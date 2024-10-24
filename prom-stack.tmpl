@@ -13,7 +13,7 @@ networks:
 services:
     prometheus:
         container_name: prometheus
-        image: prom/prometheus:v2.33.1
+        image: prom/prometheus:v2.55.0
         volumes:
             - ./container/prometheus/:/etc/prometheus/
             - prometheus_data:/prometheus
