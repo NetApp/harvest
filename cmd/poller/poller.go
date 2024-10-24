@@ -822,6 +822,10 @@ func (p *Poller) loadCollectorObject(ocs []objectCollector) error {
 				)
 			}
 		} else {
+			if shouldIgnore := col.GetParams().GetChildContentS("ignore"); shouldIgnore == "true" {
+				logger.Debug("ignoring collector", slog.String("collector", oc.class), slog.String("object", oc.object))
+				continue
+			}
 			collectors = append(collectors, col)
 			logger.Debug(
 				"initialized collector-object",

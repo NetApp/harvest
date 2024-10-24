@@ -39,6 +39,10 @@ func (r *Rest) InitCache() error {
 		r.Prop.Object = strings.ToLower(r.Object)
 	}
 
+	if shouldIgnore := r.Params.GetChildContentS("ignore"); shouldIgnore == "true" {
+		return nil
+	}
+
 	if e := r.Params.GetChildS("export_options"); e != nil {
 		r.Matrix[r.Object].SetExportOptions(e)
 	}
