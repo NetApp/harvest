@@ -21,6 +21,11 @@ var dashboards = []string{
 	"../../../grafana/dashboards/storagegrid",
 }
 
+var cDotDashboards = []string{
+	"../../../grafana/dashboards/cmode",
+	"../../../grafana/dashboards/cmode-details",
+}
+
 var throughputPattern = regexp.MustCompile(`(throughput|read_data|write_data|total_data)`)
 var aggregationThroughputPattern = regexp.MustCompile(`(?i)(\w+)\(`)
 
@@ -1631,13 +1636,19 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 }
 
 func TestFSxFriendlyVariables(t *testing.T) {
-	VisitDashboards(dashboards,
+	VisitDashboards(cDotDashboards,
 		func(path string, data []byte) {
 			checkVariablesAreFSxFriendly(t, path, data)
 		})
 }
 
 func checkVariablesAreFSxFriendly(t *testing.T, path string, data []byte) {
+
+	exceptionValues := map[string]bool{
+		"cmode/metadata.json":                true,
+		"cmode/snapmirror_destinations.json": true,
+	}
+
 	gjson.GetBytes(data, "templating.list").ForEach(func(key, value gjson.Result) bool {
 		// Only consider query variables
 		if value.Get("type").String() != "query" {
@@ -1648,18 +1659,21 @@ func checkVariablesAreFSxFriendly(t *testing.T, path string, data []byte) {
 		definition := value.Get("definition").String()
 		varName := value.Get("name").String()
 
-		if varName != "Cluster" && varName != "Datacenter" {
+		sPath := ShortPath(path)
+		isExceptionPath := exceptionValues[sPath]
+
+		if isExceptionPath || (varName != "Cluster" && varName != "Datacenter") {
 			return true
 		}
 
-		if strings.Contains(query, "node_labels") {
-			t.Errorf(`dashboard=%s path=templating.list[%s] variable="%s" has "node_labels" in query. Use "cluster_new_status" instead.`,
-				ShortPath(path), key.String(), varName)
+		if !strings.Contains(query, "cluster_new_status") {
+			t.Errorf(`dashboard=%s path=templating.list[%s] variable="%s" does not have "cluster_new_status" in query. Found "%s" instead.`,
+				sPath, key.String(), varName, definition)
 		}
 
-		if strings.Contains(definition, "node_labels") {
-			t.Errorf(`dashboard=%s path=templating.list[%s] variable="%s" has "node_labels" in definition. Use "cluster_new_status" instead.`,
-				ShortPath(path), key.String(), varName)
+		if !strings.Contains(definition, "cluster_new_status") {
+			t.Errorf(`dashboard=%s path=templating.list[%s] variable="%s" does not have "cluster_new_status" in definition. Found "%s" instead.`,
+				sPath, key.String(), varName, definition)
 		}
 		return true
 	})
