@@ -94,7 +94,7 @@ func (v *Volume) Init() error {
 	if err != nil {
 		return fmt.Errorf("unable to get version %w", err)
 	}
-	enableVolumeLogging = os.Getenv("ENABLE_VOLUME_LOGGING") == "true"
+	enableVolumeLogging = os.Getenv("ENABLE_VOLUME_LOGGING") != ""
 	return nil
 }
 
