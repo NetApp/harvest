@@ -163,7 +163,7 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]vo
 
 		if vInfo, ok := volumeMap[volume.GetLabel("volume")+volume.GetLabel("svm")]; ok {
 			if vInfo.isObjectStoreVolume {
-				if os.Getenv("ENABLE_VOLUME_LOGGING") == "true" {
+				if enableVolumeLogging {
 					v.SLogger.Warn("Setting exportable for object store volume", slog.String("volume", volume.GetLabel("volume")), slog.Bool("exportable", false))
 				}
 				volume.SetExportable(false)
