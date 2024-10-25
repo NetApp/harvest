@@ -37,8 +37,8 @@ import (
 	"log/slog"
 	"os"
 	"regexp"
+	"slices"
 	"sort"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -201,6 +201,8 @@ func (r *Rest) InitClient() error {
 	}
 	r.Client.TraceLogSet(r.Name, r.Params)
 
+	r.Remote = r.Client.Remote()
+
 	return nil
 }
 
@@ -209,7 +211,7 @@ func (r *Rest) InitMatrix() error {
 	// overwrite from abstract collector
 	mat.Object = r.Prop.Object
 	// Add system (cluster) name
-	mat.SetGlobalLabel("cluster", r.Client.Cluster().Name)
+	mat.SetGlobalLabel("cluster", r.Remote.Name)
 
 	if r.Params.HasChildS("labels") {
 		for _, l := range r.Params.GetChildS("labels").GetChildren() {
@@ -333,7 +335,7 @@ func (r *Rest) PollCounter() (map[string]*matrix.Matrix, error) {
 	apiD := time.Since(startTime)
 
 	startTime = time.Now()
-	v, err := util.VersionAtLeast(r.Client.Cluster().GetVersion(), "9.11.1")
+	v, err := util.VersionAtLeast(r.Remote.Version, "9.11.1")
 	if err != nil {
 		return nil, err
 	}
@@ -709,6 +711,7 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 	for k := range r.Prop.Counters {
 		counters = append(counters, k)
 	}
+	slices.Sort(counters)
 
 	var schedules = make([]collector.Schedule, 0)
 	tasks := r.Params.GetChildS("schedule")
@@ -745,14 +748,18 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 		InstanceInfo:  &info,
 	})
 
-	if (r.Name == "Rest" && (r.Object == "Volume" || r.Object == "Node")) || r.Name == "Ems" {
-		version := r.Client.Cluster().Version
-		p.Target.Version = strconv.Itoa(version[0]) + "." + strconv.Itoa(version[1]) + "." + strconv.Itoa(version[2])
+	isRest := r.Name == "Rest"
+	isKeyPerf := r.Name == "KeyPerf"
+	isEMS := r.Name == "Ems"
+	isOneOfVolumeNode := r.Object == "Volume" || r.Object == "Node"
+
+	if ((isRest || isKeyPerf) && isOneOfVolumeNode) || isEMS {
+		p.Target.Version = r.Remote.Version
 		p.Target.Model = "cdot"
 		if p.Target.Serial == "" {
-			p.Target.Serial = r.Client.Cluster().UUID
+			p.Target.Serial = r.Remote.UUID
 		}
-		p.Target.ClusterUUID = r.Client.Cluster().UUID
+		p.Target.ClusterUUID = r.Remote.UUID
 
 		if r.Object == "Node" || r.Name == "ems" {
 			var (

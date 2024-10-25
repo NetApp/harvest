@@ -25,6 +25,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -93,7 +94,7 @@ func (z *Zapi) InitVars() error {
 	if z.Options.IsTest {
 		z.Client = client.NewTestClient()
 		templateName := z.Params.GetChildS("objects").GetChildContentS(z.Object)
-		template, path, err := z.ImportSubTemplate("cdot", templateName, jitter, [3]int{9, 8, 0})
+		template, path, err := z.ImportSubTemplate("cdot", templateName, jitter, "9.8.0")
 		if err != nil {
 			return err
 		}
@@ -119,13 +120,16 @@ func (z *Zapi) InitVars() error {
 	}
 
 	// save for ASUP messaging
-	z.HostUUID = z.Client.Serial()
-	version := z.Client.Version()
-	z.HostVersion = strconv.Itoa(version[0]) + "." + strconv.Itoa(version[1]) + "." + strconv.Itoa(version[2])
-	z.HostModel = model
-	templateName := z.Params.GetChildS("objects").GetChildContentS(z.Object)
+	versionT := z.Client.Version()
+	z.Remote = conf.Remote{
+		Name:    z.Client.Name(),
+		UUID:    z.Client.Serial(),
+		Model:   model,
+		Version: strconv.Itoa(versionT[0]) + "." + strconv.Itoa(versionT[1]) + "." + strconv.Itoa(versionT[2]),
+	}
 
-	template, path, err := z.ImportSubTemplate(model, templateName, jitter, z.Client.Version())
+	templateName := z.Params.GetChildS("objects").GetChildContentS(z.Object)
+	template, path, err := z.ImportSubTemplate(model, templateName, jitter, z.Remote.Version)
 	if err != nil {
 		return err
 	}
@@ -436,6 +440,7 @@ func (z *Zapi) CollectAutoSupport(p *collector.Payload) {
 		c := z.Params.GetChildS("counters")
 		c.FlatList(&counters, "")
 	}
+	slices.Sort(counters)
 
 	var schedules = make([]collector.Schedule, 0)
 	tasks := z.Params.GetChildS("schedule")
@@ -480,10 +485,10 @@ func (z *Zapi) CollectAutoSupport(p *collector.Payload) {
 	})
 
 	if z.Name == "Zapi" && (z.Object == "Volume" || z.Object == "Node" || z.Object == "Qtree") {
-		p.Target.Version = z.GetHostVersion()
-		p.Target.Model = z.GetHostModel()
+		p.Target.Version = z.Remote.Version
+		p.Target.Model = z.Remote.Model
 		if p.Target.Serial == "" {
-			p.Target.Serial = z.GetHostUUID()
+			p.Target.Serial = z.Remote.UUID
 		}
 		p.Target.ClusterUUID = z.Client.ClusterUUID()
 
