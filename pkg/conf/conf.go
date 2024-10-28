@@ -503,6 +503,11 @@ type ExportDef struct {
 	Exporter
 }
 
+type Recorder struct {
+	Path string `yaml:"path,omitempty"`
+	Mode string `yaml:"mode,omitempty"` // record or replay
+}
+
 func (e *ExportDef) UnmarshalYAML(n *yaml.Node) error {
 	if n.Kind == yaml.MappingNode {
 		var aExporter *Exporter
@@ -518,34 +523,35 @@ func (e *ExportDef) UnmarshalYAML(n *yaml.Node) error {
 }
 
 type Poller struct {
-	Addr              string               `yaml:"addr,omitempty"`
 	APIVersion        string               `yaml:"api_version,omitempty"`
 	APIVfiler         string               `yaml:"api_vfiler,omitempty"`
+	Addr              string               `yaml:"addr,omitempty"`
 	AuthStyle         string               `yaml:"auth_style,omitempty"`
 	CaCertPath        string               `yaml:"ca_cert,omitempty"`
+	CertificateScript CertificateScript    `yaml:"certificate_script,omitempty"`
 	ClientTimeout     string               `yaml:"client_timeout,omitempty"`
 	Collectors        []Collector          `yaml:"collectors,omitempty"`
+	ConfPath          string               `yaml:"conf_path,omitempty"`
 	CredentialsFile   string               `yaml:"credentials_file,omitempty"`
 	CredentialsScript CredentialsScript    `yaml:"credentials_script,omitempty"`
-	CertificateScript CertificateScript    `yaml:"certificate_script,omitempty"`
 	Datacenter        string               `yaml:"datacenter,omitempty"`
 	ExporterDefs      []ExportDef          `yaml:"exporters,omitempty"`
+	Exporters         []string             `yaml:"-"`
 	IsKfs             bool                 `yaml:"is_kfs,omitempty"`
 	Labels            *[]map[string]string `yaml:"labels,omitempty"`
 	LogMaxBytes       int64                `yaml:"log_max_bytes,omitempty"`
 	LogMaxFiles       int                  `yaml:"log_max_files,omitempty"`
 	LogSet            *[]string            `yaml:"log,omitempty"`
 	Password          string               `yaml:"password,omitempty"`
-	PollerSchedule    string               `yaml:"poller_schedule,omitempty"`
 	PollerLogSchedule string               `yaml:"poller_log_schedule,omitempty"`
+	PollerSchedule    string               `yaml:"poller_schedule,omitempty"`
+	PreferZAPI        bool                 `yaml:"prefer_zapi,omitempty"`
+	Recorder          Recorder             `yaml:"recorder,omitempty"`
 	SslCert           string               `yaml:"ssl_cert,omitempty"`
 	SslKey            string               `yaml:"ssl_key,omitempty"`
 	TLSMinVersion     string               `yaml:"tls_min_version,omitempty"`
 	UseInsecureTLS    *bool                `yaml:"use_insecure_tls,omitempty"`
 	Username          string               `yaml:"username,omitempty"`
-	PreferZAPI        bool                 `yaml:"prefer_zapi,omitempty"`
-	ConfPath          string               `yaml:"conf_path,omitempty"`
-	Exporters         []string             `yaml:"-"`
 	promIndex         int
 	Name              string
 }
@@ -638,6 +644,10 @@ func ZapiPoller(n *node.Node) *Poller {
 	if certificateScriptNode := n.GetChildS("certificate_script"); certificateScriptNode != nil {
 		p.CertificateScript.Path = certificateScriptNode.GetChildContentS("path")
 		p.CertificateScript.Timeout = certificateScriptNode.GetChildContentS("timeout")
+	}
+	if recorderNode := n.GetChildS("recorder"); recorderNode != nil {
+		p.Recorder.Path = recorderNode.GetChildContentS("path")
+		p.Recorder.Mode = recorderNode.GetChildContentS("mode")
 	}
 	if clientTimeout := n.GetChildContentS("client_timeout"); clientTimeout != "" {
 		p.ClientTimeout = clientTimeout

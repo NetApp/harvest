@@ -28,6 +28,7 @@ const (
 	ErrNoMetric                  = harvestError("no metrics")
 	ErrPanic                     = harvestError("goroutine panic")
 	ErrPermissionDenied          = harvestError("Permission denied")
+	ErrResponseNotFound          = harvestError("response not found")
 	ErrWrongTemplate             = harvestError("wrong template")
 	ErrMetroClusterNotConfigured = harvestError("MetroCluster is not configured in cluster")
 )

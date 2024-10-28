@@ -46,6 +46,8 @@ import (
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"log/slog"
+	"maps"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -416,17 +418,26 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	// load requested counters (metrics + labels)
 	requestCounters := request.NewChildS("counters", "")
 	// load scalar metrics
+
+	// Sort the counters and instanceKeys so they are deterministic
+
 	for _, key := range z.scalarCounters {
 		requestCounters.NewChildS("counter", key)
 	}
+
 	// load histograms
-	for key := range z.histogramLabels {
+	sortedHistogramKeys := slices.Sorted(maps.Keys(z.histogramLabels))
+	for _, key := range sortedHistogramKeys {
 		requestCounters.NewChildS("counter", key)
 	}
+
 	// load instance labels
-	for key := range z.instanceLabels {
+	sortedLabels := slices.Sorted(maps.Keys(z.instanceLabels))
+	for _, key := range sortedLabels {
 		requestCounters.NewChildS("counter", key)
 	}
+
+	slices.Sort(instanceKeys)
 
 	// batch indices
 	startIndex := 0
@@ -457,7 +468,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 						key = v[z.keyNameIndex]
 					}
 				}
-				// avoid adding duplicate keys. It can happen for flex-cache case
+				// Avoid adding duplicate keys. It can happen for flex-cache case
 				if !addedKeys[key] {
 					requestInstances.NewChildS(z.keyName, key)
 					addedKeys[key] = true
@@ -927,6 +938,7 @@ func (z *ZapiPerf) getParentOpsCounters(data *matrix.Matrix, keyAttr string) (ti
 	}
 
 	instanceKeys = data.GetInstanceKeys()
+	slices.Sort(instanceKeys)
 
 	// build ZAPI request
 	request := node.NewXMLS("perf-object-get-instances")
@@ -1324,6 +1336,7 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		return nil, errs.New(errs.ErrNoMetric, "")
 	}
 
+	slices.Sort(z.scalarCounters)
 	return nil, nil
 }
 

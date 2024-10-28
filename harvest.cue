@@ -62,6 +62,11 @@ label: [string]: string
 	timeout?:  string
 }
 
+#Recorder: {
+	path: string
+	mode: "record" | "replay"
+}
+
 #CollectorDef: {
 	[Name=_]: [...string]
 }
@@ -87,6 +92,7 @@ Pollers: [Name=_]: #Poller
 	log_max_files?:      int
 	password?:           string
 	prefer_zapi?:        bool
+	recorder?:           #Recorder
 	ssl_cert?:           string
 	ssl_key?:            string
 	tls_min_version?:    string

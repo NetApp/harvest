@@ -6,7 +6,6 @@ package zapi
 
 import (
 	"bytes"
-	"crypto/tls"
 	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/auth"
@@ -54,7 +53,7 @@ func New(poller *conf.Poller, c *auth.Credentials) (*Client, error) {
 		client     Client
 		httpclient *http.Client
 		request    *http.Request
-		transport  *http.Transport
+		transport  http.RoundTripper
 		timeout    time.Duration
 		url, addr  string
 		err        error
@@ -103,18 +102,11 @@ func New(poller *conf.Poller, c *auth.Credentials) (*Client, error) {
 	request.Header.Set("Content-Type", "text/xml")
 	request.Header.Set("Charset", "utf-8")
 
-	transport, err = c.Transport(request)
+	transport, err = c.Transport(request, poller)
 	if err != nil {
 		return nil, err
 	}
 
-	if poller.TLSMinVersion != "" {
-		tlsVersion := client.tlsVersion(poller.TLSMinVersion)
-		if tlsVersion != 0 {
-			client.Logger.Info("Using TLS version", slog.Int("tlsVersion", int(tlsVersion)))
-			transport.TLSClientConfig.MinVersion = tlsVersion
-		}
-	}
 	client.request = request
 
 	// initialize http client
@@ -579,23 +571,6 @@ func (c *Client) SetTimeout(timeout string) {
 		c.Logger.Debug("Using default timeout", slog.String("timeout", newTimeout.String()))
 	}
 	c.client.Timeout = newTimeout
-}
-
-func (c *Client) tlsVersion(version string) uint16 {
-	lower := strings.ToLower(version)
-	switch lower {
-	case "tls10":
-		return tls.VersionTLS10
-	case "tls11":
-		return tls.VersionTLS11
-	case "tls12":
-		return tls.VersionTLS12
-	case "tls13":
-		return tls.VersionTLS13
-	default:
-		c.Logger.Warn("Unknown TLS version, using default", slog.String("version", version))
-	}
-	return 0
 }
 
 // NewTestClient It's used for unit test only
