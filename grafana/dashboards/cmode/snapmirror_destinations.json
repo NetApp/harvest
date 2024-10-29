@@ -222,7 +222,7 @@
       },
       "gridPos": {
         "h": 12,
-        "w": 13,
+        "w": 18,
         "x": 6,
         "y": 3
       },
@@ -441,13 +441,6 @@
             },
             "properties": [
               {
-                "id": "custom.cellOptions",
-                "value": {
-                  "mode": "lcd",
-                  "type": "gauge"
-                }
-              },
-              {
                 "id": "unit",
                 "value": "bytes"
               },
@@ -469,6 +462,10 @@
               {
                 "id": "custom.width",
                 "value": 240
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "lcd-gauge"
               }
             ]
           },
@@ -478,13 +475,6 @@
               "options": "Duration"
             },
             "properties": [
-              {
-                "id": "custom.cellOptions",
-                "value": {
-                  "mode": "lcd",
-                  "type": "gauge"
-                }
-              },
               {
                 "id": "unit",
                 "value": "s"
@@ -503,6 +493,10 @@
                     "type": "special"
                   }
                 ]
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "lcd-gauge"
               }
             ]
           },
@@ -517,14 +511,6 @@
                 "value": "s"
               },
               {
-                "id": "custom.cellOptions",
-                "value": {
-                  "mode": "lcd",
-                  "type": "gauge",
-                  "valueDisplayMode": "text"
-                }
-              },
-              {
                 "id": "mappings",
                 "value": [
                   {
@@ -537,6 +523,10 @@
                     "type": "special"
                   }
                 ]
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "lcd-gauge"
               }
             ]
           },
@@ -699,11 +689,8 @@
                 ]
               },
               {
-                "id": "custom.cellOptions",
-                "value": {
-                  "mode": "gradient",
-                  "type": "color-background"
-                }
+                "id": "custom.displayMode",
+                "value": "color-background"
               }
             ]
           }
@@ -1291,7 +1278,7 @@
           },
           "gridPos": {
             "h": 12,
-            "w": 13,
+            "w": 18,
             "x": 6,
             "y": 35
           },
@@ -1636,10 +1623,8 @@
                     "value": 140
                   },
                   {
-                    "id": "custom.cellOptions",
-                    "value": {
-                      "type": "color-background"
-                    }
+                    "id": "custom.displayMode",
+                    "value": "color-background"
                   }
                 ]
               },
