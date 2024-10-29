@@ -42,19 +42,18 @@ const (
 	objWorkloadClass       = "user_defined|system_defined"
 	objWorkloadVolumeClass = "autovolume"
 	timestampMetricName    = "timestamp"
+	numRecordsToSave       = 60 // Number of records to save when using the recorder
 )
 
 var (
-	constituentRegex = regexp.MustCompile(`^(.*)__(\d{4})$`)
+	constituentRegex      = regexp.MustCompile(`^(.*)__(\d{4})$`)
+	qosQuery              = "api/cluster/counter/tables/qos"
+	qosVolumeQuery        = "api/cluster/counter/tables/qos_volume"
+	qosDetailQuery        = "api/cluster/counter/tables/qos_detail"
+	qosDetailVolumeQuery  = "api/cluster/counter/tables/qos_detail_volume"
+	qosWorkloadQuery      = "api/storage/qos/workloads"
+	workloadDetailMetrics = []string{"resource_latency"}
 )
-
-var qosQuery = "api/cluster/counter/tables/qos"
-var qosVolumeQuery = "api/cluster/counter/tables/qos_volume"
-var qosDetailQuery = "api/cluster/counter/tables/qos_detail"
-var qosDetailVolumeQuery = "api/cluster/counter/tables/qos_detail_volume"
-var qosWorkloadQuery = "api/storage/qos/workloads"
-
-var workloadDetailMetrics = []string{"resource_latency"}
 
 var qosQueries = map[string]string{
 	qosQuery:       qosQuery,
@@ -70,6 +69,8 @@ type RestPerf struct {
 	perfProp            *perfProp
 	archivedMetrics     map[string]*rest2.Metric // Keeps metric definitions that are not found in the counter schema. These metrics may be available in future ONTAP versions.
 	hasInstanceSchedule bool
+	pollInstanceCalls   uint8
+	pollDataCalls       uint8
 }
 
 type counter struct {
@@ -720,7 +721,15 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		return nil, errs.New(errs.ErrConfig, "empty url")
 	}
 
-	err = rest.FetchRestPerfData(r.Client, href, &perfRecords)
+	r.pollDataCalls++
+	if r.pollDataCalls > numRecordsToSave {
+		r.pollDataCalls = 0
+	}
+
+	headers := map[string]string{
+		"From": strconv.Itoa(int(r.pollDataCalls)),
+	}
+	err = rest.FetchRestPerfData(r.Client, href, &perfRecords, headers)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch href=%s %w", href, err)
 	}
@@ -1475,6 +1484,15 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		}
 	}
 
+	r.pollInstanceCalls++
+	if r.pollInstanceCalls > numRecordsToSave/3 {
+		r.pollInstanceCalls = 0
+	}
+
+	headers := map[string]string{
+		"From": strconv.Itoa(int(r.pollInstanceCalls)),
+	}
+
 	href := rest.NewHrefBuilder().
 		APIPath(dataQuery).
 		Fields([]string{fields}).
@@ -1490,7 +1508,7 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 
 	apiT := time.Now()
 	r.Client.Metadata.Reset()
-	records, err = rest.FetchAll(r.Client, href)
+	records, err = rest.FetchAll(r.Client, href, headers)
 	if err != nil {
 		return r.handleError(err, href)
 	}

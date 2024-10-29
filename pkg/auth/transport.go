@@ -52,7 +52,10 @@ func recording(poller *conf.Poller, transport *http.Transport) http.RoundTripper
 			response *http.Response
 		)
 
-		_ = os.MkdirAll(basePath, 0750)
+		err = os.MkdirAll(basePath, 0750)
+		if err != nil {
+			return nil, fmt.Errorf("problem while creating directories=%s transport: %w", basePath, err)
+		}
 		b, err := DumpRequest(req, true)
 		if err != nil {
 			return nil, err

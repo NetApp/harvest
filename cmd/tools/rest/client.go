@@ -113,7 +113,7 @@ func (c *Client) printRequestAndResponse(req string, response []byte) {
 }
 
 // GetPlainRest makes a REST request to the cluster and returns a json response as a []byte
-func (c *Client) GetPlainRest(request string, encodeURL bool) ([]byte, error) {
+func (c *Client) GetPlainRest(request string, encodeURL bool, headers ...map[string]string) ([]byte, error) {
 	var err error
 	if strings.Index(request, "/") == 0 {
 		request = request[1:]
@@ -131,6 +131,13 @@ func (c *Client) GetPlainRest(request string, encodeURL bool) ([]byte, error) {
 		return nil, err
 	}
 	c.request.Header.Set("Accept", "application/json")
+
+	for _, hs := range headers {
+		for k, v := range hs {
+			c.request.Header.Set(k, v)
+		}
+	}
+
 	pollerAuth, err := c.auth.GetPollerAuth()
 	if err != nil {
 		return nil, err
@@ -156,8 +163,8 @@ func (c *Client) GetPlainRest(request string, encodeURL bool) ([]byte, error) {
 }
 
 // GetRest makes a REST request to the cluster and returns a json response as a []byte
-func (c *Client) GetRest(request string) ([]byte, error) {
-	return c.GetPlainRest(request, true)
+func (c *Client) GetRest(request string, headers ...map[string]string) ([]byte, error) {
+	return c.GetPlainRest(request, true, headers...)
 }
 
 func (c *Client) invokeWithAuthRetry() ([]byte, error) {

@@ -16,12 +16,14 @@ import (
 )
 
 const (
-	latencyIoReqd = 10
+	latencyIoReqd    = 10
+	numRecordsToSave = 60 // Number of records to save when using the recorder
 )
 
 type KeyPerf struct {
-	*rest.Rest // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
-	perfProp   *perfProp
+	*rest.Rest    // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
+	perfProp      *perfProp
+	pollDataCalls uint8
 }
 
 type counter struct {
@@ -232,7 +234,16 @@ func (kp *KeyPerf) PollData() (map[string]*matrix.Matrix, error) {
 		return nil, errs.New(errs.ErrConfig, "empty url")
 	}
 
-	perfRecords, err = kp.GetRestData(href)
+	kp.pollDataCalls++
+	if kp.pollDataCalls > numRecordsToSave {
+		kp.pollDataCalls = 0
+	}
+
+	headers := map[string]string{
+		"From": strconv.Itoa(int(kp.pollDataCalls)),
+	}
+
+	perfRecords, err = kp.GetRestData(href, headers)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch href=%s %w", href, err)
 	}

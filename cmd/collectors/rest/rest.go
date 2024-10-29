@@ -677,13 +677,13 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 	return count, numPartials
 }
 
-func (r *Rest) GetRestData(href string) ([]gjson.Result, error) {
+func (r *Rest) GetRestData(href string, headers ...map[string]string) ([]gjson.Result, error) {
 	r.Logger.Debug("Fetching data", slog.String("href", href))
 	if href == "" {
 		return nil, errs.New(errs.ErrConfig, "empty url")
 	}
 
-	result, err := rest.FetchAll(r.Client, href)
+	result, err := rest.FetchAll(r.Client, href, headers...)
 	if err != nil {
 		return r.handleError(err)
 	}

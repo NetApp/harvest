@@ -70,25 +70,28 @@ const (
 	objWorkloadVolumeClass  = "autovolume"
 	BILLION                 = 1_000_000_000
 	timestampMetricName     = "timestamp"
+	numRecordsToSave        = 60 // Number of records to save when using the recorder
 )
 
 var workloadDetailMetrics = []string{"resource_latency"}
 
 type ZapiPerf struct {
-	*zapi.Zapi      // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
-	object          string
-	filter          string
-	batchSize       int
-	latencyIoReqd   int
-	instanceKeys    []string
-	instanceLabels  map[string]string
-	histogramLabels map[string][]string
-	scalarCounters  []string
-	qosLabels       map[string]string
-	isCacheEmpty    bool
-	keyName         string
-	keyNameIndex    int
-	testFilePath    string // Used only from unit test
+	*zapi.Zapi        // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
+	object            string
+	filter            string
+	batchSize         int
+	latencyIoReqd     int
+	instanceKeys      []string
+	instanceLabels    map[string]string
+	histogramLabels   map[string][]string
+	scalarCounters    []string
+	qosLabels         map[string]string
+	isCacheEmpty      bool
+	keyName           string
+	keyNameIndex      int
+	testFilePath      string // Used only from unit test
+	pollDataCalls     uint8
+	pollInstanceCalls uint8
 }
 
 func init() {
@@ -483,7 +486,17 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 			return nil, err
 		}
 
-		response, rd, pd, err := z.Client.InvokeWithTimers(z.testFilePath)
+		z.pollDataCalls++
+		if z.pollDataCalls > numRecordsToSave {
+			z.pollDataCalls = 0
+		}
+
+		headers := map[string]string{
+			"From": strconv.Itoa(int(z.pollDataCalls)),
+		}
+
+		response, rd, pd, err := z.Client.InvokeWithTimers(z.testFilePath, headers)
+
 		if err != nil {
 			errMsg := strings.ToLower(err.Error())
 			// if ONTAP complains about batch size, use a smaller batch size
@@ -1621,7 +1634,17 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 
 	for {
 		apiT = time.Now()
-		responseData, err := z.Client.InvokeBatchRequest(request, batchTag, z.testFilePath)
+
+		z.pollInstanceCalls++
+		if z.pollInstanceCalls > numRecordsToSave/3 {
+			z.pollInstanceCalls = 0
+		}
+
+		headers := map[string]string{
+			"From": strconv.Itoa(int(z.pollInstanceCalls)),
+		}
+
+		responseData, err := z.Client.InvokeBatchRequest(request, batchTag, z.testFilePath, headers)
 
 		if err != nil {
 			if errors.Is(err, errs.ErrAPIRequestRejected) {
