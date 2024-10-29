@@ -197,7 +197,7 @@ func (r *RestPerf) InitMatrix() error {
 	// overwrite from abstract collector
 	mat.Object = r.Prop.Object
 	// Add system (cluster) name
-	mat.SetGlobalLabel("cluster", r.Client.Cluster().Name)
+	mat.SetGlobalLabel("cluster", r.Remote.Name)
 	if r.Params.HasChildS("labels") {
 		for _, l := range r.Params.GetChildS("labels").GetChildren() {
 			mat.SetGlobalLabel(l.GetNameS(), l.GetContentS())

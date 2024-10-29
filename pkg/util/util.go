@@ -27,6 +27,15 @@ import (
 
 var arrayRegex = regexp.MustCompile(`^([a-zA-Z][\w.]*)(\.[0-9#])`)
 
+var IsONTAPCollector = map[string]struct{}{
+	"ZapiPerf": {},
+	"Zapi":     {},
+	"Rest":     {},
+	"RestPerf": {},
+	"KeyPerf":  {},
+	"Ems":      {},
+}
+
 var IsCollector = map[string]struct{}{
 	"ZapiPerf":    {},
 	"Zapi":        {},

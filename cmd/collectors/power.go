@@ -50,7 +50,7 @@ func collectChassisFRU(client *rest.Client, logger *slog.Logger) (map[string]int
 		if !cn.Exists() {
 			logger.Warn(
 				"fru has no connected nodes",
-				slog.String("cluster", client.Cluster().Name),
+				slog.String("cluster", client.Remote().Name),
 				slog.String("fru", r.Get("fru_name").String()),
 			)
 			continue

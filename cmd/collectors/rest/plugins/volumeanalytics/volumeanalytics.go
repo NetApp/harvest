@@ -99,7 +99,7 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 	v.client.Metadata.Reset()
 
 	cluster := data.GetGlobalLabels()["cluster"]
-	clusterVersion := v.client.Cluster().GetVersion()
+	clusterVersion := v.client.Remote().Version
 	ontapVersion, err := goversion.NewVersion(clusterVersion)
 	if err != nil {
 		v.SLogger.Error("Failed to parse version",
