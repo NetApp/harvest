@@ -1255,7 +1255,7 @@
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
-              "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",group_type=\"consistencygroup\",healthy=\"false\",destination_cg_name=~\"$ConsistencyGroup\",relationship_id=\"\"}) or vector (0)",
+              "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\",group_type=\"consistencygroup\",healthy=\"false\",destination_cg_name=~\"$ConsistencyGroup\",relationship_id=\"\"}) or vector (0)",
               "format": "time_series",
               "hide": false,
               "instant": true,
@@ -1397,7 +1397,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Number of healhty snapmirrors.",
+          "description": "Number of healthy snapmirrors.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1450,7 +1450,7 @@
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
-              "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",group_type=\"consistencygroup\",healthy=\"true\",destination_cg_name=~\"$ConsistencyGroup\",relationship_id=\"\"}) or vector (0)",
+              "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\",group_type=\"consistencygroup\",healthy=\"true\",destination_cg_name=~\"$ConsistencyGroup\",relationship_id=\"\"}) or vector (0)",
               "format": "time_series",
               "hide": false,
               "instant": true,
