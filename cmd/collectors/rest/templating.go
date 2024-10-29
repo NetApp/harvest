@@ -18,7 +18,7 @@ import (
 func (r *Rest) LoadTemplate() (string, error) {
 
 	jitter := r.Params.GetChildContentS("jitter")
-	template, path, err := r.ImportSubTemplate("", TemplateFn(r.Params, r.Object), jitter, r.Client.Cluster().Version)
+	template, path, err := r.ImportSubTemplate("", TemplateFn(r.Params, r.Object), jitter, r.Remote.Version)
 	if err != nil {
 		return "", err
 	}
@@ -37,6 +37,10 @@ func (r *Rest) InitCache() error {
 		r.Prop.Object = x
 	} else {
 		r.Prop.Object = strings.ToLower(r.Object)
+	}
+
+	if shouldIgnore := r.Params.GetChildContentS("ignore"); shouldIgnore == "true" {
+		return nil
 	}
 
 	if e := r.Params.GetChildS("export_options"); e != nil {

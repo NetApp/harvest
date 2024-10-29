@@ -135,6 +135,7 @@ type Poller struct {
 	auth            *auth.Credentials
 	hasPromExporter bool
 	maxRssBytes     uint64
+	startTime       time.Time
 }
 
 // Init starts Poller, reads parameters, opens zeroLog handler, initializes metadata,
@@ -148,6 +149,7 @@ func (p *Poller) Init() error {
 		configPath            string
 	)
 
+	p.startTime = time.Now()
 	p.options = opts.SetDefaults()
 	p.name = opts.Poller
 
@@ -384,7 +386,7 @@ func (p *Poller) Init() error {
 	if tools != nil && tools.AsupDisabled {
 		logger.Info("Autosupport is disabled")
 	} else {
-		if p.targetIsOntap() {
+		if p.collectorIsBuiltin() {
 			// Write the payload after asupFirstWrite.
 			// This is to examine the autosupport contents
 			// Nothing is sent, sending happens based on the asupSchedule
@@ -569,6 +571,7 @@ func (p *Poller) Run() {
 			upe := 0 // up exporters
 
 			// update status of collectors
+			var remote conf.Remote
 			for _, c := range p.collectors {
 				code, _, msg := c.GetStatus()
 
@@ -587,7 +590,13 @@ func (p *Poller) Run() {
 						instance.SetLabel("reason", strings.ReplaceAll(msg, "\"", ""))
 					}
 				}
+
+				remote = c.GetRemote()
 			}
+
+			// add remote version and name to metadata
+			p.status.GetInstance("remote").SetLabel("version", remote.Version)
+			p.status.GetInstance("remote").SetLabel("name", remote.Name)
 
 			// update status of exporters
 			for _, ee := range p.exporters {
@@ -822,6 +831,10 @@ func (p *Poller) loadCollectorObject(ocs []objectCollector) error {
 				)
 			}
 		} else {
+			if shouldIgnore := col.GetParams().GetChildContentS("ignore"); shouldIgnore == "true" {
+				logger.Debug("ignoring collector", slog.String("collector", oc.class), slog.String("object", oc.object))
+				continue
+			}
 			collectors = append(collectors, col)
 			logger.Debug(
 				"initialized collector-object",
@@ -1079,6 +1092,9 @@ func (p *Poller) loadMetadata() {
 
 	instance, _ := p.metadataTarget.NewInstance("host")
 	pInstance, _ := p.status.NewInstance("host")
+	pRemote, _ := p.status.NewInstance("remote")
+	pRemote.SetExportable(false)
+
 	instance.SetLabel("addr", p.target)
 	pInstance.SetLabel("addr", p.target)
 
@@ -1125,13 +1141,21 @@ var pollerCmd = &cobra.Command{
 	Run:   startPoller,
 }
 
-// Returns true if at least one collector is known
-// to collect from an Ontap system (needs to be updated
-// when we add other Ontap collectors, e.g. REST)
-
-func (p *Poller) targetIsOntap() bool {
+// Returns true if at least one collector is one of the builtin collectors.
+func (p *Poller) collectorIsBuiltin() bool {
 	for _, c := range p.collectors {
 		_, ok := util.IsCollector[c.GetName()]
+		if ok {
+			return true
+		}
+	}
+	return false
+}
+
+// Returns true if at least one collector is known to collect from an Ontap system.
+func (p *Poller) targetIsOntap() bool {
+	for _, c := range p.collectors {
+		_, ok := util.IsONTAPCollector[c.GetName()]
 		if ok {
 			return true
 		}
@@ -1428,11 +1452,19 @@ func (p *Poller) logPollerMetadata() (map[string]*matrix.Matrix, error) {
 	}
 
 	rss, _ := p.status.LazyGetValueFloat64("memory.rss", "host")
+	remoteName := p.status.GetInstance("remote").GetLabel("name")
+	remoteVersion := p.status.GetInstance("remote").GetLabel("version")
+
 	slog.Info(
 		"Metadata",
-		slog.Float64("rssKB", rss),
-		slog.Uint64("maxRssKB", p.maxRssBytes/1024),
+		slog.Float64("rssMB", rss/1024),
+		slog.Uint64("maxRssMB", p.maxRssBytes/1024/1024),
 		slog.String("version", strings.TrimSpace(version.String())),
+		slog.Group("remote",
+			slog.String("name", remoteName),
+			slog.String("version", remoteVersion),
+		),
+		slog.Uint64("uptimeSeconds", uint64(time.Since(p.startTime).Seconds())),
 	)
 
 	return nil, nil
@@ -1445,6 +1477,9 @@ func (p *Poller) sendHarvestVersion() error {
 		err        error
 	)
 
+	if !p.targetIsOntap() {
+		return nil
+	}
 	// connect to the cluster and retrieve the system version
 	if poller, err = conf.PollerNamed(opts.Poller); err != nil {
 		return err
@@ -1462,7 +1497,7 @@ func (p *Poller) sendHarvestVersion() error {
 	// If it is, send a harvestTag to the cluster to indicate that Harvest is running
 	// Otherwise, do nothing
 
-	ontapVersion, err := goversion.NewVersion(connection.Cluster().GetVersion())
+	ontapVersion, err := goversion.NewVersion(connection.Remote().Version)
 	if err != nil {
 		return err
 	}

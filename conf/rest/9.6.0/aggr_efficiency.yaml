@@ -1,0 +1,7 @@
+name: AggregateEfficiency
+# This template exists to prevent double exporting of aggregate efficiency metrics when
+# using both the Rest and Zapi collectors, in that order.
+# The Zapi collector exports aggregate efficiency objects via the AggregateEfficiency template
+# while the REST collector exports them via the Aggregate template. That means the normal object/collector dedup logic
+# won't handle these metrics.
+ignore:  true

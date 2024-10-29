@@ -569,8 +569,11 @@
             "defaults": {
               "custom": {
                 "align": "left",
-                "displayMode": "auto",
-                "filterable": true
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true,
+                "inspect": false
               },
               "decimals": 2,
               "mappings": [],
@@ -595,13 +598,331 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "Bps",
+              "unitScale": true
             },
             "overrides": [
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "speed"
+                  "options": "MTU"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "bps"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "port"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 122
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "Port"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "node"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Node"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 184
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-node/ontap-node?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Node=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Link Speed"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "bps"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Status"
+                },
+                "properties": [
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "degraded": {
+                            "color": "red",
+                            "index": 2,
+                            "text": "degraded"
+                          },
+                          "down": {
+                            "color": "red",
+                            "index": 1,
+                            "text": "down"
+                          },
+                          "up ": {
+                            "color": "green",
+                            "index": 0,
+                            "text": "up"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 24,
+            "x": 0,
+            "y": 2
+          },
+          "id": 59,
+          "interval": "",
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "Status"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "datasource": "${DS_PROMETHEUS}",
+              "editorMode": "code",
+              "expr": "net_port_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$Eth\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            },
+            {
+              "datasource": "${DS_PROMETHEUS}",
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "net_port_mtu{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",port=~\"$Eth\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "legendFormat": "__auto",
+              "range": false,
+              "refId": "B"
+            }
+          ],
+          "title": "Ethernet ports",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "admin_speed",
+                    "cluster",
+                    "datacenter",
+                    "ipspace",
+                    "node",
+                    "op_speed",
+                    "port",
+                    "port_type",
+                    "role",
+                    "status",
+                    "Value #B"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "merge",
+              "options": {}
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value": false,
+                  "__name__": true,
+                  "cluster": false,
+                  "datacenter": false,
+                  "instance": true,
+                  "job": true,
+                  "speed": false,
+                  "state": true
+                },
+                "includeByName": {},
+                "indexByName": {
+                  "Value #B": 4,
+                  "admin_speed": 7,
+                  "cluster": 1,
+                  "datacenter": 0,
+                  "ipspace": 8,
+                  "node": 2,
+                  "op_speed": 5,
+                  "port": 3,
+                  "port_type": 9,
+                  "role": 10,
+                  "status": 6
+                },
+                "renameByName": {
+                  "Value #B": "MTU",
+                  "admin_duplex": "",
+                  "admin_speed": "Admin Speed",
+                  "admin_up": "",
+                  "cluster": "",
+                  "datacenter": "",
+                  "ipspace": "IPspace",
+                  "node": "",
+                  "op_speed": "Link Speed",
+                  "port": "",
+                  "port_type": "Port Type",
+                  "role": "Role",
+                  "status": "Status"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "NIC port details.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true,
+                "inspect": false
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "rgb(80, 220, 20)",
+                    "value": null
+                  },
+                  {
+                    "color": "light-yellow",
+                    "value": 1000000
+                  },
+                  {
+                    "color": "semi-dark-orange",
+                    "value": 10000000
+                  },
+                  {
+                    "color": "semi-dark-red",
+                    "value": 100000000
+                  }
+                ]
+              },
+              "unit": "Bps",
+              "unitScale": true
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Speed"
                 },
                 "properties": [
                   {
@@ -625,12 +946,15 @@
                     "value": "percentunit"
                   },
                   {
-                    "id": "custom.displayMode",
-                    "value": "gradient-gauge"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "gradient",
+                      "type": "gauge"
+                    }
                   },
                   {
                     "id": "displayName",
-                    "value": "used %"
+                    "value": "Used %"
                   },
                   {
                     "id": "noValue",
@@ -720,8 +1044,11 @@
                     }
                   },
                   {
-                    "id": "custom.displayMode",
-                    "value": "color-background"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "gradient",
+                      "type": "color-background"
+                    }
                   }
                 ]
               },
@@ -766,7 +1093,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "type"
+                  "options": "Type"
                 },
                 "properties": [
                   {
@@ -783,11 +1110,14 @@
                 "properties": [
                   {
                     "id": "displayName",
-                    "value": "send"
+                    "value": "Send"
                   },
                   {
-                    "id": "custom.displayMode",
-                    "value": "gradient-gauge"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "gradient",
+                      "type": "gauge"
+                    }
                   }
                 ]
               },
@@ -799,11 +1129,14 @@
                 "properties": [
                   {
                     "id": "displayName",
-                    "value": "receive"
+                    "value": "Receive"
                   },
                   {
-                    "id": "custom.displayMode",
-                    "value": "gradient-gauge"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "gradient",
+                      "type": "gauge"
+                    }
                   }
                 ]
               },
@@ -857,22 +1190,32 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 2
+            "y": 13
           },
           "id": 58,
           "interval": "",
           "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
             "showHeader": true,
             "sortBy": [
               {
-                "desc": true,
-                "displayName": "send"
+                "desc": false,
+                "displayName": "status"
               }
             ]
           },
           "pluginVersion": "8.1.8",
           "targets": [
             {
+              "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
               "expr": "nic_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
               "format": "table",
@@ -882,6 +1225,7 @@
               "refId": "A"
             },
             {
+              "datasource": "${DS_PROMETHEUS}",
               "expr": "nic_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
               "format": "table",
               "hide": false,
@@ -891,6 +1235,7 @@
               "refId": "B"
             },
             {
+              "datasource": "${DS_PROMETHEUS}",
               "expr": "nic_util_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
               "format": "table",
               "hide": false,
@@ -900,6 +1245,7 @@
               "refId": "C"
             },
             {
+              "datasource": "${DS_PROMETHEUS}",
               "expr": "nic_tx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
               "format": "table",
               "hide": false,
@@ -909,6 +1255,7 @@
               "refId": "D"
             },
             {
+              "datasource": "${DS_PROMETHEUS}",
               "expr": "nic_rx_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",nic=~\"$Eth\"}",
               "format": "table",
               "hide": false,
@@ -918,9 +1265,7 @@
               "refId": "E"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Ethernet ports",
+          "title": "NIC ports",
           "transformations": [
             {
               "id": "filterFieldsByName",
@@ -959,6 +1304,7 @@
                   "speed": false,
                   "state": true
                 },
+                "includeByName": {},
                 "indexByName": {
                   "Value #B": 6,
                   "Value #C": 7,
@@ -966,13 +1312,16 @@
                   "Value #E": 9,
                   "cluster": 1,
                   "datacenter": 0,
-                  "nic": 2,
-                  "node": 3,
+                  "nic": 3,
+                  "node": 2,
                   "speed": 4,
                   "type": 5
                 },
                 "renameByName": {
-                  "datacenter": ""
+                  "datacenter": "",
+                  "nic": "Port",
+                  "speed": "Speed",
+                  "type": "Type"
                 }
               }
             }
@@ -1039,7 +1388,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 13
+            "y": 24
           },
           "id": 12,
           "options": {
@@ -1132,7 +1481,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 13
+            "y": 24
           },
           "id": 28,
           "options": {
@@ -1226,7 +1575,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 23
+            "y": 34
           },
           "id": 61,
           "options": {
@@ -1318,7 +1667,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 23
+            "y": 34
           },
           "id": 29,
           "options": {
@@ -1415,7 +1764,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 23
+            "y": 34
           },
           "id": 30,
           "options": {
@@ -1670,7 +2019,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 31
+            "y": 42
           },
           "id": 119,
           "options": {
@@ -1983,7 +2332,7 @@
               }
             ]
           },
-          "pluginVersion": "10.3.1",
+          "pluginVersion": "8.1.8",
           "targets": [
             {
               "editorMode": "code",
@@ -4814,5 +5163,5 @@
   "timezone": "",
   "title": "ONTAP: Network",
   "uid": "cdot-network",
-  "version": 11
+  "version": 12
 }

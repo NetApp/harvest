@@ -40,19 +40,12 @@ type Client struct {
 	buffer   *bytes.Buffer
 	Logger   *slog.Logger
 	baseURL  string
-	cluster  Cluster
+	remote   conf.Remote
 	token    string
 	Timeout  time.Duration
 	logRest  bool // used to log Rest request/response
 	auth     *auth.Credentials
 	Metadata *util.Metadata
-}
-
-type Cluster struct {
-	Name    string
-	Info    string
-	UUID    string
-	Version [3]int
 }
 
 func New(poller *conf.Poller, timeout time.Duration, credentials *auth.Credentials) (*Client, error) {
@@ -347,12 +340,12 @@ func (c *Client) UpdateClusterInfo(retries int) error {
 		}
 
 		results := gjson.ParseBytes(content)
-		c.cluster.Name = results.Get("name").String()
-		c.cluster.UUID = results.Get("uuid").String()
-		c.cluster.Info = results.Get("version.full").String()
-		c.cluster.Version[0] = int(results.Get("version.generation").Int())
-		c.cluster.Version[1] = int(results.Get("version.major").Int())
-		c.cluster.Version[2] = int(results.Get("version.minor").Int())
+		c.remote.Name = results.Get("name").String()
+		c.remote.UUID = results.Get("uuid").String()
+		c.remote.Version =
+			results.Get("version.generation").String() + "." +
+				results.Get("version.major").String() + "." +
+				results.Get("version.minor").String()
 		return nil
 	}
 	return err
@@ -362,12 +355,6 @@ func (c *Client) Init(retries int) error {
 	return c.UpdateClusterInfo(retries)
 }
 
-func (c *Client) Cluster() Cluster {
-	return c.cluster
-}
-
-func (cl Cluster) GetVersion() string {
-	ver := cl.Version
-	return fmt.Sprintf("%d.%d.%d", ver[0], ver[1], ver[2])
-
+func (c *Client) Remote() conf.Remote {
+	return c.remote
 }

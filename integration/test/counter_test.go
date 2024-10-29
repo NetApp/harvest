@@ -134,7 +134,7 @@ func visitRestTemplates(dir string, client *rest2.Client, eachTemp func(path str
 			return nil
 		}
 
-		r := eachTemp(path, client.Cluster().GetVersion(), client)
+		r := eachTemp(path, client.Remote().Version, client)
 		for k, v := range r {
 			result[k] = v
 		}

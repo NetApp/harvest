@@ -145,7 +145,7 @@ var (
 		"aggr_hybrid_disk_count",
 		"nfs_clients_idle_duration",
 		"ems_events",
-		"olume_top_clients",
+		"volume_top_clients",
 	}
 
 	excludeDocumentedZapiMetrics = []string{
@@ -772,7 +772,7 @@ func updateDescription(description string) string {
 	return s
 }
 
-func generateCounterTemplate(counters map[string]Counter, version [3]int) {
+func generateCounterTemplate(counters map[string]Counter, version string) {
 	targetPath := "docs/ontap-metrics.md"
 	t, err := template.New("counter.tmpl").ParseFiles("cmd/tools/generate/counter.tmpl")
 	if err != nil {
@@ -785,6 +785,9 @@ func generateCounterTemplate(counters map[string]Counter, version [3]int) {
 
 	keys := make([]string, 0, len(counters))
 	for k := range counters {
+		if strings.Contains(k, "_labels") {
+			continue
+		}
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
@@ -850,12 +853,11 @@ func generateCounterTemplate(counters map[string]Counter, version [3]int) {
 		}
 	}
 	table.Render()
-	verWithDots := strings.Trim(strings.Join(strings.Fields(fmt.Sprint(version)), "."), "[]")
 	c := CounterTemplate{
 		Counters: values,
 		CounterMetaData: CounterMetaData{
 			Date:         time.Now().Format("2006-Jan-02"),
-			OntapVersion: verWithDots,
+			OntapVersion: version,
 		},
 	}
 

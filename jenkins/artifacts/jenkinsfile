@@ -9,6 +9,7 @@ pipeline {
 		string(name: 'DOCKER_PUBLISH', defaultValue: 'false', description: 'true to publish to dockerhub')
 		string(name: 'RUN_TEST', defaultValue: 'true', description: 'false to skip test')
 		string(name: 'OVERWRITE_DOCKER_LATEST_TAG', defaultValue: 'false', description: 'true to overwrite latest tag at dockerhub. Works only if DOCKER_PUBLISH is true')
+		string(name: 'RUN_TRIVY_SCAN', defaultValue: 'false', description: 'true to run Trivy image scan')
     }
 
     environment {
@@ -182,6 +183,25 @@ pipeline {
                         }
                     }
                 }
+            }
+        }
+
+        stage('Trivy Image Scan') {
+            when {
+                expression {
+                    return params.RUN_TRIVY_SCAN == 'true';
+                }
+            }
+            steps {
+                script {
+                    currentStage = 'Trivy Image Scan'
+                }
+                sh '''
+                curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin
+                export PATH=/usr/local/bin:$PATH
+                trivy image --db-repository public.ecr.aws/aquasecurity/trivy-db --exit-code 1 ${ghcrImage}:latest
+                trivy image --db-repository public.ecr.aws/aquasecurity/trivy-db --exit-code 1 ${ghcrImage}:latest-fips
+                '''
             }
         }
 

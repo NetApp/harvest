@@ -226,6 +226,14 @@ func BuildAndWriteAutoSupport(collectors []Collector, status *matrix.Matrix, pol
 	attachMemory(msg)
 
 	// give each collector the opportunity to attach autosupport information
+	slices.SortStableFunc(collectors, func(a, b Collector) int {
+		nameCmp := cmp.Compare(a.GetName(), b.GetName())
+		if nameCmp == 0 {
+			return cmp.Compare(a.GetObject(), b.GetObject())
+		}
+		return nameCmp
+	})
+
 	for _, c := range collectors {
 		c.CollectAutoSupport(msg)
 	}
