@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1718007936255,
+  "iteration": 1730271272394,
   "links": [
     {
       "asDropdown": true,
@@ -106,14 +106,14 @@
     {
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
-        "h": 5,
+        "h": 3,
         "w": 24,
         "x": 0,
         "y": 1
       },
       "id": 241,
       "options": {
-        "content": "This dashboard requires ONTAP 9.6+ and the REST collector. Two actions are required to use this dashboard:\n1. Enable the REST collector in your harvest.yml config\n2. Enable the EMS collector in your harvest.yml config for EMS events\n\nHarvest only detects Health and EMS events that are generated after the two collectors are enabled. By default, Harvest collects a focused set of [EMS events](https://github.com/NetApp/harvest/blob/main/conf/ems/9.6.0/ems.yaml) and this dashboard only shows the emergency level events.",
+        "content": "This dashboard is compatible with ONTAP 9.6+ and requires the REST collector. To use this dashboard, please follow the step below:\n\n1. **Enable the REST Collector**: Update your `harvest.yml` configuration file to enable the REST collector.",
         "mode": "markdown"
       },
       "pluginVersion": "8.1.8",
@@ -126,7 +126,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 6
+        "y": 4
       },
       "id": 225,
       "panels": [],
@@ -191,7 +191,7 @@
         "h": 6,
         "w": 8,
         "x": 0,
-        "y": 7
+        "y": 5
       },
       "id": 277,
       "options": {
@@ -282,7 +282,7 @@
         "h": 6,
         "w": 8,
         "x": 8,
-        "y": 7
+        "y": 5
       },
       "id": 278,
       "options": {
@@ -358,7 +358,7 @@
         "h": 6,
         "w": 8,
         "x": 16,
-        "y": 7
+        "y": 5
       },
       "id": 270,
       "options": {
@@ -380,14 +380,14 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "(count(last_over_time(ems_events{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"emergency\"}[$__range]) == 1) or vector(0))",
+          "expr": "sum(health_ems_alerts{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", severity=\"emergency\"}) or vector(0)",
           "instant": true,
           "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "title": "Total Active Emergency EMS",
+      "title": "Active Emergency EMS Alerts (Last 24 Hours)",
       "transformations": [],
       "type": "stat"
     },
@@ -416,7 +416,7 @@
         "h": 16,
         "w": 8,
         "x": 0,
-        "y": 13
+        "y": 11
       },
       "id": 268,
       "options": {
@@ -567,7 +567,7 @@
         "h": 16,
         "w": 8,
         "x": 8,
-        "y": 13
+        "y": 11
       },
       "id": 269,
       "options": {
@@ -721,17 +721,23 @@
         "h": 16,
         "w": 8,
         "x": 16,
-        "y": 13
+        "y": 11
       },
       "id": 272,
       "options": {
-        "showHeader": true
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "EMS"
+          }
+        ]
       },
       "pluginVersion": "8.1.8",
       "targets": [
         {
           "exemplar": false,
-          "expr": "count(last_over_time(ems_events{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"emergency\"}[$__range]) == 1) by (message)",
+          "expr": "sum(health_ems_alerts{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", severity=\"emergency\"}) by (message)",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -739,7 +745,7 @@
           "refId": "A"
         }
       ],
-      "title": "Active Emergency EMS",
+      "title": "Active Emergency EMS Alerts (Last 24 Hours)",
       "transformations": [
         {
           "id": "organize",
@@ -759,199 +765,12 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_PROMETHEUS}",
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 29
-      },
-      "id": 251,
-      "panels": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "custom": {
-                "align": "auto",
-                "displayMode": "auto",
-                "filterable": true
-              },
-              "mappings": [],
-              "noValue": "No events detected",
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              }
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Healthy"
-                },
-                "properties": [
-                  {
-                    "id": "mappings",
-                    "value": [
-                      {
-                        "options": {
-                          "false": {
-                            "index": 0,
-                            "text": "No"
-                          }
-                        },
-                        "type": "value"
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "cluster"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Cluster"
-                  },
-                  {
-                    "id": "links",
-                    "value": [
-                      {
-                        "targetBlank": true,
-                        "title": "",
-                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "datacenter"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Datacenter"
-                  },
-                  {
-                    "id": "links",
-                    "value": [
-                      {
-                        "targetBlank": true,
-                        "title": "",
-                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "node"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Node"
-                  },
-                  {
-                    "id": "links",
-                    "value": [
-                      {
-                        "targetBlank": true,
-                        "title": "",
-                        "url": "/d/cdot-node/ontap-node?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Node=${__value.raw}"
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          "gridPos": {
-            "h": 6,
-            "w": 24,
-            "x": 0,
-            "y": 28
-          },
-          "id": 253,
-          "options": {
-            "showHeader": true
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "node_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(cluster,node,datacenter) group_left(severity) (health_node_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} == 1)",
-              "format": "table",
-              "instant": true,
-              "interval": "",
-              "legendFormat": "",
-              "refId": "A"
-            }
-          ],
-          "title": "Node Issues",
-          "transformations": [
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {
-                  "Time": true,
-                  "Value": true,
-                  "instance": true,
-                  "job": true
-                },
-                "indexByName": {
-                  "Time": 0,
-                  "Value": 10,
-                  "cluster": 2,
-                  "datacenter": 1,
-                  "healthy": 4,
-                  "instance": 8,
-                  "job": 9,
-                  "node": 3,
-                  "severity": 6,
-                  "state": 5,
-                  "version": 7
-                },
-                "renameByName": {
-                  "healthy": "Healthy",
-                  "severity": "Severity",
-                  "state": "State",
-                  "version": "Version"
-                }
-              }
-            }
-          ],
-          "type": "table"
-        }
-      ],
-      "title": "Node",
-      "type": "row"
-    },
-    {
-      "collapsed": true,
       "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 28
+        "y": 27
       },
       "id": 283,
       "panels": [
@@ -1194,6 +1013,193 @@
         }
       ],
       "title": "HA",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 28
+      },
+      "id": 251,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "noValue": "No events detected",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Healthy"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "false": {
+                            "index": 0,
+                            "text": "No"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "node"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Node"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-node/ontap-node?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Node=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 24,
+            "x": 0,
+            "y": 28
+          },
+          "id": 253,
+          "options": {
+            "showHeader": true
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "node_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(cluster,node,datacenter) group_left(severity) (health_node_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} == 1)",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Node Issues",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value": true,
+                  "instance": true,
+                  "job": true
+                },
+                "indexByName": {
+                  "Time": 0,
+                  "Value": 10,
+                  "cluster": 2,
+                  "datacenter": 1,
+                  "healthy": 4,
+                  "instance": 8,
+                  "job": 9,
+                  "node": 3,
+                  "severity": 6,
+                  "state": 5,
+                  "version": 7
+                },
+                "renameByName": {
+                  "healthy": "Healthy",
+                  "severity": "Severity",
+                  "state": "State",
+                  "version": "Version"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Node",
       "type": "row"
     },
     {
@@ -4137,7 +4143,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 35
+            "y": 37
           },
           "id": 237,
           "options": {
@@ -4147,7 +4153,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "last_over_time(ems_events{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"emergency\"}[$__range]) == 1",
+              "expr": "sum(health_ems_alerts{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", severity=\"emergency\"}) by (datacenter,cluster,node,message,severity)",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -4155,13 +4161,20 @@
               "refId": "A"
             }
           ],
-          "title": "Emergency EMS",
+          "title": "Active Emergency EMS Alerts (Last 24 Hours)",
           "transformations": [
             {
               "id": "filterFieldsByName",
               "options": {
                 "include": {
-                  "pattern": "/^(datacenter|cluster|message|node|severity)$/"
+                  "names": [
+                    "cluster",
+                    "datacenter",
+                    "message",
+                    "node",
+                    "severity",
+                    "Value"
+                  ]
                 }
               }
             },
@@ -4177,6 +4190,7 @@
                   "severity": 4
                 },
                 "renameByName": {
+                  "Value": "Count",
                   "message": "Message",
                   "severity": "Severity"
                 }
@@ -4473,11 +4487,11 @@
         "options": [
           {
             "selected": true,
-            "text": "The EMS collector gathers EMS events as defined in your ems.yml file. This panel displays events with emergency severity that occurred within the selected time range.",
-            "value": "The EMS collector gathers EMS events as defined in your ems.yml file. This panel displays events with emergency severity that occurred within the selected time range."
+            "text": "This panel displays all emergency EMS alerts active in the past 24 hours.",
+            "value": "This panel displays all emergency EMS alerts active in the past 24 hours."
           }
         ],
-        "query": "The EMS collector gathers EMS events as defined in your ems.yml file. This panel displays events with emergency severity that occurred within the selected time range.",
+        "query": "This panel displays all emergency EMS alerts active in the past 24 hours. ",
         "skipUrlSync": false,
         "type": "textbox"
       }
@@ -4503,5 +4517,5 @@
   "timezone": "",
   "title": "ONTAP: Health",
   "uid": "cdot-health",
-  "version": 4
+  "version": 5
 }
