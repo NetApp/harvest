@@ -498,7 +498,7 @@ func (c *Credentials) Transport(request *http.Request, poller *conf.Poller) (htt
 		}
 	}
 
-	if poller.Recorder.Path == "" {
+	if !poller.IsRecording() {
 		return transport, nil
 	}
 

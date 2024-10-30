@@ -73,7 +73,8 @@ type Collector interface {
 }
 
 const (
-	begin = "zBegin"
+	begin                = "zBegin"
+	DefaultRecordsToSave = 60
 )
 
 // Status defines the possible states of a collector

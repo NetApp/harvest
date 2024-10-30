@@ -27,6 +27,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 )
 
@@ -235,4 +236,30 @@ func GetBuiltinPlugin(name string, abc *plugin.AbstractPlugin) plugin.Plugin {
 	}
 
 	return nil
+}
+
+func RecordKeepLast(n *node.Node, logger *slog.Logger) int {
+	r := n.GetChildS("recorder")
+	if r == nil {
+		return DefaultRecordsToSave
+	}
+	if !r.HasChildS("path") {
+		return DefaultRecordsToSave
+	}
+
+	kl := r.GetChildContentS("keep_last")
+	if kl != "" {
+		keep, err := strconv.Atoi(kl)
+		if err != nil {
+			logger.Error(
+				"invalid keep_last value. Using default.",
+				slog.Int("default", DefaultRecordsToSave),
+				slog.String("value", kl),
+			)
+			return DefaultRecordsToSave
+		}
+		return keep
+	}
+
+	return DefaultRecordsToSave
 }

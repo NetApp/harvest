@@ -40,6 +40,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/vscan"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
@@ -70,7 +71,6 @@ const (
 	objWorkloadVolumeClass  = "autovolume"
 	BILLION                 = 1_000_000_000
 	timestampMetricName     = "timestamp"
-	numRecordsToSave        = 60 // Number of records to save when using the recorder
 )
 
 var workloadDetailMetrics = []string{"resource_latency"}
@@ -90,8 +90,9 @@ type ZapiPerf struct {
 	keyName           string
 	keyNameIndex      int
 	testFilePath      string // Used only from unit test
-	pollDataCalls     uint8
-	pollInstanceCalls uint8
+	recordsToSave     int    // Number of records to save when using the recorder
+	pollDataCalls     int
+	pollInstanceCalls int
 }
 
 func init() {
@@ -126,6 +127,8 @@ func (z *ZapiPerf) Init(a *collector.AbstractCollector) error {
 	}
 
 	z.InitQOS()
+
+	z.recordsToSave = collector.RecordKeepLast(z.Params, z.Logger)
 
 	z.Logger.Debug("initialized")
 	return nil
@@ -487,12 +490,21 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		z.pollDataCalls++
-		if z.pollDataCalls > numRecordsToSave {
+		if z.pollDataCalls >= z.recordsToSave {
 			z.pollDataCalls = 0
 		}
 
-		headers := map[string]string{
-			"From": strconv.Itoa(int(z.pollDataCalls)),
+		var headers map[string]string
+
+		poller, err := conf.PollerNamed(z.Options.Poller)
+		if err != nil {
+			slog.Error("failed to find poller", slogx.Err(err), slog.String("poller", z.Options.Poller))
+		}
+
+		if poller.IsRecording() {
+			headers = map[string]string{
+				"From": strconv.Itoa(z.pollDataCalls),
+			}
 		}
 
 		response, rd, pd, err := z.Client.InvokeWithTimers(z.testFilePath, headers)
@@ -1636,12 +1648,21 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		apiT = time.Now()
 
 		z.pollInstanceCalls++
-		if z.pollInstanceCalls > numRecordsToSave/3 {
+		if z.pollInstanceCalls >= z.recordsToSave/3 {
 			z.pollInstanceCalls = 0
 		}
 
-		headers := map[string]string{
-			"From": strconv.Itoa(int(z.pollInstanceCalls)),
+		var headers map[string]string
+
+		poller, err := conf.PollerNamed(z.Options.Poller)
+		if err != nil {
+			slog.Error("failed to find poller", slogx.Err(err), slog.String("poller", z.Options.Poller))
+		}
+
+		if poller.IsRecording() {
+			headers = map[string]string{
+				"From": strconv.Itoa(z.pollInstanceCalls),
+			}
 		}
 
 		responseData, err := z.Client.InvokeBatchRequest(request, batchTag, z.testFilePath, headers)

@@ -19,23 +19,21 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/systemnode"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/volume"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/workload"
+	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	client "github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/errs"
+	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/slogx"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/netapp/harvest/v2/cmd/poller/collector"
-	"github.com/netapp/harvest/v2/pkg/errs"
-	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
-
-	client "github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 )
 
 const BatchSize = "500"

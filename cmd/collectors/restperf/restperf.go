@@ -17,6 +17,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
@@ -42,7 +43,6 @@ const (
 	objWorkloadClass       = "user_defined|system_defined"
 	objWorkloadVolumeClass = "autovolume"
 	timestampMetricName    = "timestamp"
-	numRecordsToSave       = 60 // Number of records to save when using the recorder
 )
 
 var (
@@ -69,8 +69,9 @@ type RestPerf struct {
 	perfProp            *perfProp
 	archivedMetrics     map[string]*rest2.Metric // Keeps metric definitions that are not found in the counter schema. These metrics may be available in future ONTAP versions.
 	hasInstanceSchedule bool
-	pollInstanceCalls   uint8
-	pollDataCalls       uint8
+	pollInstanceCalls   int
+	pollDataCalls       int
+	recordsToSave       int // Number of records to save when using the recorder
 }
 
 type counter struct {
@@ -146,6 +147,8 @@ func (r *RestPerf) Init(a *collector.AbstractCollector) error {
 	}
 
 	r.InitSchedule()
+
+	r.recordsToSave = collector.RecordKeepLast(r.Params, r.Logger)
 
 	r.Logger.Debug(
 		"initialized cache",
@@ -722,14 +725,25 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	}
 
 	r.pollDataCalls++
-	if r.pollDataCalls > numRecordsToSave {
+	if r.pollDataCalls >= r.recordsToSave {
 		r.pollDataCalls = 0
 	}
 
-	headers := map[string]string{
-		"From": strconv.Itoa(int(r.pollDataCalls)),
+	var headers map[string]string
+
+	poller, err := conf.PollerNamed(r.Options.Poller)
+	if err != nil {
+		slog.Error("failed to find poller", slogx.Err(err), slog.String("poller", r.Options.Poller))
 	}
+
+	if poller.IsRecording() {
+		headers = map[string]string{
+			"From": strconv.Itoa(r.pollDataCalls),
+		}
+	}
+
 	err = rest.FetchRestPerfData(r.Client, href, &perfRecords, headers)
+
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch href=%s %w", href, err)
 	}
@@ -1485,12 +1499,21 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 	}
 
 	r.pollInstanceCalls++
-	if r.pollInstanceCalls > numRecordsToSave/3 {
+	if r.pollInstanceCalls > r.recordsToSave/3 {
 		r.pollInstanceCalls = 0
 	}
 
-	headers := map[string]string{
-		"From": strconv.Itoa(int(r.pollInstanceCalls)),
+	var headers map[string]string
+
+	poller, err := conf.PollerNamed(r.Options.Poller)
+	if err != nil {
+		slog.Error("failed to find poller", slogx.Err(err), slog.String("poller", r.Options.Poller))
+	}
+
+	if poller.IsRecording() {
+		headers = map[string]string{
+			"From": strconv.Itoa(r.pollInstanceCalls),
+		}
 	}
 
 	href := rest.NewHrefBuilder().

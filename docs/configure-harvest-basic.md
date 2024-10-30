@@ -205,10 +205,11 @@ to prevent sensitive information from being stored on disk.
 
 The `recorder` section in the `harvest.yml` file allows you to configure the HTTP recorder.
 
-| parameter | type                | description                                                                                                                                   |
-|-----------|---------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
-| `path`    | string **required** | Path to a directory. Recorded requests and responses will be stored here. Replaying will read the requests and responses from this directory. |
-| `mode`    | string **required** | `record` or `replay`                                                                                                                          |
+| parameter   | type                | description                                                                                                                                   | default |
+|-------------|---------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|--------:|
+| `path`      | string **required** | Path to a directory. Recorded requests and responses will be stored here. Replaying will read the requests and responses from this directory. |         |
+| `mode`      | string **required** | `record` or `replay`                                                                                                                          |         |
+| `keep_last` | optional, int       | When mode is `record`, the number of records to keep before overwriting                                                                       |      60 |
 
 # Authentication
 

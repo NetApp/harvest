@@ -504,8 +504,9 @@ type ExportDef struct {
 }
 
 type Recorder struct {
-	Path string `yaml:"path,omitempty"`
-	Mode string `yaml:"mode,omitempty"` // record or replay
+	Path     string `yaml:"path,omitempty"`
+	Mode     string `yaml:"mode,omitempty"`      // record or replay
+	KeepLast string `yaml:"keep_last,omitempty"` // number of records to keep before overwriting
 }
 
 func (e *ExportDef) UnmarshalYAML(n *yaml.Node) error {
@@ -582,6 +583,10 @@ func (p *Poller) Union(defaults *Poller) {
 	p.AuthStyle = pAuthStyle
 	p.CredentialsFile = pCredentialsFile
 	p.CredentialsScript.Path = pCredentialsScript
+}
+
+func (p *Poller) IsRecording() bool {
+	return p.Recorder.Path != ""
 }
 
 // ZapiPoller creates a poller out of a node, this is a bridge between the node and struct-based code

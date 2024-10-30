@@ -5,6 +5,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/rest"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
@@ -16,14 +17,14 @@ import (
 )
 
 const (
-	latencyIoReqd    = 10
-	numRecordsToSave = 60 // Number of records to save when using the recorder
+	latencyIoReqd = 10
 )
 
 type KeyPerf struct {
 	*rest.Rest    // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
 	perfProp      *perfProp
-	pollDataCalls uint8
+	pollDataCalls int
+	recordsToSave int // Number of records to save when using the recorder
 }
 
 type counter struct {
@@ -90,6 +91,8 @@ func (kp *KeyPerf) Init(a *collector.AbstractCollector) error {
 	}
 
 	kp.buildCounters()
+
+	kp.recordsToSave = collector.RecordKeepLast(kp.Params, kp.Logger)
 
 	kp.Logger.Debug(
 		"initialized cache",
@@ -235,12 +238,21 @@ func (kp *KeyPerf) PollData() (map[string]*matrix.Matrix, error) {
 	}
 
 	kp.pollDataCalls++
-	if kp.pollDataCalls > numRecordsToSave {
+	if kp.pollDataCalls >= kp.recordsToSave {
 		kp.pollDataCalls = 0
 	}
 
-	headers := map[string]string{
-		"From": strconv.Itoa(int(kp.pollDataCalls)),
+	var headers map[string]string
+
+	poller, err := conf.PollerNamed(kp.Options.Poller)
+	if err != nil {
+		slog.Error("failed to find poller", slogx.Err(err), slog.String("poller", kp.Options.Poller))
+	}
+
+	if poller.IsRecording() {
+		headers = map[string]string{
+			"From": strconv.Itoa(kp.pollDataCalls),
+		}
 	}
 
 	perfRecords, err = kp.GetRestData(href, headers)
