@@ -90,7 +90,7 @@ func (v *Volume) Init() error {
 	// Read template to decide inclusion of flexgroup constituents
 	v.includeConstituents = collectors.ReadPluginKey(v.Params, "include_constituents")
 	// ARW feature is supported from 9.10 onwards, If we ask this field in Rest call in plugin, then it will be failed.
-	v.isArwSupportedVersion, err = util.VersionAtLeast(v.client.Cluster().GetVersion(), ARWSupportedVersion)
+	v.isArwSupportedVersion, err = util.VersionAtLeast(v.client.Remote().Version, ARWSupportedVersion)
 	if err != nil {
 		return fmt.Errorf("unable to get version %w", err)
 	}

@@ -126,7 +126,7 @@ func (h *Health) initMatrix(name string, prefix string, inputMat map[string]*mat
 func (h *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	data := dataMap[h.Object]
 	h.client.Metadata.Reset()
-	clusterVersion := h.client.Cluster().GetVersion()
+	clusterVersion := h.client.Remote().Version
 	ontapVersion, err := goversion.NewVersion(clusterVersion)
 	if err != nil {
 		h.SLogger.Error(
@@ -299,7 +299,7 @@ func (h *Health) collectVolumeRansomwareAlerts() int {
 		instance *matrix.Instance
 	)
 	volumeRansomwareAlertCount := 0
-	clusterVersion := h.client.Cluster().GetVersion()
+	clusterVersion := h.client.Remote().Version
 	ontapVersion, err := goversion.NewVersion(clusterVersion)
 	if err != nil {
 		h.SLogger.Error("Failed to parse version", slogx.Err(err), slog.String("version", clusterVersion))

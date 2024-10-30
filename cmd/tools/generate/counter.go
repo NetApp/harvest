@@ -772,7 +772,7 @@ func updateDescription(description string) string {
 	return s
 }
 
-func generateCounterTemplate(counters map[string]Counter, version [3]int) {
+func generateCounterTemplate(counters map[string]Counter, version string) {
 	targetPath := "docs/ontap-metrics.md"
 	t, err := template.New("counter.tmpl").ParseFiles("cmd/tools/generate/counter.tmpl")
 	if err != nil {
@@ -853,12 +853,11 @@ func generateCounterTemplate(counters map[string]Counter, version [3]int) {
 		}
 	}
 	table.Render()
-	verWithDots := strings.Trim(strings.Join(strings.Fields(fmt.Sprint(version)), "."), "[]")
 	c := CounterTemplate{
 		Counters: values,
 		CounterMetaData: CounterMetaData{
 			Date:         time.Now().Format("2006-Jan-02"),
-			OntapVersion: verWithDots,
+			OntapVersion: version,
 		},
 	}
 
