@@ -41,6 +41,13 @@ pipeline {
     }
 
     stages {
+        stage('Docker Login') {
+            steps {
+                withDockerRegistry([credentialsId: "DockerHub", url: ""]) {
+                    sh 'docker login'
+                }
+            }
+        }
 
         stage("Initialization") {
             steps {
