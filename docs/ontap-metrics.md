@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2024-Oct-24
+Creation Date : 2024-Oct-30
 ONTAP Version: 9.15.1
 ```
 ## Understanding the structure
@@ -3066,6 +3066,15 @@ Utilization component of the optimal point of the latency/utilization curve. Thi
 ### health_disk_alerts
 
 Provides any issues related to Disks health check if disks are broken or unassigned. Value of 1 means issue is happening and 0 means that issue is resolved.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.6.0/health.yaml |
+
+
+### health_ems_alerts
+
+The health_ems_alerts metric monitors EMS (Event Management System), providing a count based on their severity and other attributes. This metric includes labels such as node, message, source, and severity (e.g., emergency, alert, error). By default, it monitors alerts with emergency severity.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
