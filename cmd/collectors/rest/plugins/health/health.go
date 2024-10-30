@@ -690,8 +690,12 @@ func (h *Health) collectEmsAlerts(emsMat *matrix.Matrix) int {
 				h.SLogger.Warn("error while creating instance", slog.String("key", message))
 				continue
 			}
-			emsAlertCount++
+			instance.SetLabel("node", node)
+			instance.SetLabel("message", message)
+			instance.SetLabel("source", source)
+			instance.SetLabel(severityLabel, severity)
 			h.setAlertMetric(emsMat, instance, 1)
+			emsAlertCount++
 		} else {
 			// Increment the alert metric count by 1
 			currentCount, err := h.getAlertMetric(emsMat, instance)
@@ -701,10 +705,6 @@ func (h *Health) collectEmsAlerts(emsMat *matrix.Matrix) int {
 			}
 			h.setAlertMetric(emsMat, instance, currentCount+1)
 		}
-		instance.SetLabel("node", node)
-		instance.SetLabel("message", message)
-		instance.SetLabel("source", source)
-		instance.SetLabel(severityLabel, severity)
 	}
 
 	return emsAlertCount
