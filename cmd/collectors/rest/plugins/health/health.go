@@ -71,16 +71,17 @@ func (h *Health) Init() error {
 	}
 
 	ems := h.Params.GetChildS("ems")
+
+	// Set default severity to "emergency"
+	h.emsSeverity = []string{"emergency"}
 	if ems != nil {
 		severity := ems.GetChildS("severity")
 		if severity != nil {
-			h.emsSeverity = []string{}
-			h.emsSeverity = append(h.emsSeverity, severity.GetAllChildContentS()...)
-		} else {
-			h.emsSeverity = []string{"emergency"}
+			severities := severity.GetAllChildContentS()
+			if len(severities) > 0 {
+				h.emsSeverity = severities
+			}
 		}
-	} else {
-		h.emsSeverity = []string{"emergency"}
 	}
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
