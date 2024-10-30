@@ -14,7 +14,6 @@ counters:
   - statistics.latency_raw.read           => read_latency
   - statistics.latency_raw.total          => total_latency
   - statistics.latency_raw.write          => write_latency
-  - statistics.throughput_raw.other       => other_data
   - statistics.throughput_raw.read        => read_data
   - statistics.throughput_raw.write       => write_data
   - statistics.timestamp(timestamp)       => timestamp

@@ -41,6 +41,9 @@ var (
 		"security_ssh":       "cluster_ssh_server",
 		"namespace":          "nvme_namespace",
 		"fcp":                "fc_port",
+		"svm_cifs":           "cifs_service",
+		"svm_nfs":            "nfs_service",
+		"lif":                "ip_interface",
 	}
 	swaggerBytes         []byte
 	excludePerfTemplates = map[string]struct{}{
@@ -278,11 +281,29 @@ func processRestCounters(dir string, client *rest.Client) map[string]Counter {
 	})
 
 	restCounters := visitRestTemplates(filepath.Join(dir, "conf", "rest"), client, func(path string, client *rest.Client) map[string]Counter { // revive:disable-line:unused-parameter
-		return processRestConfigCounters(path)
+		return processRestConfigCounters(path, "REST")
+	})
+
+	keyPerfCounters := visitRestTemplates(filepath.Join(dir, "conf", "keyperf"), client, func(path string, client *rest.Client) map[string]Counter { // revive:disable-line:unused-parameter
+		return processRestConfigCounters(path, "KeyPerf")
 	})
 
 	for k, v := range restPerfCounters {
 		restCounters[k] = v
+	}
+
+	keyPerfKeys := slices.Sorted(maps.Keys(keyPerfCounters))
+	for _, k := range keyPerfKeys {
+		if strings.Contains(k, "timestamp") || strings.Contains(k, "labels") {
+			continue
+		}
+		v := keyPerfCounters[k]
+		if v1, ok := restCounters[k]; !ok {
+			restCounters[k] = v
+		} else {
+			v1.APIs = append(v1.APIs, v.APIs...)
+			restCounters[k] = v1
+		}
 	}
 	return restCounters
 }
@@ -358,7 +379,7 @@ func handleZapiCounter(path []string, content string, object string) (string, st
 }
 
 // processRestConfigCounters process Rest config templates
-func processRestConfigCounters(path string) map[string]Counter {
+func processRestConfigCounters(path string, api string) map[string]Counter {
 	var (
 		counters = make(map[string]Counter)
 	)
@@ -383,7 +404,7 @@ func processRestConfigCounters(path string) map[string]Counter {
 
 	if templateCounters != nil {
 		metricLabels, labels = getAllExportedLabels(t, templateCounters.GetAllChildContentS())
-		processCounters(templateCounters.GetAllChildContentS(), &model, path, model.Query, counters, metricLabels)
+		processCounters(templateCounters.GetAllChildContentS(), &model, path, model.Query, counters, metricLabels, api)
 		// This is for object_labels metrics
 		harvestName := model.Object + "_" + "labels"
 		counters[harvestName] = Counter{Name: harvestName, Labels: labels}
@@ -398,7 +419,7 @@ func processRestConfigCounters(path string) map[string]Counter {
 					query = line.GetContentS()
 				}
 				if line.GetNameS() == "counters" {
-					processCounters(line.GetAllChildContentS(), &model, path, query, counters, metricLabels)
+					processCounters(line.GetAllChildContentS(), &model, path, query, counters, metricLabels, api)
 				}
 			}
 		}
@@ -411,7 +432,7 @@ func processRestConfigCounters(path string) map[string]Counter {
 			Name:   model.Object + "_" + metric.Name,
 			APIs: []MetricDef{
 				{
-					API:          "REST",
+					API:          api,
 					Endpoint:     model.Query,
 					Template:     path,
 					ONTAPCounter: metric.Source,
@@ -423,10 +444,17 @@ func processRestConfigCounters(path string) map[string]Counter {
 		}
 	}
 
+	if api == "KeyPerf" {
+		// handling for templates with common object names
+		if specialPerfObjects[model.Object] {
+			return specialHandlingPerfCounters(counters, model)
+		}
+	}
+
 	return counters
 }
 
-func processCounters(counterContents []string, model *template2.Model, path, query string, counters map[string]Counter, metricLabels []string) {
+func processCounters(counterContents []string, model *template2.Model, path, query string, counters map[string]Counter, metricLabels []string, api string) {
 	for _, c := range counterContents {
 		if c == "" {
 			continue
@@ -444,7 +472,7 @@ func processCounters(counterContents []string, model *template2.Model, path, que
 				Description: description,
 				APIs: []MetricDef{
 					{
-						API:          "REST",
+						API:          api,
 						Endpoint:     query,
 						Template:     path,
 						ONTAPCounter: name,
