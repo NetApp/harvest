@@ -550,7 +550,7 @@ func visitTemplates(t *testing.T, eachTemplate func(path string, model Model), d
 			if ext != ".yaml" {
 				return nil
 			}
-			if strings.HasSuffix(path, "custom.yaml") || strings.HasSuffix(path, "default.yaml") {
+			if strings.HasSuffix(path, "custom.yaml") || strings.HasSuffix(path, "default.yaml") || strings.HasSuffix(path, "static_counter_definitions.yaml") {
 				return nil
 			}
 			model, err := ReadTemplate(path)
