@@ -3288,6 +3288,15 @@ Provides any issues related to Disks health check if disks are broken or unassig
 | REST | `NA` | `Harvest generated` | conf/rest/9.6.0/health.yaml |
 
 
+### health_ems_alerts
+
+The health_ems_alerts metric monitors EMS (Event Management System), providing a count based on their severity and other attributes. This metric includes labels such as node, message, source, and severity (e.g., emergency, alert, error). By default, it monitors alerts with emergency severity.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.6.0/health.yaml |
+
+
 ### health_ha_alerts
 
 Provides any issues related to HA health check. Value of 1 means issue is happening and 0 means that issue is resolved.

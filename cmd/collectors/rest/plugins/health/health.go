@@ -1,6 +1,7 @@
 package health
 
 import (
+	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
@@ -14,6 +15,7 @@ import (
 	"github.com/tidwall/gjson"
 	"log/slog"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -33,6 +35,7 @@ const (
 	volumeRansomwareHealthMatrix                  = "health_volume_ransomware"
 	volumeMoveHealthMatrix                        = "health_volume_move"
 	licenseHealthMatrix                           = "health_license"
+	emsHealthMatrix                               = "health_ems"
 	severityLabel                                 = "severity"
 	defaultDataPollDuration                       = 3 * time.Minute
 )
@@ -44,6 +47,7 @@ type Health struct {
 	lastFilterTime int64
 	previousData   map[string]*matrix.Matrix
 	resolutionData map[string]*matrix.Matrix
+	emsSeverity    []string
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -64,6 +68,20 @@ func (h *Health) Init() error {
 
 	if err := h.InitAllMatrix(); err != nil {
 		return err
+	}
+
+	ems := h.Params.GetChildS("ems")
+
+	// Set default severity to "emergency"
+	h.emsSeverity = []string{"emergency"}
+	if ems != nil {
+		severity := ems.GetChildS("severity")
+		if severity != nil {
+			severities := severity.GetAllChildContentS()
+			if len(severities) > 0 {
+				h.emsSeverity = severities
+			}
+		}
 	}
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
@@ -147,6 +165,14 @@ func (h *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 		h.resolutionData[k].SetGlobalLabels(data.GetGlobalLabels())
 	}
 
+	// Initialize emsMatrix separately as it doesn't need to be stored or processed for resolution
+	emsMat := matrix.New(h.Parent+emsHealthMatrix, emsHealthMatrix, emsHealthMatrix)
+	emsMat.SetGlobalLabels(data.GetGlobalLabels())
+	if err := h.initMatrix(emsHealthMatrix, "", map[string]*matrix.Matrix{emsHealthMatrix: emsMat}); err != nil {
+		h.SLogger.Warn("error while initializing emsHealthMatrix", slogx.Err(err))
+		return nil, nil, err
+	}
+
 	diskAlertCount := h.collectDiskAlerts()
 	shelfAlertCount := h.collectShelfAlerts()
 	supportAlertCount := h.collectSupportAlerts()
@@ -158,6 +184,7 @@ func (h *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 	volumeRansomwareAlertCount := h.collectVolumeRansomwareAlerts()
 	volumeMoveAlertCount := h.collectVolumeMoveAlerts()
 	licenseAlertCount := h.collectLicenseAlerts()
+	emsAlertCount := h.collectEmsAlerts(emsMat)
 
 	resolutionInstancesCount := h.generateResolutionMetrics()
 
@@ -170,6 +197,8 @@ func (h *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 	for _, value := range h.resolutionData {
 		result = append(result, value)
 	}
+
+	result = append(result, emsMat)
 	h.SLogger.Info(
 		"Collected",
 		slog.Int("numLicenseAlerts", licenseAlertCount),
@@ -183,12 +212,13 @@ func (h *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 		slog.Int("numSupportAlerts", supportAlertCount),
 		slog.Int("numShelfAlerts", shelfAlertCount),
 		slog.Int("numDiskAlerts", diskAlertCount),
+		slog.Int("numEmsAlerts", emsAlertCount),
 		slog.Int("numResolutionInstanceCount", resolutionInstancesCount),
 	)
 
 	//nolint:gosec
 	h.client.Metadata.PluginInstances = uint64(diskAlertCount + shelfAlertCount + supportAlertCount + nodeAlertCount + HAAlertCount + networkEthernetPortAlertCount + networkFcpPortAlertCount +
-		networkInterfaceAlertCount + volumeRansomwareAlertCount + volumeMoveAlertCount + licenseAlertCount + resolutionInstancesCount)
+		networkInterfaceAlertCount + volumeRansomwareAlertCount + volumeMoveAlertCount + licenseAlertCount + emsAlertCount + resolutionInstancesCount)
 
 	return result, h.client.Metadata, nil
 }
@@ -635,6 +665,51 @@ func (h *Health) collectDiskAlerts() int {
 	return diskAlertCount
 }
 
+func (h *Health) collectEmsAlerts(emsMat *matrix.Matrix) int {
+	var (
+		instance *matrix.Instance
+	)
+	emsAlertCount := 0
+	records, err := h.getEmsAlerts()
+	if err != nil {
+		if errs.IsRestErr(err, errs.APINotFound) {
+			h.SLogger.Debug("API not found", slogx.Err(err))
+		} else {
+			h.SLogger.Error("Failed to collect ems data", slogx.Err(err))
+		}
+		return 0
+	}
+	for _, record := range records {
+		node := record.Get("node.name").String()
+		severity := record.Get("message.severity").String()
+		message := record.Get("message.name").String()
+		source := record.Get("source").String()
+		if instance = emsMat.GetInstance(message); instance == nil {
+			instance, err = emsMat.NewInstance(message)
+			if err != nil {
+				h.SLogger.Warn("error while creating instance", slog.String("key", message))
+				continue
+			}
+			instance.SetLabel("node", node)
+			instance.SetLabel("message", message)
+			instance.SetLabel("source", source)
+			instance.SetLabel(severityLabel, severity)
+			h.setAlertMetric(emsMat, instance, 1)
+			emsAlertCount++
+		} else {
+			// Increment the alert metric count by 1
+			currentCount, err := h.getAlertMetric(emsMat, instance)
+			if err != nil {
+				h.SLogger.Error("Failed to get alert metric", slogx.Err(err))
+				continue
+			}
+			h.setAlertMetric(emsMat, instance, currentCount+1)
+		}
+	}
+
+	return emsAlertCount
+}
+
 func (h *Health) getDisks() ([]gjson.Result, error) {
 	fields := []string{"name", "container_type"}
 	query := "api/storage/disks"
@@ -761,6 +836,26 @@ func (h *Health) getEthernetPorts() ([]gjson.Result, error) {
 	return collectors.InvokeRestCall(h.client, href, h.SLogger)
 }
 
+func (h *Health) getEmsAlerts() ([]gjson.Result, error) {
+	clusterTime, err := collectors.GetClusterTime(h.client, nil, h.SLogger)
+	if err != nil {
+		return nil, err
+	}
+	fromTime := clusterTime.Add(-24 * time.Hour).Unix()
+	timeFilter := fmt.Sprintf("time=>=%d", fromTime)
+	severityFilter := "message.severity=" + strings.Join(h.emsSeverity, "|")
+	fields := []string{"node,message,source"}
+	query := "api/support/ems/events"
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields(fields).
+		MaxRecords(collectors.DefaultBatchSize).
+		Filter([]string{timeFilter, severityFilter}).
+		Build()
+
+	return collectors.InvokeRestCall(h.client, href, h.SLogger)
+}
+
 func (h *Health) getSupportAlerts(filter []string) ([]gjson.Result, error) {
 	query := "api/private/support/alerts"
 	href := rest.NewHrefBuilder().
@@ -811,6 +906,15 @@ func (h *Health) setAlertMetric(mat *matrix.Matrix, instance *matrix.Instance, v
 			slog.String("metric", "alerts"),
 		)
 	}
+}
+
+func (h *Health) getAlertMetric(mat *matrix.Matrix, instance *matrix.Instance) (float64, error) {
+	m := mat.GetMetric("alerts")
+	if m != nil {
+		v, _ := m.GetValueFloat64(instance)
+		return v, nil
+	}
+	return 0, errors.New("alert metric doesn't exist")
 }
 
 func (h *Health) generateResolutionMetrics() int {
