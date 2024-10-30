@@ -10,8 +10,6 @@ objects:
   CIFSvserver:                 cifs_vserver.yaml
   Cluster:                     cluster.yaml
   LIF:                         lif.yaml
-  Lun:                         lun.yaml
-  Namespace:                   namespace.yaml
   NFSv3:                       nfsv3.yaml
   NFSv41:                      nfsv4_1.yaml
   NFSv4:                       nfsv4.yaml
