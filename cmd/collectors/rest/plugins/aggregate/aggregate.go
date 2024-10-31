@@ -177,5 +177,5 @@ func (a *Aggregate) getObjectStoreData() ([]gjson.Result, error) {
 		Filter([]string{`tier_name=!" "|""`}).
 		Build()
 
-	return collectors.InvokeRestCall(a.client, href, a.SLogger)
+	return collectors.InvokeRestCall(a.client, href)
 }

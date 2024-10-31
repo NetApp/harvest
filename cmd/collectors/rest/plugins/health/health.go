@@ -720,7 +720,7 @@ func (h *Health) getDisks() ([]gjson.Result, error) {
 		Filter([]string{"container_type=broken|unassigned"}).
 		Build()
 
-	return collectors.InvokeRestCall(h.client, href, h.SLogger)
+	return collectors.InvokeRestCall(h.client, href)
 }
 
 func (h *Health) getShelves() ([]gjson.Result, error) {
@@ -732,7 +732,7 @@ func (h *Health) getShelves() ([]gjson.Result, error) {
 		MaxRecords(collectors.DefaultBatchSize).
 		Build()
 
-	return collectors.InvokeRestCall(h.client, href, h.SLogger)
+	return collectors.InvokeRestCall(h.client, href)
 }
 
 func (h *Health) getNodes() ([]gjson.Result, error) {
@@ -745,7 +745,7 @@ func (h *Health) getNodes() ([]gjson.Result, error) {
 		Filter([]string{"health=false"}).
 		Build()
 
-	return collectors.InvokeRestCall(h.client, href, h.SLogger)
+	return collectors.InvokeRestCall(h.client, href)
 }
 
 func (h *Health) getHADown() ([]gjson.Result, error) {
@@ -758,7 +758,7 @@ func (h *Health) getHADown() ([]gjson.Result, error) {
 		Filter([]string{"possible=!true"}).
 		Build()
 
-	return collectors.InvokeRestCall(h.client, href, h.SLogger)
+	return collectors.InvokeRestCall(h.client, href)
 }
 
 func (h *Health) getRansomwareVolumes() ([]gjson.Result, error) {
@@ -769,7 +769,7 @@ func (h *Health) getRansomwareVolumes() ([]gjson.Result, error) {
 		Filter([]string{"anti_ransomware.state=enabled", "anti_ransomware.attack_probability=low|moderate|high"}).
 		Build()
 
-	return collectors.InvokeRestCall(h.client, href, h.SLogger)
+	return collectors.InvokeRestCall(h.client, href)
 }
 
 func (h *Health) getNonCompliantLicense() ([]gjson.Result, error) {
@@ -782,7 +782,7 @@ func (h *Health) getNonCompliantLicense() ([]gjson.Result, error) {
 		Filter([]string{"state=noncompliant"}).
 		Build()
 
-	return collectors.InvokeRestCall(h.client, href, h.SLogger)
+	return collectors.InvokeRestCall(h.client, href)
 }
 
 func (h *Health) getMoveFailedVolumes() ([]gjson.Result, error) {
@@ -795,7 +795,7 @@ func (h *Health) getMoveFailedVolumes() ([]gjson.Result, error) {
 		Filter([]string{"movement.state=cutover_wait|failed|cutover_pending"}).
 		Build()
 
-	return collectors.InvokeRestCall(h.client, href, h.SLogger)
+	return collectors.InvokeRestCall(h.client, href)
 }
 
 func (h *Health) getNonHomeLIFs() ([]gjson.Result, error) {
@@ -807,7 +807,7 @@ func (h *Health) getNonHomeLIFs() ([]gjson.Result, error) {
 		Filter([]string{"location.is_home=false"}).
 		Build()
 
-	return collectors.InvokeRestCall(h.client, href, h.SLogger)
+	return collectors.InvokeRestCall(h.client, href)
 }
 
 func (h *Health) getFCPorts() ([]gjson.Result, error) {
@@ -820,7 +820,7 @@ func (h *Health) getFCPorts() ([]gjson.Result, error) {
 		Filter([]string{"enabled=true", "state=offlined_by_system"}).
 		Build()
 
-	return collectors.InvokeRestCall(h.client, href, h.SLogger)
+	return collectors.InvokeRestCall(h.client, href)
 }
 
 func (h *Health) getEthernetPorts() ([]gjson.Result, error) {
@@ -833,7 +833,7 @@ func (h *Health) getEthernetPorts() ([]gjson.Result, error) {
 		Filter([]string{"enabled=true", "state=down"}).
 		Build()
 
-	return collectors.InvokeRestCall(h.client, href, h.SLogger)
+	return collectors.InvokeRestCall(h.client, href)
 }
 
 func (h *Health) getEmsAlerts() ([]gjson.Result, error) {
@@ -853,7 +853,7 @@ func (h *Health) getEmsAlerts() ([]gjson.Result, error) {
 		Filter([]string{timeFilter, severityFilter}).
 		Build()
 
-	return collectors.InvokeRestCall(h.client, href, h.SLogger)
+	return collectors.InvokeRestCall(h.client, href)
 }
 
 func (h *Health) getSupportAlerts(filter []string) ([]gjson.Result, error) {
@@ -864,7 +864,7 @@ func (h *Health) getSupportAlerts(filter []string) ([]gjson.Result, error) {
 		Filter(filter).
 		Build()
 
-	return collectors.InvokeRestCall(h.client, href, h.SLogger)
+	return collectors.InvokeRestCall(h.client, href)
 }
 
 // returns time filter (clustertime - polldata duration)

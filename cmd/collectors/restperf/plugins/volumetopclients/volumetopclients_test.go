@@ -18,7 +18,7 @@ type MockVolume struct {
 }
 
 func (mv *MockVolume) fetchTopClients(_ *set.Set, _ *set.Set, _ string) ([]gjson.Result, error) {
-	return collectors.InvokeRestCallWithTestFile(nil, "", nil, mv.testFilePath)
+	return collectors.InvokeRestCallWithTestFile(nil, "", mv.testFilePath)
 }
 
 func (mv *MockVolume) fetchVolumesWithActivityTrackingEnabled() (*set.Set, error) {

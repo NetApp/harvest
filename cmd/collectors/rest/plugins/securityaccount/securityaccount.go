@@ -70,7 +70,7 @@ func (s *SecurityAccount) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 		Build()
 
 	s.client.Metadata.Reset()
-	if result, err = collectors.InvokeRestCall(s.client, href, s.SLogger); err != nil {
+	if result, err = collectors.InvokeRestCall(s.client, href); err != nil {
 		return nil, nil, err
 	}
 

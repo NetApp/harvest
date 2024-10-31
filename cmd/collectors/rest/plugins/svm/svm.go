@@ -219,7 +219,7 @@ func (s *SVM) GetKerberosConfig() (map[string]string, error) {
 		MaxRecords(collectors.DefaultBatchSize).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(s.client, href, s.SLogger); err != nil {
+	if result, err = collectors.InvokeRestCall(s.client, href); err != nil {
 		return nil, err
 	}
 
@@ -253,7 +253,7 @@ func (s *SVM) GetFpolicy() (map[string]Fpolicy, error) {
 		MaxRecords(collectors.DefaultBatchSize).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(s.client, href, s.SLogger); err != nil {
+	if result, err = collectors.InvokeRestCall(s.client, href); err != nil {
 		return nil, err
 	}
 
@@ -288,7 +288,7 @@ func (s *SVM) GetIscsiServices() (map[string]string, error) {
 		MaxRecords(collectors.DefaultBatchSize).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(s.client, href, s.SLogger); err != nil {
+	if result, err = collectors.InvokeRestCall(s.client, href); err != nil {
 		return nil, err
 	}
 
@@ -322,7 +322,7 @@ func (s *SVM) GetIscsiCredentials() (map[string]string, error) {
 		MaxRecords(collectors.DefaultBatchSize).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(s.client, href, s.SLogger); err != nil {
+	if result, err = collectors.InvokeRestCall(s.client, href); err != nil {
 		return nil, err
 	}
 

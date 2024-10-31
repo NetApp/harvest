@@ -92,7 +92,7 @@ func invokeRestCall(client *rest2.Client, counters map[string][]counterData) err
 				CounterSchema(counterDetail.perfCounters).
 				Build()
 
-			if _, err := collectors.InvokeRestCall(client, href, slog.Default()); err != nil {
+			if _, err := collectors.InvokeRestCall(client, href); err != nil {
 				return fmt.Errorf("failed to invoke rest href=%s call: %w", href, err)
 			}
 		}

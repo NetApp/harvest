@@ -353,7 +353,7 @@ func TestFields(t *testing.T) {
 func TestQuotas(t *testing.T) {
 	r := newRest("Quota", "quota.yaml", "../../../conf")
 	var instanceKeys []string
-	result, err := collectors.InvokeRestCallWithTestFile(r.Client, "", r.Logger, "testdata/quota.json")
+	result, err := collectors.InvokeRestCallWithTestFile(r.Client, "", "testdata/quota.json")
 	if err != nil {
 		t.Errorf("Error while invoking quota rest api call")
 	}

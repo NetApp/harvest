@@ -200,7 +200,7 @@ func (c *Certificate) GetAdminVserver() (string, error) {
 		Filter([]string{"type=admin"}).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(c.client, href, c.SLogger); err != nil {
+	if result, err = collectors.InvokeRestCall(c.client, href); err != nil {
 		return "", err
 	}
 
@@ -227,7 +227,7 @@ func (c *Certificate) GetSecuritySsl(adminSvm string) (string, error) {
 		Filter([]string{"vserver=" + adminSvm}).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(c.client, href, c.SLogger); err != nil {
+	if result, err = collectors.InvokeRestCall(c.client, href); err != nil {
 		return "", err
 	}
 

@@ -1,6 +1,7 @@
 package collectors
 
 import (
+	"fmt"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
@@ -60,7 +61,7 @@ func IsEmbedShelf(model string, moduleType string) bool {
 	return combinations[embedShelf{model, moduleType}]
 }
 
-func InvokeRestCallWithTestFile(client *rest.Client, href string, logger *slog.Logger, testFilePath string) ([]gjson.Result, error) {
+func InvokeRestCallWithTestFile(client *rest.Client, href string, testFilePath string) ([]gjson.Result, error) {
 	if testFilePath != "" {
 		b, err := os.ReadFile(testFilePath)
 		if err != nil {
@@ -69,19 +70,13 @@ func InvokeRestCallWithTestFile(client *rest.Client, href string, logger *slog.L
 		testData := gjson.Result{Type: gjson.JSON, Raw: string(b)}
 		return testData.Get("records").Array(), nil
 	}
-	return InvokeRestCall(client, href, logger)
+	return InvokeRestCall(client, href)
 }
 
-func InvokeRestCall(client *rest.Client, href string, logger *slog.Logger) ([]gjson.Result, error) {
+func InvokeRestCall(client *rest.Client, href string) ([]gjson.Result, error) {
 	result, err := rest.FetchAll(client, href)
 	if err != nil {
-		logger.Error(
-			"Failed to fetch data",
-			slogx.Err(err),
-			slog.String("href", href),
-			slog.Int("hrefLength", len(href)),
-		)
-		return []gjson.Result{}, err
+		return []gjson.Result{}, fmt.Errorf("failed to fetchAll href=%s, hrefLength=%d err=%w", TruncateURL(href), len(href), err)
 	}
 
 	if len(result) == 0 {
@@ -89,6 +84,14 @@ func InvokeRestCall(client *rest.Client, href string, logger *slog.Logger) ([]gj
 	}
 
 	return result, nil
+}
+
+func TruncateURL(href string) string {
+	indexOfQuestionMark := strings.Index(href, "?")
+	if indexOfQuestionMark == -1 {
+		return href
+	}
+	return href[:indexOfQuestionMark] + "..."
 }
 
 func GetClusterTime(client *rest.Client, returnTimeOut *int, logger *slog.Logger) (time.Time, error) {
