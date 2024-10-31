@@ -59,8 +59,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	goversion "github.com/netapp/harvest/v2/third_party/go-version"
-	"github.com/shirou/gopsutil/v4/mem"
-	"github.com/shirou/gopsutil/v4/process"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 	"io"
@@ -1408,41 +1406,16 @@ func (p *Poller) mergeConfPath() {
 
 func (p *Poller) addMemoryMetadata() {
 
-	pid := os.Getpid()
-	pid32, err := util.SafeConvertToInt32(pid)
-	if err != nil {
-		slog.Warn(err.Error(), slog.Int("pid", pid))
-		return
-	}
-
-	proc, err := process.NewProcess(pid32)
-	if err != nil {
-		slog.Error("Failed to lookup process for poller", slogx.Err(err), slog.Int("pid", pid))
-		return
-	}
-	memInfo, err := proc.MemoryInfo()
-	if err != nil {
-		slog.Error("Failed to get memory info for poller", slogx.Err(err), slog.Int("pid", pid))
-		return
-	}
+	memMetrics := collector.MemoryMetrics()
 
 	// The unix poller used KB for memory so use the same here
-	_ = p.status.LazySetValueUint64("memory.rss", "host", memInfo.RSS/1024)
-	_ = p.status.LazySetValueUint64("memory.vms", "host", memInfo.VMS/1024)
-	_ = p.status.LazySetValueUint64("memory.swap", "host", memInfo.Swap/1024)
-
-	// Calculate memory percentage
-	memory, err := mem.VirtualMemory()
-	if err != nil {
-		slog.Error("Failed to get memory for machine", slogx.Err(err), slog.Int("pid", pid))
-		return
-	}
-
-	memPercentage := float64(memInfo.RSS) / float64(memory.Total) * 100
-	_ = p.status.LazySetValueFloat64("memory_percent", "host", memPercentage)
+	_ = p.status.LazySetValueUint64("memory.rss", "host", memMetrics.RSSBytes/1024)
+	_ = p.status.LazySetValueUint64("memory.vms", "host", memMetrics.VMSBytes/1024)
+	_ = p.status.LazySetValueUint64("memory.swap", "host", memMetrics.SwapBytes/1024)
+	_ = p.status.LazySetValueFloat64("memory_percent", "host", memMetrics.PercentageRssUsed)
 
 	// Update maxRssBytes
-	p.maxRssBytes = max(p.maxRssBytes, memInfo.RSS)
+	p.maxRssBytes = max(p.maxRssBytes, memMetrics.RSSBytes)
 }
 
 func (p *Poller) logPollerMetadata() (map[string]*matrix.Matrix, error) {
@@ -1451,18 +1424,25 @@ func (p *Poller) logPollerMetadata() (map[string]*matrix.Matrix, error) {
 		slog.Error("Failed to send Harvest version", slogx.Err(err))
 	}
 
-	rss, _ := p.status.LazyGetValueFloat64("memory.rss", "host")
 	remoteName := p.status.GetInstance("remote").GetLabel("name")
 	remoteVersion := p.status.GetInstance("remote").GetLabel("version")
 
+	memMetrics := collector.MemoryMetrics()
+	p.maxRssBytes = max(p.maxRssBytes, memMetrics.RSSBytes)
+
 	slog.Info(
 		"Metadata",
-		slog.Float64("rssMB", rss/1024),
-		slog.Uint64("maxRssMB", p.maxRssBytes/1024/1024),
-		slog.String("version", strings.TrimSpace(version.String())),
 		slog.Group("remote",
 			slog.String("name", remoteName),
 			slog.String("version", remoteVersion),
+		),
+		slog.String("version", strings.TrimSpace(version.String())),
+		slog.Group("mem",
+			slog.Uint64("liveHeapMB", memMetrics.LiveHeapBytes/1024/1024),
+			slog.Uint64("heapMB", memMetrics.HeapSizeBytes/1024/1024),
+			slog.Uint64("heapGoalMB", memMetrics.HeapGoalBytes/1024/1024),
+			slog.Uint64("rssMB", memMetrics.RSSBytes/1024/1024),
+			slog.Uint64("maxRssMB", p.maxRssBytes/1024/1024),
 		),
 		slog.Uint64("uptimeSeconds", uint64(time.Since(p.startTime).Seconds())),
 	)
