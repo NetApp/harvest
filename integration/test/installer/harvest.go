@@ -36,10 +36,16 @@ func (h *Harvest) Stop() {
 	fmt.Println(status)
 }
 
-func (h *Harvest) AllRunning() bool {
+func (h *Harvest) AllRunning(ignoring ...string) bool {
 	pollerArray := h.GetPollerInfo()
+outer:
 	for _, poller := range pollerArray {
 		if poller.Status != "running" {
+			for _, ignore := range ignoring {
+				if strings.Contains(poller.Poller, ignore) {
+					continue outer
+				}
+			}
 			return false
 		}
 	}

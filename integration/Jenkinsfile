@@ -284,7 +284,7 @@ def void stopAndRemoveDockers() {
     sh '''
         for container_id in $(docker ps -a -q);do docker stop $container_id;done
         for container_id in $(docker ps -a -q);do docker rm $container_id;done
-        docker system prune --all --force --volumes
+        docker system prune --force --volumes
         volumes=$(docker volume ls -qf dangling=true)
         if [ "$volumes" ]; then
             docker volume rm $volumes
