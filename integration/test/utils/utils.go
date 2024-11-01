@@ -27,6 +27,7 @@ const (
 	GrafanaTokeKey = "grafana_api_token"
 
 	AnalyzeDockerLogs = "ANALYZE_DOCKER_LOGS"
+	CheckMetrics      = "CHECK_METRICS"
 	CopyDockerLogs    = "COPY_DOCKER_LOGS"
 	InstallDocker     = "INSTALL_DOCKER"
 	InstallNative     = "INSTALL_NATIVE"
