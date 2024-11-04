@@ -27,6 +27,12 @@
       "name": "Table",
       "type": "panel",
       "version": ""
+    },
+    {
+      "id": "timeseries",
+      "name": "Time series",
+      "type": "panel",
+      "version": ""
     }
   ],
   "annotations": {
@@ -52,7 +58,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1668531008860,
+  "iteration": 1730728741684,
   "links": [],
   "panels": [
     {
@@ -78,9 +84,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -92,7 +95,6 @@
               "tooltip": false,
               "viz": false
             },
-            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -181,9 +183,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -195,7 +194,6 @@
               "tooltip": false,
               "viz": false
             },
-            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -287,18 +285,7 @@
             "displayMode": "auto",
             "filterable": true
           },
-          "mappings": [
-            {
-              "options": {
-                "match": "null+nan",
-                "result": {
-                  "index": 1,
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
+          "mappings": [],
           "thresholds": {
             "mode": "percentage",
             "steps": [
@@ -447,6 +434,21 @@
               {
                 "id": "unit",
                 "value": "decbytes"
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "match": "null+nan",
+                      "result": {
+                        "index": 0,
+                        "text": "N/A"
+                      }
+                    },
+                    "type": "special"
+                  }
+                ]
               }
             ]
           }
@@ -567,9 +569,21 @@
               "Value #C": 4,
               "Value #D": 5,
               "Value #E": 6,
-              "cluster": 1,
-              "datacenter": 0,
-              "tenant": 2
+              "cluster 1": 1,
+              "cluster 2": 7,
+              "cluster 3": 10,
+              "cluster 4": 13,
+              "cluster 5": 16,
+              "datacenter 1": 0,
+              "datacenter 2": 8,
+              "datacenter 3": 11,
+              "datacenter 4": 14,
+              "datacenter 5": 17,
+              "tenant 1": 2,
+              "tenant 2": 9,
+              "tenant 3": 12,
+              "tenant 4": 15,
+              "tenant 5": 18
             },
             "renameByName": {
               "Value #B": "Logical Used",
@@ -586,6 +600,7 @@
             "binary": {
               "left": "Logical Used",
               "operator": "/",
+              "reducer": "sum",
               "right": "Objects"
             },
             "mode": "binary",
@@ -609,18 +624,7 @@
             "displayMode": "auto",
             "filterable": true
           },
-          "mappings": [
-            {
-              "options": {
-                "match": "null+nan",
-                "result": {
-                  "index": 1,
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -725,6 +729,21 @@
               {
                 "id": "unit",
                 "value": "decbytes"
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "match": "null+nan",
+                      "result": {
+                        "index": 0,
+                        "text": "N/A"
+                      }
+                    },
+                    "type": "special"
+                  }
+                ]
               }
             ]
           }
@@ -950,13 +969,17 @@
         "type": "query"
       },
       {
+        "allValue": null,
         "current": {
           "selected": true,
           "text": "5",
           "value": "5"
         },
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": false,
+        "label": null,
         "multi": false,
         "name": "TopResources",
         "options": [
@@ -1046,5 +1069,5 @@
   "timezone": "",
   "title": "StorageGrid: Tenants",
   "uid": "storagegrid-tenants",
-  "version": 5
+  "version": 6
 }
