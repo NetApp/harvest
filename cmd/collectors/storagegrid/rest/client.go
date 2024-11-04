@@ -75,7 +75,7 @@ func New(poller *conf.Poller, timeout time.Duration, c *auth.Credentials) (*Clie
 	var (
 		client     Client
 		httpclient *http.Client
-		transport  *http.Transport
+		transport  http.RoundTripper
 		addr       string
 		href       string
 		err        error
@@ -96,7 +96,7 @@ func New(poller *conf.Poller, timeout time.Duration, c *auth.Credentials) (*Clie
 	client.baseURL = href
 	client.Timeout = timeout
 
-	transport, err = c.Transport(nil)
+	transport, err = c.Transport(nil, poller)
 	if err != nil {
 		return nil, err
 	}

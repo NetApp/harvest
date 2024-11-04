@@ -408,14 +408,14 @@ func FetchForCli(client *Client, href string, records *[]any, downloadAll bool, 
 
 // FetchAll collects all records.
 // If you want to limit the number of records returned, use FetchSome.
-func FetchAll(client *Client, href string) ([]gjson.Result, error) {
+func FetchAll(client *Client, href string, headers ...map[string]string) ([]gjson.Result, error) {
 	var (
 		records []gjson.Result
 		result  []gjson.Result
 		err     error
 	)
 
-	err = fetchAll(client, href, &records)
+	err = fetchAll(client, href, &records, headers...)
 	if err != nil {
 		return nil, err
 	}
@@ -463,8 +463,8 @@ func FetchAnalytics(client *Client, href string) ([]gjson.Result, gjson.Result, 
 	return result, *analytics, nil
 }
 
-func fetchAll(client *Client, href string, records *[]gjson.Result) error {
-	getRest, err := client.GetRest(href)
+func fetchAll(client *Client, href string, records *[]gjson.Result, headers ...map[string]string) error {
+	getRest, err := client.GetRest(href, headers...)
 	if err != nil {
 		return fmt.Errorf("error making request %w", err)
 	}
@@ -634,8 +634,8 @@ func fetchAnalytics(client *Client, href string, records *[]gjson.Result, analyt
 }
 
 // FetchRestPerfData This method is used in PerfRest collector. This method returns timestamp per batch
-func FetchRestPerfData(client *Client, href string, perfRecords *[]PerfRecord) error {
-	getRest, err := client.GetRest(href)
+func FetchRestPerfData(client *Client, href string, perfRecords *[]PerfRecord, headers ...map[string]string) error {
+	getRest, err := client.GetRest(href, headers...)
 	if err != nil {
 		return fmt.Errorf("error making request %w", err)
 	}

@@ -18,6 +18,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
@@ -46,16 +47,14 @@ const (
 )
 
 var (
-	constituentRegex = regexp.MustCompile(`^(.*)__(\d{4})$`)
+	constituentRegex      = regexp.MustCompile(`^(.*)__(\d{4})$`)
+	qosQuery              = "api/cluster/counter/tables/qos"
+	qosVolumeQuery        = "api/cluster/counter/tables/qos_volume"
+	qosDetailQuery        = "api/cluster/counter/tables/qos_detail"
+	qosDetailVolumeQuery  = "api/cluster/counter/tables/qos_detail_volume"
+	qosWorkloadQuery      = "api/storage/qos/workloads"
+	workloadDetailMetrics = []string{"resource_latency"}
 )
-
-var qosQuery = "api/cluster/counter/tables/qos"
-var qosVolumeQuery = "api/cluster/counter/tables/qos_volume"
-var qosDetailQuery = "api/cluster/counter/tables/qos_detail"
-var qosDetailVolumeQuery = "api/cluster/counter/tables/qos_detail_volume"
-var qosWorkloadQuery = "api/storage/qos/workloads"
-
-var workloadDetailMetrics = []string{"resource_latency"}
 
 var qosQueries = map[string]string{
 	qosQuery:       qosQuery,
@@ -71,6 +70,9 @@ type RestPerf struct {
 	perfProp            *perfProp
 	archivedMetrics     map[string]*rest2.Metric // Keeps metric definitions that are not found in the counter schema. These metrics may be available in future ONTAP versions.
 	hasInstanceSchedule bool
+	pollInstanceCalls   int
+	pollDataCalls       int
+	recordsToSave       int // Number of records to save when using the recorder
 }
 
 type counter struct {
@@ -146,6 +148,8 @@ func (r *RestPerf) Init(a *collector.AbstractCollector) error {
 	}
 
 	r.InitSchedule()
+
+	r.recordsToSave = collector.RecordKeepLast(r.Params, r.Logger)
 
 	r.Logger.Debug(
 		"initialized cache",
@@ -721,7 +725,26 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		return nil, errs.New(errs.ErrConfig, "empty url")
 	}
 
-	err = rest.FetchRestPerfData(r.Client, href, &perfRecords)
+	r.pollDataCalls++
+	if r.pollDataCalls >= r.recordsToSave {
+		r.pollDataCalls = 0
+	}
+
+	var headers map[string]string
+
+	poller, err := conf.PollerNamed(r.Options.Poller)
+	if err != nil {
+		slog.Error("failed to find poller", slogx.Err(err), slog.String("poller", r.Options.Poller))
+	}
+
+	if poller.IsRecording() {
+		headers = map[string]string{
+			"From": strconv.Itoa(r.pollDataCalls),
+		}
+	}
+
+	err = rest.FetchRestPerfData(r.Client, href, &perfRecords, headers)
+
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch href=%s %w", href, err)
 	}
@@ -1476,6 +1499,24 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		}
 	}
 
+	r.pollInstanceCalls++
+	if r.pollInstanceCalls > r.recordsToSave/3 {
+		r.pollInstanceCalls = 0
+	}
+
+	var headers map[string]string
+
+	poller, err := conf.PollerNamed(r.Options.Poller)
+	if err != nil {
+		slog.Error("failed to find poller", slogx.Err(err), slog.String("poller", r.Options.Poller))
+	}
+
+	if poller.IsRecording() {
+		headers = map[string]string{
+			"From": strconv.Itoa(r.pollInstanceCalls),
+		}
+	}
+
 	href := rest.NewHrefBuilder().
 		APIPath(dataQuery).
 		Fields([]string{fields}).
@@ -1491,7 +1532,7 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 
 	apiT := time.Now()
 	r.Client.Metadata.Reset()
-	records, err = rest.FetchAll(r.Client, href)
+	records, err = rest.FetchAll(r.Client, href, headers)
 	if err != nil {
 		return r.handleError(err, href)
 	}

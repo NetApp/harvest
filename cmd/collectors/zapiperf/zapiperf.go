@@ -40,12 +40,15 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/vscan"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"log/slog"
+	"maps"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -73,20 +76,23 @@ const (
 var workloadDetailMetrics = []string{"resource_latency"}
 
 type ZapiPerf struct {
-	*zapi.Zapi      // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
-	object          string
-	filter          string
-	batchSize       int
-	latencyIoReqd   int
-	instanceKeys    []string
-	instanceLabels  map[string]string
-	histogramLabels map[string][]string
-	scalarCounters  []string
-	qosLabels       map[string]string
-	isCacheEmpty    bool
-	keyName         string
-	keyNameIndex    int
-	testFilePath    string // Used only from unit test
+	*zapi.Zapi        // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
+	object            string
+	filter            string
+	batchSize         int
+	latencyIoReqd     int
+	instanceKeys      []string
+	instanceLabels    map[string]string
+	histogramLabels   map[string][]string
+	scalarCounters    []string
+	qosLabels         map[string]string
+	isCacheEmpty      bool
+	keyName           string
+	keyNameIndex      int
+	testFilePath      string // Used only from unit test
+	recordsToSave     int    // Number of records to save when using the recorder
+	pollDataCalls     int
+	pollInstanceCalls int
 }
 
 func init() {
@@ -121,6 +127,8 @@ func (z *ZapiPerf) Init(a *collector.AbstractCollector) error {
 	}
 
 	z.InitQOS()
+
+	z.recordsToSave = collector.RecordKeepLast(z.Params, z.Logger)
 
 	z.Logger.Debug("initialized")
 	return nil
@@ -416,17 +424,26 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	// load requested counters (metrics + labels)
 	requestCounters := request.NewChildS("counters", "")
 	// load scalar metrics
+
+	// Sort the counters and instanceKeys so they are deterministic
+
 	for _, key := range z.scalarCounters {
 		requestCounters.NewChildS("counter", key)
 	}
+
 	// load histograms
-	for key := range z.histogramLabels {
+	sortedHistogramKeys := slices.Sorted(maps.Keys(z.histogramLabels))
+	for _, key := range sortedHistogramKeys {
 		requestCounters.NewChildS("counter", key)
 	}
+
 	// load instance labels
-	for key := range z.instanceLabels {
+	sortedLabels := slices.Sorted(maps.Keys(z.instanceLabels))
+	for _, key := range sortedLabels {
 		requestCounters.NewChildS("counter", key)
 	}
+
+	slices.Sort(instanceKeys)
 
 	// batch indices
 	startIndex := 0
@@ -457,7 +474,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 						key = v[z.keyNameIndex]
 					}
 				}
-				// avoid adding duplicate keys. It can happen for flex-cache case
+				// Avoid adding duplicate keys. It can happen for flex-cache case
 				if !addedKeys[key] {
 					requestInstances.NewChildS(z.keyName, key)
 					addedKeys[key] = true
@@ -472,7 +489,26 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 			return nil, err
 		}
 
-		response, rd, pd, err := z.Client.InvokeWithTimers(z.testFilePath)
+		z.pollDataCalls++
+		if z.pollDataCalls >= z.recordsToSave {
+			z.pollDataCalls = 0
+		}
+
+		var headers map[string]string
+
+		poller, err := conf.PollerNamed(z.Options.Poller)
+		if err != nil {
+			slog.Error("failed to find poller", slogx.Err(err), slog.String("poller", z.Options.Poller))
+		}
+
+		if poller.IsRecording() {
+			headers = map[string]string{
+				"From": strconv.Itoa(z.pollDataCalls),
+			}
+		}
+
+		response, rd, pd, err := z.Client.InvokeWithTimers(z.testFilePath, headers)
+
 		if err != nil {
 			errMsg := strings.ToLower(err.Error())
 			// if ONTAP complains about batch size, use a smaller batch size
@@ -927,6 +963,7 @@ func (z *ZapiPerf) getParentOpsCounters(data *matrix.Matrix, keyAttr string) (ti
 	}
 
 	instanceKeys = data.GetInstanceKeys()
+	slices.Sort(instanceKeys)
 
 	// build ZAPI request
 	request := node.NewXMLS("perf-object-get-instances")
@@ -1324,6 +1361,7 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		return nil, errs.New(errs.ErrNoMetric, "")
 	}
 
+	slices.Sort(z.scalarCounters)
 	return nil, nil
 }
 
@@ -1608,7 +1646,26 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 
 	for {
 		apiT = time.Now()
-		responseData, err := z.Client.InvokeBatchRequest(request, batchTag, z.testFilePath)
+
+		z.pollInstanceCalls++
+		if z.pollInstanceCalls >= z.recordsToSave/3 {
+			z.pollInstanceCalls = 0
+		}
+
+		var headers map[string]string
+
+		poller, err := conf.PollerNamed(z.Options.Poller)
+		if err != nil {
+			slog.Error("failed to find poller", slogx.Err(err), slog.String("poller", z.Options.Poller))
+		}
+
+		if poller.IsRecording() {
+			headers = map[string]string{
+				"From": strconv.Itoa(z.pollInstanceCalls),
+			}
+		}
+
+		responseData, err := z.Client.InvokeBatchRequest(request, batchTag, z.testFilePath, headers)
 
 		if err != nil {
 			if errors.Is(err, errs.ErrAPIRequestRejected) {

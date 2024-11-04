@@ -25,6 +25,7 @@ All pollers are defined in `harvest.yml`, the main configuration file of Harvest
 | `log`                  | optional, list of collector names              | Matching collectors log their ZAPI request/response                                                                                                                                                                                                                                                                                                                       |                  |
 | `prefer_zapi`          | optional, bool                                 | Use the ZAPI API if the cluster supports it, otherwise allow Harvest to choose REST or ZAPI, whichever is appropriate to the ONTAP version. See [rest-strategy](https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-strategy.md) for details.                                                                                                              |                  |
 | `conf_path`            | optional, `:` separated list of directories    | The search path Harvest uses to load its [templates](configure-templates.md). Harvest walks each directory in order, stopping at the first one that contains the desired template.                                                                                                                                                                                        | conf             |
+| `recorder`             | optional, section                              | Section that determines if Harvest should record or replay HTTP requests. See [here](configure-harvest-basic.md#http-recorder) for details.                                                                                                                                                                                                                               |                  |
 
 ## Defaults
 
@@ -194,6 +195,21 @@ node_vol_cifs_write_data{org="meg",ns="rtp",datacenter="DC-01",cluster="cluster-
 
 Keep in mind that each unique combination of key-value pairs increases the amount of stored data. Use them sparingly.
 See [PrometheusNaming](https://prometheus.io/docs/practices/naming/#labels) for details.
+
+# HTTP Recorder
+
+When troubleshooting, it can be useful to record HTTP requests and responses to disk for later replay.
+
+Harvest removes `Authorization` and `Host` headers from recorded requests and responses
+to prevent sensitive information from being stored on disk.
+
+The `recorder` section in the `harvest.yml` file allows you to configure the HTTP recorder.
+
+| parameter   | type                | description                                                                                                                                   | default |
+|-------------|---------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|--------:|
+| `path`      | string **required** | Path to a directory. Recorded requests and responses will be stored here. Replaying will read the requests and responses from this directory. |         |
+| `mode`      | string **required** | `record` or `replay`                                                                                                                          |         |
+| `keep_last` | optional, int       | When mode is `record`, the number of records to keep before overwriting                                                                       |      60 |
 
 # Authentication
 

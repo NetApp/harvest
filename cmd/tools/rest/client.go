@@ -15,7 +15,6 @@ import (
 	"github.com/tidwall/gjson"
 	"io"
 	"log/slog"
-	"net"
 	"net/http"
 	"net/http/httputil"
 	"os"
@@ -27,11 +26,9 @@ import (
 const (
 	// DefaultTimeout should be > than ONTAP's default REST timeout, which is 15 seconds for GET requests
 	DefaultTimeout = "30s"
-	// DefaultDialerTimeout limits the time spent establishing a TCP connection
-	DefaultDialerTimeout = 10 * time.Second
-	Message              = "message"
-	Code                 = "code"
-	Target               = "target"
+	Message        = "message"
+	Code           = "code"
+	Target         = "target"
 )
 
 type Client struct {
@@ -52,7 +49,7 @@ func New(poller *conf.Poller, timeout time.Duration, credentials *auth.Credentia
 	var (
 		client     Client
 		httpclient *http.Client
-		transport  *http.Transport
+		transport  http.RoundTripper
 		addr       string
 		url        string
 		err        error
@@ -76,11 +73,11 @@ func New(poller *conf.Poller, timeout time.Duration, credentials *auth.Credentia
 	client.baseURL = url
 	client.Timeout = timeout
 
-	transport, err = credentials.Transport(nil)
+	transport, err = credentials.Transport(nil, poller)
 	if err != nil {
 		return nil, err
 	}
-	transport.DialContext = (&net.Dialer{Timeout: DefaultDialerTimeout}).DialContext
+
 	httpclient = &http.Client{Transport: transport, Timeout: timeout}
 	client.client = httpclient
 
@@ -109,7 +106,7 @@ func (c *Client) printRequestAndResponse(req string, response []byte) {
 }
 
 // GetPlainRest makes a REST request to the cluster and returns a json response as a []byte
-func (c *Client) GetPlainRest(request string, encodeURL bool) ([]byte, error) {
+func (c *Client) GetPlainRest(request string, encodeURL bool, headers ...map[string]string) ([]byte, error) {
 	var err error
 	if strings.Index(request, "/") == 0 {
 		request = request[1:]
@@ -127,6 +124,13 @@ func (c *Client) GetPlainRest(request string, encodeURL bool) ([]byte, error) {
 		return nil, err
 	}
 	c.request.Header.Set("Accept", "application/json")
+
+	for _, hs := range headers {
+		for k, v := range hs {
+			c.request.Header.Set(k, v)
+		}
+	}
+
 	pollerAuth, err := c.auth.GetPollerAuth()
 	if err != nil {
 		return nil, err
@@ -152,8 +156,8 @@ func (c *Client) GetPlainRest(request string, encodeURL bool) ([]byte, error) {
 }
 
 // GetRest makes a REST request to the cluster and returns a json response as a []byte
-func (c *Client) GetRest(request string) ([]byte, error) {
-	return c.GetPlainRest(request, true)
+func (c *Client) GetRest(request string, headers ...map[string]string) ([]byte, error) {
+	return c.GetPlainRest(request, true, headers...)
 }
 
 func (c *Client) invokeWithAuthRetry() ([]byte, error) {
@@ -289,7 +293,7 @@ func downloadSwagger(poller *conf.Poller, path string, url string, verbose bool)
 
 	timeout, _ := time.ParseDuration(DefaultTimeout)
 	credentials := auth.NewCredentials(poller, slog.Default())
-	transport, err := credentials.Transport(request)
+	transport, err := credentials.Transport(request, poller)
 	if err != nil {
 		return 0, err
 	}

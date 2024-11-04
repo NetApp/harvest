@@ -15,6 +15,7 @@ import (
 	"github.com/netapp/harvest/v2/third_party/mergo"
 	"gopkg.in/yaml.v3"
 	"log/slog"
+	"net"
 	"net/http"
 	"os"
 	"os/exec"
@@ -30,6 +31,8 @@ const (
 	defaultTimeout  = "10s"
 	certType        = "CERTIFICATE"
 	keyType         = "PRIVATE KEY"
+	// DefaultDialerTimeout limits the time spent establishing a TCP connection
+	DefaultDialerTimeout = 10 * time.Second
 )
 
 func NewCredentials(p *conf.Poller, logger *slog.Logger) *Credentials {
@@ -438,7 +441,7 @@ func extractCertAndKey(blob string) ([]byte, []byte, error) {
 	return nil, nil, fmt.Errorf("unexpected PEM block1Type=%s block2Type=%s", block1.Type, block2.Type)
 }
 
-func (c *Credentials) Transport(request *http.Request) (*http.Transport, error) {
+func (c *Credentials) Transport(request *http.Request, poller *conf.Poller) (http.RoundTripper, error) {
 	var (
 		cert      tls.Certificate
 		transport *http.Transport
@@ -475,6 +478,7 @@ func (c *Credentials) Transport(request *http.Request) (*http.Transport, error) 
 		if request != nil {
 			request.SetBasicAuth(pollerAuth.Username, pollerAuth.Password)
 		}
+
 		transport = &http.Transport{
 			Proxy: http.ProxyFromEnvironment,
 			TLSClientConfig: &tls.Config{
@@ -483,5 +487,27 @@ func (c *Credentials) Transport(request *http.Request) (*http.Transport, error) 
 			},
 		}
 	}
-	return transport, err
+
+	transport.DialContext = (&net.Dialer{Timeout: DefaultDialerTimeout}).DialContext
+
+	if poller.TLSMinVersion != "" {
+		tlsVersion := tlsVersion(poller.TLSMinVersion, c.logger)
+		if tlsVersion != 0 {
+			c.logger.Info("Using TLS version", slog.Int("tlsVersion", int(tlsVersion)))
+			transport.TLSClientConfig.MinVersion = tlsVersion
+		}
+	}
+
+	if !poller.IsRecording() {
+		return transport, nil
+	}
+
+	switch poller.Recorder.Mode {
+	case "record":
+		return recording(poller, transport), nil
+	case "replay":
+		return replaying(poller), nil
+	default:
+		return nil, errs.New(errs.ErrInvalidParam, "recorder mode")
+	}
 }

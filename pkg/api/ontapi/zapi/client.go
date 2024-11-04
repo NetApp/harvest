@@ -6,7 +6,6 @@ package zapi
 
 import (
 	"bytes"
-	"crypto/tls"
 	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/auth"
@@ -54,7 +53,7 @@ func New(poller *conf.Poller, c *auth.Credentials) (*Client, error) {
 		client     Client
 		httpclient *http.Client
 		request    *http.Request
-		transport  *http.Transport
+		transport  http.RoundTripper
 		timeout    time.Duration
 		url, addr  string
 		err        error
@@ -103,18 +102,11 @@ func New(poller *conf.Poller, c *auth.Credentials) (*Client, error) {
 	request.Header.Set("Content-Type", "text/xml")
 	request.Header.Set("Charset", "utf-8")
 
-	transport, err = c.Transport(request)
+	transport, err = c.Transport(request, poller)
 	if err != nil {
 		return nil, err
 	}
 
-	if poller.TLSMinVersion != "" {
-		tlsVersion := client.tlsVersion(poller.TLSMinVersion)
-		if tlsVersion != 0 {
-			client.Logger.Info("Using TLS version", slog.Int("tlsVersion", int(tlsVersion)))
-			transport.TLSClientConfig.MinVersion = tlsVersion
-		}
-	}
 	client.request = request
 
 	// initialize http client
@@ -332,7 +324,7 @@ func (c *Client) Invoke(testFilePath string) (*node.Node, error) {
 // Else -> will issue API requests in series, once there
 // are no more instances returned by the server, returned results will be nil
 // Use the returned tag for subsequent calls to this method
-func (c *Client) InvokeBatchRequest(request *node.Node, tag string, testFilePath string) (Response, error) {
+func (c *Client) InvokeBatchRequest(request *node.Node, tag string, testFilePath string, headers ...map[string]string) (Response, error) {
 	if testFilePath != "" && tag != "" {
 		testData, err := tree.ImportXML(testFilePath)
 		if err != nil {
@@ -341,13 +333,13 @@ func (c *Client) InvokeBatchRequest(request *node.Node, tag string, testFilePath
 		return Response{Result: testData, Tag: "", Rd: time.Second, Pd: time.Second}, nil
 	}
 	// wasteful of course, need to rewrite later @TODO
-	results, tag, rd, pd, err := c.InvokeBatchWithTimers(request, tag)
+	results, tag, rd, pd, err := c.InvokeBatchWithTimers(request, tag, headers...)
 	return Response{Result: results, Tag: tag, Rd: rd, Pd: pd}, err
 }
 
 // InvokeBatchWithTimers does the same as InvokeBatchRequest, but it also
 // returns API time and XML parse time
-func (c *Client) InvokeBatchWithTimers(request *node.Node, tag string) (*node.Node, string, time.Duration, time.Duration, error) {
+func (c *Client) InvokeBatchWithTimers(request *node.Node, tag string, headers ...map[string]string) (*node.Node, string, time.Duration, time.Duration, error) {
 
 	var (
 		results *node.Node
@@ -368,7 +360,7 @@ func (c *Client) InvokeBatchWithTimers(request *node.Node, tag string) (*node.No
 		return nil, "", rd, pd, err
 	}
 
-	if results, rd, pd, err = c.invokeWithAuthRetry(true); err != nil {
+	if results, rd, pd, err = c.invokeWithAuthRetry(true, headers...); err != nil {
 		return nil, "", rd, pd, err
 	}
 
@@ -405,7 +397,7 @@ func (c *Client) InvokeRequest(request *node.Node) (*node.Node, error) {
 // Else -> invokes the request and returns parsed XML response and timers:
 // API wait time and XML parse time.
 // This method should only be called after building the request
-func (c *Client) InvokeWithTimers(testFilePath string) (*node.Node, time.Duration, time.Duration, error) {
+func (c *Client) InvokeWithTimers(testFilePath string, headers ...map[string]string) (*node.Node, time.Duration, time.Duration, error) {
 	if testFilePath != "" {
 		testData, err := tree.ImportXML(testFilePath)
 		if err != nil {
@@ -413,10 +405,10 @@ func (c *Client) InvokeWithTimers(testFilePath string) (*node.Node, time.Duratio
 		}
 		return testData, 0, 0, nil
 	}
-	return c.invokeWithAuthRetry(true)
+	return c.invokeWithAuthRetry(true, headers...)
 }
 
-func (c *Client) invokeWithAuthRetry(withTimers bool) (*node.Node, time.Duration, time.Duration, error) {
+func (c *Client) invokeWithAuthRetry(withTimers bool, headers ...map[string]string) (*node.Node, time.Duration, time.Duration, error) {
 	var buffer bytes.Buffer
 	pollerAuth, err := c.auth.GetPollerAuth()
 	if err != nil {
@@ -428,7 +420,7 @@ func (c *Client) invokeWithAuthRetry(withTimers bool) (*node.Node, time.Duration
 		buffer = *c.buffer
 	}
 
-	resp, t1, t2, err := c.invoke(withTimers)
+	resp, t1, t2, err := c.invoke(withTimers, headers...)
 
 	if err != nil {
 		var he errs.HarvestError
@@ -456,7 +448,7 @@ func (c *Client) invokeWithAuthRetry(withTimers bool) (*node.Node, time.Duration
 }
 
 // invokes the request that has been built with one of the BuildRequest* methods
-func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Duration, error) {
+func (c *Client) invoke(withTimers bool, headers ...map[string]string) (*node.Node, time.Duration, time.Duration, error) {
 
 	var (
 		root, result      *node.Node
@@ -484,6 +476,12 @@ func (c *Client) invoke(withTimers bool) (*node.Node, time.Duration, time.Durati
 	zapiReq := ""
 	if c.logZapi {
 		zapiReq = c.buffer.String()
+	}
+
+	for _, hs := range headers {
+		for k, v := range hs {
+			c.request.Header.Set(k, v)
+		}
 	}
 
 	if response, err = c.client.Do(c.request); err != nil {
@@ -579,23 +577,6 @@ func (c *Client) SetTimeout(timeout string) {
 		c.Logger.Debug("Using default timeout", slog.String("timeout", newTimeout.String()))
 	}
 	c.client.Timeout = newTimeout
-}
-
-func (c *Client) tlsVersion(version string) uint16 {
-	lower := strings.ToLower(version)
-	switch lower {
-	case "tls10":
-		return tls.VersionTLS10
-	case "tls11":
-		return tls.VersionTLS11
-	case "tls12":
-		return tls.VersionTLS12
-	case "tls13":
-		return tls.VersionTLS13
-	default:
-		c.Logger.Warn("Unknown TLS version, using default", slog.String("version", version))
-	}
-	return 0
 }
 
 // NewTestClient It's used for unit test only
