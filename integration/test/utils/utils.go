@@ -2,9 +2,11 @@ package utils
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/carlmjohnson/requests"
 	"github.com/netapp/harvest/v2/cmd/tools/grafana"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/slogx"
@@ -179,12 +181,8 @@ func WaitForGrafana() bool {
 }
 
 func IsURLReachable(url string) bool {
-	response, err := http.Get(url) //nolint:gosec
-	if err != nil {
-		return false
-	}
-	defer response.Body.Close()
-	return response.StatusCode == http.StatusOK
+	err := requests.URL(url).Fetch(context.Background())
+	return err == nil
 }
 
 func AddPrometheusToGrafana() {

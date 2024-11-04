@@ -41,7 +41,7 @@ func (r *RPM) Install() bool {
 		return false
 	} // use file directly from the repo
 	harvestObj.Start()
-	status := harvestObj.AllRunning()
+	status := harvestObj.AllRunning("keyperf")
 	asupExecPath := HarvestHome + "/autosupport/asup"
 	isValidAsup := harvestObj.IsValidAsup(asupExecPath)
 	return status && isValidAsup
@@ -51,7 +51,7 @@ func (r *RPM) Upgrade() bool {
 	rpmFileName := "harvest.rpm"
 	utils.RemoveSafely(rpmFileName)
 	harvestObj := new(Harvest)
-	if !harvestObj.AllRunning() {
+	if !harvestObj.AllRunning("keyperf") {
 		utils.PanicIfNotNil(errors.New("pollers are not in a running state before upgrade"))
 	}
 	versionCmd := []string{"-qa", "harvest"}
