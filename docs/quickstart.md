@@ -353,7 +353,7 @@ You will be prompted to save your API key (token) for later use. Press `n` to no
 
 After a few seconds, all the dashboards will be imported into Grafana.
 
-### 9. Verify Dashboards in Grafana
+### 11. Verify Dashboards in Grafana
 
 After adding the Prometheus datasource, you can verify that your dashboards are correctly displaying data. Follow these steps:
 

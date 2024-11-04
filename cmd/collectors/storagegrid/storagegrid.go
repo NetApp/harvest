@@ -15,6 +15,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"log/slog"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -91,7 +92,7 @@ func (s *StorageGrid) InitMatrix() error {
 	// overwrite from abstract collector
 	mat.Object = s.Props.Object
 	// Add system (cluster) name
-	mat.SetGlobalLabel("cluster", s.client.Cluster.Name)
+	mat.SetGlobalLabel("cluster", s.client.Remote.Name)
 
 	if s.Params.HasChildS("labels") {
 		for _, l := range s.Params.GetChildS("labels").GetChildren() {
@@ -441,6 +442,8 @@ func (s *StorageGrid) initClient() error {
 	}
 	s.client.TraceLogSet(s.Name, s.Params)
 
+	s.Remote = s.client.Remote
+
 	return nil
 }
 
@@ -492,7 +495,7 @@ func (s *StorageGrid) LoadTemplate() (string, error) {
 
 	jitter := s.Params.GetChildContentS("jitter")
 
-	template, path, err = s.ImportSubTemplate("", rest.TemplateFn(s.Params, s.Object), jitter, s.client.Cluster.Version)
+	template, path, err = s.ImportSubTemplate("", rest.TemplateFn(s.Params, s.Object), jitter, s.Remote.Version)
 	if err != nil {
 		return "", err
 	}
@@ -540,6 +543,7 @@ func (s *StorageGrid) CollectAutoSupport(p *collector.Payload) {
 	for k := range s.Props.Counters {
 		counters = append(counters, k)
 	}
+	slices.Sort(counters)
 
 	var schedules = make([]collector.Schedule, 0)
 	tasks := s.Params.GetChildS("schedule")
@@ -576,10 +580,10 @@ func (s *StorageGrid) CollectAutoSupport(p *collector.Payload) {
 		InstanceInfo:  &info,
 	})
 
-	version := s.client.Cluster.Version
-	p.Target.Version = strconv.Itoa(version[0]) + "." + strconv.Itoa(version[1]) + "." + strconv.Itoa(version[2])
+	version := s.Remote.Version
+	p.Target.Version = version
 	p.Target.Model = "storagegrid"
-	p.Target.ClusterUUID = s.client.Cluster.UUID
+	p.Target.ClusterUUID = s.Remote.UUID
 
 	if p.Nodes == nil {
 		nodeIDs, err := s.getNodeUuids()

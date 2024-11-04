@@ -92,7 +92,7 @@ func invokeRestCall(client *rest2.Client, counters map[string][]counterData) err
 				CounterSchema(counterDetail.perfCounters).
 				Build()
 
-			if _, err := collectors.InvokeRestCall(client, href, slog.Default()); err != nil {
+			if _, err := collectors.InvokeRestCall(client, href); err != nil {
 				return fmt.Errorf("failed to invoke rest href=%s call: %w", href, err)
 			}
 		}
@@ -134,7 +134,7 @@ func visitRestTemplates(dir string, client *rest2.Client, eachTemp func(path str
 			return nil
 		}
 
-		r := eachTemp(path, client.Cluster().GetVersion(), client)
+		r := eachTemp(path, client.Remote().Version, client)
 		for k, v := range r {
 			result[k] = v
 		}

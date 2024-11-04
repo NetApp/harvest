@@ -241,7 +241,7 @@ func (n *Nic) getIfgroupInfo() map[string]string {
 		MaxRecords(collectors.DefaultBatchSize).
 		Build()
 
-	if ifgroupsData, err = collectors.InvokeRestCallWithTestFile(n.client, href, n.SLogger, n.testFilePath); err != nil {
+	if ifgroupsData, err = collectors.InvokeRestCallWithTestFile(n.client, href, n.testFilePath); err != nil {
 		return portIfgroupMap
 	}
 

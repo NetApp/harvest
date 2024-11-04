@@ -1328,6 +1328,15 @@ counters:
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.6.0/health.yaml
 
+  - Name: health_ems_alerts
+    Description: The health_ems_alerts metric monitors EMS (Event Management System), providing a count based on their severity and other attributes. This metric includes labels such as node, message, source, and severity (e.g., emergency, alert, error). 
+                 By default, it monitors alerts with emergency severity.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.6.0/health.yaml
+
   - Name: qos_policy_adaptive_absolute_min_iops
     Description: Specifies the absolute minimum IOPS that is used as an override when the expected_iops is less than this value.
     APIs:
@@ -1927,3 +1936,15 @@ counters:
         Endpoint: api/support/ems/events
         ONTAPCounter: Harvest generated
         Template: conf/ems/9.6.0/ems.yaml
+
+  - Name: net_port_status
+    Description: This metric indicates a value of 1 if the port state is up and a value of 0 for any other state.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/netport.yaml
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapi/cdot/9.8.0/netport.yaml

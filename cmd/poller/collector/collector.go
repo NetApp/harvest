@@ -70,6 +70,7 @@ type Collector interface {
 	LoadPlugins(*node.Node, Collector, string) error
 	LoadPlugin(string, *plugin.AbstractPlugin) plugin.Plugin
 	CollectAutoSupport(p *Payload)
+	GetRemote() conf.Remote
 }
 
 const (
@@ -106,11 +107,9 @@ type AbstractCollector struct {
 	collectCount uint64                     // count of collected data points
 	// this is different from what the collector will have in its metadata, since this variable
 	// holds count independent of the poll interval of the collector, used to give stats to Poller
-	countMux    *sync.Mutex       // used for atomic access to collectCount
-	Auth        *auth.Credentials // used for authing the collector
-	HostVersion string
-	HostModel   string
-	HostUUID    string
+	countMux *sync.Mutex       // used for atomic access to collectCount
+	Auth     *auth.Credentials // used for authing the collector
+	Remote   conf.Remote
 }
 
 func New(name, object string, o *options.Options, params *node.Node, credentials *auth.Credentials) *AbstractCollector {
@@ -291,16 +290,8 @@ func (c *AbstractCollector) GetMetadata() *matrix.Matrix {
 	return c.Metadata
 }
 
-func (c *AbstractCollector) GetHostModel() string {
-	return c.HostModel
-}
-
-func (c *AbstractCollector) GetHostVersion() string {
-	return c.HostVersion
-}
-
-func (c *AbstractCollector) GetHostUUID() string {
-	return c.HostUUID
+func (c *AbstractCollector) GetRemote() conf.Remote {
+	return c.Remote
 }
 
 // Start will run the collector in an infinite loop

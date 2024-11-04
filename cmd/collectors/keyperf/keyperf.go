@@ -65,6 +65,8 @@ func (kp *KeyPerf) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
+	kp.Remote = kp.Client.Remote()
+
 	if kp.Prop.TemplatePath, err = kp.LoadTemplate(); err != nil {
 		return err
 	}
@@ -105,7 +107,7 @@ func (kp *KeyPerf) InitMatrix() error {
 	// overwrite from abstract collector
 	mat.Object = kp.Prop.Object
 	// Add system (cluster) name
-	mat.SetGlobalLabel("cluster", kp.Client.Cluster().Name)
+	mat.SetGlobalLabel("cluster", kp.Remote.Name)
 	if kp.Params.HasChildS("labels") {
 		for _, l := range kp.Params.GetChildS("labels").GetChildren() {
 			mat.SetGlobalLabel(l.GetNameS(), l.GetContentS())
@@ -140,7 +142,7 @@ func (kp *KeyPerf) loadParamInt(name string, defaultValue int) int {
 }
 
 func (kp *KeyPerf) buildCounters() {
-	staticCounterDef, err := loadStaticCounterDefinitions(kp.Prop.Object, "cmd/collectors/keyperf/static_counter_definitions.yaml", kp.Logger)
+	staticCounterDef, err := loadStaticCounterDefinitions(kp.Prop.Object, "conf/keyperf/static_counter_definitions.yaml", kp.Logger)
 	if err != nil {
 		// It's acceptable to continue even if there are errors, as the remaining counters will still be processed.
 		// Any counters that require counter metadata will be skipped.

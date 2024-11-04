@@ -372,6 +372,9 @@ func (m Metric) pathString() string {
 
 func TestQueryPrefix(t *testing.T) {
 	visitTemplates(t, func(path string, model Model) {
+		if model.Ignore == "true" {
+			return
+		}
 		if !strings.HasPrefix(model.Query, "api/") {
 			t.Errorf("query should be prefixed with api/, got=%s path=[%s]", model.Query, shortPath(path))
 		}
@@ -547,7 +550,7 @@ func visitTemplates(t *testing.T, eachTemplate func(path string, model Model), d
 			if ext != ".yaml" {
 				return nil
 			}
-			if strings.HasSuffix(path, "custom.yaml") || strings.HasSuffix(path, "default.yaml") {
+			if strings.HasSuffix(path, "custom.yaml") || strings.HasSuffix(path, "default.yaml") || strings.HasSuffix(path, "static_counter_definitions.yaml") {
 				return nil
 			}
 			model, err := ReadTemplate(path)

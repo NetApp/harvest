@@ -74,9 +74,10 @@
   },
   "description": "",
   "editable": true,
-  "fiscalYearStartMonth": 0,
+  "gnetId": null,
   "graphTooltip": 1,
   "id": null,
+  "iteration": 1730300177877,
   "links": [
     {
       "asDropdown": true,
@@ -93,7 +94,6 @@
       "url": ""
     }
   ],
-  "liveNow": false,
   "panels": [
     {
       "datasource": "${DS_PROMETHEUS}",
@@ -113,13 +113,7 @@
         "content": "The SnapMirror Destinations dashboard displays the destination view of all SnapMirror relationships. The filters provided above are applied from the destination side of SnapMirror.",
         "mode": "markdown"
       },
-      "pluginVersion": "10.3.1",
-      "targets": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "refId": "A"
-        }
-      ],
+      "pluginVersion": "8.1.8",
       "title": "Important Information about SnapMirror Destinations dashboard",
       "type": "text"
     },
@@ -134,125 +128,75 @@
       },
       "id": 15,
       "panels": [],
-      "targets": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "refId": "A"
-        }
-      ],
       "title": "Highlights",
       "type": "row"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel displays volume relationship count based on the relationship health.",
+      "description": "Number of unhealhty snapmirrors.",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds"
           },
-          "custom": {
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            }
-          },
-          "decimals": 0,
           "mappings": [],
-          "min": 0,
-          "unitScale": true
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Healthy"
-            },
-            "properties": [
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
               {
-                "id": "color",
-                "value": {
-                  "fixedColor": "green",
-                  "mode": "fixed"
-                }
+                "color": "red",
+                "value": null
               }
             ]
           },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Unhealthy"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "red",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
+          "unit": "short"
+        },
+        "overrides": []
       },
       "gridPos": {
-        "h": 12,
-        "w": 11,
+        "h": 6,
+        "w": 6,
         "x": 0,
         "y": 3
       },
-      "id": 112,
+      "id": 142,
+      "links": [],
       "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": true,
-          "values": [
-            "value"
-          ]
-        },
-        "pieType": "donut",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
-            "last"
+            "lastNotNull"
           ],
           "fields": "",
           "values": false
         },
-        "tooltip": {
-          "mode": "none",
-          "sort": "none"
-        }
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "8.1.2",
+      "pluginVersion": "8.1.8",
       "targets": [
         {
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
-          "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",healthy=\"true\",relationship_id!=\"\"}) or vector (0)",
-          "format": "time_series",
-          "instant": true,
-          "interval": "",
-          "legendFormat": "Healthy",
-          "refId": "A"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",healthy=\"false\",relationship_id!=\"\"}) or vector (0)",
+          "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\",healthy=\"false\",relationship_id!=\"\"}) or vector (0)",
           "format": "time_series",
           "hide": false,
           "instant": true,
           "interval": "",
-          "legendFormat": "Unhealthy",
-          "refId": "B"
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
         }
       ],
-      "title": "Relationship Health Overview",
-      "type": "piechart"
+      "title": "Unhealthy",
+      "type": "stat"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
@@ -270,15 +214,14 @@
             }
           },
           "decimals": 0,
-          "mappings": [],
-          "unitScale": true
+          "mappings": []
         },
         "overrides": []
       },
       "gridPos": {
         "h": 12,
-        "w": 13,
-        "x": 11,
+        "w": 18,
+        "x": 6,
         "y": 3
       },
       "id": 111,
@@ -311,7 +254,7 @@
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
-          "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",derived_relationship_type=\"extended_data_protection\",relationship_id!=\"\"}) or vector(0)",
+          "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_vserver=~\"$SVM\",destination_volume=~\".*$Volume.*\",derived_relationship_type=\"extended_data_protection\",relationship_id!=\"\"}) or vector(0)",
           "instant": true,
           "interval": "",
           "legendFormat": "Asynchronous Mirror",
@@ -321,7 +264,7 @@
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
-          "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",derived_relationship_type=\"mirror_vault\",relationship_id!=\"\"}) or vector(0)",
+          "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_vserver=~\"$SVM\",destination_volume=~\".*$Volume.*\",derived_relationship_type=\"mirror_vault\",relationship_id!=\"\"}) or vector(0)",
           "hide": false,
           "instant": true,
           "interval": "",
@@ -332,7 +275,7 @@
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
-          "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",derived_relationship_type=\"vault\",relationship_id!=\"\"}) or vector(0)",
+          "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_vserver=~\"$SVM\",destination_volume=~\".*$Volume.*\",derived_relationship_type=\"vault\",relationship_id!=\"\"}) or vector(0)",
           "hide": false,
           "instant": true,
           "interval": "",
@@ -343,7 +286,7 @@
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
-          "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",derived_relationship_type=\"sync_mirror_strict\",relationship_id!=\"\"}) or vector(0)",
+          "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_vserver=~\"$SVM\",destination_volume=~\".*$Volume.*\",derived_relationship_type=\"sync_mirror_strict\",relationship_id!=\"\"}) or vector(0)",
           "hide": false,
           "instant": true,
           "interval": "",
@@ -354,7 +297,7 @@
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
-          "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",derived_relationship_type=\"sync_mirror\",relationship_id!=\"\"}) or vector(0)",
+          "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_vserver=~\"$SVM\",destination_volume=~\".*$Volume.*\",derived_relationship_type=\"sync_mirror\",relationship_id!=\"\"}) or vector(0)",
           "hide": false,
           "instant": true,
           "interval": "",
@@ -365,7 +308,7 @@
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
-          "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",derived_relationship_type=\"automated_failover\",relationship_id!=\"\"}) or vector(0)",
+          "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_vserver=~\"$SVM\",destination_volume=~\".*$Volume.*\",derived_relationship_type=\"automated_failover\",relationship_id!=\"\"}) or vector(0)",
           "hide": false,
           "instant": true,
           "interval": "",
@@ -376,7 +319,7 @@
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
-          "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",derived_relationship_type=\"automated_failover_duplex\",relationship_id!=\"\"}) or vector(0)",
+          "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_vserver=~\"$SVM\",destination_volume=~\".*$Volume.*\",derived_relationship_type=\"automated_failover_duplex\",relationship_id!=\"\"}) or vector(0)",
           "hide": false,
           "instant": true,
           "interval": "",
@@ -390,6 +333,73 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "Number of healhty snapmirrors.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 0,
+        "y": 9
+      },
+      "id": 143,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\",healthy=\"true\",relationship_id!=\"\"}) or vector (0)",
+          "format": "time_series",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Healthy",
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This panel displays detail of all the snapmirror relationships from destination side of view.",
       "fieldConfig": {
         "defaults": {
@@ -398,14 +408,10 @@
           },
           "custom": {
             "align": "left",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "filterable": true,
-            "inspect": false
+            "displayMode": "auto",
+            "filterable": true
           },
           "decimals": 2,
-          "fieldMinMax": true,
           "links": [],
           "mappings": [],
           "min": 0,
@@ -417,8 +423,7 @@
                 "value": null
               }
             ]
-          },
-          "unitScale": true
+          }
         },
         "overrides": [
           {
@@ -427,13 +432,6 @@
               "options": "Size"
             },
             "properties": [
-              {
-                "id": "custom.cellOptions",
-                "value": {
-                  "mode": "lcd",
-                  "type": "gauge"
-                }
-              },
               {
                 "id": "unit",
                 "value": "bytes"
@@ -456,6 +454,10 @@
               {
                 "id": "custom.width",
                 "value": 240
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "lcd-gauge"
               }
             ]
           },
@@ -465,13 +467,6 @@
               "options": "Duration"
             },
             "properties": [
-              {
-                "id": "custom.cellOptions",
-                "value": {
-                  "mode": "lcd",
-                  "type": "gauge"
-                }
-              },
               {
                 "id": "unit",
                 "value": "s"
@@ -490,6 +485,10 @@
                     "type": "special"
                   }
                 ]
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "lcd-gauge"
               }
             ]
           },
@@ -504,14 +503,6 @@
                 "value": "s"
               },
               {
-                "id": "custom.cellOptions",
-                "value": {
-                  "mode": "lcd",
-                  "type": "gauge",
-                  "valueDisplayMode": "text"
-                }
-              },
-              {
                 "id": "mappings",
                 "value": [
                   {
@@ -524,6 +515,10 @@
                     "type": "special"
                   }
                 ]
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "lcd-gauge"
               }
             ]
           },
@@ -686,11 +681,8 @@
                 ]
               },
               {
-                "id": "custom.cellOptions",
-                "value": {
-                  "mode": "gradient",
-                  "type": "color-background"
-                }
+                "id": "custom.displayMode",
+                "value": "color-background"
               }
             ]
           }
@@ -723,12 +715,12 @@
           }
         ]
       },
-      "pluginVersion": "10.3.1",
+      "pluginVersion": "8.1.8",
       "targets": [
         {
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
-          "expr": "snapmirror_last_transfer_duration{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_volume=~\"$Volume\",destination_vserver=~\"$SVM\",destination_location=~\".*$ConsistencyGroup\",relationship_id!=\"\"}",
+          "expr": "snapmirror_last_transfer_duration{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\",destination_location=~\".*$ConsistencyGroup\",relationship_id!=\"\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -740,7 +732,7 @@
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
-          "expr": "snapmirror_last_transfer_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", destination_volume=~\"$Volume\",destination_vserver=~\"$SVM\",destination_location=~\".*$ConsistencyGroup\",relationship_id!=\"\"}",
+          "expr": "snapmirror_last_transfer_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\",destination_location=~\".*$ConsistencyGroup\",relationship_id!=\"\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -751,7 +743,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
-          "expr": "snapmirror_lag_time{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_volume=~\"$Volume\",destination_vserver=~\"$SVM\",destination_location=~\".*$ConsistencyGroup\",relationship_id!=\"\"}",
+          "expr": "snapmirror_lag_time{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\",destination_location=~\".*$ConsistencyGroup\",relationship_id!=\"\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -763,7 +755,7 @@
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
-          "expr": "snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_volume=~\"$Volume\",destination_location=~\".*$ConsistencyGroup\",derived_relationship_type!=\"load_sharing\",relationship_id!=\"\"} ",
+          "expr": "snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\",destination_location=~\".*$ConsistencyGroup\",derived_relationship_type!=\"load_sharing\",relationship_id!=\"\"} ",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -866,9 +858,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -880,7 +869,6 @@
               "tooltip": false,
               "viz": false
             },
-            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -913,8 +901,7 @@
               }
             ]
           },
-          "unit": "s",
-          "unitScale": true
+          "unit": "s"
         },
         "overrides": []
       },
@@ -950,10 +937,10 @@
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
-          "expr": "snapmirror_last_transfer_duration{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_volume=~\"$Volume\",destination_vserver=~\"$SVM\",destination_location=~\".*$ConsistencyGroup\"}\nand\ntopk($TopResources, avg_over_time(snapmirror_last_transfer_duration{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_volume=~\"$Volume\",destination_vserver=~\"$SVM\",destination_location=~\".*$ConsistencyGroup\"}[3h] @ end()))",
+          "expr": "snapmirror_last_transfer_duration{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\",destination_location=~\".*$ConsistencyGroup\"}\nand\ntopk($TopResources, avg_over_time(snapmirror_last_transfer_duration{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\",destination_location=~\".*$ConsistencyGroup\"}[3h] @ end()))",
           "hide": false,
           "interval": "",
-          "legendFormat": "{{destination_volume}} - {{source_volume}}",
+          "legendFormat": "{{source_location}} -> {{destination_location}}",
           "range": true,
           "refCount": 0,
           "refId": "B",
@@ -972,9 +959,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -986,7 +970,6 @@
               "tooltip": false,
               "viz": false
             },
-            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -1020,8 +1003,7 @@
               }
             ]
           },
-          "unit": "s",
-          "unitScale": true
+          "unit": "s"
         },
         "overrides": []
       },
@@ -1057,10 +1039,10 @@
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
-          "expr": "snapmirror_lag_time{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_volume=~\"$Volume\",destination_vserver=~\"$SVM\",destination_location=~\".*$ConsistencyGroup\"}\nand\ntopk($TopResources, avg_over_time(snapmirror_lag_time{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_volume=~\"$Volume\",destination_vserver=~\"$SVM\",destination_location=~\".*$ConsistencyGroup\"}[3h] @ end()))",
+          "expr": "snapmirror_lag_time{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\",destination_location=~\".*$ConsistencyGroup\"}\nand\ntopk($TopResources, avg_over_time(snapmirror_lag_time{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\",destination_location=~\".*$ConsistencyGroup\"}[3h] @ end()))",
           "hide": false,
           "interval": "",
-          "legendFormat": "{{destination_volume}} - {{source_volume}}",
+          "legendFormat": "{{source_location}} -> {{destination_location}}",
           "range": true,
           "refCount": 0,
           "refId": "B",
@@ -1079,9 +1061,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1093,7 +1072,6 @@
               "tooltip": false,
               "viz": false
             },
-            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -1126,8 +1104,7 @@
               }
             ]
           },
-          "unit": "bytes",
-          "unitScale": true
+          "unit": "bytes"
         },
         "overrides": []
       },
@@ -1161,11 +1138,13 @@
       "targets": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "editorMode": "code",
           "exemplar": false,
-          "expr": "snapmirror_last_transfer_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_volume=~\"$Volume\",destination_vserver=~\"$SVM\",destination_location=~\".*$ConsistencyGroup\"}\nand\ntopk($TopResources, avg_over_time(snapmirror_last_transfer_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_volume=~\"$Volume\",destination_vserver=~\"$SVM\",destination_location=~\".*$ConsistencyGroup\"}[3h] @ end()))",
+          "expr": "snapmirror_last_transfer_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\",destination_location=~\".*$ConsistencyGroup\"}\nand\ntopk($TopResources, avg_over_time(snapmirror_last_transfer_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\",destination_location=~\".*$ConsistencyGroup\"}[3h] @ end()))",
           "hide": false,
           "interval": "",
-          "legendFormat": "{{destination_volume}} - {{source_volume}}",
+          "legendFormat": "{{source_location}} -> {{destination_location}}",
+          "range": true,
           "refCount": 0,
           "refId": "B",
           "textEditor": false
@@ -1187,113 +1166,70 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel displays consistency group relationship count based on the relationship health.",
+          "description": "Number of unhealhty snapmirrors.",
           "fieldConfig": {
             "defaults": {
               "color": {
-                "mode": "palette-classic"
+                "mode": "thresholds"
               },
-              "custom": {
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                }
-              },
-              "decimals": 0,
               "mappings": [],
-              "unitScale": true
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Healthy"
-                },
-                "properties": [
+              "noValue": "0",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
                   {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "green",
-                      "mode": "fixed"
-                    }
+                    "color": "red",
+                    "value": null
                   }
                 ]
               },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Unhealthy"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "dark-yellow",
-                      "mode": "fixed"
-                    }
-                  }
-                ]
-              }
-            ]
+              "unit": "short"
+            },
+            "overrides": []
           },
           "gridPos": {
-            "h": 12,
-            "w": 11,
+            "h": 6,
+            "w": 6,
             "x": 0,
             "y": 35
           },
-          "id": 114,
+          "id": 144,
+          "links": [],
           "options": {
-            "legend": {
-              "displayMode": "table",
-              "placement": "right",
-              "showLegend": true,
-              "values": [
-                "value"
-              ]
-            },
-            "pieType": "donut",
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "orientation": "horizontal",
             "reduceOptions": {
               "calcs": [
-                "last"
+                "lastNotNull"
               ],
               "fields": "",
               "values": false
             },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
+            "showPercentChange": false,
+            "text": {},
+            "textMode": "auto",
+            "wideLayout": true
           },
-          "pluginVersion": "8.1.2",
+          "pluginVersion": "8.1.8",
           "targets": [
             {
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
-              "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",group_type=\"consistencygroup\",healthy=\"true\",destination_cg_name=~\"$ConsistencyGroup\",relationship_id=\"\"}) or vector (0)",
-              "format": "time_series",
-              "instant": true,
-              "interval": "",
-              "legendFormat": "Healthy",
-              "refId": "A"
-            },
-            {
-              "datasource": "${DS_PROMETHEUS}",
-              "editorMode": "code",
-              "exemplar": false,
-              "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",group_type=\"consistencygroup\",healthy=\"false\",destination_cg_name=~\"$ConsistencyGroup\",relationship_id=\"\"}) or vector (0)",
+              "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\",group_type=\"consistencygroup\",healthy=\"false\",destination_cg_name=~\"$ConsistencyGroup\",relationship_id=\"\"}) or vector (0)",
               "format": "time_series",
               "hide": false,
               "instant": true,
               "interval": "",
-              "legendFormat": "Unhealthy",
-              "refId": "B"
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "A"
             }
           ],
-          "title": "Consistency Group Relationship Health Overview",
-          "type": "piechart"
+          "title": "Unhealthy",
+          "type": "stat"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
@@ -1311,15 +1247,14 @@
                 }
               },
               "decimals": 0,
-              "mappings": [],
-              "unitScale": true
+              "mappings": []
             },
             "overrides": []
           },
           "gridPos": {
             "h": 12,
-            "w": 13,
-            "x": 11,
+            "w": 18,
+            "x": 6,
             "y": 35
           },
           "id": 113,
@@ -1351,7 +1286,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",group_type=\"consistencygroup\",destination_cg_name=~\"$ConsistencyGroup\",derived_relationship_type=\"extended_data_protection\",relationship_id=\"\"}) or vector(0)",
+              "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_vserver=~\"$SVM\",destination_volume=~\"$Volume\",group_type=\"consistencygroup\",destination_cg_name=~\"$ConsistencyGroup\",derived_relationship_type=\"extended_data_protection\",relationship_id=\"\"}) or vector(0)",
               "instant": true,
               "interval": "",
               "legendFormat": "Asynchronous Mirror",
@@ -1360,7 +1295,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",group_type=\"consistencygroup\",destination_cg_name=~\"$ConsistencyGroup\",derived_relationship_type=\"mirror_vault\",relationship_id=\"\"}) or vector(0)",
+              "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_vserver=~\"$SVM\",destination_volume=~\"$Volume\",group_type=\"consistencygroup\",destination_cg_name=~\"$ConsistencyGroup\",derived_relationship_type=\"mirror_vault\",relationship_id=\"\"}) or vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1370,7 +1305,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",group_type=\"consistencygroup\",destination_cg_name=~\"$ConsistencyGroup\",derived_relationship_type=\"vault\",relationship_id=\"\"}) or vector(0)",
+              "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_vserver=~\"$SVM\",destination_volume=~\"$Volume\",group_type=\"consistencygroup\",destination_cg_name=~\"$ConsistencyGroup\",derived_relationship_type=\"vault\",relationship_id=\"\"}) or vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1380,7 +1315,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",group_type=\"consistencygroup\",destination_cg_name=~\"$ConsistencyGroup\",derived_relationship_type=\"sync_mirror_strict\",relationship_id=\"\"}) or vector(0)",
+              "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_vserver=~\"$SVM\",destination_volume=~\"$Volume\",group_type=\"consistencygroup\",destination_cg_name=~\"$ConsistencyGroup\",derived_relationship_type=\"sync_mirror_strict\",relationship_id=\"\"}) or vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1390,7 +1325,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",group_type=\"consistencygroup\",destination_cg_name=~\"$ConsistencyGroup\",derived_relationship_type=\"sync_mirror\",relationship_id=\"\"}) or vector(0)",
+              "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_vserver=~\"$SVM\",destination_volume=~\"$Volume\",group_type=\"consistencygroup\",destination_cg_name=~\"$ConsistencyGroup\",derived_relationship_type=\"sync_mirror\",relationship_id=\"\"}) or vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1400,7 +1335,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",group_type=\"consistencygroup\",destination_cg_name=~\"$ConsistencyGroup\",derived_relationship_type=\"automated_failover\",relationship_id=\"\"}) or vector(0)",
+              "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_vserver=~\"$SVM\",destination_volume=~\"$Volume\",group_type=\"consistencygroup\",destination_cg_name=~\"$ConsistencyGroup\",derived_relationship_type=\"automated_failover\",relationship_id=\"\"}) or vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1410,7 +1345,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",group_type=\"consistencygroup\",destination_cg_name=~\"$ConsistencyGroup\",derived_relationship_type=\"automated_failover_duplex\",relationship_id=\"\"}) or vector(0)",
+              "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_vserver=~\"$SVM\",destination_volume=~\"$Volume\",group_type=\"consistencygroup\",destination_cg_name=~\"$ConsistencyGroup\",derived_relationship_type=\"automated_failover_duplex\",relationship_id=\"\"}) or vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1424,6 +1359,73 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Number of healthy snapmirrors.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "noValue": "0",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 6,
+            "x": 0,
+            "y": 41
+          },
+          "id": 145,
+          "links": [],
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showPercentChange": false,
+            "text": {},
+            "textMode": "auto",
+            "wideLayout": true
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "datasource": "${DS_PROMETHEUS}",
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\",group_type=\"consistencygroup\",healthy=\"true\",destination_cg_name=~\"$ConsistencyGroup\",relationship_id=\"\"}) or vector (0)",
+              "format": "time_series",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Healthy",
+          "type": "stat"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This panel displays detail of all Consistency Group relationships from destination side of view.",
           "fieldConfig": {
             "defaults": {
@@ -1433,11 +1435,8 @@
               },
               "custom": {
                 "align": "left",
-                "cellOptions": {
-                  "type": "auto"
-                },
-                "filterable": true,
-                "inspect": false
+                "displayMode": "auto",
+                "filterable": true
               },
               "mappings": [],
               "thresholds": {
@@ -1448,8 +1447,7 @@
                     "value": null
                   }
                 ]
-              },
-              "unitScale": true
+              }
             },
             "overrides": [
               {
@@ -1595,10 +1593,8 @@
                     "value": 140
                   },
                   {
-                    "id": "custom.cellOptions",
-                    "value": {
-                      "type": "color-background"
-                    }
+                    "id": "custom.displayMode",
+                    "value": "color-background"
                   }
                 ]
               },
@@ -1668,13 +1664,13 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "10.3.1",
+          "pluginVersion": "8.1.8",
           "targets": [
             {
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
-              "expr": "snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",group_type=\"consistencygroup\",destination_cg_name=~\"$ConsistencyGroup\",relationship_id=\"\"}",
+              "expr": "snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_vserver=~\"$SVM\",destination_volume=~\"$Volume\",group_type=\"consistencygroup\",destination_cg_name=~\"$ConsistencyGroup\",relationship_id=\"\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1743,18 +1739,13 @@
           "type": "table"
         }
       ],
-      "targets": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "refId": "A"
-        }
-      ],
       "title": "Consistency Group Data Protection",
       "type": "row"
     }
   ],
   "refresh": "",
-  "schemaVersion": 39,
+  "schemaVersion": 30,
+  "style": "dark",
   "tags": [
     "harvest",
     "ontap",
@@ -1766,8 +1757,10 @@
         "current": {
           "selected": false,
           "text": "Prometheus",
-          "value": "c6938c7d-3e1c-4ff1-9741-ef4164e5259a"
+          "value": "Prometheus"
         },
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": false,
         "label": "Data Source",
@@ -1781,12 +1774,15 @@
         "type": "datasource"
       },
       {
+        "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"},datacenter)",
         "description": "Select all the datacenters that contain the ONTAP clusters acting as source for SnapMirror relationships.",
+        "error": null,
         "hide": 0,
         "includeAll": false,
+        "label": null,
         "multi": true,
         "name": "Datacenter",
         "options": [],
@@ -1808,8 +1804,11 @@
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(snapmirror_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"})",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "Cluster",
         "options": [],
@@ -1832,8 +1831,11 @@
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, destination_vserver)",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "SVM",
         "options": [],
@@ -1855,8 +1857,11 @@
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",destination_vserver=~\"$SVM\"}, destination_volume)",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "Volume",
         "options": [],
@@ -1865,7 +1870,7 @@
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
-        "regex": "",
+        "regex": "^[a-zA-Z0-9~@#$^*()_+=[\\]{}|\\\\.?: -]*$",
         "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
@@ -1878,8 +1883,11 @@
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", destination_vserver=~\"$SVM\"}, source_cg_name)",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "ConsistencyGroup",
         "options": [],
@@ -1903,8 +1911,11 @@
           "text": "5",
           "value": "5"
         },
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": true,
+        "label": null,
         "multi": false,
         "name": "TopResources",
         "options": [
@@ -2022,6 +2033,5 @@
   "timezone": "",
   "title": "ONTAP: SnapMirror Destinations",
   "uid": "cdot-snapmirror-destinations",
-  "version": 1,
-  "weekStart": ""
+  "version": 2
 }

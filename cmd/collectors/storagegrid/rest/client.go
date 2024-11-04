@@ -18,6 +18,7 @@ import (
 	"math"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -35,20 +36,13 @@ type Client struct {
 	buffer   *bytes.Buffer
 	Logger   *slog.Logger
 	baseURL  string
-	Cluster  Cluster
+	Remote   conf.Remote
 	token    string
 	Timeout  time.Duration
 	logRest  bool // used to log Rest request/response
 	APIPath  string
 	auth     *auth.Credentials
 	Metadata *util.Metadata
-}
-
-type Cluster struct {
-	Name    string
-	Info    string
-	UUID    string
-	Version [3]int
 }
 
 func NewClient(pollerName string, clientTimeout string, c *auth.Credentials) (*Client, error) {
@@ -303,13 +297,13 @@ func (c *Client) Init(retries int) error {
 		}
 
 		results = gjson.ParseBytes(content)
-		c.Cluster.Name = results.Get("data.name").String()
+		c.Remote.Name = results.Get("data.name").String()
 
 		if content, err = c.GetGridRest("grid/license"); err != nil {
 			continue
 		}
 		results = gjson.ParseBytes(content)
-		c.Cluster.UUID = results.Get("data.systemId").String()
+		c.Remote.UUID = results.Get("data.systemId").String()
 		return nil
 	}
 
@@ -324,9 +318,10 @@ func (c *Client) SetVersion(v string) error {
 	// e.g 11.6.0.3-20220802.2201.f58633a
 	segments := newVersion.Segments()
 	if len(segments) >= 3 {
-		c.Cluster.Version[0] = check(segments[0])
-		c.Cluster.Version[1] = check(segments[1])
-		c.Cluster.Version[2] = check(segments[2])
+		v0 := check(segments[0])
+		v1 := check(segments[1])
+		v2 := check(segments[2])
+		c.Remote.Version = strconv.Itoa(v0) + "." + strconv.Itoa(v1) + "." + strconv.Itoa(v2)
 	} else {
 		return fmt.Errorf("failed to parse version %s", v)
 	}

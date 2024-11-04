@@ -554,7 +554,7 @@ func writeAdminSystemd(configFp string) {
 	println(color.Colorize("✓", color.Green) + " HTTP SD file: " + harvestAdminService + " created")
 }
 
-func BuildMetrics(dir, configPath, pollerName string) (map[string]Counter, rest.Cluster) {
+func BuildMetrics(dir, configPath, pollerName string) (map[string]Counter, conf.Remote) {
 	var (
 		poller         *conf.Poller
 		err            error
@@ -612,7 +612,7 @@ func BuildMetrics(dir, configPath, pollerName string) (map[string]Counter, rest.
 		}
 	}
 
-	return counters, restClient.Cluster()
+	return counters, restClient.Remote()
 }
 
 func generateDescription(dPath string, data []byte, counters map[string]Counter) {

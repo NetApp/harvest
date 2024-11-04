@@ -37,19 +37,34 @@ func TestCopyLogs(t *testing.T) {
 	}
 }
 
+type containerInfo struct {
+	name          string
+	ignorePattern string
+	errorPattern  string
+}
+
 func TestNoErrors(t *testing.T) {
 	utils.SkipIfMissing(t, utils.AnalyzeDockerLogs)
-	containerIDs, err := docker.Containers("bin/poller")
-	if err != nil {
-		panic(err)
+
+	containerPatterns := []containerInfo{
+		{name: "bin/poller", ignorePattern: pollerIgnore(), errorPattern: "ERR"},
+		{name: "prometheus", errorPattern: "level=error|level=warn"},
+		{name: "grafana", errorPattern: "level=error"},
 	}
-	for _, container := range containerIDs {
-		checkLogs(t, container)
+
+	for _, containerPattern := range containerPatterns {
+		containers, err := docker.Containers(containerPattern.name)
+		if err != nil {
+			panic(err)
+		}
+		for _, container := range containers {
+			checkLogs(t, container, containerPattern)
+		}
 	}
 }
 
-func checkLogs(t *testing.T, container docker.Container) {
-	cli := fmt.Sprintf(`docker logs %s 2>&1 | grep -Ev '%s' | grep -E "ERR"`, container.ID, ignoreList())
+func checkLogs(t *testing.T, container docker.Container, info containerInfo) {
+	cli := fmt.Sprintf(`docker logs %s 2>&1 | grep -Ev '%s' | grep -E '%s'`, container.ID, info.ignorePattern, info.errorPattern)
 	command := exec.Command("bash", "-c", cli)
 	output, err := command.CombinedOutput()
 	// The grep checks for matching lines.
@@ -76,7 +91,7 @@ func checkLogs(t *testing.T, container docker.Container) {
 	}
 }
 
-// ignoreList returns a list of regex patterns that will be ignored
-func ignoreList() any {
+// pollerIgnore returns a list of regex patterns that will be ignored
+func pollerIgnore() string {
 	return `RPC: Remote system error|connection error|Code: 2426405`
 }

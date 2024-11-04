@@ -124,8 +124,8 @@ func (e *Ems) InitMatrix() error {
 	// overwrite from abstract collector
 	mat.Object = e.Object
 	// Add system (cluster) name
-	mat.SetGlobalLabel("cluster", e.Client.Cluster().Name)
-	mat.SetGlobalLabel("cluster_uuid", e.Client.Cluster().UUID)
+	mat.SetGlobalLabel("cluster", e.Client.Remote().Name)
+	mat.SetGlobalLabel("cluster_uuid", e.Client.Remote().UUID)
 
 	if e.Params.HasChildS("labels") {
 		for _, l := range e.Params.GetChildS("labels").GetChildren() {

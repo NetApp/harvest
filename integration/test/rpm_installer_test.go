@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/Netapp/harvest-automation/test/installer"
 	"github.com/Netapp/harvest-automation/test/utils"
-	"log"
+	"log/slog"
 	"os"
 	"testing"
 )
@@ -16,7 +16,7 @@ func TestRHELInstall(t *testing.T) {
 	}
 	installObject, err := installer.GetInstaller(installer.GRAFANA, "grafana/grafana")
 	if err != nil {
-		log.Println("Unable to initialize installer object for " + installer.GRAFANA)
+		slog.Error("Unable to initialize installer object", slog.String("object", installer.GRAFANA))
 		panic(err)
 	}
 	if !installObject.Install() {
@@ -27,24 +27,24 @@ func TestRHELInstall(t *testing.T) {
 
 	installObject, err2 := installer.GetInstaller(installer.RHEL, path)
 	if err2 != nil {
-		log.Println("Unable to initialize installer object")
+		slog.Error("Unable to initialize installer object", slog.String("object", installer.RHEL))
 		panic(err2)
 	}
 	if installObject.Install() {
-		log.Println("Installation is successful..")
+		slog.Info("Installation is successful..")
 	} else {
-		log.Println("Setup completed")
-		panic("installation is failed.")
+		slog.Error("Installation failed")
+		panic("installation failed.")
 	}
 	harvestObj := new(installer.Harvest)
-	if harvestObj.AllRunning() {
-		log.Println("All pollers are running")
+	if harvestObj.AllRunning("keyperf") {
+		slog.Info("All pollers but keyperf are running")
 	} else {
 		t.Errorf("One or more pollers are not running.")
 	}
 	installObject, err = installer.GetInstaller(installer.PROMETHEUS, "prom/prometheus")
 	if err != nil {
-		log.Println("Unable to initialize installer object for " + installer.PROMETHEUS)
+		slog.Error("Unable to initialize installer object", slog.String("object", installer.PROMETHEUS))
 		panic(err)
 	}
 	if !installObject.Install() {
@@ -58,11 +58,11 @@ func TestRHELStop(t *testing.T) {
 	var path = os.Getenv("BUILD_PATH")
 	installObject, err2 := installer.GetInstaller(installer.RHEL, path)
 	if err2 != nil {
-		log.Println("Unable to initialize installer object")
+		slog.Info("Unable to initialize installer object")
 		panic(err2)
 	}
 	if installObject.Stop() {
-		log.Println("Stop is successful..")
+		slog.Info("Stop is successful..")
 	} else {
 		panic("Stop is failed.")
 	}

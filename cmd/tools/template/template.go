@@ -22,6 +22,7 @@ type Model struct {
 	Name          string      `yaml:"name"`
 	Query         string      `yaml:"query"`
 	Object        string      `yaml:"object"`
+	Ignore        string      `yaml:"ignore"`
 	ExportData    string      `yaml:"export_data"`
 	Endpoints     []*Endpoint `yaml:"endpoints"`
 	ExportOptions struct {
@@ -80,6 +81,15 @@ func unmarshalModel(data []byte) (Model, error) {
 		return tm, errs.New(errs.ErrConfig, "template file is empty or does not exist")
 	}
 	contentNode := root.Content[0]
+	ignoreNode := searchNode(contentNode, "ignore")
+	if ignoreNode != nil && ignoreNode.Value == "true" {
+		tm.Ignore = ignoreNode.Value
+		nameNode := searchNode(contentNode, "name")
+		if nameNode != nil {
+			tm.Name = nameNode.Value
+		}
+		return tm, nil
+	}
 	err = readNameQueryObject(&tm, contentNode)
 	if err != nil {
 		return tm, err

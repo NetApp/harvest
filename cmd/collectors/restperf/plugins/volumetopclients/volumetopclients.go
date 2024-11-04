@@ -367,7 +367,7 @@ func (t *TopClients) fetchVolumesWithActivityTrackingEnabled() (*set.Set, error)
 		Filter([]string{"activity_tracking.state=on"}).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(t.client, href, t.SLogger); err != nil {
+	if result, err = collectors.InvokeRestCall(t.client, href); err != nil {
 		return va, err
 	}
 
@@ -395,7 +395,7 @@ func (t *TopClients) fetchTopClients(volumes *set.Set, svms *set.Set, metric str
 		Filter([]string{"top_metric=" + metric, "volume=" + strings.Join(volumes.Values(), "|"), "svm=" + strings.Join(svms.Values(), "|")}).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(t.client, href, t.SLogger); err != nil {
+	if result, err = collectors.InvokeRestCall(t.client, href); err != nil {
 		return result, err
 	}
 

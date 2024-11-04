@@ -10,6 +10,7 @@ schedule:
 
 objects:
   Aggregate:                   aggr.yaml
+  AggregateEfficiency:         aggr_efficiency.yaml
 # The CIFSSession template may slow down data collection due to a high number of metrics.
 #  CIFSSession:                 cifs_session.yaml
 #  CIFSShare:                    cifs_share.yaml
@@ -29,7 +30,7 @@ objects:
   Namespace:                   namespace.yaml
 #  NDMPSession:                ndmp_session.yaml
 #  NetConnections:              netconnections.yaml
-#  NetPort:                     netport.yaml
+  NetPort:                     netport.yaml
   NetRoute:                    netroute.yaml
 #  NFSClients:                  nfs_clients.yaml
   Node:                        node.yaml

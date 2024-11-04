@@ -54,7 +54,7 @@ var versionRegex = regexp.MustCompile(`\d+\.\d+\.\d+`)
 // are sorted, and we try to return the subtemplate that most closely matches the ONTAP version.
 // Model is cdot or 7mode, filename is the name of the subtemplate, and ver is the
 // ONTAP version triple (generation, major, minor)
-func (c *AbstractCollector) ImportSubTemplate(model, filename, jitter string, ver [3]int) (*node.Node, string, error) {
+func (c *AbstractCollector) ImportSubTemplate(model, filename, jitter string, verWithDots string) (*node.Node, string, error) {
 
 	var (
 		selectedVersion, templatePath string
@@ -72,7 +72,9 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename, jitter string, ve
 	// string like "volume.yaml,custom_volume.yaml"
 	filenames := strings.Split(filename, ",")
 
-	verWithDots := strings.Trim(strings.Join(strings.Fields(fmt.Sprint(ver)), "."), "[]")
+	if verWithDots == "" {
+		verWithDots = "0.0.0"
+	}
 	ontapVersion, err := version.NewVersion(verWithDots)
 	if err != nil {
 		return nil, "", fmt.Errorf("no best-fit template found due to err=%w", err)

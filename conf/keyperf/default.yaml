@@ -9,16 +9,10 @@ objects:
   Aggregate:                   aggr.yaml
   CIFSvserver:                 cifs_vserver.yaml
   Cluster:                     cluster.yaml
-  ISCSISvm:                    iscsi_svm.yaml
   LIF:                         lif.yaml
-  Lun:                         lun.yaml
-  Namespace:                   namespace.yaml
   NFSv3:                       nfsv3.yaml
   NFSv41:                      nfsv4_1.yaml
-  NFSv42:                      nfsv4_2.yaml
   NFSv4:                       nfsv4.yaml
   Node:                        node.yaml
-  NvmeServices:                nvme_services.yaml
   Volume:                      volume.yaml
   Qtree:                       qtree.yaml
-  OntapS3SVM:                  ontap_s3_svm.yaml
