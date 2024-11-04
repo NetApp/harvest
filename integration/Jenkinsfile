@@ -207,6 +207,7 @@ pipeline {
                                         zip -r docker_logs.zip /var/log/harvest
                                         cd $WORKSPACE/docker
                                         ANALYZE_DOCKER_LOGS=1 bash $WORKSPACE/harvest/integration/test/test.sh
+                                        CHECK_METRICS=1 bash $WORKSPACE/harvest/integration/test/test.sh
                                         docker ps -q | xargs docker stop | xargs docker rm --force
                                     """
                                     archiveArtifacts artifacts: "docker_logs.zip", fingerprint: true
@@ -267,6 +268,7 @@ pipeline {
                                         zip -r docker_fips_logs.zip /var/log/harvest
                                         cd $WORKSPACE/docker
                                         ANALYZE_DOCKER_LOGS=1 bash $WORKSPACE/harvest/integration/test/test.sh
+                                        CHECK_METRICS=1 bash $WORKSPACE/harvest/integration/test/test.sh
                                         docker ps -q | xargs docker stop | xargs docker rm --force
                                     """
                                     archiveArtifacts artifacts: "docker_fips_logs.zip", fingerprint: true
