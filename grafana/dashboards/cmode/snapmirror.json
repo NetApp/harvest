@@ -111,7 +111,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Total number of volumes that are protected.",
+      "description": "Number of unhealthy snapmirrors.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -123,7 +123,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-green",
+                "color": "red",
                 "value": null
               }
             ]
@@ -135,145 +135,8 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 6,
+        "w": 5,
         "x": 0,
-        "y": 1
-      },
-      "id": 137,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "text": {},
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "sum(snapmirror_break_successful_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",source_vserver=~\"$SVM\",source_volume=~\"$Volume\"})+sum(snapmirror_resync_successful_count{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",source_vserver=~\"$SVM\",source_volume=~\"$Volume\"})+sum(snapmirror_update_successful_count{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",source_vserver=~\"$SVM\",source_volume=~\"$Volume\"})OR on() vector(0)",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "range": false,
-          "refId": "A"
-        }
-      ],
-      "title": "Total Successful Count",
-      "type": "stat"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "Total number of volumes that are protected.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short",
-          "unitScale": true
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 6,
-        "x": 6,
-        "y": 1
-      },
-      "id": 138,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "text": {},
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "sum(snapmirror_break_failed_count{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",source_vserver=~\"$SVM\",source_volume=~\"$Volume\"})+sum(snapmirror_resync_failed_count{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",source_vserver=~\"$SVM\",source_volume=~\"$Volume\"})+sum(snapmirror_update_failed_count{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",source_vserver=~\"$SVM\",source_volume=~\"$Volume\"}) OR on() vector(0)",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Total Failed Count",
-      "type": "stat"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "Number of unhealhty snapmirrors.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short",
-          "unitScale": true
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 6,
-        "x": 12,
         "y": 1
       },
       "id": 139,
@@ -311,12 +174,149 @@
           "refId": "A"
         }
       ],
-      "title": "Unhealthy Count",
+      "title": "Unhealthy Relationships",
       "type": "stat"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Number of unhealhty snapmirrors.",
+      "description": "Total number of snapmirror transfers that have failed.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 5,
+        "x": 5,
+        "y": 1
+      },
+      "id": 138,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum(snapmirror_break_failed_count{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",source_vserver=~\"$SVM\",source_volume=~\".*$Volume.*\"})+sum(snapmirror_resync_failed_count{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",source_vserver=~\"$SVM\",source_volume=~\".*$Volume.*\"})+sum(snapmirror_update_failed_count{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",source_vserver=~\"$SVM\",source_volume=~\".*$Volume.*\"}) OR on() vector(0)",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Failed SnapMirror Transfers",
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Total number of snapmirror transfers that have been successfully completed without any errors or issues.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 5,
+        "x": 10,
+        "y": 1
+      },
+      "id": 137,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "text": {},
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum(snapmirror_break_successful_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",source_vserver=~\"$SVM\",source_volume=~\".*$Volume.*\"})+sum(snapmirror_resync_successful_count{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",source_vserver=~\"$SVM\",source_volume=~\".*$Volume.*\"})+sum(snapmirror_update_successful_count{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",source_vserver=~\"$SVM\",source_volume=~\".*$Volume.*\"})OR on() vector(0)",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Successful SnapMirror Transfers",
+      "type": "stat"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Number of unprotected volumes.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -340,8 +340,8 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 6,
-        "x": 18,
+        "w": 5,
+        "x": 15,
         "y": 1
       },
       "id": 148,
@@ -369,7 +369,7 @@
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
-          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",type=\"rw\",state!=\"\"}) - count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",type=\"rw\",state!=\"\",isProtected=\"true\",isDestinationOntap=\"true\", svm_root=\"false\"}) or vector(0)",
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",type=\"rw\",state!=\"\"}) - count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\".*$Volume.*\",type=\"rw\",state!=\"\",isProtected=\"true\",isDestinationOntap=\"true\", svm_root=\"false\"}) or vector(0)",
           "format": "time_series",
           "hide": false,
           "instant": true,
@@ -379,21 +379,18 @@
           "refId": "A"
         }
       ],
-      "title": "Unprotected volumes count",
+      "title": "Unprotected Volumes",
       "type": "stat"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Number of unhealhty snapmirrors.",
+      "description": "Number of protected volumes.",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
-          "decimals": 0,
           "mappings": [],
-          "max": 100,
-          "min": 0,
           "noValue": "0",
           "thresholds": {
             "mode": "absolute",
@@ -401,19 +398,39 @@
               {
                 "color": "green",
                 "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
               }
             ]
           },
-          "unit": "percent",
+          "unit": "short",
           "unitScale": true
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Protected"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 5,
         "w": 4,
-        "x": 0,
-        "y": 6
+        "x": 20,
+        "y": 1
       },
       "id": 145,
       "links": [],
@@ -433,328 +450,6 @@
         "text": {},
         "textMode": "auto",
         "wideLayout": true
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "100 * count(volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",type=\"rw\",snapshot_policy!=\"none\"}) / count(volume_labels{cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",type=\"rw\",snapshot_policy!=\"\",state!=\"\"}) or vector(0)",
-          "format": "time_series",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Snapshot copies (local)",
-      "type": "stat"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "Volumes Protected With Snapmirror (Local And Remote).",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "fieldMinMax": false,
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unitScale": true
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Scheduled Snapshot policy"
-            },
-            "properties": [
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "green",
-                      "value": null
-                    }
-                  ]
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Not Scheduled Snapshot policy"
-            },
-            "properties": [
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "red",
-                      "value": null
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 20,
-        "x": 4,
-        "y": 6
-      },
-      "id": 101,
-      "options": {
-        "displayMode": "basic",
-        "maxVizHeight": 300,
-        "minVizHeight": 16,
-        "minVizWidth": 8,
-        "namePlacement": "top",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showUnfilled": true,
-        "sizing": "manual",
-        "valueMode": "color"
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "count(volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",type=\"rw\",snapshot_policy!=\"none\"}) or vector(0)",
-          "format": "time_series",
-          "instant": true,
-          "interval": "",
-          "legendFormat": "Scheduled Snapshot policy",
-          "range": false,
-          "refId": "A"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "count(volume_labels{cluster=~\"$Cluster\",type=\"rw\",svm=~\"$SVM\",volume=~\"$Volume\",snapshot_policy!=\"\",state!=\"\"}) or vector(0)",
-          "format": "time_series",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "Total",
-          "refId": "B"
-        }
-      ],
-      "title": "Snapshot copies (local)",
-      "transformations": [
-        {
-          "id": "calculateField",
-          "options": {
-            "alias": "Not Scheduled Snapshot policy",
-            "binary": {
-              "left": "Total",
-              "operator": "-",
-              "right": "Scheduled Snapshot policy"
-            },
-            "mode": "binary",
-            "reduce": {
-              "reducer": "sum"
-            }
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "Time": true,
-              "Total": true
-            },
-            "includeByName": {},
-            "indexByName": {},
-            "renameByName": {}
-          }
-        }
-      ],
-      "type": "bargauge"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "Number of unhealhty snapmirrors.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "decimals": 0,
-          "mappings": [],
-          "max": 100,
-          "min": 0,
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "percent",
-          "unitScale": true
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 0,
-        "y": 11
-      },
-      "id": 146,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "text": {},
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "100 * count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",type=\"rw\",state!=\"\",isProtected=\"true\",isDestinationOntap=\"true\", svm_root=\"false\"}) / count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",type=\"rw\",state!=\"\"}) or vector(0)",
-          "format": "time_series",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "SnapMirror (local or remote)",
-      "type": "stat"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "Volumes Protected With Snapmirror (Local And Remote).",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "continuous-GrYlRd"
-          },
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unitScale": true
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Protected"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "green",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Not Protected"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "red",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 20,
-        "x": 4,
-        "y": 11
-      },
-      "id": 135,
-      "options": {
-        "displayMode": "basic",
-        "maxVizHeight": 300,
-        "minVizHeight": 16,
-        "minVizWidth": 8,
-        "namePlacement": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showUnfilled": true,
-        "sizing": "auto",
-        "valueMode": "color"
       },
       "pluginVersion": "8.1.8",
       "targets": [
@@ -782,7 +477,7 @@
           "refId": "B"
         }
       ],
-      "title": "SnapMirror (local or remote)",
+      "title": "Protected Volumes",
       "transformations": [
         {
           "id": "calculateField",
@@ -791,6 +486,7 @@
             "binary": {
               "left": "Total",
               "operator": "-",
+              "reducer": "sum",
               "right": "Protected"
             },
             "mode": "binary",
@@ -805,233 +501,28 @@
         {
           "id": "organize",
           "options": {
+            "colorMode": "value",
             "excludeByName": {
+              "Not Protected": true,
               "Time": true,
               "Total": true
             },
+            "graphMode": "area",
             "includeByName": {},
             "indexByName": {},
-            "renameByName": {}
+            "justifyMode": "auto",
+            "orientation": "horizontal",
+            "renameByName": {},
+            "text": {},
+            "textMode": "auto"
           }
         }
       ],
-      "type": "bargauge"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "Number of unhealhty snapmirrors.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "decimals": 0,
-          "mappings": [],
-          "max": 100,
-          "min": 0,
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "percent",
-          "unitScale": true
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 0,
-        "y": 16
-      },
-      "id": 147,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "text": {},
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "100 * count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",state!=\"\",isProtected=\"true\",isDestinationCloud=\"true\"})  / count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(0)",
-          "format": "time_series",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Back up to cloud",
       "type": "stat"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Volumes Protected With Snapmirror (Local And Remote).",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "continuous-GrYlRd"
-          },
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unitScale": true
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Backed Up"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "green",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Not Backed Up"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "red",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 20,
-        "x": 4,
-        "y": 16
-      },
-      "id": 136,
-      "options": {
-        "displayMode": "basic",
-        "maxVizHeight": 300,
-        "minVizHeight": 16,
-        "minVizWidth": 8,
-        "namePlacement": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showUnfilled": true,
-        "sizing": "auto",
-        "valueMode": "color"
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}) or vector(0)",
-          "format": "time_series",
-          "instant": true,
-          "interval": "",
-          "legendFormat": "Total",
-          "refId": "A"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",state!=\"\",isProtected=\"true\",isDestinationCloud=\"true\"}) or vector(0)",
-          "format": "time_series",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "Backed Up",
-          "refId": "B"
-        }
-      ],
-      "title": "Back up to cloud",
-      "transformations": [
-        {
-          "id": "calculateField",
-          "options": {
-            "alias": "Not Backed Up",
-            "binary": {
-              "left": "Total",
-              "operator": "-",
-              "right": "Backed Up"
-            },
-            "mode": "binary",
-            "reduce": {
-              "reducer": "sum"
-            }
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "Time": true,
-              "Total": true
-            },
-            "includeByName": {},
-            "indexByName": {},
-            "renameByName": {}
-          }
-        }
-      ],
-      "type": "bargauge"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel displays detail of all the snapmirror relationships from destination side of view.",
+      "description": "This panel displays detail of all the snapmirror relationships from source side of view.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1039,11 +530,8 @@
           },
           "custom": {
             "align": "left",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "filterable": true,
-            "inspect": false
+            "displayMode": "auto",
+            "filterable": true
           },
           "decimals": 2,
           "fieldMinMax": true,
@@ -1221,11 +709,8 @@
                 ]
               },
               {
-                "id": "custom.cellOptions",
-                "value": {
-                  "mode": "gradient",
-                  "type": "color-background"
-                }
+                "id": "custom.displayMode",
+                "value": "color-background"
               }
             ]
           },
@@ -1260,11 +745,8 @@
             },
             "properties": [
               {
-                "id": "custom.cellOptions",
-                "value": {
-                  "mode": "lcd",
-                  "type": "gauge"
-                }
+                "id": "custom.displayMode",
+                "value": "lcd-gauge"
               },
               {
                 "id": "unit",
@@ -1294,11 +776,8 @@
             },
             "properties": [
               {
-                "id": "custom.cellOptions",
-                "value": {
-                  "mode": "lcd",
-                  "type": "gauge"
-                }
+                "id": "custom.displayMode",
+                "value": "lcd-gauge"
               },
               {
                 "id": "unit",
@@ -1328,11 +807,8 @@
             },
             "properties": [
               {
-                "id": "custom.cellOptions",
-                "value": {
-                  "mode": "lcd",
-                  "type": "gauge"
-                }
+                "id": "custom.displayMode",
+                "value": "lcd-gauge"
               },
               {
                 "id": "mappings",
@@ -1361,7 +837,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 21
+        "y": 6
       },
       "id": 134,
       "links": [],
@@ -1390,19 +866,7 @@
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
-          "expr": "snapmirror_labels{source_cluster=~\"$Cluster\",source_volume=~\"$Volume\",source_vserver=~\"$SVM\",source_location=~\".*$ConsistencyGroup\",derived_relationship_type!=\"load_sharing\",relationship_id!=\"\"} ",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "snapmirror_last_transfer_duration{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",source_volume=~\"$Volume\",source_vserver=~\"$SVM\",source_location=~\".*$ConsistencyGroup\",relationship_id!=\"\"}",
+          "expr": "snapmirror_last_transfer_duration{source_cluster=~\"$Cluster\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\",relationship_id!=\"\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1414,7 +878,7 @@
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
-          "expr": "snapmirror_last_transfer_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", source_volume=~\"$Volume\",source_vserver=~\"$SVM\",source_location=~\".*$ConsistencyGroup\",relationship_id!=\"\"}",
+          "expr": "snapmirror_last_transfer_size{source_cluster=~\"$Cluster\", source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\",relationship_id!=\"\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1426,13 +890,25 @@
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
-          "expr": "snapmirror_lag_time{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",source_volume=~\"$Volume\",source_vserver=~\"$SVM\",source_location=~\".*$ConsistencyGroup\",relationship_id!=\"\"}",
+          "expr": "snapmirror_lag_time{source_cluster=~\"$Cluster\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\",relationship_id!=\"\"}",
           "format": "table",
           "hide": false,
           "instant": true,
           "legendFormat": "__auto",
           "range": false,
           "refId": "D"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "snapmirror_labels{source_cluster=~\"$Cluster\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\",derived_relationship_type!=\"load_sharing\",relationship_id!=\"\"} ",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
         }
       ],
       "title": "Relationships",
@@ -1504,7 +980,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Must select Source Volume/Destination Volume for detail of single relationship.",
+      "description": "This panel displays duration of the last SnapMirror transfer in seconds.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1567,7 +1043,7 @@
         "h": 9,
         "w": 8,
         "x": 0,
-        "y": 31
+        "y": 16
       },
       "id": 140,
       "options": {
@@ -1594,7 +1070,7 @@
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
-          "expr": "snapmirror_last_transfer_duration{source_cluster=~\"$Cluster\",source_volume=~\"$Volume\",source_vserver=~\"$SVM\",source_location=~\".*$ConsistencyGroup\"}\nand\ntopk($TopResources, avg_over_time(snapmirror_last_transfer_duration{source_cluster=~\"$Cluster\",source_volume=~\"$Volume\",source_vserver=~\"$SVM\",source_location=~\".*$ConsistencyGroup\"}[3h] @ end()))",
+          "expr": "snapmirror_last_transfer_duration{source_cluster=~\"$Cluster\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(snapmirror_last_transfer_duration{source_cluster=~\"$Cluster\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}[3h] @ end()))",
           "hide": false,
           "interval": "",
           "legendFormat": "{{source_location}} -> {{destination_location}}",
@@ -1609,7 +1085,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Must select Source Volume/Destination Volume for detail of single relationship.",
+      "description": "This panel displays amount of time since the last snapmirror transfer in seconds.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1673,7 +1149,7 @@
         "h": 9,
         "w": 8,
         "x": 8,
-        "y": 31
+        "y": 16
       },
       "id": 141,
       "options": {
@@ -1700,7 +1176,7 @@
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
-          "expr": "snapmirror_lag_time{source_cluster=~\"$Cluster\",source_volume=~\"$Volume\",source_vserver=~\"$SVM\",source_location=~\".*$ConsistencyGroup\"}\nand\ntopk($TopResources, avg_over_time(snapmirror_lag_time{source_cluster=~\"$Cluster\",source_volume=~\"$Volume\",source_vserver=~\"$SVM\",source_location=~\".*$ConsistencyGroup\"}[3h] @ end()))",
+          "expr": "snapmirror_lag_time{source_cluster=~\"$Cluster\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(snapmirror_lag_time{source_cluster=~\"$Cluster\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}[3h] @ end()))",
           "hide": false,
           "interval": "",
           "legendFormat": "{{source_location}} -> {{destination_location}}",
@@ -1715,7 +1191,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Must select Source Volume/Destination Volume for detail of single relationship.",
+      "description": "This panel displays size in kilobytes (1024 bytes) of the last transfer.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1778,7 +1254,7 @@
         "h": 9,
         "w": 8,
         "x": 16,
-        "y": 31
+        "y": 16
       },
       "id": 142,
       "options": {
@@ -1805,7 +1281,7 @@
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
-          "expr": "snapmirror_last_transfer_size{source_cluster=~\"$Cluster\",source_volume=~\"$Volume\",source_vserver=~\"$SVM\",source_location=~\".*$ConsistencyGroup\"}\nand\ntopk($TopResources, avg_over_time(snapmirror_last_transfer_size{source_cluster=~\"$Cluster\",source_volume=~\"$Volume\",source_vserver=~\"$SVM\",source_location=~\".*$ConsistencyGroup\"}[3h] @ end()))",
+          "expr": "snapmirror_last_transfer_size{source_cluster=~\"$Cluster\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(snapmirror_last_transfer_size{source_cluster=~\"$Cluster\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}[3h] @ end()))",
           "hide": false,
           "interval": "",
           "legendFormat": "{{source_location}} -> {{destination_location}}",
@@ -1825,7 +1301,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 40
+        "y": 25
       },
       "id": 45,
       "panels": [
@@ -1886,7 +1362,7 @@
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
-              "expr": "count(snapmirror_labels{source_cluster=~\"$Cluster\",source_vserver=~\"$SVM\",source_volume=~\"$Volume\",derived_relationship_type=\"extended_data_protection\"}) or vector(0)",
+              "expr": "count(snapmirror_labels{source_cluster=~\"$Cluster\",source_vserver=~\"$SVM\",source_volume=~\".*$Volume.*\",derived_relationship_type=\"extended_data_protection\",relationship_id!=\"\"}) or vector(0)",
               "instant": true,
               "interval": "",
               "legendFormat": "Asynchronous Mirror",
@@ -1896,7 +1372,7 @@
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
-              "expr": "count(snapmirror_labels{source_cluster=~\"$Cluster\",source_vserver=~\"$SVM\",source_volume=~\"$Volume\",derived_relationship_type=\"mirror_vault\"}) or vector(0)",
+              "expr": "count(snapmirror_labels{source_cluster=~\"$Cluster\",source_vserver=~\"$SVM\",source_volume=~\".*$Volume.*\",derived_relationship_type=\"mirror_vault\",relationship_id!=\"\"}) or vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1907,7 +1383,7 @@
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
-              "expr": "count(snapmirror_labels{source_cluster=~\"$Cluster\",source_vserver=~\"$SVM\",source_volume=~\"$Volume\",derived_relationship_type=\"vault\"}) or vector(0)",
+              "expr": "count(snapmirror_labels{source_cluster=~\"$Cluster\",source_vserver=~\"$SVM\",source_volume=~\".*$Volume.*\",derived_relationship_type=\"vault\",relationship_id!=\"\"}) or vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1918,7 +1394,7 @@
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
-              "expr": "count(snapmirror_labels{source_cluster=~\"$Cluster\",source_vserver=~\"$SVM\",source_volume=~\"$Volume\",derived_relationship_type=\"sync_mirror_strict\"}) or vector(0)",
+              "expr": "count(snapmirror_labels{source_cluster=~\"$Cluster\",source_vserver=~\"$SVM\",source_volume=~\".*$Volume.*\",derived_relationship_type=\"sync_mirror_strict\",relationship_id!=\"\"}) or vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1929,7 +1405,7 @@
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
-              "expr": "count(snapmirror_labels{source_cluster=~\"$Cluster\",source_vserver=~\"$SVM\",source_volume=~\"$Volume\",derived_relationship_type=\"sync_mirror\"}) or vector(0)",
+              "expr": "count(snapmirror_labels{source_cluster=~\"$Cluster\",source_vserver=~\"$SVM\",source_volume=~\".*$Volume.*\",derived_relationship_type=\"sync_mirror\",relationship_id!=\"\"}) or vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1940,7 +1416,7 @@
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
-              "expr": "count(snapmirror_labels{source_cluster=~\"$Cluster\",source_vserver=~\"$SVM\",source_volume=~\"$Volume\",derived_relationship_type=\"automated_failover\"}) or vector(0)",
+              "expr": "count(snapmirror_labels{source_cluster=~\"$Cluster\",source_vserver=~\"$SVM\",source_volume=~\".*$Volume.*\",derived_relationship_type=\"automated_failover\",relationship_id!=\"\"}) or vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1951,7 +1427,7 @@
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
-              "expr": "count(snapmirror_labels{source_cluster=~\"$Cluster\",source_vserver=~\"$SVM\",source_volume=~\"$Volume\",derived_relationship_type=\"automated_failover_duplex\"}) or vector(0)",
+              "expr": "count(snapmirror_labels{source_cluster=~\"$Cluster\",source_vserver=~\"$SVM\",source_volume=~\".*$Volume.*\",derived_relationship_type=\"automated_failover_duplex\",relationship_id!=\"\"}) or vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1959,13 +1435,13 @@
               "refId": "G"
             }
           ],
-          "title": "Count by Protection Policy",
+          "title": "Relationships by Protection Policy",
           "transformations": [],
           "type": "piechart"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Volume Relationships Experiencing Lag.",
+          "description": "This panel displays volume relationship count based on the lag time bucket.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2081,7 +1557,7 @@
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
-              "expr": "count((1 < snapmirror_lag_time{source_cluster=~\"$Cluster\", source_volume!=\"\",source_vserver=~\"$SVM\",source_volume=~\"$Volume\"} <= 900)) or vector(0)",
+              "expr": "count((1 < snapmirror_lag_time{source_cluster=~\"$Cluster\", source_volume!=\"\",source_vserver=~\"$SVM\",source_volume=~\".*$Volume.*\",relationship_id!=\"\"} <= 900)) or vector(0)",
               "instant": true,
               "interval": "",
               "legendFormat": "<=15 minutes",
@@ -2091,7 +1567,7 @@
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
-              "expr": "count((900 < snapmirror_lag_time{source_cluster=~\"$Cluster\", source_volume!=\"\",source_vserver=~\"$SVM\",source_volume=~\"$Volume\"} <= 1800)) or vector(0)",
+              "expr": "count((900 < snapmirror_lag_time{source_cluster=~\"$Cluster\", source_volume!=\"\",source_vserver=~\"$SVM\",source_volume=~\".*$Volume.*\",relationship_id!=\"\"} <= 1800)) or vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -2102,7 +1578,7 @@
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
-              "expr": "count((1800 < snapmirror_lag_time{source_cluster=~\"$Cluster\", source_volume!=\"\",source_vserver=~\"$SVM\",source_volume=~\"$Volume\"}  <= 3600)) or vector(0)",
+              "expr": "count((1800 < snapmirror_lag_time{source_cluster=~\"$Cluster\", source_volume!=\"\",source_vserver=~\"$SVM\",source_volume=~\".*$Volume.*\",relationship_id!=\"\"}  <= 3600)) or vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -2113,7 +1589,7 @@
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
-              "expr": "count((snapmirror_lag_time{ source_cluster=~\"$Cluster\",source_volume!=\"\",source_vserver=~\"$SVM\",source_volume=~\"$Volume\"} > 3600)) or vector(0)",
+              "expr": "count((snapmirror_lag_time{ source_cluster=~\"$Cluster\",source_volume!=\"\",source_vserver=~\"$SVM\",source_volume=~\".*$Volume.*\",relationship_id!=\"\"} > 3600)) or vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -2121,13 +1597,13 @@
               "refId": "D"
             }
           ],
-          "title": "Lag Status",
+          "title": "Relationships by Lag time",
           "transformations": [],
           "type": "piechart"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel displays snapmirror relationships with lag duration details.",
+          "description": "This panel displays snapmirror relationships with protection policy and lag duration details.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2223,10 +1699,8 @@
                     "value": 275
                   },
                   {
-                    "id": "custom.cellOptions",
-                    "value": {
-                      "type": "color-background"
-                    }
+                    "id": "custom.displayMode",
+                    "value": "color-background-solid"
                   }
                 ]
               },
@@ -2388,7 +1862,7 @@
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
-              "expr": "snapmirror_lag_time{source_cluster=~\"$Cluster\",source_volume!=\"\",source_vserver=~\"$SVM\",source_volume=~\"$Volume\"} * on(relationship_id) group_left(derived_relationship_type) snapmirror_labels{source_cluster=~\"$Cluster\",source_volume!=\"\",source_vserver=~\"$SVM\",source_volume=~\"$Volume\"} > 0",
+              "expr": "snapmirror_lag_time{source_cluster=~\"$Cluster\",source_volume!=\"\",source_vserver=~\"$SVM\",source_volume=~\".*$Volume.*\"} * on(source_cluster,source_vserver,source_volume) group_left(derived_relationship_type) snapmirror_labels{source_cluster=~\"$Cluster\",source_volume!=\"\",source_vserver=~\"$SVM\",source_volume=~\".*$Volume.*\"} > 0",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -2568,31 +2042,7 @@
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 2,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allValue": ".*",
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(snapmirror_labels{source_cluster=~\"$Cluster\", source_vserver=~\"$SVM\"},source_cg_name)",
-        "hide": 0,
-        "includeAll": true,
-        "multi": true,
-        "name": "ConsistencyGroup",
-        "options": [],
-        "query": {
-          "qryType": 1,
-          "query": "label_values(snapmirror_labels{source_cluster=~\"$Cluster\", source_vserver=~\"$SVM\"},source_cg_name)",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
-        },
-        "refresh": 2,
-        "regex": "",
+        "regex": "^[a-zA-Z0-9~@#$^*()_+=[\\]{}|\\\\.?: -]*$",
         "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
