@@ -65,6 +65,7 @@ label: [string]: string
 #Recorder: {
 	path: string
 	mode: "record" | "replay"
+	keep_last?: int
 }
 
 #CollectorDef: {
@@ -91,6 +92,7 @@ Pollers: [Name=_]: #Poller
 	log_max_bytes?:      int
 	log_max_files?:      int
 	password?:           string
+	poller_log_schedule?: string
 	prefer_zapi?:        bool
 	recorder?:           #Recorder
 	ssl_cert?:           string
