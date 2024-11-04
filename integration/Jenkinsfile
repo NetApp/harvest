@@ -1,12 +1,14 @@
+import java.util.Random
+
 pipeline {
 
     agent none
 
     options {
         buildDiscarder logRotator(
-                    daysToKeepStr: '16',
-                    numToKeepStr: '10'
-            )
+            daysToKeepStr: '16',
+            numToKeepStr: '10'
+        )
     }
     parameters {
         string(name: 'VERSION', defaultValue: '', description: 'Version')
@@ -53,7 +55,9 @@ pipeline {
                                 cleanWs()
                                 stopAndRemoveDockers()
                                 setupWorkspace()
-                                dockerLogin()
+                                retryWithBackoff(3) {
+                                    dockerLogin()
+                                }
                             }
                         }
                         stage('Install NATIVE pkg') {
@@ -112,7 +116,9 @@ pipeline {
                                 cleanWs()
                                 stopAndRemoveDockers()
                                 setupWorkspace()
-                                dockerLogin()
+                                retryWithBackoff(3) {
+                                    dockerLogin()
+                                }
                             }
                         }
                         stage('Install RPM pkg') {
@@ -168,7 +174,9 @@ pipeline {
                                 cleanWs()
                                 stopAndRemoveDockers()
                                 setupWorkspace()
-                                dockerLogin()
+                                retryWithBackoff(3) {
+                                    dockerLogin()
+                                }
                             }
                         }
                         stage('Install Docker') {
@@ -229,7 +237,9 @@ pipeline {
                                 cleanWs()
                                 stopAndRemoveDockers()
                                 setupWorkspace()
-                                dockerLogin()
+                                retryWithBackoff(3) {
+                                    dockerLogin()
+                                }
                             }
                         }
                         stage('Install Docker FIPS') {
@@ -317,5 +327,23 @@ def void printNodeInfo() {
 def void dockerLogin() {
     withDockerRegistry([credentialsId: "DockerHub", url: ""]) {
         sh 'docker login'
+    }
+}
+
+def void retryWithBackoff(int retries, Closure body) {
+    int attempt = 0
+    Random random = new Random()
+    while (attempt < retries) {
+        try {
+            body.call()
+            return
+        } catch (Exception e) {
+            attempt++
+            if (attempt >= retries) {
+                throw e
+            }
+            int randomDelay = random.nextInt(10000) // Random delay between 0 and 15000 milliseconds (0 to 10 seconds)
+            sleep((30 * 1000 * attempt) + randomDelay) // Exponential backoff with random delay
+        }
     }
 }
