@@ -128,8 +128,7 @@
               }
             ]
           },
-          "unit": "short",
-          "unitScale": true
+          "unit": "short"
         },
         "overrides": []
       },
@@ -196,8 +195,7 @@
               }
             ]
           },
-          "unit": "short",
-          "unitScale": true
+          "unit": "short"
         },
         "overrides": []
       },
@@ -264,8 +262,7 @@
               }
             ]
           },
-          "unit": "short",
-          "unitScale": true
+          "unit": "short"
         },
         "overrides": []
       },
@@ -333,8 +330,7 @@
               }
             ]
           },
-          "unit": "short",
-          "unitScale": true
+          "unit": "short"
         },
         "overrides": []
       },
@@ -405,8 +401,7 @@
               }
             ]
           },
-          "unit": "short",
-          "unitScale": true
+          "unit": "short"
         },
         "overrides": [
           {
@@ -534,7 +529,6 @@
             "filterable": true
           },
           "decimals": 2,
-          "fieldMinMax": true,
           "links": [],
           "mappings": [],
           "min": 0,
@@ -546,8 +540,7 @@
                 "value": null
               }
             ]
-          },
-          "unitScale": true
+          }
         },
         "overrides": [
           {
@@ -987,9 +980,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1001,7 +991,6 @@
               "tooltip": false,
               "viz": false
             },
-            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -1034,8 +1023,7 @@
               }
             ]
           },
-          "unit": "s",
-          "unitScale": true
+          "unit": "s"
         },
         "overrides": []
       },
@@ -1092,9 +1080,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1106,7 +1091,6 @@
               "tooltip": false,
               "viz": false
             },
-            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -1140,8 +1124,7 @@
               }
             ]
           },
-          "unit": "s",
-          "unitScale": true
+          "unit": "s"
         },
         "overrides": []
       },
@@ -1198,9 +1181,6 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -1212,7 +1192,6 @@
               "tooltip": false,
               "viz": false
             },
-            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -1245,8 +1224,7 @@
               }
             ]
           },
-          "unit": "bytes",
-          "unitScale": true
+          "unit": "bytes"
         },
         "overrides": []
       },
@@ -1930,7 +1908,7 @@
     }
   ],
   "refresh": "",
-  "schemaVersion": 39,
+  "schemaVersion": 30,
   "tags": [
     "harvest",
     "ontap",
@@ -1944,6 +1922,8 @@
           "text": "Prometheus",
           "value": "Prometheus"
         },
+        "description": null,
+        "error": null,
         "hide": 2,
         "includeAll": false,
         "label": "Data Source",
@@ -1957,12 +1937,15 @@
         "type": "datasource"
       },
       {
+        "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"},datacenter)",
         "description": "Select all the datacenters that contain the ONTAP clusters acting as source for SnapMirror relationships.",
+        "error": null,
         "hide": 0,
         "includeAll": false,
+        "label": null,
         "multi": true,
         "name": "Datacenter",
         "options": [],
@@ -1984,8 +1967,11 @@
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(snapmirror_labels{system_type!=\"7mode\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"cluster\", \"(.*)\"))",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "Cluster",
         "options": [],
@@ -2007,8 +1993,11 @@
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(snapmirror_labels{source_cluster=~\"$Cluster\"},source_vserver)",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "SVM",
         "options": [],
@@ -2031,8 +2020,11 @@
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(snapmirror_labels{source_cluster=~\"$Cluster\", source_vserver=~\"$SVM\"},source_volume)",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": true,
+        "label": null,
         "multi": true,
         "name": "Volume",
         "options": [],
@@ -2057,8 +2049,11 @@
           "text": "5",
           "value": "5"
         },
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": true,
+        "label": null,
         "multi": false,
         "name": "TopResources",
         "options": [
