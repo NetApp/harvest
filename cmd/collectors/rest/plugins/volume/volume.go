@@ -282,7 +282,7 @@ func (v *Volume) getEncryptedDisks() ([]gjson.Result, error) {
 		Filter([]string{"protection_mode=!data|full"}).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(v.client, href, v.SLogger); err != nil {
+	if result, err = collectors.InvokeRestCall(v.client, href); err != nil {
 		return nil, err
 	}
 	return result, nil
@@ -319,7 +319,7 @@ func (v *Volume) getVolume(field string, fields []string, volumeMap map[string]v
 		Filter([]string{field}).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(v.client, href, v.SLogger); err != nil {
+	if result, err = collectors.InvokeRestCall(v.client, href); err != nil {
 		return nil, err
 	}
 

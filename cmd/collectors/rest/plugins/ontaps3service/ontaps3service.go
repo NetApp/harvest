@@ -77,7 +77,7 @@ func (o *OntapS3Service) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 		MaxRecords(collectors.DefaultBatchSize).
 		Build()
 
-	if result, err = collectors.InvokeRestCall(o.client, href, o.SLogger); err != nil {
+	if result, err = collectors.InvokeRestCall(o.client, href); err != nil {
 		return nil, nil, err
 	}
 
