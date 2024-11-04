@@ -53,6 +53,7 @@ pipeline {
                                 cleanWs()
                                 stopAndRemoveDockers()
                                 setupWorkspace()
+                                dockerLogin()
                             }
                         }
                         stage('Install NATIVE pkg') {
@@ -111,6 +112,7 @@ pipeline {
                                 cleanWs()
                                 stopAndRemoveDockers()
                                 setupWorkspace()
+                                dockerLogin()
                             }
                         }
                         stage('Install RPM pkg') {
@@ -166,6 +168,7 @@ pipeline {
                                 cleanWs()
                                 stopAndRemoveDockers()
                                 setupWorkspace()
+                                dockerLogin()
                             }
                         }
                         stage('Install Docker') {
@@ -226,6 +229,7 @@ pipeline {
                                 cleanWs()
                                 stopAndRemoveDockers()
                                 setupWorkspace()
+                                dockerLogin()
                             }
                         }
                         stage('Install Docker FIPS') {
@@ -284,7 +288,7 @@ def void stopAndRemoveDockers() {
     sh '''
         for container_id in $(docker ps -a -q);do docker stop $container_id;done
         for container_id in $(docker ps -a -q);do docker rm $container_id;done
-        docker system prune --force --volumes
+        docker system prune --all --force --volumes
         volumes=$(docker volume ls -qf dangling=true)
         if [ "$volumes" ]; then
             docker volume rm $volumes
@@ -308,4 +312,10 @@ def void printNodeInfo() {
         socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
         nodeIp = socket.getLocalAddress().getHostAddress();
         println("The Node IP Address is: ${nodeIp}")
+}
+
+def void dockerLogin() {
+    withDockerRegistry([credentialsId: "DockerHub", url: ""]) {
+        sh 'docker login'
+    }
 }
