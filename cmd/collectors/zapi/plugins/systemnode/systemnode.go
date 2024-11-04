@@ -68,10 +68,6 @@ func (s *SystemNode) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 		inst.SetLabel("bmc_firmware_version", serviceProcessorMap[nodeName])
 	}
 
-	// update node metrics with partner info
-	for _, metric := range data.GetMetrics() {
-		metric.SetLabel("ha_partner", partnerNameMap[metric.GetLabel("node")])
-	}
 	return nil, s.client.Metadata, nil
 }
 
