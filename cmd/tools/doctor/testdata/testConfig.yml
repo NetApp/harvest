@@ -170,4 +170,14 @@ Pollers:
     username: admin
     password: '#pass'  # you can use single or double quotes to escape #
 
+  poller-with-embedded-exporter:
+    exporters:
+      - exporter: Prometheus
+        port: 2000
+
+  poller-with-embedded-exporter2:
+    exporters:
+      - exporter: Prometheus
+        port: 2000
+
 ll: grafana_api_token grafana_api_token
