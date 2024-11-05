@@ -889,6 +889,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#http-recorder" class="md-nav__link">
+    <span class="md-ellipsis">
+      HTTP Recorder
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#authentication" class="md-nav__link">
     <span class="md-ellipsis">
       Authentication
@@ -1945,6 +1954,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#http-recorder" class="md-nav__link">
+    <span class="md-ellipsis">
+      HTTP Recorder
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#authentication" class="md-nav__link">
     <span class="md-ellipsis">
       Authentication
@@ -2170,6 +2188,12 @@
 <td>The search path Harvest uses to load its <a href="../configure-templates/">templates</a>. Harvest walks each directory in order, stopping at the first one that contains the desired template.</td>
 <td>conf</td>
 </tr>
+<tr>
+<td><code>recorder</code></td>
+<td>optional, section</td>
+<td>Section that determines if Harvest should record or replay HTTP requests. See <a href="./#http-recorder">here</a> for details.</td>
+<td></td>
+</tr>
 </tbody>
 </table>
 <h2 id="defaults">Defaults<a class="headerlink" href="#defaults" title="Permanent link">&para;</a></h2>
@@ -2316,6 +2340,41 @@ in a cross-cutting fashion. Here's an example:</p>
 </code></pre></div>
 <p>Keep in mind that each unique combination of key-value pairs increases the amount of stored data. Use them sparingly.
 See <a href="https://prometheus.io/docs/practices/naming/#labels">PrometheusNaming</a> for details.</p>
+<h1 id="http-recorder">HTTP Recorder<a class="headerlink" href="#http-recorder" title="Permanent link">&para;</a></h1>
+<p>When troubleshooting, it can be useful to record HTTP requests and responses to disk for later replay.</p>
+<p>Harvest removes <code>Authorization</code> and <code>Host</code> headers from recorded requests and responses
+to prevent sensitive information from being stored on disk.</p>
+<p>The <code>recorder</code> section in the <code>harvest.yml</code> file allows you to configure the HTTP recorder.</p>
+<table>
+<thead>
+<tr>
+<th>parameter</th>
+<th>type</th>
+<th>description</th>
+<th align="right">default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>path</code></td>
+<td>string <strong>required</strong></td>
+<td>Path to a directory. Recorded requests and responses will be stored here. Replaying will read the requests and responses from this directory.</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td><code>mode</code></td>
+<td>string <strong>required</strong></td>
+<td><code>record</code> or <code>replay</code></td>
+<td align="right"></td>
+</tr>
+<tr>
+<td><code>keep_last</code></td>
+<td>optional, int</td>
+<td>When mode is <code>record</code>, the number of records to keep before overwriting</td>
+<td align="right">60</td>
+</tr>
+</tbody>
+</table>
 <h1 id="authentication">Authentication<a class="headerlink" href="#authentication" title="Permanent link">&para;</a></h1>
 <p>When authenticating with ONTAP and StorageGRID clusters,
 Harvest supports both client certificates and basic authentication.</p>
