@@ -21,8 +21,6 @@ type MemMetrics struct {
 }
 
 func MemoryMetrics() MemMetrics {
-	slog.Info("foo")
-
 	var memStats MemMetrics
 
 	// Get runtime metrics
