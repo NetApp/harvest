@@ -4,34 +4,34 @@
 ## 24.11.0 / 2024-11-06 Release
 :pushpin: Highlights of this major release include:
 
-
-- :gem: Seven new dashboards:
-  - New SnapMirror Destinations dashboard which shows relationship details from destination side of the view.
-  - New Vscan dashboard which shows SVM level and connection scanner details.
+- :gem: New dashboards:
+- SnapMirror Destinations Dashboard which displays relationship details from the destination perspective.
+- Vscan Dashboard which shows SVM-level and connection scanner details.
 
 
 - :star: Several of the existing dashboards include new panels in this release:
-  - SnapMirror dashboard now shows relationships details from source side of the view.
-  - Health dashboard includes emergency events in panel.
-  - Network dashboard includes ifgroup level throughput metrics.
-  - Network dashboard includes Ethernet port table panel.
-  - S3 Object Storage dashboard includes panels for OntapS3SVM.
-  - Tenant dashboard includes few time series panels.
-  - Metadata dashboard includes panel having instances collected data.
-  - Power dashboard includes "Average Power Consumption (kWh) Over Last Hour" panel.
-  - SVM dashboard includes Top SVM by Space panel.
-  - Volume Deep Dive dashboard includes other ops panel.
+- SnapMirror dashboard now includes relationship details from the source perspective and has been renamed to "ONTAP: SnapMirror Sources".
+- Health Dashboard's emergency events panel now includes all emergency EMS events from the last 24 hours.
+- Network Dashboard
+  - Includes Link Aggregation Group (LAG) metrics
+  - Adds Ethernet port details
+- s3 Object Storage dashboard includes panels for s3 metrics for SVM.
+- Tenant Dashboard
+  - Adds Tenant/Bucket Capacity Growth Chart
+  - Includes average size per object details for each bucket
+- Metadata Dashboard includes a panel displaying the number of instances collected.
+- Power Dashboard includes a new "Average Power Consumption (kWh) Over Last Hour" panel.
+- SVM Dashboard now features panels for logical space and physical space at the SVM level.
+- Volume Deep Dive dashboard includes "Other IOPs" panel.
 
+- :rocket: Performance Improvements:
+- Reduced memory footprint by optimizing memory allocations when serving metrics.
+- Reduced API calls when using the RestPerf collector.
 
-- Harvest supports Top clients metrics collection
-- Harvest supports recording and replaying HTTP requests
-- Harvest generates fips compliant container image
-- Grafana import allows rewriting cluster label
-
-
-- :ear_of_rice: Harvest includes new templates to collect:
-
-- :closed_book: Documentation additions
+- Harvest supports Top clients metrics collection. [More details](https://netapp.github.io/harvest/latest/plugins/#volumetopclients).
+- Harvest supports recording and replaying HTTP requests.
+- Harvest now provides a FIPS-compliant container image, available as a separate image (ghcr.io/netapp/harvest:24.08.0-1-fips).
+- Grafana import allows rewriting the cluster label during import.
 
 ## Announcements
 
