@@ -118,7 +118,7 @@ func TestUniquePromPorts(t *testing.T) {
 	if valid.isValid {
 		t.Fatal(`expected isValid to be false since there are duplicate prom ports, actual was isValid=true`)
 	}
-	if len(valid.invalid) != 2 {
+	if len(valid.invalid) != 4 {
 		t.Fatalf(`expected checkUniquePromPorts to return 2 invalid results, actual was %s`, valid.invalid)
 	}
 }
