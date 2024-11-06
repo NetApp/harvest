@@ -422,8 +422,8 @@ func checkExportersExist(config conf.HarvestConfig) validation {
 	return valid
 }
 
-// checkUniquePromPorts checks that all Prometheus exporters
-// which specify a port, do so uniquely
+// checkUniquePromPorts checks that all Prometheus exporters, which specify a port, do so uniquely.
+// Embedded exporters can conflict with non-embedded exporters, but not with each other.
 func checkUniquePromPorts(config conf.HarvestConfig) validation {
 	if config.Exporters == nil {
 		return validation{}
@@ -431,9 +431,16 @@ func checkUniquePromPorts(config conf.HarvestConfig) validation {
 	// Add all exporters that have a port to a
 	// map of portNum -> list of names
 	seen := make(map[int][]string)
+	var embeddedExporters []conf.ExporterDef
+
 	for name, exporter := range config.Exporters {
 		// ignore configuration with both port and portrange defined. PortRange takes precedence
 		if exporter.Port == nil || exporter.Type != "Prometheus" || exporter.PortRange != nil {
+			continue
+		}
+		// Ignore embedded exporters
+		if exporter.IsEmbedded {
+			embeddedExporters = append(embeddedExporters, conf.ExporterDef{Exporter: exporter, Name: name})
 			continue
 		}
 		previous := seen[*exporter.Port]
@@ -462,8 +469,24 @@ func checkUniquePromPorts(config conf.HarvestConfig) validation {
 			continue
 		}
 		valid.isValid = false
-		valid.invalid = append(valid.invalid, exporterNames...)
 		break
+	}
+
+	// Check that embedded exports do not conflict with each other
+	embeddedPorts := make(map[int][]string)
+	for _, embeddedExporter := range embeddedExporters {
+		// Check if the embedded exporter has a port
+		if embeddedExporter.Port == nil {
+			continue
+		}
+		// Check if the port is unique
+		previous := embeddedPorts[*embeddedExporter.Port]
+		previous = append(previous, embeddedExporter.Name)
+		embeddedPorts[*embeddedExporter.Port] = previous
+		if len(previous) > 1 {
+			valid.isValid = false
+			break
+		}
 	}
 
 	if !valid.isValid {
@@ -474,7 +497,25 @@ func checkUniquePromPorts(config conf.HarvestConfig) validation {
 				continue
 			}
 			names := strings.Join(exporterNames, ", ")
-			fmt.Printf("  port: [%s] duplicateExporters: [%s]\n", color.Colorize(port, color.Red), color.Colorize(names, color.Yellow))
+			valid.invalid = append(valid.invalid, exporterNames...)
+			fmt.Printf("  port: [%s] duplicate exporters: [%s]\n", color.Colorize(port, color.Red), color.Colorize(names, color.Yellow))
+		}
+		for port, exporterNames := range embeddedPorts {
+			if len(exporterNames) == 1 {
+				continue
+			}
+			pollerNames := make([]string, 0, len(exporterNames))
+			for _, exporterName := range exporterNames {
+				index := strings.LastIndex(exporterName, "-")
+				if index == -1 {
+					pollerNames = append(pollerNames, exporterName)
+					continue
+				}
+				pollerNames = append(pollerNames, exporterName[:index])
+			}
+			names := strings.Join(pollerNames, ", ")
+			valid.invalid = append(valid.invalid, exporterNames...)
+			fmt.Printf("  port: [%s] duplicate embedded exporters for pollers: [%s]\n", color.Colorize(port, color.Red), color.Colorize(names, color.Yellow))
 		}
 		fmt.Println()
 	}

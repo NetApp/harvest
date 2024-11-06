@@ -24,7 +24,7 @@ type StaticCounterDefinitions struct {
 	Objects map[string]Object `yaml:"objects"`
 }
 
-func loadStaticCounterDefinitions(object string, filePath string, logger *slog.Logger) (ObjectCounters, error) {
+func LoadStaticCounterDefinitions(object string, filePath string, logger *slog.Logger) (ObjectCounters, error) {
 	var staticDefinitions StaticCounterDefinitions
 	var objectCounters ObjectCounters
 

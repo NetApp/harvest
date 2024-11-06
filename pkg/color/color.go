@@ -36,9 +36,9 @@ func DetectConsole(option string) {
 	}
 }
 
-func Colorize(s interface{}, color string) string {
+func Colorize(s any, color string) string {
 	if withColor {
 		return fmt.Sprintf("%s%v\x1b[0m", color, s)
 	}
-	return fmt.Sprintf("%s", s)
+	return fmt.Sprintf("%v", s)
 }

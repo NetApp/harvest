@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/netapp/harvest/v2/cmd/collectors/keyperf"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	template2 "github.com/netapp/harvest/v2/cmd/tools/template"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
+	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -28,6 +30,10 @@ import (
 	"strings"
 	"text/template"
 	"time"
+)
+
+const (
+	keyPerfAPI = "KeyPerf"
 )
 
 var (
@@ -285,7 +291,7 @@ func processRestCounters(dir string, client *rest.Client) map[string]Counter {
 	})
 
 	keyPerfCounters := visitRestTemplates(filepath.Join(dir, "conf", "keyperf"), client, func(path string, client *rest.Client) map[string]Counter { // revive:disable-line:unused-parameter
-		return processRestConfigCounters(path, "KeyPerf")
+		return processRestConfigCounters(path, keyPerfAPI)
 	})
 
 	for k, v := range restPerfCounters {
@@ -444,7 +450,7 @@ func processRestConfigCounters(path string, api string) map[string]Counter {
 		}
 	}
 
-	if api == "KeyPerf" {
+	if api == keyPerfAPI {
 		// handling for templates with common object names
 		if specialPerfObjects[model.Object] {
 			return specialHandlingPerfCounters(counters, model)
@@ -455,10 +461,23 @@ func processRestConfigCounters(path string, api string) map[string]Counter {
 }
 
 func processCounters(counterContents []string, model *template2.Model, path, query string, counters map[string]Counter, metricLabels []string, api string) {
+	var (
+		staticCounterDef keyperf.ObjectCounters
+		err              error
+	)
+	if api == keyPerfAPI {
+		logger := logging.Get()
+		staticCounterDef, err = keyperf.LoadStaticCounterDefinitions(model.Object, "conf/keyperf/static_counter_definitions.yaml", logger)
+		if err != nil {
+			fmt.Printf("Failed to load static counter definitions=%s\n", err)
+		}
+	}
+
 	for _, c := range counterContents {
 		if c == "" {
 			continue
 		}
+		var co Counter
 		name, display, m, _ := util.ParseMetric(c)
 		if _, ok := excludeCounters[name]; ok {
 			continue
@@ -466,19 +485,66 @@ func processCounters(counterContents []string, model *template2.Model, path, que
 		description := searchDescriptionSwagger(model.Object, name)
 		harvestName := model.Object + "_" + display
 		if m == "float" {
-			co := Counter{
-				Object:      model.Object,
-				Name:        harvestName,
-				Description: description,
-				APIs: []MetricDef{
-					{
-						API:          api,
-						Endpoint:     query,
-						Template:     path,
-						ONTAPCounter: name,
+			if api == keyPerfAPI {
+				var (
+					unit        string
+					counterType string
+					denominator string
+				)
+				switch {
+				case strings.Contains(name, "latency"):
+					counterType = "average"
+					unit = "microsec"
+					denominator = model.Object + "_" + strings.Replace(name, "latency", "iops", 1)
+				case strings.Contains(name, "iops"):
+					counterType = "rate"
+					unit = "per_sec"
+				case strings.Contains(name, "throughput"):
+					counterType = "rate"
+					unit = "b_per_sec"
+				case strings.Contains(name, "timestamp"):
+					counterType = "delta"
+					unit = "sec"
+				default:
+					// look up metric in staticCounterDef
+					if counterDef, exists := staticCounterDef.CounterDefinitions[name]; exists {
+						counterType = counterDef.Type
+						unit = counterDef.BaseCounter
+					}
+				}
+
+				co = Counter{
+					Object:      model.Object,
+					Name:        harvestName,
+					Description: description,
+					APIs: []MetricDef{
+						{
+							API:          api,
+							Endpoint:     model.Query,
+							Template:     path,
+							ONTAPCounter: name,
+							Unit:         unit,
+							Type:         counterType,
+							BaseCounter:  denominator,
+						},
 					},
-				},
-				Labels: metricLabels,
+					Labels: metricLabels,
+				}
+			} else {
+				co = Counter{
+					Object:      model.Object,
+					Name:        harvestName,
+					Description: description,
+					APIs: []MetricDef{
+						{
+							API:          api,
+							Endpoint:     query,
+							Template:     path,
+							ONTAPCounter: name,
+						},
+					},
+					Labels: metricLabels,
+				}
 			}
 			counters[harvestName] = co
 
@@ -753,7 +819,7 @@ func visitRestTemplates(dir string, client *rest.Client, eachTemp func(path stri
 		if ext != ".yaml" {
 			return nil
 		}
-		if strings.HasSuffix(path, "default.yaml") {
+		if strings.HasSuffix(path, "default.yaml") || strings.HasSuffix(path, "static_counter_definitions.yaml") {
 			return nil
 		}
 		r := eachTemp(path, client)
