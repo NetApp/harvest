@@ -10,15 +10,15 @@
 
 
 - :star: Several of the existing dashboards include new panels in this release:
-- SnapMirror Dashboard now includes relationship details from the source perspective and has been renamed to "ONTAP: SnapMirror Sources".
+- SnapMirror dashboard now includes relationship details from the source perspective and has been renamed to "ONTAP: SnapMirror Sources".
 - Health Dashboard's emergency events panel now includes all emergency EMS events from the last 24 hours.
 - Network Dashboard
-- Includes Link Aggregation Group (LAG) metrics
-- Adds Ethernet port details
-- S3 Object Storage dashboard includes panels for s3 metrics for SVM.
+  - Includes Link Aggregation Group (LAG) metrics
+  - Adds Ethernet port details
+- s3 Object Storage dashboard includes panels for s3 metrics for SVM.
 - Tenant Dashboard
-- Adds Tenant/Bucket Capacity Growth Chart
-- Includes average size per object details for each bucket
+  - Adds Tenant/Bucket Capacity Growth Chart
+  - Includes average size per object details for each bucket
 - Metadata Dashboard includes a panel displaying the number of instances collected.
 - Power Dashboard includes a new "Average Power Consumption (kWh) Over Last Hour" panel.
 - SVM Dashboard now features panels for logical space and physical space at the SVM level.
@@ -30,8 +30,8 @@
 
 - Harvest supports Top clients metrics collection. [More details](https://netapp.github.io/harvest/latest/plugins/#volumetopclients).
 - Harvest supports recording and replaying HTTP requests.
-- Harvest now provides a FIPS-compliant container image, available as a separate image.
-- Grafana Import allows rewriting the cluster label during import.
+- Harvest now provides a FIPS-compliant container image, available as a separate image(ghcr.io/netapp/harvest:24.08.0-1-fips).
+- Grafana import allows rewriting the cluster label during import.
 
 ## Announcements
 
