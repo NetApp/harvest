@@ -147,7 +147,7 @@ func (kp *KeyPerf) loadParamInt(name string, defaultValue int) int {
 }
 
 func (kp *KeyPerf) buildCounters() {
-	staticCounterDef, err := loadStaticCounterDefinitions(kp.Prop.Object, "conf/keyperf/static_counter_definitions.yaml", kp.Logger)
+	staticCounterDef, err := LoadStaticCounterDefinitions(kp.Prop.Object, "conf/keyperf/static_counter_definitions.yaml", kp.Logger)
 	if err != nil {
 		// It's acceptable to continue even if there are errors, as the remaining counters will still be processed.
 		// Any counters that require counter metadata will be skipped.
