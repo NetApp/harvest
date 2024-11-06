@@ -101,6 +101,7 @@ this release:
 - Add Emergency Events To Health Dashboard ([#3238](https://github.com/NetApp/harvest/pull/3238))
 - Add Keyperf Metric Docs ([#3240](https://github.com/NetApp/harvest/pull/3240))
 - Improve Harvest Memory Logging ([#3244](https://github.com/NetApp/harvest/pull/3244))
+- Doctor should handle embedded exporters ([#3258](https://github.com/NetApp/harvest/pull/3258))
 
 ### :bug: Bug Fixes
 - Handled Non Exported Qtrees In Template ([#3105](https://github.com/NetApp/harvest/pull/3105))
@@ -127,6 +128,7 @@ this release:
 - Update Keyperf Collector Static Counter File Path ([#3241](https://github.com/NetApp/harvest/pull/3241))
 - Fix Numbering In Quickstart ([#3249](https://github.com/NetApp/harvest/pull/3249))
 - Fix Value Mapping In Tenant Dashboard ([#3253](https://github.com/NetApp/harvest/pull/3253))
+- Rename volume latency in keyperf ([#3261](https://github.com/NetApp/harvest/pull/3261))
 
 ### :closed_book: Documentation
 - Fix Typo In Docs ([#3112](https://github.com/NetApp/harvest/pull/3112))
@@ -136,6 +138,7 @@ this release:
 - Remove Qos Service Latency Counter From Metric Docs ([#3188](https://github.com/NetApp/harvest/pull/3188))
 - Add Space To Datacenter Dashboard Title ([#3225](https://github.com/NetApp/harvest/pull/3225))
 - Update Release Months To Match Harvest Release Cadence ([#3236](https://github.com/NetApp/harvest/pull/3236))
+- Update KeyPerf metric docs ([#3260](https://github.com/NetApp/harvest/pull/3260))
 
 ### :zap: Performance
 - Reduce Allocs When Reading Credential Files ([#3111](https://github.com/NetApp/harvest/pull/3111))
@@ -191,7 +194,7 @@ this release:
 
 ---
 
-## 24.05.8 / 2024-08-12 Release
+## 24.08.0 / 2024-08-12 Release
 
 - :gem: Harvest dashboards now include links to other relevant dashboards. This makes it easier to navigate relationships between cluster objects.
 
