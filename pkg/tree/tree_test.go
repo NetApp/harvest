@@ -164,7 +164,7 @@ func TestHarvestConfigImportYaml(t *testing.T) {
 		}
 	}
 
-	want = 12
+	want = 14
 	got = 0
 	if pollers := template.GetChildS("Pollers"); pollers != nil {
 		for range pollers.GetChildren() {

@@ -152,9 +152,10 @@ func fixupExporters() {
 	for _, pollerName := range Config.PollersOrdered {
 		poller := Config.Pollers[pollerName]
 		for i, e := range poller.ExporterDefs {
-			exporterName := e.name
+			exporterName := e.Name
 			if exporterName == "" {
 				// This is an embedded exporter, synthesize a name for it
+				e.Exporter.IsEmbedded = true
 				exporterName = fmt.Sprintf("%s-%d", pollerName, i)
 				Config.Exporters[exporterName] = e.Exporter
 			}
@@ -498,8 +499,8 @@ type CertificateScript struct {
 	Timeout string `yaml:"timeout,omitempty"`
 }
 
-type ExportDef struct {
-	name string
+type ExporterDef struct {
+	Name string
 	Exporter
 }
 
@@ -509,7 +510,7 @@ type Recorder struct {
 	KeepLast string `yaml:"keep_last,omitempty"` // number of records to keep before overwriting
 }
 
-func (e *ExportDef) UnmarshalYAML(n *yaml.Node) error {
+func (e *ExporterDef) UnmarshalYAML(n *yaml.Node) error {
 	if n.Kind == yaml.MappingNode {
 		var aExporter *Exporter
 		err := n.Decode(&aExporter)
@@ -518,7 +519,7 @@ func (e *ExportDef) UnmarshalYAML(n *yaml.Node) error {
 		}
 		e.Exporter = *aExporter
 	} else if n.Kind == yaml.ScalarNode && n.ShortTag() == "!!str" {
-		e.name = n.Value
+		e.Name = n.Value
 	}
 	return nil
 }
@@ -536,7 +537,7 @@ type Poller struct {
 	CredentialsFile   string               `yaml:"credentials_file,omitempty"`
 	CredentialsScript CredentialsScript    `yaml:"credentials_script,omitempty"`
 	Datacenter        string               `yaml:"datacenter,omitempty"`
-	ExporterDefs      []ExportDef          `yaml:"exporters,omitempty"`
+	ExporterDefs      []ExporterDef        `yaml:"exporters,omitempty"`
 	Exporters         []string             `yaml:"-"`
 	IsKfs             bool                 `yaml:"is_kfs,omitempty"`
 	Labels            *[]map[string]string `yaml:"labels,omitempty"`
@@ -698,7 +699,8 @@ type Exporter struct {
 	ClientTimeout *string `yaml:"client_timeout,omitempty"`
 	Version       *string `yaml:"version,omitempty"`
 
-	IsTest bool // true when run from unit tests
+	IsTest     bool // true when run from unit tests
+	IsEmbedded bool // true when the exporter is embedded in a poller
 }
 
 type Pollers struct {
