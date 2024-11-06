@@ -30,7 +30,7 @@
 
 - Harvest supports Top clients metrics collection. [More details](https://netapp.github.io/harvest/latest/plugins/#volumetopclients).
 - Harvest supports recording and replaying HTTP requests.
-- Harvest now provides a FIPS-compliant container image, available as a separate image(ghcr.io/netapp/harvest:24.08.0-1-fips).
+- Harvest now provides a FIPS-compliant container image, available as a separate image (ghcr.io/netapp/harvest:24.08.0-1-fips).
 - Grafana import allows rewriting the cluster label during import.
 
 ## Announcements
