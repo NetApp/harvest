@@ -7810,6 +7810,7 @@ Average latency in microseconds for the WAFL filesystem to process all the opera
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume` | `average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/restperf/9.12.0/volume.yaml | 
+| KeyPerf | `api/storage/volumes` | `statistics.latency_raw.total`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.total | conf/keyperf/9.15.0/volume.yaml | 
 | ZAPI | `perf-object-get-instances volume` | `avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/volume.yaml | 
 
 
@@ -8056,15 +8057,6 @@ This metric represents the total amount of data that has been read from and writ
 | KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.total`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml | 
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml | 
-
-
-### node_volume_total_latency
-
-Performance metric aggregated over all types of I/O operations. node_volume_total_latency is [volume_total_latency](#volume_total_latency) aggregated by `node`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| KeyPerf | `api/storage/volumes` | `statistics.latency_raw.total`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.total | conf/keyperf/9.15.0/volume.yaml | 
 
 
 ### node_volume_total_ops
@@ -14801,6 +14793,15 @@ Number of write operations per second to the volume
 | ZAPI | `perf-object-get-instances volume:vserver` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_svm.yaml | 
 
 
+### svm_volume_avg_latency
+
+Performance metric aggregated over all types of I/O operations. svm_volume_avg_latency is [volume_avg_latency](#volume_avg_latency) aggregated by `svm`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/volumes` | `statistics.latency_raw.total`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.total | conf/keyperf/9.15.0/volume.yaml | 
+
+
 ### svm_volume_other_data
 
 Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on. svm_volume_other_data is [volume_other_data](#volume_other_data) aggregated by `svm`.
@@ -14862,15 +14863,6 @@ Performance metric aggregated over all types of I/O operations. svm_volume_total
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.total`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
-
-
-### svm_volume_total_latency
-
-Performance metric aggregated over all types of I/O operations. svm_volume_total_latency is [volume_total_latency](#volume_total_latency) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| KeyPerf | `api/storage/volumes` | `statistics.latency_raw.total`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.total | conf/keyperf/9.15.0/volume.yaml | 
 
 
 ### svm_volume_total_ops
@@ -15139,6 +15131,7 @@ Average latency in microseconds for the WAFL filesystem to process all the opera
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume` | `average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/restperf/9.12.0/volume.yaml | 
+| KeyPerf | `api/storage/volumes` | `statistics.latency_raw.total`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.total | conf/keyperf/9.15.0/volume.yaml | 
 | ZAPI | `perf-object-get-instances volume` | `avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/volume.yaml | 
 
 
@@ -15859,15 +15852,6 @@ This metric represents the total amount of data that has been read from and writ
 | REST | `api/cluster/counter/tables/volume` | `bytes_read, bytes_written`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml | 
 | KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.total`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
 | ZAPI | `volume` | `read_data, write_data`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml | 
-
-
-### volume_total_latency
-
-Performance metric aggregated over all types of I/O operations.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| KeyPerf | `api/storage/volumes` | `statistics.latency_raw.total`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.total | conf/keyperf/9.15.0/volume.yaml | 
 
 
 ### volume_total_ops
