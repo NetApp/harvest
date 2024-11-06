@@ -1647,6 +1647,7 @@ func checkVariablesAreFSxFriendly(t *testing.T, path string, data []byte) {
 	exceptionValues := map[string]bool{
 		"cmode/metadata.json":                true,
 		"cmode/snapmirror_destinations.json": true,
+		"cmode/snapmirror.json":              true,
 	}
 
 	gjson.GetBytes(data, "templating.list").ForEach(func(key, value gjson.Result) bool {
