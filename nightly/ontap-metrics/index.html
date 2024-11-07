@@ -8275,15 +8275,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#node_volume_total_latency" class="md-nav__link">
-    <span class="md-ellipsis">
-      node_volume_total_latency
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#node_volume_total_ops" class="md-nav__link">
     <span class="md-ellipsis">
       node_volume_total_ops
@@ -13945,6 +13936,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#svm_volume_avg_latency" class="md-nav__link">
+    <span class="md-ellipsis">
+      svm_volume_avg_latency
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#svm_volume_other_data" class="md-nav__link">
     <span class="md-ellipsis">
       svm_volume_other_data
@@ -14002,15 +14002,6 @@
   <a href="#svm_volume_total_data" class="md-nav__link">
     <span class="md-ellipsis">
       svm_volume_total_data
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#svm_volume_total_latency" class="md-nav__link">
-    <span class="md-ellipsis">
-      svm_volume_total_latency
     </span>
   </a>
   
@@ -14911,15 +14902,6 @@
   <a href="#volume_total_data" class="md-nav__link">
     <span class="md-ellipsis">
       volume_total_data
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#volume_total_latency" class="md-nav__link">
-    <span class="md-ellipsis">
-      volume_total_latency
     </span>
   </a>
   
@@ -22393,15 +22375,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#node_volume_total_latency" class="md-nav__link">
-    <span class="md-ellipsis">
-      node_volume_total_latency
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#node_volume_total_ops" class="md-nav__link">
     <span class="md-ellipsis">
       node_volume_total_ops
@@ -28063,6 +28036,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#svm_volume_avg_latency" class="md-nav__link">
+    <span class="md-ellipsis">
+      svm_volume_avg_latency
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#svm_volume_other_data" class="md-nav__link">
     <span class="md-ellipsis">
       svm_volume_other_data
@@ -28120,15 +28102,6 @@
   <a href="#svm_volume_total_data" class="md-nav__link">
     <span class="md-ellipsis">
       svm_volume_total_data
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#svm_volume_total_latency" class="md-nav__link">
-    <span class="md-ellipsis">
-      svm_volume_total_latency
     </span>
   </a>
   
@@ -29035,15 +29008,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#volume_total_latency" class="md-nav__link">
-    <span class="md-ellipsis">
-      volume_total_latency
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#volume_total_ops" class="md-nav__link">
     <span class="md-ellipsis">
       volume_total_ops
@@ -29346,7 +29310,7 @@ These can be generated on demand by running <code>bin/harvest grafana metrics</c
 <p>More information about ONTAP REST performance counters can be found <a href="https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html">here</a>.</p>
 </li>
 </ul>
-<div class="highlight"><pre><span></span><code>Creation Date : 2024-Nov-06
+<div class="highlight"><pre><span></span><code>Creation Date : 2024-Nov-07
 ONTAP Version: 9.15.1
 </code></pre></div>
 <h2 id="understanding-the-structure">Understanding the structure<a class="headerlink" href="#understanding-the-structure" title="Permanent link">&para;</a></h2>
@@ -30747,7 +30711,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/aggregates</code></td>
-<td><code>statistics.throughput_raw.other</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.throughput_raw.other</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/aggr.yaml</td>
 </tr>
 </tbody>
@@ -30767,7 +30731,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/aggregates</code></td>
-<td><code>statistics.latency_raw.other</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.latency_raw.other</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> aggr_statistics.iops_raw.other</td>
 <td>conf/keyperf/9.15.0/aggr.yaml</td>
 </tr>
 </tbody>
@@ -30787,7 +30751,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/aggregates</code></td>
-<td><code>statistics.iops_raw.other</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.iops_raw.other</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/aggr.yaml</td>
 </tr>
 </tbody>
@@ -30983,7 +30947,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/aggregates</code></td>
-<td><code>statistics.throughput_raw.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.throughput_raw.read</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/aggr.yaml</td>
 </tr>
 </tbody>
@@ -31003,7 +30967,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/aggregates</code></td>
-<td><code>statistics.latency_raw.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.latency_raw.read</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> aggr_statistics.iops_raw.read</td>
 <td>conf/keyperf/9.15.0/aggr.yaml</td>
 </tr>
 </tbody>
@@ -31023,7 +30987,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/aggregates</code></td>
-<td><code>statistics.iops_raw.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.iops_raw.read</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/aggr.yaml</td>
 </tr>
 </tbody>
@@ -31785,7 +31749,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/aggregates</code></td>
-<td><code>statistics.throughput_raw.total</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.throughput_raw.total</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/aggr.yaml</td>
 </tr>
 </tbody>
@@ -31805,7 +31769,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/aggregates</code></td>
-<td><code>statistics.latency_raw.total</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.latency_raw.total</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> aggr_statistics.iops_raw.total</td>
 <td>conf/keyperf/9.15.0/aggr.yaml</td>
 </tr>
 </tbody>
@@ -31851,7 +31815,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/aggregates</code></td>
-<td><code>statistics.iops_raw.total</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.iops_raw.total</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/aggr.yaml</td>
 </tr>
 </tbody>
@@ -31923,7 +31887,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/aggregates</code></td>
-<td><code>statistics.throughput_raw.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.throughput_raw.write</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/aggr.yaml</td>
 </tr>
 </tbody>
@@ -31943,7 +31907,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/aggregates</code></td>
-<td><code>statistics.latency_raw.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.latency_raw.write</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> aggr_statistics.iops_raw.write</td>
 <td>conf/keyperf/9.15.0/aggr.yaml</td>
 </tr>
 </tbody>
@@ -31963,7 +31927,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/aggregates</code></td>
-<td><code>statistics.iops_raw.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.iops_raw.write</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/aggr.yaml</td>
 </tr>
 </tbody>
@@ -32061,7 +32025,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/cluster</code></td>
-<td><code>statistics.throughput_raw.other</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.throughput_raw.other</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/cluster.yaml</td>
 </tr>
 </tbody>
@@ -32081,7 +32045,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/cluster</code></td>
-<td><code>statistics.latency_raw.other</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.latency_raw.other</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cluster_statistics.iops_raw.other</td>
 <td>conf/keyperf/9.15.0/cluster.yaml</td>
 </tr>
 </tbody>
@@ -32101,7 +32065,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/cluster</code></td>
-<td><code>statistics.iops_raw.other</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.iops_raw.other</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/cluster.yaml</td>
 </tr>
 </tbody>
@@ -32147,7 +32111,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/cluster</code></td>
-<td><code>statistics.throughput_raw.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.throughput_raw.read</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/cluster.yaml</td>
 </tr>
 </tbody>
@@ -32167,7 +32131,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/cluster</code></td>
-<td><code>statistics.latency_raw.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.latency_raw.read</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cluster_statistics.iops_raw.read</td>
 <td>conf/keyperf/9.15.0/cluster.yaml</td>
 </tr>
 </tbody>
@@ -32187,7 +32151,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/cluster</code></td>
-<td><code>statistics.iops_raw.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.iops_raw.read</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/cluster.yaml</td>
 </tr>
 </tbody>
@@ -32285,7 +32249,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/cluster</code></td>
-<td><code>statistics.throughput_raw.total</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.throughput_raw.total</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/cluster.yaml</td>
 </tr>
 </tbody>
@@ -32305,7 +32269,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/cluster</code></td>
-<td><code>statistics.latency_raw.total</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.latency_raw.total</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cluster_statistics.iops_raw.total</td>
 <td>conf/keyperf/9.15.0/cluster.yaml</td>
 </tr>
 </tbody>
@@ -32325,7 +32289,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/cluster</code></td>
-<td><code>statistics.iops_raw.total</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.iops_raw.total</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/cluster.yaml</td>
 </tr>
 </tbody>
@@ -32345,7 +32309,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/cluster</code></td>
-<td><code>statistics.throughput_raw.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.throughput_raw.write</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/cluster.yaml</td>
 </tr>
 </tbody>
@@ -32365,7 +32329,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/cluster</code></td>
-<td><code>statistics.latency_raw.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.latency_raw.write</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cluster_statistics.iops_raw.write</td>
 <td>conf/keyperf/9.15.0/cluster.yaml</td>
 </tr>
 </tbody>
@@ -32385,7 +32349,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/cluster</code></td>
-<td><code>statistics.iops_raw.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.iops_raw.write</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/cluster.yaml</td>
 </tr>
 </tbody>
@@ -38291,7 +38255,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/network/ip/interfaces</code></td>
-<td><code>statistics.throughput_raw.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.throughput_raw.write</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/lif.yaml</td>
 </tr>
 <tr>
@@ -38375,7 +38339,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/network/ip/interfaces</code></td>
-<td><code>statistics.throughput_raw.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.throughput_raw.read</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/lif.yaml</td>
 </tr>
 <tr>
@@ -38453,7 +38417,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/network/ip/interfaces</code></td>
-<td><code>statistics.throughput_raw.total</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.throughput_raw.total</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/lif.yaml</td>
 </tr>
 </tbody>
@@ -41691,7 +41655,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/cluster/nodes</code></td>
-<td><code>statistics.processor_utilization_raw</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.processor_utilization_raw</code><br><span class="key">Unit:</span> statistics.processor_utilization_base<br><span class="key">Type:</span> percent<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/node.yaml</td>
 </tr>
 <tr>
@@ -50709,6 +50673,12 @@ ONTAP Version: 9.15.1
 <td>conf/restperf/9.12.0/volume.yaml</td>
 </tr>
 <tr>
+<td>KeyPerf</td>
+<td><code>api/storage/volumes</code></td>
+<td><code>statistics.latency_raw.total</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.total</td>
+<td>conf/keyperf/9.15.0/volume.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances volume</code></td>
 <td><code>avg_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops</td>
@@ -51173,7 +51143,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.throughput_raw.other</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.throughput_raw.other</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 </tbody>
@@ -51199,7 +51169,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.latency_raw.other</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.latency_raw.other</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.other</td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 <tr>
@@ -51231,7 +51201,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.iops_raw.other</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.iops_raw.other</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 <tr>
@@ -51263,7 +51233,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.throughput_raw.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.throughput_raw.read</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 <tr>
@@ -51295,7 +51265,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.latency_raw.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.latency_raw.read</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.read</td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 <tr>
@@ -51327,7 +51297,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.iops_raw.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.iops_raw.read</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 <tr>
@@ -51353,7 +51323,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.throughput_raw.total</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.throughput_raw.total</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 <tr>
@@ -51367,26 +51337,6 @@ ONTAP Version: 9.15.1
 <td><code>NA</code></td>
 <td><code>Harvest generated</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/volume.yaml</td>
-</tr>
-</tbody>
-</table>
-<h3 id="node_volume_total_latency">node_volume_total_latency<a class="headerlink" href="#node_volume_total_latency" title="Permanent link">&para;</a></h3>
-<p>Performance metric aggregated over all types of I/O operations. node_volume_total_latency is <a href="#volume_total_latency">volume_total_latency</a> aggregated by <code>node</code>.</p>
-<table>
-<thead>
-<tr>
-<th>API</th>
-<th>Endpoint</th>
-<th>Metric</th>
-<th>Template</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>KeyPerf</td>
-<td><code>api/storage/volumes</code></td>
-<td><code>statistics.latency_raw.total</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
-<td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -51411,7 +51361,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.iops_raw.total</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.iops_raw.total</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 <tr>
@@ -51443,7 +51393,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.throughput_raw.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.throughput_raw.write</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 <tr>
@@ -51475,7 +51425,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.latency_raw.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.latency_raw.write</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.write</td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 <tr>
@@ -51507,7 +51457,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.iops_raw.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.iops_raw.write</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 <tr>
@@ -57261,7 +57211,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/qtrees</code></td>
-<td><code>statistics.throughput_raw.other</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.throughput_raw.other</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/qtree.yaml</td>
 </tr>
 </tbody>
@@ -57281,7 +57231,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/qtrees</code></td>
-<td><code>statistics.iops_raw.other</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.iops_raw.other</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/qtree.yaml</td>
 </tr>
 </tbody>
@@ -57301,7 +57251,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/qtrees</code></td>
-<td><code>statistics.throughput_raw.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.throughput_raw.read</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/qtree.yaml</td>
 </tr>
 </tbody>
@@ -57321,7 +57271,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/qtrees</code></td>
-<td><code>statistics.iops_raw.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.iops_raw.read</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/qtree.yaml</td>
 </tr>
 </tbody>
@@ -57341,7 +57291,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/qtrees</code></td>
-<td><code>statistics.throughput_raw.total</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.throughput_raw.total</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/qtree.yaml</td>
 </tr>
 </tbody>
@@ -57367,7 +57317,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/qtrees</code></td>
-<td><code>statistics.iops_raw.total</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.iops_raw.total</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/qtree.yaml</td>
 </tr>
 <tr>
@@ -57393,7 +57343,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/qtrees</code></td>
-<td><code>statistics.throughput_raw.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.throughput_raw.write</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/qtree.yaml</td>
 </tr>
 </tbody>
@@ -57413,7 +57363,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/qtrees</code></td>
-<td><code>statistics.iops_raw.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.iops_raw.write</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/qtree.yaml</td>
 </tr>
 </tbody>
@@ -60082,7 +60032,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/cifs/services</code></td>
-<td><code>statistics.latency_raw.other</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.latency_raw.other</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> svm_cifs_statistics.iops_raw.other</td>
 <td>conf/keyperf/9.15.0/cifs_vserver.yaml</td>
 </tr>
 </tbody>
@@ -60102,7 +60052,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/cifs/services</code></td>
-<td><code>statistics.iops_raw.other</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.iops_raw.other</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/cifs_vserver.yaml</td>
 </tr>
 </tbody>
@@ -60122,7 +60072,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/cifs/services</code></td>
-<td><code>statistics.throughput_raw.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.throughput_raw.read</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/cifs_vserver.yaml</td>
 </tr>
 </tbody>
@@ -60148,7 +60098,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/cifs/services</code></td>
-<td><code>statistics.latency_raw.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.latency_raw.read</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> svm_cifs_statistics.iops_raw.read</td>
 <td>conf/keyperf/9.15.0/cifs_vserver.yaml</td>
 </tr>
 <tr>
@@ -60180,7 +60130,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/cifs/services</code></td>
-<td><code>statistics.iops_raw.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.iops_raw.read</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/cifs_vserver.yaml</td>
 </tr>
 <tr>
@@ -60232,7 +60182,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/cifs/services</code></td>
-<td><code>statistics.latency_raw.total</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.latency_raw.total</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> svm_cifs_statistics.iops_raw.total</td>
 <td>conf/keyperf/9.15.0/cifs_vserver.yaml</td>
 </tr>
 </tbody>
@@ -60252,7 +60202,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/cifs/services</code></td>
-<td><code>statistics.iops_raw.total</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.iops_raw.total</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/cifs_vserver.yaml</td>
 </tr>
 </tbody>
@@ -60272,7 +60222,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/cifs/services</code></td>
-<td><code>statistics.throughput_raw.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.throughput_raw.write</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/cifs_vserver.yaml</td>
 </tr>
 </tbody>
@@ -60298,7 +60248,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/cifs/services</code></td>
-<td><code>statistics.latency_raw.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.latency_raw.write</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> svm_cifs_statistics.iops_raw.write</td>
 <td>conf/keyperf/9.15.0/cifs_vserver.yaml</td>
 </tr>
 <tr>
@@ -60330,7 +60280,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/cifs/services</code></td>
-<td><code>statistics.iops_raw.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.iops_raw.write</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/cifs_vserver.yaml</td>
 </tr>
 <tr>
@@ -62148,7 +62098,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v3.latency_raw.total</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v3.latency_raw.total</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> svm_nfs_statistics.v3.iops_raw.total</td>
 <td>conf/keyperf/9.15.0/nfsv3.yaml</td>
 </tr>
 <tr>
@@ -62160,7 +62110,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v4.latency_raw.total</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v4.latency_raw.total</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> svm_nfs_statistics.v4.iops_raw.total</td>
 <td>conf/keyperf/9.15.0/nfsv4.yaml</td>
 </tr>
 <tr>
@@ -62172,7 +62122,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v41.latency_raw.total</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v41.latency_raw.total</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> svm_nfs_statistics.v41.iops_raw.total</td>
 <td>conf/keyperf/9.15.0/nfsv4_1.yaml</td>
 </tr>
 <tr>
@@ -63784,7 +63734,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v3.iops_raw.total</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v3.iops_raw.total</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/nfsv3.yaml</td>
 </tr>
 <tr>
@@ -63796,7 +63746,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v4.iops_raw.total</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v4.iops_raw.total</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/nfsv4.yaml</td>
 </tr>
 <tr>
@@ -63808,7 +63758,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v41.iops_raw.total</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v41.iops_raw.total</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/nfsv4_1.yaml</td>
 </tr>
 <tr>
@@ -63858,19 +63808,19 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v3.latency_raw.other</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v3.latency_raw.other</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> svm_nfs_statistics.v3.iops_raw.other</td>
 <td>conf/keyperf/9.15.0/nfsv3.yaml</td>
 </tr>
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v4.latency_raw.other</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v4.latency_raw.other</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> svm_nfs_statistics.v4.iops_raw.other</td>
 <td>conf/keyperf/9.15.0/nfsv4.yaml</td>
 </tr>
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v41.latency_raw.other</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v41.latency_raw.other</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> svm_nfs_statistics.v41.iops_raw.other</td>
 <td>conf/keyperf/9.15.0/nfsv4_1.yaml</td>
 </tr>
 </tbody>
@@ -63890,19 +63840,19 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v3.iops_raw.other</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v3.iops_raw.other</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/nfsv3.yaml</td>
 </tr>
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v4.iops_raw.other</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v4.iops_raw.other</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/nfsv4.yaml</td>
 </tr>
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v41.iops_raw.other</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v41.iops_raw.other</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/nfsv4_1.yaml</td>
 </tr>
 </tbody>
@@ -64280,7 +64230,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v3.latency_raw.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v3.latency_raw.read</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> svm_nfs_statistics.v3.iops_raw.read</td>
 <td>conf/keyperf/9.15.0/nfsv3.yaml</td>
 </tr>
 <tr>
@@ -64292,7 +64242,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v4.latency_raw.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v4.latency_raw.read</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> svm_nfs_statistics.v4.iops_raw.read</td>
 <td>conf/keyperf/9.15.0/nfsv4.yaml</td>
 </tr>
 <tr>
@@ -64304,7 +64254,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v41.latency_raw.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v41.latency_raw.read</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> svm_nfs_statistics.v41.iops_raw.read</td>
 <td>conf/keyperf/9.15.0/nfsv4_1.yaml</td>
 </tr>
 <tr>
@@ -64360,19 +64310,19 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v3.iops_raw.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v3.iops_raw.read</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/nfsv3.yaml</td>
 </tr>
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v4.iops_raw.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v4.iops_raw.read</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/nfsv4.yaml</td>
 </tr>
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v41.iops_raw.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v41.iops_raw.read</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/nfsv4_1.yaml</td>
 </tr>
 <tr>
@@ -64456,7 +64406,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v3.throughput_raw.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v3.throughput_raw.read</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/nfsv3.yaml</td>
 </tr>
 <tr>
@@ -64468,7 +64418,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v4.throughput_raw.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v4.throughput_raw.read</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/nfsv4.yaml</td>
 </tr>
 <tr>
@@ -64480,7 +64430,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v41.throughput_raw.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v41.throughput_raw.read</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/nfsv4_1.yaml</td>
 </tr>
 <tr>
@@ -66294,19 +66244,19 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v3.throughput_raw.total</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v3.throughput_raw.total</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/nfsv3.yaml</td>
 </tr>
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v4.throughput_raw.total</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v4.throughput_raw.total</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/nfsv4.yaml</td>
 </tr>
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v41.throughput_raw.total</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v41.throughput_raw.total</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/nfsv4_1.yaml</td>
 </tr>
 </tbody>
@@ -66508,7 +66458,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v3.latency_raw.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v3.latency_raw.write</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> svm_nfs_statistics.v3.iops_raw.write</td>
 <td>conf/keyperf/9.15.0/nfsv3.yaml</td>
 </tr>
 <tr>
@@ -66520,7 +66470,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v4.latency_raw.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v4.latency_raw.write</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> svm_nfs_statistics.v4.iops_raw.write</td>
 <td>conf/keyperf/9.15.0/nfsv4.yaml</td>
 </tr>
 <tr>
@@ -66532,7 +66482,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v41.latency_raw.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v41.latency_raw.write</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> svm_nfs_statistics.v41.iops_raw.write</td>
 <td>conf/keyperf/9.15.0/nfsv4_1.yaml</td>
 </tr>
 <tr>
@@ -66588,19 +66538,19 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v3.iops_raw.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v3.iops_raw.write</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/nfsv3.yaml</td>
 </tr>
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v4.iops_raw.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v4.iops_raw.write</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/nfsv4.yaml</td>
 </tr>
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v41.iops_raw.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v41.iops_raw.write</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/nfsv4_1.yaml</td>
 </tr>
 <tr>
@@ -66632,7 +66582,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v3.throughput_raw.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v3.throughput_raw.write</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/nfsv3.yaml</td>
 </tr>
 <tr>
@@ -66644,7 +66594,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v4.throughput_raw.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v4.throughput_raw.write</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/nfsv4.yaml</td>
 </tr>
 <tr>
@@ -66656,7 +66606,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/protocols/nfs/services</code></td>
-<td><code>statistics.v41.throughput_raw.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.v41.throughput_raw.write</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/nfsv4_1.yaml</td>
 </tr>
 <tr>
@@ -70341,6 +70291,26 @@ ONTAP Version: 9.15.1
 </tr>
 </tbody>
 </table>
+<h3 id="svm_volume_avg_latency">svm_volume_avg_latency<a class="headerlink" href="#svm_volume_avg_latency" title="Permanent link">&para;</a></h3>
+<p>Performance metric aggregated over all types of I/O operations. svm_volume_avg_latency is <a href="#volume_avg_latency">volume_avg_latency</a> aggregated by <code>svm</code>.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>KeyPerf</td>
+<td><code>api/storage/volumes</code></td>
+<td><code>statistics.latency_raw.total</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.total</td>
+<td>conf/keyperf/9.15.0/volume.yaml</td>
+</tr>
+</tbody>
+</table>
 <h3 id="svm_volume_other_data">svm_volume_other_data<a class="headerlink" href="#svm_volume_other_data" title="Permanent link">&para;</a></h3>
 <p>Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on. svm_volume_other_data is <a href="#volume_other_data">volume_other_data</a> aggregated by <code>svm</code>.</p>
 <table>
@@ -70356,7 +70326,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.throughput_raw.other</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.throughput_raw.other</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 </tbody>
@@ -70376,7 +70346,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.latency_raw.other</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.latency_raw.other</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.other</td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 </tbody>
@@ -70396,7 +70366,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.iops_raw.other</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.iops_raw.other</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 </tbody>
@@ -70416,7 +70386,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.throughput_raw.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.throughput_raw.read</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 </tbody>
@@ -70436,7 +70406,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.latency_raw.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.latency_raw.read</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.read</td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 </tbody>
@@ -70456,7 +70426,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.iops_raw.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.iops_raw.read</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 </tbody>
@@ -70476,27 +70446,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.throughput_raw.total</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
-<td>conf/keyperf/9.15.0/volume.yaml</td>
-</tr>
-</tbody>
-</table>
-<h3 id="svm_volume_total_latency">svm_volume_total_latency<a class="headerlink" href="#svm_volume_total_latency" title="Permanent link">&para;</a></h3>
-<p>Performance metric aggregated over all types of I/O operations. svm_volume_total_latency is <a href="#volume_total_latency">volume_total_latency</a> aggregated by <code>svm</code>.</p>
-<table>
-<thead>
-<tr>
-<th>API</th>
-<th>Endpoint</th>
-<th>Metric</th>
-<th>Template</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>KeyPerf</td>
-<td><code>api/storage/volumes</code></td>
-<td><code>statistics.latency_raw.total</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.throughput_raw.total</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 </tbody>
@@ -70516,7 +70466,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.iops_raw.total</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.iops_raw.total</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 </tbody>
@@ -70536,7 +70486,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.throughput_raw.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.throughput_raw.write</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 </tbody>
@@ -70556,7 +70506,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.latency_raw.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.latency_raw.write</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.write</td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 </tbody>
@@ -70576,7 +70526,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.iops_raw.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.iops_raw.write</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 </tbody>
@@ -71154,6 +71104,12 @@ ONTAP Version: 9.15.1
 <td><code>api/cluster/counter/tables/volume</code></td>
 <td><code>average_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops</td>
 <td>conf/restperf/9.12.0/volume.yaml</td>
+</tr>
+<tr>
+<td>KeyPerf</td>
+<td><code>api/storage/volumes</code></td>
+<td><code>statistics.latency_raw.total</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.total</td>
+<td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -71866,7 +71822,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.throughput_raw.other</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.throughput_raw.other</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 </tbody>
@@ -71892,7 +71848,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.latency_raw.other</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.latency_raw.other</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.other</td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 <tr>
@@ -71924,7 +71880,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.iops_raw.other</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.iops_raw.other</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 <tr>
@@ -72086,7 +72042,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.throughput_raw.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.throughput_raw.read</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 <tr>
@@ -72118,7 +72074,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.latency_raw.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.latency_raw.read</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.read</td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 <tr>
@@ -72150,7 +72106,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.iops_raw.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.iops_raw.read</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 <tr>
@@ -73016,7 +72972,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.throughput_raw.total</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.throughput_raw.total</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 <tr>
@@ -73024,26 +72980,6 @@ ONTAP Version: 9.15.1
 <td><code>volume</code></td>
 <td><code>read_data, write_data</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/volume.yaml</td>
-</tr>
-</tbody>
-</table>
-<h3 id="volume_total_latency">volume_total_latency<a class="headerlink" href="#volume_total_latency" title="Permanent link">&para;</a></h3>
-<p>Performance metric aggregated over all types of I/O operations.</p>
-<table>
-<thead>
-<tr>
-<th>API</th>
-<th>Endpoint</th>
-<th>Metric</th>
-<th>Template</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>KeyPerf</td>
-<td><code>api/storage/volumes</code></td>
-<td><code>statistics.latency_raw.total</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
-<td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -73068,7 +73004,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.iops_raw.total</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.iops_raw.total</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 <tr>
@@ -73100,7 +73036,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.throughput_raw.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.throughput_raw.write</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 <tr>
@@ -73132,7 +73068,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.latency_raw.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.latency_raw.write</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.write</td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 <tr>
@@ -73164,7 +73100,7 @@ ONTAP Version: 9.15.1
 <tr>
 <td>KeyPerf</td>
 <td><code>api/storage/volumes</code></td>
-<td><code>statistics.iops_raw.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>statistics.iops_raw.write</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 <tr>
