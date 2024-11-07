@@ -612,6 +612,38 @@ func unitForExpr(e expression, overrides []override, defaultUnit string,
 	return defaultUnit
 }
 
+func TestVariablesRefresh(t *testing.T) {
+	VisitDashboards(dashboards,
+		func(path string, data []byte) {
+			checkVariablesRefresh(t, path, data)
+		})
+}
+
+func checkVariablesRefresh(t *testing.T, path string, data []byte) {
+	gjson.GetBytes(data, "templating.list").ForEach(func(key, value gjson.Result) bool {
+		if value.Get("type").String() == "datasource" {
+			return true
+		}
+		// If the variable is not visible, ignore
+		if value.Get("hide").Int() != 0 {
+			return true
+		}
+		// If the variable is custom, ignore
+		if value.Get("type").String() == "custom" {
+			return true
+		}
+
+		refreshVal := value.Get("refresh").Int()
+		if refreshVal != 2 {
+			varName := value.Get("name").String()
+			t.Errorf("dashboard=%s path=templating.list[%s].refresh variable=%s is not 2. Should be \"refresh\": 2,",
+				ShortPath(path), key.String(), varName)
+		}
+
+		return true
+	})
+}
+
 func TestVariablesAreSorted(t *testing.T) {
 	VisitDashboards(dashboards,
 		func(path string, data []byte) {

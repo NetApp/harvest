@@ -1189,7 +1189,7 @@
           "query": "label_values(svm_vscan_scan_latency{system_type!=\"7mode\",datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}, svm)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -1212,7 +1212,7 @@
           "query": "label_values(vscan_scanner_stats_pct_cpu_used{system_type!=\"7mode\",datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}, scanner)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
