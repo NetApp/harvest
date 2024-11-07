@@ -1,5 +1,7 @@
 Welcome to the NetApp Harvest Getting Started Guide. This tutorial will guide you through the steps required to deploy an instance of NetApp Harvest, Prometheus, and Grafana on a Linux platform to monitor an ONTAP cluster.
 
+If you prefer to use the container version of NetApp Harvest, please refer to the [container installation guide](install/containers.md).
+
 This tutorial uses `systemd` to manage Harvest, Prometheus, and Grafana. If you would rather run the processes directly, feel free to ignore the sections of the tutorial that set up `systemd` service files.
 
 ### 1. Set Installation Path
@@ -302,13 +304,13 @@ systemctl status "poller*"
 
   ```bash
   cd ${HARVEST_INSTALL_PATH}/harvest-${HARVEST_VERSION}-1_linux_amd64
-  sudo -u harvest bin/harvest start
+  bin/harvest start
   ```
 
   Verify that the pollers have started successfully by checking their status:
 
   ```bash
-  sudo -u harvest bin/harvest status
+  bin/harvest status
   ```
 
   The output should look similar to this:
