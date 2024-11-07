@@ -268,8 +268,8 @@ User=harvest
 Group=harvest
 Type=simple
 Restart=on-failure
-ExecStart=${HARVEST_INSTALL_PATH}/harvest-${HARVEST_VERSION}-1_linux_amd64/bin/harvest --config ${HARVEST_INSTALL_PATH}/harvest-${HARVEST_VERSION}-1_linux_amd64/harvest.yml start -f %i
 WorkingDirectory=${HARVEST_INSTALL_PATH}/harvest-${HARVEST_VERSION}-1_linux_amd64
+ExecStart=${HARVEST_INSTALL_PATH}/harvest-${HARVEST_VERSION}-1_linux_amd64/bin/harvest --config ${HARVEST_INSTALL_PATH}/harvest-${HARVEST_VERSION}-1_linux_amd64/harvest.yml start -f %i
 
 [Install]
 WantedBy=harvest.target
