@@ -583,7 +583,7 @@ func BuildMetrics(dir, configPath, pollerName string) (map[string]Counter, conf.
 		fmt.Printf("error creating new client %+v\n", err)
 		os.Exit(1)
 	}
-	if err = restClient.Init(2); err != nil {
+	if err = restClient.Init(2, conf.Remote{}); err != nil {
 		fmt.Printf("error init rest client %+v\n", err)
 		os.Exit(1)
 	}

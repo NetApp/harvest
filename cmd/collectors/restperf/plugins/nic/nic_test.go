@@ -4,6 +4,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
@@ -17,7 +18,7 @@ func runNicTest(t *testing.T, createRestNic func(params *node.Node) plugin.Plugi
 	n := createRestNic(params)
 
 	// Initialize the plugin
-	if err := n.Init(); err != nil {
+	if err := n.Init(conf.Remote{}); err != nil {
 		t.Fatalf("failed to initialize plugin: %v", err)
 	}
 

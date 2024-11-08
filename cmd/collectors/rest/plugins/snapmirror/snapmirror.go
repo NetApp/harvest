@@ -40,7 +40,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &SnapMirror{AbstractPlugin: p}
 }
 
-func (m *SnapMirror) Init() error {
+func (m *SnapMirror) Init(remote conf.Remote) error {
 
 	var err error
 
@@ -54,7 +54,7 @@ func (m *SnapMirror) Init() error {
 		return err
 	}
 
-	if err := m.client.Init(5); err != nil {
+	if err := m.client.Init(5, remote); err != nil {
 		return err
 	}
 

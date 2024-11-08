@@ -29,6 +29,7 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/auth"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -44,7 +45,7 @@ const DefaultPollInterval = 3 * time.Minute
 // Plugin defines the methods of a plugin
 type Plugin interface {
 	GetName() string
-	Init() error
+	Init(conf.Remote) error
 	Run(map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error)
 }
 
@@ -130,7 +131,7 @@ func (p *AbstractPlugin) GetName() string {
 }
 
 // Init initializes the plugin by calling InitAbc
-func (p *AbstractPlugin) Init() error {
+func (p *AbstractPlugin) Init(conf.Remote) error {
 	return p.InitAbc()
 }
 

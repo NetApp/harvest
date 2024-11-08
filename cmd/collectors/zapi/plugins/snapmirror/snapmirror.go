@@ -36,7 +36,8 @@ var flexgroupConstituentName = regexp.MustCompile(`^(.*)__(\d{4})$`)
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &SnapMirror{AbstractPlugin: p}
 }
-func (m *SnapMirror) Init() error {
+
+func (m *SnapMirror) Init(remote conf.Remote) error {
 	var err error
 	if err := m.InitAbc(); err != nil {
 		return err
@@ -45,7 +46,7 @@ func (m *SnapMirror) Init() error {
 		m.SLogger.Error("connecting", slogx.Err(err))
 		return err
 	}
-	if err := m.client.Init(5); err != nil {
+	if err := m.client.Init(5, remote); err != nil {
 		return err
 	}
 	m.nodeUpdCounter = 0

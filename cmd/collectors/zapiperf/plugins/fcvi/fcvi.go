@@ -23,7 +23,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &FCVI{AbstractPlugin: p}
 }
 
-func (f *FCVI) Init() error {
+func (f *FCVI) Init(remote conf.Remote) error {
 	var err error
 	if err := f.InitAbc(); err != nil {
 		return err
@@ -33,7 +33,7 @@ func (f *FCVI) Init() error {
 		f.SLogger.Error("connecting", slogx.Err(err))
 		return err
 	}
-	return f.client.Init(5)
+	return f.client.Init(5, remote)
 }
 
 func (f *FCVI) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {

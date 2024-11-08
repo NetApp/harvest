@@ -6,6 +6,7 @@ package aggregator
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"testing"
@@ -18,7 +19,7 @@ func newAggregator() *Aggregator {
 	abc := plugin.New("Test", nil, params, nil, "", nil)
 	p := &Aggregator{AbstractPlugin: abc}
 
-	if err := p.Init(); err != nil {
+	if err := p.Init(conf.Remote{}); err != nil {
 		panic(err)
 	}
 	return p
@@ -94,7 +95,7 @@ func TestRuleIncludeAllLabels(t *testing.T) {
 
 	p.Params = params
 
-	if err := p.Init(); err != nil {
+	if err := p.Init(conf.Remote{}); err != nil {
 		t.Fatal(err)
 	}
 
@@ -156,7 +157,7 @@ func TestComplexRuleRegex(t *testing.T) {
 	p.Params = params
 	m := newArtificialData()
 
-	if err := p.Init(); err != nil {
+	if err := p.Init(conf.Remote{}); err != nil {
 		t.Fatal(err)
 	}
 
@@ -313,7 +314,7 @@ func TestRuleSimpleLatencyAggregation(t *testing.T) {
 
 	p.Params = params
 
-	if err := p.Init(); err != nil {
+	if err := p.Init(conf.Remote{}); err != nil {
 		t.Fatal(err)
 	}
 
@@ -421,7 +422,7 @@ func TestRuleSimpleLatencyZeroAggregation(t *testing.T) {
 
 	p.Params = params
 
-	if err := p.Init(); err != nil {
+	if err := p.Init(conf.Remote{}); err != nil {
 		t.Fatal(err)
 	}
 

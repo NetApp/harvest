@@ -7,6 +7,7 @@ package labelagent
 import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
@@ -39,14 +40,14 @@ func New(p *plugin.AbstractPlugin) *LabelAgent {
 	return &LabelAgent{AbstractPlugin: p}
 }
 
-func (a *LabelAgent) Init() error {
+func (a *LabelAgent) Init(remote conf.Remote) error {
 
 	var (
 		err   error
 		count int
 	)
 
-	if err := a.AbstractPlugin.Init(); err != nil {
+	if err := a.AbstractPlugin.Init(remote); err != nil {
 		return err
 	}
 

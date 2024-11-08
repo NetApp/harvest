@@ -40,7 +40,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Shelf{AbstractPlugin: p}
 }
 
-func (s *Shelf) Init() error {
+func (s *Shelf) Init(remote conf.Remote) error {
 
 	var err error
 
@@ -53,7 +53,7 @@ func (s *Shelf) Init() error {
 		return err
 	}
 
-	if err := s.client.Init(5); err != nil {
+	if err := s.client.Init(5, remote); err != nil {
 		return err
 	}
 

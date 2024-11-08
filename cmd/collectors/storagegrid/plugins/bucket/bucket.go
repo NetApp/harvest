@@ -3,6 +3,7 @@ package bucket
 import (
 	"github.com/netapp/harvest/v2/cmd/collectors/storagegrid/rest"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
@@ -20,7 +21,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Bucket{AbstractPlugin: p}
 }
 
-func (b *Bucket) Init() error {
+func (b *Bucket) Init(remote conf.Remote) error {
 
 	var err error
 
@@ -34,7 +35,7 @@ func (b *Bucket) Init() error {
 		return err
 	}
 
-	if err := b.client.Init(5); err != nil {
+	if err := b.client.Init(5, remote); err != nil {
 		return err
 	}
 

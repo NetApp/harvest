@@ -440,7 +440,7 @@ type Sensor struct {
 	hasREST        bool
 }
 
-func (s *Sensor) Init() error {
+func (s *Sensor) Init(remote conf.Remote) error {
 
 	var err error
 	if err := s.InitAbc(); err != nil {
@@ -455,7 +455,7 @@ func (s *Sensor) Init() error {
 
 	s.hasREST = true
 
-	if err := s.client.Init(5); err != nil {
+	if err := s.client.Init(5, remote); err != nil {
 		var re *errs.RestError
 		if errors.As(err, &re) && re.StatusCode == http.StatusNotFound {
 			s.SLogger.Warn("Cluster does not support REST. Power plugin disabled")

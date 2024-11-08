@@ -28,7 +28,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Security{AbstractPlugin: p}
 }
 
-func (s *Security) Init() error {
+func (s *Security) Init(remote conf.Remote) error {
 
 	var err error
 
@@ -41,7 +41,7 @@ func (s *Security) Init() error {
 		return err
 	}
 
-	if err := s.client.Init(5); err != nil {
+	if err := s.client.Init(5, remote); err != nil {
 		return err
 	}
 

@@ -25,7 +25,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &FlexCache{AbstractPlugin: p}
 }
 
-func (f *FlexCache) Init() error {
+func (f *FlexCache) Init(remote conf.Remote) error {
 
 	var err error
 
@@ -38,7 +38,7 @@ func (f *FlexCache) Init() error {
 		return err
 	}
 
-	if err := f.client.Init(5); err != nil {
+	if err := f.client.Init(5, remote); err != nil {
 		return err
 	}
 	return nil

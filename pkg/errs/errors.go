@@ -26,7 +26,6 @@ const (
 	ErrNoCollector               = harvestError("no collectors")
 	ErrNoInstance                = harvestError("no instances")
 	ErrNoMetric                  = harvestError("no metrics")
-	ErrPanic                     = harvestError("goroutine panic")
 	ErrPermissionDenied          = harvestError("Permission denied")
 	ErrResponseNotFound          = harvestError("response not found")
 	ErrWrongTemplate             = harvestError("wrong template")

@@ -36,7 +36,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Aggregate{AbstractPlugin: p}
 }
 
-func (a *Aggregate) Init() error {
+func (a *Aggregate) Init(remote conf.Remote) error {
 	if err := a.InitAbc(); err != nil {
 		return fmt.Errorf("failed to initialize AbstractPlugin: %w", err)
 	}
@@ -48,7 +48,7 @@ func (a *Aggregate) Init() error {
 	}
 	a.client = client
 
-	if err := a.client.Init(5); err != nil {
+	if err := a.client.Init(5, remote); err != nil {
 		return fmt.Errorf("failed to initialize REST client: %w", err)
 	}
 

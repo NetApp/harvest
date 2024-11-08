@@ -155,7 +155,7 @@ func newRest(object string, path string, confPath string) *Rest {
 	opts.Poller = pollerName
 	opts.HomePath = "testdata"
 	opts.IsTest = true
-	ac := collector.New("Rest", object, opts, collectors.Params(object, path), nil)
+	ac := collector.New("Rest", object, opts, collectors.Params(object, path), nil, conf.Remote{})
 	r := Rest{}
 	err = r.Init(ac)
 	if err != nil {
