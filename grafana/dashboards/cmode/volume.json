@@ -626,7 +626,7 @@
                   },
                   {
                     "id": "displayName",
-                    "value": "status"
+                    "value": "Status"
                   },
                   {
                     "id": "color",
@@ -1041,7 +1041,8 @@
                     "Value #I",
                     "Value #J",
                     "datacenter",
-                    "cluster"
+                    "cluster",
+                    "tags"
                   ]
                 }
               }
@@ -1066,23 +1067,24 @@
                 },
                 "indexByName": {
                   "Value #A": 6,
-                  "Value #C": 7,
-                  "Value #D": 8,
-                  "Value #E": 11,
-                  "Value #F": 12,
-                  "Value #G": 13,
-                  "Value #H": 9,
-                  "Value #I": 10,
-                  "Value #J": 18,
+                  "Value #C": 8,
+                  "Value #D": 9,
+                  "Value #E": 12,
+                  "Value #F": 13,
+                  "Value #G": 14,
+                  "Value #H": 10,
+                  "Value #I": 11,
+                  "Value #J": 19,
                   "aggr": 5,
-                  "clone_parent_snapshot": 17,
-                  "clone_parent_svm": 15,
-                  "clone_parent_volume": 16,
+                  "clone_parent_snapshot": 18,
+                  "clone_parent_svm": 16,
+                  "clone_parent_volume": 17,
                   "cluster": 1,
                   "datacenter": 0,
-                  "junction_path": 14,
+                  "junction_path": 15,
                   "node": 4,
                   "svm": 2,
+                  "tags": 7,
                   "volume": 3
                 },
                 "renameByName": {
@@ -1097,7 +1099,8 @@
                   "clone_parent_snapshot": "Clone Parent Snapshot",
                   "clone_parent_svm": "Clone Parent SVM",
                   "clone_parent_volume": "Clone Parent Volume",
-                  "junction_path": "Junction Path"
+                  "junction_path": "Junction Path",
+                  "tags": "Tags"
                 }
               }
             }
@@ -9194,5 +9197,5 @@
   "timezone": "",
   "title": "ONTAP: Volume",
   "uid": "cdot-volume",
-  "version": 28
+  "version": 29
 }

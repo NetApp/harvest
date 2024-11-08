@@ -16,6 +16,7 @@ counters:
   - ^snaplock_type                                => snaplock_type
   - ^snapshot_policy                              => snapshot_policy
   - ^state                                        => state
+  - ^tags                                         => tags
   - ^type                                         => type
   - ^uuid                                         => uuid
   - ^volume_style_extended                        => style
@@ -144,4 +145,5 @@ export_options:
     - snapshot_policy
     - state
     - svm_root
+    - tags
     - type
