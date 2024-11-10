@@ -1341,7 +1341,7 @@ func (p *Poller) upgradeCollector(c conf.Collector, remote conf.Remote) conf.Col
 		return c
 	}
 
-	isKeyPerf := remote.IsDisaggregated && !remote.IsSanOptimized
+	isKeyPerf := remote.IsKeyPerf()
 	replaced := c.Name
 
 	if strings.HasPrefix(replaced, "Zapi") {

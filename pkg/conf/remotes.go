@@ -17,3 +17,7 @@ type Remote struct {
 func (r Remote) IsZero() bool {
 	return r.Name == "" && r.Model == "" && r.UUID == ""
 }
+
+func (r Remote) IsKeyPerf() bool {
+	return r.IsDisaggregated && !r.IsSanOptimized
+}
