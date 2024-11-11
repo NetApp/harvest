@@ -1,4 +1,4 @@
-package volumetopclients
+package volumetopmetrics
 
 import (
 	"testing"
@@ -13,11 +13,15 @@ import (
 var globalDataMatrix *matrix.Matrix
 
 type MockVolume struct {
-	*TopClients
+	*TopMetrics
 	testFilePath string
 }
 
 func (mv *MockVolume) fetchTopClients(_ *set.Set, _ *set.Set, _ string) ([]gjson.Result, error) {
+	return collectors.InvokeRestCallWithTestFile(nil, "", mv.testFilePath)
+}
+
+func (mv *MockVolume) fetchTopFiles(_ *set.Set, _ *set.Set, _ string) ([]gjson.Result, error) {
 	return collectors.InvokeRestCallWithTestFile(nil, "", mv.testFilePath)
 }
 
@@ -29,9 +33,9 @@ func (mv *MockVolume) fetchVolumesWithActivityTrackingEnabled() (*set.Set, error
 }
 
 func NewMockVolume(p *plugin.AbstractPlugin, testFilePath string) *MockVolume {
-	v := &TopClients{AbstractPlugin: p}
+	v := &TopMetrics{AbstractPlugin: p}
 	mockVolume := &MockVolume{
-		TopClients:   v,
+		TopMetrics:   v,
 		testFilePath: testFilePath,
 	}
 	mockVolume.tracker = mockVolume
@@ -78,10 +82,10 @@ func TestProcessTopClients(t *testing.T) {
 		testFilePath  string
 		expectedCount int
 	}{
-		{"Read Ops", "iops.read", topClientReadOPSMatrix, "testdata/readops.json", 1},
-		{"Write Ops", "iops.write", topClientWriteOPSMatrix, "testdata/writeops.json", 4},
-		{"Read Data", "throughput.read", topClientReadDataMatrix, "testdata/readdata.json", 1},
-		{"Write Data", "throughput.write", topClientWriteDataMatrix, "testdata/writedata.json", 3},
+		{"Client Read Ops", "iops.read", topClientReadOPSMatrix, "testdata/client_readops.json", 1},
+		{"Client Write Ops", "iops.write", topClientWriteOPSMatrix, "testdata/client_writeops.json", 4},
+		{"Client Read Data", "throughput.read", topClientReadDataMatrix, "testdata/client_readdata.json", 1},
+		{"Client Write Data", "throughput.write", topClientWriteDataMatrix, "testdata/client_writedata.json", 3},
 	}
 
 	for _, tc := range testCases {
@@ -96,7 +100,60 @@ func TestProcessTopClients(t *testing.T) {
 
 			data := globalDataMatrix
 
-			err = mockVolume.processTopClients(data)
+			metrics, err := mockVolume.processTopMetrics(data)
+			if err != nil {
+				return
+			}
+
+			err = mockVolume.processTopClients(metrics)
+			if err != nil {
+				t.Errorf("processTopClients should not return an error: %v", err)
+			}
+
+			resultMatrix := mockVolume.data[tc.matrixName]
+
+			if resultMatrix == nil {
+				t.Errorf("%s Matrix should be initialized", tc.matrixName)
+			}
+			if len(resultMatrix.GetInstances()) != tc.expectedCount {
+				t.Errorf("%s Matrix should have %d instance(s), got %d", tc.matrixName, tc.expectedCount, len(resultMatrix.GetInstances()))
+			}
+		})
+	}
+}
+
+func TestProcessTopFiles(t *testing.T) {
+	testCases := []struct {
+		name          string
+		metric        string
+		matrixName    string
+		testFilePath  string
+		expectedCount int
+	}{
+		{"File Read Ops", "iops.read", topFileReadOPSMatrix, "testdata/file_readops.json", 1},
+		{"File Write Ops", "iops.write", topFileWriteOPSMatrix, "testdata/file_writeops.json", 6},
+		{"File Read Data", "throughput.read", topFileReadDataMatrix, "testdata/file_readdata.json", 1},
+		{"File Write Data", "throughput.write", topFileWriteDataMatrix, "testdata/file_writedata.json", 1},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			mockVolume := NewMockVolume(&plugin.AbstractPlugin{}, tc.testFilePath)
+			mockVolume.maxVolumeCount = 5
+
+			err := mockVolume.InitAllMatrix()
+			if err != nil {
+				t.Errorf("InitAllMatrix should not return an error: %v", err)
+			}
+
+			data := globalDataMatrix
+
+			metrics, err := mockVolume.processTopMetrics(data)
+			if err != nil {
+				return
+			}
+
+			err = mockVolume.processTopFiles(metrics)
 			if err != nil {
 				t.Errorf("processTopClients should not return an error: %v", err)
 			}
