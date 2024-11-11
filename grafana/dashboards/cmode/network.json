@@ -610,7 +610,7 @@
                 "properties": [
                   {
                     "id": "unit",
-                    "value": "bps"
+                    "value": "bytes"
                   }
                 ]
               },
