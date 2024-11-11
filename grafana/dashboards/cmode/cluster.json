@@ -1726,7 +1726,7 @@
           },
           "gridPos": {
             "h": 7,
-            "w": 18,
+            "w": 15,
             "x": 0,
             "y": 35
           },
@@ -1870,6 +1870,104 @@
                 "renameByName": {
                   "cpu_firmware_release": "CPU Firmware Release"
                 }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Tags details.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unitScale": true
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 7,
+            "w": 3,
+            "x": 15,
+            "y": 2
+          },
+          "id": 282,
+          "interval": "",
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "datasource": "${DS_PROMETHEUS}",
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "cluster_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Tags",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value": true,
+                  "__name__": true,
+                  "cluster": true,
+                  "datacenter": true,
+                  "instance": true,
+                  "job": true,
+                  "status": true
+                },
+                "includeByName": {},
+                "indexByName": {},
+                "renameByName": {
+                  "tags": "Tags"
+                }
+              }
+            },
+            {
+              "disabled": true,
+              "id": "extractFields",
+              "options": {
+                "format": "auto",
+                "keepTime": false,
+                "replace": true,
+                "source": "Tags"
               }
             }
           ],
@@ -4462,7 +4560,31 @@
         "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},cluster)",
+        "definition": "label_values(cluster_new_status{system_type!=\"7mode\", datacenter=~\"$Datacenter\"},tags)",
+        "hide": 0,
+        "includeAll": true,
+        "label": "",
+        "multi": true,
+        "name": "Tags",
+        "options": [],
+        "query": {
+          "query": "label_values(cluster_new_status{system_type!=\"7mode\", datacenter=~\"$Datacenter\"},tags)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\",tags~\"$Tags\"},cluster)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -4472,7 +4594,7 @@
         "name": "Cluster",
         "options": [],
         "query": {
-          "query": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},cluster)",
+          "query": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\",tags~\"$Tags\"},cluster)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -4619,5 +4741,5 @@
   "timezone": "",
   "title": "ONTAP: Cluster",
   "uid": "cdot-cluster",
-  "version": 6
+  "version": 7
 }
