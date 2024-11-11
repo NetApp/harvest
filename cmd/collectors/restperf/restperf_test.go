@@ -353,7 +353,7 @@ func newRestPerf(object string, path string) *RestPerf {
 	opts.HomePath = "testdata"
 	opts.IsTest = true
 
-	ac := collector.New("RestPerf", object, opts, params(object, path), nil)
+	ac := collector.New("RestPerf", object, opts, params(object, path), nil, conf.Remote{})
 	r := RestPerf{}
 	err = r.Init(ac)
 	if err != nil {

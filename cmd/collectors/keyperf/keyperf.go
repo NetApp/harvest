@@ -68,8 +68,6 @@ func (kp *KeyPerf) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
-	kp.Remote = kp.Client.Remote()
-
 	if kp.Prop.TemplatePath, err = kp.LoadTemplate(); err != nil {
 		return err
 	}

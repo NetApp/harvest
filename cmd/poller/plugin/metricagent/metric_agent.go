@@ -6,6 +6,7 @@ package metricagent
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
@@ -25,14 +26,14 @@ func New(p *plugin.AbstractPlugin) *MetricAgent {
 	return &MetricAgent{AbstractPlugin: p}
 }
 
-func (a *MetricAgent) Init() error {
+func (a *MetricAgent) Init(remote conf.Remote) error {
 
 	var (
 		err   error
 		count int
 	)
 
-	if err := a.AbstractPlugin.Init(); err != nil {
+	if err := a.AbstractPlugin.Init(remote); err != nil {
 		return err
 	}
 

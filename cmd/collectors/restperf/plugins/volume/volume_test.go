@@ -5,6 +5,7 @@ import (
 	volume2 "github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/volume"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/volume"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"log/slog"
 	"strconv"
 	"testing"
@@ -26,7 +27,7 @@ func runVolumeTest(t *testing.T, createVolume func(params *node.Node) plugin.Plu
 	volumesMap := make(map[string]string)
 
 	// Initialize the plugin
-	if err := v.Init(); err != nil {
+	if err := v.Init(conf.Remote{}); err != nil {
 		t.Fatalf("failed to initialize plugin: %v", err)
 	}
 

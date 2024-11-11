@@ -437,12 +437,10 @@ func (s *StorageGrid) initClient() error {
 		return nil
 	}
 
-	if err := s.client.Init(5); err != nil {
+	if err := s.client.Init(5, s.Remote); err != nil {
 		return err
 	}
 	s.client.TraceLogSet(s.Name, s.Params)
-
-	s.Remote = s.client.Remote
 
 	return nil
 }

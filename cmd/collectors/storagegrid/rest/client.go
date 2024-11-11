@@ -268,11 +268,17 @@ func (c *Client) fetch() ([]byte, error) {
 }
 
 // Init is responsible for determining the StorageGrid server version, API version, hostname, and systemId
-func (c *Client) Init(retries int) error {
+func (c *Client) Init(retries int, remote conf.Remote) error {
 	var (
 		err     error
 		content []byte
 	)
+
+	c.Remote = remote
+
+	if !remote.IsZero() {
+		return nil
+	}
 
 	for range retries {
 		// Determine which API versions are supported and then request

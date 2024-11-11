@@ -29,7 +29,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &OntapS3Service{AbstractPlugin: p}
 }
 
-func (o *OntapS3Service) Init() error {
+func (o *OntapS3Service) Init(remote conf.Remote) error {
 	var err error
 
 	if err := o.InitAbc(); err != nil {
@@ -49,7 +49,7 @@ func (o *OntapS3Service) Init() error {
 		return err
 	}
 
-	if err := o.client.Init(5); err != nil {
+	if err := o.client.Init(5, remote); err != nil {
 		return err
 	}
 

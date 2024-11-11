@@ -1,12 +1,10 @@
 package main
 
 import (
-	"errors"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"os"
 	"strings"
 	"testing"
 )
@@ -132,29 +130,35 @@ func TestCollectorUpgrade(t *testing.T) {
 	poller := Poller{params: &conf.Poller{}}
 
 	type test struct {
-		name           string
-		clusterVersion string
-		askFor         string
-		wantCollector  string
-		setEnvVar      bool
-		check          func() error
+		name          string
+		askFor        string
+		wantCollector string
+		remote        conf.Remote
 	}
 
-	zapisExist := func() error { return nil }
-	zapisDoNotExist := func() error { return errors.New("boom") }
+	ontap911 := conf.Remote{Version: "9.11.1", ZAPIsExist: true}
+	ontap917 := conf.Remote{Version: "9.17.1", ZAPIsExist: false}
+	keyPerf := conf.Remote{Version: "9.17.1", ZAPIsExist: false, IsDisaggregated: true}
+	keyPerfWithZapi := conf.Remote{Version: "9.17.1", ZAPIsExist: true, IsDisaggregated: true}
 
 	tests := []test{
-		{name: "9.11 use ZAPI", clusterVersion: "9.11.1", askFor: "Zapi", wantCollector: "Zapi"},
-		{name: "9.11 use REST", clusterVersion: "9.11.1", askFor: "Rest", wantCollector: "Rest"},
-		{name: "9.12 upgrade", clusterVersion: "9.12.1", askFor: "Zapi", wantCollector: "Zapi"},
-		{name: "9.12 w/ envar", clusterVersion: "9.12.1", askFor: "Zapi", wantCollector: "Zapi", setEnvVar: true},
-		{name: "9.12 REST", clusterVersion: "9.12.3", askFor: "Rest", wantCollector: "Rest", setEnvVar: true},
-		{name: "9.13 RestPerf", clusterVersion: "9.13.1", askFor: "ZapiPerf", wantCollector: "ZapiPerf"},
-		{name: "9.13 REST w/ envar", clusterVersion: "9.13.1", askFor: "Rest", wantCollector: "Rest", setEnvVar: true},
-		{name: "9.13 REST w/ envar", clusterVersion: "9.13.1", askFor: "Zapi", wantCollector: "Zapi", setEnvVar: true},
-		{name: "9.13 REST w/ envar", clusterVersion: "9.13.1", askFor: "Rest", wantCollector: "Rest", setEnvVar: true,
-			check: zapisDoNotExist},
-		{name: "9.13 REST", clusterVersion: "9.13.1", askFor: "Rest", wantCollector: "Rest"},
+		{name: "9.11 w/ ZAPI", remote: ontap911, askFor: "Zapi", wantCollector: "Zapi"},
+		{name: "9.11 w/ ZAPI", remote: ontap911, askFor: "ZapiPerf", wantCollector: "ZapiPerf"},
+		{name: "9.11 w/ ZAPI", remote: ontap911, askFor: "Rest", wantCollector: "Rest"},
+		{name: "9.11 w/ ZAPI", remote: ontap911, askFor: "KeyPerf", wantCollector: "KeyPerf"},
+
+		{name: "9.17 no ZAPI", remote: ontap917, askFor: "Zapi", wantCollector: "Rest"},
+		{name: "9.17 no ZAPI", remote: ontap917, askFor: "ZapiPerf", wantCollector: "RestPerf"},
+		{name: "9.17 no ZAPI", remote: ontap917, askFor: "KeyPerf", wantCollector: "KeyPerf"},
+
+		{name: "KeyPerf", remote: keyPerf, askFor: "Zapi", wantCollector: "Rest"},
+		{name: "KeyPerf", remote: keyPerf, askFor: "Rest", wantCollector: "Rest"},
+		{name: "KeyPerf", remote: keyPerf, askFor: "ZapiPerf", wantCollector: "KeyPerf"},
+		{name: "KeyPerf", remote: keyPerf, askFor: "RestPerf", wantCollector: "KeyPerf"},
+
+		{name: "KeyPerf w/ ZAPI", remote: keyPerfWithZapi, askFor: "Zapi", wantCollector: "Zapi"},
+		{name: "KeyPerf w/ ZAPI", remote: keyPerfWithZapi, askFor: "ZapiPerf", wantCollector: "KeyPerf"},
+		{name: "KeyPerf w/ ZAPI", remote: keyPerfWithZapi, askFor: "RestPerf", wantCollector: "KeyPerf"},
 	}
 
 	for _, tt := range tests {
@@ -162,15 +166,8 @@ func TestCollectorUpgrade(t *testing.T) {
 			collector := conf.Collector{
 				Name: tt.askFor,
 			}
-			if tt.setEnvVar {
-				_ = os.Setenv(NoUpgrade, "1")
-			} else {
-				_ = os.Unsetenv(NoUpgrade)
-			}
-			if tt.check == nil {
-				tt.check = zapisExist
-			}
-			newCollector := poller.negotiateAPI(collector, tt.check)
+
+			newCollector := poller.upgradeCollector(collector, tt.remote)
 			if newCollector.Name != tt.wantCollector {
 				t.Errorf("got = [%s] want [%s]", newCollector.Name, tt.wantCollector)
 			}
@@ -193,6 +190,9 @@ func Test_nonOverlappingCollectors(t *testing.T) {
 			args: ocs("Zapi", "Rest", "Rest", "Rest", "Rest", "Rest", "Zapi", "Zapi", "Zapi", "Zapi", "Zapi"),
 			want: ocs("Zapi")},
 		{name: "non ontap", args: ocs("Rest", "SG"), want: ocs("Rest", "SG")},
+		{name: "no overlap", args: ocs("Rest", "KeyPerf"), want: ocs("Rest", "KeyPerf")},
+		{name: "overlap", args: ocs("RestPerf", "KeyPerf"), want: ocs("RestPerf")},
+		{name: "overlap", args: ocs("KeyPerf", "KeyPerf"), want: ocs("KeyPerf")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -227,6 +227,12 @@ func Test_uniquifyObjectCollectors(t *testing.T) {
 			want: []objectCollector{{class: "Rest", object: "Qtree"}, {class: "Rest", object: "Quota"}}},
 		{name: "qtree-zapi-disable-quota", args: objectCollectorMap("Qtree: Zapi, Rest", "Quota: Rest"),
 			want: []objectCollector{{class: "Zapi", object: "Qtree"}}},
+		{name: "volume-restperf", args: objectCollectorMap("Volume: RestPerf, KeyPerf"),
+			want: []objectCollector{{class: "RestPerf", object: "Volume"}}},
+		{name: "volume-keyperf", args: objectCollectorMap("Volume: KeyPerf, RestPerf"),
+			want: []objectCollector{{class: "KeyPerf", object: "Volume"}}},
+		{name: "multi-keyperf", args: objectCollectorMap("Volume: RestPerf", "Aggregate: KeyPerf"),
+			want: []objectCollector{{class: "RestPerf", object: "Volume"}, {class: "KeyPerf", object: "Aggregate"}}},
 	}
 
 	for _, tt := range tests {

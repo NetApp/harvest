@@ -97,7 +97,7 @@ func (t *TopClients) initMatrix(name string, object string, inputMat map[string]
 	return nil
 }
 
-func (t *TopClients) Init() error {
+func (t *TopClients) Init(remote conf.Remote) error {
 	var err error
 	if err := t.InitAbc(); err != nil {
 		return err
@@ -112,7 +112,7 @@ func (t *TopClients) Init() error {
 		return err
 	}
 
-	if err := t.client.Init(5); err != nil {
+	if err := t.client.Init(5, remote); err != nil {
 		return err
 	}
 

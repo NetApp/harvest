@@ -27,7 +27,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Aggregate{AbstractPlugin: p}
 }
 
-func (a *Aggregate) Init() error {
+func (a *Aggregate) Init(remote conf.Remote) error {
 
 	var err error
 
@@ -40,7 +40,7 @@ func (a *Aggregate) Init() error {
 		return err
 	}
 
-	if err := a.client.Init(5); err != nil {
+	if err := a.client.Init(5, remote); err != nil {
 		return err
 	}
 
@@ -109,8 +109,7 @@ func (a *Aggregate) getCloudStores() error {
 	)
 
 	// aggr-object-store-get-iter Zapi was introduced in 9.2.
-	version := a.client.Version()
-	clusterVersion := strconv.Itoa(version[0]) + "." + strconv.Itoa(version[1]) + "." + strconv.Itoa(version[2])
+	clusterVersion := a.client.Version()
 	ontapVersion, err := goversion.NewVersion(clusterVersion)
 	if err != nil {
 		a.SLogger.Error(

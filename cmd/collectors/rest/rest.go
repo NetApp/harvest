@@ -196,12 +196,12 @@ func (r *Rest) InitClient() error {
 	if r.Options.IsTest {
 		return nil
 	}
-	if err := r.Client.Init(5); err != nil {
+
+	if err := r.Client.Init(5, r.Remote); err != nil {
 		return err
 	}
-	r.Client.TraceLogSet(r.Name, r.Params)
 
-	r.Remote = r.Client.Remote()
+	r.Client.TraceLogSet(r.Name, r.Params)
 
 	return nil
 }

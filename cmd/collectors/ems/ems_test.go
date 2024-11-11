@@ -54,7 +54,7 @@ func NewEms() *Ems {
 	opts.HomePath = homePath
 	opts.IsTest = true
 
-	ac := collector.New("Ems", "Ems", opts, emsParams(emsConfigPath), nil)
+	ac := collector.New("Ems", "Ems", opts, emsParams(emsConfigPath), nil, conf.Remote{})
 	e := &Ems{}
 	if err := e.Init(ac); err != nil {
 		slog.Error("", slogx.Err(err))

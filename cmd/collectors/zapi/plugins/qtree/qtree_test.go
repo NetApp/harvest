@@ -4,6 +4,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	client "github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"log/slog"
@@ -108,7 +109,7 @@ func runQtreeTest(t *testing.T, createQtree func(historicalLabels bool) plugin.P
 	q := createQtree(historicalLabels)
 
 	// Initialize the plugin
-	if err := q.Init(); err != nil {
+	if err := q.Init(conf.Remote{}); err != nil {
 		t.Fatalf("failed to initialize plugin: %v", err)
 	}
 

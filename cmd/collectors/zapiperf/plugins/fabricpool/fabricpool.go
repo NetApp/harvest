@@ -3,6 +3,7 @@ package fabricpool
 import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"strconv"
@@ -17,7 +18,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &FabricPool{AbstractPlugin: p}
 }
 
-func (f *FabricPool) Init() error {
+func (f *FabricPool) Init(conf.Remote) error {
 	err := f.InitAbc()
 	if err != nil {
 		return err

@@ -21,7 +21,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &VolumeTag{AbstractPlugin: p}
 }
 
-func (v *VolumeTag) Init() error {
+func (v *VolumeTag) Init(remote conf.Remote) error {
 	var err error
 	if err := v.InitAbc(); err != nil {
 		return err
@@ -33,7 +33,7 @@ func (v *VolumeTag) Init() error {
 		return err
 	}
 
-	return v.client.Init(5)
+	return v.client.Init(5, remote)
 }
 
 func (v *VolumeTag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {

@@ -143,7 +143,7 @@ func doCmd(cmd string) {
 		log.Fatal(err)
 	}
 
-	if err = connection.Init(2); err != nil {
+	if err = connection.Init(2, conf.Remote{}); err != nil {
 		log.Fatal(err)
 	}
 
