@@ -327,10 +327,14 @@ func Path(aPath string) string {
 }
 
 // GetLastPromPort returns the Prometheus port for the given poller
-// If multiple Prometheus exporters are configured for a poller, the port for the last exporter is returned.
+// If a poller has multiple Prometheus exporters in its `exporters` section,
+// the port for the last exporter in the list is used.
 func GetLastPromPort(pollerName string, validatePortInUse bool) (int, error) {
-	var port int
-	var isPrometheusExporterConfigured bool
+	var (
+		port                           int
+		isPrometheusExporterConfigured bool
+		preferredPort                  int
+	)
 
 	if len(promPortRangeMapping) == 0 {
 		loadPrometheusExporterPortRangeMapping(validatePortInUse)
@@ -341,34 +345,48 @@ func GetLastPromPort(pollerName string, validatePortInUse bool) (int, error) {
 	}
 
 	exporters := poller.Exporters
+exporter:
 	for i := len(exporters) - 1; i >= 0; i-- {
 		e := exporters[i]
 		exporter := Config.Exporters[e]
 		if exporter.Type == "Prometheus" {
 			isPrometheusExporterConfigured = true
-			if exporter.PortRange != nil {
+			switch {
+			case exporter.PortRange != nil:
 				ports := promPortRangeMapping[e]
-				preferredPort := exporter.PortRange.Min + poller.promIndex
+				if poller.PromPort == 0 {
+					preferredPort = exporter.PortRange.Min + poller.promIndex
+				} else {
+					port = poller.PromPort
+					delete(ports.freePorts, port)
+					break exporter
+				}
 				_, isFree := ports.freePorts[preferredPort]
 				if isFree {
 					port = preferredPort
 					delete(ports.freePorts, preferredPort)
-					break
+					break exporter
 				}
 				for k := range ports.freePorts {
 					port = k
 					delete(ports.freePorts, k)
-					break
+					break exporter
 				}
-			} else if exporter.Port != nil && *exporter.Port != 0 {
+				// This case is checked before the next one because PromPort wins over an embedded exporter
+			case poller.PromPort != 0:
+				port = poller.PromPort
+				break exporter
+			case exporter.Port != nil && *exporter.Port != 0:
 				port = *exporter.Port
-				break
+				break exporter
 			}
 		}
 	}
+
 	if port == 0 && isPrometheusExporterConfigured {
 		return port, errs.New(errs.ErrConfig, "No free port found for poller "+pollerName)
 	}
+
 	return port, nil
 }
 
@@ -537,6 +555,7 @@ type Poller struct {
 	CredentialsFile   string               `yaml:"credentials_file,omitempty"`
 	CredentialsScript CredentialsScript    `yaml:"credentials_script,omitempty"`
 	Datacenter        string               `yaml:"datacenter,omitempty"`
+	IsDisabled        bool                 `yaml:"disabled,omitempty"`
 	ExporterDefs      []ExporterDef        `yaml:"exporters,omitempty"`
 	Exporters         []string             `yaml:"-"`
 	IsKfs             bool                 `yaml:"is_kfs,omitempty"`
@@ -548,6 +567,7 @@ type Poller struct {
 	PollerLogSchedule string               `yaml:"poller_log_schedule,omitempty"`
 	PollerSchedule    string               `yaml:"poller_schedule,omitempty"`
 	PreferZAPI        bool                 `yaml:"prefer_zapi,omitempty"`
+	PromPort          int                  `yaml:"prom_port,omitempty"`
 	Recorder          Recorder             `yaml:"recorder,omitempty"`
 	SslCert           string               `yaml:"ssl_cert,omitempty"`
 	SslKey            string               `yaml:"ssl_key,omitempty"`
@@ -562,24 +582,35 @@ type Poller struct {
 // For all keys in default, copy them to the poller if the poller does not already include them
 func (p *Poller) Union(defaults *Poller) {
 	// this is needed because of how mergo handles boolean zero values
+	var (
+		pUseInsecureTLS bool
+	)
+
 	isInsecureNil := true
-	var pUseInsecureTLS bool
+
 	pIsKfs := p.IsKfs
+	pIsDisabled := p.IsDisabled
+
 	if p.UseInsecureTLS != nil {
 		isInsecureNil = false
 		pUseInsecureTLS = *p.UseInsecureTLS
 	}
+
 	// Don't copy auth related fields from defaults to poller, even when the poller is missing those fields.
 	// Save a copy of the poller's auth fields and restore after merge
 	pPassword := p.Password
 	pAuthStyle := p.AuthStyle
 	pCredentialsFile := p.CredentialsFile
 	pCredentialsScript := p.CredentialsScript.Path
+
 	_ = mergo.Merge(p, defaults)
+
 	if !isInsecureNil {
 		p.UseInsecureTLS = &pUseInsecureTLS
 	}
+
 	p.IsKfs = pIsKfs
+	p.IsDisabled = pIsDisabled
 	p.Password = pPassword
 	p.AuthStyle = pAuthStyle
 	p.CredentialsFile = pCredentialsFile

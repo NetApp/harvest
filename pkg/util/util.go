@@ -238,6 +238,7 @@ const (
 	StatusNotRunning     Status = "not running"
 	StatusKilled         Status = "killed"
 	StatusAlreadyExited  Status = "already exited"
+	StatusDisabled       Status = "disabled"
 )
 
 type PollerStatus struct {
