@@ -3,6 +3,7 @@ package joinrest
 import (
 	"github.com/netapp/harvest/v2/cmd/collectors/storagegrid/rest"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
@@ -40,13 +41,13 @@ plugins:
         label_prom: policy
 `
 
-func (t *JoinRest) Init() error {
+func (t *JoinRest) Init(remote conf.Remote) error {
 	var err error
 
 	if err := t.InitAbc(); err != nil {
 		return err
 	}
-	if err := t.initClient(); err != nil {
+	if err := t.initClient(remote); err != nil {
 		return err
 	}
 
@@ -164,14 +165,14 @@ func (t *JoinRest) updateCache(model join, bytes *[]byte) {
 	}
 }
 
-func (t *JoinRest) initClient() error {
+func (t *JoinRest) initClient(remote conf.Remote) error {
 	var err error
 
 	if t.client, err = rest.NewClient(t.Options.Poller, t.Params.GetChildContentS("client_timeout"), t.Auth); err != nil {
 		return err
 	}
 
-	if err := t.client.Init(5); err != nil {
+	if err := t.client.Init(5, remote); err != nil {
 		return err
 	}
 	t.client.TraceLogSet(t.Name, t.Params)

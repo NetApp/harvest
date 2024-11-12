@@ -107,7 +107,7 @@ func (z *Zapi) InitVars() error {
 	}
 	z.Client.TraceLogSet(z.Name, z.Params)
 
-	if err = z.Client.Init(5); err != nil { // 5 retries before giving up to connect
+	if err = z.Client.Init(5, z.Remote); err != nil { // 5 retries before giving up to connect
 		return errs.New(errs.ErrConnection, err.Error())
 	}
 	z.Logger.Debug("connected", slog.String("client", z.Client.Info()))
@@ -115,15 +115,6 @@ func (z *Zapi) InitVars() error {
 	model := "cdot"
 	if !z.Client.IsClustered() {
 		model = "7mode"
-	}
-
-	// save for ASUP messaging
-	versionT := z.Client.Version()
-	z.Remote = conf.Remote{
-		Name:    z.Client.Name(),
-		UUID:    z.Client.Serial(),
-		Model:   model,
-		Version: strconv.Itoa(versionT[0]) + "." + strconv.Itoa(versionT[1]) + "." + strconv.Itoa(versionT[2]),
 	}
 
 	templateName := z.Params.GetChildS("objects").GetChildContentS(z.Object)

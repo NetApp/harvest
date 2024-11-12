@@ -38,7 +38,7 @@ var metrics = []string{
 	"dir_subdir_count",
 }
 
-func (v *VolumeAnalytics) Init() error {
+func (v *VolumeAnalytics) Init(remote conf.Remote) error {
 
 	var err error
 
@@ -67,7 +67,7 @@ func (v *VolumeAnalytics) Init() error {
 		return err
 	}
 
-	if err := v.client.Init(5); err != nil {
+	if err := v.client.Init(5, remote); err != nil {
 		return err
 	}
 

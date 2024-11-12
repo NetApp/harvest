@@ -26,7 +26,7 @@ func newStorageGrid(object string, path string) (*StorageGrid, error) {
 	rest.NewClientFunc = func(_ string, _ string, _ *auth.Credentials) (*rest.Client, error) {
 		return rest.NewDummyClient(), nil
 	}
-	ac := collector.New("StorageGrid", object, opts, collectors.Params(object, path), nil)
+	ac := collector.New("StorageGrid", object, opts, collectors.Params(object, path), nil, conf.Remote{})
 	err := r.Init(ac)
 	if err != nil {
 		return nil, err

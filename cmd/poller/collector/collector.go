@@ -113,7 +113,7 @@ type AbstractCollector struct {
 	Remote   conf.Remote
 }
 
-func New(name, object string, o *options.Options, params *node.Node, credentials *auth.Credentials) *AbstractCollector {
+func New(name, object string, o *options.Options, params *node.Node, credentials *auth.Credentials, remote conf.Remote) *AbstractCollector {
 	return &AbstractCollector{
 		Name:     name,
 		Object:   object,
@@ -122,6 +122,7 @@ func New(name, object string, o *options.Options, params *node.Node, credentials
 		Params:   params,
 		countMux: &sync.Mutex{},
 		Auth:     credentials,
+		Remote:   remote,
 	}
 }
 
@@ -758,7 +759,7 @@ func (c *AbstractCollector) LoadPlugins(params *node.Node, collector Collector, 
 			continue
 		}
 
-		if err := p.Init(); err != nil {
+		if err := p.Init(c.Remote); err != nil {
 			slog.Error("init plugin", slogx.Err(err), slog.String("name", name))
 			return err
 		}

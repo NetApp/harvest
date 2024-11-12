@@ -47,7 +47,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Nic{AbstractPlugin: p}
 }
 
-func (n *Nic) Init() error {
+func (n *Nic) Init(remote conf.Remote) error {
 	var err error
 	if err := n.InitAbc(); err != nil {
 		return err
@@ -58,7 +58,7 @@ func (n *Nic) Init() error {
 		return err
 	}
 
-	if err := n.client.Init(5); err != nil {
+	if err := n.client.Init(5, remote); err != nil {
 		return err
 	}
 

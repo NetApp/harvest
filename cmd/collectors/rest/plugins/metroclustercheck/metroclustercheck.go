@@ -2,6 +2,7 @@ package metroclustercheck
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -19,7 +20,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &MetroclusterCheck{AbstractPlugin: p}
 }
 
-func (m *MetroclusterCheck) Init() error {
+func (m *MetroclusterCheck) Init(conf.Remote) error {
 
 	pluginMetrics := []string{"cluster_status", "node_status", "aggr_status", "volume_status"}
 	pluginLabels := []string{"result", "name", "node", "aggregate", "volume"}

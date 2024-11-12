@@ -4,6 +4,7 @@ package shelf
 import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
 )
@@ -16,7 +17,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Shelf{AbstractPlugin: p}
 }
 
-func (my *Shelf) Init() error {
+func (my *Shelf) Init(conf.Remote) error {
 	return my.InitAbc()
 }
 

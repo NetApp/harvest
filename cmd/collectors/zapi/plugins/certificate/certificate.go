@@ -34,7 +34,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Certificate{AbstractPlugin: p}
 }
 
-func (c *Certificate) Init() error {
+func (c *Certificate) Init(remote conf.Remote) error {
 
 	var err error
 
@@ -47,7 +47,7 @@ func (c *Certificate) Init() error {
 		return err
 	}
 
-	if err := c.client.Init(5); err != nil {
+	if err := c.client.Init(5, remote); err != nil {
 		return err
 	}
 

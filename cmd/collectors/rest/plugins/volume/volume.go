@@ -17,15 +17,12 @@ import (
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"log/slog"
-	"os"
 	"strconv"
 	"time"
 )
 
 const HoursInMonth = 24 * 30
 const ARWSupportedVersion = "9.10.0"
-
-var enableVolumeLogging bool
 
 type Volume struct {
 	*plugin.AbstractPlugin
@@ -52,7 +49,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Volume{AbstractPlugin: p}
 }
 
-func (v *Volume) Init() error {
+func (v *Volume) Init(remote conf.Remote) error {
 
 	var err error
 
@@ -75,7 +72,7 @@ func (v *Volume) Init() error {
 		return err
 	}
 
-	if err := v.client.Init(5); err != nil {
+	if err := v.client.Init(5, remote); err != nil {
 		return err
 	}
 
@@ -97,7 +94,6 @@ func (v *Volume) Init() error {
 	if err != nil {
 		return fmt.Errorf("unable to get version %w", err)
 	}
-	enableVolumeLogging = os.Getenv("ENABLE_VOLUME_LOGGING") != ""
 	return nil
 }
 
@@ -139,10 +135,6 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]volumeInfo) {
 	var err error
 
-	if enableVolumeLogging {
-		v.SLogger.Info("Size of volumeMap", slog.Int("size", len(volumeMap)), slog.Any("volumeMap", volumeMap))
-	}
-
 	cloneSplitEstimateMetric := data.GetMetric("clone_split_estimate")
 	if cloneSplitEstimateMetric == nil {
 		if cloneSplitEstimateMetric, err = data.NewMetricFloat64("clone_split_estimate"); err != nil {
@@ -156,9 +148,6 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]vo
 		}
 
 		if volume.GetLabel("style") == "flexgroup_constituent" {
-			if enableVolumeLogging {
-				v.SLogger.Warn("Setting exportable for flexgroup constituent", slog.String("volume", volume.GetLabel("volume")), slog.Bool("exportable", v.includeConstituents))
-			}
 			volume.SetExportable(v.includeConstituents)
 		}
 
@@ -166,9 +155,6 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]vo
 
 		if vInfo, ok := volumeMap[volume.GetLabel("volume")+volume.GetLabel("svm")]; ok {
 			if vInfo.isObjectStoreVolume {
-				if enableVolumeLogging {
-					v.SLogger.Warn("Setting exportable for object store volume", slog.String("volume", volume.GetLabel("volume")), slog.Bool("exportable", false))
-				}
 				volume.SetExportable(false)
 				continue
 			}
@@ -190,9 +176,6 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]vo
 			}
 		} else {
 			// The public API does not include node root and temp volumes, while the private CLI does include them. Harvest will exclude them the same as the public API by not exporting them.
-			if enableVolumeLogging {
-				v.SLogger.Warn("Setting exportable for excluded volume", slog.String("volume", volume.GetLabel("volume")), slog.Bool("exportable", false))
-			}
 			volume.SetExportable(false)
 		}
 	}

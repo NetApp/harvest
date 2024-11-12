@@ -70,7 +70,7 @@ func TestCounters(t *testing.T) {
 		os.Exit(1)
 	}
 
-	if err = client.Init(5); err != nil {
+	if err = client.Init(5, conf.Remote{}); err != nil {
 		slog.Error("client init failed", slogx.Err(err))
 		os.Exit(1)
 	}

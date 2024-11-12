@@ -7,6 +7,7 @@ package aggregator
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
@@ -38,9 +39,9 @@ type rule struct {
 	counts        map[string]map[string]float64
 }
 
-func (a *Aggregator) Init() error {
+func (a *Aggregator) Init(remote conf.Remote) error {
 
-	if err := a.AbstractPlugin.Init(); err != nil {
+	if err := a.AbstractPlugin.Init(remote); err != nil {
 		return err
 	}
 

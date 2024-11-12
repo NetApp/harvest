@@ -6,6 +6,7 @@ package labelagent
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"testing"
@@ -67,7 +68,7 @@ func newLabelAgent() *LabelAgent {
 	abc := plugin.New("Test", nil, params, nil, "", nil)
 	p := &LabelAgent{AbstractPlugin: abc}
 
-	if err := p.Init(); err != nil {
+	if err := p.Init(conf.Remote{}); err != nil {
 		panic(err)
 	}
 	return p
@@ -93,7 +94,7 @@ func TestSplitRegexQtree(t *testing.T) {
 
 	abc := plugin.New("Test", nil, params, nil, "", nil)
 	p := &LabelAgent{AbstractPlugin: abc}
-	err := p.Init()
+	err := p.Init(conf.Remote{})
 	if err != nil {
 		panic(err)
 	}

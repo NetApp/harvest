@@ -4,6 +4,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/aggregator"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/labelagent"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -12,6 +13,7 @@ import (
 
 func TestMultipleRule(t *testing.T) {
 	var Plugins []plugin.Plugin
+	remote := conf.Remote{}
 
 	defaultTemplate, _ := tree.ImportYaml("testdata/sample.yaml")
 	p := defaultTemplate.GetChildS("plugins")
@@ -35,7 +37,7 @@ func TestMultipleRule(t *testing.T) {
 			}
 			abc := plugin.New("Test", nil, params, nil, "", nil)
 			lb = &labelagent.LabelAgent{AbstractPlugin: abc}
-			if err := lb.Init(); err != nil {
+			if err := lb.Init(remote); err != nil {
 				t.Fatal(err)
 			}
 			Plugins = append(Plugins, lb)
@@ -49,7 +51,7 @@ func TestMultipleRule(t *testing.T) {
 			abc := plugin.New("Test", nil, params, nil, "", nil)
 			ag := &aggregator.Aggregator{AbstractPlugin: abc}
 
-			if err := ag.Init(); err != nil {
+			if err := ag.Init(remote); err != nil {
 				t.Fatal(err)
 			}
 			Plugins = append(Plugins, ag)

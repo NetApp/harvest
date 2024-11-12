@@ -41,7 +41,7 @@ func CheckFreePorts(address string, ports []int) map[int]struct{} {
 			}
 		}()
 
-		for range len(ports) {
+		for range ports {
 			port := <-results
 			if port != 0 {
 				freeports[port] = struct{}{}

@@ -6,6 +6,7 @@ package metricagent
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"testing"
@@ -33,7 +34,7 @@ func newAgent() *MetricAgent {
 	abc := plugin.New("Test", nil, params, nil, "", nil)
 	p := &MetricAgent{AbstractPlugin: abc}
 
-	if err := p.Init(); err != nil {
+	if err := p.Init(conf.Remote{}); err != nil {
 		panic(err)
 	}
 	return p

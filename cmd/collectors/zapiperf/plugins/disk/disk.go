@@ -109,7 +109,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Disk{AbstractPlugin: p}
 }
 
-func (d *Disk) Init() error {
+func (d *Disk) Init(remote conf.Remote) error {
 
 	var err error
 
@@ -122,7 +122,7 @@ func (d *Disk) Init() error {
 		return err
 	}
 
-	if err := d.client.Init(5); err != nil {
+	if err := d.client.Init(5, remote); err != nil {
 		return err
 	}
 
