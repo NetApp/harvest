@@ -16,6 +16,7 @@ import (
 
 const OpsKeyPrefix = "temp_"
 const StyleType = "style"
+const Tags = "tags"
 const PollerName = "test"
 
 // Common test logic for RestPerf/ZapiPerf Volume plugin
@@ -23,7 +24,7 @@ func runVolumeTest(t *testing.T, createVolume func(params *node.Node) plugin.Plu
 	params := node.NewS("Volume")
 	params.NewChildS("include_constituents", includeConstituents)
 	v := createVolume(params)
-	volumesMap := make(map[string]string)
+	volumesMap := make(map[string]collectors.VolumeData)
 
 	// Initialize the plugin
 	if err := v.Init(); err != nil {
@@ -36,26 +37,26 @@ func runVolumeTest(t *testing.T, createVolume func(params *node.Node) plugin.Plu
 	instance1.SetLabel("volume", "RahulTest__0001")
 	instance1.SetLabel("svm", "svm1")
 	instance1.SetLabel("aggr", "aggr1")
-	volumesMap["RahulTest__0001"] = "flexgroup_constituent"
+	volumesMap["RahulTest__0001"] = collectors.VolumeData{Style: "flexgroup_constituent"}
 
 	instance2, _ := data.NewInstance("RahulTest__0002")
 	instance2.SetLabel("volume", "RahulTest__0002")
 	instance2.SetLabel("svm", "svm1")
 	instance2.SetLabel("aggr", "aggr2")
-	volumesMap["RahulTest__0002"] = "flexgroup_constituent"
+	volumesMap["RahulTest__0002"] = collectors.VolumeData{Style: "flexgroup_constituent"}
 
 	instance3, _ := data.NewInstance("RahulTest__0003")
 	instance3.SetLabel("volume", "RahulTest__0003")
 	instance3.SetLabel("svm", "svm1")
 	instance3.SetLabel("aggr", "aggr3")
-	volumesMap["RahulTest__0003"] = "flexgroup_constituent"
+	volumesMap["RahulTest__0003"] = collectors.VolumeData{Style: "flexgroup_constituent"}
 
 	// Create a simple volume instance
 	simpleInstance, _ := data.NewInstance("SimpleVolume")
 	simpleInstance.SetLabel("volume", "SimpleVolume")
 	simpleInstance.SetLabel("svm", "svm1")
 	simpleInstance.SetLabel("aggr", "aggr4")
-	volumesMap["SimpleVolume"] = "flexvol"
+	volumesMap["SimpleVolume"] = collectors.VolumeData{Style: "flexvol"}
 
 	// Create latency and ops metrics
 	latencyMetric, _ := data.NewMetricFloat64("read_latency")
@@ -87,7 +88,7 @@ func runVolumeTest(t *testing.T, createVolume func(params *node.Node) plugin.Plu
 
 	// Run the plugin
 	boolValue, _ := strconv.ParseBool(includeConstituents)
-	output, _, err := collectors.ProcessFlexGroupData(slog.Default(), data, StyleType, boolValue, OpsKeyPrefix, volumesMap)
+	output, _, err := collectors.ProcessFlexGroupData(slog.Default(), data, StyleType, Tags, boolValue, OpsKeyPrefix, volumesMap)
 	if err != nil {
 		t.Fatalf("Run method failed: %v", err)
 	}

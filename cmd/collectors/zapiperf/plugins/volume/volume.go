@@ -23,7 +23,7 @@ type Volume struct {
 	styleType           string
 	includeConstituents bool
 	client              *zapi.Client
-	volumesMap          map[string]string // volume-name -> volume-extended-style map
+	volumesMap          map[string]collectors.VolumeData // volume-name -> {volume-extended-style, tags} map
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -46,7 +46,7 @@ func (v *Volume) Init() error {
 		return nil
 	}
 
-	v.volumesMap = make(map[string]string)
+	v.volumesMap = make(map[string]collectors.VolumeData)
 
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
 	v.currentVal = v.SetPluginInterval()
@@ -64,6 +64,7 @@ func (v *Volume) Init() error {
 func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	data := dataMap[v.Object]
 	style := v.styleType
+	tags := "tags"
 	opsKeyPrefix := "temp_"
 	if v.currentVal >= v.PluginInvocationRate {
 		v.currentVal = 0
@@ -73,17 +74,17 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 	}
 
 	v.currentVal++
-	return collectors.ProcessFlexGroupData(v.SLogger, data, style, v.includeConstituents, opsKeyPrefix, v.volumesMap)
+	return collectors.ProcessFlexGroupData(v.SLogger, data, style, tags, v.includeConstituents, opsKeyPrefix, v.volumesMap)
 }
 
-func (v *Volume) fetchVolumes() map[string]string {
+func (v *Volume) fetchVolumes() map[string]collectors.VolumeData {
 	var (
 		result     *node.Node
 		volumes    []*node.Node
-		volumesMap map[string]string
+		volumesMap map[string]collectors.VolumeData
 	)
 
-	volumesMap = make(map[string]string)
+	volumesMap = make(map[string]collectors.VolumeData)
 	query := "volume-get-iter"
 	tag := "initial"
 	request := node.NewXMLS(query)
@@ -119,7 +120,7 @@ func (v *Volume) fetchVolumes() map[string]string {
 		for _, volume := range volumes {
 			styleExtended := volume.GetChildS("volume-id-attributes").GetChildContentS("style-extended")
 			name := volume.GetChildS("volume-id-attributes").GetChildContentS("name")
-			volumesMap[name] = styleExtended
+			volumesMap[name] = collectors.VolumeData{Style: styleExtended, Tags: ""}
 		}
 	}
 

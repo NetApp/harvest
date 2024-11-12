@@ -8,6 +8,8 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
+	"sort"
+	"strings"
 	"time"
 )
 
@@ -17,7 +19,7 @@ type Volume struct {
 	styleType           string
 	includeConstituents bool
 	client              *rest.Client
-	volumesMap          map[string]string // volume-name -> volume-extended-style map
+	volumesMap          map[string]collectors.VolumeData // volume-name -> {volume-extended-style, tags} map
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -36,7 +38,7 @@ func (v *Volume) Init() error {
 		v.styleType = "type"
 	}
 
-	v.volumesMap = make(map[string]string)
+	v.volumesMap = make(map[string]collectors.VolumeData)
 
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
 	v.currentVal = v.SetPluginInterval()
@@ -61,6 +63,7 @@ func (v *Volume) Init() error {
 func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	data := dataMap[v.Object]
 	style := v.styleType
+	tags := "tags"
 	opsKeyPrefix := "temp_"
 	if v.currentVal >= v.PluginInvocationRate {
 		v.currentVal = 0
@@ -70,16 +73,16 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 	}
 
 	v.currentVal++
-	return collectors.ProcessFlexGroupData(v.SLogger, data, style, v.includeConstituents, opsKeyPrefix, v.volumesMap)
+	return collectors.ProcessFlexGroupData(v.SLogger, data, style, tags, v.includeConstituents, opsKeyPrefix, v.volumesMap)
 }
 
-func (v *Volume) fetchVolumes() map[string]string {
-	volumesMap := make(map[string]string)
+func (v *Volume) fetchVolumes() map[string]collectors.VolumeData {
+	volumesMap := make(map[string]collectors.VolumeData)
 	query := "api/private/cli/volume"
 
 	href := rest.NewHrefBuilder().
 		APIPath(query).
-		Fields([]string{"volume", "volume_style_extended"}).
+		Fields([]string{"volume", "volume_style_extended", "tags"}).
 		Filter([]string{"is_constituent=*"}).
 		MaxRecords(collectors.DefaultBatchSize).
 		Build()
@@ -95,13 +98,26 @@ func (v *Volume) fetchVolumes() map[string]string {
 	}
 
 	for _, volume := range records {
+		var tags string
 		if !volume.IsObject() {
 			v.SLogger.Warn("volume is not object, skipping", slog.String("type", volume.Type.String()))
 			continue
 		}
 		styleExtended := volume.Get("volume_style_extended").String()
 		name := volume.Get("volume").String()
-		volumesMap[name] = styleExtended
+		tagData := volume.Get("tags")
+		if tagData.IsArray() {
+			var labelArray []string
+			for _, r := range tagData.Array() {
+				labelString := r.String()
+				labelArray = append(labelArray, labelString)
+			}
+			sort.Strings(labelArray)
+			tags = strings.Join(labelArray, ",")
+		} else {
+			tags = tagData.String()
+		}
+		volumesMap[name] = collectors.VolumeData{Style: styleExtended, Tags: tags}
 	}
 
 	return volumesMap
