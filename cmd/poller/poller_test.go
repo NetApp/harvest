@@ -1,8 +1,10 @@
 package main
 
 import (
+	"errors"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
+	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"strings"
@@ -264,4 +266,58 @@ func objectCollectorMap(constructors ...string) map[string][]objectCollector {
 	}
 
 	return objectsToCollectors
+}
+
+func TestNegotiateONTAPAPI(t *testing.T) {
+
+	tests := []struct {
+		name           string
+		collectors     []conf.Collector
+		mockReturn     conf.Remote
+		mockError      error
+		expectedRemote conf.Remote
+	}{
+		{
+			name: "No ONTAP Collector",
+			collectors: []conf.Collector{
+				{Name: "StorageGrid"},
+			},
+			mockReturn:     conf.Remote{},
+			mockError:      nil,
+			expectedRemote: conf.Remote{},
+		},
+		{
+			name: "ONTAP Collector with Success",
+			collectors: []conf.Collector{
+				{Name: "Zapi"},
+			},
+			mockReturn:     conf.Remote{Version: "9.11.1"},
+			mockError:      nil,
+			expectedRemote: conf.Remote{Version: "9.11.1"},
+		},
+		{
+			name: "ONTAP Collector with Error",
+			collectors: []conf.Collector{
+				{Name: "Zapi"},
+			},
+			mockReturn:     conf.Remote{Version: "9.11.1"},
+			mockError:      errors.New("failed to gather cluster info"),
+			expectedRemote: conf.Remote{Version: "9.11.1"},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mockGatherClusterInfo := func(_ string, _ *auth.Credentials) (conf.Remote, error) {
+				return tt.mockReturn, tt.mockError
+			}
+			poller := Poller{}
+
+			poller.negotiateONTAPAPI(tt.collectors, mockGatherClusterInfo)
+
+			if diff := cmp.Diff(poller.remote, tt.expectedRemote); diff != "" {
+				t.Errorf("negotiateONTAPAPI() mismatch (-got +want):\n%s", diff)
+			}
+		})
+	}
 }
