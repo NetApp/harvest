@@ -140,6 +140,7 @@ func TestCollectorUpgrade(t *testing.T) {
 
 	ontap911 := conf.Remote{Version: "9.11.1", ZAPIsExist: true}
 	ontap917 := conf.Remote{Version: "9.17.1", ZAPIsExist: false}
+	asaR2 := conf.Remote{Version: "9.16.1", ZAPIsExist: false, IsDisaggregated: true, IsSanOptimized: true}
 	keyPerf := conf.Remote{Version: "9.17.1", ZAPIsExist: false, IsDisaggregated: true}
 	keyPerfWithZapi := conf.Remote{Version: "9.17.1", ZAPIsExist: true, IsDisaggregated: true}
 
@@ -161,6 +162,9 @@ func TestCollectorUpgrade(t *testing.T) {
 		{name: "KeyPerf w/ ZAPI", remote: keyPerfWithZapi, askFor: "Zapi", wantCollector: "Zapi"},
 		{name: "KeyPerf w/ ZAPI", remote: keyPerfWithZapi, askFor: "ZapiPerf", wantCollector: "KeyPerf"},
 		{name: "KeyPerf w/ ZAPI", remote: keyPerfWithZapi, askFor: "RestPerf", wantCollector: "KeyPerf"},
+
+		{name: "ASA R2", remote: asaR2, askFor: "Zapi", wantCollector: "Rest"},
+		{name: "ASA R2", remote: asaR2, askFor: "RestPerf", wantCollector: "KeyPerf"},
 	}
 
 	for _, tt := range tests {
