@@ -823,6 +823,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#how-should-i-configure-the-prometheus-exporter" class="md-nav__link">
+    <span class="md-ellipsis">
+      How should I configure the Prometheus exporter?
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#parameters" class="md-nav__link">
     <span class="md-ellipsis">
       Parameters
@@ -833,9 +842,36 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#port_range" class="md-nav__link">
+  <a href="#per-poller-prom_port" class="md-nav__link">
     <span class="md-ellipsis">
-      port_range
+      Per-poller prom_port
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#port-range" class="md-nav__link">
+    <span class="md-ellipsis">
+      Port Range
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#single-port-exporter" class="md-nav__link">
+    <span class="md-ellipsis">
+      Single Port Exporter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#embedded-exporter" class="md-nav__link">
+    <span class="md-ellipsis">
+      Embedded Exporter
     </span>
   </a>
   
@@ -1803,6 +1839,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#how-should-i-configure-the-prometheus-exporter" class="md-nav__link">
+    <span class="md-ellipsis">
+      How should I configure the Prometheus exporter?
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#parameters" class="md-nav__link">
     <span class="md-ellipsis">
       Parameters
@@ -1813,9 +1858,36 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#port_range" class="md-nav__link">
+  <a href="#per-poller-prom_port" class="md-nav__link">
     <span class="md-ellipsis">
-      port_range
+      Per-poller prom_port
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#port-range" class="md-nav__link">
+    <span class="md-ellipsis">
+      Port Range
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#single-port-exporter" class="md-nav__link">
+    <span class="md-ellipsis">
+      Single Port Exporter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#embedded-exporter" class="md-nav__link">
+    <span class="md-ellipsis">
+      Embedded Exporter
     </span>
   </a>
   
@@ -2025,12 +2097,59 @@ out <a href="https://prometheus.io/docs/prometheus/latest/getting_started/">thei
 <p>A web end-point is required because Prometheus scrapes Harvest by polling that end-point.</p>
 <p>In addition to the <code>/metrics</code> end-point, the Prometheus exporter also serves an overview of all metrics and collectors
 available on its root address <code>scheme://&lt;ADDR&gt;:&lt;PORT&gt;/</code>.</p>
-<p>Because Prometheus polls Harvest, don't forget
+<p>Because Prometheus polls Harvest, remember
 to <a href="#configure-prometheus-to-scrape-harvest-pollers">update your Prometheus configuration</a> and tell Prometheus how to
 scrape each poller.</p>
-<p>There are two ways to configure the Prometheus exporter: using a <code>port range</code> or individual <code>port</code>s.</p>
-<p>The <code>port range</code> is more flexible and should be used when you want multiple pollers all exporting to the same instance
-of Prometheus. Both options are explained below.</p>
+<h2 id="how-should-i-configure-the-prometheus-exporter">How should I configure the Prometheus exporter?<a class="headerlink" href="#how-should-i-configure-the-prometheus-exporter" title="Permanent link">&para;</a></h2>
+<p>There are several ways to configure the Prometheus exporter with various trade-offs outlined below:</p>
+<ul>
+<li>a per-poller prom_port in the <code>Pollers</code> section</li>
+<li>a port range in the <code>Exporters</code> section</li>
+<li>a single port in the <code>Exporters</code> section</li>
+<li>embedded exporters in the <code>Pollers</code> section</li>
+</ul>
+<p>We recommend the first two options, using a per-poller <code>prom_port</code> or <code>port_range</code>, since they work for the majority of 
+use cases and are the easiest to manage.</p>
+<p>Use <code>prom_port</code> when you want the most control over the Prometheus port with the least amount of management.
+Use <code>port_range</code> when you want Harvest to manage the port numbers for you,
+but be aware that the port numbers depend on the order of pollers in your <code>harvest.yml</code>.
+You need to keep that order consistent otherwise it will appear that you have lost data.  </p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Pros</th>
+<th>Cons</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#per-poller-prom_port">prom_port</a></td>
+<td>Precisely control each Poller's Prometheus exporter port. The port is defined in one place, beside each poller.</td>
+<td>You have to manage which port each poller should use.</td>
+<td>Start with this until you outgrow it. Many folks never do.</td>
+</tr>
+<tr>
+<td><a href="#port-range">port_range</a></td>
+<td>Less to manage since Harvest assigns the port numbers for you based on the order of the pollers in your <code>harvest.yml</code></td>
+<td>You need to be mindful of the order of pollers in your <code>harvest.yml</code> file and be careful about changing that order when adding/removing pollers. Reordering will cause the Prometheus port to change. Since Prometheus includes the port in the <code>instance</code> label, changing the port causes Prometheus to treat metrics with different ports as different instances. That means it will appear that you have lost data because the metrics with the new port are distinct from the metrics with the older port. See <a href="https://github.com/NetApp/harvest/issues/2782">#2782</a> for details.</td>
+<td>Less to manage, but makes sure you understand how to <a href="#port-range">control the order of your pollers</a>.</td>
+</tr>
+<tr>
+<td><a href="#single-port-exporter">port in Exporters</a></td>
+<td>Precisely control each Poller's Prometheus exporter port.<br>Can define multiple Prometheus exporters, each with custom configuration.</td>
+<td>Similar to <code>prom_port</code> but with an unnecessary level of indirection that makes you repeat yourself.</td>
+<td>Exporter that Harvest always shipped with. Most folks should use <code>prom_port</code> unless they need to configure many instances of the Prometheus exporter, which is rare.</td>
+</tr>
+<tr>
+<td><a href="#embedded-exporter">embedded exporter</a></td>
+<td>All the pros of <code>port in Exporters</code> but without the unnecessary indirection</td>
+<td>Removes the level of indirection and allows you to define the exporter in one place, but more verbose than per-poller <code>prom_port</code>.</td>
+<td>Most folks should use <code>prom_port</code> unless they need to configure many instances of the Prometheus exporter, which is rare.</td>
+</tr>
+</tbody>
+</table>
 <h2 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h2>
 <p>All parameters of the exporter are defined in the <code>Exporters</code> section of <code>harvest.yml</code>.</p>
 <p>An overview of all parameters:</p>
@@ -2045,6 +2164,42 @@ of Prometheus. Both options are explained below.</p>
 </thead>
 <tbody>
 <tr>
+<td><code>add_meta_tags</code></td>
+<td>bool, optional</td>
+<td>add <code>HELP</code> and <code>TYPE</code> <a href="https://prometheus.io/docs/instrumenting/exposition_formats/#comments-help-text-and-type-information">metatags</a> to metrics (currently no useful information, but required by some tools)</td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><a href="#allow_addrs"><code>allow_addrs</code></a></td>
+<td>list of strings, optional</td>
+<td>allow access only if host matches any of the provided addresses</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="#allow_addrs_regex"><code>allow_addrs_regex</code></a></td>
+<td>list of strings, optional</td>
+<td>allow access only if host address matches at least one of the regular expressions</td>
+<td></td>
+</tr>
+<tr>
+<td><code>cache_max_keep</code></td>
+<td>string (Go duration format), optional</td>
+<td>maximum amount of time metrics are cached (in case Prometheus does not timely collect the metrics)</td>
+<td><code>5m</code></td>
+</tr>
+<tr>
+<td><code>global_prefix</code></td>
+<td>string, optional</td>
+<td>add a prefix to all metrics (e.g. <code>netapp_</code>)</td>
+<td></td>
+</tr>
+<tr>
+<td><code>local_http_addr</code></td>
+<td>string, optional</td>
+<td>address of the HTTP server Harvest starts for Prometheus to scrape:<br />use <code>localhost</code> to serve only on the local machine<br />use <code>0.0.0.0</code> (default) if Prometheus is scrapping from another machine</td>
+<td><code>0.0.0.0</code></td>
+</tr>
+<tr>
 <td><code>port_range</code></td>
 <td>int-int (range), overrides <code>port</code> if specified</td>
 <td>lower port to upper port (inclusive) of the HTTP end-point to create when a poller specifies this exporter. Starting at lower port, each free port will be tried sequentially up to the upper port.</td>
@@ -2057,45 +2212,9 @@ of Prometheus. Both options are explained below.</p>
 <td></td>
 </tr>
 <tr>
-<td><code>local_http_addr</code></td>
-<td>string, optional</td>
-<td>address of the HTTP server Harvest starts for Prometheus to scrape:<br />use <code>localhost</code> to serve only on the local machine<br />use <code>0.0.0.0</code> (default) if Prometheus is scrapping from another machine</td>
-<td><code>0.0.0.0</code></td>
-</tr>
-<tr>
-<td><code>global_prefix</code></td>
-<td>string, optional</td>
-<td>add a prefix to all metrics (e.g. <code>netapp_</code>)</td>
-<td></td>
-</tr>
-<tr>
-<td><code>allow_addrs</code></td>
-<td>list of strings, optional</td>
-<td>allow access only if host matches any of the provided addresses</td>
-<td></td>
-</tr>
-<tr>
-<td><code>allow_addrs_regex</code></td>
-<td>list of strings, optional</td>
-<td>allow access only if host address matches at least one of the regular expressions</td>
-<td></td>
-</tr>
-<tr>
-<td><code>cache_max_keep</code></td>
-<td>string (Go duration format), optional</td>
-<td>maximum amount of time metrics are cached (in case Prometheus does not timely collect the metrics)</td>
-<td><code>5m</code></td>
-</tr>
-<tr>
-<td><code>add_meta_tags</code></td>
-<td>bool, optional</td>
-<td>add <code>HELP</code> and <code>TYPE</code> <a href="https://prometheus.io/docs/instrumenting/exposition_formats/#comments-help-text-and-type-information">metatags</a> to metrics (currently no useful information, but required by some tools)</td>
-<td><code>false</code></td>
-</tr>
-<tr>
 <td><code>sort_labels</code></td>
 <td>bool, optional</td>
-<td>sort metric labels before exporting. Some <a href="https://github.com/NetApp/harvest/issues/756">open-metrics scrapers report</a> stale metrics when labels are not sorted.</td>
+<td>sort metric labels before exporting. <a href="https://github.com/NetApp/harvest/issues/756">VictoriaMetrics</a> requires this otherwise stale metrics are reported.</td>
 <td><code>false</code></td>
 </tr>
 <tr>
@@ -2112,58 +2231,126 @@ of Prometheus. Both options are explained below.</p>
 </tr>
 </tbody>
 </table>
-<p>A few examples:</p>
-<h4 id="port_range">port_range<a class="headerlink" href="#port_range" title="Permanent link">&para;</a></h4>
+<h3 id="per-poller-prom_port">Per-poller prom_port<a class="headerlink" href="#per-poller-prom_port" title="Permanent link">&para;</a></h3>
+<p>Define a Prometheus exporter in the <code>Exporters</code> section of your <code>harvest.yml</code> file, use that exporter in <code>Defaults</code>, 
+and then each poller lists its <code>prom_port</code> in the <code>Pollers</code> section.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Exporters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">my_prom</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">exporter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prometheus</span>
+<span class="w">    </span><span class="nt">add_meta_tags</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">sort_labels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="nt">Defaults</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">auth_style</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">basic_auth</span>
+<span class="w">  </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">harvest</span>
+<span class="w">  </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pass</span>
+<span class="w">  </span><span class="nt">exporters</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_prom</span>
+</code></pre></div>
+<p>Then update your pollers in the <code>Pollers</code> section of your <code>harvest.yml</code> file.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Pollers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">cluster-01</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0.1.1</span>
+<span class="w">    </span><span class="nt">prom_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">12990</span>
+<span class="w">  </span><span class="nt">cluster-02</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0.1.2</span>
+<span class="w">    </span><span class="nt">prom_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">12991</span>
+</code></pre></div>
+<h3 id="port-range">Port Range<a class="headerlink" href="#port-range" title="Permanent link">&para;</a></h3>
+<p>Port range works by defining a range of ports in the <code>Exporters</code> section of your <code>harvest.yml</code> file.
+Harvest will assign the first available port in the range to each poller that uses the exporter.
+That means you need to be careful about the order of your pollers in the <code>harvest.yml</code> file.</p>
+<p>If you add or remove pollers, the order of the pollers may change, and the port assigned to each poller may change.
+To mitigate this:</p>
+<ul>
+<li>when you add new pollers to the <code>harvest.yml</code> file, add them to the end of the <code>Pollers</code> section of your <code>harvest.yml</code> file.</li>
+<li>when you want to remove pollers, instead of deleting them, add the <code>disabled: true</code> parameter to the poller.
+The poller will not be started, but the port will be reserved.
+That way, the order of later pollers won't change. </li>
+</ul>
 <div class="highlight"><pre><span></span><code><span class="nt">Exporters</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">prom-prod</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">exporter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prometheus</span>
 <span class="w">    </span><span class="nt">port_range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2000-2030</span>
+<span class="nt">Defaults</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">exporters</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prom-prod</span><span class="w">    </span>
 <span class="nt">Pollers</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">cluster-01</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">exporters</span><span class="p">:</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prom-prod</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0.1.1</span>
+<span class="w">    </span><span class="nt">disabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">  </span><span class="c1"># This poller will not be used</span>
 <span class="w">  </span><span class="nt">cluster-02</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">exporters</span><span class="p">:</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prom-prod</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0.1.2</span>
 <span class="w">  </span><span class="nt">cluster-03</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">exporters</span><span class="p">:</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prom-prod</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0.1.3</span>
 <span class="w">  </span><span class="c1"># ... more</span>
 <span class="w">  </span><span class="nt">cluster-16</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">exporters</span><span class="p">:</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prom-prod</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0.1.16</span>
 </code></pre></div>
-<p>Sixteen pollers will collect metrics from 16 clusters and make those metrics available to a single instance of
-Prometheus named <code>prom-prod</code>. Sixteen web end-points will be created on the first 16 available free ports between 2000
-and 2030 (inclusive).</p>
-<p>After staring the pollers in the example above, running <code>bin/harvest status</code> shows the following. Note that ports 2000
-and 2003 were not available so the next free port in the range was selected. If no free port can be found an error will
+<p>In the example above, fifteen pollers will collect metrics from 15 clusters
+and make those metrics available to a single instance of Prometheus named <code>prom-prod</code>.
+Fifteen web end-points will be created on the available free ports between 2000 and 2030 (inclusive).
+Port 2000 will be assigned to <code>cluster-01</code>, port 2001 to <code>cluster-02</code>, and so on.</p>
+<p>After starting the pollers in the example above, running <code>bin/harvest status</code> shows the following.
+Since <code>cluster-01</code> is disabled, it won't be started and its port will be skipped.
+If no free port can be found, an error will
 be logged.</p>
-<div class="highlight"><pre><span></span><code>Datacenter   Poller       PID     PromPort  Status              
-++++++++++++ ++++++++++++ +++++++ +++++++++ ++++++++++++++++++++
-DC-01        cluster-01   2339    2001      running         
-DC-01        cluster-02   2343    2002      running         
-DC-01        cluster-03   2351    2004      running         
+<div class="highlight"><pre><span></span><code>  Datacenter  |    Poller    | PID  | PromPort |  Status     
+--------------+--------------+------+----------+----------
+  dc-01       | cluster-01   | 2339 |          | disabled  
+  dc-01       | cluster-02   | 2343 |  2001    | running  
+  dc-01       | cluster-03   | 2351 |  2002    | running  
 ...
-DC-01        cluster-14   2405    2015      running         
-DC-01        cluster-15   2502    2016      running         
-DC-01        cluster-16   2514    2017      running         
+  dc-01       | cluster-14   | 2405 |  2013    | running  
+  dc-01       | cluster-15   | 2502 |  2014    | running  
+  dc-01       | cluster-16   | 2514 |  2015    | running  
 </code></pre></div>
-<h4 id="allow_addrs">allow_addrs<a class="headerlink" href="#allow_addrs" title="Permanent link">&para;</a></h4>
+<h3 id="single-port-exporter">Single Port Exporter<a class="headerlink" href="#single-port-exporter" title="Permanent link">&para;</a></h3>
+<p>Define a Prometheus exporter in the <code>Exporters</code> section of your <code>harvest.yml</code> file.
+Give that exporter a <code>port</code> and update a single poller to use this exporter.
+Each poller requires a different Prometheus exporter.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Exporters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">my_prom</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">exporter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prometheus</span>
+<span class="w">    </span><span class="nt">add_meta_tags</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">sort_labels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">12990</span>
+</code></pre></div>
+<p>Then update a single poller in the <code>Pollers</code> section of your <code>harvest.yml</code> file to reference the Prometheus exporter.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Pollers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">cluster-01</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0.1.1</span>
+<span class="w">    </span><span class="nt">exporters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_prom</span>
+</code></pre></div>
+<h3 id="embedded-exporter">Embedded Exporter<a class="headerlink" href="#embedded-exporter" title="Permanent link">&para;</a></h3>
+<p>This example is similar to the <a href="#single-port-exporter">single port exporter</a> example,
+but the exporter is defined in the <code>Pollers</code> section.
+No need to define the exporter in the <code>Exporters</code> section.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Pollers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">cluster-01</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0.1.1</span>
+<span class="w">    </span><span class="nt">exporters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">exporter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prometheus</span>
+<span class="w">        </span><span class="nt">add_meta_tags</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">        </span><span class="nt">sort_labels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">        </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">12990</span>
+</code></pre></div>
+<h3 id="allow_addrs">allow_addrs<a class="headerlink" href="#allow_addrs" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="nt">Exporters</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">my_prom</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">allow_addrs</span><span class="p">:</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.0.102</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.0.103</span>
 </code></pre></div>
-<p>will only allow access from exactly these two addresses.</p>
-<h4 id="allow_addrs_regex">allow_addrs_regex<a class="headerlink" href="#allow_addrs_regex" title="Permanent link">&para;</a></h4>
+<p>Access will only be allowed from these two addresses.</p>
+<h3 id="allow_addrs_regex">allow_addrs_regex<a class="headerlink" href="#allow_addrs_regex" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="nt">Exporters</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">my_prom</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">allow_addrs_regex</span><span class="p">:</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="err">`</span><span class="l l-Scalar l-Scalar-Plain">^192.168.0.\d+$`</span>
 </code></pre></div>
-<p>will only allow access from the IP4 range <code>192.168.0.0</code>-<code>192.168.0.255</code>.</p>
+<p>Access will only be allowed from the IP4 range <code>192.168.0.0</code>-<code>192.168.0.255</code>.</p>
 <h2 id="configure-prometheus-to-scrape-harvest-pollers">Configure Prometheus to scrape Harvest pollers<a class="headerlink" href="#configure-prometheus-to-scrape-harvest-pollers" title="Permanent link">&para;</a></h2>
 <p>There are two ways to tell Prometheus how to scrape Harvest: using HTTP service discovery (SD) or listing each poller
 individually.</p>
