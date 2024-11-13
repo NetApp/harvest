@@ -529,19 +529,21 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 
 			// Continue if metadata failed, since it might be specific to metadata
 			for _, data := range results {
-				if data.IsExportable() {
-					stats, err := e.Export(data)
-					if err != nil {
-						c.Logger.Error(
-							"export data",
-							slogx.Err(err),
-							slog.String("exporter", e.GetName()),
-						)
-						break
-					}
-					exporterStats.InstancesExported += stats.InstancesExported
-					exporterStats.MetricsExported += stats.MetricsExported
+				if !data.IsExportable() {
+					continue
 				}
+				stats, err := e.Export(data)
+				if err != nil {
+					c.Logger.Error(
+						"export data",
+						slogx.Err(err),
+						slog.String("exporter", e.GetName()),
+					)
+					break
+				}
+				exporterStats.InstancesExported += stats.InstancesExported
+				exporterStats.MetricsExported += stats.MetricsExported
+				exporterStats.RenderedBytes += stats.RenderedBytes
 			}
 		}
 
@@ -612,6 +614,7 @@ func (c *AbstractCollector) logMetadata(taskName string, stats exporter.Stats) {
 			int64Field("pluginInstances"),
 			timeToMilli("plugin_time"),
 			timeToMilli("poll_time"),
+			slog.Uint64("renderedBytes", stats.RenderedBytes),
 			int64Field("skips"),
 			int64Field("zBegin"),
 		)

@@ -101,7 +101,9 @@ func doDoctorCmd(cmd *cobra.Command, _ []string) {
 	pathI := conf.ConfigPath(config.Value.String())
 	confPath := confPaths.Value.String()
 	out := doDoctor(pathI)
-	fmt.Println(out)
+	if opts.ShouldPrintConfig {
+		fmt.Println(out)
+	}
 	checkAll(pathI, confPath)
 }
 
@@ -233,6 +235,7 @@ func checkAll(aPath string, confPath string) {
 	anyFailed = !checkExporterTypes(cfg).isValid || anyFailed
 	anyFailed = !checkConfTemplates(confPaths).isValid || anyFailed
 	anyFailed = !checkCollectorName(cfg).isValid || anyFailed
+	anyFailed = !checkPollerPromPorts(cfg).isValid || anyFailed
 
 	if anyFailed {
 		os.Exit(1)
@@ -275,6 +278,7 @@ func checkCollectorName(config conf.HarvestConfig) validation {
 
 	// if no collector is configured in default and poller
 	if !isDefaultCollectorExist && !isPollerCollectorExist {
+		fmt.Printf("%s: No collectors are defined. Nothing will be collected.\n", color.Colorize("Error", color.Red))
 		valid.isValid = false
 	}
 
@@ -598,6 +602,69 @@ func printRedactedConfig(aPath string, contents []byte) (*yaml.Node, error) {
 	sanitize(nodes)
 	removeComments(root)
 	return root, nil
+}
+
+// checkPollerPromPorts checks that
+//   - pollers that define a prom_port do so uniquely.
+//   - when a prom_port is defined, but there are no Prometheus exporters
+func checkPollerPromPorts(config conf.HarvestConfig) validation {
+	seen := make(map[int][]string)
+
+	for _, pName := range config.PollersOrdered {
+		poller := config.Pollers[pName]
+		if poller.PromPort == 0 {
+			continue
+		}
+		previous := seen[poller.PromPort]
+		previous = append(previous, pName)
+		seen[poller.PromPort] = previous
+	}
+
+	valid := validation{isValid: true}
+	for _, pollerNames := range seen {
+		if len(pollerNames) == 1 {
+			continue
+		}
+		valid.isValid = false
+		break
+	}
+
+	if !valid.isValid {
+		fmt.Printf("%s: Multiple pollers use the same prom_port.\n", color.Colorize("Error", color.Red))
+		fmt.Println("  Each poller's prom_port should be unique. Change the following pollers to use unique prom_ports:")
+
+		for port, pollerNames := range seen {
+			if len(pollerNames) == 1 {
+				continue
+			}
+			names := strings.Join(pollerNames, ", ")
+			fmt.Printf("  pollers [%s] specify the same prom_port: [%s]\n", color.Colorize(names, color.Yellow), color.Colorize(port, color.Red))
+			valid.invalid = append(valid.invalid, names)
+		}
+		fmt.Println()
+	}
+
+	// Check if there are any pollers that define a prom_port but there are no Prometheus exporters
+	if config.Exporters == nil {
+		fmt.Printf("%s: No Exporters section defined. At least one Prometheus exporter is needed for prom_port to export.\n", color.Colorize("Error", color.Red))
+		valid.invalid = append(valid.invalid, "No Prometheus exporters defined")
+		valid.isValid = false
+	} else {
+		hasPromExporter := false
+		for _, exporter := range config.Exporters {
+			if exporter.Type == "Prometheus" {
+				hasPromExporter = true
+				break
+			}
+		}
+		if !hasPromExporter {
+			fmt.Printf("%s: No Prometheus exporters defined. At least one Prometheus exporter is needed for prom_port to export.\n", color.Colorize("Error", color.Red))
+			valid.invalid = append(valid.invalid, "No Prometheus exporters defined")
+			valid.isValid = false
+		}
+	}
+
+	return valid
 }
 
 func sanitize(nodes []*yaml.Node) {

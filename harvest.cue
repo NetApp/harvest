@@ -85,6 +85,7 @@ Pollers: [Name=_]: #Poller
 	credentials_file?:   string
 	credentials_script?: #CredentialsScript
 	datacenter?:         string
+	disabled?:           bool
 	exporters:           [...#ExporterDefs]
 	is_kfs?:             bool
 	labels?:             [...label]
@@ -94,6 +95,7 @@ Pollers: [Name=_]: #Poller
 	password?:           string
 	poller_log_schedule?: string
 	prefer_zapi?:        bool
+	prom_port?:          int
 	recorder?:           #Recorder
 	ssl_cert?:           string
 	ssl_key?:            string

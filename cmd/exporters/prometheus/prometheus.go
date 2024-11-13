@@ -272,6 +272,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 		histograms        map[string]*histogram
 		normalizedLabels  map[string][]string // cache of histogram normalized labels
 		instancesExported uint64
+		renderedBytes     uint64
 		instanceKeysOk    bool
 		buf               bytes.Buffer // shared buffer for rendering
 	)
@@ -442,11 +443,13 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 				prefixed := prefix + "_labels"
 				if tagged != nil && !tagged.Has(prefixed) {
 					tagged.Add(prefixed)
-					rendered = append(rendered,
-						[]byte("# HELP "+prefixed+" Pseudo-metric for "+data.Object+" labels"),
-						[]byte("# TYPE "+prefixed+" gauge"))
+					help := "# HELP " + prefixed + " Pseudo-metric for " + data.Object + " labels"
+					typeT := "# TYPE " + prefixed + " gauge"
+					rendered = append(rendered, []byte(help), []byte(typeT))
+					renderedBytes += uint64(len(help)) + uint64(len(typeT))
 				}
 				rendered = append(rendered, labelData)
+				renderedBytes += uint64(len(labelData))
 			}
 		}
 
@@ -503,12 +506,14 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 					prefixedName := prefix + "_" + metric.GetName()
 					if tagged != nil && !tagged.Has(prefixedName) {
 						tagged.Add(prefixedName)
-						rendered = append(rendered,
-							[]byte("# HELP "+prefixedName+" Metric for "+data.Object),
-							[]byte("# TYPE "+prefixedName+" histogram"))
+						help := "# HELP " + prefixedName + " Metric for " + data.Object
+						typeT := "# TYPE " + prefixedName + " histogram"
+						rendered = append(rendered, []byte(help), []byte(typeT))
+						renderedBytes += uint64(len(help)) + uint64(len(typeT))
 					}
 
 					rendered = append(rendered, []byte(x))
+					renderedBytes += uint64(len(x))
 					// scalar metric
 				} else {
 					buf.Reset()
@@ -547,6 +552,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 						copy(helpB, xbr)
 
 						rendered = append(rendered, helpB)
+						renderedBytes += uint64(len(helpB))
 
 						buf.Reset()
 						buf.WriteString("# TYPE ")
@@ -558,9 +564,11 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 						copy(typeB, tbr)
 
 						rendered = append(rendered, typeB)
+						renderedBytes += uint64(len(typeB))
 					}
 
 					rendered = append(rendered, scalarMetric)
+					renderedBytes += uint64(len(scalarMetric))
 				}
 			}
 		}
@@ -592,9 +600,11 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 			prefixedName := prefix + "_" + metric.GetName()
 			if tagged != nil && !tagged.Has(prefixedName) {
 				tagged.Add(prefix + "_" + metric.GetName())
-				rendered = append(rendered,
-					[]byte("# HELP "+prefixedName+" Metric for "+data.Object),
-					[]byte("# TYPE "+prefixedName+" histogram"))
+
+				help := "# HELP " + prefixedName + " Metric for " + data.Object
+				typeT := "# TYPE " + prefixedName + " histogram"
+				rendered = append(rendered, []byte(help), []byte(typeT))
+				renderedBytes += uint64(len(help)) + uint64(len(typeT))
 			}
 
 			normalizedNames, canNormalize := normalizedLabels[objectMetric]
@@ -616,15 +626,18 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 					x = prefix + "_" + metric.GetName() + "{" + joinedKeys + `,` + escape(p.replacer, "metric", bucketName) + "} " + value
 				}
 				rendered = append(rendered, []byte(x))
+				renderedBytes += uint64(len(x))
 			}
 			if canNormalize {
 				rendered = append(rendered, []byte(countMetric), []byte(sumMetric))
+				renderedBytes += uint64(len(countMetric)) + uint64(len(sumMetric))
 			}
 		}
 	}
 	stats := exporter.Stats{
 		InstancesExported: instancesExported,
 		MetricsExported:   uint64(len(rendered)),
+		RenderedBytes:     renderedBytes,
 	}
 
 	return rendered, stats

@@ -494,8 +494,8 @@ func TestEmbeddedExporter(t *testing.T) {
 	}
 
 	uniqueExporters := GetUniqueExporters(p.Exporters)
-	want := []string{"u2-1", "u2-2})"}
-	if slices.Equal(uniqueExporters, want) {
+	want := []string{"u2-1", "u2-2"}
+	if !slices.Equal(uniqueExporters, want) {
 		t.Errorf("got %v, want %v", uniqueExporters, want)
 	}
 
@@ -506,5 +506,63 @@ func TestEmbeddedExporter(t *testing.T) {
 	}
 	if port != 32990 {
 		t.Errorf("got port=%d, want port=32990", port)
+	}
+}
+
+// TestPromPort tests the prom_port configuration
+//   - If there are multiple Prometheus exporters defined for a poller, pick the last one.
+//     (see GetUniqueExporters)
+//   - If there is an embedded exporter, prom_port wins
+//     If the embedded exporter is the last one in the list, it will be picked (per the above rule), but the
+//     prom_port will be used instead of any port defined in the embedded exporter.
+func TestPromPort(t *testing.T) {
+	t.Helper()
+	resetConfig()
+
+	configYaml := "testdata/prom_ports.yml"
+	_, err := LoadHarvestConfig(configYaml)
+	if err != nil {
+		t.Fatalf("got error loading config: %s, want no errors", err)
+	}
+
+	p, err := PollerNamed("sar")
+	if err != nil {
+		t.Fatalf("got no poller, want poller named=u2")
+	}
+	if len(p.Exporters) != 2 {
+		t.Errorf("got %d exporters, want 2", len(p.Exporters))
+	}
+
+	// Ensure that the last exporter is used
+	uniqueExporters := GetUniqueExporters(p.Exporters)
+	want := []string{"prometheus1"}
+	if !slices.Equal(uniqueExporters, want) {
+		t.Errorf("got %v, want %v", uniqueExporters, want)
+	}
+
+	port, err := GetLastPromPort("sar", false)
+	if err != nil {
+		t.Fatalf("got error: %v, want no error", err)
+	}
+	if port != 3000 {
+		t.Errorf("got port=%d, want port=3000", port)
+	}
+
+	// Ensure that the prom_port is used instead of the port defined in the embedded exporter
+	port, err = GetLastPromPort("u3", false)
+	if err != nil {
+		t.Fatalf("got error: %v, want no error", err)
+	}
+	if port != 9999 {
+		t.Errorf("got port=%d, want port=9999", port)
+	}
+
+	// Ensure that zero is returned if the poller does not have an exporter
+	port, err = GetLastPromPort("no-exporter", false)
+	if err != nil {
+		t.Fatalf("got error: %v, want no error", err)
+	}
+	if port != 0 {
+		t.Errorf("got port=%d, want port=0", port)
 	}
 }

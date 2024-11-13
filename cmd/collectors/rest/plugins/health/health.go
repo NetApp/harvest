@@ -200,7 +200,7 @@ func (h *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 
 	result = append(result, emsMat)
 	h.SLogger.Info(
-		"Collected",
+		"Health plugin",
 		slog.Int("numLicenseAlerts", licenseAlertCount),
 		slog.Int("numVolumeMoveAlerts", volumeMoveAlertCount),
 		slog.Int("numVolumeRansomwareAlerts", volumeRansomwareAlertCount),

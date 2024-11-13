@@ -42,6 +42,7 @@ var status = [3]string{
 type Stats struct {
 	InstancesExported uint64
 	MetricsExported   uint64
+	RenderedBytes     uint64
 }
 
 // AbstractExporter implements all methods of the Exporter interface, except Export()
