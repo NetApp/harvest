@@ -412,6 +412,17 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 						slog.String("task", task.Name),
 						slog.String("object", c.Object),
 					)
+				// Metro cluster is not configured
+				case errors.Is(err, errs.ErrMetroClusterNotConfigured):
+					var herr errs.HarvestError
+					errMsg := err.Error()
+					if ok := errors.As(err, &herr); ok {
+						errMsg = herr.Inner.Error()
+					}
+					c.SetStatus(1, errMsg)
+					c.Schedule.SetStandByModeMax(task, 1*time.Hour)
+					// no need to log this
+
 				// not an error we are expecting, so enter failed or standby state
 				default:
 					switch {
@@ -424,14 +435,12 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 						)
 					case errors.Is(err, errs.ErrAPIRequestRejected):
 						c.Schedule.SetStandByModeMax(task, 1*time.Hour)
-						if !errors.Is(err, errs.ErrMetroClusterNotConfigured) {
-							// Log as info since these are not errors.
-							c.Logger.Info(
-								"Entering standby mode",
-								slogx.Err(err),
-								slog.String("task", task.Name),
-							)
-						}
+						// Log as info since these are not errors.
+						c.Logger.Info(
+							"Entering standby mode",
+							slogx.Err(err),
+							slog.String("task", task.Name),
+						)
 					default:
 						c.Logger.Error("", slogx.Err(err), slog.String("task", task.Name))
 					}
