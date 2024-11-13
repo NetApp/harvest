@@ -301,7 +301,7 @@ func (p *Poller) Init() error {
 		return errs.New(errs.ErrNoCollector, "no collectors")
 	}
 
-	p.negotiateONTAPAPI(filteredCollectors)
+	p.negotiateONTAPAPI(filteredCollectors, collectors.GatherClusterInfo)
 
 	objectsToCollectors := make(map[string][]objectCollector)
 	for _, c := range filteredCollectors {
@@ -1491,7 +1491,7 @@ func (p *Poller) sendHarvestVersion() error {
 	return nil
 }
 
-func (p *Poller) negotiateONTAPAPI(cols []conf.Collector) {
+func (p *Poller) negotiateONTAPAPI(cols []conf.Collector, gatherClusterInfo func(pollerName string, cred *auth.Credentials) (conf.Remote, error)) {
 	anyONTAP := false
 	for _, c := range cols {
 		if _, ok := util.IsONTAPCollector[c.Name]; ok {
@@ -1504,15 +1504,16 @@ func (p *Poller) negotiateONTAPAPI(cols []conf.Collector) {
 		return
 	}
 
-	remote, err := collectors.GatherClusterInfo(opts.Poller, p.auth)
+	remote, err := gatherClusterInfo(opts.Poller, p.auth)
 	if err != nil {
 		logger.Error("Failed to gather cluster info", slogx.Err(err))
-		return
 	}
 
-	slog.Info("Cluster info", slog.Any("remote", remote))
-
 	p.remote = remote
+
+	if remote.Version != "" {
+		slog.Info("Cluster info", slog.Any("remote", remote))
+	}
 }
 
 func startPoller(_ *cobra.Command, _ []string) {
