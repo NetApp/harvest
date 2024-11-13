@@ -10,6 +10,7 @@ counters:
       - health
 
 plugins:
+  - Cluster
   - LabelAgent:
       value_to_num:
         - new_status status ok ok `0`

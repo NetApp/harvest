@@ -1899,6 +1899,7 @@
                   }
                 ]
               },
+              "unit": "short",
               "unitScale": true
             },
             "overrides": []
@@ -1921,7 +1922,7 @@
               ],
               "show": false
             },
-            "showHeader": true
+            "showHeader": false
           },
           "pluginVersion": "8.1.8",
           "targets": [
@@ -1929,7 +1930,7 @@
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
-              "expr": "cluster_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "cluster_tags{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -4560,15 +4561,15 @@
         "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(cluster_new_status{system_type!=\"7mode\", datacenter=~\"$Datacenter\"},tags)",
+        "definition": "label_values(cluster_tags{system_type!=\"7mode\", datacenter=~\"$Datacenter\"},tag)",
         "hide": 0,
         "includeAll": true,
         "label": "",
         "multi": true,
-        "name": "Tags",
+        "name": "Tag",
         "options": [],
         "query": {
-          "query": "label_values(cluster_new_status{system_type!=\"7mode\", datacenter=~\"$Datacenter\"},tags)",
+          "query": "label_values(cluster_tags{system_type!=\"7mode\", datacenter=~\"$Datacenter\"},tag)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -4581,10 +4582,10 @@
         "useTags": false
       },
       {
-        "allValue": ".*",
+        "allValue": null,
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\",tags=~\"$Tags\"},cluster)",
+        "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\",tags=~\".*$Tag.*\"},cluster)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -4594,7 +4595,7 @@
         "name": "Cluster",
         "options": [],
         "query": {
-          "query": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\",tags=~\"$Tags\"},cluster)",
+          "query": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\",tags=~\".*$Tag.*\"},cluster)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,

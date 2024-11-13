@@ -45,12 +45,13 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 
 	for _, i := range data.GetInstances() {
 		volName := i.GetLabel("volume")
-		volData := volumesMap[volName]
+		svmName := i.GetLabel("svm")
+		volData := volumesMap[svmName+volName]
 		i.SetLabel(tags, volData.Tags)
 		switch volData.Style {
 		case "flexgroup_constituent":
 			match := flexgroupRegex.FindStringSubmatch(volName)
-			key := i.GetLabel("svm") + "." + match[1]
+			key := svmName + "." + match[1]
 			if cache.GetInstance(key) == nil {
 				fg, _ := cache.NewInstance(key)
 				fg.SetLabels(maps.Clone(i.GetLabels()))
@@ -79,7 +80,7 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 			i.SetExportable(includeConstituents)
 		case "flexvol":
 			i.SetLabel(style, "flexvol")
-			key := i.GetLabel("svm") + "." + volName
+			key := svmName + "." + volName
 			flexvolInstance, err := volumeAggrmetric.NewInstance(key)
 			if err != nil {
 				logger.Error("Failed to create new instance", slogx.Err(err), slog.String("key", key))
@@ -98,11 +99,12 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 	recordFGFalse := make(map[string]*set.Set)
 	for _, i := range data.GetInstances() {
 		volName := i.GetLabel("volume")
-		if volumesMap[volName].Style != "flexgroup_constituent" {
+		svmName := i.GetLabel("svm")
+		if volumesMap[svmName+volName].Style != "flexgroup_constituent" {
 			continue
 		}
 		match := flexgroupRegex.FindStringSubmatch(volName)
-		key := i.GetLabel("svm") + "." + match[1]
+		key := svmName + "." + match[1]
 
 		flexgroupInstance := volumeAggrmetric.GetInstance(key)
 		if flexgroupInstance != nil {
