@@ -17,6 +17,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -473,6 +474,9 @@ func GetUniqueExporters(exporterNames []string) []string {
 		}
 		resultExporters = append(resultExporters, value...)
 	}
+
+	slices.Sort(resultExporters)
+
 	return resultExporters
 }
 
