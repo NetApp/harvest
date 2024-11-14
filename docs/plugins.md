@@ -791,8 +791,8 @@ The `objects` parameter allows you to specify which metrics to collect. By defau
 
 ```yaml
 - objects:
-    - client  # Remove to disable the collection of read/write operations and throughput metrics for the top clients.
-    - file    # Remove to disable the collection of read/write operations and throughput metrics for the top files.
+    - client  # collect read/write operations and throughput metrics for the top clients.
+    - file    # collect read/write operations and throughput metrics for the top files
 ```
 
 If the `objects` parameter is not defined, both client and file data will be collected by default.
