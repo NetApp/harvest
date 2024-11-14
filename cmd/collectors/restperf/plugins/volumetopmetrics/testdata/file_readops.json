@@ -1,0 +1,43 @@
+{
+  "records": [
+    {
+      "volume": {
+        "uuid": "03613247-54ac-4127-a512-afb331f1c207",
+        "name": "osc_vol01",
+        "_links": {
+          "self": {
+            "href": "/api/storage/volumes/03613247-54ac-4127-a512-afb331f1c207"
+          }
+        }
+      },
+      "iops": {
+        "read": 350,
+        "error": {
+          "lower_bound": 350,
+          "upper_bound": 350
+        }
+      },
+      "path": "/harvest-rhel8-1/harvest-rhel8-1_9-flat.vmdk",
+      "svm": {
+        "uuid": "ff82ac73-d7f8-11eb-80e3-00a098d39e12",
+        "name": "osc",
+        "_links": {
+          "self": {
+            "href": "/api/svm/svms/ff82ac73-d7f8-11eb-80e3-00a098d39e12"
+          }
+        }
+      },
+      "_links": {
+        "metadata": {
+          "href": "/api/storage/volumes/03613247-54ac-4127-a512-afb331f1c207/files/harvest-rhel8-1%2Fharvest-rhel8-1_9-flat%2Evmdk?return_metadata=true"
+        }
+      }
+    }
+  ],
+  "num_records": 1,
+  "_links": {
+    "self": {
+      "href": "/api/storage/volumes/*/top-metrics/files?top_metric=iops.read&volume.name=osc_vol01"
+    }
+  }
+}

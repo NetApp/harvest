@@ -1,4 +1,4 @@
-package volumetopclients
+package volumetopmetrics
 
 import (
 	"cmp"
@@ -20,8 +20,10 @@ import (
 
 type VolumeTracker interface {
 	fetchTopClients(volumes *set.Set, svms *set.Set, metric string) ([]gjson.Result, error)
+	fetchTopFiles(volumes *set.Set, svms *set.Set, metric string) ([]gjson.Result, error)
 	fetchVolumesWithActivityTrackingEnabled() (*set.Set, error)
-	processTopClients(data *matrix.Matrix) error
+	processTopClients(data *TopMetricsData) error
+	processTopFiles(data *TopMetricsData) error
 }
 
 const (
@@ -30,6 +32,10 @@ const (
 	topClientWriteOPSMatrix  = "volume_top_clients_write_ops"
 	topClientReadDataMatrix  = "volume_top_clients_read_data"
 	topClientWriteDataMatrix = "volume_top_clients_write_data"
+	topFileReadOPSMatrix     = "volume_top_files_read_ops"
+	topFileWriteOPSMatrix    = "volume_top_files_write_ops"
+	topFileReadDataMatrix    = "volume_top_files_read_data"
+	topFileWriteDataMatrix   = "volume_top_files_write_data"
 	defaultTopN              = 5
 	maxTopN                  = 50
 )
@@ -38,14 +44,27 @@ var opMetric = "ops"
 
 var dataMetric = "data"
 
-type TopClients struct {
+type TopMetrics struct {
 	*plugin.AbstractPlugin
-	schedule       int
-	client         *rest.Client
-	data           map[string]*matrix.Matrix
-	cache          *VolumeCache
-	maxVolumeCount int
-	tracker        VolumeTracker
+	schedule             int
+	client               *rest.Client
+	data                 map[string]*matrix.Matrix
+	cache                *VolumeCache
+	maxVolumeCount       int
+	tracker              VolumeTracker
+	clientMetricsEnabled bool
+	fileMetricsEnabled   bool
+}
+
+type TopMetricsData struct {
+	readOpsVolumes   *set.Set
+	readOpsSvms      *set.Set
+	writeOpsVolumes  *set.Set
+	writeOpsSvms     *set.Set
+	readDataVolumes  *set.Set
+	readDataSvms     *set.Set
+	writeDataVolumes *set.Set
+	writeDataSvms    *set.Set
 }
 
 type VolumeCache struct {
@@ -59,10 +78,10 @@ type MetricValue struct {
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
-	return &TopClients{AbstractPlugin: p}
+	return &TopMetrics{AbstractPlugin: p}
 }
 
-func (t *TopClients) InitAllMatrix() error {
+func (t *TopMetrics) InitAllMatrix() error {
 	t.data = make(map[string]*matrix.Matrix)
 	mats := []struct {
 		name   string
@@ -73,6 +92,10 @@ func (t *TopClients) InitAllMatrix() error {
 		{topClientWriteOPSMatrix, "volume_top_clients_write", opMetric},
 		{topClientReadDataMatrix, "volume_top_clients_read", dataMetric},
 		{topClientWriteDataMatrix, "volume_top_clients_write", dataMetric},
+		{topFileReadOPSMatrix, "volume_top_files_read", opMetric},
+		{topFileWriteOPSMatrix, "volume_top_files_write", opMetric},
+		{topFileReadDataMatrix, "volume_top_files_read", dataMetric},
+		{topFileWriteDataMatrix, "volume_top_files_write", dataMetric},
 	}
 
 	for _, m := range mats {
@@ -83,7 +106,7 @@ func (t *TopClients) InitAllMatrix() error {
 	return nil
 }
 
-func (t *TopClients) initMatrix(name string, object string, inputMat map[string]*matrix.Matrix, metric string) error {
+func (t *TopMetrics) initMatrix(name string, object string, inputMat map[string]*matrix.Matrix, metric string) error {
 	matrixName := t.Parent + name
 	inputMat[name] = matrix.New(matrixName, object, name)
 	for _, v1 := range t.data {
@@ -97,7 +120,7 @@ func (t *TopClients) initMatrix(name string, object string, inputMat map[string]
 	return nil
 }
 
-func (t *TopClients) Init(remote conf.Remote) error {
+func (t *TopMetrics) Init(remote conf.Remote) error {
 	var err error
 	if err := t.InitAbc(); err != nil {
 		return err
@@ -125,12 +148,31 @@ func (t *TopClients) Init(remote conf.Remote) error {
 			t.maxVolumeCount = min(maxVolCount, maxTopN)
 		}
 	}
+
+	// enable client and file metrics collection by default
+	t.clientMetricsEnabled = true
+	t.fileMetricsEnabled = true
+
+	if objects := t.Params.GetChildS("objects"); objects != nil {
+		o := objects.GetAllChildContentS()
+		if !slices.Contains(o, "client") {
+			t.clientMetricsEnabled = false
+		}
+		if !slices.Contains(o, "file") {
+			t.fileMetricsEnabled = false
+		}
+	}
 	t.schedule = t.SetPluginInterval()
 	t.SLogger.Info("Using", slog.Int("maxVolumeCount", t.maxVolumeCount))
 	return nil
 }
 
-func (t *TopClients) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (t *TopMetrics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+	// if both client and file metrics are disabled then return
+	if !t.clientMetricsEnabled && !t.fileMetricsEnabled {
+		return nil, nil, nil
+	}
+
 	data := dataMap[t.Object]
 	t.client.Metadata.Reset()
 	err := t.InitAllMatrix()
@@ -141,10 +183,25 @@ func (t *TopClients) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 		// Set all global labels if already not exist
 		t.data[k].SetGlobalLabels(data.GetGlobalLabels())
 	}
-	err = t.processTopClients(data)
+
+	metricsData, err := t.processTopMetrics(data)
 	if err != nil {
 		return nil, nil, err
 	}
+
+	if t.clientMetricsEnabled {
+		err = t.processTopClients(metricsData)
+		if err != nil {
+			return nil, nil, err
+		}
+	}
+	if t.fileMetricsEnabled {
+		err = t.processTopFiles(metricsData)
+		if err != nil {
+			return nil, nil, err
+		}
+	}
+
 	result := make([]*matrix.Matrix, 0, len(t.data))
 
 	var pluginInstances uint64
@@ -154,14 +211,14 @@ func (t *TopClients) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 			continue
 		}
 		result = append(result, value)
-		pluginInstances = +uint64(len(value.GetInstances()))
+		pluginInstances += uint64(len(value.GetInstances()))
 	}
 
 	t.client.Metadata.PluginInstances = pluginInstances
 	return result, t.client.Metadata, err
 }
 
-func (t *TopClients) getCachedVolumesWithActivityTracking() (*set.Set, error) {
+func (t *TopMetrics) getCachedVolumesWithActivityTracking() (*set.Set, error) {
 
 	var (
 		va  *set.Set
@@ -186,14 +243,54 @@ func (t *TopClients) getCachedVolumesWithActivityTracking() (*set.Set, error) {
 	return va, nil
 }
 
-func (t *TopClients) processTopClients(data *matrix.Matrix) error {
-	va, err := t.getCachedVolumesWithActivityTracking()
-	if err != nil {
+func (t *TopMetrics) processTopClients(metricsData *TopMetricsData) error {
+	if err := t.processTopClientsByMetric(metricsData.readOpsVolumes, metricsData.readOpsSvms, topClientReadOPSMatrix, "iops.read", opMetric); err != nil {
 		return err
 	}
 
+	if err := t.processTopClientsByMetric(metricsData.writeOpsVolumes, metricsData.writeOpsSvms, topClientWriteOPSMatrix, "iops.write", opMetric); err != nil {
+		return err
+	}
+
+	if err := t.processTopClientsByMetric(metricsData.readDataVolumes, metricsData.readDataSvms, topClientReadDataMatrix, "throughput.read", dataMetric); err != nil {
+		return err
+	}
+
+	if err := t.processTopClientsByMetric(metricsData.writeDataVolumes, metricsData.writeDataSvms, topClientWriteDataMatrix, "throughput.write", dataMetric); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (t *TopMetrics) processTopFiles(metricsData *TopMetricsData) error {
+	if err := t.processTopFilesByMetric(metricsData.readOpsVolumes, metricsData.readOpsSvms, topFileReadOPSMatrix, "iops.read", opMetric); err != nil {
+		return err
+	}
+
+	if err := t.processTopFilesByMetric(metricsData.writeOpsVolumes, metricsData.writeOpsSvms, topFileWriteOPSMatrix, "iops.write", opMetric); err != nil {
+		return err
+	}
+
+	if err := t.processTopFilesByMetric(metricsData.readDataVolumes, metricsData.readDataSvms, topFileReadDataMatrix, "throughput.read", dataMetric); err != nil {
+		return err
+	}
+
+	if err := t.processTopFilesByMetric(metricsData.writeDataVolumes, metricsData.writeDataSvms, topFileWriteDataMatrix, "throughput.write", dataMetric); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (t *TopMetrics) processTopMetrics(data *matrix.Matrix) (*TopMetricsData, error) {
+	va, err := t.getCachedVolumesWithActivityTracking()
+	if err != nil {
+		return nil, err
+	}
+
 	if va.Size() == 0 {
-		return nil
+		return nil, nil
 	}
 
 	filteredDataInstances := set.New()
@@ -217,26 +314,19 @@ func (t *TopClients) processTopClients(data *matrix.Matrix) error {
 	readDataVolumes, readDataSvms := t.extractVolumesAndSvms(data, topReadData)
 	writeDataVolumes, writeDataSvms := t.extractVolumesAndSvms(data, topWriteData)
 
-	if err := t.processTopClientsByMetric(readOpsVolumes, readOpsSvms, topClientReadOPSMatrix, "iops.read", opMetric); err != nil {
-		return err
-	}
-
-	if err := t.processTopClientsByMetric(writeOpsVolumes, writeOpsSvms, topClientWriteOPSMatrix, "iops.write", opMetric); err != nil {
-		return err
-	}
-
-	if err := t.processTopClientsByMetric(readDataVolumes, readDataSvms, topClientReadDataMatrix, "throughput.read", dataMetric); err != nil {
-		return err
-	}
-
-	if err := t.processTopClientsByMetric(writeDataVolumes, writeDataSvms, topClientWriteDataMatrix, "throughput.write", dataMetric); err != nil {
-		return err
-	}
-
-	return nil
+	return &TopMetricsData{
+		readOpsVolumes:   readOpsVolumes,
+		readOpsSvms:      readOpsSvms,
+		writeOpsVolumes:  writeOpsVolumes,
+		writeOpsSvms:     writeOpsSvms,
+		readDataVolumes:  readDataVolumes,
+		readDataSvms:     readDataSvms,
+		writeDataVolumes: writeDataVolumes,
+		writeDataSvms:    writeDataSvms,
+	}, nil
 }
 
-func (t *TopClients) collectMetricValues(data *matrix.Matrix, filteredDataInstances *set.Set) ([]MetricValue, []MetricValue, []MetricValue, []MetricValue) {
+func (t *TopMetrics) collectMetricValues(data *matrix.Matrix, filteredDataInstances *set.Set) ([]MetricValue, []MetricValue, []MetricValue, []MetricValue) {
 	readOpsMetric := data.GetMetric("total_read_ops")
 	writeOpsMetric := data.GetMetric("total_write_ops")
 	readDataMetric := data.GetMetric("bytes_read")
@@ -277,7 +367,7 @@ func (t *TopClients) collectMetricValues(data *matrix.Matrix, filteredDataInstan
 	return readOpsList, writeOpsList, readDataList, writeDataList
 }
 
-func (t *TopClients) getTopN(metricList []MetricValue) []MetricValue {
+func (t *TopMetrics) getTopN(metricList []MetricValue) []MetricValue {
 	slices.SortFunc(metricList, func(a, b MetricValue) int {
 		return cmp.Compare(b.value, a.value) // Sort in descending order
 	})
@@ -288,7 +378,7 @@ func (t *TopClients) getTopN(metricList []MetricValue) []MetricValue {
 	return metricList
 }
 
-func (t *TopClients) extractVolumesAndSvms(data *matrix.Matrix, topMetrics []MetricValue) (*set.Set, *set.Set) {
+func (t *TopMetrics) extractVolumesAndSvms(data *matrix.Matrix, topMetrics []MetricValue) (*set.Set, *set.Set) {
 	volumes := set.New()
 	svms := set.New()
 	for _, item := range topMetrics {
@@ -303,7 +393,40 @@ func (t *TopClients) extractVolumesAndSvms(data *matrix.Matrix, topMetrics []Met
 	return volumes, svms
 }
 
-func (t *TopClients) processTopClientsByMetric(volumes, svms *set.Set, matrixName, metric, metricType string) error {
+func (t *TopMetrics) processTopFilesByMetric(volumes, svms *set.Set, matrixName, metric, metricType string) error {
+	if svms.Size() == 0 || volumes.Size() == 0 {
+		return nil
+	}
+
+	topFiles, err := t.fetchTopFiles(volumes, svms, metric)
+	if err != nil {
+		return err
+	}
+
+	mat := t.data[matrixName]
+	if mat == nil {
+		return nil
+	}
+	for _, client := range topFiles {
+		path := client.Get("path").String()
+		vol := client.Get("volume.name").String()
+		svm := client.Get("svm.name").String()
+		value := client.Get(metric).Float()
+		instanceKey := path + keyToken + vol + keyToken + svm
+		instance, err := mat.NewInstance(instanceKey)
+		if err != nil {
+			t.SLogger.Warn("error while creating instance", slogx.Err(err), slog.String("volume", vol))
+			continue
+		}
+		instance.SetLabel("volume", vol)
+		instance.SetLabel("svm", svm)
+		instance.SetLabel("path", path)
+		t.setMetric(mat, instance, value, metricType)
+	}
+	return nil
+}
+
+func (t *TopMetrics) processTopClientsByMetric(volumes, svms *set.Set, matrixName, metric, metricType string) error {
 	if svms.Size() == 0 || volumes.Size() == 0 {
 		return nil
 	}
@@ -336,7 +459,7 @@ func (t *TopClients) processTopClientsByMetric(volumes, svms *set.Set, matrixNam
 	return nil
 }
 
-func (t *TopClients) setMetric(mat *matrix.Matrix, instance *matrix.Instance, value float64, metricType string) {
+func (t *TopMetrics) setMetric(mat *matrix.Matrix, instance *matrix.Instance, value float64, metricType string) {
 	var err error
 	m := mat.GetMetric(metricType)
 	if m == nil {
@@ -350,7 +473,7 @@ func (t *TopClients) setMetric(mat *matrix.Matrix, instance *matrix.Instance, va
 	}
 }
 
-func (t *TopClients) fetchVolumesWithActivityTrackingEnabled() (*set.Set, error) {
+func (t *TopMetrics) fetchVolumesWithActivityTrackingEnabled() (*set.Set, error) {
 	var (
 		result []gjson.Result
 		err    error
@@ -379,7 +502,7 @@ func (t *TopClients) fetchVolumesWithActivityTrackingEnabled() (*set.Set, error)
 	return va, nil
 }
 
-func (t *TopClients) fetchTopClients(volumes *set.Set, svms *set.Set, metric string) ([]gjson.Result, error) {
+func (t *TopMetrics) fetchTopClients(volumes *set.Set, svms *set.Set, metric string) ([]gjson.Result, error) {
 	var (
 		result []gjson.Result
 		err    error
@@ -391,6 +514,29 @@ func (t *TopClients) fetchTopClients(volumes *set.Set, svms *set.Set, metric str
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Fields([]string{"client_ip", "svm", "volume.name", metric}).
+		MaxRecords(collectors.DefaultBatchSize).
+		Filter([]string{"top_metric=" + metric, "volume=" + strings.Join(volumes.Values(), "|"), "svm=" + strings.Join(svms.Values(), "|")}).
+		Build()
+
+	if result, err = collectors.InvokeRestCall(t.client, href); err != nil {
+		return result, err
+	}
+
+	return result, nil
+}
+
+func (t *TopMetrics) fetchTopFiles(volumes *set.Set, svms *set.Set, metric string) ([]gjson.Result, error) {
+	var (
+		result []gjson.Result
+		err    error
+	)
+	if t.tracker != nil {
+		return t.tracker.fetchTopFiles(volumes, svms, metric)
+	}
+	query := "api/storage/volumes/*/top-metrics/files"
+	href := rest.NewHrefBuilder().
+		APIPath(query).
+		Fields([]string{"path", "svm", "volume.name", metric}).
 		MaxRecords(collectors.DefaultBatchSize).
 		Filter([]string{"top_metric=" + metric, "volume=" + strings.Join(volumes.Values(), "|"), "svm=" + strings.Join(svms.Values(), "|")}).
 		Build()
