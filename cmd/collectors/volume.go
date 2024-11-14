@@ -14,12 +14,7 @@ import (
 
 var flexgroupRegex = regexp.MustCompile(`^(.*)__(\d{4})$`)
 
-type VolumeData struct {
-	Style string
-	Tags  string
-}
-
-func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string, tags string, includeConstituents bool, opsKeyPrefix string, volumesMap map[string]VolumeData) ([]*matrix.Matrix, *util.Metadata, error) {
+func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string, includeConstituents bool, opsKeyPrefix string, volumesMap map[string]string) ([]*matrix.Matrix, *util.Metadata, error) {
 	var err error
 
 	if volumesMap == nil {
@@ -46,9 +41,7 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 	for _, i := range data.GetInstances() {
 		volName := i.GetLabel("volume")
 		svmName := i.GetLabel("svm")
-		volData := volumesMap[svmName+volName]
-		i.SetLabel(tags, volData.Tags)
-		switch volData.Style {
+		switch volumesMap[svmName+volName] {
 		case "flexgroup_constituent":
 			match := flexgroupRegex.FindStringSubmatch(volName)
 			key := svmName + "." + match[1]
@@ -100,7 +93,7 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 	for _, i := range data.GetInstances() {
 		volName := i.GetLabel("volume")
 		svmName := i.GetLabel("svm")
-		if volumesMap[svmName+volName].Style != "flexgroup_constituent" {
+		if volumesMap[svmName+volName] != "flexgroup_constituent" {
 			continue
 		}
 		match := flexgroupRegex.FindStringSubmatch(volName)

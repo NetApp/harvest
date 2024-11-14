@@ -78,5 +78,4 @@ export_options:
     - node
     - style
     - svm
-    - tags
     - volume
