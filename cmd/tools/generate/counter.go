@@ -464,10 +464,15 @@ func processCounters(counterContents []string, model *template2.Model, path, que
 	var (
 		staticCounterDef keyperf.ObjectCounters
 		err              error
+		defLocation      string
 	)
 	if api == keyPerfAPI {
 		logger := logging.Get()
-		staticCounterDef, err = keyperf.LoadStaticCounterDefinitions(model.Object, "conf/keyperf/static_counter_definitions.yaml", logger)
+		// CLI conf/keyperf/9.15.0/aggr.yaml
+		// CI  ../../conf/keyperf/9.15.0/volume.yaml
+		defLocation = filepath.Join(filepath.Dir(filepath.Dir(path)), "static_counter_definitions.yaml")
+
+		staticCounterDef, err = keyperf.LoadStaticCounterDefinitions(model.Object, defLocation, logger)
 		if err != nil {
 			fmt.Printf("Failed to load static counter definitions=%s\n", err)
 		}
