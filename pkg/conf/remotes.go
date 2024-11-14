@@ -19,5 +19,5 @@ func (r Remote) IsZero() bool {
 }
 
 func (r Remote) IsKeyPerf() bool {
-	return r.IsDisaggregated && !r.IsSanOptimized
+	return r.IsDisaggregated
 }
