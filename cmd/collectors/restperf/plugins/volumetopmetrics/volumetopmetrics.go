@@ -155,10 +155,10 @@ func (t *TopMetrics) Init() error {
 
 	if objects := t.Params.GetChildS("objects"); objects != nil {
 		o := objects.GetAllChildContentS()
-		if !util.Contains(o, "client") {
+		if !slices.Contains(o, "client") {
 			t.clientMetricsEnabled = false
 		}
-		if !util.Contains(o, "file") {
+		if !slices.Contains(o, "file") {
 			t.fileMetricsEnabled = false
 		}
 	}
