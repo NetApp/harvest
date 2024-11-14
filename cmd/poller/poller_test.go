@@ -1,8 +1,10 @@
 package main
 
 import (
+	"errors"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
+	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"strings"
@@ -138,6 +140,7 @@ func TestCollectorUpgrade(t *testing.T) {
 
 	ontap911 := conf.Remote{Version: "9.11.1", ZAPIsExist: true}
 	ontap917 := conf.Remote{Version: "9.17.1", ZAPIsExist: false}
+	asaR2 := conf.Remote{Version: "9.16.1", ZAPIsExist: false, IsDisaggregated: true, IsSanOptimized: true}
 	keyPerf := conf.Remote{Version: "9.17.1", ZAPIsExist: false, IsDisaggregated: true}
 	keyPerfWithZapi := conf.Remote{Version: "9.17.1", ZAPIsExist: true, IsDisaggregated: true}
 
@@ -159,6 +162,9 @@ func TestCollectorUpgrade(t *testing.T) {
 		{name: "KeyPerf w/ ZAPI", remote: keyPerfWithZapi, askFor: "Zapi", wantCollector: "Zapi"},
 		{name: "KeyPerf w/ ZAPI", remote: keyPerfWithZapi, askFor: "ZapiPerf", wantCollector: "KeyPerf"},
 		{name: "KeyPerf w/ ZAPI", remote: keyPerfWithZapi, askFor: "RestPerf", wantCollector: "KeyPerf"},
+
+		{name: "ASA R2", remote: asaR2, askFor: "Zapi", wantCollector: "Rest"},
+		{name: "ASA R2", remote: asaR2, askFor: "RestPerf", wantCollector: "KeyPerf"},
 	}
 
 	for _, tt := range tests {
@@ -264,4 +270,58 @@ func objectCollectorMap(constructors ...string) map[string][]objectCollector {
 	}
 
 	return objectsToCollectors
+}
+
+func TestNegotiateONTAPAPI(t *testing.T) {
+
+	tests := []struct {
+		name           string
+		collectors     []conf.Collector
+		mockReturn     conf.Remote
+		mockError      error
+		expectedRemote conf.Remote
+	}{
+		{
+			name: "No ONTAP Collector",
+			collectors: []conf.Collector{
+				{Name: "StorageGrid"},
+			},
+			mockReturn:     conf.Remote{},
+			mockError:      nil,
+			expectedRemote: conf.Remote{},
+		},
+		{
+			name: "ONTAP Collector with Success",
+			collectors: []conf.Collector{
+				{Name: "Zapi"},
+			},
+			mockReturn:     conf.Remote{Version: "9.11.1"},
+			mockError:      nil,
+			expectedRemote: conf.Remote{Version: "9.11.1"},
+		},
+		{
+			name: "ONTAP Collector with Error",
+			collectors: []conf.Collector{
+				{Name: "Zapi"},
+			},
+			mockReturn:     conf.Remote{Version: "9.11.1"},
+			mockError:      errors.New("failed to gather cluster info"),
+			expectedRemote: conf.Remote{Version: "9.11.1"},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mockGatherClusterInfo := func(_ string, _ *auth.Credentials) (conf.Remote, error) {
+				return tt.mockReturn, tt.mockError
+			}
+			poller := Poller{}
+
+			poller.negotiateONTAPAPI(tt.collectors, mockGatherClusterInfo)
+
+			if diff := cmp.Diff(poller.remote, tt.expectedRemote); diff != "" {
+				t.Errorf("negotiateONTAPAPI() mismatch (-got +want):\n%s", diff)
+			}
+		})
+	}
 }

@@ -1,0 +1,43 @@
+{
+  "records": [
+    {
+      "volume": {
+        "uuid": "03613247-54ac-4127-a512-afb331f1c207",
+        "name": "osc_vol01",
+        "_links": {
+          "self": {
+            "href": "/api/storage/volumes/03613247-54ac-4127-a512-afb331f1c207"
+          }
+        }
+      },
+      "throughput": {
+        "write": 819,
+        "error": {
+          "lower_bound": 819,
+          "upper_bound": 819
+        }
+      },
+      "path": "/.vSphere-HA/FDM-cf816f20-89e8-4f6a-92cb-3aee5ededaf9-1012-b20b14c-harvestvc/.lck-c5009be600000000",
+      "svm": {
+        "uuid": "ff82ac73-d7f8-11eb-80e3-00a098d39e12",
+        "name": "osc",
+        "_links": {
+          "self": {
+            "href": "/api/svm/svms/ff82ac73-d7f8-11eb-80e3-00a098d39e12"
+          }
+        }
+      },
+      "_links": {
+        "metadata": {
+          "href": "/api/storage/volumes/03613247-54ac-4127-a512-afb331f1c207/files/%2EvSphere-HA%2FFDM-cf816f20-89e8-4f6a-92cb-3aee5ededaf9-1012-b20b14c-harvestvc%2F%2Elck-c5009be600000000?return_metadata=true"
+        }
+      }
+    }
+  ],
+  "num_records": 1,
+  "_links": {
+    "self": {
+      "href": "/api/storage/volumes/*/top-metrics/files?top_metric=throughput.write&volume.name=osc_vol01"
+    }
+  }
+}

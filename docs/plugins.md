@@ -761,11 +761,11 @@ You can view the metrics published by the ChangeLog plugin in the `ChangeLog Mon
 
 # VolumeTopClients
 
-The `VolumeTopClients` plugin is used to track a volume's top clients for volumes in terms of read and write IOPS, as well as read and write throughput. This plugin is available only through the RestPerf Collector in ONTAP version 9.12 and later.
+The `VolumeTopClients` plugin is used to track a volume's top clients and top files in terms of read and write IOPS, as well as read and write throughput. This plugin is available only through the RestPerf Collector in ONTAP version 9.12 and later.
 
 ## Enabling the Plugin
 
-Top Clients collection is disabled by default. To enable Top Clients tracking in Harvest, follow these steps:
+Top Clients and Files collection is disabled by default. To enable Top Clients and Files tracking in Harvest, follow these steps:
 
 1. Ensure you are using ONTAP version 9.12 or later.
 2. Enable the Top Clients collection in the RestPerf Collector Volume template via the `VolumeTopClients` plugin.
@@ -783,8 +783,20 @@ The plugin will select the top volumes based on the descending order of read IOP
 1. Collect the read IOPS, write IOPS, read throughput, and write throughput for all volumes.
 2. Sort the volumes in descending order based on their metric values.
 3. Select the top volumes as specified by `max_volumes`.
-4. Collect top clients metrics for these volumes.
+4. Collect top clients and top files metrics for these volumes.
+
+### `objects`
+
+The `objects` parameter allows you to specify which metrics to collect. By default, both client and file data will be collected. You can customize this by including or excluding specific objects:
+
+```yaml
+- objects:
+    - client  # collect read/write operations and throughput metrics for the top clients.
+    - file    # collect read/write operations and throughput metrics for the top files
+```
+
+If the `objects` parameter is not defined, both client and file data will be collected by default.
 
 ## Viewing the Metrics
 
-You can view the metrics published by the `VolumeTopClients` plugin in the `Volume` dashboard under the `Top Clients` row in Grafana.
+You can view the metrics published by the `VolumeTopClients` plugin in the `Volume` dashboard under the `Clients` and `Files` row in Grafana.
