@@ -301,7 +301,7 @@ func (p *Poller) Init() error {
 		return errs.New(errs.ErrNoCollector, "no collectors")
 	}
 
-	p.negotiateONTAPAPI(filteredCollectors, collectors.GatherClusterInfo)
+	p.negotiateONTAPAPI(filteredCollectors)
 
 	objectsToCollectors := make(map[string][]objectCollector)
 	for _, c := range filteredCollectors {
@@ -711,7 +711,11 @@ func (p *Poller) readObjects(c conf.Collector) ([]objectCollector, error) {
 		template, subTemplate *node.Node
 	)
 
-	c = p.upgradeCollector(c, p.remote)
+	newC := p.upgradeCollector(c, p.remote)
+	if newC.Name != c.Name {
+		logger.Info("upgraded collector", slog.String("old", c.Name), slog.String("new", newC.Name))
+	}
+	c = newC
 	class = c.Name
 	// throw warning for deprecated collectors
 	if r, d := deprecatedCollectors[strings.ToLower(class)]; d {
@@ -1491,7 +1495,7 @@ func (p *Poller) sendHarvestVersion() error {
 	return nil
 }
 
-func (p *Poller) negotiateONTAPAPI(cols []conf.Collector, gatherClusterInfo func(pollerName string, cred *auth.Credentials) (conf.Remote, error)) {
+func (p *Poller) negotiateONTAPAPI(cols []conf.Collector) {
 	anyONTAP := false
 	for _, c := range cols {
 		if _, ok := util.IsONTAPCollector[c.Name]; ok {
@@ -1504,9 +1508,9 @@ func (p *Poller) negotiateONTAPAPI(cols []conf.Collector, gatherClusterInfo func
 		return
 	}
 
-	remote, err := gatherClusterInfo(opts.Poller, p.auth)
+	remote, err := collectors.GatherClusterInfo(opts.Poller, p.auth)
 	if err != nil {
-		logger.Error("Failed to gather cluster info", slogx.Err(err))
+		logger.Warn("gather cluster info", slog.Any("remote", remote), slog.Any("remoteErr", err))
 	}
 
 	p.remote = remote
