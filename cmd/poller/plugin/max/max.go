@@ -6,6 +6,7 @@ package max
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
@@ -36,9 +37,9 @@ type rule struct {
 	counts        map[string]map[string]int
 }
 
-func (m *Max) Init() error {
+func (m *Max) Init(remote conf.Remote) error {
 
-	if err := m.AbstractPlugin.Init(); err != nil {
+	if err := m.AbstractPlugin.Init(remote); err != nil {
 		return err
 	}
 

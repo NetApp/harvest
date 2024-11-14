@@ -2,6 +2,7 @@ package changelog
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/yaml"
@@ -68,10 +69,10 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 }
 
 // Init initializes the ChangeLog plugin
-func (c *ChangeLog) Init() error {
+func (c *ChangeLog) Init(remote conf.Remote) error {
 
 	// Initialize the abstract plugin
-	if err := c.AbstractPlugin.Init(); err != nil {
+	if err := c.AbstractPlugin.Init(remote); err != nil {
 		return err
 	}
 

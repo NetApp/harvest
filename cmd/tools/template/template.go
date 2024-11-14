@@ -9,6 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/labelagent"
 	max2 "github.com/netapp/harvest/v2/cmd/poller/plugin/max"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/metricagent"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -291,7 +292,7 @@ func readMax(template *node.Node, model *Model) error {
 	if len(children) != 0 {
 		abc := plugin.AbstractPlugin{Params: children[0]}
 		mm := max2.New(&abc)
-		err := mm.Init()
+		err := mm.Init(conf.Remote{})
 		if err != nil {
 			return err
 		}
@@ -308,7 +309,7 @@ func readMetricAgent(template *node.Node, model *Model) error {
 	}
 	abc := plugin.AbstractPlugin{Params: children[0]}
 	ma := metricagent.New(&abc)
-	err := ma.Init()
+	err := ma.Init(conf.Remote{})
 	if err != nil {
 		return err
 	}
@@ -321,7 +322,7 @@ func readAggregator(template *node.Node, model *Model) error {
 	if len(children) != 0 {
 		abc := plugin.AbstractPlugin{Params: children[0]}
 		agg := aggregator.New(&abc)
-		err := agg.Init()
+		err := agg.Init(conf.Remote{})
 		if err != nil {
 			return err
 		}
@@ -339,7 +340,7 @@ func readLabelAgent(template *node.Node, model *Model) error {
 	}
 	abc := plugin.AbstractPlugin{Params: children[0]}
 	la := labelagent.New(&abc)
-	err := la.Init()
+	err := la.Init(conf.Remote{})
 	if err != nil {
 		return err
 	}

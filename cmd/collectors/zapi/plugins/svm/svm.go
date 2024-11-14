@@ -70,7 +70,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &SVM{AbstractPlugin: p}
 }
 
-func (s *SVM) Init() error {
+func (s *SVM) Init(remote conf.Remote) error {
 
 	var err error
 
@@ -83,7 +83,7 @@ func (s *SVM) Init() error {
 		return err
 	}
 
-	if err := s.client.Init(5); err != nil {
+	if err := s.client.Init(5, remote); err != nil {
 		return err
 	}
 

@@ -172,10 +172,10 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 	case "start":
 		startAllPollers(pollersFiltered, statusesByName)
 	}
-	printTable(pollersFiltered)
+	printTable(pollersFiltered, statusesByName)
 }
 
-func printTable(filteredPollers []string) {
+func printTable(filteredPollers []string, statusesByName map[string][]*util.PollerStatus) {
 	table := tw.NewWriter(os.Stdout)
 	table.SetBorder(false)
 	table.SetAutoFormatHeaders(false)
@@ -186,7 +186,8 @@ func printTable(filteredPollers []string) {
 	}
 	table.SetColumnAlignment([]int{tw.ALIGN_LEFT, tw.ALIGN_LEFT, tw.ALIGN_RIGHT, tw.ALIGN_RIGHT, tw.ALIGN_RIGHT})
 	notRunning := &util.PollerStatus{Status: util.StatusNotRunning}
-	statusesByName := getPollersStatus()
+	disabled := &util.PollerStatus{Status: util.StatusDisabled}
+
 	for _, name := range filteredPollers {
 		var (
 			poller       *conf.Poller
@@ -196,6 +197,7 @@ func printTable(filteredPollers []string) {
 			// should never happen, ignore since this was handled earlier
 			continue
 		}
+
 		if statuses, ok := statusesByName[name]; ok {
 			// print each status, annotate extra rows with a +
 			for i, status := range statuses {
@@ -207,7 +209,11 @@ func printTable(filteredPollers []string) {
 			}
 		} else {
 			// poller not running
-			printStatus(table, opts.longStatus, poller.Datacenter, name, notRunning)
+			if poller.IsDisabled {
+				printStatus(table, opts.longStatus, poller.Datacenter, name, disabled)
+			} else {
+				printStatus(table, opts.longStatus, poller.Datacenter, name, notRunning)
+			}
 		}
 	}
 	table.Render()
@@ -230,7 +236,11 @@ func startAllPollers(pollersFiltered []string, statusesByName map[string][]*util
 				startPoller(name, promPort, opts)
 			}
 		} else {
-			// poller not already running or just stopped
+			// poller not already running, just stopped, or disabled
+			poller, _ := conf.PollerNamed(name)
+			if poller == nil || poller.IsDisabled {
+				continue
+			}
 			promPort := getPollerPrometheusPort(name, opts)
 			startPoller(name, promPort, opts)
 		}
@@ -256,7 +266,7 @@ func getPollersStatus() map[string][]*util.PollerStatus {
 		fmt.Printf("Unable to GetPollerStatuses err: %+v\n", err)
 		return nil
 	}
-	// create map of status names
+	// create a map of status names
 	for _, status := range statuses {
 		statusesByName[status.Name] = append(statusesByName[status.Name], &status) // #nosec G601
 	}

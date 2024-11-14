@@ -4,112 +4,99 @@ package zapi
 import (
 	"errors"
 	"fmt"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"regexp"
 	"strconv"
 )
 
-type system struct {
-	name        string
-	serial      string
-	clusterUUID string
-	release     string
-	version     [3]int
-	clustered   bool
-}
-
 // See system_test.go for examples
-func (s *system) parse7mode(release string) error {
+func parse7mode(release string) (int, int, int, error) {
 	// NetApp Release 8.2P4 7-Mode: Tue Oct 1 11:24:04 PDT 2013
 	r := regexp.MustCompile(`NetApp Release (\d+)\.(\d+)\w(\d+)`)
 	matches := r.FindStringSubmatch(release)
 	if len(matches) == 4 {
-		setInt(&s.version[0], matches[1])
-		setInt(&s.version[1], matches[2])
-		setInt(&s.version[2], matches[3])
-		return nil
+		return toInt(matches[1]), toInt(matches[2]), toInt(matches[3]), nil
 	}
 
 	r = regexp.MustCompile(`NetApp Release (\d+)\.(\d+)\.(\d+)`)
 	matches = r.FindStringSubmatch(release)
 	if len(matches) == 4 {
-		setInt(&s.version[0], matches[1])
-		setInt(&s.version[1], matches[2])
-		setInt(&s.version[2], matches[3])
-		return nil
+		return toInt(matches[1]), toInt(matches[2]), toInt(matches[3]), nil
 	}
 
 	r = regexp.MustCompile(`NetApp Release (\d+)\.(\d+)\.(\d+)\.(\d+)`)
 	matches = r.FindStringSubmatch(release)
 	if len(matches) == 5 {
 		// 7.0.0.1 becomes 7.0.0
-		setInt(&s.version[0], matches[1])
-		setInt(&s.version[1], matches[2])
-		setInt(&s.version[2], matches[3])
-		return nil
+		return toInt(matches[1]), toInt(matches[2]), toInt(matches[3]), nil
 	}
 
-	return fmt.Errorf("no valid version tuple found for=[%s]", release)
+	return 0, 0, 0, fmt.Errorf("no valid version tuple found for=[%s]", release)
 }
 
-func setInt(i *int, s string) {
+func toInt(s string) int {
 	value, err := strconv.Atoi(s)
 	if err != nil {
-		return
+		return 0
 	}
-	*i = value
+	return value
 }
 
 // getSystem connects to ONTAP system and retrieves its identity and version
 // this works for Clustered and 7-mode systems
 func (c *Client) getSystem() error {
 	var (
-		s        system
-		response *node.Node
-		err      error
+		r           conf.Remote
+		release     string
+		isClustered bool
+		versionT    [3]int
+		response    *node.Node
+		err         error
 	)
 
-	s = system{}
+	r = conf.Remote{}
 
 	// fetch system version and model
 	if response, err = c.InvokeRequestString("system-get-version"); err != nil {
 		return err
 	}
 
-	s.release = response.GetChildContentS("version")
+	release = response.GetChildContentS("version")
 
 	if version := response.GetChildS("version-tuple"); version != nil {
 		if tuple := version.GetChildS("system-version-tuple"); tuple != nil {
 
 			for i, v := range []string{"generation", "major", "minor"} {
 				if n, err := strconv.ParseInt(tuple.GetChildContentS(v), 0, 16); err == nil {
-					s.version[i] = int(n)
+					versionT[i] = int(n)
 				}
 			}
 		}
 	}
 
-	// if version tuple is missing try to parse from the release string
+	// if version tuple is missing, try to parse from the release string,
 	// this is usually the case with 7mode systems
-	// e.g. NetApp Release 8.2P4 7-Mode: Tue Oct 1 11:24:04 PDT 2013
-	if s.version[0] == 0 {
-		err := s.parse7mode(s.release)
+	// e.g., NetApp Release 8.2P4 7-Mode: Tue Oct 1 11:24:04 PDT 2013
+	if versionT[0] == 0 {
+		i0, i1, i2, err := parse7mode(release)
 		if err != nil {
 			return err
 		}
+		versionT[0] = i0
+		versionT[1] = i1
+		versionT[2] = i2
 	}
 
-	if clustered := response.GetChildContentS("is-clustered"); clustered == "" {
+	clustered := response.GetChildContentS("is-clustered")
+	if clustered == "" {
 		return errors.New("missing attribute [is-clustered]")
-	} else if clustered == "true" {
-		s.clustered = true
-	} else {
-		s.clustered = false
 	}
+	isClustered = clustered == "true"
 
 	// fetch system name and serial number
 	request := "cluster-identity-get"
-	if !s.clustered {
+	if !isClustered {
 		request = "system-get-info"
 	}
 
@@ -117,21 +104,32 @@ func (c *Client) getSystem() error {
 		return err
 	}
 
-	if s.clustered {
+	if isClustered {
 		if attrs := response.GetChildS("attributes"); attrs != nil {
 			if info := attrs.GetChildS("cluster-identity-info"); info != nil {
-				s.name = info.GetChildContentS("cluster-name")
-				s.clusterUUID = info.GetChildContentS("cluster-uuid")
+				r.Name = info.GetChildContentS("cluster-name")
+				r.UUID = info.GetChildContentS("cluster-uuid")
 			}
 		}
 	} else {
 		if info := response.GetChildS("system-info"); info != nil {
-			s.name = info.GetChildContentS("system-name")
-			s.serial = info.GetChildContentS("system-serial-number")
-			// There is no uuid for non cluster mode, using system-id.
-			s.clusterUUID = info.GetChildContentS("system-id")
+			r.Name = info.GetChildContentS("system-name")
+			r.Serial = info.GetChildContentS("system-serial-number")
+			// There is no uuid for non-cluster mode, using system-id.
+			r.UUID = info.GetChildContentS("system-id")
 		}
 	}
-	c.system = &s
+
+	r.Version = strconv.Itoa(versionT[0]) + "." + strconv.Itoa(versionT[1]) + "." + strconv.Itoa(versionT[2])
+	if isClustered {
+		r.Model = "cdot"
+	} else {
+		r.Model = "7mode"
+	}
+	r.IsClustered = isClustered
+	r.ZAPIsExist = true
+	r.Release = release
+	c.remote = r
+
 	return nil
 }

@@ -189,7 +189,7 @@ func NewZapiPerf(object, path string) *ZapiPerf {
 	opts.HomePath = homePath
 	opts.IsTest = true
 
-	ac := collector.New("Zapiperf", object, opts, params(object, path), nil)
+	ac := collector.New("Zapiperf", object, opts, params(object, path), nil, conf.Remote{})
 	z := &ZapiPerf{}
 	if err := z.Init(ac); err != nil {
 		slog.Error("", slogx.Err(err))

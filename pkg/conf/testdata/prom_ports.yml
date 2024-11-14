@@ -1,0 +1,32 @@
+Exporters:
+  prometheus0:
+    exporter: Prometheus
+    addr: 0.0.0.0
+    port: 4444
+  prometheus1:
+    exporter: Prometheus
+    addr: 0.0.0.0
+    port_range: 2000-2030
+
+Defaults:
+  collectors:
+    - Rest
+
+Pollers:
+  no-exporter:
+    addr: 10.193.48.11
+    prom_port: 3000
+      
+  sar:
+    addr: 10.193.48.11
+    prom_port: 3000
+    exporters:
+      - prometheus0
+      - prometheus1
+
+  u3:
+    addr: 10.0.1.1
+    prom_port: 9999
+    exporters:
+      - exporter: Prometheus
+        port: 32990

@@ -18,14 +18,33 @@ A web end-point is required because Prometheus scrapes Harvest by polling that e
 In addition to the `/metrics` end-point, the Prometheus exporter also serves an overview of all metrics and collectors
 available on its root address `scheme://<ADDR>:<PORT>/`.
 
-Because Prometheus polls Harvest, don't forget
+Because Prometheus polls Harvest, remember
 to [update your Prometheus configuration](#configure-prometheus-to-scrape-harvest-pollers) and tell Prometheus how to
 scrape each poller.
 
-There are two ways to configure the Prometheus exporter: using a `port range` or individual `port`s.
+## How should I configure the Prometheus exporter?
 
-The `port range` is more flexible and should be used when you want multiple pollers all exporting to the same instance
-of Prometheus. Both options are explained below.
+There are several ways to configure the Prometheus exporter with various trade-offs outlined below:
+
+- a per-poller prom_port in the `Pollers` section
+- a port range in the `Exporters` section
+- a single port in the `Exporters` section
+- embedded exporters in the `Pollers` section
+
+We recommend the first two options, using a per-poller `prom_port` or `port_range`, since they work for the majority of 
+use cases and are the easiest to manage.
+
+Use `prom_port` when you want the most control over the Prometheus port with the least amount of management.
+Use `port_range` when you want Harvest to manage the port numbers for you,
+but be aware that the port numbers depend on the order of pollers in your `harvest.yml`.
+You need to keep that order consistent otherwise it will appear that you have lost data.  
+
+| Name                                       | Pros                                                                                                                                   | Cons                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | Notes                                                                                                                                                                |
+|--------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [prom_port](#per-poller-prom_port)         | Precisely control each Poller's Prometheus exporter port. The port is defined in one place, beside each poller.                        | You have to manage which port each poller should use.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | Start with this until you outgrow it. Many folks never do.                                                                                                           |
+| [port_range](#port-range)                  | Less to manage since Harvest assigns the port numbers for you based on the order of the pollers in your `harvest.yml`                  | You need to be mindful of the order of pollers in your `harvest.yml` file and be careful about changing that order when adding/removing pollers. Reordering will cause the Prometheus port to change. Since Prometheus includes the port in the `instance` label, changing the port causes Prometheus to treat metrics with different ports as different instances. That means it will appear that you have lost data because the metrics with the new port are distinct from the metrics with the older port. See [#2782](https://github.com/NetApp/harvest/issues/2782) for details. | Less to manage, but makes sure you understand how to [control the order of your pollers](#port-range).                                                               |
+| [port in Exporters](#single-port-exporter) | Precisely control each Poller's Prometheus exporter port.<br>Can define multiple Prometheus exporters, each with custom configuration. | Similar to `prom_port` but with an unnecessary level of indirection that makes you repeat yourself.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | Exporter that Harvest always shipped with. Most folks should use `prom_port` unless they need to configure many instances of the Prometheus exporter, which is rare. |
+| [embedded exporter](#embedded-exporter)    | All the pros of `port in Exporters` but without the unnecessary indirection                                                            | Removes the level of indirection and allows you to define the exporter in one place, but more verbose than per-poller `prom_port`.                                                                                                                                                                                                                                                                                                                                                                                                                                                     | Most folks should use `prom_port` unless they need to configure many instances of the Prometheus exporter, which is rare.                                            |
 
 ## Parameters
 
@@ -33,66 +52,153 @@ All parameters of the exporter are defined in the `Exporters` section of `harves
 
 An overview of all parameters:
 
-| parameter                   | type                                           | description                                                                                                                                                                                                                   | default                                                                                                                                        |
-|-----------------------------|------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------|
-| `port_range`                | int-int (range), overrides `port` if specified | lower port to upper port (inclusive) of the HTTP end-point to create when a poller specifies this exporter. Starting at lower port, each free port will be tried sequentially up to the upper port.                           |                                                                                                                                                |
-| `port`                      | int, required if port_range is not specified   | port of the HTTP end-point                                                                                                                                                                                                    |                                                                                                                                                |
-| `local_http_addr`           | string, optional                               | address of the HTTP server Harvest starts for Prometheus to scrape:<br />use `localhost` to serve only on the local machine<br />use `0.0.0.0` (default) if Prometheus is scrapping from another machine                      | `0.0.0.0`                                                                                                                                      |
-| `global_prefix`             | string, optional                               | add a prefix to all metrics (e.g. `netapp_`)                                                                                                                                                                                  |                                                                                                                                                |
-| `allow_addrs`               | list of strings, optional                      | allow access only if host matches any of the provided addresses                                                                                                                                                               |                                                                                                                                                |
-| `allow_addrs_regex`         | list of strings, optional                      | allow access only if host address matches at least one of the regular expressions                                                                                                                                             |                                                                                                                                                |
-| `cache_max_keep`            | string (Go duration format), optional          | maximum amount of time metrics are cached (in case Prometheus does not timely collect the metrics)                                                                                                                            | `5m`                                                                                                                                           |
-| `add_meta_tags`             | bool, optional                                 | add `HELP` and `TYPE` [metatags](https://prometheus.io/docs/instrumenting/exposition_formats/#comments-help-text-and-type-information) to metrics (currently no useful information, but required by some tools)               | `false`                                                                                                                                        |
-| `sort_labels`               | bool, optional                                 | sort metric labels before exporting. Some [open-metrics scrapers report](https://github.com/NetApp/harvest/issues/756) stale metrics when labels are not sorted.                                                              | `false`                                                                                                                                        |
-| `tls`                       | `tls`                                          | optional                                                                                                                                                                                                                      | If present, enables TLS transport. If running in a container, see [note](https://github.com/NetApp/harvest/issues/672#issuecomment-1036338589) |         
-| tls `cert_file`, `key_file` | **required** child of `tls`                    | Relative or absolute path to TLS certificate and key file. TLS 1.3 certificates required.<br />FIPS complaint P-256 TLS 1.3 certificates can be created with `bin/harvest admin tls create server`, `openssl`, `mkcert`, etc. |                                                                                                                                                |
+| parameter                                 | type                                           | description                                                                                                                                                                                                                   | default                                                                                                                                        |
+|-------------------------------------------|------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------|
+| `add_meta_tags`                           | bool, optional                                 | add `HELP` and `TYPE` [metatags](https://prometheus.io/docs/instrumenting/exposition_formats/#comments-help-text-and-type-information) to metrics (currently no useful information, but required by some tools)               | `false`                                                                                                                                        |
+| [`allow_addrs`](#allow_addrs)             | list of strings, optional                      | allow access only if host matches any of the provided addresses                                                                                                                                                               |                                                                                                                                                |
+| [`allow_addrs_regex`](#allow_addrs_regex) | list of strings, optional                      | allow access only if host address matches at least one of the regular expressions                                                                                                                                             |                                                                                                                                                |
+| `cache_max_keep`                          | string (Go duration format), optional          | maximum amount of time metrics are cached (in case Prometheus does not timely collect the metrics)                                                                                                                            | `5m`                                                                                                                                           |
+| `global_prefix`                           | string, optional                               | add a prefix to all metrics (e.g. `netapp_`)                                                                                                                                                                                  |                                                                                                                                                |
+| `local_http_addr`                         | string, optional                               | address of the HTTP server Harvest starts for Prometheus to scrape:<br />use `localhost` to serve only on the local machine<br />use `0.0.0.0` (default) if Prometheus is scrapping from another machine                      | `0.0.0.0`                                                                                                                                      |
+| `port_range`                              | int-int (range), overrides `port` if specified | lower port to upper port (inclusive) of the HTTP end-point to create when a poller specifies this exporter. Starting at lower port, each free port will be tried sequentially up to the upper port.                           |                                                                                                                                                |
+| `port`                                    | int, required if port_range is not specified   | port of the HTTP end-point                                                                                                                                                                                                    |                                                                                                                                                |
+| `sort_labels`                             | bool, optional                                 | sort metric labels before exporting. [VictoriaMetrics](https://github.com/NetApp/harvest/issues/756) requires this otherwise stale metrics are reported.                                                                      | `false`                                                                                                                                        |
+| `tls`                                     | `tls`                                          | optional                                                                                                                                                                                                                      | If present, enables TLS transport. If running in a container, see [note](https://github.com/NetApp/harvest/issues/672#issuecomment-1036338589) |         
+| tls `cert_file`, `key_file`               | **required** child of `tls`                    | Relative or absolute path to TLS certificate and key file. TLS 1.3 certificates required.<br />FIPS complaint P-256 TLS 1.3 certificates can be created with `bin/harvest admin tls create server`, `openssl`, `mkcert`, etc. |                                                                                                                                                |
 
-A few examples:
+### Per-poller prom_port
 
-#### port_range
+Define a Prometheus exporter in the `Exporters` section of your `harvest.yml` file, use that exporter in `Defaults`, 
+and then each poller lists its `prom_port` in the `Pollers` section.
+
+```yaml
+Exporters:
+  my_prom:
+    exporter: Prometheus
+    add_meta_tags: true
+    sort_labels: true
+
+Defaults:
+  auth_style: basic_auth
+  username: harvest
+  password: pass
+  exporters:
+    - my_prom
+```
+
+Then update your pollers in the `Pollers` section of your `harvest.yml` file.
+
+```yaml
+Pollers:
+  cluster-01:
+    addr: 10.0.1.1
+    prom_port: 12990
+  cluster-02:
+    addr: 10.0.1.2
+    prom_port: 12991
+```
+
+
+### Port Range
+
+Port range works by defining a range of ports in the `Exporters` section of your `harvest.yml` file.
+Harvest will assign the first available port in the range to each poller that uses the exporter.
+That means you need to be careful about the order of your pollers in the `harvest.yml` file.
+
+If you add or remove pollers, the order of the pollers may change, and the port assigned to each poller may change.
+To mitigate this:
+
+- when you add new pollers to the `harvest.yml` file, add them to the end of the `Pollers` section of your `harvest.yml` file.
+- when you want to remove pollers, instead of deleting them, add the `disabled: true` parameter to the poller.
+The poller will not be started, but the port will be reserved.
+That way, the order of later pollers won't change. 
 
 ```yaml
 Exporters:
   prom-prod:
     exporter: Prometheus
     port_range: 2000-2030
+Defaults:
+  exporters:
+    - prom-prod    
 Pollers:
   cluster-01:
-    exporters:
-      - prom-prod
+    addr: 10.0.1.1
+    disabled: true  # This poller will not be used
   cluster-02:
-    exporters:
-      - prom-prod
+    addr: 10.0.1.2
   cluster-03:
-    exporters:
-      - prom-prod
+    addr: 10.0.1.3
   # ... more
   cluster-16:
-    exporters:
-      - prom-prod
+    addr: 10.0.1.16
 ```
 
-Sixteen pollers will collect metrics from 16 clusters and make those metrics available to a single instance of
-Prometheus named `prom-prod`. Sixteen web end-points will be created on the first 16 available free ports between 2000
-and 2030 (inclusive).
+In the example above, fifteen pollers will collect metrics from 15 clusters
+and make those metrics available to a single instance of Prometheus named `prom-prod`.
+Fifteen web end-points will be created on the available free ports between 2000 and 2030 (inclusive).
+Port 2000 will be assigned to `cluster-01`, port 2001 to `cluster-02`, and so on.
 
-After staring the pollers in the example above, running `bin/harvest status` shows the following. Note that ports 2000
-and 2003 were not available so the next free port in the range was selected. If no free port can be found an error will
+After starting the pollers in the example above, running `bin/harvest status` shows the following.
+Since `cluster-01` is disabled, it won't be started and its port will be skipped.
+If no free port can be found, an error will
 be logged.
 
 ```
-Datacenter   Poller       PID     PromPort  Status              
-++++++++++++ ++++++++++++ +++++++ +++++++++ ++++++++++++++++++++
-DC-01        cluster-01   2339    2001      running         
-DC-01        cluster-02   2343    2002      running         
-DC-01        cluster-03   2351    2004      running         
+  Datacenter  |    Poller    | PID  | PromPort |  Status     
+--------------+--------------+------+----------+----------
+  dc-01       | cluster-01   | 2339 |          | disabled  
+  dc-01       | cluster-02   | 2343 |  2001    | running  
+  dc-01       | cluster-03   | 2351 |  2002    | running  
 ...
-DC-01        cluster-14   2405    2015      running         
-DC-01        cluster-15   2502    2016      running         
-DC-01        cluster-16   2514    2017      running         
+  dc-01       | cluster-14   | 2405 |  2013    | running  
+  dc-01       | cluster-15   | 2502 |  2014    | running  
+  dc-01       | cluster-16   | 2514 |  2015    | running  
 ```
 
-#### allow_addrs
+### Single Port Exporter
+
+Define a Prometheus exporter in the `Exporters` section of your `harvest.yml` file.
+Give that exporter a `port` and update a single poller to use this exporter.
+Each poller requires a different Prometheus exporter.
+
+```yaml
+Exporters:
+  my_prom:
+    exporter: Prometheus
+    add_meta_tags: true
+    sort_labels: true
+    port: 12990
+```
+
+Then update a single poller in the `Pollers` section of your `harvest.yml` file to reference the Prometheus exporter.
+
+```yaml
+Pollers:
+  cluster-01:
+    addr: 10.0.1.1
+    exporters:
+      - my_prom
+```
+
+### Embedded Exporter
+
+This example is similar to the [single port exporter](#single-port-exporter) example,
+but the exporter is defined in the `Pollers` section.
+No need to define the exporter in the `Exporters` section.
+
+```yaml
+Pollers:
+  cluster-01:
+    addr: 10.0.1.1
+    exporters:
+      - exporter: Prometheus
+        add_meta_tags: true
+        sort_labels: true
+        port: 12990
+```
+
+### allow_addrs
 
 ```yaml
 Exporters:
@@ -102,9 +208,9 @@ Exporters:
       - 192.168.0.103
 ```
 
-will only allow access from exactly these two addresses.
+Access will only be allowed from these two addresses.
 
-#### allow_addrs_regex
+### allow_addrs_regex
 
 ```yaml
 Exporters:
@@ -113,7 +219,7 @@ Exporters:
       - `^192.168.0.\d+$`
 ```
 
-will only allow access from the IP4 range `192.168.0.0`-`192.168.0.255`.
+Access will only be allowed from the IP4 range `192.168.0.0`-`192.168.0.255`.
 
 ## Configure Prometheus to scrape Harvest pollers
 

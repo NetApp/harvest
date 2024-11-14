@@ -6,6 +6,7 @@ package netroute
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -35,7 +36,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &NetRoute{AbstractPlugin: p}
 }
 
-func (n *NetRoute) Init() error {
+func (n *NetRoute) Init(conf.Remote) error {
 
 	if err := n.InitAbc(); err != nil {
 		return err

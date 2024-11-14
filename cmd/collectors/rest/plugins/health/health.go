@@ -58,7 +58,7 @@ var metrics = []string{
 	"alerts",
 }
 
-func (h *Health) Init() error {
+func (h *Health) Init(remote conf.Remote) error {
 
 	var err error
 
@@ -89,7 +89,7 @@ func (h *Health) Init() error {
 		return err
 	}
 
-	return h.client.Init(5)
+	return h.client.Init(5, remote)
 }
 
 func (h *Health) InitAllMatrix() error {
@@ -200,7 +200,7 @@ func (h *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 
 	result = append(result, emsMat)
 	h.SLogger.Info(
-		"Collected",
+		"Health plugin",
 		slog.Int("numLicenseAlerts", licenseAlertCount),
 		slog.Int("numVolumeMoveAlerts", volumeMoveAlertCount),
 		slog.Int("numVolumeRansomwareAlerts", volumeRansomwareAlertCount),

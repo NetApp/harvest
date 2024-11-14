@@ -49,7 +49,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Volume{AbstractPlugin: p}
 }
 
-func (v *Volume) Init() error {
+func (v *Volume) Init(remote conf.Remote) error {
 
 	var err error
 
@@ -72,7 +72,7 @@ func (v *Volume) Init() error {
 		return err
 	}
 
-	if err := v.client.Init(5); err != nil {
+	if err := v.client.Init(5, remote); err != nil {
 		return err
 	}
 

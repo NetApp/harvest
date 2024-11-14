@@ -113,7 +113,7 @@ type AbstractCollector struct {
 	Remote   conf.Remote
 }
 
-func New(name, object string, o *options.Options, params *node.Node, credentials *auth.Credentials) *AbstractCollector {
+func New(name, object string, o *options.Options, params *node.Node, credentials *auth.Credentials, remote conf.Remote) *AbstractCollector {
 	return &AbstractCollector{
 		Name:     name,
 		Object:   object,
@@ -122,6 +122,7 @@ func New(name, object string, o *options.Options, params *node.Node, credentials
 		Params:   params,
 		countMux: &sync.Mutex{},
 		Auth:     credentials,
+		Remote:   remote,
 	}
 }
 
@@ -528,19 +529,21 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 
 			// Continue if metadata failed, since it might be specific to metadata
 			for _, data := range results {
-				if data.IsExportable() {
-					stats, err := e.Export(data)
-					if err != nil {
-						c.Logger.Error(
-							"export data",
-							slogx.Err(err),
-							slog.String("exporter", e.GetName()),
-						)
-						break
-					}
-					exporterStats.InstancesExported += stats.InstancesExported
-					exporterStats.MetricsExported += stats.MetricsExported
+				if !data.IsExportable() {
+					continue
 				}
+				stats, err := e.Export(data)
+				if err != nil {
+					c.Logger.Error(
+						"export data",
+						slogx.Err(err),
+						slog.String("exporter", e.GetName()),
+					)
+					break
+				}
+				exporterStats.InstancesExported += stats.InstancesExported
+				exporterStats.MetricsExported += stats.MetricsExported
+				exporterStats.RenderedBytes += stats.RenderedBytes
 			}
 		}
 
@@ -611,6 +614,7 @@ func (c *AbstractCollector) logMetadata(taskName string, stats exporter.Stats) {
 			int64Field("pluginInstances"),
 			timeToMilli("plugin_time"),
 			timeToMilli("poll_time"),
+			slog.Uint64("renderedBytes", stats.RenderedBytes),
 			int64Field("skips"),
 			int64Field("zBegin"),
 		)
@@ -758,7 +762,7 @@ func (c *AbstractCollector) LoadPlugins(params *node.Node, collector Collector, 
 			continue
 		}
 
-		if err := p.Init(); err != nil {
+		if err := p.Init(c.Remote); err != nil {
 			slog.Error("init plugin", slogx.Err(err), slog.String("name", name))
 			return err
 		}

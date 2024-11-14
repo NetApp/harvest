@@ -10,7 +10,7 @@ require (
 	github.com/carlmjohnson/requests v0.24.2
 	github.com/netapp/harvest/v2 v2.0.0-20241001142758-f137ab714dd8
 	github.com/tidwall/gjson v1.18.0
-	golang.org/x/text v0.19.0
+	golang.org/x/text v0.20.0
 )
 
 require (
@@ -35,8 +35,8 @@ require (
 	github.com/tklauser/numcpus v0.8.0 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
 	golang.org/x/net v0.29.0 // indirect
-	golang.org/x/sys v0.26.0 // indirect
-	golang.org/x/term v0.25.0 // indirect
+	golang.org/x/sys v0.27.0 // indirect
+	golang.org/x/term v0.26.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

@@ -228,3 +228,15 @@ func TestExportersExist(t *testing.T) {
 		t.Errorf(`got isValid=true, want isValid=false since there is no exporters section`)
 	}
 }
+
+func TestPollerPromPorts(t *testing.T) {
+	conf.TestLoadHarvestConfig("testdata/promPortNoPromExporters.yml")
+	valid := checkPollerPromPorts(conf.Config)
+	if valid.isValid {
+		t.Errorf(`got isValid=true, want isValid=false since there are non unique prom ports`)
+	}
+
+	if len(valid.invalid) != 2 {
+		t.Errorf(`got %d invalid, want 2`, len(valid.invalid))
+	}
+}

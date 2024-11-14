@@ -28,7 +28,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &SecurityAccount{AbstractPlugin: p}
 }
 
-func (s *SecurityAccount) Init() error {
+func (s *SecurityAccount) Init(remote conf.Remote) error {
 	var err error
 
 	if err := s.InitAbc(); err != nil {
@@ -47,7 +47,7 @@ func (s *SecurityAccount) Init() error {
 		return fmt.Errorf("failed to connect err=%w", err)
 	}
 
-	if err := s.client.Init(5); err != nil {
+	if err := s.client.Init(5, remote); err != nil {
 		return err
 	}
 

@@ -188,20 +188,24 @@ func generateDocker(kind int) {
 	certDirPath = asComposePath(opts.certDir)
 	filesd := make([]string, 0, len(conf.Config.PollersOrdered))
 
-	for _, v := range conf.Config.PollersOrdered {
-		port, _ := conf.GetLastPromPort(v, true)
+	for _, pollerName := range conf.Config.PollersOrdered {
+		poller, ok := conf.Config.Pollers[pollerName]
+		if !ok || poller == nil || poller.IsDisabled {
+			continue
+		}
+		port, _ := conf.GetLastPromPort(pollerName, true)
 		pollerInfo := PollerInfo{
-			ServiceName:   normalizeContainerNames(v),
-			PollerName:    v,
+			ServiceName:   normalizeContainerNames(pollerName),
+			PollerName:    pollerName,
 			ConfigFile:    configFilePath,
 			Port:          port,
 			LogLevel:      opts.loglevel,
 			Image:         opts.image,
-			ContainerName: normalizeContainerNames("poller_" + v),
+			ContainerName: normalizeContainerNames("poller_" + pollerName),
 			ShowPorts:     opts.showPorts,
 			IsFull:        kind == full,
 			CertDir:       certDirPath,
-			Mounts:        makeMounts(v),
+			Mounts:        makeMounts(pollerName),
 		}
 		pollerTemplate.Pollers = append(pollerTemplate.Pollers, pollerInfo)
 		filesd = append(filesd, fmt.Sprintf("- targets: ['%s:%d']", pollerInfo.ServiceName, pollerInfo.Port))
@@ -500,26 +504,28 @@ func generateSystemd() {
 	}
 	println("and then run " + color.Colorize("systemctl daemon-reload", color.Green))
 	writeAdminSystemd(opts.configPath)
-	// reorder list of pollers so that unix collectors are last, see https://github.com/NetApp/harvest/issues/643
 	pollers := make([]string, 0)
 	unixPollers := make([]string, 0)
-	pollers = append(pollers, conf.Config.PollersOrdered...)
-	// iterate over the pollers backwards, so we don't skip any when removing
-	for i := len(pollers) - 1; i >= 0; i-- {
-		pollerName := pollers[i]
+
+	for _, pollerName := range conf.Config.PollersOrdered {
 		poller, ok := conf.Config.Pollers[pollerName]
-		if !ok || poller == nil {
+		if !ok || poller == nil || poller.IsDisabled {
 			continue
 		}
+		// reorder list of pollers so that unix collectors are last, see https://github.com/NetApp/harvest/issues/643
 		// if unix is in the poller's list of collectors, remove it from the list of pollers
+		skipPoller := false
 		for _, c := range poller.Collectors {
 			if c.Name == "Unix" {
-				pollers = append(pollers[:i], pollers[i+1:]...)
 				unixPollers = append(unixPollers, pollerName)
-				break
+				skipPoller = true
 			}
 		}
+		if !skipPoller {
+			pollers = append(pollers, pollerName)
+		}
 	}
+
 	pollers = append(pollers, unixPollers...)
 	err = t.Execute(os.Stdout, struct {
 		Admin          string
@@ -583,7 +589,7 @@ func BuildMetrics(dir, configPath, pollerName string) (map[string]Counter, conf.
 		fmt.Printf("error creating new client %+v\n", err)
 		os.Exit(1)
 	}
-	if err = restClient.Init(2); err != nil {
+	if err = restClient.Init(2, conf.Remote{}); err != nil {
 		fmt.Printf("error init rest client %+v\n", err)
 		os.Exit(1)
 	}

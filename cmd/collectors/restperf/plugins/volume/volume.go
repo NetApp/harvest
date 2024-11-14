@@ -24,7 +24,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Volume{AbstractPlugin: p}
 }
 
-func (v *Volume) Init() error {
+func (v *Volume) Init(remote conf.Remote) error {
 	var err error
 	if err := v.InitAbc(); err != nil {
 		return err
@@ -55,7 +55,7 @@ func (v *Volume) Init() error {
 		return err
 	}
 
-	return v.client.Init(5)
+	return v.client.Init(5, remote)
 }
 
 func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {

@@ -32,13 +32,13 @@ type Client struct {
 	client     *http.Client
 	request    *http.Request
 	buffer     *bytes.Buffer
-	system     *system
 	apiVersion string
 	vfiler     string
 	Logger     *slog.Logger
 	logZapi    bool // used to log ZAPI request/response
 	auth       *auth.Credentials
 	Metadata   *util.Metadata
+	remote     conf.Remote
 }
 
 type Response struct {
@@ -144,8 +144,15 @@ func parseClientTimeout(clientTimeout string) (time.Duration, error) {
 
 // Init connects to the cluster and retrieves system info
 // it will give up after retries
-func (c *Client) Init(retries int) error {
+func (c *Client) Init(retries int, remote conf.Remote) error {
 	var err error
+
+	c.remote = remote
+
+	if !remote.IsZero() {
+		return nil
+	}
+
 	for range retries {
 		if err = c.getSystem(); err == nil {
 			break
@@ -156,32 +163,32 @@ func (c *Client) Init(retries int) error {
 
 // Name returns the name of the Cluster
 func (c *Client) Name() string {
-	return c.system.name
+	return c.remote.Name
 }
 
 // IsClustered returns true if ONTAP is clustered or false if it's a 7-mode system
 func (c *Client) IsClustered() bool {
-	return c.system.clustered
+	return c.remote.IsClustered
 }
 
 // Version returns version of the ONTAP server (generation, major and minor)
-func (c *Client) Version() [3]int {
-	return c.system.version
+func (c *Client) Version() string {
+	return c.remote.Version
 }
 
 // Release returns string with long release info of the ONTAP system
 func (c *Client) Release() string {
-	return c.system.release
+	return c.remote.Release
 }
 
 // Serial returns the serial number of the ONTAP system
 func (c *Client) Serial() string {
-	return c.system.serial
+	return c.remote.Serial
 }
 
 // ClusterUUID returns the cluster UUID of a c-mode system and system-id for 7-mode
 func (c *Client) ClusterUUID() string {
-	return c.system.clusterUUID
+	return c.remote.UUID
 }
 
 // Info returns a string with details about the ONTAP system identity
@@ -192,7 +199,7 @@ func (c *Client) Info() string {
 	} else {
 		model = "7MODE"
 	}
-	version = fmt.Sprintf("(%s version %d.%d.%d)", model, c.system.version[0], c.system.version[1], c.system.version[2])
+	version = fmt.Sprintf("(%s version %s)", model, c.remote.Version)
 	return fmt.Sprintf("%s %s (serial %s) (%s)", c.Name(), version, c.Serial(), c.Release())
 }
 
@@ -579,10 +586,14 @@ func (c *Client) SetTimeout(timeout string) {
 	c.client.Timeout = newTimeout
 }
 
+func (c *Client) Remote() conf.Remote {
+	return c.remote
+}
+
 // NewTestClient It's used for unit test only
 func NewTestClient() *Client {
 	return &Client{
-		system:   &system{name: "testCluster", clustered: true},
+		remote:   conf.Remote{Name: "testCluster", IsClustered: true},
 		request:  &http.Request{},
 		Metadata: &util.Metadata{},
 	}

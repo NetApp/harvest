@@ -38,7 +38,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Qtree{AbstractPlugin: p}
 }
 
-func (q *Qtree) Init() error {
+func (q *Qtree) Init(remote conf.Remote) error {
 
 	var err error
 
@@ -55,7 +55,7 @@ func (q *Qtree) Init() error {
 		return err
 	}
 
-	if err := q.client.Init(5); err != nil {
+	if err := q.client.Init(5, remote); err != nil {
 		return err
 	}
 

@@ -1,0 +1,19 @@
+Exporters:
+  influx3:
+    exporter: InfluxDB
+    url: http://localhost:123809/api/v2/write?org=harvest&bucket=harvest&precision=s
+    token: my-token
+
+Defaults:
+  datacenter: rtp
+  collectors:
+    - Rest
+
+Pollers:
+  sar:
+    addr: 10.1.1.1
+    prom_port: 3000
+
+  abc:
+    addr: 10.1.1.1
+    prom_port: 3000

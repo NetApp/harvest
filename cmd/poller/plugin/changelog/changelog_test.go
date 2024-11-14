@@ -3,6 +3,7 @@ package changelog
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"testing"
@@ -31,7 +32,7 @@ func createChangeLog(params, parentParams *node.Node) *ChangeLog {
 	}
 	p.Object = "svm"
 
-	if err := p.Init(); err != nil {
+	if err := p.Init(conf.Remote{}); err != nil {
 		panic(err)
 	}
 	return p

@@ -31,6 +31,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/ems"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/keyperf"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/restperf"
@@ -48,7 +49,6 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/poller/schedule"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
-	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
@@ -92,10 +92,6 @@ var (
 	opts              *options.Options
 )
 
-const (
-	NoUpgrade = "HARVEST_NO_COLLECTOR_UPGRADE"
-)
-
 // init with default configuration that logs to the console and harvest.log
 var logger = slog.Default()
 
@@ -134,6 +130,7 @@ type Poller struct {
 	hasPromExporter bool
 	maxRssBytes     uint64
 	startTime       time.Time
+	remote          conf.Remote
 }
 
 // Init starts Poller, reads parameters, opens zeroLog handler, initializes metadata,
@@ -304,6 +301,8 @@ func (p *Poller) Init() error {
 		return errs.New(errs.ErrNoCollector, "no collectors")
 	}
 
+	p.negotiateONTAPAPI(filteredCollectors, collectors.GatherClusterInfo)
+
 	objectsToCollectors := make(map[string][]objectCollector)
 	for _, c := range filteredCollectors {
 		_, ok := util.IsCollector[c.Name]
@@ -424,8 +423,8 @@ func uniquifyObjectCollectors(objectsToCollectors map[string][]objectCollector) 
 
 	specialCaseQtree(objectsToCollectors)
 
-	for _, collectors := range objectsToCollectors {
-		uniqueOCs = append(uniqueOCs, nonOverlappingCollectors(collectors)...)
+	for _, col := range objectsToCollectors {
+		uniqueOCs = append(uniqueOCs, nonOverlappingCollectors(col)...)
 	}
 
 	return uniqueOCs
@@ -569,7 +568,6 @@ func (p *Poller) Run() {
 			upe := 0 // up exporters
 
 			// update status of collectors
-			var remote conf.Remote
 			for _, c := range p.collectors {
 				code, _, msg := c.GetStatus()
 
@@ -588,13 +586,11 @@ func (p *Poller) Run() {
 						instance.SetLabel("reason", strings.ReplaceAll(msg, "\"", ""))
 					}
 				}
-
-				remote = c.GetRemote()
 			}
 
 			// add remote version and name to metadata
-			p.status.GetInstance("remote").SetLabel("version", remote.Version)
-			p.status.GetInstance("remote").SetLabel("name", remote.Name)
+			p.status.GetInstance("remote").SetLabel("version", p.remote.Version)
+			p.status.GetInstance("remote").SetLabel("name", p.remote.Name)
 
 			// update status of exporters
 			for _, ee := range p.exporters {
@@ -640,10 +636,14 @@ func (p *Poller) Run() {
 			if upc != upCollectors || upe != upExporters {
 				logger.Info(
 					"updated status",
-					slog.Int("upCollectors", upc),
-					slog.Int("collectorsTotal", len(p.collectors)),
-					slog.Int("upExporters", upe),
-					slog.Int("exportersTotal", len(p.exporters)),
+					slog.Group("collectors",
+						slog.Int("up", upc),
+						slog.Int("total", len(p.collectors)),
+					),
+					slog.Group("exporters",
+						slog.Int("up", upe),
+						slog.Int("total", len(p.exporters)),
+					),
 				)
 			}
 			upCollectors = upc
@@ -711,7 +711,7 @@ func (p *Poller) readObjects(c conf.Collector) ([]objectCollector, error) {
 		template, subTemplate *node.Node
 	)
 
-	c = p.upgradeCollector(c)
+	c = p.upgradeCollector(c, p.remote)
 	class = c.Name
 	// throw warning for deprecated collectors
 	if r, d := deprecatedCollectors[strings.ToLower(class)]; d {
@@ -803,7 +803,7 @@ type objectCollector struct {
 // dynamically load and initialize a collector
 func (p *Poller) loadCollectorObject(ocs []objectCollector) error {
 
-	var collectors []collector.Collector
+	var cols []collector.Collector
 
 	logger.Debug("Starting collectors", slog.Int("collectors", len(ocs)))
 
@@ -833,7 +833,7 @@ func (p *Poller) loadCollectorObject(ocs []objectCollector) error {
 				logger.Debug("ignoring collector", slog.String("collector", oc.class), slog.String("object", oc.object))
 				continue
 			}
-			collectors = append(collectors, col)
+			cols = append(cols, col)
 			logger.Debug(
 				"initialized collector-object",
 				slog.String("collector", oc.class),
@@ -842,9 +842,9 @@ func (p *Poller) loadCollectorObject(ocs []objectCollector) error {
 		}
 	}
 
-	p.collectors = append(p.collectors, collectors...)
+	p.collectors = append(p.collectors, cols...)
 	// link each collector with requested exporter & update metadata
-	for _, col := range collectors {
+	for _, col := range cols {
 		if col == nil {
 			logger.Warn("ignoring nil collector")
 			continue
@@ -879,23 +879,24 @@ func (p *Poller) loadCollectorObject(ocs []objectCollector) error {
 	return nil
 }
 
-func nonOverlappingCollectors(collectors []objectCollector) []objectCollector {
-	if len(collectors) == 0 {
+func nonOverlappingCollectors(objectCollectors []objectCollector) []objectCollector {
+	if len(objectCollectors) == 0 {
 		return []objectCollector{}
 	}
-	if len(collectors) == 1 {
-		return collectors
+	if len(objectCollectors) == 1 {
+		return objectCollectors
 	}
 
 	unique := make([]objectCollector, 0)
-	conflicts := map[string]string{
-		"Zapi":     "Rest",
-		"ZapiPerf": "RestPerf",
-		"Rest":     "Zapi",
-		"RestPerf": "ZapiPerf",
+	conflicts := map[string][]string{
+		"Zapi":     {"Rest"},
+		"ZapiPerf": {"RestPerf", "KeyPerf"},
+		"Rest":     {"Zapi"},
+		"RestPerf": {"ZapiPerf", "KeyPerf"},
+		"KeyPerf":  {"ZapiPerf", "RestPerf"},
 	}
 
-	for _, c := range collectors {
+	for _, c := range objectCollectors {
 		conflict, ok := conflicts[c.class]
 		if ok {
 			if collectorContains(unique, conflict, c.class) {
@@ -907,12 +908,14 @@ func nonOverlappingCollectors(collectors []objectCollector) []objectCollector {
 	return unique
 }
 
-func collectorContains(unique []objectCollector, searches ...string) bool {
+func collectorContains(unique []objectCollector, conflicts []string, search string) bool {
 	for _, o := range unique {
-		for _, s := range searches {
-			if o.class == s {
-				return true
-			}
+		if o.class == search {
+			return true
+		}
+		has := slices.Contains(conflicts, o.class)
+		if has {
+			return true
 		}
 	}
 	return false
@@ -988,7 +991,7 @@ func (p *Poller) newCollector(class string, object string, template *node.Node) 
 	if !ok {
 		return nil, errs.New(errs.ErrNoCollector, "no collectors")
 	}
-	delegate := collector.New(class, object, p.options, template.Copy(), p.auth)
+	delegate := collector.New(class, object, p.options, template.Copy(), p.auth, p.remote)
 	err = col.Init(delegate)
 	return col, err
 }
@@ -1328,67 +1331,53 @@ func (p *Poller) createClient() {
 
 // upgradeCollector checks if the collector c should be upgraded to a REST collector.
 // ZAPI collectors should be upgraded to REST collectors when the cluster no longer speaks Zapi
-func (p *Poller) upgradeCollector(c conf.Collector) conf.Collector {
+func (p *Poller) upgradeCollector(c conf.Collector, remote conf.Remote) conf.Collector {
 	// If REST is desired, use REST
 	// If ZAPI is desired, check that the cluster speaks ZAPI and if so, use ZAPI, otherwise use REST
+	// If KeyPerf is desired, negotiate the API
 	// EMS and StorageGRID are ignored
 
-	if !strings.HasPrefix(c.Name, "Zapi") {
+	if _, ok := util.IsONTAPCollector[c.Name]; !ok {
 		return c
 	}
 
-	return p.negotiateAPI(c, p.doZAPIsExist)
-}
+	isKeyPerf := remote.IsKeyPerf()
+	replaced := c.Name
 
-// Harvest will upgrade ZAPI conversations to REST in two cases:
-//   - if ONTAP returns a ZAPI error with errno=61253
-//   - if ONTAP returns an HTTP status code of 400
-func (p *Poller) negotiateAPI(c conf.Collector, checkZAPIs func() error) conf.Collector {
-	var switchToRest bool
-	err := checkZAPIs()
+	if strings.HasPrefix(replaced, "Zapi") {
 
-	if err != nil {
-		var he errs.HarvestError
-		if errors.As(err, &he) {
-			if he.ErrNum == errs.ErrNumZAPISuspended {
-				logger.Warn("ZAPIs suspended. Use REST", slog.String("collector", c.Name))
-				switchToRest = true
-			}
-
-			if he.StatusCode == http.StatusBadRequest {
-				logger.Warn("ZAPIs EOA. Use REST", slog.String("collector", c.Name))
-				switchToRest = true
+		if remote.ZAPIsExist {
+			switch replaced {
+			case "Zapi":
+				return c
+			case "ZapiPerf":
+				if isKeyPerf {
+					replaced = "RestPerf"
+				} else {
+					return c
+				}
 			}
 		}
-		if switchToRest {
-			upgradeCollector := strings.ReplaceAll(c.Name, "Zapi", "Rest")
-			return conf.Collector{
-				Name:      upgradeCollector,
-				Templates: c.Templates,
-			}
+
+		replaced = strings.ReplaceAll(replaced, "Zapi", "Rest")
+		if isKeyPerf {
+			replaced = strings.ReplaceAll(replaced, "RestPerf", "KeyPerf")
 		}
-		logger.Error("Failed to negotiateAPI", slogx.Err(err), slog.String("collector", c.Name))
+		return conf.Collector{
+			Name:      replaced,
+			Templates: c.Templates,
+		}
+	}
+
+	if isKeyPerf {
+		replaced := strings.ReplaceAll(c.Name, "RestPerf", "KeyPerf")
+		return conf.Collector{
+			Name:      replaced,
+			Templates: c.Templates,
+		}
 	}
 
 	return c
-}
-
-func (p *Poller) doZAPIsExist() error {
-	var (
-		poller     *conf.Poller
-		connection *zapi.Client
-		err        error
-	)
-
-	// connect to the cluster and retrieve the system version
-	if poller, err = conf.PollerNamed(opts.Poller); err != nil {
-		return err
-	}
-	if connection, err = zapi.New(poller, p.auth); err != nil {
-		return err
-
-	}
-	return connection.Init(2)
 }
 
 // set the poller's confPath using the following precedence:
@@ -1460,29 +1449,29 @@ func (p *Poller) sendHarvestVersion() error {
 	if !p.targetIsOntap() {
 		return nil
 	}
-	// connect to the cluster and retrieve the system version
-	if poller, err = conf.PollerNamed(opts.Poller); err != nil {
-		return err
-	}
-	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
-	if connection, err = rest.New(poller, timeout, p.auth); err != nil {
-		return err
-	}
-	err = connection.Init(2)
-	if err != nil {
-		return err
+	if !p.remote.HasREST {
+		return nil
 	}
 
-	// Check if the cluster is running ONTAP 9.11.1 or later
-	// If it is, send a harvestTag to the cluster to indicate that Harvest is running
+	// If the cluster is running ONTAP 9.11.1 or later,
+	// send a harvestTag to the cluster to indicate that Harvest is running.
 	// Otherwise, do nothing
 
-	ontapVersion, err := goversion.NewVersion(connection.Remote().Version)
+	ontapVersion, err := goversion.NewVersion(p.remote.Version)
 	if err != nil {
 		return err
 	}
 
 	if ontapVersion.LessThan(goversion.Must(goversion.NewVersion("9.11.1"))) {
+		return nil
+	}
+
+	// connect to the cluster
+	if poller, err = conf.PollerNamed(opts.Poller); err != nil {
+		return err
+	}
+	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
+	if connection, err = rest.New(poller, timeout, p.auth); err != nil {
 		return err
 	}
 
@@ -1500,6 +1489,31 @@ func (p *Poller) sendHarvestVersion() error {
 	}
 
 	return nil
+}
+
+func (p *Poller) negotiateONTAPAPI(cols []conf.Collector, gatherClusterInfo func(pollerName string, cred *auth.Credentials) (conf.Remote, error)) {
+	anyONTAP := false
+	for _, c := range cols {
+		if _, ok := util.IsONTAPCollector[c.Name]; ok {
+			anyONTAP = true
+			break
+		}
+	}
+
+	if !anyONTAP {
+		return
+	}
+
+	remote, err := gatherClusterInfo(opts.Poller, p.auth)
+	if err != nil {
+		logger.Error("Failed to gather cluster info", slogx.Err(err))
+	}
+
+	p.remote = remote
+
+	if remote.Version != "" {
+		slog.Info("Cluster info", slog.Any("remote", remote))
+	}
 }
 
 func startPoller(_ *cobra.Command, _ []string) {

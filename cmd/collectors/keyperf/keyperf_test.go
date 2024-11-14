@@ -187,7 +187,7 @@ func newKeyPerf(object string, path string) *KeyPerf {
 	opts.HomePath = "testdata"
 	opts.IsTest = true
 
-	ac := collector.New("KeyPerf", object, opts, params(object, path), nil)
+	ac := collector.New("KeyPerf", object, opts, params(object, path), nil, conf.Remote{})
 	kp := KeyPerf{}
 	err = kp.Init(ac)
 	if err != nil {
