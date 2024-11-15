@@ -321,6 +321,15 @@ func TestMergeRemotes(t *testing.T) {
 			want:       conf.Remote{UUID: "abc", Version: "9.17.1", ZAPIsExist: true, HasREST: true},
 			wantErr:    false,
 		},
+		{
+			name:       "Both Fail",
+			remoteZapi: conf.Remote{ZAPIsExist: true},
+			remoteRest: conf.Remote{},
+			errZapi:    errors.New("auth error"),
+			errRest:    errors.New("auth error"),
+			want:       conf.Remote{ZAPIsExist: true},
+			wantErr:    true,
+		},
 	}
 
 	for _, tt := range tests {
