@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1731607493095,
+  "iteration": 1731674594935,
   "links": [
     {
       "asDropdown": true,
@@ -2152,7 +2152,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 9
+            "y": 60
           },
           "id": 108,
           "options": {
@@ -2164,7 +2164,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Displays information about the status of DIMM type Field Replaceable Units (FRUs).",
+          "description": "Displays information about the status of Field Replaceable Units (FRUs).",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2227,7 +2227,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 11
+            "y": 62
           },
           "id": 106,
           "options": {
@@ -2237,7 +2237,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "fru_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",subsystem=\"memory\"}",
+              "expr": "fru_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -2245,7 +2245,7 @@
               "refId": "A"
             }
           ],
-          "title": "DIMM",
+          "title": "Field Replaceable Unit (FRU)",
           "transformations": [
             {
               "id": "filterFieldsByName",
@@ -2254,10 +2254,11 @@
                   "names": [
                     "cluster",
                     "datacenter",
+                    "name",
                     "node",
                     "serial_number",
                     "status",
-                    "name"
+                    "subsystem"
                   ]
                 }
               }
@@ -2272,8 +2273,8 @@
                   "name": 3,
                   "node": 2,
                   "serial_number": 4,
-                  "status": 5,
-                  "subsystem": 6
+                  "status": 6,
+                  "subsystem": 5
                 },
                 "renameByName": {
                   "cluster": "Cluster",
@@ -2281,7 +2282,8 @@
                   "name": "Name",
                   "node": "Node",
                   "serial_number": "Serial Number",
-                  "status": "Status"
+                  "status": "Status",
+                  "subsystem": "Subsystem"
                 }
               }
             }
@@ -2289,7 +2291,7 @@
           "type": "table"
         }
       ],
-      "title": "DIMM",
+      "title": "Field Replaceable Unit (FRU)",
       "type": "row"
     },
     {
