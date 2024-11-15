@@ -700,7 +700,6 @@ func checkVariablesHaveAll(t *testing.T, path string, data []byte) {
 	exceptionForAllValues := map[string]bool{
 		"cmode/security.json": true,
 		"cmode/cluster.json":  true,
-		"cmode/volume.json":   true,
 	}
 
 	if exceptionToAll[ShortPath(path)] {
