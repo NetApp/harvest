@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2024-Nov-06
+Creation Date : 2024-Nov-15
 ONTAP Version: 9.15.1
 ```
 ## Understanding the structure
@@ -3057,6 +3057,15 @@ Physical size of the FlexCache. The recommended size for a FlexCache is 10% of t
 |--------|----------|--------|---------|
 | REST | `api/storage/flexcache/flexcaches` | `size` | conf/rest/9.12.0/flexcache.yaml |
 | ZAPI | `flexcache-get-iter` | `flexcache-info.size` | conf/zapi/cdot/9.8.0/flexcache.yaml |
+
+
+### fru_status
+
+This metric indicates a value of 1 if the FRU status is ok and a value of 0 for any other state.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/fru.yaml |
 
 
 ### headroom_aggr_current_latency
@@ -15841,6 +15850,42 @@ This metric tracks the number of write operations performed by the top clients o
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/storage/volumes/*/top-metrics/clients` | `iops.read` | conf/rest/9.12.0/volume.yaml |
+
+
+### volume_top_files_read_data
+
+This metric measures the amount of data read from the files of a specific volume.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/volumes/*/top-metrics/files` | `iops.read` | conf/rest/9.12.0/volume.yaml |
+
+
+### volume_top_files_read_ops
+
+This metric tracks the number of read operations performed on the files of a specific volume.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/volumes/*/top-metrics/files` | `iops.read` | conf/rest/9.12.0/volume.yaml |
+
+
+### volume_top_files_write_data
+
+This metric measures the amount of data written to the top files of a specific volume.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/volumes/*/top-metrics/files` | `iops.read` | conf/rest/9.12.0/volume.yaml |
+
+
+### volume_top_files_write_ops
+
+This metric tracks the number of write operations performed on the files of a specific volume.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/volumes/*/top-metrics/files` | `iops.read` | conf/rest/9.12.0/volume.yaml |
 
 
 ### volume_total_data

@@ -1712,6 +1712,38 @@ counters:
         ONTAPCounter: iops.read
         Template: conf/rest/9.12.0/volume.yaml
 
+  - Name: volume_top_files_read_ops
+    Description: This metric tracks the number of read operations performed on the files of a specific volume.
+    APIs:
+      - API: REST
+        Endpoint: api/storage/volumes/*/top-metrics/files
+        ONTAPCounter: iops.read
+        Template: conf/rest/9.12.0/volume.yaml
+
+  - Name: volume_top_files_write_ops
+    Description: This metric tracks the number of write operations performed on the files of a specific volume.
+    APIs:
+      - API: REST
+        Endpoint: api/storage/volumes/*/top-metrics/files
+        ONTAPCounter: iops.read
+        Template: conf/rest/9.12.0/volume.yaml
+
+  - Name: volume_top_files_read_data
+    Description: This metric measures the amount of data read from the files of a specific volume.
+    APIs:
+      - API: REST
+        Endpoint: api/storage/volumes/*/top-metrics/files
+        ONTAPCounter: iops.read
+        Template: conf/rest/9.12.0/volume.yaml
+
+  - Name: volume_top_files_write_data
+    Description: This metric measures the amount of data written to the top files of a specific volume.
+    APIs:
+      - API: REST
+        Endpoint: api/storage/volumes/*/top-metrics/files
+        ONTAPCounter: iops.read
+        Template: conf/rest/9.12.0/volume.yaml
+
   - Name: volume_clone_split_estimate
     Description: Display an estimate of additional storage required in the underlying aggregate to perform a volume clone split operation.
     APIs:
@@ -1948,3 +1980,11 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/netport.yaml
+
+  - Name: fru_status
+    Description: This metric indicates a value of 1 if the FRU status is ok and a value of 0 for any other state.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/fru.yaml

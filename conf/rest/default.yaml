@@ -21,6 +21,7 @@ objects:
 #  ExportRule:                  exports.yaml
   FlexCache:                   flexcache.yaml
   FCP:                         fcp.yaml
+  FRU:                         fru.yaml
   LIF:                         lif.yaml
 #  Lock:                        lock.yaml
   Health:                      health.yaml

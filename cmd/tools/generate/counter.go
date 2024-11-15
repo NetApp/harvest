@@ -155,6 +155,7 @@ var (
 		"nfs_clients_idle_duration",
 		"ems_events",
 		"volume_top_clients",
+		"volume_top_files",
 	}
 
 	excludeDocumentedZapiMetrics = []string{
