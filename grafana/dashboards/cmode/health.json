@@ -688,30 +688,18 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Volumes protected"
+              "options": "EMS"
             },
             "properties": [
               {
-                "id": "color",
-                "value": {
-                  "fixedColor": "green",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Volumes not protected"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "yellow",
-                  "mode": "fixed"
-                }
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "https://mysupport.netapp.com/site/bugs-online/syslog-translator?product=ontap&syslog=${__data.fields.EMS}"
+                  }
+                ]
               }
             ]
           }
@@ -4132,6 +4120,24 @@
                         "targetBlank": true,
                         "title": "",
                         "url": "/d/cdot-node/ontap-node?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Node=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Message"
+                },
+                "properties": [
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "https://mysupport.netapp.com/site/bugs-online/syslog-translator?product=ontap&syslog=${__data.fields.Message}"
                       }
                     ]
                   }
