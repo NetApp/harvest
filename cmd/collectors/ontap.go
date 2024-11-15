@@ -13,23 +13,26 @@ import (
 
 func GatherClusterInfo(pollerName string, cred *auth.Credentials) (conf.Remote, error) {
 
-	var (
-		err error
-	)
+	remoteZapi, errZapi := checkZapi(pollerName, cred)
+	remoteRest, errRest := checkRest(pollerName, cred)
 
-	remoteZapi, err := checkZapi(pollerName, cred)
-	if err != nil {
-		return conf.Remote{}, err
-	}
+	return MergeRemotes(remoteZapi, remoteRest, errZapi, errRest)
+}
 
-	remoteRest, err := checkRest(pollerName, cred)
-	if err != nil {
-		return remoteZapi, err
-	}
+func MergeRemotes(remoteZapi conf.Remote, remoteRest conf.Remote, errZapi error, errRest error) (conf.Remote, error) {
+	err := errors.Join(errZapi, errRest)
 
 	remoteRest.ZAPIsExist = remoteZapi.ZAPIsExist
 
-	return remoteRest, nil
+	if errZapi != nil {
+		return remoteRest, err
+	}
+
+	if errRest != nil {
+		return remoteZapi, err
+	}
+
+	return remoteRest, err
 }
 
 func checkRest(pollerName string, cred *auth.Credentials) (conf.Remote, error) {
@@ -92,7 +95,8 @@ func checkZapi(pollerName string, cred *auth.Credentials) (conf.Remote, error) {
 		}
 
 		if returnErr {
-			return conf.Remote{}, err
+			// Assume that ZAPIs exist so we don't upgrade ZAPI to REST when there is an error
+			return conf.Remote{ZAPIsExist: true}, err
 		}
 	}
 

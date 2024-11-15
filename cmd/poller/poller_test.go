@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
-	"github.com/netapp/harvest/v2/pkg/auth"
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"strings"
@@ -212,11 +212,11 @@ func Test_nonOverlappingCollectors(t *testing.T) {
 }
 
 func ocs(names ...string) []objectCollector {
-	collectors := make([]objectCollector, 0, len(names))
+	objectCollectors := make([]objectCollector, 0, len(names))
 	for _, n := range names {
-		collectors = append(collectors, objectCollector{class: n})
+		objectCollectors = append(objectCollectors, objectCollector{class: n})
 	}
-	return collectors
+	return objectCollectors
 }
 
 func Test_uniquifyObjectCollectors(t *testing.T) {
@@ -272,55 +272,74 @@ func objectCollectorMap(constructors ...string) map[string][]objectCollector {
 	return objectsToCollectors
 }
 
-func TestNegotiateONTAPAPI(t *testing.T) {
+func TestMergeRemotes(t *testing.T) {
 
-	tests := []struct {
-		name           string
-		collectors     []conf.Collector
-		mockReturn     conf.Remote
-		mockError      error
-		expectedRemote conf.Remote
-	}{
+	type test struct {
+		name       string
+		remoteZapi conf.Remote
+		remoteRest conf.Remote
+		errZapi    error
+		errRest    error
+		want       conf.Remote
+		wantErr    bool
+	}
+
+	tests := []test{
 		{
-			name: "No ONTAP Collector",
-			collectors: []conf.Collector{
-				{Name: "StorageGrid"},
-			},
-			mockReturn:     conf.Remote{},
-			mockError:      nil,
-			expectedRemote: conf.Remote{},
+			name:       "No ONTAP",
+			remoteZapi: conf.Remote{},
+			remoteRest: conf.Remote{},
+			errZapi:    errors.New("no ZAPI"),
+			errRest:    errors.New("no REST"),
+			want:       conf.Remote{},
+			wantErr:    true,
 		},
 		{
-			name: "ONTAP Collector with Success",
-			collectors: []conf.Collector{
-				{Name: "Zapi"},
-			},
-			mockReturn:     conf.Remote{Version: "9.11.1"},
-			mockError:      nil,
-			expectedRemote: conf.Remote{Version: "9.11.1"},
+			name:       "No REST",
+			remoteZapi: conf.Remote{UUID: "abc", Version: "9.11.1", ZAPIsExist: true},
+			remoteRest: conf.Remote{},
+			errZapi:    nil,
+			errRest:    errors.New("no REST"),
+			want:       conf.Remote{UUID: "abc", Version: "9.11.1", ZAPIsExist: true},
+			wantErr:    true,
 		},
 		{
-			name: "ONTAP Collector with Error",
-			collectors: []conf.Collector{
-				{Name: "Zapi"},
-			},
-			mockReturn:     conf.Remote{Version: "9.11.1"},
-			mockError:      errors.New("failed to gather cluster info"),
-			expectedRemote: conf.Remote{Version: "9.11.1"},
+			name:       "No ZAPIs",
+			remoteZapi: conf.Remote{},
+			remoteRest: conf.Remote{UUID: "abc", Version: "9.17.1", HasREST: true},
+			errZapi:    errors.New("no ZAPI"),
+			errRest:    nil,
+			want:       conf.Remote{UUID: "abc", Version: "9.17.1", HasREST: true},
+			wantErr:    true,
+		},
+		{
+			name:       "Both",
+			remoteZapi: conf.Remote{UUID: "abc", Version: "9.17.1", ZAPIsExist: true, HasREST: true},
+			remoteRest: conf.Remote{UUID: "abc", Version: "9.17.1", ZAPIsExist: true, HasREST: true},
+			errZapi:    nil,
+			errRest:    nil,
+			want:       conf.Remote{UUID: "abc", Version: "9.17.1", ZAPIsExist: true, HasREST: true},
+			wantErr:    false,
+		},
+		{
+			name:       "Both Fail",
+			remoteZapi: conf.Remote{ZAPIsExist: true},
+			remoteRest: conf.Remote{},
+			errZapi:    errors.New("auth error"),
+			errRest:    errors.New("auth error"),
+			want:       conf.Remote{ZAPIsExist: true},
+			wantErr:    true,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockGatherClusterInfo := func(_ string, _ *auth.Credentials) (conf.Remote, error) {
-				return tt.mockReturn, tt.mockError
+			gotRemote, err := collectors.MergeRemotes(tt.remoteZapi, tt.remoteRest, tt.errZapi, tt.errRest)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("MergeRemotes() error = %v, wantErr %v", err, tt.wantErr)
 			}
-			poller := Poller{}
-
-			poller.negotiateONTAPAPI(tt.collectors, mockGatherClusterInfo)
-
-			if diff := cmp.Diff(poller.remote, tt.expectedRemote); diff != "" {
-				t.Errorf("negotiateONTAPAPI() mismatch (-got +want):\n%s", diff)
+			if diff := cmp.Diff(gotRemote, tt.want); diff != "" {
+				t.Errorf("MergeRemotes() mismatch (-gotRemote +want):\n%s", diff)
 			}
 		})
 	}
