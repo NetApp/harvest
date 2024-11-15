@@ -230,7 +230,7 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 					}
 				}
 
-				if len(atBytesUsedValues) == len(atBytesUsedPercentages) && len(atBytesUsedValues) == len(atBytesUsedLabels) { //nolint:gocritic
+				if len(atBytesUsedValues) == len(atBytesUsedPercentages) && len(atBytesUsedPercentages) == len(atBytesUsedLabels) {
 
 					for i, av := range atBytesUsedValues {
 						if av == "" {
