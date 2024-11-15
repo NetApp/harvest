@@ -1,4 +1,4 @@
-name:                     Node
+name:                     SystemNode
 query:                    api/cluster/nodes
 object:                   node
 
