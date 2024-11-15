@@ -494,7 +494,6 @@ func TestEmbeddedExporter(t *testing.T) {
 	}
 
 	uniqueExporters := GetUniqueExporters(p.Exporters)
-	slices.Sort(uniqueExporters)
 	want := []string{"u2-1", "u2-2"}
 	if !slices.Equal(uniqueExporters, want) {
 		t.Errorf("got %v, want %v", uniqueExporters, want)
