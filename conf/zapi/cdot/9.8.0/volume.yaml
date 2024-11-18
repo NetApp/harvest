@@ -45,6 +45,8 @@ counters:
     - volume-snapshot-autodelete-attributes:
         - ^is-autodelete-enabled                      => snapshot_autodelete
     - volume-space-attributes:
+        - ^is-space-enforcement-logical               => is_space_enforcement_logical
+        - ^is-space-reporting-logical                 => is_space_reporting_logical
         - expected-available
         - filesystem-size                             => filesystem_size
         - logical-available
@@ -127,6 +129,8 @@ export_options:
     - isHardwareEncrypted
     - isProtected
     - is_sis_volume
+    - is_space_enforcement_logical
+    - is_space_reporting_logical
     - junction_path
     - node_root
     - root_volume

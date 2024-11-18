@@ -7,6 +7,8 @@ counters:
   vserver-info:
     - ^^uuid                                  => uuid
     - ^anti-ransomware-default-volume-state   => anti_ransomware_state
+    - ^is-space-enforcement-logical           => is_space_enforcement_logical
+    - ^is-space-reporting-logical             => is_space_reporting_logical
     - ^state                                  => state
     - ^vserver-name                           => svm
     - ^vserver-type                           => type
@@ -44,6 +46,8 @@ export_options:
     - fpolicy_enabled
     - fpolicy_name
     - insecured
+    - is_space_enforcement_logical
+    - is_space_reporting_logical
     - iscsi_authentication_type
     - iscsi_service_enabled
     - ldap_session_security
