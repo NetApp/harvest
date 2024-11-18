@@ -1652,86 +1652,86 @@ Many of these metrics are used in the <code>Harvest Metadata</code> dashboard.</
 <table>
 <thead>
 <tr>
-<th style="text-align: left;">Metric</th>
-<th style="text-align: left;">Description</th>
-<th style="text-align: left;">Units</th>
+<th align="left">Metric</th>
+<th align="left">Description</th>
+<th align="left">Units</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">metadata_collector_api_time</td>
-<td style="text-align: left;">amount of time to collect data from monitored cluster object</td>
-<td style="text-align: left;">microseconds</td>
+<td align="left">metadata_collector_api_time</td>
+<td align="left">amount of time to collect data from monitored cluster object</td>
+<td align="left">microseconds</td>
 </tr>
 <tr>
-<td style="text-align: left;">metadata_collector_instances</td>
-<td style="text-align: left;">number of objects collected from monitored cluster</td>
-<td style="text-align: left;">scalar</td>
+<td align="left">metadata_collector_instances</td>
+<td align="left">number of objects collected from monitored cluster</td>
+<td align="left">scalar</td>
 </tr>
 <tr>
-<td style="text-align: left;">metadata_collector_metrics</td>
-<td style="text-align: left;">number of counters collected from monitored cluster</td>
-<td style="text-align: left;">scalar</td>
+<td align="left">metadata_collector_metrics</td>
+<td align="left">number of counters collected from monitored cluster</td>
+<td align="left">scalar</td>
 </tr>
 <tr>
-<td style="text-align: left;">metadata_collector_parse_time</td>
-<td style="text-align: left;">amount of time to parse XML, JSON, etc. for cluster object</td>
-<td style="text-align: left;">microseconds</td>
+<td align="left">metadata_collector_parse_time</td>
+<td align="left">amount of time to parse XML, JSON, etc. for cluster object</td>
+<td align="left">microseconds</td>
 </tr>
 <tr>
-<td style="text-align: left;">metadata_collector_plugin_time</td>
-<td style="text-align: left;">amount of time for all plugins to post-process metrics</td>
-<td style="text-align: left;">microseconds</td>
+<td align="left">metadata_collector_plugin_time</td>
+<td align="left">amount of time for all plugins to post-process metrics</td>
+<td align="left">microseconds</td>
 </tr>
 <tr>
-<td style="text-align: left;">metadata_collector_poll_time</td>
-<td style="text-align: left;">amount of time it took for the poll to finish</td>
-<td style="text-align: left;">microseconds</td>
+<td align="left">metadata_collector_poll_time</td>
+<td align="left">amount of time it took for the poll to finish</td>
+<td align="left">microseconds</td>
 </tr>
 <tr>
-<td style="text-align: left;">metadata_collector_task_time</td>
-<td style="text-align: left;">amount of time it took for each collector's subtasks to complete</td>
-<td style="text-align: left;">microseconds</td>
+<td align="left">metadata_collector_task_time</td>
+<td align="left">amount of time it took for each collector's subtasks to complete</td>
+<td align="left">microseconds</td>
 </tr>
 <tr>
-<td style="text-align: left;">metadata_component_count</td>
-<td style="text-align: left;">number of metrics collected for each object</td>
-<td style="text-align: left;">scalar</td>
+<td align="left">metadata_component_count</td>
+<td align="left">number of metrics collected for each object</td>
+<td align="left">scalar</td>
 </tr>
 <tr>
-<td style="text-align: left;">metadata_component_status</td>
-<td style="text-align: left;">status of the collector - 0 means running, 1 means standby, 2 means failed</td>
-<td style="text-align: left;">enum</td>
+<td align="left">metadata_component_status</td>
+<td align="left">status of the collector - 0 means running, 1 means standby, 2 means failed</td>
+<td align="left">enum</td>
 </tr>
 <tr>
-<td style="text-align: left;">metadata_exporter_count</td>
-<td style="text-align: left;">number of metrics and labels exported</td>
-<td style="text-align: left;">scalar</td>
+<td align="left">metadata_exporter_count</td>
+<td align="left">number of metrics and labels exported</td>
+<td align="left">scalar</td>
 </tr>
 <tr>
-<td style="text-align: left;">metadata_exporter_time</td>
-<td style="text-align: left;">amount of time it took to render, export, and serve exported data</td>
-<td style="text-align: left;">microseconds</td>
+<td align="left">metadata_exporter_time</td>
+<td align="left">amount of time it took to render, export, and serve exported data</td>
+<td align="left">microseconds</td>
 </tr>
 <tr>
-<td style="text-align: left;">metadata_target_goroutines</td>
-<td style="text-align: left;">number of goroutines that exist within the poller</td>
-<td style="text-align: left;">scalar</td>
+<td align="left">metadata_target_goroutines</td>
+<td align="left">number of goroutines that exist within the poller</td>
+<td align="left">scalar</td>
 </tr>
 <tr>
-<td style="text-align: left;">metadata_target_status</td>
-<td style="text-align: left;">status of the system being monitored. 0 means reachable, 1 means unreachable</td>
-<td style="text-align: left;">enum</td>
+<td align="left">metadata_target_status</td>
+<td align="left">status of the system being monitored. 0 means reachable, 1 means unreachable</td>
+<td align="left">enum</td>
 </tr>
 <tr>
-<td style="text-align: left;">metadata_collector_calc_time</td>
-<td style="text-align: left;">amount of time it took to compute metrics between two successive polls, specifically using properties like raw, delta, rate, average, and percent. This metric is available for ZapiPerf/RestPerf collectors.</td>
-<td style="text-align: left;">microseconds</td>
+<td align="left">metadata_collector_calc_time</td>
+<td align="left">amount of time it took to compute metrics between two successive polls, specifically using properties like raw, delta, rate, average, and percent. This metric is available for ZapiPerf/RestPerf collectors.</td>
+<td align="left">microseconds</td>
 </tr>
 <tr>
-<td style="text-align: left;">metadata_collector_skips</td>
-<td style="text-align: left;">number of metrics that were not calculated between two successive polls. This metric is available for ZapiPerf/RestPerf collectors.</td>
-<td style="text-align: left;">scalar</td>
+<td align="left">metadata_collector_skips</td>
+<td align="left">number of metrics that were not calculated between two successive polls. This metric is available for ZapiPerf/RestPerf collectors.</td>
+<td align="left">scalar</td>
 </tr>
 </tbody>
 </table>
