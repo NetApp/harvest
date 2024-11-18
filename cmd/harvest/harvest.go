@@ -464,8 +464,7 @@ func startPoller(pollerName string, promPort int, opts *options) {
 	// Start the poller process in the background
 	if err := cmd.Start(); err != nil {
 		fmt.Println(err)
-		closeDevNull(devNull) // os.Exit means closeDevNull will not run so call directly
-		os.Exit(1)            //nolint:gocritic
+		defer os.Exit(1)
 	}
 }
 
