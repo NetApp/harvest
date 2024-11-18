@@ -4135,6 +4135,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#fru_status" class="md-nav__link">
+    <span class="md-ellipsis">
+      fru_status
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#headroom_aggr_current_latency" class="md-nav__link">
     <span class="md-ellipsis">
       headroom_aggr_current_latency
@@ -14893,6 +14902,42 @@
   <a href="#volume_top_clients_write_ops" class="md-nav__link">
     <span class="md-ellipsis">
       volume_top_clients_write_ops
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#volume_top_files_read_data" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_top_files_read_data
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#volume_top_files_read_ops" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_top_files_read_ops
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#volume_top_files_write_data" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_top_files_write_data
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#volume_top_files_write_ops" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_top_files_write_ops
     </span>
   </a>
   
@@ -18235,6 +18280,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#fru_status" class="md-nav__link">
+    <span class="md-ellipsis">
+      fru_status
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#headroom_aggr_current_latency" class="md-nav__link">
     <span class="md-ellipsis">
       headroom_aggr_current_latency
@@ -28993,6 +29047,42 @@
   <a href="#volume_top_clients_write_ops" class="md-nav__link">
     <span class="md-ellipsis">
       volume_top_clients_write_ops
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#volume_top_files_read_data" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_top_files_read_data
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#volume_top_files_read_ops" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_top_files_read_ops
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#volume_top_files_write_data" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_top_files_write_data
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#volume_top_files_write_ops" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_top_files_write_ops
     </span>
   </a>
   
@@ -36977,6 +37067,26 @@ ONTAP Version: 9.15.1
 <td><code>flexcache-get-iter</code></td>
 <td><code>flexcache-info.size</code></td>
 <td>conf/zapi/cdot/9.8.0/flexcache.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="fru_status">fru_status<a class="headerlink" href="#fru_status" title="Permanent link">&para;</a></h3>
+<p>This metric indicates a value of 1 if the FRU status is ok and a value of 0 for any other state.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/rest/9.12.0/fru.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -72946,6 +73056,86 @@ ONTAP Version: 9.15.1
 <tr>
 <td>REST</td>
 <td><code>api/storage/volumes/*/top-metrics/clients</code></td>
+<td><code>iops.read</code></td>
+<td>conf/rest/9.12.0/volume.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="volume_top_files_read_data">volume_top_files_read_data<a class="headerlink" href="#volume_top_files_read_data" title="Permanent link">&para;</a></h3>
+<p>This metric measures the amount of data read from the files of a specific volume.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/storage/volumes/*/top-metrics/files</code></td>
+<td><code>iops.read</code></td>
+<td>conf/rest/9.12.0/volume.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="volume_top_files_read_ops">volume_top_files_read_ops<a class="headerlink" href="#volume_top_files_read_ops" title="Permanent link">&para;</a></h3>
+<p>This metric tracks the number of read operations performed on the files of a specific volume.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/storage/volumes/*/top-metrics/files</code></td>
+<td><code>iops.read</code></td>
+<td>conf/rest/9.12.0/volume.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="volume_top_files_write_data">volume_top_files_write_data<a class="headerlink" href="#volume_top_files_write_data" title="Permanent link">&para;</a></h3>
+<p>This metric measures the amount of data written to the top files of a specific volume.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/storage/volumes/*/top-metrics/files</code></td>
+<td><code>iops.read</code></td>
+<td>conf/rest/9.12.0/volume.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="volume_top_files_write_ops">volume_top_files_write_ops<a class="headerlink" href="#volume_top_files_write_ops" title="Permanent link">&para;</a></h3>
+<p>This metric tracks the number of write operations performed on the files of a specific volume.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/storage/volumes/*/top-metrics/files</code></td>
 <td><code>iops.read</code></td>
 <td>conf/rest/9.12.0/volume.yaml</td>
 </tr>
