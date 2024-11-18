@@ -172,6 +172,7 @@ var (
 		"_labels",
 		"volume_arw_status",
 		"ALERTS",
+		"_tags",
 	}
 
 	// Exclude extra metrics for ZAPI

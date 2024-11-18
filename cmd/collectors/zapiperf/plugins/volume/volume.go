@@ -92,6 +92,7 @@ func (v *Volume) fetchVolumes() map[string]string {
 	volumeAttributes := node.NewXMLS("desired-attributes")
 	volumeIDAttributes := node.NewXMLS("volume-id-attributes")
 	volumeIDAttributes.NewChildS("name", "")
+	volumeIDAttributes.NewChildS("owning-vserver-name", "")
 	volumeIDAttributes.NewChildS("style-extended", "")
 	volumeAttributes.AddChild(volumeIDAttributes)
 	desired.AddChild(volumeAttributes)
@@ -119,7 +120,8 @@ func (v *Volume) fetchVolumes() map[string]string {
 		for _, volume := range volumes {
 			styleExtended := volume.GetChildS("volume-id-attributes").GetChildContentS("style-extended")
 			name := volume.GetChildS("volume-id-attributes").GetChildContentS("name")
-			volumesMap[name] = styleExtended
+			svm := volume.GetChildS("volume-id-attributes").GetChildContentS("owning-vserver-name")
+			volumesMap[svm+name] = styleExtended
 		}
 	}
 

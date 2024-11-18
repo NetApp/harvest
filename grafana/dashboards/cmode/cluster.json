@@ -1747,7 +1747,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "node_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "node_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on (datacenter, cluster) group_left(tags) cluster_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1757,7 +1757,7 @@
             },
             {
               "exemplar": false,
-              "expr": "node_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "node_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on (datacenter, cluster) group_left(tags) cluster_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} ",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1857,7 +1857,8 @@
                     "version",
                     "model",
                     "Value #B",
-                    "cpu_firmware_release"
+                    "cpu_firmware_release",
+                    "tags"
                   ]
                 }
               }
@@ -1868,7 +1869,8 @@
                 "excludeByName": {},
                 "indexByName": {},
                 "renameByName": {
-                  "cpu_firmware_release": "CPU Firmware Release"
+                  "cpu_firmware_release": "CPU Firmware Release",
+                  "tags": "Cluster Tags"
                 }
               }
             }
@@ -4462,7 +4464,31 @@
         "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},cluster)",
+        "definition": "label_values(cluster_tags{system_type!=\"7mode\", datacenter=~\"$Datacenter\"},tag)",
+        "hide": 0,
+        "includeAll": true,
+        "label": "",
+        "multi": true,
+        "name": "Tag",
+        "options": [],
+        "query": {
+          "query": "label_values(cluster_tags{system_type!=\"7mode\", datacenter=~\"$Datacenter\"},tag)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\",tags=~\".*$Tag.*\"},cluster)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -4472,7 +4498,7 @@
         "name": "Cluster",
         "options": [],
         "query": {
-          "query": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},cluster)",
+          "query": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\",tags=~\".*$Tag.*\"},cluster)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -4619,5 +4645,5 @@
   "timezone": "",
   "title": "ONTAP: Cluster",
   "uid": "cdot-cluster",
-  "version": 6
+  "version": 7
 }

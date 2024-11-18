@@ -79,7 +79,7 @@ func (v *Volume) fetchVolumes() map[string]string {
 
 	href := rest.NewHrefBuilder().
 		APIPath(query).
-		Fields([]string{"volume", "volume_style_extended"}).
+		Fields([]string{"volume", "vserver", "volume_style_extended"}).
 		Filter([]string{"is_constituent=*"}).
 		MaxRecords(collectors.DefaultBatchSize).
 		Build()
@@ -101,7 +101,8 @@ func (v *Volume) fetchVolumes() map[string]string {
 		}
 		styleExtended := volume.Get("volume_style_extended").String()
 		name := volume.Get("volume").String()
-		volumesMap[name] = styleExtended
+		svm := volume.Get("vserver").String()
+		volumesMap[svm+name] = styleExtended
 	}
 
 	return volumesMap

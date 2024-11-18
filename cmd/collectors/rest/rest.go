@@ -6,6 +6,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/aggregate"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/certificate"
+	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/cluster"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/disk"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/health"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/metroclustercheck"
@@ -484,6 +485,8 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 	switch kind {
 	case "Aggregate":
 		return aggregate.New(abc)
+	case "Cluster":
+		return cluster.New(abc)
 	case "Disk":
 		return disk.New(abc)
 	case "Health":

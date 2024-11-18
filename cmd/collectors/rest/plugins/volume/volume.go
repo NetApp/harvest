@@ -18,6 +18,7 @@ import (
 	"github.com/tidwall/gjson"
 	"log/slog"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -28,8 +29,10 @@ type Volume struct {
 	*plugin.AbstractPlugin
 	currentVal            int
 	client                *rest.Client
-	aggrsMap              map[string]bool // aggregate-name -> exist map
+	aggrsMap              map[string]bool      // aggregate-name -> exist map
+	volTagMap             map[string]volumeTag // volume-key -> volumeTag map
 	arw                   *matrix.Matrix
+	tags                  *matrix.Matrix
 	includeConstituents   bool
 	isArwSupportedVersion bool
 }
@@ -45,6 +48,12 @@ type volumeInfo struct {
 	isDestinationCloud       string
 }
 
+type volumeTag struct {
+	vol  string
+	svm  string
+	tags string
+}
+
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Volume{AbstractPlugin: p}
 }
@@ -58,6 +67,7 @@ func (v *Volume) Init(remote conf.Remote) error {
 	}
 
 	v.aggrsMap = make(map[string]bool)
+	v.volTagMap = make(map[string]volumeTag)
 
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
 	v.currentVal = v.SetPluginInterval()
@@ -82,6 +92,19 @@ func (v *Volume) Init(remote conf.Remote) error {
 	instanceKeys.NewChildS("", "ArwStatus")
 	v.arw.SetExportOptions(exportOptions)
 	_, err = v.arw.NewMetricFloat64("status", "status")
+	if err != nil {
+		v.SLogger.Error("add metric", slogx.Err(err))
+		return err
+	}
+
+	v.tags = matrix.New(v.Parent+".Volume", "volume", "volume")
+	exportOptions = node.NewS("export_options")
+	instanceKeys = exportOptions.NewChildS("instance_keys", "")
+	instanceKeys.NewChildS("", "tag")
+	instanceKeys.NewChildS("", "svm")
+	instanceKeys.NewChildS("", "volume")
+	v.tags.SetExportOptions(exportOptions)
+	_, err = v.tags.NewMetricFloat64("tags", "tags")
 	if err != nil {
 		v.SLogger.Error("add metric", slogx.Err(err))
 		return err
@@ -121,19 +144,25 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 	if err != nil {
 		v.SLogger.Error("Failed to collect volume info data", slogx.Err(err))
 	} else {
-		// update volume instance labels
+		// update volume instance labels and populate volTagMap
 		v.updateVolumeLabels(data, volumeMap)
 	}
 
 	// parse anti_ransomware_start_time, antiRansomwareState for all volumes and export at cluster level
 	v.handleARWProtection(data)
 
+	// Based on the tags array in volTagMap, volume_tags instances/metrics would be created
+	v.handleTags(data.GetGlobalLabels())
+
 	v.currentVal++
-	return []*matrix.Matrix{v.arw}, v.client.Metadata, nil
+	return []*matrix.Matrix{v.arw, v.tags}, v.client.Metadata, nil
 }
 
 func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]volumeInfo) {
 	var err error
+
+	// clear volTagMap
+	clear(v.volTagMap)
 
 	cloneSplitEstimateMetric := data.GetMetric("clone_split_estimate")
 	if cloneSplitEstimateMetric == nil {
@@ -142,7 +171,13 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]vo
 			return
 		}
 	}
-	for _, volume := range data.GetInstances() {
+	for vKey, volume := range data.GetInstances() {
+		// update volumeTagMap used to update tag details
+		svm := volume.GetLabel("svm")
+		vol := volume.GetLabel("volume")
+		tags := volume.GetLabel("tags")
+		v.volTagMap[vKey] = volumeTag{vol: vol, svm: svm, tags: tags}
+
 		if !volume.IsExportable() {
 			continue
 		}
@@ -340,6 +375,52 @@ func (v *Volume) updateAggrMap(disks []gjson.Result) {
 			aggrName := disk.Get("aggregates.#.name").Array()
 			for _, aggr := range aggrName {
 				v.aggrsMap[aggr.String()] = true
+			}
+		}
+	}
+}
+
+func (v *Volume) handleTags(globalLabels map[string]string) {
+	var (
+		tagInstance *matrix.Instance
+		err         error
+	)
+
+	// Purge and reset data
+	v.tags.PurgeInstances()
+	v.tags.Reset()
+
+	// Set all global labels
+	v.tags.SetGlobalLabels(globalLabels)
+
+	// Based on the tags array, volume_tags instances/metrics would be created.
+	for _, volume := range v.volTagMap {
+		svm := volume.svm
+		vol := volume.vol
+		if tags := volume.tags; tags != "" {
+			for _, tag := range strings.Split(tags, ",") {
+				tagInstanceKey := globalLabels["cluster"] + svm + vol + tag
+				if tagInstance, err = v.tags.NewInstance(tagInstanceKey); err != nil {
+					v.SLogger.Error(
+						"Failed to create tag instance",
+						slogx.Err(err),
+						slog.String("tagInstanceKey", tagInstanceKey),
+					)
+					return
+				}
+
+				tagInstance.SetLabel("tag", tag)
+				tagInstance.SetLabel("volume", vol)
+				tagInstance.SetLabel("svm", svm)
+
+				m := v.tags.GetMetric("tags")
+				// populate numeric data
+				value := 1.0
+				if err = m.SetValueFloat64(tagInstance, value); err != nil {
+					v.SLogger.Error("Failed to parse value", slogx.Err(err), slog.Float64("value", value))
+				} else {
+					v.SLogger.Debug("added value", slog.Float64("value", value))
+				}
 			}
 		}
 	}
