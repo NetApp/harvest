@@ -49,6 +49,7 @@ var zapiCounterMap = map[string]struct{}{
 	// Below are not available in ZAPI
 	"aggr_object_store_logical_used":  {},
 	"aggr_object_store_physical_used": {},
+	"fru_status":                      {},
 }
 
 // restCounterMap are additional counters, above and beyond the ones from counterMap, which should be excluded from Rest

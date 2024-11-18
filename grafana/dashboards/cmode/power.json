@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1727437918841,
+  "iteration": 1731674846895,
   "links": [
     {
       "asDropdown": true,
@@ -2055,7 +2055,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 58
+            "y": 59
           },
           "id": 86,
           "options": {
@@ -2137,12 +2137,177 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
         "y": 59
+      },
+      "id": 104,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "gridPos": {
+            "h": 2,
+            "w": 24,
+            "x": 0,
+            "y": 60
+          },
+          "id": 108,
+          "options": {
+            "content": "This panel requires a cluster with ONTAP 9.6+ and the Harvest REST collector.",
+            "mode": "markdown"
+          },
+          "pluginVersion": "8.1.8",
+          "type": "text"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Displays information about the status of Field Replaceable Units (FRUs).",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Status"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "degraded": {
+                            "color": "red",
+                            "index": 0
+                          },
+                          "unknown": {
+                            "color": "red",
+                            "index": 2
+                          },
+                          "unreachable": {
+                            "color": "red",
+                            "index": 1
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 62
+          },
+          "id": 106,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "Subsystem"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "fru_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Field Replaceable Unit (FRU)",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "cluster",
+                    "datacenter",
+                    "name",
+                    "node",
+                    "serial_number",
+                    "status",
+                    "subsystem"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "cluster": 1,
+                  "datacenter": 0,
+                  "name": 3,
+                  "node": 2,
+                  "serial_number": 4,
+                  "status": 6,
+                  "subsystem": 5
+                },
+                "renameByName": {
+                  "cluster": "Cluster",
+                  "datacenter": "Datacenter",
+                  "name": "Name",
+                  "node": "Node",
+                  "serial_number": "Serial Number",
+                  "status": "Status",
+                  "subsystem": "Subsystem"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Field Replaceable Unit (FRU)",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 60
       },
       "id": 76,
       "panels": [
@@ -2745,7 +2910,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 60
+        "y": 61
       },
       "id": 78,
       "panels": [
@@ -3658,5 +3823,5 @@
   "timezone": "",
   "title": "ONTAP: Power",
   "uid": "cdot-power",
-  "version": 16
+  "version": 17
 }
