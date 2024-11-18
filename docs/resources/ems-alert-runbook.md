@@ -52,6 +52,18 @@ If you use Cloud Volumes ONTAP, perform the following corrective actions:
   2. Ensure that the login and connectivity information is still valid.
 Contact NetApp technical support if the issue persists.
 
+### Directory size is approaching the maximum directory size (maxdirsize) limit
+
+**Impact**: Availability
+
+**EMS Event**: `wafl.dir.size.warning`
+
+This message occurs when the size of a directory surpasses a configured percentage (default: 90%) of its current maximum directory size (maxdirsize) limit.
+
+**Remediation**
+
+Use the "volume file show-inode" command with the file ID and volume name information to find the file path. Reduce the number of files in the directory. If not possible, use the (privilege:advanced) option "volume modify -volume vol_name -maxdir-size new_value" to increase the maximum number of files per directory. However, doing so could impact system performance. If you need to increase the maximum directory size, contact NetApp technical support.
+
 ### Disk Out of Service
 
 **Impact**: Availability

@@ -944,6 +944,13 @@ events:
       - parameters.mirror_config_id  => mirror_config_id
       - parameters.primary_config_id => primary_config_id
 
+  - name: wafl.dir.size.warning
+    exports:
+      - parameters.fileid    => directory_inum
+      - parameters.vol       => volume
+      - parameters.app       => app
+      - parameters.volident  => vol_ident
+
   - name: wafl.readdir.expired
     exports:
       - parameters.app            => app
