@@ -11,6 +11,8 @@ counters:
   - ^clone_volume                                 => is_flexclone
   - ^is_encrypted                                 => isEncrypted
   - ^is_sis_volume                                => is_sis_volume
+  - ^is_space_enforcement_logical                 => is_space_enforcement_logical
+  - ^is_space_reporting_logical                   => is_space_reporting_logical
   - ^junction_path                                => junction_path
   - ^nodes                                        => node
   - ^snaplock_type                                => snaplock_type
@@ -133,6 +135,8 @@ export_options:
     - isEncrypted
     - isHardwareEncrypted
     - is_sis_volume
+    - is_space_enforcement_logical
+    - is_space_reporting_logical
     - junction_path
     - root_volume
     - snaplock_type
