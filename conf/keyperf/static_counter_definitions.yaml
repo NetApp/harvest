@@ -6,3 +6,9 @@ objects:
         base_counter: statistics.processor_utilization_base
       - name: statistics.processor_utilization_base
         type: delta
+  flexcache:
+    counter_definitions:
+      - name: statistics.flexcache_raw.client_requested_blocks
+        type: delta
+      - name: statistics.flexcache_raw.cache_miss_blocks
+        type: delta

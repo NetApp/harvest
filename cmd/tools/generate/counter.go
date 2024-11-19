@@ -50,6 +50,7 @@ var (
 		"svm_cifs":           "cifs_service",
 		"svm_nfs":            "nfs_service",
 		"lif":                "ip_interface",
+		"flexcache":          "volume",
 	}
 	swaggerBytes         []byte
 	excludePerfTemplates = map[string]struct{}{
