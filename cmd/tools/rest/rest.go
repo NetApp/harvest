@@ -361,7 +361,7 @@ func FetchForCli(client *Client, href string, records *[]any, downloadAll bool, 
 		if err != nil {
 			return err
 		}
-		*curls = append(*curls, fmt.Sprintf("curl --user %s --insecure '%s%s'", pollerAuth.Username, client.baseURL, href))
+		*curls = append(*curls, fmt.Sprintf("curl --user %s --insecure '%s%s'", pollerAuth.Username, client.baseURL, nextLink))
 
 		isNonIterRestCall := false
 		value := gjson.GetBytes(getRest, "records")
@@ -596,6 +596,7 @@ func fetchLimit(client *Client, href string, records *[]gjson.Result, recordsWan
 			}
 			value := gjson.GetBytes(response, "records")
 			*records = append(*records, value)
+			break
 		}
 	}
 
