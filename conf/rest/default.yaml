@@ -3,7 +3,7 @@ collector:          Rest
 
 schedule:
   - counter: 24h  # This handles cases such as cluster upgrades or collector cache updates.
-  - data: 1m
+  - data: 3m
 
 # See https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-strategy.md
 # for details on how Harvest handles the ONTAP transition from ZAPI to REST.
