@@ -1,0 +1,23 @@
+name:                     FlexCache
+query:                    api/storage/volumes
+object:                   flexcache
+
+counters:
+  - ^^name                                                        => volume
+  - ^^svm.name                                                    => svm
+  - ^statistics.flexcache_raw.status                              => status
+  - statistics.flexcache_raw.cache_miss_blocks                    => blocks_retrieved_from_origin
+  - statistics.flexcache_raw.client_requested_blocks              => blocks_requested_from_client
+  - statistics.flexcache_raw.timestamp(timestamp)                 => timestamp
+  - filter:
+      - statistics.flexcache_raw.timestamp=!"-"
+
+plugins:
+  - MetricAgent:
+      compute_metric:
+        - miss_percent PERCENT blocks_retrieved_from_origin blocks_requested_from_client
+
+export_options:
+  instance_keys:
+    - svm
+    - volume
