@@ -1,16 +1,12 @@
 
 name:       ClusterUpdate
-query:      api/private/cli/cluster/image/show-update-progress
+query:      api/cluster/software
 object:     cluster_update
 
 counters:
-  - ^^ndu_phase           => phase
-  - ^^phase_description   => phase_name
-  - ^^phase_status        => status
+  - ^update_details   => update_details
 
-export_options:
-  instance_keys:
-    - phase
-    - status
-  instance_labels:
-    - phase_name
+plugins:
+  - ClusterUpdate
+
+
