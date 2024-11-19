@@ -7,6 +7,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/tidwall/gjson"
 	"os"
@@ -73,31 +74,18 @@ func TestMain(m *testing.M) {
 
 	benchRest = newRest("Volume", "volume.yaml", "testdata/conf")
 	fullPollData = collectors.JSONToGson("testdata/volume-1.json.gz", true)
-	now := time.Now().Truncate(time.Second)
-	_, _ = benchRest.pollData(now, fullPollData, volumeEndpoints)
+	_, _ = benchRest.pollData(fullPollData, set.New())
 
 	os.Exit(m.Run())
 }
 
 func BenchmarkRestPerf_PollData(b *testing.B) {
-	var err error
 	ms = make([]*matrix.Matrix, 0)
 	now := time.Now().Truncate(time.Second)
 
 	for range b.N {
 		now = now.Add(time.Minute * 15)
-		mi, _ := benchRest.pollData(now, fullPollData, volumeEndpoints)
-
-		for _, mm := range mi {
-			ms = append(ms, mm)
-		}
-		mi, err = benchRest.pollData(now, fullPollData, volumeEndpoints)
-		if err != nil {
-			b.Errorf("error: %v", err)
-		}
-		for _, mm := range mi {
-			ms = append(ms, mm)
-		}
+		_, _ = benchRest.pollData(fullPollData, set.New())
 	}
 }
 
@@ -121,14 +109,14 @@ func Test_pollDataVolume(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 
 			r := newRest("Volume", "volume.yaml", "testdata/conf")
-			now := time.Now().Truncate(time.Second)
 			pollData := collectors.JSONToGson(tt.pollDataPath1, true)
 
-			mm, err := r.pollData(now, pollData, volumeEndpoints)
-			if err != nil {
-				t.Fatal(err)
-			}
-			m := mm["Volume"]
+			mcount, parseD := r.pollData(pollData, set.New())
+			mecount, apiD := r.ProcessEndPoints(r.Matrix[r.Object], volumeEndpoints, set.New())
+
+			metricCount := mcount + mecount
+			r.postPollData(apiD, parseD, metricCount, set.New())
+			m := r.Matrix["Volume"]
 
 			if len(m.GetInstances()) != tt.numInstances {
 				t.Errorf("pollData() numInstances got=%v, want=%v", len(m.GetInstances()), tt.numInstances)

@@ -463,6 +463,58 @@ func FetchAnalytics(client *Client, href string) ([]gjson.Result, gjson.Result, 
 	return result, *analytics, nil
 }
 
+func FetchAllStream(client *Client, href string, processBatch func([]gjson.Result) error, headers ...map[string]string) error {
+	var records []gjson.Result
+	var prevLink string
+	nextLink := href
+
+	for {
+		response, err := client.GetRest(nextLink, headers...)
+		if err != nil {
+			return fmt.Errorf("error making request %w", err)
+		}
+
+		output := gjson.ParseBytes(response)
+		data := output.Get("records")
+		numRecords := output.Get("num_records")
+		next := output.Get("_links.next.href")
+
+		if data.Exists() {
+			// extract returned records since paginated records need to be merged into a single list
+			if numRecords.Int() > 0 {
+				records = append(records, data.Array()...)
+			}
+			// Process the current batch of records
+			if err := processBatch(records); err != nil {
+				return err
+			}
+
+			prevLink = nextLink
+			// If there is a next link, follow it
+			nextLink = next.String()
+			if nextLink == "" || nextLink == prevLink {
+				// no nextLink or nextLink is the same as the previous link, no progress is being made, exit
+				break
+			}
+		} else {
+			contentJSON := `{"records":[]}`
+			response, err := sjson.SetRawBytes([]byte(contentJSON), "records.-1", response)
+			if err != nil {
+				return fmt.Errorf("error setting record %w", err)
+			}
+			value := gjson.GetBytes(response, "records")
+			records = append(records, value.Array()...)
+			// Process the current batch of records
+			if err := processBatch(records); err != nil {
+				return err
+			}
+			break
+		}
+	}
+
+	return nil
+}
+
 func fetchAll(client *Client, href string, records *[]gjson.Result, headers ...map[string]string) error {
 	getRest, err := client.GetRest(href, headers...)
 	if err != nil {

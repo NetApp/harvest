@@ -380,65 +380,79 @@ func (r *Rest) updateHref() {
 }
 
 func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
-
 	var (
-		startTime time.Time
-		err       error
-		records   []gjson.Result
+		apiD, parseD time.Duration
+		metricCount  uint64
 	)
-
 	r.Matrix[r.Object].Reset()
 	r.Client.Metadata.Reset()
 
-	startTime = time.Now()
+	// Track old instances before processing batches
+	oldInstances := set.New()
+	for key := range r.Matrix[r.Object].GetInstances() {
+		oldInstances.Add(key)
+	}
 
-	if records, err = r.GetRestData(r.Prop.Href); err != nil {
+	processBatch := func(records []gjson.Result) error {
+		if len(records) == 0 {
+			return errs.New(errs.ErrNoInstance, "no "+r.Object+" instances on cluster")
+		}
+
+		// Process the current batch of records
+		count, batchParseD := r.pollData(records, oldInstances)
+		metricCount += count
+		parseD += batchParseD
+		apiD -= batchParseD
+		return nil
+	}
+
+	startTime := time.Now()
+	if err := rest.FetchAllStream(r.Client, r.Prop.Href, processBatch); err != nil {
 		return nil, err
 	}
+	apiD += time.Since(startTime)
 
-	if len(records) == 0 {
-		return nil, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances on cluster")
-	}
+	// Process endpoints after all batches have been processed
+	eCount, endpointAPID := r.ProcessEndPoints(r.Matrix[r.Object], r.ProcessEndPoint, oldInstances)
+	metricCount += eCount
+	apiD += endpointAPID
 
-	return r.pollData(startTime, records, func(e *EndPoint) ([]gjson.Result, time.Duration, error) {
-		return r.ProcessEndPoint(e)
-	})
+	r.postPollData(apiD, parseD, metricCount, oldInstances)
+	return r.Matrix, nil
 }
 
-func (r *Rest) pollData(
-	startTime time.Time,
-	records []gjson.Result,
-	endpointFunc func(e *EndPoint) ([]gjson.Result, time.Duration, error),
-) (map[string]*matrix.Matrix, error) {
-
-	var (
-		count        uint64
-		apiD, parseD time.Duration
-	)
-
-	apiD = time.Since(startTime)
-	startTime = time.Now()
-	mat := r.Matrix[r.Object]
-
-	count, _ = r.HandleResults(mat, records, r.Prop, false)
-
-	// process endpoints
-	eCount, endpointAPID := r.ProcessEndPoints(mat, endpointFunc)
-	count += eCount
-	parseD = time.Since(startTime)
+func (r *Rest) postPollData(apiD time.Duration, parseD time.Duration, metricCount uint64, oldInstances *set.Set) {
+	// Remove old instances that are not found in new instances
+	for key := range oldInstances.Iter() {
+		r.Matrix[r.Object].RemoveInstance(key)
+	}
 
 	numRecords := len(r.Matrix[r.Object].GetInstances())
 
-	_ = r.Metadata.LazySetValueInt64("api_time", "data", (apiD + endpointAPID).Microseconds())
+	_ = r.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
 	_ = r.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
-	_ = r.Metadata.LazySetValueUint64("metrics", "data", count)
+	_ = r.Metadata.LazySetValueUint64("metrics", "data", metricCount)
 	_ = r.Metadata.LazySetValueUint64("instances", "data", uint64(numRecords))
 	_ = r.Metadata.LazySetValueUint64("bytesRx", "data", r.Client.Metadata.BytesRx)
 	_ = r.Metadata.LazySetValueUint64("numCalls", "data", r.Client.Metadata.NumCalls)
 
-	r.AddCollectCount(count)
+	r.AddCollectCount(metricCount)
+}
 
-	return r.Matrix, nil
+func (r *Rest) pollData(records []gjson.Result, oldInstances *set.Set) (uint64, time.Duration) {
+
+	var (
+		count  uint64
+		parseD time.Duration
+	)
+
+	startTime := time.Now()
+	mat := r.Matrix[r.Object]
+
+	count, _ = r.HandleResults(mat, records, r.Prop, false, oldInstances)
+	parseD = time.Since(startTime)
+
+	return count, parseD
 }
 
 func (r *Rest) ProcessEndPoint(e *EndPoint) ([]gjson.Result, time.Duration, error) {
@@ -450,7 +464,7 @@ func (r *Rest) ProcessEndPoint(e *EndPoint) ([]gjson.Result, time.Duration, erro
 	return data, time.Since(now), nil
 }
 
-func (r *Rest) ProcessEndPoints(mat *matrix.Matrix, endpointFunc func(e *EndPoint) ([]gjson.Result, time.Duration, error)) (uint64, time.Duration) {
+func (r *Rest) ProcessEndPoints(mat *matrix.Matrix, endpointFunc func(e *EndPoint) ([]gjson.Result, time.Duration, error), oldInstances *set.Set) (uint64, time.Duration) {
 	var (
 		err       error
 		count     uint64
@@ -475,7 +489,7 @@ func (r *Rest) ProcessEndPoints(mat *matrix.Matrix, endpointFunc func(e *EndPoin
 			r.Logger.Debug("no instances on cluster", slog.String("APIPath", endpoint.prop.Query))
 			continue
 		}
-		count, _ = r.HandleResults(mat, records, endpoint.prop, true)
+		count, _ = r.HandleResults(mat, records, endpoint.prop, true, oldInstances)
 	}
 
 	return count, totalAPID
@@ -531,20 +545,14 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 
 // HandleResults function is used for handling the rest response for parent as well as endpoints calls,
 // isEndPoint would be true only for the endpoint call, and it can't create/delete instance.
-func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *prop, isEndPoint bool) (uint64, uint64) {
+func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *prop, isEndPoint bool, oldInstances *set.Set) (uint64, uint64) {
 	var (
 		err         error
 		count       uint64
 		numPartials uint64
 	)
 
-	oldInstances := set.New()
 	currentInstances := set.New()
-
-	// copy keys of current instances. This is used to remove deleted instances from matrix later
-	for key := range mat.GetInstances() {
-		oldInstances.Add(key)
-	}
 
 	for _, instanceData := range result {
 		var (
@@ -591,11 +599,10 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 		} else {
 			currentInstances.Add(instanceKey)
 		}
-		oldInstances.Remove(instanceKey)
-
 		// clear all instance labels as there are some fields which may be missing between polls
 		// Don't remove instance labels when endpoints are being processed because endpoints uses parent instance only.
 		if !isEndPoint {
+			oldInstances.Remove(instanceKey)
 			instance.ClearLabels()
 		}
 		for label, display := range prop.InstanceLabels {
@@ -668,14 +675,6 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 		// for endpoints, we want to remove common keys from metric count
 		if isEndPoint {
 			count -= uint64(len(prop.InstanceKeys))
-		}
-	}
-
-	// Used for parent as we don't want to remove instances for endpoints
-	if !isEndPoint {
-		// remove deleted instances
-		for key := range oldInstances.Iter() {
-			mat.RemoveInstance(key)
 		}
 	}
 
