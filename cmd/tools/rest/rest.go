@@ -464,11 +464,11 @@ func FetchAnalytics(client *Client, href string) ([]gjson.Result, gjson.Result, 
 }
 
 func FetchAllStream(client *Client, href string, processBatch func([]gjson.Result) error, headers ...map[string]string) error {
-	var records []gjson.Result
 	var prevLink string
 	nextLink := href
 
 	for {
+		var records []gjson.Result
 		response, err := client.GetRest(nextLink, headers...)
 		if err != nil {
 			return fmt.Errorf("error making request %w", err)
@@ -480,13 +480,11 @@ func FetchAllStream(client *Client, href string, processBatch func([]gjson.Resul
 		next := output.Get("_links.next.href")
 
 		if data.Exists() {
-			// extract returned records since paginated records need to be merged into a single list
 			if numRecords.Int() > 0 {
-				records = append(records, data.Array()...)
-			}
-			// Process the current batch of records
-			if err := processBatch(records); err != nil {
-				return err
+				// Process the current batch of records
+				if err := processBatch(data.Array()); err != nil {
+					return err
+				}
 			}
 
 			prevLink = nextLink
