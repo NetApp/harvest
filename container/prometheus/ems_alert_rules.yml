@@ -23,7 +23,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "LUN {{ $labels.lun_path }}, vol {{ $labels.volume_name }} (DSID {{ $labels.volume_dsid }}) destroyed (UUID: {{ $labels.object_uuid }})."
+          summary: "LUN {{ $labels.lun_path }}, vol {{ $labels.volume }} (DSID {{ $labels.volume_ds_id }}) destroyed (UUID: {{ $labels.object_uuid }})."
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#lun-destroyed"
 
@@ -47,7 +47,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "LUN {{ $labels.lun_path }}, vol {{ $labels.volume_name }} (DSID {{ $labels.volume_dsid }}) was brought offline (UUID: {{ $labels.object_uuid }})."
+          summary: "LUN {{ $labels.lun_path }}, vol {{ $labels.volume }} (DSID {{ $labels.volume_ds_id }}) was brought offline (UUID: {{ $labels.object_uuid }})."
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#lun-offline"
 
@@ -71,7 +71,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "NVMe namespace {{ $labels.NVMeNS_path }}, vol {{ $labels.volume_name }} (DSID {{ $labels.volume_dsid }}) was destroyed (UUID: {{ $labels.object_uuid }})."
+          summary: "NVMe namespace {{ $labels.path }}, vol {{ $labels.volume }} (DSID {{ $labels.volume_ds_id }}) was destroyed (UUID: {{ $labels.object_uuid }})."
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#nvme-namespace-destroyed"
 
@@ -95,7 +95,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "NVMe namespace {{ $labels.path }}, vol {{ $labels.volume_name }} (DSID {{ $labels.volume_dsid }}) was brought offline (UUID: {{ $labels.object_uuid }})."
+          summary: "NVMe namespace {{ $labels.path }}, vol {{ $labels.volume }} (DSID {{ $labels.volume_ds_id }}) was brought offline (UUID: {{ $labels.object_uuid }})."
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#nvme-namespace-offline"
 
@@ -119,7 +119,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "NVMe namespace {{ $labels.path }}, vol {{ $labels.volume_name }} (DSID {{ $labels.volume_dsid }}) was brought online (UUID: {{ $labels.object_uuid }})."
+          summary: "NVMe namespace {{ $labels.path }}, vol {{ $labels.volume }} (DSID {{ $labels.volume_ds_id }}) was brought online (UUID: {{ $labels.object_uuid }})."
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#nvme-namespace-online"
 
@@ -143,7 +143,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Many simultaneous new CIFS connections are occurring on Vserver ID {{ $labels.vsId }} from IP address {{ $labels.remoteIpAddress }} object type is {{ $labels.object_type }} with UUID {{ $labels.object_uuid }}."
+          summary: "Many simultaneous new CIFS connections are occurring on Vserver ID {{ $labels.vs_id }} from IP address {{ $labels.remote_ip_address }} object type is {{ $labels.object_type }} with UUID {{ $labels.object_uuid }}."
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#too-many-cifs-authentication"
 
@@ -167,7 +167,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Received too many open file requests for the same file by one user on a connection: clientIP:port {{ $labels.IpAddress }}:{{ $labels.port }}, file \"{{ $labels.filePath }}\" on share \"{{ $labels.shareName }}\", vserver: \"{{ $labels.vserverName }}\". Object type is: {{ $labels.object_type }} with UUID: {{ $labels.object_uuid }}."
+          summary: "Received too many open file requests for the same file by one user on a connection: clientIP:port {{ $labels.ip_address }}:{{ $labels.port }}, file \"{{ $labels.file_path }}\" on share \"{{ $labels.share }}\", vserver: \"{{ $labels.svm }}\". Object type is: {{ $labels.object_type }} with UUID: {{ $labels.object_uuid }}."
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#max-times-open-per-file-exceeded"
 
@@ -191,7 +191,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Received too many session requests from the same user on one TCP connection: clientIP:port {{ $labels.IpAddress }}:{{ $labels.port }}, user \"{{ $labels.userName }}\", vserver: \"{{ $labels.vserverName }}\". Object type is: {{ $labels.object_type }} with UUID: {{ $labels.object_uuid }}."
+          summary: "Received too many session requests from the same user on one TCP connection: clientIP:port {{ $labels.ip_address }}:{{ $labels.port }}, user \"{{ $labels.user }}\", vserver: \"{{ $labels.svm }}\". Object type is: {{ $labels.object_type }} with UUID: {{ $labels.object_uuid }}."
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#max-sessions-per-user-exceeded"
 
@@ -215,7 +215,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "The NetBIOS Name Service received a negative name registration response. The name {{ $labels.nbName }} is owned by a remote machine. The IP address being registered is {{ $labels.IpAddress }}. Object type is: {{ $labels.object_type }} with UUID: {{ $labels.object_uuid }}."
+          summary: "The NetBIOS Name Service received a negative name registration response. The name {{ $labels.nb }} is owned by a remote machine. The IP address being registered is {{ $labels.ip_address }}. Object type is: {{ $labels.object_type }} with UUID: {{ $labels.object_uuid }}."
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#netbios-name-conflict"
 
@@ -239,7 +239,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Vserver ID: {{ $labels.vserverId }}, user name: {{ $labels.userName }}, client ip: {{ $labels.clientIp }}, Object type is: {{ $labels.object_type }} with UUID: {{ $labels.object_uuid }}."
+          summary: "Vserver ID: {{ $labels.svm_uuid }}, user name: {{ $labels.user }}, client ip: {{ $labels.client_ip }}, Object type is: {{ $labels.object_type }} with UUID: {{ $labels.object_uuid }}."
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#nonexistent-admin-share"
 
@@ -263,7 +263,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "NFS Store Pool for {{ $labels.poolname }} exhausted. Associated object type is {{ $labels.object_type }} with UUID: {{ $labels.object_uuid }}."
+          summary: "NFS Store Pool for {{ $labels.pool }} exhausted. Associated object type is {{ $labels.object_type }} with UUID: {{ $labels.object_uuid }}."
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#nfsv4-store-pool-exhausted"
 
@@ -287,7 +287,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "For Vserver \"{{ $labels.vserverName }}\", the attempt to connect to the privileged ONTAP_ADMIN$ share by the client \"{{ $labels.scannerIp }}\" is rejected because its logged-in user \"{{ $labels.userName }}\" is not configured in any of the Vserver active scanner pools."
+          summary: "For Vserver \"{{ $labels.svm }}\", the attempt to connect to the privileged ONTAP_ADMIN$ share by the client \"{{ $labels.scanner_ip }}\" is rejected because its logged-in user \"{{ $labels.user }}\" is not configured in any of the Vserver active scanner pools."
           impact: "Security"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#unauthorized-user-access-to-admin-share"
 
@@ -311,7 +311,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "For Vserver \"{{ $labels.vserverName }}\", AV server \"{{ $labels.scannerIp }}\" is too busy to accept new scan requests."
+          summary: "For Vserver \"{{ $labels.svm }}\", AV server \"{{ $labels.scanner_ip }}\" is too busy to accept new scan requests."
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#antivirus-server-busy"
 
@@ -335,7 +335,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "For Vserver \"{{ $labels.vserverName }}\", ONTAP(R) forcibly closed the vscan connection originated from the nonresponsive AV server \"{{ $labels.scannerIp }}\"."
+          summary: "For Vserver \"{{ $labels.svm }}\", ONTAP(R) forcibly closed the vscan connection originated from the nonresponsive AV server \"{{ $labels.scanner_ip }}\"."
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#non-responsive-antivirus-server"
 
@@ -359,7 +359,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "For Vserver \"{{ $labels.vserverName }}\", AV Connector running on the AV server \"{{ $labels.scannerIp }}\" does not have a registered scan-engine to it."
+          summary: "For Vserver \"{{ $labels.svm }}\", AV Connector running on the AV server \"{{ $labels.scanner_ip }}\" does not have a registered scan-engine to it."
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#no-registered-scan-engine"
 
@@ -383,7 +383,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Vserver \"{{ $labels.vserverName }}\" has no virus scanner connection."
+          summary: "Vserver \"{{ $labels.svm }}\" has no virus scanner connection."
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#no-vscan-connection"
 
@@ -407,7 +407,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Possible virus detected. Vserver: {{ $labels.vserverName }}, vscan server IP: {{ $labels.vscanServerIp }}, file path: {{ $labels.filePath }}, client IP: {{ $labels.clientIp }}, SID: {{ $labels.SID }}, vscan engine status: {{ $labels.vscanEngineStatus }}, vscan engine result string: {{ $labels.vscanEngineResultString }}."
+          summary: "Possible virus detected. Vserver: {{ $labels.svm }}, vscan server IP: {{ $labels.vscan_server_ip }}, file path: {{ $labels.file_path }}, client IP: {{ $labels.client_ip }}, SID: {{ $labels.sid }}, vscan engine status: {{ $labels.vscanEngineStatus }}, vscan engine result string: {{ $labels.vscanEngineResultString }}."
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#virus-detected"
 
@@ -431,7 +431,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Relocation of aggregate '{{ $labels.vol }}' (uuid: {{ $labels.aggr_uuid }}) failed due to {{ $labels.reason }} preventing object store access on the destination node."
+          summary: "Relocation of aggregate '{{ $labels.volume }}' (uuid: {{ $labels.aggr_uuid }}) failed due to {{ $labels.reason }} preventing object store access on the destination node."
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#relocation-of-storage-pool-failed"
 
@@ -455,7 +455,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Anti-ransomware state was changed to \"{{ $labels.op }}\" on volume \"{{ $labels.volumeName }}\" (UUID: \"{{ $labels.volumeUuid }}\") in Vserver \"{{ $labels.vserverName }}\" (UUID: \"{{ $labels.vserverUuid }}\")."
+          summary: "Anti-ransomware state was changed to \"{{ $labels.op }}\" on volume \"{{ $labels.volume }}\" (UUID: \"{{ $labels.volume_uuid }}\") in Vserver \"{{ $labels.svm }}\" (UUID: \"{{ $labels.svm_uuid }}\")."
           impact: "Security"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#volume-anti-ransomware-monitoring"
 
@@ -479,7 +479,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Anti-ransomware was changed to \"{{ $labels.op }}\" on Vserver \"{{ $labels.vserverName }}\" (UUID: \"{{ $labels.vserverUuid }}\")."
+          summary: "Anti-ransomware was changed to \"{{ $labels.op }}\" on Vserver \"{{ $labels.svm }}\" (UUID: \"{{ $labels.svm_uuid }}\")."
           impact: "Security"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#storage-vm-anti-ransomware-monitoring"
 
@@ -623,7 +623,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "A shadow copy operation has failed: {{ $labels.errMsg }}. ( Operation : {{ $labels.operation }} , Client Shadow Copy Set ID : {{ $labels.clientShadowCopySetId }} , Filer Shadow Copy Set ID : {{ $labels.filerShadowCopySetId }} , Client Shadow Copy ID : {{ $labels.clientShadowCopyId }} , Filer Shadow Copy ID : {{ $labels.filerShadowCopyId }} , Share Name : {{ $labels.shareName }}, Object type is: {{ $labels.object_type }} with UUID: {{ $labels.object_uuid }} )"
+          summary: "A shadow copy operation has failed: {{ $labels.errMsg }}. ( Operation : {{ $labels.operation }} , Client Shadow Copy Set ID : {{ $labels.client_shadow_copy_set_id }} , Filer Shadow Copy Set ID : {{ $labels.filer_shadow_copy_set_id }} , Client Shadow Copy ID : {{ $labels.client_shadow_copy_id }} , Filer Shadow Copy ID : {{ $labels.filer_shadow_copy_id }} , Share Name : {{ $labels.share }}, Object type is: {{ $labels.object_type }} with UUID: {{ $labels.object_uuid }} )"
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#shadow-copy-failed"
 
@@ -647,7 +647,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "A module attempted to access credential information before the cloud credential thread initialized on node {{ $labels.nodeUuid }}."
+          summary: "A module attempted to access credential information before the cloud credential thread initialized on node {{ $labels.node_uuid }}."
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#aws-credentials-not-initialized"
 
@@ -671,7 +671,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Cluster switch: {{ $labels.switch_name }} power supply: {{ $labels.pwr_supply_name }} status: {{ $labels.status }}."
+          summary: "Cluster switch: {{ $labels.switch }} power supply: {{ $labels.pwr_supply }} status: {{ $labels.status }}."
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#storage-switch-power-supplies-failed"
 
@@ -695,7 +695,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Drive {{ $labels.diskName }} ({{ $labels.serialno }}){{ $labels.reason }}. Power-On Hours: {{ $labels.powerOnHours }}, GList Count: {{ $labels.glistEntries }}, Drive Info: {{ $labels.disk_information }}."
+          summary: "Drive {{ $labels.disk }} ({{ $labels.serial_no }}){{ $labels.reason }}. Power-On Hours: {{ $labels.power_on_hours }}, GList Count: {{ $labels.glistEntries }}, Drive Info: {{ $labels.disk_information }}."
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#disk-out-of-service"
 
@@ -719,7 +719,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "{{ $labels.location }} power supply was added to {{ $labels.channelName }}.shelf{{ $labels.shelfIdent }}"
+          summary: "{{ $labels.location }} power supply was added to {{ $labels.channel }}.shelf{{ $labels.shelf_ident }}"
           impact: "Configuration"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#disk-shelf-power-supply-discovered"
 
@@ -743,7 +743,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "{{ $labels.location }} power supply was removed from {{ $labels.channelName }}.shelf{{ $labels.shelfIdent }}"
+          summary: "{{ $labels.location }} power supply was removed from {{ $labels.channel }}.shelf{{ $labels.shelf_ident }}"
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#disk-shelves-power-supply-removed"
 
@@ -815,7 +815,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Giveback of aggregate '{{ $labels.vol }}' (uuid: {{ $labels.aggr_uuid }}) failed due to {{ $labels.reason }} preventing object store access on the destination node."
+          summary: "Giveback of aggregate '{{ $labels.volume }}' (uuid: {{ $labels.aggr_uuid }}) failed due to {{ $labels.reason }} preventing object store access on the destination node."
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#giveback-of-storage-pool-failed"
 
@@ -1055,7 +1055,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Unable to connect to the object store \"{{ $labels.configname }}\" from node {{ $labels.node_uuid }}. Reason: {{ $labels.reason }}."
+          summary: "Unable to connect to the object store \"{{ $labels.config }}\" from node {{ $labels.node_uuid }}. Reason: {{ $labels.reason }}."
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#cloud-tier-unreachable"
 
@@ -1079,7 +1079,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Object-store server host name \"{{ $labels.hostname }}\" cannot be resolved to an IP address on node {{ $labels.nodeUuid }}."
+          summary: "Object-store server host name \"{{ $labels.host }}\" cannot be resolved to an IP address on node {{ $labels.node_uuid }}."
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#object-store-host-unresolvable"
 
@@ -1103,7 +1103,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Object-store client could not find an operational intercluster LIF (IPspace ID: {{ $labels.ipspaceID }}) on node {{ $labels.nodeUuid }}."
+          summary: "Object-store client could not find an operational intercluster LIF (IPspace ID: {{ $labels.ipspace_id }}) on node {{ $labels.node_uuid }}."
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#object-store-intercluster-lif-down"
 
@@ -1127,7 +1127,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Object-store {{ $labels.operation }} operation server-calculated request signature does not match the signature sent to object-store server {{ $labels.serverHostname }} for bucket or container \"{{ $labels.bucket }}\" on node {{ $labels.nodeUuid }}. Check the keys and signing method."
+          summary: "Object-store {{ $labels.operation }} operation server-calculated request signature does not match the signature sent to object-store server {{ $labels.server_host }} for bucket or container \"{{ $labels.bucket }}\" on node {{ $labels.node_uuid }}. Check the keys and signing method."
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#object-store-signature-mismatch"
 
@@ -1199,7 +1199,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "FC target port {{ $labels.portname }} has {{ $labels.active_commands }} outstanding commands, which exceeds the maximum number of commands {{ $labels.max_commands }} that can be supported by this port."
+          summary: "FC target port {{ $labels.port }} has {{ $labels.active_commands }} outstanding commands, which exceeds the maximum number of commands {{ $labels.max_commands }} that can be supported by this port."
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#fc-target-port-commands-exceeded"
 
@@ -1271,7 +1271,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "{{ $labels.prodChannel }} cooling fan error for {{ $labels.typeText }} {{ $labels.fanNumber }}: {{ $labels.errorMsg }}{{ $labels.errorText }}. {{ $labels.locationText }}."
+          summary: "{{ $labels.prod_channel }} cooling fan error for {{ $labels.typeText }} {{ $labels.fan_number }}: {{ $labels.errorMsg }}{{ $labels.errorText }}. {{ $labels.locationText }}."
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#shelf-fan-failed"
 
@@ -1319,7 +1319,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "ONTAP Mediator (version {{ $labels.version }}) is added on cluster '{{ $labels.cluster }}' having peer cluster '{{ $labels.peerCluster }}' and mediator IP address '{{ $labels.ipAddress }}'."
+          summary: "ONTAP Mediator (version {{ $labels.version }}) is added on cluster '{{ $labels.cluster }}' having peer cluster '{{ $labels.peer_cluster }}' and mediator IP address '{{ $labels.ip_address }}'."
           impact: "Protection"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#ontap-mediator-added"
 
@@ -1343,7 +1343,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "CA certificate of the ONTAP Mediator (IP: {{ $labels.ipAddress }}) expired on {{ $labels.expiryDate }}."
+          summary: "CA certificate of the ONTAP Mediator (IP: {{ $labels.ip_address }}) expired on {{ $labels.expiry_date }}."
           impact: "Protection"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#ontap-mediator-ca-certificate-expired"
 
@@ -1367,7 +1367,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "CA certificate for the ONTAP Mediator (IP: {{ $labels.ipAddress }}) will expire in {{ $labels.daysToExpire }} days. Expiry: {{ $labels.expiryDate }}."
+          summary: "CA certificate for the ONTAP Mediator (IP: {{ $labels.ip_address }}) will expire in {{ $labels.days_to_expire }} days. Expiry: {{ $labels.expiry_date }}."
           impact: "Protection"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#ontap-mediator-ca-certificate-expiring"
 
@@ -1391,7 +1391,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Client certificate of the ONTAP Mediator (IP: {{ $labels.ipAddress }}) expired on {{ $labels.expiryDate }}."
+          summary: "Client certificate of the ONTAP Mediator (IP: {{ $labels.ip_address }}) expired on {{ $labels.expiry_date }}."
           impact: "Protection"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#ontap-mediator-client-certificate-expired"
 
@@ -1415,7 +1415,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Client certificate for the ONTAP Mediator (IP: {{ $labels.ipAddress }}) will expire in {{ $labels.daysToExpire }} days. Expiry: {{ $labels.expiryDate }}."
+          summary: "Client certificate for the ONTAP Mediator (IP: {{ $labels.ip_address }}) will expire in {{ $labels.days_to_expire }} days. Expiry: {{ $labels.expiry_date }}."
           impact: "Protection"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#ontap-mediator-client-certificate-expiring"
 
@@ -1439,7 +1439,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "ONTAP Mediator is not accessible on cluster '{{ $labels.cluster }}' with Mediator IP address '{{ $labels.ipAddress }}'."
+          summary: "ONTAP Mediator is not accessible on cluster '{{ $labels.cluster }}' with Mediator IP address '{{ $labels.ip_address }}'."
           impact: "Protection"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#ontap-mediator-not-accessible"
 
@@ -1463,7 +1463,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "ONTAP Mediator (version {{ $labels.version }}) was removed on cluster '{{ $labels.cluster }}' having peer cluster '{{ $labels.peerCluster }}' and mediator IP address '{{ $labels.ipAddress }}'."
+          summary: "ONTAP Mediator (version {{ $labels.version }}) was removed on cluster '{{ $labels.cluster }}' having peer cluster '{{ $labels.peer_cluster }}' and mediator IP address '{{ $labels.ip_address }}'."
           impact: "Protection"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#ontap-mediator-removed"
 
@@ -1487,7 +1487,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Server certificate of the ONTAP Mediator (IP: {{ $labels.ipAddress }}) expired on {{ $labels.expiryDate }}."
+          summary: "Server certificate of the ONTAP Mediator (IP: {{ $labels.ip_address }}) expired on {{ $labels.expiry_date }}."
           impact: "Protection"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#ontap-mediator-server-certificate-expired"
 
@@ -1511,7 +1511,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Server certificate for the ONTAP Mediator (IP: {{ $labels.ipAddress }}) will expire in {{ $labels.daysToExpire }} days. Expiry: {{ $labels.expiryDate }}."
+          summary: "Server certificate for the ONTAP Mediator (IP: {{ $labels.ip_address }}) will expire in {{ $labels.days_to_expire }} days. Expiry: {{ $labels.expiry_date }}."
           impact: "Protection"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#ontap-mediator-server-certificate-expiring"
 
@@ -1535,7 +1535,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "ONTAP Mediator (IP: {{ $labels.ipAddress }}) is unreachable from cluster {{ $labels.cluster }}."
+          summary: "ONTAP Mediator (IP: {{ $labels.ip_address }}) is unreachable from cluster {{ $labels.cluster }}."
           impact: "Protection"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#ontap-mediator-unreachable"
 
@@ -1559,7 +1559,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Source volume \"{{ $labels.srcpath }}\" and destination volume \"{{ $labels.dstpath }}\" with relationship UUID \"{{ $labels.relationship_id }}\" is in \"out-of-sync\" status due to the following reason: \"{{ $labels.error_msg }}\"."
+          summary: "Source volume \"{{ $labels.src_path }}\" and destination volume \"{{ $labels.dst_path }}\" with relationship UUID \"{{ $labels.relationship_id }}\" is in \"out-of-sync\" status due to the following reason: \"{{ $labels.error_msg }}\"."
           impact: "Protection"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#snapmirror-relationship-out-of-sync"
 
@@ -1583,7 +1583,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Source CG \"{{ $labels.srccgpath }}\" and destination CG \"{{ $labels.dstcgpath }}\" with relationship UUID \"{{ $labels.cg_relationship_id }}\" is in \"out-of-sync\" status. Reason: \"{{ $labels.error_msg }}\"."
+          summary: "Source CG \"{{ $labels.src_cg_path }}\" and destination CG \"{{ $labels.dst_cg_path }}\" with relationship UUID \"{{ $labels.cg_relationship_id }}\" is in \"out-of-sync\" status. Reason: \"{{ $labels.error_msg }}\"."
           impact: "Protection"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#snapmirror-active-sync-relationship-out-of-sync"
 
@@ -1679,7 +1679,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Vserver {{ $labels.vserver_name }} (UUID: {{ $labels.vserver_uuid }}) stopped successfully."
+          summary: "Vserver {{ $labels.svm }} (UUID: {{ $labels.svm_uuid }}) stopped successfully."
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#storage-vm-stop-succeeded"
 
@@ -1727,7 +1727,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "A READDIR file operation has expired for the directory associated with volume \"{{ $labels.volume }}{{ $labels.app }}/{{ $labels.volident }}\" Snapshot copy ID {{ $labels.snapid }} and inode {{ $labels.directory_inum }}."
+          summary: "A READDIR file operation has expired for the directory associated with volume \"{{ $labels.volume }}{{ $labels.app }}/{{ $labels.vol_ident }}\" Snapshot copy ID {{ $labels.snap_id }} and inode {{ $labels.directory_inum }}."
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#readdir-timeout"
 
@@ -1751,7 +1751,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Volume autosize: Automatic {{ $labels.event_type }} of volume '{{ $labels.vol }}{{ $labels.app }}{{ $labels.volident }}' by {{ $labels.size }} is complete."
+          summary: "Volume autosize: Automatic {{ $labels.event_type }} of volume '{{ $labels.volume }}{{ $labels.app }}{{ $labels.vol_ident }}' by {{ $labels.size }} is complete."
           impact: "Capacity"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#volume-automatic-resizing-succeeded"
 
@@ -1775,7 +1775,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Volume '{{ $labels.name }}{{ $labels.app }}{{ $labels.volident }}' has been set temporarily offline"
+          summary: "Volume '{{ $labels.volume }}{{ $labels.app }}{{ $labels.vol_ident }}' has been set temporarily offline"
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#volume-offline"
 
@@ -1799,7 +1799,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "vol=\"{{ $labels.vol }}\", app=\"{{ $labels.app }}\", volident=\"{{ $labels.volident }}\", instuuid=\"{{ $labels.instuuid }}\""
+          summary: "vol=\"{{ $labels.volume }}\", app=\"{{ $labels.app }}\", vol_ident=\"{{ $labels.vol_ident }}\", instuuid=\"{{ $labels.inst_uuid }}\""
           impact: "Availability"
           runbook: "https://netapp.github.io/harvest/nightly/resources/ems-alert-runbook/#volume-restricted"
 
@@ -1823,7 +1823,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Resynchronize operation between source volume \"{{ $labels.srcpath }}\" and destination volume \"{{ $labels.dstpath }}\" with relationship UUID \"{{ $labels.relationship_id }}\" has failed. The next auto-resync will be attempted after \"{{ $labels.next_resync_interval }}\" mins."
+          summary: "Resynchronize operation between source volume \"{{ $labels.src_path }}\" and destination volume \"{{ $labels.dst_path }}\" with relationship UUID \"{{ $labels.relationship_id }}\" has failed. The next auto-resync will be attempted after \"{{ $labels.next_resync_interval }}\" mins."
           impact: "Protection"
 
       - alert: SnapMirror Relationship Common Snapshot Failed
@@ -1846,7 +1846,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Creating a common Snapshot copy for source volume \"{{ $labels.srcpath }}\" and destination volume \"{{ $labels.dstpath }}\" with relationship UUID \"{{ $labels.relationship_id }}\" has failed due to the following reason:\"{{ $labels.error_msg }}\". Elapsed time since the latest successful common Snapshot copy is \"{{ $labels.css_fail_interval }}\"."
+          summary: "Creating a common Snapshot copy for source volume \"{{ $labels.src_path }}\" and destination volume \"{{ $labels.dst_path }}\" with relationship UUID \"{{ $labels.relationship_id }}\" has failed due to the following reason:\"{{ $labels.error_msg }}\". Elapsed time since the latest successful common Snapshot copy is \"{{ $labels.css_fail_interval }}\"."
           impact: "Protection"
 
       - alert: SnapMirror Relationship Snapshot is not Replicated
@@ -1869,7 +1869,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Snapshot copy \"{{ $labels.snapshot }}\" is not sucessfully replicated for the relationship \"{{ $labels.transferId }}\" with source volume DSID \"{{ $labels.volumeDSID }}\" and path \"{{ $labels.volumePath }}\". Reason: \"{{ $labels.failureReason }}\"."
+          summary: "Snapshot copy \"{{ $labels.snapshot }}\" is not sucessfully replicated for the relationship \"{{ $labels.transfer_id }}\" with source volume DSID \"{{ $labels.volume_DSID }}\" and path \"{{ $labels.volume_path }}\". Reason: \"{{ $labels.failure_reason }}\"."
           impact: "Protection"
 
       - alert: Fanout SnapMirror Relationship Common Snapshot Deleted
@@ -1915,7 +1915,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Initialize from source volume \"{{ $labels.srcpath }}\" to destination volume \"{{ $labels.dstpath }}\" with relationship UUID \"{{ $labels.relationship_id }}\" failed with error \"{{ $labels.error }}\"."
+          summary: "Initialize from source volume \"{{ $labels.src_path }}\" to destination volume \"{{ $labels.dst_path }}\" with relationship UUID \"{{ $labels.relationship_id }}\" failed with error \"{{ $labels.error }}\"."
           impact: "Protection"
 
       - alert: SnapMirror active sync Automatic Unplanned Failover Failed
@@ -1938,7 +1938,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "SnapMirror automatic failover failed for Destination path: \"{{ $labels.dstpath }}\"."
+          summary: "SnapMirror automatic failover failed for Destination path: \"{{ $labels.dst_path }}\"."
           impact: "Protection"
 
       - alert: SnapMirror active sync Automatic Unplanned Failover Completed
@@ -1961,7 +1961,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "SnapMirror automatic failover completed for Destination path: \"{{ $labels.dstpath }}\"."
+          summary: "SnapMirror automatic failover completed for Destination path: \"{{ $labels.dst_path }}\"."
           impact: "Protection"
 
       - alert: SnapMirror active sync Planned Failover Failed
@@ -1984,7 +1984,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "SnapMirror active sync planned failover operation failed for Destination path: \"{{ $labels.dstpath }}\"."
+          summary: "SnapMirror active sync planned failover operation failed for Destination path: \"{{ $labels.dst_path }}\"."
           impact: "Protection"
 
       - alert: SnapMirror active sync Planned Failover Completed
@@ -2007,7 +2007,7 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "SnapMirror active sync planned failover operation completed for Destination path: \"{{ $labels.dstpath }}\"."
+          summary: "SnapMirror active sync planned failover operation completed for Destination path: \"{{ $labels.dst_path }}\"."
           impact: "Protection"
 
       - alert: Directory size is approaching the maximum directory size (maxdirsize) limit
@@ -2030,5 +2030,5 @@ groups:
             {{- end -}}
             {{- end -}}
         annotations:
-          summary: "Directory size for file ID \"{{ $labels.directory_inum }}\" in volume \"{{ $labels.volume }}\" is approaching the maximum directory size (maxdirsize) limit."
+          summary: "Directory size for file ID \"{{ $labels.directory_inum }}\" in volume  \"{{ $labels.volume }}{{ $labels.app }}/{{ $labels.vol_ident }}\" is approaching the maximum directory size (maxdirsize) limit."
           impact: "Availability"
