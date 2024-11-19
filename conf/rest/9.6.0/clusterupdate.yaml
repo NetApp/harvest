@@ -1,0 +1,16 @@
+
+name:       ClusterUpdate
+query:      api/private/cli/cluster/image/show-update-progress
+object:     cluster_update
+
+counters:
+  - ^^ndu_phase           => phase
+  - ^^phase_description   => phase_name
+  - ^^phase_status        => status
+
+export_options:
+  instance_keys:
+    - phase
+    - status
+  instance_labels:
+    - phase_name
