@@ -84,7 +84,7 @@ func (p *Prometheus) Init() error {
 	}
 
 	if x := p.Params.GlobalPrefix; x != nil {
-		p.Logger.Debug("use gloabl prefix", slog.String("prefix", *x))
+		p.Logger.Debug("use global prefix", slog.String("prefix", *x))
 		p.globalPrefix = *x
 		if !strings.HasSuffix(p.globalPrefix, "_") {
 			p.globalPrefix += "_"

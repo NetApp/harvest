@@ -1751,7 +1751,7 @@ func TestLinks(t *testing.T) {
 
 			// Check if the dashboard exists
 			if _, ok := uids[matches[1]]; !ok {
-				t.Errorf(`dashboard=%s links to not existant dashboard with link="%s"`, path, link)
+				t.Errorf(`dashboard=%s links to not existent dashboard with link="%s"`, path, link)
 			}
 
 			query, err := url.ParseQuery(link)
