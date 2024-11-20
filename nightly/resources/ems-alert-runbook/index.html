@@ -1320,6 +1320,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#directory-size-is-approaching-the-maximum-directory-size-maxdirsize-limit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Directory size is approaching the maximum directory size (maxdirsize) limit
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#disk-out-of-service" class="md-nav__link">
     <span class="md-ellipsis">
       Disk Out of Service
@@ -2370,6 +2379,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#directory-size-is-approaching-the-maximum-directory-size-maxdirsize-limit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Directory size is approaching the maximum directory size (maxdirsize) limit
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#disk-out-of-service" class="md-nav__link">
     <span class="md-ellipsis">
       Disk Out of Service
@@ -3149,6 +3167,12 @@ Contact NetApp technical support if the issue persists.</li>
 <li>Ensure that the login and connectivity information is still valid.
 Contact NetApp technical support if the issue persists.</li>
 </ol>
+<h3 id="directory-size-is-approaching-the-maximum-directory-size-maxdirsize-limit">Directory size is approaching the maximum directory size (maxdirsize) limit<a class="headerlink" href="#directory-size-is-approaching-the-maximum-directory-size-maxdirsize-limit" title="Permanent link">&para;</a></h3>
+<p><strong>Impact</strong>: Availability</p>
+<p><strong>EMS Event</strong>: <code>wafl.dir.size.warning</code></p>
+<p>This message occurs when the size of a directory surpasses a configured percentage (default: 90%) of its current maximum directory size (maxdirsize) limit.</p>
+<p><strong>Remediation</strong></p>
+<p>Use the "volume file show-inode" command with the file ID and volume name information to find the file path. Reduce the number of files in the directory. If not possible, use the (privilege:advanced) option "volume modify -volume vol_name -maxdir-size new_value" to increase the maximum number of files per directory. However, doing so could impact system performance. If you need to increase the maximum directory size, contact NetApp technical support.</p>
 <h3 id="disk-out-of-service">Disk Out of Service<a class="headerlink" href="#disk-out-of-service" title="Permanent link">&para;</a></h3>
 <p><strong>Impact</strong>: Availability</p>
 <p><strong>EMS Event</strong>: <code>disk.outOfService</code></p>
