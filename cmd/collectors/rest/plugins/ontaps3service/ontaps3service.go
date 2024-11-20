@@ -13,7 +13,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"strings"
 	"time"
@@ -87,12 +87,12 @@ func (o *OntapS3Service) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 			o.SLogger.Error("Ontap S3 Service is not an object, skipping", slog.String("type", ontaps3Service.Type.String()))
 			return nil, nil, errs.New(errs.ErrNoInstance, "Ontap S3 Service is not an object")
 		}
-		s3ServerName := ontaps3Service.Get("name").String()
-		svm := ontaps3Service.Get("svm.name").String()
+		s3ServerName := ontaps3Service.Get("name").ClonedString()
+		svm := ontaps3Service.Get("svm.name").ClonedString()
 		isHTTPEnabled := ontaps3Service.Get("is_http_enabled").Bool()
 		isHTTPSEnabled := ontaps3Service.Get("is_https_enabled").Bool()
-		securePort := ontaps3Service.Get("secure_port").String()
-		port := ontaps3Service.Get("port").String()
+		securePort := ontaps3Service.Get("secure_port").ClonedString()
+		port := ontaps3Service.Get("port").ClonedString()
 
 		httpsURL := ""
 		httpURL := ""

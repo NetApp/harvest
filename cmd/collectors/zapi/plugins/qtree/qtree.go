@@ -326,9 +326,11 @@ func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, data *matrix.Matrix, q
 
 				// In 22.05, populate metrics with qtree labels
 				if q.historicalLabels {
-					for _, label := range q.data.GetExportOptions().GetChildS("instance_keys").GetAllChildContentS() {
-						if value := qtreeInstance.GetLabel(label); value != "" {
-							quotaInstance.SetLabel(label, value)
+					if qtreeInstance != nil {
+						for _, label := range q.data.GetExportOptions().GetChildS("instance_keys").GetAllChildContentS() {
+							if value := qtreeInstance.GetLabel(label); value != "" {
+								quotaInstance.SetLabel(label, value)
+							}
 						}
 					}
 					// If the Qtree is the volume itself, then qtree label is empty, so copy the volume name to qtree.

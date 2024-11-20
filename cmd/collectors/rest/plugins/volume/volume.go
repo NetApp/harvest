@@ -15,7 +15,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"strconv"
 	"strings"
@@ -349,16 +349,16 @@ func (v *Volume) getVolume(field string, fields []string, volumeMap map[string]v
 	}
 
 	for _, volume := range result {
-		volName := volume.Get("name").String()
-		svmName := volume.Get("svm.name").String()
-		arwStartTime := volume.Get("anti_ransomware.dry_run_start_time").String()
-		arwState := volume.Get("anti_ransomware.state").String()
-		cloneSnapshotName := volume.Get("clone.parent_snapshot.name").String()
+		volName := volume.Get("name").ClonedString()
+		svmName := volume.Get("svm.name").ClonedString()
+		arwStartTime := volume.Get("anti_ransomware.dry_run_start_time").ClonedString()
+		arwState := volume.Get("anti_ransomware.state").ClonedString()
+		cloneSnapshotName := volume.Get("clone.parent_snapshot.name").ClonedString()
 		cloneSplitEstimate := volume.Get("clone.split_estimate").Float()
 		isObjectStoreVolume := volume.Get("is_object_store").Bool()
-		isProtected := volume.Get("snapmirror.is_protected").String()
-		isDestinationOntap := volume.Get("snapmirror.destinations.is_ontap").String()
-		isDestinationCloud := volume.Get("snapmirror.destinations.is_cloud").String()
+		isProtected := volume.Get("snapmirror.is_protected").ClonedString()
+		isDestinationOntap := volume.Get("snapmirror.destinations.is_ontap").ClonedString()
+		isDestinationCloud := volume.Get("snapmirror.destinations.is_cloud").ClonedString()
 		volumeMap[volName+svmName] = volumeInfo{arwStartTime: arwStartTime, arwState: arwState, cloneSnapshotName: cloneSnapshotName, cloneSplitEstimateMetric: cloneSplitEstimate, isObjectStoreVolume: isObjectStoreVolume, isProtected: isProtected, isDestinationOntap: isDestinationOntap, isDestinationCloud: isDestinationCloud}
 	}
 	return volumeMap, nil
@@ -374,7 +374,7 @@ func (v *Volume) updateAggrMap(disks []gjson.Result) {
 			}
 			aggrName := disk.Get("aggregates.#.name").Array()
 			for _, aggr := range aggrName {
-				v.aggrsMap[aggr.String()] = true
+				v.aggrsMap[aggr.ClonedString()] = true
 			}
 		}
 	}

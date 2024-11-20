@@ -142,9 +142,9 @@ func (m *SnapMirror) getSVMPeerData(cluster string) error {
 	}
 
 	for _, peerData := range result {
-		localSvmName := peerData.Get("name").String()
-		actualSvmName := peerData.Get("peer.svm.name").String()
-		peerClusterName := peerData.Get("peer.cluster.name").String()
+		localSvmName := peerData.Get("name").ClonedString()
+		actualSvmName := peerData.Get("peer.svm.name").ClonedString()
+		peerClusterName := peerData.Get("peer.cluster.name").ClonedString()
 		m.svmPeerDataMap[localSvmName] = Peer{svm: actualSvmName, cluster: peerClusterName}
 	}
 	return nil
@@ -173,8 +173,8 @@ func (m *SnapMirror) getClusterPeerData() error {
 	}
 
 	for _, peerData := range result {
-		localClusterName := peerData.Get("name").String()
-		actualClusterName := peerData.Get("remote.name").String()
+		localClusterName := peerData.Get("name").ClonedString()
+		actualClusterName := peerData.Get("remote.name").ClonedString()
 		m.clusterPeerDataMap[localClusterName] = actualClusterName
 	}
 	return nil

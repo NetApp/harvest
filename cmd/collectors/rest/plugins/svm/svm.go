@@ -13,7 +13,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"regexp"
 	"sort"
 	"strconv"
@@ -188,7 +188,7 @@ func (s *SVM) GetNSSwitchInfo(data *matrix.Matrix) (map[string]Nsswitch, error) 
 			config := gjson.Result{Type: gjson.JSON, Raw: nsswitchConfig}
 			for nsdb, nssource := range config.Map() {
 				if nssource.Exists() {
-					nssourcelist := strings.Split(replaceStr.Replace(nssource.String()), ",")
+					nssourcelist := strings.Split(replaceStr.Replace(nssource.ClonedString()), ",")
 					if ns, ok = vserverNsswitchMap[svmName]; ok {
 						ns.nsdb = append(ns.nsdb, nsdb)
 						ns.nssource = append(ns.nssource, nssourcelist...)
@@ -224,8 +224,8 @@ func (s *SVM) GetKerberosConfig() (map[string]string, error) {
 	}
 
 	for _, kerberosConfig := range result {
-		enable := kerberosConfig.Get("enabled").String()
-		svmName := kerberosConfig.Get("svm.name").String()
+		enable := kerberosConfig.Get("enabled").ClonedString()
+		svmName := kerberosConfig.Get("svm.name").ClonedString()
 		if _, ok := svmKerberosMap[svmName]; !ok {
 			svmKerberosMap[svmName] = enable
 		} else if enable == "true" {
@@ -258,9 +258,9 @@ func (s *SVM) GetFpolicy() (map[string]Fpolicy, error) {
 	}
 
 	for _, fpolicyData := range result {
-		fpolicyEnable := fpolicyData.Get("policies.enabled").String()
-		fpolicyName := fpolicyData.Get("policies.name").String()
-		svmName := fpolicyData.Get("svm.name").String()
+		fpolicyEnable := fpolicyData.Get("policies.enabled").ClonedString()
+		fpolicyName := fpolicyData.Get("policies.name").ClonedString()
+		svmName := fpolicyData.Get("svm.name").ClonedString()
 		if _, ok := svmFpolicyMap[svmName]; !ok {
 			svmFpolicyMap[svmName] = Fpolicy{name: fpolicyName, enable: fpolicyEnable}
 		} else if svmFpolicyMap[svmName].enable == "false" {
@@ -293,8 +293,8 @@ func (s *SVM) GetIscsiServices() (map[string]string, error) {
 	}
 
 	for _, iscsiData := range result {
-		iscsiServiceEnable := iscsiData.Get("enabled").String()
-		svmName := iscsiData.Get("svm.name").String()
+		iscsiServiceEnable := iscsiData.Get("enabled").ClonedString()
+		svmName := iscsiData.Get("svm.name").ClonedString()
 		if _, ok := svmIscsiServiceMap[svmName]; !ok {
 			svmIscsiServiceMap[svmName] = iscsiServiceEnable
 		} else if svmIscsiServiceMap[svmName] == "false" {
@@ -327,8 +327,8 @@ func (s *SVM) GetIscsiCredentials() (map[string]string, error) {
 	}
 
 	for _, iscsiData := range result {
-		authenticationType := iscsiData.Get("authentication_type").String()
-		svmName := iscsiData.Get("svm.name").String()
+		authenticationType := iscsiData.Get("authentication_type").ClonedString()
+		svmName := iscsiData.Get("svm.name").ClonedString()
 		if _, ok := svmIscsiCredentialMap[svmName]; !ok {
 			svmIscsiCredentialMap[svmName] = authenticationType
 		} else {

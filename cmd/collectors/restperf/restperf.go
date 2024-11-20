@@ -25,7 +25,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"iter"
 	"log/slog"
 	"maps"
@@ -318,8 +318,8 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 			return true
 		}
 
-		name := strings.Clone(c.Get("name").String())
-		dataType := strings.Clone(c.Get("type").String())
+		name := c.Get("name").ClonedString()
+		dataType := c.Get("type").ClonedString()
 
 		if p := r.GetOverride(name); p != "" {
 			dataType = p
@@ -341,7 +341,7 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 				r.Prop.Metrics[name].Exportable = false
 				return true
 			}
-			d := strings.Clone(c.Get("denominator.name").String())
+			d := c.Get("denominator.name").ClonedString()
 			if d != "" {
 				if _, has := r.Prop.Metrics[d]; !has {
 					if isWorkloadDetailObject(r.Prop.Query) {
@@ -366,16 +366,16 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 			return true
 		}
 
-		name := strings.Clone(c.Get("name").String())
+		name := c.Get("name").ClonedString()
 		if _, has := r.Prop.Metrics[name]; has {
 			seenMetrics[name] = true
 			if _, ok := r.perfProp.counterInfo[name]; !ok {
 				r.perfProp.counterInfo[name] = &counter{
 					name:        name,
-					description: strings.Clone(c.Get("description").String()),
-					counterType: strings.Clone(c.Get("type").String()),
-					unit:        strings.Clone(c.Get("unit").String()),
-					denominator: strings.Clone(c.Get("denominator.name").String()),
+					description: c.Get("description").ClonedString(),
+					counterType: c.Get("type").ClonedString(),
+					unit:        c.Get("unit").ClonedString(),
+					denominator: c.Get("denominator.name").ClonedString(),
 				}
 				if p := r.GetOverride(name); p != "" {
 					r.perfProp.counterInfo[name].counterType = p
@@ -424,14 +424,14 @@ func (r *RestPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 
 func parseProps(instanceData gjson.Result) map[string]gjson.Result {
 	var props = map[string]gjson.Result{
-		"id": gjson.Get(instanceData.String(), "id"),
+		"id": gjson.Get(instanceData.ClonedString(), "id"),
 	}
 
 	instanceData.ForEach(func(key, v gjson.Result) bool {
-		keyS := key.String()
+		keyS := key.ClonedString()
 		if keyS == "properties" {
 			v.ForEach(func(_, each gjson.Result) bool {
-				key := each.Get("name").String()
+				key := each.Get("name").ClonedString()
 				value := each.Get("value")
 				props[key] = value
 				return true
@@ -449,15 +449,15 @@ func parseProperties(instanceData gjson.Result, property string) gjson.Result {
 	)
 
 	if property == "id" {
-		value := gjson.Get(instanceData.String(), "id")
+		value := gjson.Get(instanceData.ClonedString(), "id")
 		return value
 	}
 
 	instanceData.ForEach(func(key, v gjson.Result) bool {
-		keyS := key.String()
+		keyS := key.ClonedString()
 		if keyS == "properties" {
 			v.ForEach(func(_, each gjson.Result) bool {
-				if each.Get("name").String() == property {
+				if each.Get("name").ClonedString() == property {
 					value := each.Get("value")
 					result = value
 					return false
@@ -479,29 +479,29 @@ func parseMetricResponses(instanceData gjson.Result, metric map[string]*rest2.Me
 		numSeen            = 0
 	)
 	instanceData.ForEach(func(key, v gjson.Result) bool {
-		keyS := key.String()
+		keyS := key.ClonedString()
 		if keyS == "counters" {
 			v.ForEach(func(_, each gjson.Result) bool {
 				if numSeen == numWant {
 					return false
 				}
-				name := each.Get("name").String()
+				name := each.Get("name").ClonedString()
 				_, ok := metric[name]
 				if !ok {
 					return true
 				}
-				value := each.Get("value").String()
+				value := each.Get("value").ClonedString()
 				if value != "" {
-					mapMetricResponses[name] = &metricResponse{value: strings.Clone(value), label: ""}
+					mapMetricResponses[name] = &metricResponse{value: value, label: ""}
 					numSeen++
 					return true
 				}
-				values := each.Get("values").String()
-				labels := each.Get("labels").String()
+				values := each.Get("values").ClonedString()
+				labels := each.Get("labels").ClonedString()
 				if values != "" {
 					mapMetricResponses[name] = &metricResponse{
-						value:   util.ArrayMetricToString(strings.Clone(values)),
-						label:   util.ArrayMetricToString(strings.Clone(labels)),
+						value:   util.ArrayMetricToString(values),
+						label:   util.ArrayMetricToString(labels),
 						isArray: true,
 					}
 					numSeen++
@@ -513,15 +513,15 @@ func parseMetricResponses(instanceData gjson.Result, metric map[string]*rest2.Me
 				}
 
 				// handle sub metrics
-				subLabelsS := strings.Clone(labels)
+				subLabelsS := labels
 				subLabelsS = util.ArrayMetricToString(subLabelsS)
 				subLabelSlice := strings.Split(subLabelsS, ",")
 				var finalLabels []string
 				var finalValues []string
 				subCounters.ForEach(func(_, subCounter gjson.Result) bool {
-					label := strings.Clone(subCounter.Get("label").String())
-					subValues := subCounter.Get("values").String()
-					m := util.ArrayMetricToString(strings.Clone(subValues))
+					label := subCounter.Get("label").ClonedString()
+					subValues := subCounter.Get("values").ClonedString()
+					m := util.ArrayMetricToString(subValues)
 					ms := strings.Split(m, ",")
 					if len(ms) > len(subLabelSlice) {
 						return false
@@ -549,10 +549,10 @@ func parseMetricResponses(instanceData gjson.Result, metric map[string]*rest2.Me
 }
 
 func parseMetricResponse(instanceData gjson.Result, metric string) *metricResponse {
-	instanceDataS := instanceData.String()
+	instanceDataS := instanceData.ClonedString()
 	t := gjson.Get(instanceDataS, "counters.#.name")
 	for _, name := range t.Array() {
-		if name.String() != metric {
+		if name.ClonedString() != metric {
 			continue
 		}
 		metricPath := "counters.#(name=" + metric + ")"
@@ -562,30 +562,30 @@ func parseMetricResponse(instanceData gjson.Result, metric string) *metricRespon
 		labels := many.Get(metricPath + ".labels")
 		subLabels := many.Get(metricPath + ".counters.#.label")
 		subValues := many.Get(metricPath + ".counters.#.values")
-		if value.String() != "" {
-			return &metricResponse{value: strings.Clone(value.String()), label: ""}
+		if value.ClonedString() != "" {
+			return &metricResponse{value: value.ClonedString(), label: ""}
 		}
-		if values.String() != "" {
+		if values.ClonedString() != "" {
 			return &metricResponse{
-				value:   util.ArrayMetricToString(strings.Clone(values.String())),
-				label:   util.ArrayMetricToString(strings.Clone(labels.String())),
+				value:   util.ArrayMetricToString(values.ClonedString()),
+				label:   util.ArrayMetricToString(labels.ClonedString()),
 				isArray: true,
 			}
 		}
 
 		// check for sub metrics
-		if subLabels.String() != "" {
+		if subLabels.ClonedString() != "" {
 			var finalLabels []string
 			var finalValues []string
-			subLabelsS := strings.Clone(labels.String())
+			subLabelsS := labels.ClonedString()
 			subLabelsS = util.ArrayMetricToString(subLabelsS)
 			subLabelSlice := strings.Split(subLabelsS, ",")
 			ls := subLabels.Array()
 			vs := subValues.Array()
 			var vLen int
 			for i, v := range vs {
-				label := strings.Clone(ls[i].String())
-				m := util.ArrayMetricToString(strings.Clone(v.String()))
+				label := ls[i].ClonedString()
+				m := util.ArrayMetricToString(v.ClonedString())
 				ms := strings.Split(m, ",")
 				for range ms {
 					finalLabels = append(finalLabels, label+arrayKeyToken+subLabelSlice[vLen])
@@ -856,7 +856,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 				for _, k := range instanceKeys {
 					value, ok := props[k]
 					if ok {
-						instanceKey += strings.Clone(value.String())
+						instanceKey += value.ClonedString()
 					} else {
 						r.Logger.Warn("missing key", slog.String("key", k))
 					}
@@ -912,7 +912,7 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 			}
 
 			// check for partial aggregation
-			if instanceData.Get("aggregation.complete").String() == "false" {
+			if instanceData.Get("aggregation.complete").ClonedString() == "false" {
 				instance.SetPartial(true)
 				numPartials++
 			}
@@ -923,13 +923,13 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 					if value.IsArray() {
 						var labelArray []string
 						value.ForEach(func(_, r gjson.Result) bool {
-							labelString := strings.Clone(r.String())
+							labelString := r.ClonedString()
 							labelArray = append(labelArray, labelString)
 							return true
 						})
 						instance.SetLabel(display, strings.Join(labelArray, ","))
 					} else {
-						instance.SetLabel(display, strings.Clone(value.String()))
+						instance.SetLabel(display, value.ClonedString())
 					}
 					count++
 				} else {
@@ -1411,7 +1411,7 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 
 		value := parseProperties(instanceData, "name")
 		if value.Exists() {
-			instanceKey += strings.Clone(value.String())
+			instanceKey += value.ClonedString()
 		} else {
 			r.Logger.Warn("skip instance, missing key", slog.String("key", "name"))
 			continue
@@ -1429,7 +1429,7 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 					"set metric",
 					slogx.Err(err),
 					slog.String("metric", counterName),
-					slog.String("value", value.String()),
+					slog.String("value", value.ClonedString()),
 				)
 			}
 		}
@@ -1579,7 +1579,7 @@ func (r *RestPerf) pollInstance(mat *matrix.Matrix, records iter.Seq[gjson.Resul
 			// The API endpoint api/storage/qos/workloads lacks an is_constituent filter, unlike qos-workload-get-iter. As a result, we must perform client-side filtering.
 			// Although the api/private/cli/qos/workload endpoint includes this filter, it doesn't provide an option to fetch all records, both constituent and flexgroup types.
 			if r.perfProp.disableConstituents {
-				if constituentRegex.MatchString(instanceData.Get("volume").String()) {
+				if constituentRegex.MatchString(instanceData.Get("volume").ClonedString()) {
 					// skip constituent
 					continue
 				}
@@ -1595,7 +1595,7 @@ func (r *RestPerf) pollInstance(mat *matrix.Matrix, records iter.Seq[gjson.Resul
 				value = parseProperties(instanceData, k)
 			}
 			if value.Exists() {
-				instanceKey += strings.Clone(value.String())
+				instanceKey += value.ClonedString()
 			} else {
 				r.Logger.Warn("skip instance, missing key", slog.String("key", k))
 				break
@@ -1648,7 +1648,7 @@ func (r *RestPerf) updateQosLabels(qos gjson.Result, instance *matrix.Instance, 
 		for label, display := range r.perfProp.qosLabels {
 			// lun,file,qtree may not always exist for workload
 			if value := qos.Get(label); value.Exists() {
-				instance.SetLabel(display, strings.Clone(value.String()))
+				instance.SetLabel(display, value.ClonedString())
 			}
 		}
 

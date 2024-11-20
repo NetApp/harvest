@@ -47,6 +47,7 @@ func fetchMetrics(datacenter string, prometheusURL string) ([]Result, error) {
 	if err != nil {
 		return nil, err
 	}
+	//goland:noinspection GoUnhandledErrorResult
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)

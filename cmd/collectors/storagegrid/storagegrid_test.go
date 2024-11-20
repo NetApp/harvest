@@ -7,7 +7,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"os"
 	"testing"
 )

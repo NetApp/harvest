@@ -12,7 +12,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	goversion "github.com/netapp/harvest/v2/third_party/go-version"
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"strconv"
 	"strings"
@@ -239,9 +239,9 @@ func (h *Health) collectLicenseAlerts() int {
 	}
 	mat := h.data[licenseHealthMatrix]
 	for _, record := range records {
-		name := record.Get("name").String()
-		scope := record.Get("scope").String()
-		state := record.Get("state").String()
+		name := record.Get("name").ClonedString()
+		scope := record.Get("scope").ClonedString()
+		state := record.Get("state").ClonedString()
 		instance, err = mat.NewInstance(name)
 		if err != nil {
 			h.SLogger.Warn("error while creating instance", slog.String("key", name))
@@ -275,10 +275,10 @@ func (h *Health) collectVolumeMoveAlerts() int {
 	}
 	mat := h.data[volumeMoveHealthMatrix]
 	for _, record := range records {
-		uuid := record.Get("uuid").String()
-		volume := record.Get("name").String()
-		svm := record.Get("svm.name").String()
-		movementState := record.Get("movement.state").String()
+		uuid := record.Get("uuid").ClonedString()
+		volume := record.Get("name").ClonedString()
+		svm := record.Get("svm.name").ClonedString()
+		movementState := record.Get("movement.state").ClonedString()
 		instance, err = mat.NewInstance(uuid)
 		if err != nil {
 			h.SLogger.Warn("error while creating instance", slog.String("key", uuid))
@@ -327,9 +327,9 @@ func (h *Health) collectVolumeRansomwareAlerts() int {
 	}
 	mat := h.data[volumeRansomwareHealthMatrix]
 	for _, record := range records {
-		uuid := record.Get("uuid").String()
-		volume := record.Get("name").String()
-		antiRansomwareAttackProbability := record.Get("anti_ransomware.attack_probability").String()
+		uuid := record.Get("uuid").ClonedString()
+		volume := record.Get("name").ClonedString()
+		antiRansomwareAttackProbability := record.Get("anti_ransomware.attack_probability").ClonedString()
 		instance, err = mat.NewInstance(uuid)
 		if err != nil {
 			h.SLogger.Warn("error while creating instance", slog.String("key", uuid))
@@ -362,10 +362,10 @@ func (h *Health) collectNetworkInterfacesAlerts() int {
 	}
 	mat := h.data[lifHealthMatrix]
 	for _, record := range records {
-		uuid := record.Get("uuid").String()
-		lif := record.Get("name").String()
-		svm := record.Get("svm.name").String()
-		isHome := record.Get("location.is_home").String()
+		uuid := record.Get("uuid").ClonedString()
+		lif := record.Get("name").ClonedString()
+		svm := record.Get("svm.name").ClonedString()
+		isHome := record.Get("location.is_home").ClonedString()
 		instance, err = mat.NewInstance(uuid)
 		if err != nil {
 			h.SLogger.Warn("error while creating instance", slog.String("key", uuid))
@@ -398,10 +398,10 @@ func (h *Health) collectNetworkFCPortAlerts() int {
 	}
 	mat := h.data[networkFCPortHealthMatrix]
 	for _, record := range records {
-		uuid := record.Get("uuid").String()
-		nodeName := record.Get("node.name").String()
-		port := record.Get("name").String()
-		state := record.Get("state").String()
+		uuid := record.Get("uuid").ClonedString()
+		nodeName := record.Get("node.name").ClonedString()
+		port := record.Get("name").ClonedString()
+		state := record.Get("state").ClonedString()
 		instance, err = mat.NewInstance(uuid)
 		if err != nil {
 			h.SLogger.Warn("error while creating instance", slog.String("key", uuid))
@@ -434,11 +434,11 @@ func (h *Health) collectNetworkEthernetPortAlerts() int {
 	}
 	mat := h.data[networkEthernetPortHealthMatrix]
 	for _, record := range records {
-		uuid := record.Get("uuid").String()
-		port := record.Get("name").String()
-		nodeName := record.Get("node.name").String()
-		portType := record.Get("type").String()
-		state := record.Get("state").String()
+		uuid := record.Get("uuid").ClonedString()
+		port := record.Get("name").ClonedString()
+		nodeName := record.Get("node.name").ClonedString()
+		portType := record.Get("type").ClonedString()
+		state := record.Get("state").ClonedString()
 		instance, err = mat.NewInstance(uuid)
 		if err != nil {
 			h.SLogger.Warn("error while creating instance", slog.String("key", uuid))
@@ -472,7 +472,7 @@ func (h *Health) collectNodeAlerts() int {
 	}
 	mat := h.data[nodeHealthMatrix]
 	for _, record := range records {
-		nodeName := record.Get("node").String()
+		nodeName := record.Get("node").ClonedString()
 
 		instance, err = mat.NewInstance(nodeName)
 		if err != nil {
@@ -505,11 +505,11 @@ func (h *Health) collectHAAlerts() int {
 	}
 	mat := h.data[haHealthMatrix]
 	for _, record := range records {
-		nodeName := record.Get("node").String()
-		takeoverPossible := record.Get("possible").String()
-		partnerName := record.Get("partner_name").String()
-		stateDescription := record.Get("state_description").String()
-		partnerState := record.Get("partner_state").String()
+		nodeName := record.Get("node").ClonedString()
+		takeoverPossible := record.Get("possible").ClonedString()
+		partnerName := record.Get("partner_name").ClonedString()
+		stateDescription := record.Get("state_description").ClonedString()
+		partnerState := record.Get("partner_state").ClonedString()
 		if takeoverPossible == "" {
 			takeoverPossible = "false"
 		}
@@ -548,10 +548,10 @@ func (h *Health) collectShelfAlerts() int {
 	}
 	mat := h.data[shelfHealthMatrix]
 	for _, record := range records {
-		shelf := record.Get("shelf").String()
-		errorType := record.Get("error_type").String()
-		errorSeverity := record.Get("error_severity").String()
-		errorText := record.Get("error_text").String()
+		shelf := record.Get("shelf").ClonedString()
+		errorType := record.Get("error_type").ClonedString()
+		errorSeverity := record.Get("error_severity").ClonedString()
+		errorText := record.Get("error_text").ClonedString()
 
 		// errorSeverity possible values are unknown|notice|warning|error|critical
 		if errorSeverity == "error" || errorSeverity == "critical" || errorSeverity == "warning" {
@@ -601,12 +601,12 @@ func (h *Health) collectSupportAlerts() int {
 	}
 	mat := h.data[supportHealthMatrix]
 	for index, record := range records {
-		nodeName := record.Get("node.name").String()
-		monitor := record.Get("monitor").String()
-		name := record.Get("name").String()
-		resource := record.Get("resource").String()
-		reason := record.Get("cause.message").String()
-		correctiveAction := record.Get("corrective_action.message").String()
+		nodeName := record.Get("node.name").ClonedString()
+		monitor := record.Get("monitor").ClonedString()
+		name := record.Get("name").ClonedString()
+		resource := record.Get("resource").ClonedString()
+		reason := record.Get("cause.message").ClonedString()
+		correctiveAction := record.Get("corrective_action.message").ClonedString()
 		instance, err = mat.NewInstance(strconv.Itoa(index))
 		if err != nil {
 			h.SLogger.Warn("error while creating instance", slog.Int("key", index))
@@ -644,8 +644,8 @@ func (h *Health) collectDiskAlerts() int {
 	}
 	mat := h.data[diskHealthMatrix]
 	for _, record := range records {
-		name := record.Get("name").String()
-		containerType := record.Get("container_type").String()
+		name := record.Get("name").ClonedString()
+		containerType := record.Get("container_type").ClonedString()
 		instance, err = mat.NewInstance(name)
 		if err != nil {
 			h.SLogger.Warn("error while creating instance", slog.String("key", name))
@@ -680,10 +680,10 @@ func (h *Health) collectEmsAlerts(emsMat *matrix.Matrix) int {
 		return 0
 	}
 	for _, record := range records {
-		node := record.Get("node.name").String()
-		severity := record.Get("message.severity").String()
-		message := record.Get("message.name").String()
-		source := record.Get("source").String()
+		node := record.Get("node.name").ClonedString()
+		severity := record.Get("message.severity").ClonedString()
+		message := record.Get("message.name").ClonedString()
+		source := record.Get("source").ClonedString()
 		if instance = emsMat.GetInstance(message); instance == nil {
 			instance, err = emsMat.NewInstance(message)
 			if err != nil {

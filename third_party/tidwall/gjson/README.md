@@ -41,7 +41,8 @@ Get searches json for the specified path. A path is in dot syntax, such as "name
 ```go
 package main
 
-import "github.com/tidwall/gjson"
+import "github.com/netapp/harvest/v2/third_party/tidwall/gjson"
+
 
 const json = `{"name":{"first":"Janet","last":"Prichard"},"age":47}`
 
