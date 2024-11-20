@@ -13,7 +13,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"slices"
 	"sort"
@@ -200,7 +200,7 @@ func (s *StorageGrid) makePromMetrics(metricName string, result *[]gjson.Result,
 	mat.UUID += "." + metricName
 
 	r := (*result)[0]
-	resultType := r.Get("resultType").String()
+	resultType := r.Get("resultType").ClonedString()
 	if resultType != "vector" {
 		return nil, fmt.Errorf("unexpected resultType=[%s]", resultType)
 	}
@@ -226,8 +226,8 @@ func (s *StorageGrid) makePromMetrics(metricName string, result *[]gjson.Result,
 			continue
 		}
 		rr.Get("metric").ForEach(func(kk, vv gjson.Result) bool {
-			key := kk.String()
-			value := vv.String()
+			key := kk.ClonedString()
+			value := vv.ClonedString()
 
 			if key == "__name__" {
 				return true
@@ -338,7 +338,7 @@ func (s *StorageGrid) handleResults(result []gjson.Result) uint64 {
 		for _, k := range s.Props.InstanceKeys {
 			value := instanceData.Get(k)
 			if value.Exists() {
-				instanceKey += value.String()
+				instanceKey += value.ClonedString()
 			} else {
 				s.Logger.Warn("skip instance, missing key", slog.String("key", k))
 				break
@@ -370,12 +370,12 @@ func (s *StorageGrid) handleResults(result []gjson.Result) uint64 {
 				if value.IsArray() {
 					var labelArray []string
 					for _, r := range value.Array() {
-						labelString := r.String()
+						labelString := r.ClonedString()
 						labelArray = append(labelArray, labelString)
 					}
 					instance.SetLabel(display, strings.Join(labelArray, ","))
 				} else {
-					instance.SetLabel(display, value.String())
+					instance.SetLabel(display, value.ClonedString())
 				}
 				count++
 			}
@@ -616,8 +616,8 @@ func (s *StorageGrid) getNodeUuids() ([]collector.ID, error) {
 	infos := make([]collector.ID, 0, len(data))
 	for _, each := range data {
 		infos = append(infos, collector.ID{
-			SerialNumber: each.Get("id").String(),
-			SystemID:     each.Get("siteId").String(),
+			SerialNumber: each.Get("id").ClonedString(),
+			SystemID:     each.Get("siteId").ClonedString(),
 		})
 	}
 

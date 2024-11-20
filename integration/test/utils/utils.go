@@ -95,6 +95,7 @@ func DownloadFile(aPath string, url string) error {
 	if err != nil {
 		return err
 	}
+	//goland:noinspection GoUnhandledErrorResult
 	defer resp.Body.Close()
 
 	// Create the file

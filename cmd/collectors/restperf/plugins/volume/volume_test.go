@@ -17,7 +17,6 @@ import (
 
 const OpsKeyPrefix = "temp_"
 const StyleType = "style"
-const PollerName = "test"
 
 // Common test logic for RestPerf/ZapiPerf Volume plugin
 func runVolumeTest(t *testing.T, createVolume func(params *node.Node) plugin.Plugin, includeConstituents string, expectedCount int, setMetricNaN bool) {

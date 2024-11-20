@@ -13,7 +13,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"time"
 )
@@ -75,8 +75,8 @@ func (s *SecurityAccount) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 	}
 
 	for _, securityAccount := range result {
-		username := securityAccount.Get("name").String()
-		svm := securityAccount.Get("owner.name").String()
+		username := securityAccount.Get("name").ClonedString()
+		svm := securityAccount.Get("owner.name").ClonedString()
 
 		if !securityAccount.IsObject() {
 			return nil, nil, errs.New(errs.ErrNoInstance, "security account is not an object. type="+securityAccount.Type.String())
@@ -87,10 +87,10 @@ func (s *SecurityAccount) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 		// Parse application object and cache the details
 		if applications := securityAccount.Get("applications"); applications.Exists() {
 			for _, applicationDetail := range applications.Array() {
-				application := applicationDetail.Get("application").String()
+				application := applicationDetail.Get("application").ClonedString()
 				if methodList := applicationDetail.Get("authentication_methods"); methodList.Exists() {
 					for _, method := range applicationDetail.Get("authentication_methods").Array() {
-						applicationToMethodMap[application] = append(applicationToMethodMap[application], method.String())
+						applicationToMethodMap[application] = append(applicationToMethodMap[application], method.ClonedString())
 					}
 				}
 			}

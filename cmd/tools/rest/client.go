@@ -12,7 +12,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"io"
 	"log/slog"
 	"net/http"
@@ -213,7 +213,7 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 			result := gjson.GetBytes(innerBody, "error")
 
 			if response.StatusCode == http.StatusForbidden {
-				message := result.Get(Message).String()
+				message := result.Get(Message).ClonedString()
 				return nil, errs.NewRest().
 					StatusCode(response.StatusCode).
 					Error(errs.ErrPermissionDenied).
@@ -223,9 +223,9 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 			}
 
 			if result.Exists() {
-				message := result.Get(Message).String()
+				message := result.Get(Message).ClonedString()
 				code := result.Get(Code).Int()
-				target := result.Get(Target).String()
+				target := result.Get(Target).ClonedString()
 				return nil, errs.NewRest().
 					StatusCode(response.StatusCode).
 					Message(message).
@@ -345,12 +345,12 @@ func (c *Client) UpdateClusterInfo(retries int) error {
 
 		results := gjson.ParseBytes(content)
 		c.remote.Model = "cdot"
-		c.remote.Name = results.Get("name").String()
-		c.remote.UUID = results.Get("uuid").String()
-		c.remote.Version = results.Get("version.generation").String() + "." +
-			results.Get("version.major").String() + "." +
-			results.Get("version.minor").String()
-		c.remote.Release = results.Get("version.full").String()
+		c.remote.Name = results.Get("name").ClonedString()
+		c.remote.UUID = results.Get("uuid").ClonedString()
+		c.remote.Version = results.Get("version.generation").ClonedString() + "." +
+			results.Get("version.major").ClonedString() + "." +
+			results.Get("version.minor").ClonedString()
+		c.remote.Release = results.Get("version.full").ClonedString()
 		c.remote.IsSanOptimized = results.Get("san_optimized").Bool()
 		c.remote.IsDisaggregated = results.Get("disaggregated").Bool()
 		c.remote.IsClustered = true

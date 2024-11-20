@@ -11,7 +11,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"maps"
 	"slices"
@@ -240,8 +240,8 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 			continue
 		}
 
-		shelfName := shelf.Get("name").String()
-		shelfSerialNumber := shelf.Get("serial_number").String()
+		shelfName := shelf.Get("name").ClonedString()
+		shelfSerialNumber := shelf.Get("serial_number").ClonedString()
 
 		for attribute, data1 := range d.shelfData {
 			if statusMetric := data1.GetMetric("status"); statusMetric != nil {
@@ -257,7 +257,7 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 
 							// This is special condition, because child records can't be filterable in parent REST call
 							// frus type can be [module, psu] and we would only need psu for our use-case.
-							if attribute == "frus" && obj.Get("type").Exists() && obj.Get("type").String() != "psu" {
+							if attribute == "frus" && obj.Get("type").Exists() && obj.Get("type").ClonedString() != "psu" {
 								continue
 							}
 
@@ -266,7 +266,7 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 								var skey []string
 								for _, k := range keys {
 									v := obj.Get(k)
-									skey = append(skey, v.String())
+									skey = append(skey, v.ClonedString())
 								}
 
 								combinedKey := strings.Join(skey, "")
@@ -288,12 +288,12 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 										if value.IsArray() {
 											var labelArray []string
 											for _, r := range value.Array() {
-												labelString := r.String()
+												labelString := r.ClonedString()
 												labelArray = append(labelArray, labelString)
 											}
 											shelfChildInstance.SetLabel(labelDisplay, strings.Join(labelArray, ","))
 										} else {
-											valueString := value.String()
+											valueString := value.ClonedString()
 											// For shelf child level objects' status field, Rest `ok` value maps Zapi `normal` value.
 											if labelDisplay == "status" {
 												valueString = strings.ReplaceAll(valueString, "ok", "normal")
@@ -319,13 +319,13 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 								for metricKey, m := range data1.GetMetrics() {
 
 									if value := obj.Get(metricKey); value.Exists() {
-										if err = m.SetValueString(shelfChildInstance, value.String()); err != nil { // float
+										if err = m.SetValueString(shelfChildInstance, value.ClonedString()); err != nil { // float
 											d.SLogger.Error(
 												"Unable to set float key on metric",
 												slogx.Err(err),
 												slog.String("key", metricKey),
 												slog.String("metric", m.GetName()),
-												slog.String("value", value.String()),
+												slog.String("value", value.ClonedString()),
 											)
 										}
 									}
@@ -554,15 +554,15 @@ func (d *Disk) getDisks() error {
 			continue
 		}
 
-		diskName := v.Get("name").String()
-		diskUID := v.Get("uid").String()
-		shelfID := v.Get("shelf.uid").String()
+		diskName := v.Get("name").ClonedString()
+		diskUID := v.Get("uid").ClonedString()
+		shelfID := v.Get("shelf.uid").ClonedString()
 
-		diskType := v.Get("type").String()
+		diskType := v.Get("type").ClonedString()
 		aN := v.Get("aggregates.#.name")
 		var aggrNames []string
 		for _, name := range aN.Array() {
-			aggrNames = append(aggrNames, name.String())
+			aggrNames = append(aggrNames, name.ClonedString())
 		}
 
 		dis := &disk{
@@ -612,11 +612,11 @@ func (d *Disk) getAggregates() error {
 			d.SLogger.Warn("Aggregate is not object, skipping", slog.String("type", aggr.Type.String()))
 			continue
 		}
-		aggrName := aggr.Get("aggregate").String()
-		usesSharedDisks := aggr.Get("uses_shared_disks").String()
-		isC := aggr.Get("composite").String()
-		aggregateType := aggr.Get("storage_type").String()
-		nodeName := aggr.Get("node").String()
+		aggrName := aggr.Get("aggregate").ClonedString()
+		usesSharedDisks := aggr.Get("uses_shared_disks").ClonedString()
+		isC := aggr.Get("composite").ClonedString()
+		aggregateType := aggr.Get("storage_type").ClonedString()
+		nodeName := aggr.Get("node").ClonedString()
 		isShared := usesSharedDisks == "true"
 		isComposite := isC == "true"
 		derivedType := getAggregateDerivedType(aggregateType, isComposite, isShared)
@@ -674,10 +674,10 @@ func (d *Disk) handleShelfPower(shelves []gjson.Result, output []*matrix.Matrix)
 			d.SLogger.Warn("Shelf is not object, skipping", slog.String("type", s.Type.String()))
 			continue
 		}
-		shelfName := s.Get("name").String()
-		shelfSerialNumber := s.Get("serial_number").String()
-		shelfID := s.Get("id").String()
-		shelfUID := s.Get("uid").String()
+		shelfName := s.Get("name").ClonedString()
+		shelfSerialNumber := s.Get("serial_number").ClonedString()
+		shelfID := s.Get("id").ClonedString()
+		shelfUID := s.Get("uid").ClonedString()
 		instanceKey := shelfSerialNumber
 		instance, err := data.NewInstance(instanceKey)
 		if err != nil {

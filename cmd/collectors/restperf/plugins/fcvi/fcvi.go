@@ -62,9 +62,9 @@ func (f *FCVI) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 			f.SLogger.Warn("adapter is not object, skipping", slog.String("type", adapterData.Type.String()))
 			continue
 		}
-		node := adapterData.Get("node").String()
-		adapter := adapterData.Get("adapter").String()
-		port := adapterData.Get("port_name").String()
+		node := adapterData.Get("node").ClonedString()
+		adapter := adapterData.Get("adapter").ClonedString()
+		port := adapterData.Get("port_name").ClonedString()
 
 		// Fetch instance and add port label
 		if instance := data.GetInstance(node + ":" + adapter); instance != nil {

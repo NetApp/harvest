@@ -13,7 +13,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"strconv"
 	"strings"
@@ -314,7 +314,7 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 	for _, instanceData := range records {
 		name := instanceData.Get("name")
 		if name.Exists() {
-			emsEventCatalogue = append(emsEventCatalogue, name.String())
+			emsEventCatalogue = append(emsEventCatalogue, name.ClonedString())
 		}
 	}
 
@@ -448,7 +448,7 @@ func parseProperties(instanceData gjson.Result, property string) gjson.Result {
 
 	if !strings.HasPrefix(property, "parameters.") {
 		// if prefix is not parameters.
-		value := gjson.Get(instanceData.String(), property)
+		value := gjson.Get(instanceData.ClonedString(), property)
 		return value
 	}
 	// strip parameters. from property name
@@ -458,11 +458,11 @@ func parseProperties(instanceData gjson.Result, property string) gjson.Result {
 	}
 
 	// process parameter search
-	t := gjson.Get(instanceData.String(), "parameters.#.name")
+	t := gjson.Get(instanceData.ClonedString(), "parameters.#.name")
 
 	for _, name := range t.Array() {
-		if name.String() == property {
-			value := gjson.Get(instanceData.String(), "parameters.#(name="+property+").value")
+		if name.ClonedString() == property {
+			value := gjson.Get(instanceData.ClonedString(), "parameters.#(name="+property+").value")
 			return value
 		}
 	}
@@ -495,7 +495,7 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 			e.Logger.Error("skip instance, missing message name")
 			continue
 		}
-		msgName := messageName.String()
+		msgName := messageName.ClonedString()
 		if issuingEmsList, ok := e.bookendEmsMap[msgName]; ok {
 			props := prop[msgName]
 			if len(props) == 0 {
@@ -595,12 +595,12 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 							if value.IsArray() {
 								var labelArray []string
 								for _, r := range value.Array() {
-									labelString := r.String()
+									labelString := r.ClonedString()
 									labelArray = append(labelArray, labelString)
 								}
 								instance.SetLabel(display, strings.Join(labelArray, ","))
 							} else {
-								instance.SetLabel(display, value.String())
+								instance.SetLabel(display, value.ClonedString())
 							}
 							instanceLabelCountPs++
 						} else {
@@ -707,7 +707,7 @@ func (e *Ems) getInstanceKeys(p *emsProp, instanceData gjson.Result) string {
 	for _, k := range p.InstanceKeys {
 		value := parseProperties(instanceData, k)
 		if value.Exists() {
-			instanceKey += Hyphen + value.String()
+			instanceKey += Hyphen + value.ClonedString()
 		} else {
 			e.Logger.Error("skip instance, missing key", slog.String("key", k))
 			break

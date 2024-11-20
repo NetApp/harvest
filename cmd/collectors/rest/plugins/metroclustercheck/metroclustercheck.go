@@ -7,7 +7,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 )
 
@@ -78,20 +78,20 @@ func (m *MetroclusterCheck) update(objectInfo string, object string) {
 
 	objectInfoJSON := gjson.Result{Type: gjson.JSON, Raw: objectInfo}
 	for _, detail := range objectInfoJSON.Get("details").Array() {
-		clusterName := detail.Get("cluster.name").String()
+		clusterName := detail.Get("cluster.name").ClonedString()
 		nodeName := detail.Get("node.name")
 		aggregateName := detail.Get("aggregate.name")
 		volumeName := detail.Get("volume.name")
 		for _, check := range detail.Get("checks").Array() {
-			name := check.Get("name").String()
-			result := check.Get("result").String()
+			name := check.Get("name").ClonedString()
+			result := check.Get("result").ClonedString()
 			switch object {
 			case "volume":
-				key = clusterName + nodeName.String() + aggregateName.String() + volumeName.String() + name
+				key = clusterName + nodeName.ClonedString() + aggregateName.ClonedString() + volumeName.ClonedString() + name
 			case "aggregate":
-				key = clusterName + nodeName.String() + aggregateName.String() + name
+				key = clusterName + nodeName.ClonedString() + aggregateName.ClonedString() + name
 			case "node":
-				key = clusterName + nodeName.String() + name
+				key = clusterName + nodeName.ClonedString() + name
 			case "cluster":
 				key = clusterName + name
 			}
@@ -102,9 +102,9 @@ func (m *MetroclusterCheck) update(objectInfo string, object string) {
 			}
 			newDetailInstance.SetLabel("name", name)
 			newDetailInstance.SetLabel("result", result)
-			newDetailInstance.SetLabel("volume", volumeName.String())
-			newDetailInstance.SetLabel("aggregate", aggregateName.String())
-			newDetailInstance.SetLabel("node", nodeName.String())
+			newDetailInstance.SetLabel("volume", volumeName.ClonedString())
+			newDetailInstance.SetLabel("aggregate", aggregateName.ClonedString())
+			newDetailInstance.SetLabel("node", nodeName.ClonedString())
 
 			switch object {
 			case "volume":

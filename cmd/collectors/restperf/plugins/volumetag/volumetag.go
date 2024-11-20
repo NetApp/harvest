@@ -69,8 +69,8 @@ func (v *VolumeTag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 			v.SLogger.Warn("volume is not object, skipping", slog.String("type", volume.Type.String()))
 			continue
 		}
-		key := volume.Get("uuid").String()
-		comment := volume.Get("comment").String()
+		key := volume.Get("uuid").ClonedString()
+		comment := volume.Get("comment").ClonedString()
 		instance := data.GetInstance(key)
 		if instance != nil && comment != "" {
 			instance.SetLabel("comment", comment)

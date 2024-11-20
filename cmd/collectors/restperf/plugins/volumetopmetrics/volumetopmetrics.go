@@ -10,7 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"slices"
 	"strconv"
@@ -408,9 +408,9 @@ func (t *TopMetrics) processTopFilesByMetric(volumes, svms *set.Set, matrixName,
 		return nil
 	}
 	for _, client := range topFiles {
-		path := client.Get("path").String()
-		vol := client.Get("volume.name").String()
-		svm := client.Get("svm.name").String()
+		path := client.Get("path").ClonedString()
+		vol := client.Get("volume.name").ClonedString()
+		svm := client.Get("svm.name").ClonedString()
 		value := client.Get(metric).Float()
 		instanceKey := path + keyToken + vol + keyToken + svm
 		instance, err := mat.NewInstance(instanceKey)
@@ -441,9 +441,9 @@ func (t *TopMetrics) processTopClientsByMetric(volumes, svms *set.Set, matrixNam
 		return nil
 	}
 	for _, client := range topClients {
-		clientIP := client.Get("client_ip").String()
-		vol := client.Get("volume.name").String()
-		svm := client.Get("svm.name").String()
+		clientIP := client.Get("client_ip").ClonedString()
+		vol := client.Get("volume.name").ClonedString()
+		svm := client.Get("svm.name").ClonedString()
 		value := client.Get(metric).Float()
 		instanceKey := clientIP + keyToken + vol + keyToken + svm
 		instance, err := mat.NewInstance(instanceKey)
@@ -495,8 +495,8 @@ func (t *TopMetrics) fetchVolumesWithActivityTrackingEnabled() (*set.Set, error)
 	}
 
 	for _, volume := range result {
-		volName := volume.Get("name").String()
-		svmName := volume.Get("svm.name").String()
+		volName := volume.Get("name").ClonedString()
+		svmName := volume.Get("svm.name").ClonedString()
 		va.Add(svmName + keyToken + volName)
 	}
 	return va, nil

@@ -6,10 +6,9 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"os"
 	"strings"
 	"testing"
@@ -21,7 +20,6 @@ const (
 )
 
 var (
-	ms           []*matrix.Matrix
 	benchRest    *Rest
 	fullPollData []gjson.Result
 )
@@ -37,7 +35,6 @@ func TestMain(m *testing.M) {
 }
 
 func BenchmarkRestPerf_PollData(b *testing.B) {
-	ms = make([]*matrix.Matrix, 0)
 	now := time.Now().Truncate(time.Second)
 
 	for range b.N {
@@ -310,7 +307,7 @@ func TestQuotas(t *testing.T) {
 			for _, k := range r.Prop.InstanceKeys {
 				value := quotaInstanceData.Get(k)
 				if value.Exists() {
-					instanceKey += value.String()
+					instanceKey += value.ClonedString()
 				}
 			}
 

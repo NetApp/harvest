@@ -6,7 +6,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -205,7 +205,7 @@ func countMatches(sensorRegex *regexp.Regexp, data []byte) int {
 	names := gjson.GetBytes(data, "records.#.name").Array()
 	matches := 0
 	for _, name := range names {
-		if sensorRegex.MatchString(name.String()) {
+		if sensorRegex.MatchString(name.ClonedString()) {
 			matches++
 		}
 	}

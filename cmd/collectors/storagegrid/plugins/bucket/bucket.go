@@ -7,7 +7,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 )
 
@@ -87,8 +87,8 @@ func (b *Bucket) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 
 			bucketsJSON := record.Get("buckets")
 			for _, bucketJSON := range bucketsJSON.Array() {
-				bucket := bucketJSON.Get("name").String()
-				region := bucketJSON.Get("region").String()
+				bucket := bucketJSON.Get("name").ClonedString()
+				region := bucketJSON.Get("region").ClonedString()
 
 				instanceKey = instKey + "#" + bucket
 				bucketInstance, err2 := b.data.NewInstance(instanceKey)
@@ -106,19 +106,19 @@ func (b *Bucket) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 				for metricKey, m := range b.data.GetMetrics() {
 					jsonKey := metricToJSON[metricKey]
 					if value := bucketJSON.Get(jsonKey); value.Exists() {
-						if err = m.SetValueString(bucketInstance, value.String()); err != nil {
+						if err = m.SetValueString(bucketInstance, value.ClonedString()); err != nil {
 							b.SLogger.Error(
 								"Unable to set float key on metric",
 								slogx.Err(err),
 								slog.String("key", metricKey),
 								slog.String("metric", m.GetName()),
-								slog.String("value", value.String()),
+								slog.String("value", value.ClonedString()),
 							)
 						} else {
 							b.SLogger.Debug(
 								"added",
 								slog.String("metricKey", metricKey),
-								slog.String("value", value.String()),
+								slog.String("value", value.ClonedString()),
 							)
 						}
 					}

@@ -2,8 +2,8 @@ package grafana
 
 import (
 	"fmt"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"github.com/spf13/cobra"
-	"github.com/tidwall/gjson"
 	"log"
 	"os"
 	"path/filepath"
@@ -110,17 +110,17 @@ func allVariables(data []byte) map[string]variable {
 	variables := make(map[string]variable)
 	gjson.GetBytes(data, "templating.list").ForEach(func(key, value gjson.Result) bool {
 		// The datasource variable can be ignored
-		if value.Get("type").String() == "datasource" {
+		if value.Get("type").ClonedString() == "datasource" {
 			return true
 		}
 
 		v := variable{
-			name:    value.Get("name").String(),
-			kind:    value.Get("type").String(),
-			query:   value.Get("query.query").String(),
-			refresh: value.Get("refresh").String(),
+			name:    value.Get("name").ClonedString(),
+			kind:    value.Get("type").ClonedString(),
+			query:   value.Get("query.query").ClonedString(),
+			refresh: value.Get("refresh").ClonedString(),
 			options: value.Get("options").Array(),
-			path:    key.String(),
+			path:    key.ClonedString(),
 		}
 		variables[v.name] = v
 		return true
@@ -144,15 +144,15 @@ func newExpr(path string, expr string, title string) exprP {
 
 func doTarget(pathPrefix string, key gjson.Result, value gjson.Result,
 	exprFunc func(path string, expr string, format string, title string)) {
-	kind := value.Get("type").String()
-	title := value.Get("title").String()
+	kind := value.Get("type").ClonedString()
+	title := value.Get("title").ClonedString()
 	if kind == "row" {
 		return
 	}
 	path := fmt.Sprintf("%spanels[%d]", pathPrefix, key.Int())
 	targetsSlice := value.Get("targets").Array()
 	for i, targetN := range targetsSlice {
-		expr := targetN.Get("expr").String()
+		expr := targetN.Get("expr").ClonedString()
 		pathWithTarget := path + ".targets[" + strconv.Itoa(i) + "]"
 		exprFunc(pathWithTarget, expr, kind, title)
 	}
@@ -190,7 +190,7 @@ func VisitAllPanels(data []byte, handle func(path string, key gjson.Result, valu
 
 func visitPanels(data []byte, panelPath string, pathPrefix string, handle func(path string, key gjson.Result, value gjson.Result)) {
 	gjson.GetBytes(data, panelPath).ForEach(func(key, value gjson.Result) bool {
-		path := panelPath + "." + key.String()
+		path := panelPath + "." + key.ClonedString()
 		fullPath := path
 		if pathPrefix != "" {
 			fullPath = pathPrefix + "." + path
