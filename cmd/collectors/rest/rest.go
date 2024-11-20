@@ -295,35 +295,6 @@ func TemplateFn(n *node.Node, obj string) string {
 	return fn
 }
 
-// Returns a slice of keys in dot notation from json
-func getFieldName(source string, parent string) []string {
-	res := make([]string, 0)
-	var arr map[string]gjson.Result
-	r := gjson.Parse(source)
-	switch {
-	case r.IsArray():
-		newR := r.Get("0")
-		arr = newR.Map()
-	case r.IsObject():
-		arr = r.Map()
-	default:
-		return []string{parent}
-	}
-	if len(arr) == 0 {
-		return []string{parent}
-	}
-	for key, val := range arr {
-		var temp []string
-		if parent == "" {
-			temp = getFieldName(val.Raw, key)
-		} else {
-			temp = getFieldName(val.Raw, parent+"."+key)
-		}
-		res = append(res, temp...)
-	}
-	return res
-}
-
 // PollCounter performs daily tasks such as updating the cluster info and caching href.
 func (r *Rest) PollCounter() (map[string]*matrix.Matrix, error) {
 
