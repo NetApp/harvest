@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1722596631356,
+  "iteration": 1732181856878,
   "links": [
     {
       "asDropdown": true,
@@ -5783,7 +5783,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 104
+            "y": 78
           },
           "id": 813,
           "options": {
@@ -5806,7 +5806,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}\nand\ntopk($TopResources, avg_over_time(volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}[3h] @ end()))",
+              "expr": "volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}\nand on(datacenter,cluster,svm,volume)\ntopk($TopResources, avg_over_time(volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
               "refId": "A"
@@ -5874,7 +5874,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 104
+            "y": 78
           },
           "id": 815,
           "options": {
@@ -5897,7 +5897,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "(\n    volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"} \n    +\n    volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}\n)\nand\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}[3h] @ end())\n        + avg_over_time(volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}[3h] @ end())\n    )\n)",
+              "expr": "(\n    volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"} \n    +\n    volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}\n)\nand on(datacenter,cluster,svm,volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}[3h] @ end())\n        + avg_over_time(volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}[3h] @ end())\n    )\n)",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}} - {{volume}}",
               "refId": "A"
@@ -5966,7 +5966,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 104
+            "y": 78
           },
           "id": 817,
           "options": {
@@ -5989,7 +5989,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}\nand\ntopk($TopResources, avg_over_time(volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}[3h] @ end()))",
+              "expr": "volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}\nand on(datacenter,cluster,svm,volume)\ntopk($TopResources, avg_over_time(volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}} - {{volume}}",
               "refId": "A"
@@ -6057,7 +6057,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 112
+            "y": 86
           },
           "id": 88,
           "options": {
@@ -6078,7 +6078,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}\nand\ntopk($TopResources, avg_over_time(volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}[3h] @ end()))",
+              "expr": "volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}\nand on(datacenter,cluster,svm,volume)\ntopk($TopResources, avg_over_time(volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
               "refId": "A"
@@ -6146,7 +6146,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 112
+            "y": 86
           },
           "id": 89,
           "options": {
@@ -6167,7 +6167,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}\nand\ntopk($TopResources, avg_over_time(volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}[3h] @ end()))",
+              "expr": "volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}\nand on(datacenter,cluster,svm,volume)\ntopk($TopResources, avg_over_time(volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}[3h] @ end()))",
               "interval": "",
               "intervalFactor": 1,
               "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
@@ -6237,7 +6237,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 112
+            "y": 86
           },
           "id": 90,
           "options": {
@@ -6258,7 +6258,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}\nand\ntopk($TopResources, avg_over_time(volume_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}[3h] @ end()))",
+              "expr": "volume_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}\nand on(datacenter,cluster,svm,volume)\ntopk($TopResources, avg_over_time(volume_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
               "refId": "A"
@@ -6326,7 +6326,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 121
+            "y": 95
           },
           "id": 91,
           "options": {
@@ -6347,7 +6347,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}\nand\ntopk($TopResources, avg_over_time(volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}[3h] @ end()))",
+              "expr": "volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}\nand on(datacenter,cluster,svm,volume)\ntopk($TopResources, avg_over_time(volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
               "refId": "A"
@@ -6415,7 +6415,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 121
+            "y": 95
           },
           "id": 92,
           "options": {
@@ -6436,7 +6436,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}\nand\ntopk($TopResources, avg_over_time(volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}[3h] @ end()))",
+              "expr": "volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}\nand on(datacenter,cluster,svm,volume)\ntopk($TopResources, avg_over_time(volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
               "refId": "A"
@@ -6505,7 +6505,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 121
+            "y": 95
           },
           "id": 93,
           "options": {
@@ -6526,7 +6526,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}\nand\ntopk($TopResources, avg_over_time(volume_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}[3h] @ end()))",
+              "expr": "volume_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}\nand on(datacenter,cluster,svm,volume)\ntopk($TopResources, avg_over_time(volume_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\".*$Aggregate.*\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{aggr}} - {{volume}} - {{style}}",
               "refId": "A"
@@ -6776,5 +6776,5 @@
   "timezone": "",
   "title": "ONTAP: Aggregate",
   "uid": "cdot-aggregate",
-  "version": 15
+  "version": 16
 }
