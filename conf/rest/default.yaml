@@ -16,7 +16,7 @@ objects:
 #  CIFSShare:                    cifs_share.yaml
   CloudTarget:                 cloud_target.yaml
   ClusterPeer:                 clusterpeer.yaml
-  ClusterUpdate:               clusterupdate.yaml
+  ClusterSoftware:             clustersoftware.yaml
   Disk:                        disk.yaml
   EmsDestination:              ems_destination.yaml
 #  ExportRule:                  exports.yaml
