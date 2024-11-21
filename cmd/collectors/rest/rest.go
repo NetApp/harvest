@@ -379,7 +379,8 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 
 	startTime := time.Now()
 	if err := rest.FetchAllStream(r.Client, r.Prop.Href, processBatch); err != nil {
-		return nil, err
+		_, err2 := r.handleError(err)
+		return nil, err2
 	}
 	apiD += time.Since(startTime)
 
