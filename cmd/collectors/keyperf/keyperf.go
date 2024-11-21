@@ -8,6 +8,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/tidwall/gjson"
 	"log/slog"
@@ -302,6 +303,11 @@ func (kp *KeyPerf) pollData(
 	)
 
 	prevMat = kp.Matrix[kp.Object]
+	// Track old instances before processing batches
+	oldInstances := set.New()
+	for key := range prevMat.GetInstances() {
+		oldInstances.Add(key)
+	}
 
 	// clone matrix without numeric data
 	curMat = prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
@@ -314,10 +320,10 @@ func (kp *KeyPerf) pollData(
 	if len(perfRecords) == 0 {
 		return nil, errs.New(errs.ErrNoInstance, "no "+kp.Object+" instances on cluster")
 	}
-	count, numPartials = kp.HandleResults(curMat, perfRecords, kp.Prop, false)
+	count, numPartials = kp.HandleResults(curMat, perfRecords, kp.Prop, false, oldInstances)
 
 	// process endpoints
-	eCount, endpointAPID := kp.ProcessEndPoints(curMat, endpointFunc)
+	eCount, endpointAPID := kp.ProcessEndPoints(curMat, endpointFunc, oldInstances)
 	count += eCount
 
 	parseD = time.Since(startTime)

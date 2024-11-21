@@ -185,9 +185,9 @@ func parseEmsLabels(exports *node.Node) string {
 	var labels []string
 	if exports != nil {
 		for _, export := range exports.GetAllChildContentS() {
-			name, _, _, _ := util.ParseMetric(export)
+			name, display, _, _ := util.ParseMetric(export)
 			if strings.HasPrefix(name, "parameters") {
-				labels = append(labels, strings.Split(name, ".")[1])
+				labels = append(labels, display)
 			}
 		}
 	}
