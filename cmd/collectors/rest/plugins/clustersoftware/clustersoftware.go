@@ -7,14 +7,14 @@ import (
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 )
 
-const updateMatrix = "cluster_software_update"
-const StatusMatrix = "cluster_software_status"
-const validationMatrix = "cluster_software_validation"
-const labels = "labels"
+const clusterSoftware = "cluster_software"
+const updateMatrix = "update"
+const StatusMatrix = "status"
+const validationMatrix = "validation"
 
 type ClusterSoftware struct {
 	*plugin.AbstractPlugin
@@ -45,10 +45,9 @@ func (c *ClusterSoftware) Init(conf.Remote) error {
 }
 
 func (c *ClusterSoftware) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
-	data := dataMap[c.Object]
-	globalLabels := data.GetGlobalLabels()
+	globalLabels := dataMap[c.Object].GetGlobalLabels()
 
-	for _, instance := range data.GetInstances() {
+	for _, instance := range dataMap[c.Object].GetInstances() {
 		instance.SetExportable(false)
 		// generate update details metrics
 		updateDetails := instance.GetLabel("update_details")
@@ -75,7 +74,7 @@ func (c *ClusterSoftware) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 }
 
 func (c *ClusterSoftware) createUpdateMetrics() error {
-	mat := matrix.New(c.Parent+".ClusterSoftware", updateMatrix, updateMatrix)
+	mat := matrix.New(c.Parent+"."+updateMatrix, clusterSoftware, clusterSoftware)
 	exportOptions := node.NewS("export_options")
 	instanceKeys := exportOptions.NewChildS("instance_keys", "")
 	instanceKeys.NewChildS("", "phase")
@@ -84,8 +83,8 @@ func (c *ClusterSoftware) createUpdateMetrics() error {
 
 	mat.SetExportOptions(exportOptions)
 
-	if _, err := mat.NewMetricFloat64(labels, labels); err != nil {
-		c.SLogger.Error("Failed to create metric", slogx.Err(err), slog.String("metric", labels))
+	if _, err := mat.NewMetricFloat64(updateMatrix); err != nil {
+		c.SLogger.Error("Failed to create metric", slogx.Err(err), slog.String("metric", updateMatrix))
 		return err
 	}
 
@@ -94,7 +93,7 @@ func (c *ClusterSoftware) createUpdateMetrics() error {
 }
 
 func (c *ClusterSoftware) createStatusMetrics() error {
-	mat := matrix.New(c.Parent+".ClusterUpdate", StatusMatrix, StatusMatrix)
+	mat := matrix.New(c.Parent+"."+StatusMatrix, clusterSoftware, clusterSoftware)
 	exportOptions := node.NewS("export_options")
 	instanceKeys := exportOptions.NewChildS("instance_keys", "")
 	instanceKeys.NewChildS("", "state")
@@ -103,8 +102,8 @@ func (c *ClusterSoftware) createStatusMetrics() error {
 
 	mat.SetExportOptions(exportOptions)
 
-	if _, err := mat.NewMetricFloat64(labels, labels); err != nil {
-		c.SLogger.Error("Failed to create metric", slogx.Err(err), slog.String("metric", labels))
+	if _, err := mat.NewMetricFloat64(StatusMatrix); err != nil {
+		c.SLogger.Error("Failed to create metric", slogx.Err(err), slog.String("metric", StatusMatrix))
 		return err
 	}
 
@@ -113,7 +112,7 @@ func (c *ClusterSoftware) createStatusMetrics() error {
 }
 
 func (c *ClusterSoftware) createValidationMetrics() error {
-	mat := matrix.New(c.Parent+".ClusterUpdate", validationMatrix, validationMatrix)
+	mat := matrix.New(c.Parent+"."+validationMatrix, clusterSoftware, clusterSoftware)
 	exportOptions := node.NewS("export_options")
 	instanceKeys := exportOptions.NewChildS("instance_keys", "")
 	instanceKeys.NewChildS("", "status")
@@ -121,8 +120,8 @@ func (c *ClusterSoftware) createValidationMetrics() error {
 
 	mat.SetExportOptions(exportOptions)
 
-	if _, err := mat.NewMetricFloat64(labels, labels); err != nil {
-		c.SLogger.Error("Failed to create metric", slogx.Err(err), slog.String("metric", labels))
+	if _, err := mat.NewMetricFloat64(validationMatrix); err != nil {
+		c.SLogger.Error("Failed to create metric", slogx.Err(err), slog.String("metric", validationMatrix))
 		return err
 	}
 
@@ -144,9 +143,9 @@ func (c *ClusterSoftware) handleUpdateDetails(updateDetailsJSON gjson.Result, gl
 	c.data[updateMatrix].SetGlobalLabels(globalLabels)
 
 	for _, updateDetail := range updateDetailsJSON.Array() {
-		phase := updateDetail.Get("phase").String()
-		state := updateDetail.Get("state").String()
-		nodeName := updateDetail.Get("node.name").String()
+		phase := updateDetail.Get("phase").ClonedString()
+		state := updateDetail.Get("state").ClonedString()
+		nodeName := updateDetail.Get("node.name").ClonedString()
 		key = phase + state + nodeName
 
 		if clusterUpdateInstance, err = c.data[updateMatrix].NewInstance(key); err != nil {
@@ -163,7 +162,7 @@ func (c *ClusterSoftware) handleUpdateDetails(updateDetailsJSON gjson.Result, gl
 			value = 1.0
 		}
 
-		met := c.data[updateMatrix].GetMetric(labels)
+		met := c.data[updateMatrix].GetMetric(updateMatrix)
 		if err := met.SetValueFloat64(clusterUpdateInstance, value); err != nil {
 			c.SLogger.Error("Failed to parse value", slogx.Err(err), slog.Float64("value", value))
 		} else {
@@ -186,9 +185,9 @@ func (c *ClusterSoftware) handleStatusDetails(statusDetailsJSON gjson.Result, gl
 	c.data[StatusMatrix].SetGlobalLabels(globalLabels)
 
 	for _, updateDetail := range statusDetailsJSON.Array() {
-		name := updateDetail.Get("name").String()
-		state := updateDetail.Get("state").String()
-		nodeName := updateDetail.Get("node.name").String()
+		name := updateDetail.Get("name").ClonedString()
+		state := updateDetail.Get("state").ClonedString()
+		nodeName := updateDetail.Get("node.name").ClonedString()
 		key = name + state + nodeName
 
 		if clusterStatusInstance, err = c.data[StatusMatrix].NewInstance(key); err != nil {
@@ -205,7 +204,7 @@ func (c *ClusterSoftware) handleStatusDetails(statusDetailsJSON gjson.Result, gl
 			value = 1.0
 		}
 
-		met := c.data[StatusMatrix].GetMetric(labels)
+		met := c.data[StatusMatrix].GetMetric(StatusMatrix)
 		if err := met.SetValueFloat64(clusterStatusInstance, value); err != nil {
 			c.SLogger.Error("Failed to parse value", slogx.Err(err), slog.Float64("value", value))
 		} else {
@@ -228,8 +227,8 @@ func (c *ClusterSoftware) handleValidationDetails(validationDetailsJSON gjson.Re
 	c.data[validationMatrix].SetGlobalLabels(globalLabels)
 
 	for _, updateDetail := range validationDetailsJSON.Array() {
-		updateCheck := updateDetail.Get("update_check").String()
-		status := updateDetail.Get("status").String()
+		updateCheck := updateDetail.Get("update_check").ClonedString()
+		status := updateDetail.Get("status").ClonedString()
 		key = updateCheck + status
 
 		if clusterValidationInstance, err = c.data[validationMatrix].NewInstance(key); err != nil {
@@ -245,7 +244,7 @@ func (c *ClusterSoftware) handleValidationDetails(validationDetailsJSON gjson.Re
 			value = 1.0
 		}
 
-		met := c.data[validationMatrix].GetMetric(labels)
+		met := c.data[validationMatrix].GetMetric(validationMatrix)
 		if err := met.SetValueFloat64(clusterValidationInstance, value); err != nil {
 			c.SLogger.Error("Failed to parse value", slogx.Err(err), slog.Float64("value", value))
 		} else {
