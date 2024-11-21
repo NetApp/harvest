@@ -12,7 +12,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/go-version"
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"io"
 	"log/slog"
 	"math"
@@ -293,7 +293,7 @@ func (c *Client) Init(retries int, remote conf.Remote) error {
 			continue
 		}
 		results := gjson.ParseBytes(content)
-		err = c.SetVersion(results.Get("data.productVersion").String())
+		err = c.SetVersion(results.Get("data.productVersion").ClonedString())
 		if err != nil {
 			return err
 		}
@@ -303,13 +303,13 @@ func (c *Client) Init(retries int, remote conf.Remote) error {
 		}
 
 		results = gjson.ParseBytes(content)
-		c.Remote.Name = results.Get("data.name").String()
+		c.Remote.Name = results.Get("data.name").ClonedString()
 
 		if content, err = c.GetGridRest("grid/license"); err != nil {
 			continue
 		}
 		results = gjson.ParseBytes(content)
-		c.Remote.UUID = results.Get("data.systemId").String()
+		c.Remote.UUID = results.Get("data.systemId").ClonedString()
 		return nil
 	}
 
@@ -411,10 +411,10 @@ func (c *Client) fetchTokenWithAuthRetry() error {
 		errorMsg := results.Get("message.text")
 
 		if token.Exists() {
-			c.token = token.String()
+			c.token = token.ClonedString()
 			c.request.Header.Set("Authorization", "Bearer "+c.token)
 		} else {
-			return errs.New(errs.ErrAuthFailed, errorMsg.String())
+			return errs.New(errs.ErrAuthFailed, errorMsg.ClonedString())
 		}
 		return nil
 	}
@@ -462,7 +462,7 @@ func (c *Client) sniffAPIVersion(retries int) error {
 		if versionB.Exists() && versionB.IsArray() {
 			versions := versionB.Array()
 			if len(versions) > 0 {
-				apiVersion = versions[len(versions)-1].String()
+				apiVersion = versions[len(versions)-1].ClonedString()
 			}
 		}
 		c.APIPath = "/api/v" + apiVersion

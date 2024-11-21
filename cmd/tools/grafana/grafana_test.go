@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
@@ -114,8 +114,8 @@ func TestAddSvmRegex(t *testing.T) {
 		func(path string, data []byte) {
 			out := addSvmRegex(data, regex)
 			r := gjson.GetBytes(out, "templating.list.#(name=\"SVM\").regex")
-			if r.String() != regex {
-				t.Errorf("path: %s \nExpected: [%s]\n     Got: [%s]", path, regex, r.String())
+			if r.ClonedString() != regex {
+				t.Errorf("path: %s \nExpected: [%s]\n     Got: [%s]", path, regex, r.ClonedString())
 			}
 		})
 }

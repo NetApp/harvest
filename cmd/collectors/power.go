@@ -51,13 +51,13 @@ func collectChassisFRU(client *rest.Client, logger *slog.Logger) (map[string]int
 			logger.Warn(
 				"fru has no connected nodes",
 				slog.String("cluster", client.Remote().Name),
-				slog.String("fru", r.Get("fru_name").String()),
+				slog.String("fru", r.Get("fru_name").ClonedString()),
 			)
 			continue
 		}
 		numNodes := int(r.Get("num_nodes").Int())
 		for _, e := range cn.Array() {
-			nodeToNumNode[e.String()] = numNodes
+			nodeToNumNode[e.ClonedString()] = numNodes
 		}
 	}
 	return nodeToNumNode, nil

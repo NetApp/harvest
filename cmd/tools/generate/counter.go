@@ -15,7 +15,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	tw "github.com/netapp/harvest/v2/third_party/olekukonko/tablewriter"
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"gopkg.in/yaml.v3"
 	"log"
 	"maps"
@@ -276,7 +276,7 @@ func searchDescriptionSwagger(objName string, ontapCounterName string) string {
 		}
 	}
 	t := gjson.GetBytes(swaggerBytes, searchQuery)
-	return updateDescription(t.String())
+	return updateDescription(t.ClonedString())
 }
 
 // processRestCounters parse rest and restperf templates
@@ -1098,13 +1098,13 @@ func processRestPerfCounters(path string, client *rest.Client) map[string]Counte
 		if !r.IsObject() {
 			return true
 		}
-		ontapCounterName := r.Get("name").String()
+		ontapCounterName := r.Get("name").ClonedString()
 		if _, ok := excludeCounters[ontapCounterName]; ok {
 			return true
 		}
 
-		description := r.Get("description").String()
-		ty := r.Get("type").String()
+		description := r.Get("description").ClonedString()
+		ty := r.Get("type").ClonedString()
 		if override != nil {
 			oty := override.GetChildContentS(ontapCounterName)
 			if oty != "" {
@@ -1125,9 +1125,9 @@ func processRestPerfCounters(path string, client *rest.Client) map[string]Counte
 						Endpoint:     model.Query,
 						Template:     path,
 						ONTAPCounter: ontapCounterName,
-						Unit:         r.Get("unit").String(),
+						Unit:         r.Get("unit").ClonedString(),
 						Type:         ty,
-						BaseCounter:  r.Get("denominator.name").String(),
+						BaseCounter:  r.Get("denominator.name").ClonedString(),
 					},
 				},
 				Labels: metricLabels,
@@ -1270,6 +1270,7 @@ func fetchAndCategorizePrometheusMetrics(promURL string) (map[string]bool, map[s
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to fetch metrics from Prometheus: %w", err)
 	}
+	//goland:noinspection GoUnhandledErrorResult
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {

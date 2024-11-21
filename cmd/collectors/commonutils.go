@@ -8,7 +8,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"os"
 	"sort"
@@ -121,12 +121,12 @@ func GetClusterTime(client *rest.Client, returnTimeOut *int, logger *slog.Logger
 	for _, instanceData := range records {
 		currentClusterDate := instanceData.Get("date")
 		if currentClusterDate.Exists() {
-			t, err := time.Parse(time.RFC3339, currentClusterDate.String())
+			t, err := time.Parse(time.RFC3339, currentClusterDate.ClonedString())
 			if err != nil {
 				logger.Error(
 					"Failed to load cluster date",
 					slogx.Err(err),
-					slog.String("date", currentClusterDate.String()),
+					slog.String("date", currentClusterDate.ClonedString()),
 				)
 				continue
 			}

@@ -15,7 +15,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"time"
 )
@@ -206,7 +206,7 @@ func (c *Certificate) GetAdminVserver() (string, error) {
 
 	// This should be one iteration only as cluster can have one admin vserver
 	for _, svm := range result {
-		adminVserver = svm.Get("vserver").String()
+		adminVserver = svm.Get("vserver").ClonedString()
 	}
 	return adminVserver, nil
 }
@@ -233,7 +233,7 @@ func (c *Certificate) GetSecuritySsl(adminSvm string) (string, error) {
 
 	// This should be one iteration only as cluster can have one admin vserver
 	for _, ssl := range result {
-		adminSerial = ssl.Get("serial").String()
+		adminSerial = ssl.Get("serial").ClonedString()
 	}
 
 	return adminSerial, nil

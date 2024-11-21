@@ -10,9 +10,9 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"github.com/netapp/harvest/v2/third_party/tidwall/sjson"
 	"github.com/spf13/cobra"
-	"github.com/tidwall/gjson"
 	"log"
 	"log/slog"
 	"net/url"
@@ -365,7 +365,7 @@ func FetchForCli(client *Client, href string, records *[]any, downloadAll bool, 
 
 		isNonIterRestCall := false
 		value := gjson.GetBytes(getRest, "records")
-		if value.String() == "" {
+		if value.ClonedString() == "" {
 			isNonIterRestCall = true
 		}
 
@@ -496,7 +496,7 @@ func FetchAllStream(client *Client, href string, processBatch func([]gjson.Resul
 
 			prevLink = nextLink
 			// If there is a next link, follow it
-			nextLink = next.String()
+			nextLink = next.ClonedString()
 			if nextLink == "" || nextLink == prevLink {
 				// no nextLink or nextLink is the same as the previous link, no progress is being made, exit
 				break
@@ -544,7 +544,7 @@ func fetchAll(client *Client, href string, records *[]gjson.Result, headers ...m
 
 			prevLink = nextLink
 			// If there is a next link, follow it
-			nextLink = next.String()
+			nextLink = next.ClonedString()
 			if nextLink == "" || nextLink == prevLink {
 				// no nextLink or nextLink is the same as the previous link, no progress is being made, exit
 				break
@@ -631,7 +631,7 @@ func fetchLimit(client *Client, href string, records *[]gjson.Result, recordsWan
 			}
 
 			prevLink = nextLink
-			nextLink = next.String()
+			nextLink = next.ClonedString()
 
 			if nextLink == "" || nextLink == prevLink {
 				// no nextLink or nextLink is the same as the previous link, no progress is being made, exit
@@ -682,7 +682,7 @@ func fetchAnalytics(client *Client, href string, records *[]gjson.Result, analyt
 		}
 
 		prevLink = nextLink
-		nextLink = next.String()
+		nextLink = next.ClonedString()
 
 		if nextLink == "" || nextLink == prevLink || !downloadAll {
 			// no nextLink, nextLink is the same as the previous link, or not all records are desired, exit
@@ -717,7 +717,7 @@ func FetchRestPerfData(client *Client, href string, perfRecords *[]PerfRecord, h
 		}
 
 		prevLink = nextLink
-		nextLink = next.String()
+		nextLink = next.ClonedString()
 
 		if nextLink == "" || nextLink == prevLink {
 			// no nextLink or nextLink is the same as the previous link, no progress is being made, exit

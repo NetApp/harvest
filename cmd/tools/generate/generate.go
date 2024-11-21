@@ -9,9 +9,9 @@ import (
 	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/color"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"github.com/netapp/harvest/v2/third_party/tidwall/sjson"
 	"github.com/spf13/cobra"
-	"github.com/tidwall/gjson"
 	"io"
 	"log"
 	"log/slog"
@@ -633,16 +633,16 @@ func generateDescription(dPath string, data []byte, counters map[string]Counter)
 	}
 
 	grafana.VisitAllPanels(data, func(path string, _, value gjson.Result) {
-		kind := value.Get("type").String()
+		kind := value.Get("type").ClonedString()
 		if kind == "row" || kind == "text" {
 			return
 		}
-		description := value.Get("description").String()
+		description := value.Get("description").ClonedString()
 		targetsSlice := value.Get("targets").Array()
 
 		if description == "" {
 			if len(targetsSlice) == 1 {
-				expr := targetsSlice[0].Get("expr").String()
+				expr := targetsSlice[0].Get("expr").ClonedString()
 				if !(strings.Contains(expr, "/") || strings.Contains(expr, "+") || strings.Contains(expr, "-") || strings.Contains(expr, "on")) {
 					allMatches := metricRe.FindAllStringSubmatch(expr, -1)
 					for _, match := range allMatches {

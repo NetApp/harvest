@@ -14,10 +14,8 @@ var Bold = "\033[1m"
 var End = "\033[0m"
 var Green = "\033[92m"
 var Red = "\033[31m"
-var Pink = "\033[35m"
 var Yellow = "\033[93m"
 var Cyan = "\033[36m"
-var Blue = "\033[96m"
 var Grey = "\033[90m"
 
 var withColor = false

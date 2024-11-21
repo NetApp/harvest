@@ -17,6 +17,7 @@ func GetResponse(url string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	//goland:noinspection GoUnhandledErrorResult
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -36,6 +37,7 @@ func GetResponseBody(url string) ([]byte, error) {
 		slog.Error("", slogx.Err(err))
 		os.Exit(1)
 	}
+	//goland:noinspection GoUnhandledErrorResult
 	resp.Body.Close()
 	return body, nil
 }
@@ -51,6 +53,7 @@ func SendReqAndGetRes(url string, method string,
 	req.Header.Add("Content-Type", "application/json")
 	res, err := client.Do(req)
 	PanicIfNotNil(err)
+	//goland:noinspection GoUnhandledErrorResult
 	defer res.Body.Close()
 	body, err := io.ReadAll(res.Body)
 	PanicIfNotNil(err)

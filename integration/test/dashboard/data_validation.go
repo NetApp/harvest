@@ -3,7 +3,7 @@ package dashboard
 import (
 	"fmt"
 	"github.com/Netapp/harvest-automation/test/utils"
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"net/url"
 	"strings"
@@ -30,7 +30,7 @@ func HasMinRecord(query string, limit int) bool {
 	queryURL := fmt.Sprintf("%s/api/v1/query?query=%s", PrometheusURL,
 		url.QueryEscape(query))
 	resp, err := utils.GetResponse(queryURL)
-	if err == nil && gjson.Get(resp, "status").String() == "success" {
+	if err == nil && gjson.Get(resp, "status").ClonedString() == "success" {
 		value := gjson.Get(resp, "data.result")
 		if value.Exists() && value.IsArray() && (len(value.Array()) > limit) {
 			return true

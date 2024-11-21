@@ -9,7 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	goversion "github.com/netapp/harvest/v2/third_party/go-version"
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"path"
 	"strconv"
@@ -144,17 +144,17 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 		} else {
 			explorerMatrix := v.data[explorer]
 			for index, record := range records {
-				name := record.Get("name").String()
-				fileCount := record.Get("analytics.file_count").String()
-				bytesUsed := record.Get("analytics.bytes_used").String()
-				subDirCount := record.Get("analytics.subdir_count").String()
-				mtBytesUsedValues := strings.Split(util.ArrayMetricToString(record.Get("analytics.by_modified_time.bytes_used.values").String()), ",")
-				mtBytesUsedPercentages := strings.Split(util.ArrayMetricToString(record.Get("analytics.by_modified_time.bytes_used.percentages").String()), ",")
-				mtBytesUsedLabels := strings.Split(util.ArrayMetricToString(analytics.Get("by_modified_time.bytes_used.labels").String()), ",")
+				name := record.Get("name").ClonedString()
+				fileCount := record.Get("analytics.file_count").ClonedString()
+				bytesUsed := record.Get("analytics.bytes_used").ClonedString()
+				subDirCount := record.Get("analytics.subdir_count").ClonedString()
+				mtBytesUsedValues := strings.Split(util.ArrayMetricToString(record.Get("analytics.by_modified_time.bytes_used.values").ClonedString()), ",")
+				mtBytesUsedPercentages := strings.Split(util.ArrayMetricToString(record.Get("analytics.by_modified_time.bytes_used.percentages").ClonedString()), ",")
+				mtBytesUsedLabels := strings.Split(util.ArrayMetricToString(analytics.Get("by_modified_time.bytes_used.labels").ClonedString()), ",")
 
-				atBytesUsedValues := strings.Split(util.ArrayMetricToString(record.Get("analytics.by_accessed_time.bytes_used.values").String()), ",")
-				atBytesUsedPercentages := strings.Split(util.ArrayMetricToString(record.Get("analytics.by_accessed_time.bytes_used.percentages").String()), ",")
-				atBytesUsedLabels := strings.Split(util.ArrayMetricToString(analytics.Get("by_accessed_time.bytes_used.labels").String()), ",")
+				atBytesUsedValues := strings.Split(util.ArrayMetricToString(record.Get("analytics.by_accessed_time.bytes_used.values").ClonedString()), ",")
+				atBytesUsedPercentages := strings.Split(util.ArrayMetricToString(record.Get("analytics.by_accessed_time.bytes_used.percentages").ClonedString()), ",")
+				atBytesUsedLabels := strings.Split(util.ArrayMetricToString(analytics.Get("by_accessed_time.bytes_used.labels").ClonedString()), ",")
 
 				instance, err := explorerMatrix.NewInstance(instanceID + name)
 				if err != nil {

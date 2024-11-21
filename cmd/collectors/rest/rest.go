@@ -35,7 +35,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"os"
 	"regexp"
@@ -296,35 +296,6 @@ func TemplateFn(n *node.Node, obj string) string {
 	return fn
 }
 
-// Returns a slice of keys in dot notation from json
-func getFieldName(source string, parent string) []string {
-	res := make([]string, 0)
-	var arr map[string]gjson.Result
-	r := gjson.Parse(source)
-	switch {
-	case r.IsArray():
-		newR := r.Get("0")
-		arr = newR.Map()
-	case r.IsObject():
-		arr = r.Map()
-	default:
-		return []string{parent}
-	}
-	if len(arr) == 0 {
-		return []string{parent}
-	}
-	for key, val := range arr {
-		var temp []string
-		if parent == "" {
-			temp = getFieldName(val.Raw, key)
-		} else {
-			temp = getFieldName(val.Raw, parent+"."+key)
-		}
-		res = append(res, temp...)
-	}
-	return res
-}
-
 // PollCounter performs daily tasks such as updating the cluster info and caching href.
 func (r *Rest) PollCounter() (map[string]*matrix.Matrix, error) {
 
@@ -573,7 +544,7 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 			for _, k := range prop.InstanceKeys {
 				value := instanceData.Get(k)
 				if value.Exists() {
-					instanceKey += value.String()
+					instanceKey += value.ClonedString()
 				}
 			}
 
@@ -614,13 +585,13 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 				if value.IsArray() {
 					var labelArray []string
 					for _, r := range value.Array() {
-						labelString := r.String()
+						labelString := r.ClonedString()
 						labelArray = append(labelArray, labelString)
 					}
 					sort.Strings(labelArray)
 					instance.SetLabel(display, strings.Join(labelArray, ","))
 				} else {
-					instance.SetLabel(display, value.String())
+					instance.SetLabel(display, value.ClonedString())
 				}
 				count++
 			}
@@ -630,7 +601,7 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 		// If the `statistics.status` is not OK, then set `partial` to true.
 		if mat.UUID == "KeyPerf" {
 			status := instanceData.Get("statistics.status")
-			if status.Exists() && status.String() != "ok" {
+			if status.Exists() && status.ClonedString() != "ok" {
 				instance.SetPartial(true)
 				numPartials++
 			}
@@ -654,9 +625,9 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 				var floatValue float64
 				switch metric.MetricType {
 				case "duration":
-					floatValue = HandleDuration(f.String())
+					floatValue = HandleDuration(f.ClonedString())
 				case "timestamp":
-					floatValue = HandleTimestamp(f.String())
+					floatValue = HandleTimestamp(f.ClonedString())
 				case "":
 					floatValue = f.Float()
 				default:
@@ -811,7 +782,7 @@ func (r *Rest) getNodeUuids() ([]collector.ID, error) {
 
 	infos := make([]collector.ID, 0, len(records))
 	for _, instanceData := range records {
-		infos = append(infos, collector.ID{SerialNumber: instanceData.Get("serial_number").String(), SystemID: instanceData.Get("system_id").String()})
+		infos = append(infos, collector.ID{SerialNumber: instanceData.Get("serial_number").ClonedString(), SystemID: instanceData.Get("system_id").ClonedString()})
 	}
 
 	// When Harvest monitors a c-mode system, the first node is picked.

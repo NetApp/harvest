@@ -7,7 +7,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"gopkg.in/yaml.v3"
 	"log/slog"
 	"strings"
@@ -161,7 +161,7 @@ func (t *JoinRest) updateCache(model join, bytes *[]byte) {
 			m = make(map[string]string)
 			t.resourcesMap[model.Rest] = m
 		}
-		m[k.String()] = vals[i].String()
+		m[k.ClonedString()] = vals[i].ClonedString()
 	}
 }
 

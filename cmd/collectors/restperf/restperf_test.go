@@ -12,7 +12,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"os"
 	"sort"
 	"testing"

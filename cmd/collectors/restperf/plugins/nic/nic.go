@@ -22,7 +22,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"math"
 	"strconv"
@@ -246,11 +246,11 @@ func (n *Nic) getIfgroupInfo() map[string]string {
 	}
 
 	for _, ifgroup := range ifgroupsData {
-		nodeName := ifgroup.Get("node").String()
-		ifgrp := ifgroup.Get("ifgrp").String()
+		nodeName := ifgroup.Get("node").ClonedString()
+		ifgrp := ifgroup.Get("ifgrp").ClonedString()
 		ports := ifgroup.Get("ports").Array()
 		for _, portName := range ports {
-			portIfgroupMap[nodeName+portName.String()] = ifgrp
+			portIfgroupMap[nodeName+portName.ClonedString()] = ifgrp
 		}
 	}
 	return portIfgroupMap

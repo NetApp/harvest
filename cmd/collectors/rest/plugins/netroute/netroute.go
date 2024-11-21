@@ -11,7 +11,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"strconv"
 )
@@ -91,8 +91,8 @@ func (n *NetRoute) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *ut
 					interfaceInstance.SetLabel(l, instance.GetLabel(l))
 				}
 				interfaceInstance.SetLabel("index", index)
-				interfaceInstance.SetLabel("address", address[i].String())
-				interfaceInstance.SetLabel("name", name.String())
+				interfaceInstance.SetLabel("address", address[i].ClonedString())
+				interfaceInstance.SetLabel("name", name.ClonedString())
 				interfaceInstance.SetLabel("route_uuid", routeID)
 				count++
 			}

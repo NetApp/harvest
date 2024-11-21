@@ -2,7 +2,7 @@ package grafana
 
 import (
 	"fmt"
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"maps"
 	"net/url"
 	"os"
@@ -39,11 +39,11 @@ func checkThroughput(t *testing.T, path string, data []byte) {
 	path = ShortPath(path)
 	// visit all panels for datasource test
 	VisitAllPanels(data, func(_ string, _, value gjson.Result) {
-		panelTitle := value.Get("title").String()
-		kind := value.Get("type").String()
+		panelTitle := value.Get("title").ClonedString()
+		kind := value.Get("type").ClonedString()
 		targetsSlice := value.Get("targets").Array()
 		for _, targetN := range targetsSlice {
-			expr := targetN.Get("expr").String()
+			expr := targetN.Get("expr").ClonedString()
 			if !throughputPattern.MatchString(expr) {
 				continue
 			}
@@ -81,12 +81,12 @@ func checkThreshold(t *testing.T, path string, data []byte) {
 	}
 	// visit all panels for datasource test
 	VisitAllPanels(data, func(_ string, _, value gjson.Result) {
-		panelTitle := value.Get("title").String()
-		kind := value.Get("type").String()
+		panelTitle := value.Get("title").ClonedString()
+		kind := value.Get("type").ClonedString()
 		if kind == "table" || kind == "stat" {
 			targetsSlice := value.Get("targets").Array()
 			for _, targetN := range targetsSlice {
-				expr := targetN.Get("expr").String()
+				expr := targetN.Get("expr").ClonedString()
 				// Check if the metric matches the aggregation pattern
 				if aggregationPattern.MatchString(expr) {
 					continue
@@ -110,7 +110,7 @@ func checkThreshold(t *testing.T, path string, data []byte) {
 						tSlice := dS.Get("thresholds")
 						color := tSlice.Get("steps.#.color")
 						v := tSlice.Get("steps.#.value")
-						isThresholdSet = color.String() == th[0] && v.String() == th[1]
+						isThresholdSet = color.ClonedString() == th[0] && v.ClonedString() == th[1]
 					}
 
 					// check if any override has threshold set
@@ -118,15 +118,15 @@ func checkThreshold(t *testing.T, path string, data []byte) {
 					for _, overrideN := range overridesSlice {
 						propertiesSlice := overrideN.Get("properties").Array()
 						for _, propertiesN := range propertiesSlice {
-							id := propertiesN.Get("id").String()
+							id := propertiesN.Get("id").ClonedString()
 							if id == "thresholds" {
 								color := propertiesN.Get("value.steps.#.color")
 								v := propertiesN.Get("value.steps.#.value")
-								isThresholdSet = color.String() == th[0] && v.String() == th[1]
+								isThresholdSet = color.ClonedString() == th[0] && v.ClonedString() == th[1]
 							} else if id == "custom.displayMode" && kind == "table" {
 								v := propertiesN.Get("value")
-								if !slices.Contains(expectedColorBackground[kind], v.String()) {
-									t.Errorf("dashboard=%s panel=%s kind=%s expr=%s don't have correct displaymode expected %s found %s", path, panelTitle, kind, expr, expectedColorBackground[kind], v.String())
+								if !slices.Contains(expectedColorBackground[kind], v.ClonedString()) {
+									t.Errorf("dashboard=%s panel=%s kind=%s expr=%s don't have correct displaymode expected %s found %s", path, panelTitle, kind, expr, expectedColorBackground[kind], v.ClonedString())
 								} else {
 									isColorBackgroundSet = true
 								}
@@ -136,8 +136,8 @@ func checkThreshold(t *testing.T, path string, data []byte) {
 
 					if kind == "stat" {
 						colorMode := value.Get("options.colorMode")
-						if !slices.Contains(expectedColorBackground[kind], colorMode.String()) {
-							t.Errorf("dashboard=%s panel=%s kind=%s expr=%s doesn't have correct colorMode got %s want %s", path, panelTitle, kind, expr, colorMode.String(), expectedColorBackground[kind])
+						if !slices.Contains(expectedColorBackground[kind], colorMode.ClonedString()) {
+							t.Errorf("dashboard=%s panel=%s kind=%s expr=%s doesn't have correct colorMode got %s want %s", path, panelTitle, kind, expr, colorMode.ClonedString(), expectedColorBackground[kind])
 						} else {
 							isColorBackgroundSet = true
 						}
@@ -165,7 +165,7 @@ func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
 	// visit all panels for datasource test
 	VisitAllPanels(data, func(p string, _, value gjson.Result) {
 		dsResult := value.Get("datasource")
-		panelTitle := value.Get("title").String()
+		panelTitle := value.Get("title").ClonedString()
 		if !dsResult.Exists() {
 			t.Errorf(`dashboard="%s" panel="%s" doesn't have a datasource`, path, panelTitle)
 			return
@@ -173,12 +173,12 @@ func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
 
 		if dsResult.Type == gjson.Null {
 			// if the panel is a row, it is OK if there is no datasource
-			if value.Get("type").String() == "row" {
+			if value.Get("type").ClonedString() == "row" {
 				return
 			}
 			t.Errorf(`dashboard=%s panel="%s" has a null datasource, should be ${DS_PROMETHEUS}`, path, panelTitle)
-		} else if dsResult.String() != "${DS_PROMETHEUS}" {
-			t.Errorf("dashboard=%s panel=%s has %s datasource should be ${DS_PROMETHEUS}", path, panelTitle, dsResult.String())
+		} else if dsResult.ClonedString() != "${DS_PROMETHEUS}" {
+			t.Errorf("dashboard=%s panel=%s has %s datasource should be ${DS_PROMETHEUS}", path, panelTitle, dsResult.ClonedString())
 		}
 
 		// Later versions of Grafana introduced a different datasource shape which causes errors
@@ -190,14 +190,14 @@ func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
 		//          },
 		dses := value.Get("targets.#.datasource").Array()
 		for i, ds := range dses {
-			if ds.String() != "${DS_PROMETHEUS}" {
+			if ds.ClonedString() != "${DS_PROMETHEUS}" {
 				targetPath := fmt.Sprintf("%s.target[%d].datasource", p, i)
 				t.Errorf(
 					"dashboard=%s path=%s panel=%s has %s datasource shape that breaks older versions of Grafana",
 					path,
 					targetPath,
 					panelTitle,
-					dsResult.String(),
+					dsResult.ClonedString(),
 				)
 			}
 		}
@@ -219,21 +219,21 @@ func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
 	}
 
 	gjson.GetBytes(data, "templating.list").ForEach(func(_, value gjson.Result) bool {
-		name := value.Get("name").String()
-		if value.Get("name").String() == "DS_PROMETHEUS" {
+		name := value.Get("name").ClonedString()
+		if value.Get("name").ClonedString() == "DS_PROMETHEUS" {
 			doesDsPromExist = true
-			query := value.Get("query").String()
+			query := value.Get("query").ClonedString()
 			if query != "prometheus" {
 				t.Errorf("dashboard=%s var=DS_PROMETHEUS query want=prometheus got=%s", path, query)
 			}
-			theType := value.Get("type").String()
+			theType := value.Get("type").ClonedString()
 			if theType != "datasource" {
 				t.Errorf("dashboard=%s var=DS_PROMETHEUS type want=datasource got=%s", path, theType)
 			}
 		}
 
 		if !excludedNames[name] {
-			if value.Get("current.selected").String() == "true" {
+			if value.Get("current.selected").ClonedString() == "true" {
 				t.Errorf(
 					"dashboard=%s var=current.selected query want=false got=%s text=%s value=%s name= %s",
 					path,
@@ -243,8 +243,8 @@ func checkDashboardForDatasource(t *testing.T, path string, data []byte) {
 					name,
 				)
 			}
-			ttype := value.Get("type").String()
-			datasource := value.Get("datasource").String()
+			ttype := value.Get("type").ClonedString()
+			datasource := value.Get("datasource").ClonedString()
 			if !excludeTypes[ttype] && datasource != "${DS_PROMETHEUS}" {
 				t.Errorf("dashboard=%s var=%s has %s datasource should be ${DS_PROMETHEUS}", path, name, datasource)
 			}
@@ -454,16 +454,16 @@ var metricDivideMetric2 = regexp.MustCompile(`(\w+)/.*?(\w+){`)
 var metricWithArray = regexp.MustCompile(`metric=~*"(.*?)"`)
 
 func doPanel(t *testing.T, pathPrefix string, key gjson.Result, value gjson.Result, mt *metricsTable, dashboardPath string) {
-	kind := value.Get("type").String()
+	kind := value.Get("type").ClonedString()
 	if kind == "row" {
 		return
 	}
 	path := fmt.Sprintf("%spanels[%d]", pathPrefix, key.Int())
-	defaultUnit := value.Get("fieldConfig.defaults.unit").String()
+	defaultUnit := value.Get("fieldConfig.defaults.unit").ClonedString()
 	overridesSlice := value.Get("fieldConfig.overrides").Array()
 	targetsSlice := value.Get("targets").Array()
 	transformationsSlice := value.Get("transformations").Array()
-	title := value.Get("title").String()
+	title := value.Get("title").ClonedString()
 	sPath := ShortPath(dashboardPath)
 
 	propertiesMap := make(map[string]map[string]string)
@@ -474,18 +474,18 @@ func doPanel(t *testing.T, pathPrefix string, key gjson.Result, value gjson.Resu
 	for oi, overrideN := range overridesSlice {
 		matcherID := overrideN.Get("matcher.id")
 		// make sure that mapKey is unique for each override element
-		propertiesMapKey := matcherID.String() + strconv.Itoa(oi)
+		propertiesMapKey := matcherID.ClonedString() + strconv.Itoa(oi)
 		propertiesMap[propertiesMapKey] = make(map[string]string)
 		matcherOptions := overrideN.Get("matcher.options")
 		propertiesN := overrideN.Get("properties").Array()
 		for pi, propN := range propertiesN {
-			propID := propN.Get("id").String()
-			propVal := propN.Get("value").String()
+			propID := propN.Get("id").ClonedString()
+			propVal := propN.Get("value").ClonedString()
 			propertiesMap[propertiesMapKey][propID] = propVal
 			if propID == "unit" {
 				o := override{
-					id:      matcherID.String(),
-					options: matcherOptions.String(),
+					id:      matcherID.ClonedString(),
+					options: matcherOptions.ClonedString(),
 					unit:    propVal,
 					path: fmt.Sprintf("%s.panels[%d].fieldConfig.overrides.%d.properties.%d",
 						path, key.Int(), oi, pi),
@@ -517,11 +517,11 @@ func doPanel(t *testing.T, pathPrefix string, key gjson.Result, value gjson.Resu
 
 	// Heatmap units are saved in a different place
 	if kind == "heatmap" && defaultUnit == "" {
-		defaultUnit = value.Get("yAxis.format").String()
+		defaultUnit = value.Get("yAxis.format").ClonedString()
 	}
 
 	for _, targetN := range targetsSlice {
-		expr := targetN.Get("expr").String()
+		expr := targetN.Get("expr").ClonedString()
 		matches := metricName.FindStringSubmatch(expr)
 		if len(matches) != 2 {
 			continue
@@ -550,7 +550,7 @@ func doPanel(t *testing.T, pathPrefix string, key gjson.Result, value gjson.Resu
 			metric = metric + "-" + match[1]
 		}
 
-		exprRefID := targetN.Get("refId").String()
+		exprRefID := targetN.Get("refId").ClonedString()
 		expressions = append(expressions, expression{
 			metric: metric,
 			refID:  exprRefID,
@@ -558,11 +558,11 @@ func doPanel(t *testing.T, pathPrefix string, key gjson.Result, value gjson.Resu
 		})
 	}
 	for _, transformN := range transformationsSlice {
-		transformID := transformN.Get("id").String()
+		transformID := transformN.Get("id").ClonedString()
 		if transformID == "organize" {
 			rbn := transformN.Get("options.renameByName").Map()
 			for k, v := range rbn {
-				valueToName[k] = v.String()
+				valueToName[k] = v.ClonedString()
 			}
 		}
 	}
@@ -621,7 +621,7 @@ func TestVariablesRefresh(t *testing.T) {
 
 func checkVariablesRefresh(t *testing.T, path string, data []byte) {
 	gjson.GetBytes(data, "templating.list").ForEach(func(key, value gjson.Result) bool {
-		if value.Get("type").String() == "datasource" {
+		if value.Get("type").ClonedString() == "datasource" {
 			return true
 		}
 		// If the variable is not visible, ignore
@@ -629,15 +629,15 @@ func checkVariablesRefresh(t *testing.T, path string, data []byte) {
 			return true
 		}
 		// If the variable is custom, ignore
-		if value.Get("type").String() == "custom" {
+		if value.Get("type").ClonedString() == "custom" {
 			return true
 		}
 
 		refreshVal := value.Get("refresh").Int()
 		if refreshVal != 2 {
-			varName := value.Get("name").String()
+			varName := value.Get("name").ClonedString()
 			t.Errorf("dashboard=%s path=templating.list[%s].refresh variable=%s is not 2. Should be \"refresh\": 2,",
-				ShortPath(path), key.String(), varName)
+				ShortPath(path), key.ClonedString(), varName)
 		}
 
 		return true
@@ -654,7 +654,7 @@ func TestVariablesAreSorted(t *testing.T) {
 func checkVariablesAreSorted(t *testing.T, path string, data []byte) {
 	gjson.GetBytes(data, "templating.list").ForEach(func(key, value gjson.Result) bool {
 		// The datasource variable does not need to be sorted, ignore
-		if value.Get("type").String() == "datasource" {
+		if value.Get("type").ClonedString() == "datasource" {
 			return true
 		}
 		// If the variable is not visible, ignore
@@ -662,15 +662,15 @@ func checkVariablesAreSorted(t *testing.T, path string, data []byte) {
 			return true
 		}
 		// If the variable is custom, ignore
-		if value.Get("type").String() == "custom" {
+		if value.Get("type").ClonedString() == "custom" {
 			return true
 		}
 
 		sortVal := value.Get("sort").Int()
 		if sortVal != 1 {
-			varName := value.Get("name").String()
+			varName := value.Get("name").ClonedString()
 			t.Errorf("dashboard=%s path=templating.list[%s].sort variable=%s is not 1. Should be \"sort\": 1,",
-				ShortPath(path), key.String(), varName)
+				ShortPath(path), key.ClonedString(), varName)
 		}
 		return true
 	})
@@ -708,7 +708,7 @@ func checkVariablesHaveAll(t *testing.T, path string, data []byte) {
 
 	gjson.GetBytes(data, "templating.list").ForEach(func(key, value gjson.Result) bool {
 		// The datasource variable does not need to be sorted, ignore
-		if value.Get("type").String() == "datasource" {
+		if value.Get("type").ClonedString() == "datasource" {
 			return true
 		}
 		// If the variable is not visible, ignore
@@ -716,11 +716,11 @@ func checkVariablesHaveAll(t *testing.T, path string, data []byte) {
 			return true
 		}
 		// If the variable is custom, ignore
-		if value.Get("type").String() == "custom" {
+		if value.Get("type").ClonedString() == "custom" {
 			return true
 		}
 
-		varName := value.Get("name").String()
+		varName := value.Get("name").ClonedString()
 		if !shouldHaveAll[varName] {
 			return true
 		}
@@ -728,10 +728,10 @@ func checkVariablesHaveAll(t *testing.T, path string, data []byte) {
 		includeAll := value.Get("includeAll").Bool()
 		if !includeAll {
 			t.Errorf("variable=%s should have includeAll=true dashboard=%s path=templating.list[%s].includeAll",
-				varName, ShortPath(path), key.String())
+				varName, ShortPath(path), key.ClonedString())
 		}
 
-		allValues := value.Get("allValue").String()
+		allValues := value.Get("allValue").ClonedString()
 		if allValues != ".*" {
 			if exceptionForAllValues[ShortPath(path)] {
 				return true
@@ -758,18 +758,18 @@ func checkUnusedVariables(t *testing.T, path string, data []byte) {
 	description := make([]string, 0)
 	varExpression := make([]string, 0)
 	gjson.GetBytes(data, "templating.list").ForEach(func(_, value gjson.Result) bool {
-		if value.Get("type").String() == "datasource" {
+		if value.Get("type").ClonedString() == "datasource" {
 			return true
 		}
 		// name of variable
-		vars = append(vars, value.Get("name").String())
+		vars = append(vars, value.Get("name").ClonedString())
 		// query expression of variable
-		varExpression = append(varExpression, value.Get("definition").String())
+		varExpression = append(varExpression, value.Get("definition").ClonedString())
 		return true
 	})
 
 	VisitAllPanels(data, func(_ string, _, value gjson.Result) {
-		d := value.Get("description").String()
+		d := value.Get("description").ClonedString()
 		if d != "" {
 			description = append(description, d)
 		}
@@ -821,14 +821,14 @@ func allExpressions(data []byte) []expression {
 }
 
 func doExpr(pathPrefix string, key gjson.Result, value gjson.Result, exprFunc func(exp expression)) {
-	kind := value.Get("type").String()
+	kind := value.Get("type").ClonedString()
 	if kind == "row" {
 		return
 	}
 	path := fmt.Sprintf("%spanels[%d]", pathPrefix, key.Int())
 	targetsSlice := value.Get("targets").Array()
 	for i, targetN := range targetsSlice {
-		expr := targetN.Get("expr").String()
+		expr := targetN.Get("expr").ClonedString()
 		pathWithTarget := path + ".targets[" + strconv.Itoa(i) + "]"
 		exprFunc(expression{
 			refID:  pathWithTarget,
@@ -863,14 +863,14 @@ func checkExemplarIsFalse(t *testing.T, path string, data []byte) {
 
 func checkUIDNotEmpty(t *testing.T, path string, data []byte) {
 	path = ShortPath(path)
-	uid := gjson.GetBytes(data, "uid").String()
+	uid := gjson.GetBytes(data, "uid").ClonedString()
 	if uid == "" {
 		t.Errorf(`dashboard=%s uid is "", but should not be empty`, path)
 	}
 }
 
 func checkIDIsNull(t *testing.T, path string, data []byte) {
-	id := gjson.GetBytes(data, "id").String()
+	id := gjson.GetBytes(data, "id").ClonedString()
 	if id != "" {
 		t.Errorf(`dashboard=%s id should be null but is %s`, ShortPath(path), id)
 	}
@@ -967,8 +967,8 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 		if v.name == "TopResources" {
 			for _, optionVal := range v.options {
 				selected := optionVal.Get("selected").Bool()
-				text := optionVal.Get("text").String()
-				value := optionVal.Get("value").String()
+				text := optionVal.Get("text").ClonedString()
+				value := optionVal.Get("value").ClonedString()
 
 				// Test if text and value match, except for the special case with "All" and "$__all"
 				if text != value && !(text == "All" && value == "$__all") {
@@ -1076,7 +1076,7 @@ func checkExpansion(t *testing.T, exceptions map[string]int, path string, data [
 		title := value.Get("title")
 		pathCollapsed[path] = collapsed.Bool()
 		if !collapsed.Bool() {
-			titles = append(titles, title.String())
+			titles = append(titles, title.ClonedString())
 		}
 	})
 	if len(titles) == 0 {
@@ -1115,19 +1115,19 @@ func doLegends(t *testing.T, value gjson.Result, dashPath string) {
 	wantDisplayMode := "table"
 	wantPlacement := "bottom"
 
-	kind := value.Get("type").String()
+	kind := value.Get("type").ClonedString()
 	if kind == "row" || kind == "piechart" {
 		return
 	}
 	optionsData := value.Get("options")
 	if legendData := optionsData.Get("legend"); legendData.Exists() {
-		legendDisplayMode := legendData.Get("displayMode").String()
-		legendPlacementData := legendData.Get("placement").String()
-		title := value.Get("title").String()
+		legendDisplayMode := legendData.Get("displayMode").ClonedString()
+		legendPlacementData := legendData.Get("placement").ClonedString()
+		title := value.Get("title").ClonedString()
 		calcsData := legendData.Get("calcs").Array()
 		var calcsSlice []string
 		for _, result := range calcsData {
-			calcsSlice = append(calcsSlice, result.String())
+			calcsSlice = append(calcsSlice, result.ClonedString())
 		}
 		checkLegendCalculations(t, calcsSlice, dashPath, title)
 
@@ -1181,7 +1181,7 @@ func checkConnectNullValues(t *testing.T, path string, data []byte) {
 		}
 		if !spanNulls.Bool() {
 			t.Errorf(`dashboard=%s panel="%s fieldConfig.defaults.custom.spanNulls got=[%s] want=true`,
-				dashPath, value.Get("title").String(), spanNulls.String())
+				dashPath, value.Get("title").ClonedString(), spanNulls.ClonedString())
 		}
 	})
 }
@@ -1198,7 +1198,7 @@ func checkPanelChildPanels(t *testing.T, path string, data []byte) {
 	gjson.GetBytes(data, "panels").ForEach(func(_, value gjson.Result) bool {
 		// Check all collapsed panels should have child panels
 		if value.Get("collapsed").Bool() && len(value.Get("panels").Array()) == 0 {
-			t.Errorf("dashboard=%s, panel=%s, has child panels outside of row", path, value.Get("title").String())
+			t.Errorf("dashboard=%s, panel=%s, has child panels outside of row", path, value.Get("title").ClonedString())
 		}
 		return true
 	})
@@ -1233,12 +1233,12 @@ func TestTableFilter(t *testing.T) {
 func checkTableFilter(t *testing.T, path string, data []byte) {
 	dashPath := ShortPath(path)
 	VisitAllPanels(data, func(_ string, key, value gjson.Result) {
-		panelType := value.Get("type").String()
+		panelType := value.Get("type").ClonedString()
 		if panelType == "table" {
-			isFilterable := value.Get("fieldConfig.defaults.custom.filterable").String()
+			isFilterable := value.Get("fieldConfig.defaults.custom.filterable").ClonedString()
 			if isFilterable != "true" {
 				t.Errorf(`dashboard=%s path=panels[%d] title="%s" does not enable filtering for the table`,
-					dashPath, key.Int(), value.Get("title").String())
+					dashPath, key.Int(), value.Get("title").ClonedString())
 			}
 		}
 	})
@@ -1256,19 +1256,19 @@ func checkJoinExpressions(t *testing.T, path string, data []byte) {
 	dashPath := ShortPath(path)
 	expectedRegex := "(.*) 1$"
 	VisitAllPanels(data, func(_ string, key, value gjson.Result) {
-		panelType := value.Get("type").String()
+		panelType := value.Get("type").ClonedString()
 		if panelType == "table" {
 			targetsSlice := value.Get("targets").Array()
 			if len(targetsSlice) > 1 {
 				errorFound := false
 				for _, targetN := range targetsSlice {
-					expr := targetN.Get("expr").String()
+					expr := targetN.Get("expr").ClonedString()
 					if strings.Contains(expr, "label_join") {
 						transformationsSlice := value.Get("transformations").Array()
 						regexUsed := false
 						for _, transformationN := range transformationsSlice {
-							if transformationN.Get("id").String() == "renameByRegex" {
-								regex := transformationN.Get("options.regex").String()
+							if transformationN.Get("id").ClonedString() == "renameByRegex" {
+								regex := transformationN.Get("options.regex").ClonedString()
 								if regex == expectedRegex {
 									regexUsed = true
 									break
@@ -1283,7 +1283,7 @@ func checkJoinExpressions(t *testing.T, path string, data []byte) {
 				}
 				if errorFound {
 					t.Errorf(`dashboard=%s path=panels[%d] title="%s" uses label_join but does not use the expected regex`,
-						dashPath, key.Int(), value.Get("title").String())
+						dashPath, key.Int(), value.Get("title").ClonedString())
 				}
 			}
 		}
@@ -1309,7 +1309,7 @@ func checkTitlesOfTopN(t *testing.T, path string, data []byte) {
 		title := gjson.GetBytes(data, titleRef)
 
 		// Check that the title contains are variable
-		if !strings.Contains(title.String(), "$") {
+		if !strings.Contains(title.ClonedString(), "$") {
 			t.Errorf("dashboard=%s, title=%s at=%s does not include TopResource var", path, title, titleRef)
 		}
 	}
@@ -1340,19 +1340,19 @@ func checkIOPSDecimal(t *testing.T, path string, data []byte) {
 	dashPath := ShortPath(path)
 
 	VisitAllPanels(data, func(path string, _, value gjson.Result) {
-		panelType := value.Get("type").String()
+		panelType := value.Get("type").ClonedString()
 		if panelType != "timeseries" {
 			return
 		}
-		defaultUnit := value.Get("fieldConfig.defaults.unit").String()
+		defaultUnit := value.Get("fieldConfig.defaults.unit").ClonedString()
 		if defaultUnit != "iops" {
 			return
 		}
-		decimals := value.Get("fieldConfig.defaults.decimals").String()
+		decimals := value.Get("fieldConfig.defaults.decimals").ClonedString()
 
 		if decimals != "0" {
 			t.Errorf(`dashboard=%s path=%s panel="%s", decimals should be 0 got=%s`,
-				dashPath, path, value.Get("title").String(), decimals)
+				dashPath, path, value.Get("title").ClonedString(), decimals)
 		}
 	})
 }
@@ -1375,32 +1375,32 @@ func checkPercentHasMinMax(t *testing.T, path string, data []byte) {
 	dashPath := ShortPath(path)
 
 	VisitAllPanels(data, func(path string, _, value gjson.Result) {
-		panelType := value.Get("type").String()
+		panelType := value.Get("type").ClonedString()
 		if panelType != "timeseries" {
 			return
 		}
-		defaultUnit := value.Get("fieldConfig.defaults.unit").String()
+		defaultUnit := value.Get("fieldConfig.defaults.unit").ClonedString()
 		if defaultUnit != "percent" && defaultUnit != "percentunit" {
 			return
 		}
-		theMin := value.Get("fieldConfig.defaults.min").String()
-		theMax := value.Get("fieldConfig.defaults.max").String()
-		decimals := value.Get("fieldConfig.defaults.decimals").String()
+		theMin := value.Get("fieldConfig.defaults.min").ClonedString()
+		theMax := value.Get("fieldConfig.defaults.max").ClonedString()
+		decimals := value.Get("fieldConfig.defaults.decimals").ClonedString()
 		if theMin != "0" {
 			t.Errorf(`dashboard=%s path=%s panel="%s" has unit=%s, min should be 0 got=%s`,
-				dashPath, path, value.Get("title").String(), defaultUnit, theMin)
+				dashPath, path, value.Get("title").ClonedString(), defaultUnit, theMin)
 		}
 		if decimals != "2" {
 			t.Errorf(`dashboard=%s path=%s panel="%s", decimals should be 2 got=%s`,
-				dashPath, path, value.Get("title").String(), decimals)
+				dashPath, path, value.Get("title").ClonedString(), decimals)
 		}
-		if defaultUnit == "percent" && !exceptionMap[value.Get("title").String()] && theMax != "100" {
+		if defaultUnit == "percent" && !exceptionMap[value.Get("title").ClonedString()] && theMax != "100" {
 			t.Errorf(`dashboard=%s path=%s panel="%s" has unit=%s, max should be 100 got=%s`,
-				dashPath, path, value.Get("title").String(), defaultUnit, theMax)
+				dashPath, path, value.Get("title").ClonedString(), defaultUnit, theMax)
 		}
 		if defaultUnit == "percentunit" && theMax != "1" {
 			t.Errorf(`dashboard=%s path=%s panel="%s" has unit=%s, max should be 1 got=%s`,
-				dashPath, path, value.Get("title").String(), defaultUnit, theMax)
+				dashPath, path, value.Get("title").ClonedString(), defaultUnit, theMax)
 		}
 	})
 }
@@ -1416,8 +1416,8 @@ func TestRefreshIsOff(t *testing.T) {
 
 func checkDashboardRefresh(t *testing.T, path string, data []byte) {
 	gjson.GetBytes(data, "refresh").ForEach(func(_, value gjson.Result) bool {
-		if value.String() != "" {
-			t.Errorf(`dashboard=%s, got refresh=%s, want refresh="" (off)`, path, value.String())
+		if value.ClonedString() != "" {
+			t.Errorf(`dashboard=%s, got refresh=%s, want refresh="" (off)`, path, value.ClonedString())
 		}
 		return true
 	})
@@ -1439,19 +1439,19 @@ func checkHeatmapSettings(t *testing.T, path string, data []byte) {
 		wantColorMode   = "spectrum"
 	)
 	VisitAllPanels(data, func(path string, _, value gjson.Result) {
-		panelType := value.Get("type").String()
+		panelType := value.Get("type").ClonedString()
 		if panelType != "heatmap" {
 			return
 		}
-		colorScheme := value.Get("color.colorScheme").String()
-		colorMode := value.Get("color.mode").String()
+		colorScheme := value.Get("color.colorScheme").ClonedString()
+		colorMode := value.Get("color.mode").ClonedString()
 		if colorScheme != wantColorScheme {
 			t.Errorf(`dashboard=%s path=%s panel="%s" got color.scheme=%s, want=%s`,
-				dashPath, path, value.Get("title").String(), colorScheme, wantColorScheme)
+				dashPath, path, value.Get("title").ClonedString(), colorScheme, wantColorScheme)
 		}
 		if colorMode != wantColorMode {
 			t.Errorf(`dashboard=%s path=%s panel="%s" got color.mode=%s, want=%s`,
-				dashPath, path, value.Get("title").String(), colorMode, wantColorMode)
+				dashPath, path, value.Get("title").ClonedString(), colorMode, wantColorMode)
 		}
 	})
 }
@@ -1484,18 +1484,18 @@ func checkBytePanelsHave2Decimals(t *testing.T, path string, data []byte) {
 	}
 
 	VisitAllPanels(data, func(path string, _, value gjson.Result) {
-		panelType := value.Get("type").String()
+		panelType := value.Get("type").ClonedString()
 		if panelType != "timeseries" {
 			return
 		}
-		defaultUnit := value.Get("fieldConfig.defaults.unit").String()
+		defaultUnit := value.Get("fieldConfig.defaults.unit").ClonedString()
 		if !byteTypes[defaultUnit] {
 			return
 		}
-		decimals := value.Get("fieldConfig.defaults.decimals").String()
+		decimals := value.Get("fieldConfig.defaults.decimals").ClonedString()
 		if decimals != "2" {
 			t.Errorf(`dashboard=%s path=%s panel="%s" got decimals=%s, want decimals=2`,
-				dashPath, path, value.Get("title").String(), decimals)
+				dashPath, path, value.Get("title").ClonedString(), decimals)
 		}
 	})
 }
@@ -1505,7 +1505,7 @@ func TestDashboardKeysAreSorted(t *testing.T) {
 		dashboards,
 		func(path string, data []byte) {
 			path = ShortPath(path)
-			sorted := gjson.GetBytes(data, `@pretty:{"sortKeys":true, "indent":"  ", "width":0}`).String()
+			sorted := gjson.GetBytes(data, `@pretty:{"sortKeys":true, "indent":"  ", "width":0}`).ClonedString()
 			if sorted != string(data) {
 				sortedPath := writeSorted(t, path, sorted)
 				path = "grafana/dashboards/" + path
@@ -1558,11 +1558,11 @@ func checkDashboardTime(t *testing.T, path string, data []byte) {
 
 	fromWant := "now-3h"
 	toWant := "now"
-	if from.String() != fromWant {
-		t.Errorf("dashboard=%s time.from got=%s want=%s", dashPath, from.String(), fromWant)
+	if from.ClonedString() != fromWant {
+		t.Errorf("dashboard=%s time.from got=%s want=%s", dashPath, from.ClonedString(), fromWant)
 	}
-	if to.String() != toWant {
-		t.Errorf("dashboard=%s time.to got=%s want=%s", dashPath, to.String(), toWant)
+	if to.ClonedString() != toWant {
+		t.Errorf("dashboard=%s time.to got=%s want=%s", dashPath, to.ClonedString(), toWant)
 	}
 }
 
@@ -1575,9 +1575,9 @@ func TestNoDrillDownRows(t *testing.T) {
 func checkRowNames(t *testing.T, path string, data []byte) {
 	path = ShortPath(path)
 	VisitAllPanels(data, func(_ string, key, value gjson.Result) {
-		kind := value.Get("type").String()
+		kind := value.Get("type").ClonedString()
 		if kind == "row" {
-			title := value.Get("title").String()
+			title := value.Get("title").ClonedString()
 			if strings.Contains(title, "Drilldown") {
 				t.Errorf(`dashboard=%s path=panels[%d] title=[%s] got row with Drilldown in title. Remove drilldown`, path, key.Int(), title)
 			}
@@ -1625,14 +1625,14 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 	}
 
 	VisitAllPanels(data, func(_ string, _, value gjson.Result) {
-		kind := value.Get("type").String()
+		kind := value.Get("type").ClonedString()
 		if kind == "row" || kind == "text" {
 			return
 		}
-		description := value.Get("description").String()
+		description := value.Get("description").ClonedString()
 		targetsSlice := value.Get("targets").Array()
-		title := value.Get("title").String()
-		panelType := value.Get("type").String()
+		title := value.Get("title").ClonedString()
+		panelType := value.Get("type").ClonedString()
 		if slices.Contains(ignoreList, title) {
 			fmt.Printf(`dashboard=%s panel="%s" has different description\n`, dashPath, title)
 			return
@@ -1640,11 +1640,11 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 
 		if description == "" {
 			if len(targetsSlice) == 1 {
-				expr := targetsSlice[0].Get("expr").String()
+				expr := targetsSlice[0].Get("expr").ClonedString()
 				if strings.Contains(expr, "/") || strings.Contains(expr, "+") || strings.Contains(expr, "-") || strings.Contains(expr, " on ") {
 					// This indicates expressions with arithmetic operations, After adding appropriate description, this will be uncommented.
 					*count++
-					t.Errorf(`dashboard=%s panel="%s" has arithmetic operations %d`, dashPath, value.Get("title").String(), *count)
+					t.Errorf(`dashboard=%s panel="%s" has arithmetic operations %d`, dashPath, value.Get("title").ClonedString(), *count)
 				} else {
 					*count++
 					t.Errorf(`dashboard=%s panel="%s" does not have panel description %d`, dashPath, title, *count)
@@ -1685,13 +1685,13 @@ func checkVariablesAreFSxFriendly(t *testing.T, path string, data []byte) {
 
 	gjson.GetBytes(data, "templating.list").ForEach(func(key, value gjson.Result) bool {
 		// Only consider query variables
-		if value.Get("type").String() != "query" {
+		if value.Get("type").ClonedString() != "query" {
 			return true
 		}
 
-		query := value.Get("query").String()
-		definition := value.Get("definition").String()
-		varName := value.Get("name").String()
+		query := value.Get("query").ClonedString()
+		definition := value.Get("definition").ClonedString()
+		varName := value.Get("name").ClonedString()
 
 		sPath := ShortPath(path)
 		isExceptionPath := exceptionValues[sPath]
@@ -1702,12 +1702,12 @@ func checkVariablesAreFSxFriendly(t *testing.T, path string, data []byte) {
 
 		if !strings.Contains(query, "cluster_new_status") {
 			t.Errorf(`dashboard=%s path=templating.list[%s] variable="%s" does not have "cluster_new_status" in query. Found "%s" instead.`,
-				sPath, key.String(), varName, definition)
+				sPath, key.ClonedString(), varName, definition)
 		}
 
 		if !strings.Contains(definition, "cluster_new_status") {
 			t.Errorf(`dashboard=%s path=templating.list[%s] variable="%s" does not have "cluster_new_status" in definition. Found "%s" instead.`,
-				sPath, key.String(), varName, definition)
+				sPath, key.ClonedString(), varName, definition)
 		}
 		return true
 	})
@@ -1751,7 +1751,7 @@ func TestLinks(t *testing.T) {
 
 			// Check if the dashboard exists
 			if _, ok := uids[matches[1]]; !ok {
-				t.Errorf(`dashboard=%s links to not existant dashboard with link="%s"`, path, link)
+				t.Errorf(`dashboard=%s links to not existent dashboard with link="%s"`, path, link)
 			}
 
 			query, err := url.ParseQuery(link)
@@ -1797,21 +1797,21 @@ func checkLinks(t *testing.T, path string, data []byte, hasLinks map[string][]st
 		checkPanelLinks(t, value, dashPath, hasLinks)
 	})
 
-	uid := gjson.GetBytes(data, "uid").String()
+	uid := gjson.GetBytes(data, "uid").ClonedString()
 	uids[uid] = dashPath
 }
 
 func checkPanelLinks(t *testing.T, value gjson.Result, path string, hasLinks map[string][]string) {
 	linkFound := false
 
-	if value.Get("type").String() == "table" {
+	if value.Get("type").ClonedString() == "table" {
 		value.Get("fieldConfig.overrides").ForEach(func(_, anOverride gjson.Result) bool {
-			if name := anOverride.Get("matcher.options").String(); slices.Contains(supportedLinkedObjects, name) {
-				title := value.Get("title").String()
+			if name := anOverride.Get("matcher.options").ClonedString(); slices.Contains(supportedLinkedObjects, name) {
+				title := value.Get("title").ClonedString()
 				linkFound = false
 				anOverride.Get("properties").ForEach(func(_, propValue gjson.Result) bool {
 					propValue.Get("value").ForEach(func(_, value gjson.Result) bool {
-						link := value.Get("url").String()
+						link := value.Get("url").ClonedString()
 						if link != "" {
 							linkFound = true
 							hasLinks[path] = append(hasLinks[path], link)
@@ -1853,9 +1853,9 @@ func checkTags(t *testing.T, path string, data []byte) {
 	}
 
 	for _, tag := range tags {
-		if !allowedTagsMap[tag.String()] {
+		if !allowedTagsMap[tag.ClonedString()] {
 			allowedTags := slices.Sorted(maps.Keys(allowedTagsMap))
-			t.Errorf(`dashboard=%s got tag=%s, which is not in the allowed set=%v`, path, tag.String(), allowedTags)
+			t.Errorf(`dashboard=%s got tag=%s, which is not in the allowed set=%v`, path, tag.ClonedString(), allowedTags)
 		}
 	}
 }

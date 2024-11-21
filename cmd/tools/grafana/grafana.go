@@ -14,9 +14,9 @@ import (
 	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/util"
 	goversion "github.com/netapp/harvest/v2/third_party/go-version"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"github.com/netapp/harvest/v2/third_party/tidwall/sjson"
 	"github.com/spf13/cobra"
-	"github.com/tidwall/gjson"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 	"io"
@@ -242,7 +242,7 @@ func addLabel(content []byte, label string, labelMap map[string]string) []byte {
 	for i, result := range newVars {
 		aStr := addChainedVar(result, label, labelMap)
 		if aStr == "" {
-			varsString.WriteString(result.String())
+			varsString.WriteString(result.ClonedString())
 		} else {
 			varsString.WriteString(aStr)
 		}
@@ -269,19 +269,19 @@ func addChainedVar(result gjson.Result, label string, labelMap map[string]string
 		return ""
 	}
 	// Don't modify the query if this is one of the new labels we're adding since its query is already correct
-	if _, ok := labelMap[varName.String()]; ok {
+	if _, ok := labelMap[varName.ClonedString()]; ok {
 		return ""
 	}
 
-	defStr := definition.String()
-	if defStr != query.String() {
+	defStr := definition.ClonedString()
+	if defStr != query.ClonedString() {
 		return ""
 	}
 	chained := toChainedVar(defStr, label)
 	if chained == "" {
 		return ""
 	}
-	rString := result.String()
+	rString := result.ClonedString()
 	var err error
 	rString, err = sjson.Set(rString, "definition", chained)
 	if err != nil {
@@ -605,16 +605,16 @@ func changeClusterLabel(data []byte, cluster string) []byte {
 		value.Get("targets").ForEach(func(targetKey, target gjson.Result) bool {
 			expr := target.Get("expr")
 			if expr.Exists() {
-				newExpression := rewriteCluster(expr.String(), cluster)
+				newExpression := rewriteCluster(expr.ClonedString(), cluster)
 
-				data, _ = sjson.SetBytes(data, path+".targets."+targetKey.String()+".expr", []byte(newExpression))
+				data, _ = sjson.SetBytes(data, path+".targets."+targetKey.ClonedString()+".expr", []byte(newExpression))
 			}
 
 			legendFormat := target.Get("legendFormat")
 			if legendFormat.Exists() {
-				newLegendFormat := rewriteCluster(legendFormat.String(), cluster)
+				newLegendFormat := rewriteCluster(legendFormat.ClonedString(), cluster)
 
-				data, _ = sjson.SetBytes(data, path+".targets."+targetKey.String()+".legendFormat", []byte(newLegendFormat))
+				data, _ = sjson.SetBytes(data, path+".targets."+targetKey.ClonedString()+".legendFormat", []byte(newLegendFormat))
 			}
 
 			return true
@@ -622,30 +622,30 @@ func changeClusterLabel(data []byte, cluster string) []byte {
 
 		// Rewrite tables columns
 		panelType := value.Get("type")
-		if panelType.String() == "table" {
+		if panelType.ClonedString() == "table" {
 			value.Get("transformations").ForEach(func(transKey, value gjson.Result) bool {
 				id := value.Get("id")
-				if id.String() == "organize" {
+				if id.ClonedString() == "organize" {
 
 					// Check if the cluster exists in renameByName, and if so, rename it to the new cluster label
 					clusterTrans := value.Get("options.renameByName.cluster")
 					if clusterTrans.Exists() {
-						data, _ = sjson.SetBytes(data, path+".transformations."+transKey.String()+".options.renameByName."+cluster, []byte(clusterTrans.String()))
+						data, _ = sjson.SetBytes(data, path+".transformations."+transKey.ClonedString()+".options.renameByName."+cluster, []byte(clusterTrans.ClonedString()))
 					}
 
 					// If the cluster column exists, remove the column, and add the new cluster label at the same index
 					clusterIndex := value.Get("options.indexByName.cluster")
 					if clusterIndex.Exists() {
-						data, _ = sjson.SetBytes(data, path+".transformations."+transKey.String()+".options.indexByName."+cluster, clusterIndex.Int())
-						data, _ = sjson.DeleteBytes(data, path+".transformations."+transKey.String()+".options.indexByName.cluster")
+						data, _ = sjson.SetBytes(data, path+".transformations."+transKey.ClonedString()+".options.indexByName."+cluster, clusterIndex.Int())
+						data, _ = sjson.DeleteBytes(data, path+".transformations."+transKey.ClonedString()+".options.indexByName.cluster")
 					}
 					// Handle the case where the cluster column is named "cluster 1", "cluster 2", etc.
 					for i := range 10 {
 						clusterN := "cluster " + strconv.Itoa(i)
 						clusterIndexI := value.Get("options.indexByName." + clusterN)
 						if clusterIndexI.Exists() {
-							data, _ = sjson.SetBytes(data, path+".transformations."+transKey.String()+".options.indexByName."+cluster+" "+strconv.Itoa(i), clusterIndexI.Int())
-							data, _ = sjson.DeleteBytes(data, path+".transformations."+transKey.String()+".options.indexByName."+clusterN)
+							data, _ = sjson.SetBytes(data, path+".transformations."+transKey.ClonedString()+".options.indexByName."+cluster+" "+strconv.Itoa(i), clusterIndexI.Int())
+							data, _ = sjson.DeleteBytes(data, path+".transformations."+transKey.ClonedString()+".options.indexByName."+clusterN)
 						}
 					}
 
@@ -654,36 +654,36 @@ func changeClusterLabel(data []byte, cluster string) []byte {
 					if excludeByName.Exists() {
 						clusterIndex := value.Get("options.excludeByName.cluster")
 						if clusterIndex.Exists() {
-							data, _ = sjson.SetBytes(data, path+".transformations."+transKey.String()+".options.excludeByName."+cluster, clusterIndex.Int())
-							data, _ = sjson.DeleteBytes(data, path+".transformations."+transKey.String()+".options.excludeByName.cluster")
+							data, _ = sjson.SetBytes(data, path+".transformations."+transKey.ClonedString()+".options.excludeByName."+cluster, clusterIndex.Int())
+							data, _ = sjson.DeleteBytes(data, path+".transformations."+transKey.ClonedString()+".options.excludeByName.cluster")
 						}
 						// Handle the case where the cluster column is named "cluster 1", "cluster 2", etc.
 						for i := range 10 {
 							clusterN := "cluster " + strconv.Itoa(i)
 							clusterIndexI := value.Get("options.excludeByName." + clusterN)
 							if clusterIndexI.Exists() {
-								data, _ = sjson.SetBytes(data, path+".transformations."+transKey.String()+".options.excludeByName."+cluster+" "+strconv.Itoa(i), true)
-								data, _ = sjson.DeleteBytes(data, path+".transformations."+transKey.String()+".options.excludeByName."+clusterN)
+								data, _ = sjson.SetBytes(data, path+".transformations."+transKey.ClonedString()+".options.excludeByName."+cluster+" "+strconv.Itoa(i), true)
+								data, _ = sjson.DeleteBytes(data, path+".transformations."+transKey.ClonedString()+".options.excludeByName."+clusterN)
 							}
 						}
 					}
-				} else if id.String() == "filterFieldsByName" {
+				} else if id.ClonedString() == "filterFieldsByName" {
 					// Check if the cluster exists in filterFieldsByName, and if so, rename it to the new cluster label
 					names := value.Get("options.include.names")
 					if names.Exists() {
 						var nameValues []string
 						hasCluster := false
 						for _, name := range names.Array() {
-							if name.String() == "cluster" {
+							if name.ClonedString() == "cluster" {
 								hasCluster = true
 								nameValues = append(nameValues, cluster)
 								continue
 							}
-							nameValues = append(nameValues, name.String())
+							nameValues = append(nameValues, name.ClonedString())
 						}
 
 						if hasCluster {
-							data, _ = sjson.SetBytes(data, path+".transformations."+transKey.String()+".options.include.names", nameValues)
+							data, _ = sjson.SetBytes(data, path+".transformations."+transKey.ClonedString()+".options.include.names", nameValues)
 						}
 					}
 				}
@@ -693,8 +693,8 @@ func changeClusterLabel(data []byte, cluster string) []byte {
 
 			// Change all fieldConfig overrides that contain cluster
 			value.Get("fieldConfig.overrides").ForEach(func(overrideKey, override gjson.Result) bool {
-				if override.Get("matcher.id").String() == "byName" && override.Get("matcher.options").String() == "cluster" {
-					data, _ = sjson.SetBytes(data, path+".fieldConfig.overrides."+overrideKey.String()+".matcher.options", cluster)
+				if override.Get("matcher.id").ClonedString() == "byName" && override.Get("matcher.options").ClonedString() == "cluster" {
+					data, _ = sjson.SetBytes(data, path+".fieldConfig.overrides."+overrideKey.ClonedString()+".matcher.options", cluster)
 				}
 				return true
 			})
@@ -707,16 +707,16 @@ func changeClusterLabel(data []byte, cluster string) []byte {
 		// Change definition
 		definition := value.Get("definition")
 		if definition.Exists() {
-			newDefinition := rewriteCluster(definition.String(), cluster)
+			newDefinition := rewriteCluster(definition.ClonedString(), cluster)
 
-			data, _ = sjson.SetBytes(data, "templating.list."+key.String()+".definition", []byte(newDefinition))
+			data, _ = sjson.SetBytes(data, "templating.list."+key.ClonedString()+".definition", []byte(newDefinition))
 		}
 
 		// Change query
 		query := value.Get("query.query")
 		if query.Exists() {
-			newQuery := rewriteCluster(query.String(), cluster)
-			data, _ = sjson.SetBytes(data, "templating.list."+key.String()+".query.query", []byte(newQuery))
+			newQuery := rewriteCluster(query.ClonedString(), cluster)
+			data, _ = sjson.SetBytes(data, "templating.list."+key.ClonedString()+".query.query", []byte(newQuery))
 		}
 
 		return true

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/Netapp/harvest-automation/test/dashboard"
 	"github.com/Netapp/harvest-automation/test/utils"
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 	"log/slog"
@@ -464,12 +464,12 @@ func generateQueryWithValue(query string, expression string) string {
 	value := gjson.Get(response, "data.result")
 	caser := cases.Title(language.Und)
 	if value.Exists() && value.IsArray() && (len(value.Array()) > 0) {
-		metricMap := gjson.Get(value.Array()[0].String(), "metric").Map()
+		metricMap := gjson.Get(value.Array()[0].ClonedString(), "metric").Map()
 		for k, v := range metricMap {
-			newExpression = strings.ReplaceAll(newExpression, "$"+caser.String(k), v.String())
-			newExpression = strings.ReplaceAll(newExpression, "$"+k, v.String())
-			newExpression = strings.ReplaceAll(newExpression, "$"+strings.ToLower(k), v.String())
-			newExpression = strings.ReplaceAll(newExpression, "$"+strings.ToUpper(k), v.String())
+			newExpression = strings.ReplaceAll(newExpression, "$"+caser.String(k), v.ClonedString())
+			newExpression = strings.ReplaceAll(newExpression, "$"+k, v.ClonedString())
+			newExpression = strings.ReplaceAll(newExpression, "$"+strings.ToLower(k), v.ClonedString())
+			newExpression = strings.ReplaceAll(newExpression, "$"+strings.ToUpper(k), v.ClonedString())
 		}
 		return newExpression
 	}

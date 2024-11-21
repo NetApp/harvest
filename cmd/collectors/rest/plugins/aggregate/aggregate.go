@@ -14,7 +14,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"github.com/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 )
 
 const (
@@ -121,16 +121,16 @@ func (a *Aggregate) collectObjectStoreData(aggrSpaceMat, data *matrix.Matrix) {
 	}
 
 	for _, record := range records {
-		aggrName := record.Get("aggregate_name").String()
+		aggrName := record.Get("aggregate_name").ClonedString()
 		uuid, has := uuidLookup[aggrName]
 		if !has {
 			continue
 		}
 
-		binNum := record.Get("bin_num").String()
-		tierName := record.Get("tier_name").String()
-		logicalUsed := record.Get("object_store_logical_used").String()
-		physicalUsed := record.Get("object_store_physical_used").String()
+		binNum := record.Get("bin_num").ClonedString()
+		tierName := record.Get("tier_name").ClonedString()
+		logicalUsed := record.Get("object_store_logical_used").ClonedString()
+		physicalUsed := record.Get("object_store_physical_used").ClonedString()
 		instanceKey := aggrName + "_" + tierName + "_" + binNum
 
 		instance, err := aggrSpaceMat.NewInstance(instanceKey)

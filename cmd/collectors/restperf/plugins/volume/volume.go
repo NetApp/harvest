@@ -99,9 +99,9 @@ func (v *Volume) fetchVolumes() map[string]string {
 			v.SLogger.Warn("volume is not object, skipping", slog.String("type", volume.Type.String()))
 			continue
 		}
-		styleExtended := volume.Get("volume_style_extended").String()
-		name := volume.Get("volume").String()
-		svm := volume.Get("vserver").String()
+		styleExtended := volume.Get("volume_style_extended").ClonedString()
+		name := volume.Get("volume").ClonedString()
+		svm := volume.Get("vserver").ClonedString()
 		volumesMap[svm+name] = styleExtended
 	}
 
