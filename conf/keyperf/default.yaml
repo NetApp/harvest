@@ -14,6 +14,6 @@ objects:
   NFSv3:                       nfsv3.yaml
   NFSv41:                      nfsv4_1.yaml
   NFSv4:                       nfsv4.yaml
-  SystemNode:                  node.yaml
+  SystemNode:                  system_node.yaml
   Volume:                      volume.yaml
   Qtree:                       qtree.yaml
