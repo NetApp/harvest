@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2024-Nov-22
+Creation Date : 2024-Nov-19
 ONTAP Version: 9.15.1
 ```
 ## Understanding the structure
@@ -2898,19 +2898,21 @@ Percentage of blocks overwritten to write-cache among all disk writes.
 
 ### flexcache_blocks_requested_from_client
 
-Total number of blocks requested from client
+Total blocks requested by the client.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| KeyPerf | `api/storage/volumes` | `statistics.flexcache_raw.client_requested_blocks`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/flexcache.yaml | 
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `blocks_requested_from_client`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml | 
 
 
 ### flexcache_blocks_retrieved_from_origin
 
-Total number of blocks retrieved from origin
+Blocks retrieved from origin in case of a cache miss. This can be divided by the raw client_requested_blocks and multiplied by 100 to calculate the cache miss percentage.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| KeyPerf | `api/storage/volumes` | `statistics.flexcache_raw.cache_miss_blocks`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/flexcache.yaml | 
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `blocks_retrieved_from_origin`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml | 
 
 
@@ -2983,6 +2985,7 @@ This metric represents the percentage of block requests from a client that resul
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| KeyPerf | `api/storage/volumes` | `blocks_retrieved_from_origin, blocks_requested_from_client`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/flexcache.yaml | 
 | ZAPI | `flexcache_per_volume` | `blocks_retrieved_from_origin, blocks_requested_from_client`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml | 
 
 
@@ -3051,7 +3054,7 @@ Total number of reconciled lock entries at cache side.
 
 ### flexcache_size
 
-Physical size of the FlexCache. The recommended size for a FlexCache is 10% of the origin volume. The minimum FlexCache constituent size is 1GB.
+Physical size of the volume, in bytes. The minimum size for a FlexVol volume is 20MB and the minimum size for a FlexGroup volume is 200MB per constituent. The recommended size for a FlexGroup volume is a minimum of 100GB per constituent. For all volumes, the default size is equal to the minimum size.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -15822,8 +15825,7 @@ This metric measures the amount of data read by the top clients to a specific vo
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/storage/volumes/*/top-metrics/clients` | `throughput.read` | conf/rest/9.12.0/volume.yaml |
-| KeyPerf | `api/storage/volumes/*/top-metrics/clients` | `throughput.read`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
+| REST | `api/storage/volumes/*/top-metrics/clients` | `iops.read` | conf/rest/9.12.0/volume.yaml |
 
 
 ### volume_top_clients_read_ops
@@ -15833,7 +15835,6 @@ This metric tracks the number of read operations performed by the top clients on
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/storage/volumes/*/top-metrics/clients` | `iops.read` | conf/rest/9.12.0/volume.yaml |
-| KeyPerf | `api/storage/volumes/*/top-metrics/clients` | `iops.read`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
 
 
 ### volume_top_clients_write_data
@@ -15842,8 +15843,7 @@ This metric measures the amount of data written by the top clients to a specific
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/storage/volumes/*/top-metrics/clients` | `throughput.write` | conf/rest/9.12.0/volume.yaml |
-| KeyPerf | `api/storage/volumes/*/top-metrics/files` | `throughput.write`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
+| REST | `api/storage/volumes/*/top-metrics/clients` | `iops.read` | conf/rest/9.12.0/volume.yaml |
 
 
 ### volume_top_clients_write_ops
@@ -15852,8 +15852,7 @@ This metric tracks the number of write operations performed by the top clients o
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/storage/volumes/*/top-metrics/clients` | `iops.write` | conf/rest/9.12.0/volume.yaml |
-| KeyPerf | `api/storage/volumes/*/top-metrics/clients` | `iops.write`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
+| REST | `api/storage/volumes/*/top-metrics/clients` | `iops.read` | conf/rest/9.12.0/volume.yaml |
 
 
 ### volume_top_files_read_data
@@ -15862,8 +15861,7 @@ This metric measures the amount of data read from the files of a specific volume
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/storage/volumes/*/top-metrics/files` | `throughput.read` | conf/rest/9.12.0/volume.yaml |
-| KeyPerf | `api/storage/volumes/*/top-metrics/files` | `throughput.read`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
+| REST | `api/storage/volumes/*/top-metrics/files` | `iops.read` | conf/rest/9.12.0/volume.yaml |
 
 
 ### volume_top_files_read_ops
@@ -15873,7 +15871,6 @@ This metric tracks the number of read operations performed on the files of a spe
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/storage/volumes/*/top-metrics/files` | `iops.read` | conf/rest/9.12.0/volume.yaml |
-| KeyPerf | `api/storage/volumes/*/top-metrics/files` | `iops.read`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
 
 
 ### volume_top_files_write_data
@@ -15882,8 +15879,7 @@ This metric measures the amount of data written to the top files of a specific v
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/storage/volumes/*/top-metrics/files` | `throughput.write` | conf/rest/9.12.0/volume.yaml |
-| KeyPerf | `api/storage/volumes/*/top-metrics/files` | `throughput.write`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
+| REST | `api/storage/volumes/*/top-metrics/files` | `iops.read` | conf/rest/9.12.0/volume.yaml |
 
 
 ### volume_top_files_write_ops
@@ -15892,8 +15888,7 @@ This metric tracks the number of write operations performed on the files of a sp
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/storage/volumes/*/top-metrics/files` | `iops.write` | conf/rest/9.12.0/volume.yaml |
-| KeyPerf | `api/storage/volumes/*/top-metrics/files` | `iops.write`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
+| REST | `api/storage/volumes/*/top-metrics/files` | `iops.read` | conf/rest/9.12.0/volume.yaml |
 
 
 ### volume_total_data

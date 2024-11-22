@@ -6484,7 +6484,7 @@
           },
           "id": 155,
           "options": {
-            "content": "<br>\n\nTop clients panels are disabled by default and are supported by the Volume Template in RestPerf Collector. For more details on how to enable them, please refer to the discussion at https://github.com/NetApp/harvest/discussions/3130.",
+            "content": "<br>\n\nTop clients panels are disabled by default and are supported by the Volume Template in RestPerf Collector starting from ONTAP version 9.13.1. For more details on how to enable them, please refer to the discussion at https://github.com/NetApp/harvest/discussions/3130.",
             "mode": "markdown"
           },
           "pluginVersion": "8.1.8",
@@ -6883,7 +6883,7 @@
           },
           "id": 167,
           "options": {
-            "content": "<br>\n\nTop files panels are disabled by default and are supported by the Volume Template in RestPerf Collector. For more details on how to enable them, please refer to the discussion at https://github.com/NetApp/harvest/discussions/3130.",
+            "content": "<br>\n\nTop files panels are disabled by default and are supported by the Volume Template in RestPerf Collector starting from ONTAP version 9.13.1. For more details on how to enable them, please refer to the discussion at https://github.com/NetApp/harvest/discussions/3130.",
             "mode": "markdown"
           },
           "pluginVersion": "8.1.8",

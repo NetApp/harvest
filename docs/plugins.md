@@ -761,7 +761,7 @@ You can view the metrics published by the ChangeLog plugin in the `ChangeLog Mon
 
 # VolumeTopClients
 
-The `VolumeTopClients` plugin is used to track a volume's top clients and top files in terms of read and write IOPS, as well as read and write throughput. This plugin is available only through the RestPerf Collector in ONTAP version 9.12 and later.
+The `VolumeTopClients` plugin is used to track a volume's top clients and top files in terms of read and write IOPS, as well as read and write throughput. This plugin is available only through the RestPerf Collector in ONTAP version 9.13.1 and later.
 
 ## Enabling the Plugin
 
