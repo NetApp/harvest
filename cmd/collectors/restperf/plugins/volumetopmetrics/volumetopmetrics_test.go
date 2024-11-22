@@ -52,19 +52,19 @@ func setupMockDataMatrix() *matrix.Matrix {
 	instance2.SetLabel("volume", "volharvest")
 	instance2.SetLabel("svm", "osc")
 
-	readOpsMetric, _ := data.NewMetricFloat64("total_read_ops")
+	readOpsMetric, _ := data.NewMetricFloat64("total_read_ops", "read_ops")
 	_ = readOpsMetric.SetValueFloat64(instance1, 1)
 	_ = readOpsMetric.SetValueFloat64(instance2, 241)
 
-	writeOpsMetric, _ := data.NewMetricFloat64("total_write_ops")
+	writeOpsMetric, _ := data.NewMetricFloat64("total_write_ops", "write_ops")
 	_ = writeOpsMetric.SetValueFloat64(instance1, 100)
 	_ = writeOpsMetric.SetValueFloat64(instance2, 341)
 
-	readDataMetric, _ := data.NewMetricFloat64("bytes_read")
+	readDataMetric, _ := data.NewMetricFloat64("bytes_read", "read_data")
 	_ = readDataMetric.SetValueFloat64(instance1, 100000)
 	_ = readDataMetric.SetValueFloat64(instance2, 341000)
 
-	writeDataMetric, _ := data.NewMetricFloat64("bytes_written")
+	writeDataMetric, _ := data.NewMetricFloat64("bytes_written", "write_data")
 	_ = writeDataMetric.SetValueFloat64(instance1, 100000)
 	_ = writeDataMetric.SetValueFloat64(instance2, 341000)
 	return data
@@ -77,15 +77,14 @@ func init() {
 func TestProcessTopClients(t *testing.T) {
 	testCases := []struct {
 		name          string
-		metric        string
 		matrixName    string
 		testFilePath  string
 		expectedCount int
 	}{
-		{"Client Read Ops", "iops.read", topClientReadOPSMatrix, "testdata/client_readops.json", 1},
-		{"Client Write Ops", "iops.write", topClientWriteOPSMatrix, "testdata/client_writeops.json", 4},
-		{"Client Read Data", "throughput.read", topClientReadDataMatrix, "testdata/client_readdata.json", 1},
-		{"Client Write Data", "throughput.write", topClientWriteDataMatrix, "testdata/client_writedata.json", 3},
+		{"Client Read Ops", topClientReadOPSMatrix, "testdata/client_readops.json", 1},
+		{"Client Write Ops", topClientWriteOPSMatrix, "testdata/client_writeops.json", 4},
+		{"Client Read Data", topClientReadDataMatrix, "testdata/client_readdata.json", 1},
+		{"Client Write Data", topClientWriteDataMatrix, "testdata/client_writedata.json", 3},
 	}
 
 	for _, tc := range testCases {
@@ -125,15 +124,14 @@ func TestProcessTopClients(t *testing.T) {
 func TestProcessTopFiles(t *testing.T) {
 	testCases := []struct {
 		name          string
-		metric        string
 		matrixName    string
 		testFilePath  string
 		expectedCount int
 	}{
-		{"File Read Ops", "iops.read", topFileReadOPSMatrix, "testdata/file_readops.json", 1},
-		{"File Write Ops", "iops.write", topFileWriteOPSMatrix, "testdata/file_writeops.json", 6},
-		{"File Read Data", "throughput.read", topFileReadDataMatrix, "testdata/file_readdata.json", 1},
-		{"File Write Data", "throughput.write", topFileWriteDataMatrix, "testdata/file_writedata.json", 1},
+		{"File Read Ops", topFileReadOPSMatrix, "testdata/file_readops.json", 1},
+		{"File Write Ops", topFileWriteOPSMatrix, "testdata/file_writeops.json", 6},
+		{"File Read Data", topFileReadDataMatrix, "testdata/file_readdata.json", 1},
+		{"File Write Data", topFileWriteDataMatrix, "testdata/file_writedata.json", 1},
 	}
 
 	for _, tc := range testCases {

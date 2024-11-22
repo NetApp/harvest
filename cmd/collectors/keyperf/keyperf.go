@@ -3,6 +3,7 @@ package keyperf
 import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest"
+	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/volumetopmetrics"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -143,6 +144,16 @@ func (kp *KeyPerf) loadParamInt(name string, defaultValue int) int {
 
 	kp.Logger.Debug("using values", slog.String("name", name), slog.Int("defaultValue", defaultValue))
 	return defaultValue
+}
+
+func (kp *KeyPerf) LoadPlugin(kind string, p *plugin.AbstractPlugin) plugin.Plugin {
+	switch kind {
+	case "VolumeTopClients":
+		return volumetopmetrics.New(p)
+	default:
+		kp.Logger.Info("no KeyPerf plugin found", slog.String("kind", kind))
+	}
+	return nil
 }
 
 func (kp *KeyPerf) buildCounters() {

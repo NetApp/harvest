@@ -327,10 +327,10 @@ func (t *TopMetrics) processTopMetrics(data *matrix.Matrix) (*TopMetricsData, er
 }
 
 func (t *TopMetrics) collectMetricValues(data *matrix.Matrix, filteredDataInstances *set.Set) ([]MetricValue, []MetricValue, []MetricValue, []MetricValue) {
-	readOpsMetric := data.GetMetric("total_read_ops")
-	writeOpsMetric := data.GetMetric("total_write_ops")
-	readDataMetric := data.GetMetric("bytes_read")
-	writeDataMetric := data.GetMetric("bytes_written")
+	readOpsMetric := data.DisplayMetric("read_ops")
+	writeOpsMetric := data.DisplayMetric("write_ops")
+	readDataMetric := data.DisplayMetric("read_data")
+	writeDataMetric := data.DisplayMetric("write_data")
 
 	var readOpsList, writeOpsList, readDataList, writeDataList []MetricValue
 	for key := range filteredDataInstances.Iter() {
