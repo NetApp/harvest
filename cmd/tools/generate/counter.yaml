@@ -1687,30 +1687,46 @@ counters:
         Endpoint: api/storage/volumes/*/top-metrics/clients
         ONTAPCounter: iops.read
         Template: conf/rest/9.12.0/volume.yaml
+      - API: KeyPerf
+        Endpoint: api/storage/volumes/*/top-metrics/clients
+        ONTAPCounter: iops.read
+        Template: conf/keyperf/9.15.0/volume.yaml
 
   - Name: volume_top_clients_write_ops
     Description: This metric tracks the number of write operations performed by the top clients on a specific volume.
     APIs:
       - API: REST
         Endpoint: api/storage/volumes/*/top-metrics/clients
-        ONTAPCounter: iops.read
+        ONTAPCounter: iops.write
         Template: conf/rest/9.12.0/volume.yaml
+      - API: KeyPerf
+        Endpoint: api/storage/volumes/*/top-metrics/clients
+        ONTAPCounter: iops.write
+        Template: conf/keyperf/9.15.0/volume.yaml
 
   - Name: volume_top_clients_read_data
     Description: This metric measures the amount of data read by the top clients to a specific volume.
     APIs:
       - API: REST
         Endpoint: api/storage/volumes/*/top-metrics/clients
-        ONTAPCounter: iops.read
+        ONTAPCounter: throughput.read
         Template: conf/rest/9.12.0/volume.yaml
+      - API: KeyPerf
+        Endpoint: api/storage/volumes/*/top-metrics/clients
+        ONTAPCounter: throughput.read
+        Template: conf/keyperf/9.15.0/volume.yaml
 
   - Name: volume_top_clients_write_data
     Description: This metric measures the amount of data written by the top clients to a specific volume.
     APIs:
       - API: REST
         Endpoint: api/storage/volumes/*/top-metrics/clients
-        ONTAPCounter: iops.read
+        ONTAPCounter: throughput.write
         Template: conf/rest/9.12.0/volume.yaml
+      - API: KeyPerf
+        Endpoint: api/storage/volumes/*/top-metrics/files
+        ONTAPCounter: throughput.write
+        Template: conf/keyperf/9.15.0/volume.yaml
 
   - Name: volume_top_files_read_ops
     Description: This metric tracks the number of read operations performed on the files of a specific volume.
@@ -1719,30 +1735,46 @@ counters:
         Endpoint: api/storage/volumes/*/top-metrics/files
         ONTAPCounter: iops.read
         Template: conf/rest/9.12.0/volume.yaml
+      - API: KeyPerf
+        Endpoint: api/storage/volumes/*/top-metrics/files
+        ONTAPCounter: iops.read
+        Template: conf/keyperf/9.15.0/volume.yaml
 
   - Name: volume_top_files_write_ops
     Description: This metric tracks the number of write operations performed on the files of a specific volume.
     APIs:
       - API: REST
         Endpoint: api/storage/volumes/*/top-metrics/files
-        ONTAPCounter: iops.read
+        ONTAPCounter: iops.write
         Template: conf/rest/9.12.0/volume.yaml
+      - API: KeyPerf
+        Endpoint: api/storage/volumes/*/top-metrics/files
+        ONTAPCounter: iops.write
+        Template: conf/keyperf/9.15.0/volume.yaml
 
   - Name: volume_top_files_read_data
     Description: This metric measures the amount of data read from the files of a specific volume.
     APIs:
       - API: REST
         Endpoint: api/storage/volumes/*/top-metrics/files
-        ONTAPCounter: iops.read
+        ONTAPCounter: throughput.read
         Template: conf/rest/9.12.0/volume.yaml
+      - API: KeyPerf
+        Endpoint: api/storage/volumes/*/top-metrics/files
+        ONTAPCounter: throughput.read
+        Template: conf/keyperf/9.15.0/volume.yaml
 
   - Name: volume_top_files_write_data
     Description: This metric measures the amount of data written to the top files of a specific volume.
     APIs:
       - API: REST
         Endpoint: api/storage/volumes/*/top-metrics/files
-        ONTAPCounter: iops.read
+        ONTAPCounter: throughput.write
         Template: conf/rest/9.12.0/volume.yaml
+      - API: KeyPerf
+        Endpoint: api/storage/volumes/*/top-metrics/files
+        ONTAPCounter: throughput.write
+        Template: conf/keyperf/9.15.0/volume.yaml
 
   - Name: volume_clone_split_estimate
     Description: Display an estimate of additional storage required in the underlying aggregate to perform a volume clone split operation.
