@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2024-Nov-19
+Creation Date : 2024-Nov-22
 ONTAP Version: 9.15.1
 ```
 ## Understanding the structure
@@ -15825,7 +15825,8 @@ This metric measures the amount of data read by the top clients to a specific vo
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/storage/volumes/*/top-metrics/clients` | `iops.read` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/storage/volumes/*/top-metrics/clients` | `throughput.read` | conf/rest/9.12.0/volume.yaml |
+| KeyPerf | `api/storage/volumes/*/top-metrics/clients` | `throughput.read`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
 
 
 ### volume_top_clients_read_ops
@@ -15835,6 +15836,7 @@ This metric tracks the number of read operations performed by the top clients on
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/storage/volumes/*/top-metrics/clients` | `iops.read` | conf/rest/9.12.0/volume.yaml |
+| KeyPerf | `api/storage/volumes/*/top-metrics/clients` | `iops.read`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
 
 
 ### volume_top_clients_write_data
@@ -15843,7 +15845,8 @@ This metric measures the amount of data written by the top clients to a specific
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/storage/volumes/*/top-metrics/clients` | `iops.read` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/storage/volumes/*/top-metrics/clients` | `throughput.write` | conf/rest/9.12.0/volume.yaml |
+| KeyPerf | `api/storage/volumes/*/top-metrics/files` | `throughput.write`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
 
 
 ### volume_top_clients_write_ops
@@ -15852,7 +15855,8 @@ This metric tracks the number of write operations performed by the top clients o
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/storage/volumes/*/top-metrics/clients` | `iops.read` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/storage/volumes/*/top-metrics/clients` | `iops.write` | conf/rest/9.12.0/volume.yaml |
+| KeyPerf | `api/storage/volumes/*/top-metrics/clients` | `iops.write`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
 
 
 ### volume_top_files_read_data
@@ -15861,7 +15865,8 @@ This metric measures the amount of data read from the files of a specific volume
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/storage/volumes/*/top-metrics/files` | `iops.read` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/storage/volumes/*/top-metrics/files` | `throughput.read` | conf/rest/9.12.0/volume.yaml |
+| KeyPerf | `api/storage/volumes/*/top-metrics/files` | `throughput.read`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
 
 
 ### volume_top_files_read_ops
@@ -15871,6 +15876,7 @@ This metric tracks the number of read operations performed on the files of a spe
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/storage/volumes/*/top-metrics/files` | `iops.read` | conf/rest/9.12.0/volume.yaml |
+| KeyPerf | `api/storage/volumes/*/top-metrics/files` | `iops.read`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
 
 
 ### volume_top_files_write_data
@@ -15879,7 +15885,8 @@ This metric measures the amount of data written to the top files of a specific v
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/storage/volumes/*/top-metrics/files` | `iops.read` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/storage/volumes/*/top-metrics/files` | `throughput.write` | conf/rest/9.12.0/volume.yaml |
+| KeyPerf | `api/storage/volumes/*/top-metrics/files` | `throughput.write`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
 
 
 ### volume_top_files_write_ops
@@ -15888,7 +15895,8 @@ This metric tracks the number of write operations performed on the files of a sp
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/storage/volumes/*/top-metrics/files` | `iops.read` | conf/rest/9.12.0/volume.yaml |
+| REST | `api/storage/volumes/*/top-metrics/files` | `iops.write` | conf/rest/9.12.0/volume.yaml |
+| KeyPerf | `api/storage/volumes/*/top-metrics/files` | `iops.write`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
 
 
 ### volume_total_data
