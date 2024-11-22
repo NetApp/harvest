@@ -11,10 +11,12 @@ import (
 	"log/slog"
 )
 
-const clusterSoftware = "cluster_software"
-const updateMatrix = "update"
-const StatusMatrix = "status"
-const validationMatrix = "validation"
+const (
+	clusterSoftware  = "cluster_software"
+	updateMatrix     = "update"
+	statusMatrix     = "status"
+	validationMatrix = "validation"
+)
 
 type ClusterSoftware struct {
 	*plugin.AbstractPlugin
@@ -93,7 +95,7 @@ func (c *ClusterSoftware) createUpdateMetrics() error {
 }
 
 func (c *ClusterSoftware) createStatusMetrics() error {
-	mat := matrix.New(c.Parent+"."+StatusMatrix, clusterSoftware, clusterSoftware)
+	mat := matrix.New(c.Parent+"."+statusMatrix, clusterSoftware, clusterSoftware)
 	exportOptions := node.NewS("export_options")
 	instanceKeys := exportOptions.NewChildS("instance_keys", "")
 	instanceKeys.NewChildS("", "state")
@@ -102,12 +104,12 @@ func (c *ClusterSoftware) createStatusMetrics() error {
 
 	mat.SetExportOptions(exportOptions)
 
-	if _, err := mat.NewMetricFloat64(StatusMatrix); err != nil {
-		c.SLogger.Error("Failed to create metric", slogx.Err(err), slog.String("metric", StatusMatrix))
+	if _, err := mat.NewMetricFloat64(statusMatrix); err != nil {
+		c.SLogger.Error("Failed to create metric", slogx.Err(err), slog.String("metric", statusMatrix))
 		return err
 	}
 
-	c.data[StatusMatrix] = mat
+	c.data[statusMatrix] = mat
 	return nil
 }
 
@@ -178,11 +180,11 @@ func (c *ClusterSoftware) handleStatusDetails(statusDetailsJSON gjson.Result, gl
 		err                   error
 	)
 	// Purge and reset data
-	c.data[StatusMatrix].PurgeInstances()
-	c.data[StatusMatrix].Reset()
+	c.data[statusMatrix].PurgeInstances()
+	c.data[statusMatrix].Reset()
 
 	// Set all global labels
-	c.data[StatusMatrix].SetGlobalLabels(globalLabels)
+	c.data[statusMatrix].SetGlobalLabels(globalLabels)
 
 	for _, updateDetail := range statusDetailsJSON.Array() {
 		name := updateDetail.Get("name").ClonedString()
@@ -190,7 +192,7 @@ func (c *ClusterSoftware) handleStatusDetails(statusDetailsJSON gjson.Result, gl
 		nodeName := updateDetail.Get("node.name").ClonedString()
 		key = name + state + nodeName
 
-		if clusterStatusInstance, err = c.data[StatusMatrix].NewInstance(key); err != nil {
+		if clusterStatusInstance, err = c.data[statusMatrix].NewInstance(key); err != nil {
 			c.SLogger.Error("Failed to create instance", slogx.Err(err), slog.String("key", key))
 			continue
 		}
@@ -204,7 +206,7 @@ func (c *ClusterSoftware) handleStatusDetails(statusDetailsJSON gjson.Result, gl
 			value = 1.0
 		}
 
-		met := c.data[StatusMatrix].GetMetric(StatusMatrix)
+		met := c.data[statusMatrix].GetMetric(statusMatrix)
 		if err := met.SetValueFloat64(clusterStatusInstance, value); err != nil {
 			c.SLogger.Error("Failed to parse value", slogx.Err(err), slog.Float64("value", value))
 		} else {
