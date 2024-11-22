@@ -399,10 +399,7 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 				case errors.Is(err, errs.ErrNoInstance):
 					c.Schedule.SetStandByModeMax(task, 5*time.Minute)
 					c.SetStatus(1, errs.ErrNoInstance.Error())
-					c.Logger.Info(
-						"no instances, entering standby",
-						slog.String("task", task.Name),
-					)
+					c.Logger.Info("no instances, entering standby", slog.String("task", task.Name))
 				// no metrics available
 				case errors.Is(err, errs.ErrNoMetric):
 					c.SetStatus(1, errs.ErrNoMetric.Error())
@@ -412,16 +409,10 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 						slog.String("task", task.Name),
 						slog.String("object", c.Object),
 					)
-				// Metro cluster is not configured
+				// Metro cluster is not configured, this is similar to no instance except with a larger delay and no logging
 				case errors.Is(err, errs.ErrMetroClusterNotConfigured):
-					var herr errs.HarvestError
-					errMsg := err.Error()
-					if ok := errors.As(err, &herr); ok {
-						errMsg = herr.Inner.Error()
-					}
-					c.SetStatus(1, errMsg)
 					c.Schedule.SetStandByModeMax(task, 1*time.Hour)
-					// no need to log this
+					c.SetStatus(1, errs.ErrNoInstance.Error())
 
 				// not an error we are expecting, so enter failed or standby state
 				default:
