@@ -29400,7 +29400,7 @@ These can be generated on demand by running <code>bin/harvest grafana metrics</c
 <p>More information about ONTAP REST performance counters can be found <a href="https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html">here</a>.</p>
 </li>
 </ul>
-<div class="highlight"><pre><span></span><code>Creation Date : 2024-Nov-21
+<div class="highlight"><pre><span></span><code>Creation Date : 2024-Nov-22
 ONTAP Version: 9.15.1
 </code></pre></div>
 <h2 id="understanding-the-structure">Understanding the structure<a class="headerlink" href="#understanding-the-structure" title="Permanent link">&para;</a></h2>
@@ -36705,7 +36705,7 @@ ONTAP Version: 9.15.1
 </tbody>
 </table>
 <h3 id="flexcache_blocks_requested_from_client">flexcache_blocks_requested_from_client<a class="headerlink" href="#flexcache_blocks_requested_from_client" title="Permanent link">&para;</a></h3>
-<p>Total number of blocks requested from client</p>
+<p>Total blocks requested by the client.</p>
 <table>
 <thead>
 <tr>
@@ -36716,6 +36716,12 @@ ONTAP Version: 9.15.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>KeyPerf</td>
+<td><code>api/storage/volumes</code></td>
+<td><code>statistics.flexcache_raw.client_requested_blocks</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/keyperf/9.15.0/flexcache.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances flexcache_per_volume</code></td>
@@ -36725,7 +36731,7 @@ ONTAP Version: 9.15.1
 </tbody>
 </table>
 <h3 id="flexcache_blocks_retrieved_from_origin">flexcache_blocks_retrieved_from_origin<a class="headerlink" href="#flexcache_blocks_retrieved_from_origin" title="Permanent link">&para;</a></h3>
-<p>Total number of blocks retrieved from origin</p>
+<p>Blocks retrieved from origin in case of a cache miss. This can be divided by the raw client_requested_blocks and multiplied by 100 to calculate the cache miss percentage.</p>
 <table>
 <thead>
 <tr>
@@ -36736,6 +36742,12 @@ ONTAP Version: 9.15.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>KeyPerf</td>
+<td><code>api/storage/volumes</code></td>
+<td><code>statistics.flexcache_raw.cache_miss_blocks</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/keyperf/9.15.0/flexcache.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances flexcache_per_volume</code></td>
@@ -36897,6 +36909,12 @@ ONTAP Version: 9.15.1
 </thead>
 <tbody>
 <tr>
+<td>KeyPerf</td>
+<td><code>api/storage/volumes</code></td>
+<td><code>blocks_retrieved_from_origin, blocks_requested_from_client</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/keyperf/9.15.0/flexcache.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>flexcache_per_volume</code></td>
 <td><code>blocks_retrieved_from_origin, blocks_requested_from_client</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
@@ -37045,7 +37063,7 @@ ONTAP Version: 9.15.1
 </tbody>
 </table>
 <h3 id="flexcache_size">flexcache_size<a class="headerlink" href="#flexcache_size" title="Permanent link">&para;</a></h3>
-<p>Physical size of the FlexCache. The recommended size for a FlexCache is 10% of the origin volume. The minimum FlexCache constituent size is 1GB.</p>
+<p>Physical size of the volume, in bytes. The minimum size for a FlexVol volume is 20MB and the minimum size for a FlexGroup volume is 200MB per constituent. The recommended size for a FlexGroup volume is a minimum of 100GB per constituent. For all volumes, the default size is equal to the minimum size.</p>
 <table>
 <thead>
 <tr>
