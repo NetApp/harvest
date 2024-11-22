@@ -4506,6 +4506,18 @@
                     ]
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Approximate time elapsed"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "s"
+                  }
+                ]
               }
             ]
           },
@@ -4552,7 +4564,8 @@
                     "cluster",
                     "phase",
                     "node",
-                    "datacenter"
+                    "datacenter",
+                    "elapsed_duration"
                   ]
                 }
               }
@@ -4564,13 +4577,15 @@
                 "indexByName": {
                   "cluster": 1,
                   "datacenter": 0,
+                  "elapsed_duration": 5,
                   "node": 2,
                   "phase": 3,
                   "state": 4
                 },
                 "renameByName": {
-                  "phase": "Update Phase",
-                  "state": "State"
+                  "elapsed_duration": "Approximate time elapsed",
+                  "phase": "Phase",
+                  "state": "Status"
                 }
               }
             }
@@ -4734,7 +4749,7 @@
                 },
                 "renameByName": {
                   "name": "Job Name",
-                  "state": "State"
+                  "state": "Status"
                 }
               }
             }
@@ -4874,7 +4889,7 @@
                 },
                 "renameByName": {
                   "status": "Status",
-                  "update_check": "Validation Check Name"
+                  "update_check": "Pre-update Check"
                 }
               }
             }

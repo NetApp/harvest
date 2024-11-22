@@ -82,6 +82,7 @@ func (c *ClusterSoftware) createUpdateMetrics() error {
 	instanceKeys.NewChildS("", "phase")
 	instanceKeys.NewChildS("", "state")
 	instanceKeys.NewChildS("", "node")
+	instanceKeys.NewChildS("", "elapsed_duration")
 
 	mat.SetExportOptions(exportOptions)
 
@@ -147,6 +148,7 @@ func (c *ClusterSoftware) handleUpdateDetails(updateDetailsJSON gjson.Result, gl
 	for _, updateDetail := range updateDetailsJSON.Array() {
 		phase := updateDetail.Get("phase").ClonedString()
 		state := updateDetail.Get("state").ClonedString()
+		elapsedDuration := updateDetail.Get("elapsed_duration").ClonedString()
 		nodeName := updateDetail.Get("node.name").ClonedString()
 		key = phase + state + nodeName
 
@@ -157,6 +159,7 @@ func (c *ClusterSoftware) handleUpdateDetails(updateDetailsJSON gjson.Result, gl
 		clusterUpdateInstance.SetLabel("node", nodeName)
 		clusterUpdateInstance.SetLabel("state", state)
 		clusterUpdateInstance.SetLabel("phase", phase)
+		clusterUpdateInstance.SetLabel("elapsed_duration", elapsedDuration)
 
 		// populate numeric data
 		value := 0.0
@@ -240,12 +243,13 @@ func (c *ClusterSoftware) handleValidationDetails(validationDetailsJSON gjson.Re
 		clusterValidationInstance.SetLabel("update_check", updateCheck)
 		clusterValidationInstance.SetLabel("status", status)
 
-		// populate numeric data
-		value := 0.0
-		if status == "warning" {
-			value = 1.0
+		// ignore all the validation result which are not in warning status
+		if status != "warning" {
+			continue
 		}
 
+		// populate numeric data
+		value := 1.0
 		met := c.data[validationMatrix].GetMetric(validationMatrix)
 		if err := met.SetValueFloat64(clusterValidationInstance, value); err != nil {
 			c.SLogger.Error("Failed to parse value", slogx.Err(err), slog.Float64("value", value))
