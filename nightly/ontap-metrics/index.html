@@ -29400,7 +29400,7 @@ These can be generated on demand by running <code>bin/harvest grafana metrics</c
 <p>More information about ONTAP REST performance counters can be found <a href="https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html">here</a>.</p>
 </li>
 </ul>
-<div class="highlight"><pre><span></span><code>Creation Date : 2024-Nov-22
+<div class="highlight"><pre><span></span><code>Creation Date : 2024-Nov-23
 ONTAP Version: 9.15.1
 </code></pre></div>
 <h2 id="understanding-the-structure">Understanding the structure<a class="headerlink" href="#understanding-the-structure" title="Permanent link">&para;</a></h2>
@@ -41784,7 +41784,7 @@ ONTAP Version: 9.15.1
 <td>KeyPerf</td>
 <td><code>api/cluster/nodes</code></td>
 <td><code>statistics.processor_utilization_raw</code><br><span class="key">Unit:</span> statistics.processor_utilization_base<br><span class="key">Type:</span> percent<br><span class="key">Base:</span></td>
-<td>conf/keyperf/9.15.0/node.yaml</td>
+<td>conf/keyperf/9.15.0/system_node.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -73014,8 +73014,14 @@ ONTAP Version: 9.15.1
 <tr>
 <td>REST</td>
 <td><code>api/storage/volumes/*/top-metrics/clients</code></td>
-<td><code>iops.read</code></td>
+<td><code>throughput.read</code></td>
 <td>conf/rest/9.12.0/volume.yaml</td>
+</tr>
+<tr>
+<td>KeyPerf</td>
+<td><code>api/storage/volumes/*/top-metrics/clients</code></td>
+<td><code>throughput.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -73037,6 +73043,12 @@ ONTAP Version: 9.15.1
 <td><code>iops.read</code></td>
 <td>conf/rest/9.12.0/volume.yaml</td>
 </tr>
+<tr>
+<td>KeyPerf</td>
+<td><code>api/storage/volumes/*/top-metrics/clients</code></td>
+<td><code>iops.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/keyperf/9.15.0/volume.yaml</td>
+</tr>
 </tbody>
 </table>
 <h3 id="volume_top_clients_write_data">volume_top_clients_write_data<a class="headerlink" href="#volume_top_clients_write_data" title="Permanent link">&para;</a></h3>
@@ -73054,8 +73066,14 @@ ONTAP Version: 9.15.1
 <tr>
 <td>REST</td>
 <td><code>api/storage/volumes/*/top-metrics/clients</code></td>
-<td><code>iops.read</code></td>
+<td><code>throughput.write</code></td>
 <td>conf/rest/9.12.0/volume.yaml</td>
+</tr>
+<tr>
+<td>KeyPerf</td>
+<td><code>api/storage/volumes/*/top-metrics/files</code></td>
+<td><code>throughput.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -73074,8 +73092,14 @@ ONTAP Version: 9.15.1
 <tr>
 <td>REST</td>
 <td><code>api/storage/volumes/*/top-metrics/clients</code></td>
-<td><code>iops.read</code></td>
+<td><code>iops.write</code></td>
 <td>conf/rest/9.12.0/volume.yaml</td>
+</tr>
+<tr>
+<td>KeyPerf</td>
+<td><code>api/storage/volumes/*/top-metrics/clients</code></td>
+<td><code>iops.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -73094,8 +73118,14 @@ ONTAP Version: 9.15.1
 <tr>
 <td>REST</td>
 <td><code>api/storage/volumes/*/top-metrics/files</code></td>
-<td><code>iops.read</code></td>
+<td><code>throughput.read</code></td>
 <td>conf/rest/9.12.0/volume.yaml</td>
+</tr>
+<tr>
+<td>KeyPerf</td>
+<td><code>api/storage/volumes/*/top-metrics/files</code></td>
+<td><code>throughput.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -73117,6 +73147,12 @@ ONTAP Version: 9.15.1
 <td><code>iops.read</code></td>
 <td>conf/rest/9.12.0/volume.yaml</td>
 </tr>
+<tr>
+<td>KeyPerf</td>
+<td><code>api/storage/volumes/*/top-metrics/files</code></td>
+<td><code>iops.read</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/keyperf/9.15.0/volume.yaml</td>
+</tr>
 </tbody>
 </table>
 <h3 id="volume_top_files_write_data">volume_top_files_write_data<a class="headerlink" href="#volume_top_files_write_data" title="Permanent link">&para;</a></h3>
@@ -73134,8 +73170,14 @@ ONTAP Version: 9.15.1
 <tr>
 <td>REST</td>
 <td><code>api/storage/volumes/*/top-metrics/files</code></td>
-<td><code>iops.read</code></td>
+<td><code>throughput.write</code></td>
 <td>conf/rest/9.12.0/volume.yaml</td>
+</tr>
+<tr>
+<td>KeyPerf</td>
+<td><code>api/storage/volumes/*/top-metrics/files</code></td>
+<td><code>throughput.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -73154,8 +73196,14 @@ ONTAP Version: 9.15.1
 <tr>
 <td>REST</td>
 <td><code>api/storage/volumes/*/top-metrics/files</code></td>
-<td><code>iops.read</code></td>
+<td><code>iops.write</code></td>
 <td>conf/rest/9.12.0/volume.yaml</td>
+</tr>
+<tr>
+<td>KeyPerf</td>
+<td><code>api/storage/volumes/*/top-metrics/files</code></td>
+<td><code>iops.write</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/keyperf/9.15.0/volume.yaml</td>
 </tr>
 </tbody>
 </table>
