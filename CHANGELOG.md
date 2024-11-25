@@ -31,9 +31,9 @@ read [how to migrate your Prometheus volume](https://github.com/NetApp/harvest/b
 :metal: Thanks to all the people who've opened issues, asked questions on Discord, and contributed code or dashboards
 this release:
 
-@70tas, @Falcon667, @Mark Jordan, @Paqui, @Ryan, @cashnmoney, @knappmi, @BrendonA667, @ekolove, @ceojinhak
+@70tas, @BrendonA667, @Falcon667, @Mark Jordan, @Paqui, @Ryan, @cashnmoney, @ceojinhak, @ekolove, @knappmi
 
-:seedling: This release includes 14 features, 6 bug fixes, 3 documentation, 3 performance, 1 testing, 1 styling, 6 refactoring, 2 miscellaneous, and 3 ci pull requests.
+:seedling: This release includes 14 features, 6 bug fixes, 2 documentation, 3 performance, 1 testing, 1 styling, 6 refactoring, 2 miscellaneous, and 3 ci pull requests.
 
 ### :rocket: Features
 - Add Tags To The Volume And Cluster Dashboards ([#3273](https://github.com/NetApp/harvest/pull/3273))
@@ -60,7 +60,6 @@ this release:
 - Metroclustercheck Collector Should Report "No Instances" ([#3314](https://github.com/NetApp/harvest/pull/3314))
 
 ### :closed_book: Documentation
-- Add User Creation To Quickstart ([#3271](https://github.com/NetApp/harvest/pull/3271))
 - Update Top Clients Doc ([#3311](https://github.com/NetApp/harvest/pull/3311))
 - Harvest Should Include Network Port Ifgrp Permissions ([#3318](https://github.com/NetApp/harvest/pull/3318))
 
