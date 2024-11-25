@@ -1990,7 +1990,7 @@ counters:
         Template: conf/rest/9.12.0/fru.yaml
 
   - Name: cluster_tags
-    Description: This metric display tags at cluster level.
+    Description: Displays tags at the cluster level.
     APIs:
       - API: REST
         Endpoint: NA
@@ -1998,7 +1998,7 @@ counters:
         Template: conf/rest/9.12.0/status.yaml
 
   - Name: volume_tags
-    Description: This metric display tags at volume level.
+    Description: Displays tags at the volume level.
     APIs:
       - API: REST
         Endpoint: NA
@@ -2007,7 +2007,7 @@ counters:
 
 
   - Name: cluster_software_update
-    Description: This metric displays the software update phase with its status.
+    Description: Displays the software update phase with its status.
     APIs:
       - API: REST
         Endpoint: NA
@@ -2015,7 +2015,7 @@ counters:
         Template: conf/rest/9.6.0/clustersoftware.yaml
 
   - Name: cluster_software_status
-    Description: This metric displays the software job with its status.
+    Description: Displays the software job with its status.
     APIs:
       - API: REST
         Endpoint: NA
@@ -2023,7 +2023,7 @@ counters:
         Template: conf/rest/9.6.0/clustersoftware.yaml
 
   - Name: cluster_software_validation
-    Description: This metric displays the software pre validation checks with its status.
+    Description: Displays the software pre-validation checks with their status.
     APIs:
       - API: REST
         Endpoint: NA
