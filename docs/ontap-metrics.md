@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2024-Nov-22
+Creation Date : 2024-Nov-25
 ONTAP Version: 9.15.1
 ```
 ## Understanding the structure
@@ -1150,6 +1150,33 @@ Performance metric for read I/O operations.
 | KeyPerf | `api/cluster` | `statistics.iops_raw.read`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/cluster.yaml | 
 
 
+### cluster_software_status
+
+Displays the software job with its status.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.6.0/clustersoftware.yaml |
+
+
+### cluster_software_update
+
+Displays the software update phase with its status.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.6.0/clustersoftware.yaml |
+
+
+### cluster_software_validation
+
+Displays the software pre-validation checks with their status.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.6.0/clustersoftware.yaml |
+
+
 ### cluster_subsystem_new_status
 
 This metric indicates a value of 1 if the subsystem health is ok (indicating the subsystem is operational) and a value of 0 for any other health status.
@@ -1178,6 +1205,15 @@ Number of suppressed alerts
 |--------|----------|--------|---------|
 | REST | `api/private/cli/system/health/subsystem` | `suppressed_alert_count` | conf/rest/9.12.0/subsystem.yaml |
 | ZAPI | `diagnosis-subsystem-config-get-iter` | `diagnosis-subsystem-config-info.suppressed-alert-count` | conf/zapi/cdot/9.8.0/subsystem.yaml |
+
+
+### cluster_tags
+
+Displays tags at the cluster level.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/status.yaml |
 
 
 ### cluster_total_data
@@ -4902,7 +4938,7 @@ Average processor utilization across active processors in the system
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `average_processor_busy_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> cpu_elapsed_time | conf/restperf/9.12.0/system_node.yaml | 
-| KeyPerf | `api/cluster/nodes` | `statistics.processor_utilization_raw`<br><span class="key">Unit:</span> statistics.processor_utilization_base<br><span class="key">Type:</span> percent<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/node.yaml | 
+| KeyPerf | `api/cluster/nodes` | `statistics.processor_utilization_raw`<br><span class="key">Unit:</span> statistics.processor_utilization_base<br><span class="key">Type:</span> percent<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/system_node.yaml | 
 | ZAPI | `perf-object-get-instances system:node` | `avg_processor_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> cpu_elapsed_time | conf/zapiperf/cdot/9.8.0/system_node.yaml | 
 
 
@@ -15817,6 +15853,15 @@ The size (in percent) that is physically used in the volume.The percentage is ba
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume` | `virtual_used_percent` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.physical-used-percent` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+
+### volume_tags
+
+Displays tags at the volume level.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/volume.yaml |
 
 
 ### volume_top_clients_read_data
