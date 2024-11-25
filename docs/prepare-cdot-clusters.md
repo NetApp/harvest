@@ -98,6 +98,7 @@ security login role create -role harvest2-role -access readonly -cmddirname "met
 security login role create -role harvest2-role -access readonly -cmddirname "network fcp adapter show"
 security login role create -role harvest2-role -access readonly -cmddirname "network interface"
 security login role create -role harvest2-role -access readonly -cmddirname "network port show"
+security login role create -role harvest2-role -access readonly -cmddirname "network port ifgrp show"
 security login role create -role harvest2-role -access readonly -cmddirname "network route show"
 security login role create -role harvest2-role -access readonly -cmddirname "qos adaptive-policy-group"
 security login role create -role harvest2-role -access readonly -cmddirname "qos policy-group"
@@ -216,6 +217,7 @@ security login rest-role create -role harvest2-rest-role -access readonly -api /
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/cluster/date
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/disk
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/network/interface
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/network/port/ifgrp
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/node
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/qos/adaptive-policy-group
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/qos/policy-group
