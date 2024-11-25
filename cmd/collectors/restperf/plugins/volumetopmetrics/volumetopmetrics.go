@@ -186,19 +186,23 @@ func (t *TopMetrics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 
 	metricsData, err := t.processTopMetrics(data)
 	if err != nil {
-		return nil, nil, err
+		return nil, t.client.Metadata, err
+	}
+
+	if metricsData == nil {
+		return nil, t.client.Metadata, nil
 	}
 
 	if t.clientMetricsEnabled {
 		err = t.processTopClients(metricsData)
 		if err != nil {
-			return nil, nil, err
+			return nil, t.client.Metadata, err
 		}
 	}
 	if t.fileMetricsEnabled {
 		err = t.processTopFiles(metricsData)
 		if err != nil {
-			return nil, nil, err
+			return nil, t.client.Metadata, err
 		}
 	}
 
