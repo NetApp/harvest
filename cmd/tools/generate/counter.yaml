@@ -2020,3 +2020,44 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.12.0/fru.yaml
+
+  - Name: cluster_tags
+    Description: Displays tags at the cluster level.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/status.yaml
+
+  - Name: volume_tags
+    Description: Displays tags at the volume level.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/volume.yaml
+
+
+  - Name: cluster_software_update
+    Description: Displays the software update phase with its status.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.6.0/clustersoftware.yaml
+
+  - Name: cluster_software_status
+    Description: Displays the software job with its status.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.6.0/clustersoftware.yaml
+
+  - Name: cluster_software_validation
+    Description: Displays the software pre-validation checks with their status.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.6.0/clustersoftware.yaml

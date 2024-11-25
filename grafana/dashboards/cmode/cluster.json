@@ -4401,6 +4401,670 @@
       ],
       "title": "SVM Performance",
       "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 38
+      },
+      "id": 482,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Software update details.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "rgba(217, 91, 91, 0.74)",
+                    "value": null
+                  },
+                  {
+                    "color": "rgb(101, 201, 87)",
+                    "value": 1
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "node"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Node"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-node/ontap-node?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Node=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Approximate time elapsed"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "s"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Status"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "cancel_pending": {
+                            "color": "orange",
+                            "index": 8,
+                            "text": "Cancel Pending"
+                          },
+                          "canceled": {
+                            "color": "red",
+                            "index": 5,
+                            "text": "Canceled"
+                          },
+                          "completed": {
+                            "color": "green",
+                            "index": 4,
+                            "text": "Completed"
+                          },
+                          "failed": {
+                            "color": "red",
+                            "index": 6,
+                            "text": "Failed"
+                          },
+                          "in_progress": {
+                            "color": "yellow",
+                            "index": 0,
+                            "text": "In Progress"
+                          },
+                          "pause_pending": {
+                            "color": "orange",
+                            "index": 7,
+                            "text": "Pause Pending"
+                          },
+                          "paused_by_user": {
+                            "color": "orange",
+                            "index": 2,
+                            "text": "Paused by User"
+                          },
+                          "paused_on_error": {
+                            "color": "orange",
+                            "index": 3,
+                            "text": "Paused on Error"
+                          },
+                          "waiting": {
+                            "color": "yellow",
+                            "index": 1,
+                            "text": "Waiting"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 7,
+            "w": 24,
+            "x": 0,
+            "y": 39
+          },
+          "id": 528,
+          "interval": "",
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "cluster_software_update{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Cluster Software Update",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "state",
+                    "cluster",
+                    "phase",
+                    "node",
+                    "datacenter",
+                    "elapsed_duration"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "cluster": 1,
+                  "datacenter": 0,
+                  "elapsed_duration": 5,
+                  "node": 2,
+                  "phase": 3,
+                  "state": 4
+                },
+                "renameByName": {
+                  "elapsed_duration": "Approximate time elapsed",
+                  "phase": "Phase",
+                  "state": "Status"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Software status details.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "rgba(217, 91, 91, 0.74)",
+                    "value": null
+                  },
+                  {
+                    "color": "rgb(101, 201, 87)",
+                    "value": 1
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "node"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Node"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-node/ontap-node?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Node=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Status"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "cancel_pending": {
+                            "color": "orange",
+                            "index": 8,
+                            "text": "Cancel Pending"
+                          },
+                          "canceled": {
+                            "color": "red",
+                            "index": 5,
+                            "text": "Canceled"
+                          },
+                          "completed": {
+                            "color": "green",
+                            "index": 4,
+                            "text": "Completed"
+                          },
+                          "failed": {
+                            "color": "red",
+                            "index": 6,
+                            "text": "Failed"
+                          },
+                          "in_progress": {
+                            "color": "yellow",
+                            "index": 0,
+                            "text": "In Progress"
+                          },
+                          "pause_pending": {
+                            "color": "orange",
+                            "index": 7,
+                            "text": "Pause Pending"
+                          },
+                          "paused_by_user": {
+                            "color": "orange",
+                            "index": 2,
+                            "text": "Paused by User"
+                          },
+                          "paused_on_error": {
+                            "color": "orange",
+                            "index": 3,
+                            "text": "Paused on Error"
+                          },
+                          "waiting": {
+                            "color": "yellow",
+                            "index": 1,
+                            "text": "Waiting"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 7,
+            "w": 24,
+            "x": 0,
+            "y": 46
+          },
+          "id": 529,
+          "interval": "",
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "cluster_software_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Cluster Software Status",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "state",
+                    "cluster",
+                    "name",
+                    "node",
+                    "datacenter"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "cluster": 1,
+                  "datacenter": 0,
+                  "name": 3,
+                  "node": 2,
+                  "state": 4
+                },
+                "renameByName": {
+                  "name": "Job Name",
+                  "state": "Status"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Software validation details.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "rgba(217, 91, 91, 0.74)",
+                    "value": null
+                  },
+                  {
+                    "color": "rgb(101, 201, 87)",
+                    "value": 1
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Status"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "error": {
+                            "color": "red",
+                            "index": 1,
+                            "text": "Error"
+                          },
+                          "warning": {
+                            "color": "yellow",
+                            "index": 0,
+                            "text": "Warning"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 7,
+            "w": 24,
+            "x": 0,
+            "y": 53
+          },
+          "id": 530,
+          "interval": "",
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "cluster_software_validation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Cluster Software Validation",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "status",
+                    "cluster",
+                    "update_check",
+                    "datacenter"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "cluster": 1,
+                  "datacenter": 0,
+                  "status": 3,
+                  "update_check": 2
+                },
+                "renameByName": {
+                  "status": "Status",
+                  "update_check": "Pre-update Check"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Software",
+      "type": "row"
     }
   ],
   "refresh": "",
