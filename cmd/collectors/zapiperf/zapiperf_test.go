@@ -105,14 +105,14 @@ func TestPartialAggregationSequence(t *testing.T) {
 
 	// Partial Poll
 	t.Log("Running Partial Poll")
-	z.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/pollData2.xml", 2, 0)
+	z.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/pollData2.xml", 0, 0)
 	if t.Failed() {
 		t.Fatal("Partial Poll failed")
 	}
 
 	// Partial Poll 2
 	t.Log("Running Partial Poll 2")
-	z.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/pollData2.xml", 2, 0)
+	z.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/pollData2.xml", 0, 0)
 	if t.Failed() {
 		t.Fatal("Partial Poll 2 failed")
 	}
@@ -133,7 +133,7 @@ func TestPartialAggregationSequence(t *testing.T) {
 
 	// Partial Poll 3
 	t.Log("Running Partial Poll 3")
-	z.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/pollData2.xml", 2, 0)
+	z.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/pollData2.xml", 0, 0)
 	if t.Failed() {
 		t.Fatal("Partial Poll 3 failed")
 	}

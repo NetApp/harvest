@@ -32,11 +32,11 @@ func TestPartialAggregationSequence(t *testing.T) {
 
 	// Partial Poll
 	t.Log("Running Partial Poll")
-	kp.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/volume-poll-partial.json", 4, 36)
+	kp.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/volume-poll-partial.json", 3, 36)
 
 	// Partial Poll 2
 	t.Log("Running Partial Poll 2")
-	kp.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/volume-poll-partial.json", 4, 36)
+	kp.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/volume-poll-partial.json", 3, 36)
 	if t.Failed() {
 		t.Fatal("Partial Poll 2 failed")
 	}
@@ -49,15 +49,15 @@ func TestPartialAggregationSequence(t *testing.T) {
 	}
 
 	// Second Complete Poll After Partial
-	t.Log("Running First Complete Poll After Partial")
+	t.Log("Running Second Complete Poll After Partial")
 	kp.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/volume-poll-3.json", 4, 48)
 	if t.Failed() {
-		t.Fatal("First Complete Poll After Partial failed")
+		t.Fatal("Second Complete Poll After Partial failed")
 	}
 
 	// Partial Poll 3
 	t.Log("Running Partial Poll 3")
-	kp.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/volume-poll-partial-2.json", 4, 36)
+	kp.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/volume-poll-partial-2.json", 3, 36)
 	if t.Failed() {
 		t.Fatal("Partial Poll 3 failed")
 	}

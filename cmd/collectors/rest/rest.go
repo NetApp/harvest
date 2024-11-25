@@ -601,7 +601,11 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 			status := instanceData.Get("statistics.status")
 			if status.Exists() && status.ClonedString() != "ok" {
 				instance.SetPartial(true)
+				instance.SetExportable(false)
 				numPartials++
+			} else {
+				instance.SetPartial(false)
+				instance.SetExportable(true)
 			}
 		}
 

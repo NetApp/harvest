@@ -315,11 +315,11 @@ func TestPartialAggregationSequence(t *testing.T) {
 
 	// Partial Poll
 	t.Log("Running Partial Poll")
-	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-2.json", 2, 0)
+	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-2.json", 0, 0)
 
 	// Partial Poll 2
 	t.Log("Running Partial Poll 2")
-	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-2.json", 2, 0)
+	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-2.json", 0, 0)
 	if t.Failed() {
 		t.Fatal("Partial Poll 2 failed")
 	}
@@ -340,7 +340,7 @@ func TestPartialAggregationSequence(t *testing.T) {
 
 	// Partial Poll 3
 	t.Log("Running Partial Poll 3")
-	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-2.json", 2, 0)
+	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-2.json", 0, 0)
 	if t.Failed() {
 		t.Fatal("Partial Poll 3 failed")
 	}
