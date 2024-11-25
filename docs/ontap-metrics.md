@@ -2934,7 +2934,7 @@ Percentage of blocks overwritten to write-cache among all disk writes.
 
 ### flexcache_blocks_requested_from_client
 
-
+Total blocks requested by the client.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -2944,7 +2944,7 @@ Percentage of blocks overwritten to write-cache among all disk writes.
 
 ### flexcache_blocks_retrieved_from_origin
 
-
+Blocks retrieved from origin in case of a cache miss. This can be divided by the raw client_requested_blocks and multiplied by 100 to calculate the cache miss percentage.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -3090,7 +3090,7 @@ Total number of reconciled lock entries at cache side.
 
 ### flexcache_size
 
-Physical size of the FlexCache. The recommended size for a FlexCache is 10% of the origin volume. The minimum FlexCache constituent size is 1GB.
+Physical size of the volume, in bytes. The minimum size for a FlexVol volume is 20MB and the minimum size for a FlexGroup volume is 200MB per constituent. The recommended size for a FlexGroup volume is a minimum of 100GB per constituent. For all volumes, the default size is equal to the minimum size.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
