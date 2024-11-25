@@ -157,6 +157,7 @@ var (
 		"ems_events",
 		"volume_top_clients",
 		"volume_top_files",
+		"cluster_software",
 	}
 
 	excludeDocumentedZapiMetrics = []string{
