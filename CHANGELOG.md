@@ -1,6 +1,102 @@
 # Change Log
 ## [Releases](https://github.com/NetApp/harvest/releases)
 
+## 24.11.1 / 2024-11-25 Release
+:pushpin: Highlights of this major release include:
+## :rocket: Performance Improvements
+
+- Significant memory footprint improvements for the REST collector. More details [here](https://github.com/NetApp/harvest/pull/3310#issue-2676698124). Thanks to @Ryan for reporting it.
+- Reduced memory footprint by using streaming in the REST collector.
+
+## :star: New Features
+
+- Harvest supports Top files metrics collection. More details [here](https://github.com/NetApp/harvest/discussions/3130).
+- Volume and Cluster tags are supported via Volume and Cluster dashboards.
+- Field Replaceable Unit (FRU) details have been added to the power dashboard.
+- Track ONTAP image update progress for a cluster via the Cluster dashboard. Thanks to @knappmi for reporting it.
+- `prom_port` is now supported within the poller. More details [here](https://netapp.github.io/harvest/nightly/prometheus-exporter/#per-poller-prom_port).
+- We've fixed an intermittent latency/operations spike issue in the plugin-generated Harvest performance metrics. Thanks to @wooyoungAhn for reporting it.
+
+## Announcements
+
+:bangbang: **IMPORTANT** NetApp moved their communities from Slack to [Discord](https://discord.gg/ZmmWPHTBHw), please join us [there](https://discordapp.com/channels/855068651522490400/1001963189124206732)!
+
+:bangbang: **IMPORTANT** If using Docker Compose and you want to keep your historical Prometheus data, please
+read [how to migrate your Prometheus volume](https://github.com/NetApp/harvest/blob/main/docs/MigratePrometheusDocker.md)
+
+:bulb: **IMPORTANT** After upgrade, don't forget to re-import your dashboards, so you get all the new enhancements and fixes. You can import them via the 'bin/harvest grafana import' CLI, from the Grafana UI, or from the 'Maintenance > Reset Harvest Dashboards' button in NAbox.
+
+## Thanks to all the awesome contributors
+
+:metal: Thanks to all the people who've opened issues, asked questions on Discord, and contributed code or dashboards
+this release:
+
+@70tas, @BrendonA667, @Falcon667, @Mark Jordan, @Paqui, @Ryan, @cashnmoney, @ceojinhak, @ekolove, @knappmi, @wooyoungAhn
+
+:seedling: This release includes 14 features, 8 bug fixes, 2 documentation, 3 performance, 1 testing, 1 styling, 7 refactoring, 2 miscellaneous, and 3 ci pull requests.
+
+### :rocket: Features
+- Add Tags To The Volume And Cluster Dashboards ([#3273](https://github.com/NetApp/harvest/pull/3273))
+- Harvest Should Request Cluster Version Once ([#3274](https://github.com/NetApp/harvest/pull/3274))
+- Top Files Collection ([#3279](https://github.com/NetApp/harvest/pull/3279))
+- Enable Iface And Recvcheck Linters ([#3280](https://github.com/NetApp/harvest/pull/3280))
+- Harvest Should Support Per-Poller Prom_ports ([#3281](https://github.com/NetApp/harvest/pull/3281))
+- Harvest Should Log Number Of Renderedbytes For Each Collector ([#3282](https://github.com/NetApp/harvest/pull/3282))
+- Asa R2 Should Use Keyperf Instead Of Restperf ([#3289](https://github.com/NetApp/harvest/pull/3289))
+- Add Top Files Panels In Volume Dashboard ([#3292](https://github.com/NetApp/harvest/pull/3292))
+- Adding The Ems Doc Link In The Health Dashboard Table ([#3295](https://github.com/NetApp/harvest/pull/3295))
+- Add Dimm Panels In Power Dashboard ([#3296](https://github.com/NetApp/harvest/pull/3296))
+- Adding Is_space_enforcement_logical, Is_space_reporting_logical… ([#3301](https://github.com/NetApp/harvest/pull/3301))
+- Harvest Should Monitor `Wafl.dir.size.warning` ([#3304](https://github.com/NetApp/harvest/pull/3304))
+- Add Flexcache Keyperf Template ([#3309](https://github.com/NetApp/harvest/pull/3309))
+- Add Top Metrics Plugin To Keyperf ([#3315](https://github.com/NetApp/harvest/pull/3315))
+
+### :bug: Bug Fixes
+- Set Dashboard Variable To Refresh To Time Range Change. ([#3269](https://github.com/NetApp/harvest/pull/3269))
+- Correct The Mtu Unit In Network Dashboard ([#3278](https://github.com/NetApp/harvest/pull/3278))
+- Zapi Collection ([#3285](https://github.com/NetApp/harvest/pull/3285))
+- Metroclustercheck Collector Should Report Standby When Metroclus… ([#3287](https://github.com/NetApp/harvest/pull/3287))
+- Missing Volumes After Vol Move ([#3312](https://github.com/NetApp/harvest/pull/3312))
+- Metroclustercheck Collector Should Report "No Instances" ([#3314](https://github.com/NetApp/harvest/pull/3314))
+- Panic If No Volumes Have Analytics Enabled ([#3323](https://github.com/NetApp/harvest/pull/3323))
+- Partial Aggregation Handling In Plugins ([#3324](https://github.com/NetApp/harvest/pull/3324))
+
+### :closed_book: Documentation
+- Update Top Clients Doc ([#3311](https://github.com/NetApp/harvest/pull/3311))
+- Harvest Should Include Network Port Ifgrp Permissions ([#3318](https://github.com/NetApp/harvest/pull/3318))
+
+### :zap: Performance
+- Reduce The Memory Footprint Of Rest Collector ([#3303](https://github.com/NetApp/harvest/pull/3303))
+- Add Streaming To Rest Collector ([#3305](https://github.com/NetApp/harvest/pull/3305))
+- Improve Memory And Cpu Performance Of Rest Collector ([#3310](https://github.com/NetApp/harvest/pull/3310))
+
+### :wrench: Testing
+- Sort Exporters For Deterministic Tests ([#3290](https://github.com/NetApp/harvest/pull/3290))
+
+### Styling
+- Fix Logs ([#3307](https://github.com/NetApp/harvest/pull/3307))
+
+### Refactoring
+- Remove Extra Log ([#3257](https://github.com/NetApp/harvest/pull/3257))
+- Remove Env Logging ([#3277](https://github.com/NetApp/harvest/pull/3277))
+- Simplify Negotiateontapapi ([#3288](https://github.com/NetApp/harvest/pull/3288))
+- Keyperf Node Template Should Match Restperf Object Name ([#3298](https://github.com/NetApp/harvest/pull/3298))
+- Remove Uses Of `Nolint:gocritic` ([#3299](https://github.com/NetApp/harvest/pull/3299))
+- Remove Unused Method In Rest Collector ([#3308](https://github.com/NetApp/harvest/pull/3308))
+- Sync Template Names For Keyperf ([#3316](https://github.com/NetApp/harvest/pull/3316))
+
+### Miscellaneous
+- Update All Dependencies ([#3275](https://github.com/NetApp/harvest/pull/3275))
+- Update Chizkiyahu/Delete-Untagged-Ghcr-Action Action To V5 ([#3300](https://github.com/NetApp/harvest/pull/3300))
+
+### :hammer: CI
+- Bump Go ([#3270](https://github.com/NetApp/harvest/pull/3270))
+- Lint Errors ([#3276](https://github.com/NetApp/harvest/pull/3276))
+- Ignore Volume_top_files_ Counters ([#3293](https://github.com/NetApp/harvest/pull/3293))
+
+---
+
+
 ## 24.11.0 / 2024-11-06 Release
 :pushpin: Highlights of this major release include:
 
