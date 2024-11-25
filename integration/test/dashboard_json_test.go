@@ -50,9 +50,6 @@ var zapiCounterMap = map[string]struct{}{
 	"aggr_object_store_logical_used":  {},
 	"aggr_object_store_physical_used": {},
 	"fru_status":                      {},
-	"cluster_software_update":         {},
-	"cluster_software_status":         {},
-	"cluster_software_validation":     {},
 }
 
 // restCounterMap are additional counters, above and beyond the ones from counterMap, which should be excluded from Rest
@@ -113,6 +110,8 @@ var excludeCounters = []string{
 	"svm_write_total",
 	"volume_top_clients_",
 	"volume_top_files_",
+	// Based on the cluster upgrade, these metrics existence would be changed.
+	"cluster_software_",
 }
 
 var flakyCounters = []string{
