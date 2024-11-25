@@ -596,10 +596,13 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 			if z.isPartialAggregation(i) {
 				instance.SetPartial(true)
+				instance.SetExportable(false)
 				numPartials++
+			} else {
+				instance.SetPartial(false)
+				instance.SetExportable(true)
 			}
 
-			instance.SetExportable(true)
 			counters := i.GetChildS("counters")
 			if counters == nil {
 				z.Logger.Debug("Skip instance key, no data counters", slog.String("key", key))
