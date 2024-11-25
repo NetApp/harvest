@@ -4581,10 +4581,8 @@
                     ]
                   },
                   {
-                    "id": "custom.cellOptions",
-                    "value": {
-                      "type": "color-background"
-                    }
+                    "id": "custom.displayMode",
+                    "value": "color-background"
                   }
                 ]
               }
@@ -4817,10 +4815,8 @@
                     ]
                   },
                   {
-                    "id": "custom.cellOptions",
-                    "value": {
-                      "type": "color-background"
-                    }
+                    "id": "custom.displayMode",
+                    "value": "color-background"
                   }
                 ]
               }
@@ -4993,10 +4989,8 @@
                     ]
                   },
                   {
-                    "id": "custom.cellOptions",
-                    "value": {
-                      "type": "color-background"
-                    }
+                    "id": "custom.displayMode",
+                    "value": "color-background"
                   }
                 ]
               }
