@@ -914,7 +914,11 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 			// check for partial aggregation
 			if instanceData.Get("aggregation.complete").ClonedString() == "false" {
 				instance.SetPartial(true)
+				instance.SetExportable(false)
 				numPartials++
+			} else {
+				instance.SetPartial(false)
+				instance.SetExportable(true)
 			}
 
 			for label, display := range r.Prop.InstanceLabels {
