@@ -2,10 +2,10 @@
 ## [Releases](https://github.com/NetApp/harvest/releases)
 
 ## 24.11.1 / 2024-11-25 Release
-:pushpin: Highlights of this release include:
+:pushpin: Highlights of this major release include:
 ## :rocket: Performance Improvements
 
-- Fixed a memory leak when using the REST collector. More details [here](https://github.com/NetApp/harvest/pull/3310#issue-2676698124). Thanks to @Ryan for reporting it.
+- Significant memory footprint improvements for the REST collector. More details [here](https://github.com/NetApp/harvest/pull/3310#issue-2676698124). Thanks to @Ryan for reporting it.
 - Reduced memory footprint by using streaming in the REST collector.
 
 ## :star: New Features
@@ -13,9 +13,9 @@
 - Harvest supports Top files metrics collection. More details [here](https://github.com/NetApp/harvest/discussions/3130).
 - Volume and Cluster tags are supported via Volume and Cluster dashboards.
 - Field Replaceable Unit (FRU) details have been added to the power dashboard.
-- Track ONTAP image update progress for a cluster via the Cluster dashboard.
+- Track ONTAP image update progress for a cluster via the Cluster dashboard. Thanks to @knappmi for reporting it.
 - `prom_port` is now supported within the poller. More details [here](https://netapp.github.io/harvest/nightly/prometheus-exporter/#per-poller-prom_port).
-
+- We've fixed an intermittent latency/operations spike issue in the plugin-generated Harvest performance metrics. Thanks to @wooyoungAhn for reporting it.
 
 ## Announcements
 
@@ -31,9 +31,9 @@ read [how to migrate your Prometheus volume](https://github.com/NetApp/harvest/b
 :metal: Thanks to all the people who've opened issues, asked questions on Discord, and contributed code or dashboards
 this release:
 
-@70tas, @BrendonA667, @Falcon667, @Mark Jordan, @Paqui, @Ryan, @cashnmoney, @ceojinhak, @ekolove, @knappmi
+@70tas, @BrendonA667, @Falcon667, @Mark Jordan, @Paqui, @Ryan, @cashnmoney, @ceojinhak, @ekolove, @knappmi, @wooyoungAhn
 
-:seedling: This release includes 14 features, 6 bug fixes, 2 documentation, 3 performance, 1 testing, 1 styling, 6 refactoring, 2 miscellaneous, and 3 ci pull requests.
+:seedling: This release includes 14 features, 8 bug fixes, 2 documentation, 3 performance, 1 testing, 1 styling, 7 refactoring, 2 miscellaneous, and 3 ci pull requests.
 
 ### :rocket: Features
 - Add Tags To The Volume And Cluster Dashboards ([#3273](https://github.com/NetApp/harvest/pull/3273))
@@ -58,6 +58,8 @@ this release:
 - Metroclustercheck Collector Should Report Standby When Metroclus… ([#3287](https://github.com/NetApp/harvest/pull/3287))
 - Missing Volumes After Vol Move ([#3312](https://github.com/NetApp/harvest/pull/3312))
 - Metroclustercheck Collector Should Report "No Instances" ([#3314](https://github.com/NetApp/harvest/pull/3314))
+- Panic If No Volumes Have Analytics Enabled ([#3323](https://github.com/NetApp/harvest/pull/3323))
+- Partial Aggregation Handling In Plugins ([#3324](https://github.com/NetApp/harvest/pull/3324))
 
 ### :closed_book: Documentation
 - Update Top Clients Doc ([#3311](https://github.com/NetApp/harvest/pull/3311))
@@ -75,6 +77,7 @@ this release:
 - Fix Logs ([#3307](https://github.com/NetApp/harvest/pull/3307))
 
 ### Refactoring
+- Remove Extra Log ([#3257](https://github.com/NetApp/harvest/pull/3257))
 - Remove Env Logging ([#3277](https://github.com/NetApp/harvest/pull/3277))
 - Simplify Negotiateontapapi ([#3288](https://github.com/NetApp/harvest/pull/3288))
 - Keyperf Node Template Should Match Restperf Object Name ([#3298](https://github.com/NetApp/harvest/pull/3298))
