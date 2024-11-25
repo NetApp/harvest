@@ -4518,6 +4518,75 @@
                     "value": "s"
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Status"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "cancel_pending": {
+                            "color": "orange",
+                            "index": 8,
+                            "text": "Cancel Pending"
+                          },
+                          "canceled": {
+                            "color": "red",
+                            "index": 5,
+                            "text": "Canceled"
+                          },
+                          "completed": {
+                            "color": "green",
+                            "index": 4,
+                            "text": "Completed"
+                          },
+                          "failed": {
+                            "color": "red",
+                            "index": 6,
+                            "text": "Failed"
+                          },
+                          "in_progress": {
+                            "color": "yellow",
+                            "index": 0,
+                            "text": "In Progress"
+                          },
+                          "pause_pending": {
+                            "color": "orange",
+                            "index": 7,
+                            "text": "Pause Pending"
+                          },
+                          "paused_by_user": {
+                            "color": "orange",
+                            "index": 2,
+                            "text": "Paused by User"
+                          },
+                          "paused_on_error": {
+                            "color": "orange",
+                            "index": 3,
+                            "text": "Paused on Error"
+                          },
+                          "waiting": {
+                            "color": "yellow",
+                            "index": 1,
+                            "text": "Waiting"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  }
+                ]
               }
             ]
           },
@@ -4685,6 +4754,75 @@
                     ]
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Status"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "cancel_pending": {
+                            "color": "orange",
+                            "index": 8,
+                            "text": "Cancel Pending"
+                          },
+                          "canceled": {
+                            "color": "red",
+                            "index": 5,
+                            "text": "Canceled"
+                          },
+                          "completed": {
+                            "color": "green",
+                            "index": 4,
+                            "text": "Completed"
+                          },
+                          "failed": {
+                            "color": "red",
+                            "index": 6,
+                            "text": "Failed"
+                          },
+                          "in_progress": {
+                            "color": "yellow",
+                            "index": 0,
+                            "text": "In Progress"
+                          },
+                          "pause_pending": {
+                            "color": "orange",
+                            "index": 7,
+                            "text": "Pause Pending"
+                          },
+                          "paused_by_user": {
+                            "color": "orange",
+                            "index": 2,
+                            "text": "Paused by User"
+                          },
+                          "paused_on_error": {
+                            "color": "orange",
+                            "index": 3,
+                            "text": "Paused on Error"
+                          },
+                          "waiting": {
+                            "color": "yellow",
+                            "index": 1,
+                            "text": "Waiting"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
+                  }
+                ]
               }
             ]
           },
@@ -4825,6 +4963,40 @@
                         "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
                       }
                     ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Status"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "error": {
+                            "color": "red",
+                            "index": 1,
+                            "text": "Error"
+                          },
+                          "warning": {
+                            "color": "yellow",
+                            "index": 0,
+                            "text": "Warning"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background"
+                    }
                   }
                 ]
               }
