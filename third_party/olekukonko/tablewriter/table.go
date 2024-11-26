@@ -158,7 +158,7 @@ func (t *Table) SetHeader(keys []string) {
 
 // Set table Footer
 func (t *Table) SetFooter(keys []string) {
-	//t.colSize = len(keys)
+	// t.colSize = len(keys)
 	for i, v := range keys {
 		lines := t.parseDimension(v, i, footerRowIdx)
 		t.footers = append(t.footers, lines)
@@ -575,13 +575,13 @@ func (t *Table) printFooter() {
 					pad)
 			}
 
-			//fmt.Fprintf(t.out, " %s %s",
+			// fmt.Fprintf(t.out, " %s %s",
 			//	padFunc(f, SPACE, v),
 			//	pad)
 		}
 		// Next line
 		fmt.Fprint(t.out, t.newLine)
-		//t.printLine(true)
+		// t.printLine(true)
 	}
 
 	hasPrinted := false
@@ -702,7 +702,7 @@ func (t *Table) printRow(columns [][]string, rowIdx int) {
 	//		columns = append(columns, []string{SPACE})
 	//		t.cs[n] = t.mW
 	//	}
-	//}
+	// }
 
 	// Pad Each Height
 	pads := []int{}
@@ -722,7 +722,7 @@ func (t *Table) printRow(columns [][]string, rowIdx int) {
 			columns[i] = append(columns[i], "  ")
 		}
 	}
-	//fmt.Println(max, "\n")
+	// fmt.Println(max, "\n")
 	for x := 0; x < max; x++ {
 		for y := 0; y < total; y++ {
 
@@ -755,18 +755,18 @@ func (t *Table) printRow(columns [][]string, rowIdx int) {
 					fmt.Fprintf(t.out, "%s", PadRight(str, SPACE, t.cs[y]))
 
 					// TODO Custom alignment per column
-					//if max == 1 || pads[y] > 0 {
+					// if max == 1 || pads[y] > 0 {
 					//	fmt.Fprintf(t.out, "%s", Pad(str, SPACE, t.cs[y]))
-					//} else {
+					// } else {
 					//	fmt.Fprintf(t.out, "%s", PadRight(str, SPACE, t.cs[y]))
-					//}
+					// }
 
 				}
 			}
 			if !t.noWhiteSpace {
 				fmt.Fprintf(t.out, SPACE)
 			} else {
-				fmt.Fprintf(t.out, t.tablePadding)
+				fmt.Fprintf(t.out, "%s", t.tablePadding)
 			}
 		}
 		// Check if border is set
@@ -790,14 +790,14 @@ func (t *Table) printRowsMergeCells() {
 	for i, lines := range t.lines {
 		// We store the display of the current line in a tmp writer, as we need to know which border needs to be print above
 		previousLine, displayCellBorder = t.printRowMergeCells(&tmpWriter, lines, i, previousLine)
-		if i > 0 { //We don't need to print borders above first line
+		if i > 0 { // We don't need to print borders above first line
 			if t.rowLine {
 				t.printLineOptionalCellSeparators(true, displayCellBorder)
 			}
 		}
 		tmpWriter.WriteTo(t.out)
 	}
-	//Print the end of the table
+	// Print the end of the table
 	if t.rowLine {
 		t.printLine(true)
 	}
@@ -856,7 +856,7 @@ func (t *Table) printRowMergeCells(writer io.Writer, columns [][]string, rowIdx 
 					// columnsToAutoMergeCells was not set.
 					mergeCell = true
 				}
-				//Store the full line to merge mutli-lines cells
+				// Store the full line to merge mutli-lines cells
 				fullLine := strings.TrimRight(strings.Join(columns[y], " "), " ")
 				if len(previousLine) > y && fullLine == previousLine[y] && fullLine != "" && mergeCell {
 					// If this cell is identical to the one above but not empty, we don't display the border and keep the cell empty.
@@ -892,12 +892,12 @@ func (t *Table) printRowMergeCells(writer io.Writer, columns [][]string, rowIdx 
 		fmt.Fprint(writer, t.newLine)
 	}
 
-	//The new previous line is the current one
+	// The new previous line is the current one
 	previousLine = make([]string, total)
 	for y := 0; y < total; y++ {
-		previousLine[y] = strings.TrimRight(strings.Join(columns[y], " "), " ") //Store the full line for multi-lines cells
+		previousLine[y] = strings.TrimRight(strings.Join(columns[y], " "), " ") // Store the full line for multi-lines cells
 	}
-	//Returns the newly added line and wether or not a border should be displayed above.
+	// Returns the newly added line and wether or not a border should be displayed above.
 	return previousLine, displayCellBorder
 }
 
@@ -962,6 +962,6 @@ func (t *Table) parseDimension(str string, colKey, rowKey int) []string {
 	if !ok || v < h || v == 0 {
 		t.rs[rowKey] = h
 	}
-	//fmt.Printf("Raw %+v %d\n", raw, len(raw))
+	// fmt.Printf("Raw %+v %d\n", raw, len(raw))
 	return raw
 }
