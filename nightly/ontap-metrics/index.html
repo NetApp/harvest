@@ -2380,6 +2380,33 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#cluster_software_status" class="md-nav__link">
+    <span class="md-ellipsis">
+      cluster_software_status
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cluster_software_update" class="md-nav__link">
+    <span class="md-ellipsis">
+      cluster_software_update
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cluster_software_validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      cluster_software_validation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#cluster_subsystem_new_status" class="md-nav__link">
     <span class="md-ellipsis">
       cluster_subsystem_new_status
@@ -2401,6 +2428,15 @@
   <a href="#cluster_subsystem_suppressed_alerts" class="md-nav__link">
     <span class="md-ellipsis">
       cluster_subsystem_suppressed_alerts
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cluster_tags" class="md-nav__link">
+    <span class="md-ellipsis">
+      cluster_tags
     </span>
   </a>
   
@@ -14866,6 +14902,15 @@
   <a href="#volume_space_physical_used_percent" class="md-nav__link">
     <span class="md-ellipsis">
       volume_space_physical_used_percent
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#volume_tags" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_tags
     </span>
   </a>
   
@@ -16525,6 +16570,33 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#cluster_software_status" class="md-nav__link">
+    <span class="md-ellipsis">
+      cluster_software_status
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cluster_software_update" class="md-nav__link">
+    <span class="md-ellipsis">
+      cluster_software_update
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cluster_software_validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      cluster_software_validation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#cluster_subsystem_new_status" class="md-nav__link">
     <span class="md-ellipsis">
       cluster_subsystem_new_status
@@ -16546,6 +16618,15 @@
   <a href="#cluster_subsystem_suppressed_alerts" class="md-nav__link">
     <span class="md-ellipsis">
       cluster_subsystem_suppressed_alerts
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cluster_tags" class="md-nav__link">
+    <span class="md-ellipsis">
+      cluster_tags
     </span>
   </a>
   
@@ -29017,6 +29098,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#volume_tags" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_tags
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#volume_top_clients_read_data" class="md-nav__link">
     <span class="md-ellipsis">
       volume_top_clients_read_data
@@ -29400,7 +29490,7 @@ These can be generated on demand by running <code>bin/harvest grafana metrics</c
 <p>More information about ONTAP REST performance counters can be found <a href="https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html">here</a>.</p>
 </li>
 </ul>
-<div class="highlight"><pre><span></span><code>Creation Date : 2024-Nov-25
+<div class="highlight"><pre><span></span><code>Creation Date : 2024-Nov-26
 ONTAP Version: 9.15.1
 </code></pre></div>
 <h2 id="understanding-the-structure">Understanding the structure<a class="headerlink" href="#understanding-the-structure" title="Permanent link">&para;</a></h2>
@@ -32246,6 +32336,66 @@ ONTAP Version: 9.15.1
 </tr>
 </tbody>
 </table>
+<h3 id="cluster_software_status">cluster_software_status<a class="headerlink" href="#cluster_software_status" title="Permanent link">&para;</a></h3>
+<p>Displays the software job with its status.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/rest/9.6.0/clustersoftware.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="cluster_software_update">cluster_software_update<a class="headerlink" href="#cluster_software_update" title="Permanent link">&para;</a></h3>
+<p>Displays the software update phase with its status.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/rest/9.6.0/clustersoftware.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="cluster_software_validation">cluster_software_validation<a class="headerlink" href="#cluster_software_validation" title="Permanent link">&para;</a></h3>
+<p>Displays the software pre-validation checks with their status.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/rest/9.6.0/clustersoftware.yaml</td>
+</tr>
+</tbody>
+</table>
 <h3 id="cluster_subsystem_new_status">cluster_subsystem_new_status<a class="headerlink" href="#cluster_subsystem_new_status" title="Permanent link">&para;</a></h3>
 <p>This metric indicates a value of 1 if the subsystem health is ok (indicating the subsystem is operational) and a value of 0 for any other health status.</p>
 <table>
@@ -32321,6 +32471,26 @@ ONTAP Version: 9.15.1
 <td><code>diagnosis-subsystem-config-get-iter</code></td>
 <td><code>diagnosis-subsystem-config-info.suppressed-alert-count</code></td>
 <td>conf/zapi/cdot/9.8.0/subsystem.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="cluster_tags">cluster_tags<a class="headerlink" href="#cluster_tags" title="Permanent link">&para;</a></h3>
+<p>Displays tags at the cluster level.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/rest/9.12.0/status.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -72996,6 +73166,26 @@ ONTAP Version: 9.15.1
 <td><code>volume-get-iter</code></td>
 <td><code>volume-attributes.volume-space-attributes.physical-used-percent</code></td>
 <td>conf/zapi/cdot/9.8.0/volume.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="volume_tags">volume_tags<a class="headerlink" href="#volume_tags" title="Permanent link">&para;</a></h3>
+<p>Displays tags at the volume level.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/rest/9.12.0/volume.yaml</td>
 </tr>
 </tbody>
 </table>
