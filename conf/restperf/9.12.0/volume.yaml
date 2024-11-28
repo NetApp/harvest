@@ -49,6 +49,7 @@ plugins:
       include_constituents: false
 
   - LabelAgent:
+      # Ignore transient volumes, e.g. SnapProtect, SnapManager, SnapCenter, CommVault, Clone, and Metadata volumes
       exclude_regex:
         - volume `.+_CVclone`
         - volume `.+(0[1-9]|[12][0-9]|3[01])(0[1-9]|1[012])\d\d[0-9]{6}`

@@ -103,6 +103,7 @@ plugins:
         - svm_root root_volume `false` `No`
         - svm_root root_volume `true` `Yes`
         - svm_root root_volume `^$` `Yes`      # svm_root is not available in Rest response for volumes like vol0
+      # Ignore transient volumes, e.g. SnapProtect, SnapManager, SnapCenter, CommVault, Clone, and Metadata volumes
       exclude_regex:
         - volume `.+_CVclone`
         - volume `.+(0[1-9]|[12][0-9]|3[01])(0[1-9]|1[012])\d\d[0-9]{6}`
