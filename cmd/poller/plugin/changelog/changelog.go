@@ -268,6 +268,9 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 	var matricesArray []*matrix.Matrix
 	matricesArray = append(matricesArray, changeMat)
 
+	metadata := &util.Metadata{}
+	metadata.PluginInstances = uint64(len(changeMat.GetInstances()))
+
 	c.copyPreviousData(data)
 	if len(changeMat.GetInstances()) > 0 {
 		// The `index` variable is used to differentiate between changes to the same label in a Grafana dashboard.
@@ -281,7 +284,7 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 		)
 	}
 
-	return matricesArray, nil, nil
+	return matricesArray, metadata, nil
 }
 
 // CompareMetrics compares the metrics of the current and previous instances

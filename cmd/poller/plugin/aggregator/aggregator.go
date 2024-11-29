@@ -115,7 +115,6 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 
 	// initialize cache
 	for i, rule := range a.rules {
-
 		matrices[i] = data.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: true})
 		if rule.object != "" {
 			matrices[i].Object = rule.object
@@ -129,7 +128,6 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 	}
 
 	// create instances and summarize metric values
-
 	var (
 		objName, objKey string
 		objInstance     *matrix.Instance
@@ -141,14 +139,14 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 		err             error
 	)
 
-	for _, instance := range data.GetInstances() {
+	metadata := &util.Metadata{}
 
+	for _, instance := range data.GetInstances() {
 		if !instance.IsExportable() {
 			continue
 		}
 
 		for i, rule := range a.rules {
-
 			if objName = instance.GetLabel(rule.label); objName == "" {
 				a.SLogger.Warn("label missing, skipped", slog.String("label", rule.label))
 				continue
@@ -182,6 +180,7 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 				if objInstance, err = matrices[i].NewInstance(objKey); err != nil {
 					return nil, nil, err
 				}
+				metadata.PluginInstances++
 				switch {
 				case rule.allLabels:
 					objInstance.SetLabels(instance.GetLabels())
@@ -196,7 +195,6 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 			}
 
 			for key, metric := range data.GetMetrics() {
-
 				if value, ok = metric.GetValueFloat64(instance); !ok {
 					continue
 				}
@@ -249,10 +247,8 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 	}
 
 	// normalize values into averages if we are able to identify it as a percentage or average metric
-
 	for i, m := range matrices {
 		for mk, metric := range m.GetMetrics() {
-
 			var (
 				v       float64
 				count   float64
@@ -275,7 +271,6 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 			}
 
 			for key, instance := range m.GetInstances() {
-
 				if v, ok = metric.GetValueFloat64(instance); !ok {
 					continue
 				}
@@ -302,7 +297,7 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 		}
 	}
 
-	return matrices, nil, nil
+	return matrices, metadata, nil
 }
 
 // NewLabels returns the new labels the receiver creates

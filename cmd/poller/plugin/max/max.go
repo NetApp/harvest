@@ -156,6 +156,7 @@ func (m *Max) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 		err             error
 	)
 
+	metadata := &util.Metadata{}
 	for _, instance := range data.GetInstances() {
 
 		if !instance.IsExportable() {
@@ -189,6 +190,7 @@ func (m *Max) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 					if objInstance, err = matrices[matrixKey].NewInstance(objKey); err != nil {
 						return nil, nil, err
 					}
+					metadata.PluginInstances++
 				}
 
 				if value, ok = metric.GetValueFloat64(instance); !ok {
