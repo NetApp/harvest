@@ -70,50 +70,50 @@ query:                    api/storage/volumes
 object:                   volume
 
 counters:
-- ^^name                                => volume
-- ^^svm.name                            => svm
-- ^statistics.status                    => status
-- ^style                                => style
-- statistics.iops_raw.other             => other_ops
-- statistics.iops_raw.read              => read_ops
-- statistics.iops_raw.total             => total_ops
-- statistics.iops_raw.write             => write_ops
-- statistics.latency_raw.other          => other_latency
-- statistics.latency_raw.read           => read_latency
-- statistics.latency_raw.total          => avg_latency
-- statistics.latency_raw.write          => write_latency
-- statistics.throughput_raw.other       => other_data
-- statistics.throughput_raw.read        => read_data
-- statistics.throughput_raw.total       => total_data
-- statistics.throughput_raw.write       => write_data
-- statistics.timestamp(timestamp)       => timestamp
-- hidden_fields:
-- statistics
-- filter:
-- statistics.timestamp=!"-"
+  - ^^name                                => volume
+  - ^^svm.name                            => svm
+  - ^statistics.status                    => status
+  - ^style                                => style
+  - statistics.iops_raw.other             => other_ops
+  - statistics.iops_raw.read              => read_ops
+  - statistics.iops_raw.total             => total_ops
+  - statistics.iops_raw.write             => write_ops
+  - statistics.latency_raw.other          => other_latency
+  - statistics.latency_raw.read           => read_latency
+  - statistics.latency_raw.total          => avg_latency
+  - statistics.latency_raw.write          => write_latency
+  - statistics.throughput_raw.other       => other_data
+  - statistics.throughput_raw.read        => read_data
+  - statistics.throughput_raw.total       => total_data
+  - statistics.throughput_raw.write       => write_data
+  - statistics.timestamp(timestamp)       => timestamp
+  - hidden_fields:
+    - statistics
+  - filter:
+    - statistics.timestamp=!"-"
 
 endpoints:
-- query: api/private/cli/volume
-counters:
-- ^^volume                          => volume
-- ^^vserver                         => svm
-- ^aggr_list                        => aggr
-- ^nodes                            => node
+  - query: api/private/cli/volume
+    counters:
+      - ^^volume                          => volume
+      - ^^vserver                         => svm
+      - ^aggr_list                        => aggr
+      - ^nodes                            => node
 
 plugins:
-- Aggregator:
-# Plugin will create summary/average for each object
-# Any names after the object names will be treated as label names that will be added to instances
-- node
-- svm<>svm_vol
+  - Aggregator:
+      # Plugin will create summary/average for each object
+      # Any names after the object names will be treated as label names that will be added to instances
+      - node
+      - svm<>svm_vol
 
 export_options:
-instance_keys:
-- aggr
-- node
-- style
-- svm
-- volume
+  instance_keys:
+    - aggr
+    - node
+    - style
+    - svm
+    - volume
 ```
 
 ### Counters
