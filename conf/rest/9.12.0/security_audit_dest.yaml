@@ -4,6 +4,8 @@ query:            api/security/audit/destinations
 object:           security_audit_destination
 
 counters:
+  - ^^address     => address
+  - ^^port        => port
   - ^^protocol    => protocol
 
 
