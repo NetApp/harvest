@@ -6,7 +6,7 @@ require (
 	github.com/go-openapi/spec v0.21.0
 	github.com/google/go-cmp v0.6.0
 	github.com/rivo/uniseg v0.4.7
-	github.com/shirou/gopsutil/v4 v4.24.10
+	github.com/shirou/gopsutil/v4 v4.24.11
 	github.com/spf13/cobra v1.8.1
 	github.com/tidwall/match v1.1.1
 	github.com/tidwall/pretty v1.2.1
