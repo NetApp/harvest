@@ -1,0 +1,17 @@
+
+name:                     Rwctx
+query:                    api/cluster/counter/tables/rewind_context
+object:                   rw_ctx
+
+counters:
+  - ^^id
+  - ^node.name           => node
+  - cifs_give_ups        => cifs_giveups
+  - cifs_rewinds         => cifs_rewinds
+  - nfs_give_ups         => nfs_giveups
+  - nfs_rewinds          => nfs_rewinds
+
+
+export_options:
+  instance_keys:
+    - node

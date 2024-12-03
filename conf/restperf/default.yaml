@@ -25,6 +25,7 @@ objects:
   NicCommon:         nic_common.yaml
   Path:              path.yaml
   Qtree:             qtree.yaml
+  Rwctx:             rwctx.yaml
   SystemNode:        system_node.yaml
 #  TokenManager:      token_manager.yaml
   VolumeNode:        volume_node.yaml
