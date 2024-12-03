@@ -2,7 +2,7 @@
  * Copyright NetApp Inc, 2022 All rights reserved
  */
 
-package max
+package maxplugin
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"

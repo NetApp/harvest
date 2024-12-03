@@ -14,7 +14,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/aggregator"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/changelog"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/labelagent"
-	"github.com/netapp/harvest/v2/cmd/poller/plugin/max"
+	"github.com/netapp/harvest/v2/cmd/poller/plugin/maxplugin"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/metricagent"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
@@ -222,7 +222,7 @@ func GetBuiltinPlugin(name string, abc *plugin.AbstractPlugin) plugin.Plugin {
 	}
 
 	if name == "Max" {
-		return max.New(abc)
+		return maxplugin.New(abc)
 	}
 
 	if name == "LabelAgent" {

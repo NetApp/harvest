@@ -7,7 +7,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/aggregator"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/labelagent"
-	max2 "github.com/netapp/harvest/v2/cmd/poller/plugin/max"
+	max2 "github.com/netapp/harvest/v2/cmd/poller/plugin/maxplugin"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/metricagent"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"

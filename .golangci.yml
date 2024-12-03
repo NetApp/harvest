@@ -26,12 +26,15 @@ linters:
     - intrange
     - makezero
     - mirror
+    - misspell
+    - nakedret
     - nilerr
     - nolintlint
     - nonamedreturns
     - nosprintfhostport
     - perfsprint
     - prealloc
+    - predeclared
     - reassign
     - recvcheck
     - revive
@@ -39,9 +42,9 @@ linters:
     - staticcheck
     - stylecheck
     - tenv
+    - testableexamples
     - testifylint
     - thelper
-    - testableexamples
     - typecheck
     - unconvert
     - unparam
