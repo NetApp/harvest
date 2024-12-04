@@ -64,8 +64,9 @@ docker compose -f harvest-compose.yml up -d --remove-orphans
 ### How do I add a new poller?
 
 1. Add poller to `harvest.yml`
-2. Regenerate compose file by running [harvest generate](#generate-a-docker-compose-for-your-pollers)
-3. Run [docker compose up](#start-everything), for example,
+2. All your template customization must follow the custom.yaml approach as mentioned in [Customization of templates](../configure-templates.md#customization-of-templates), Else they would be overwritten.
+3. Regenerate compose file by running [harvest generate](#generate-a-docker-compose-for-your-pollers)
+4. Run [docker compose up](#start-everything), for example,
 
 ```bash
 docker compose -f harvest-compose.yml up -d --remove-orphans
