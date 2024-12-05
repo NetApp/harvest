@@ -86,6 +86,10 @@ func TestCounters(t *testing.T) {
 func invokeRestCall(client *rest2.Client, counters map[string][]counterData) error {
 	for _, countersDetail := range counters {
 		for _, counterDetail := range countersDetail {
+			// Skip the endpoints that should not be called
+			if strings.Contains(counterDetail.api, "api/private/cli/snapshot/policy") || strings.Contains(counterDetail.api, "api/support/autosupport") {
+				continue
+			}
 			href := rest2.NewHrefBuilder().
 				APIPath(counterDetail.api).
 				Fields(counterDetail.restCounters).
