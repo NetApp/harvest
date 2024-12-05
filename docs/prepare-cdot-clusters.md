@@ -95,6 +95,7 @@ security login role create -role harvest2-role -access readonly -cmddirname "eve
 security login role create -role harvest2-role -access readonly -cmddirname "event notification destination"
 security login role create -role harvest2-role -access readonly -cmddirname "lun"
 security login role create -role harvest2-role -access readonly -cmddirname "metrocluster configuration-settings mediator add"
+security login role create -role harvest2-role -access readonly -cmddirname "metrocluster"
 security login role create -role harvest2-role -access readonly -cmddirname "network fcp adapter show"
 security login role create -role harvest2-role -access readonly -cmddirname "network interface"
 security login role create -role harvest2-role -access readonly -cmddirname "network port show"
@@ -123,6 +124,7 @@ security login role create -role harvest2-role -access readonly -cmddirname "sys
 security login role create -role harvest2-role -access readonly -cmddirname "version"
 security login role create -role harvest2-role -access readonly -cmddirname "volume"
 security login role create -role harvest2-role -access readonly -cmddirname "vserver"
+security login role create -role harvest2-role -access readonly -cmddirname "event log"
 ```
 
 #### Create harvest user and associate with the harvest role
@@ -174,7 +176,6 @@ security login rest-role create -role harvest2-rest-role -access readonly -api /
     security login rest-role create -role harvest-rest-role -access readonly -api /api/network/ip/interfaces
     security login rest-role create -role harvest-rest-role -access readonly -api /api/network/ip/ports
     security login rest-role create -role harvest-rest-role -access readonly -api /api/network/ip/routes
-    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/support/alerts
     security login rest-role create -role harvest-rest-role -access readonly -api /api/protocols/cifs/services
     security login rest-role create -role harvest-rest-role -access readonly -api /api/protocols/cifs/sessions
@@ -217,14 +218,17 @@ security login rest-role create -role harvest2-rest-role -access readonly -api /
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/aggr
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/cluster/date
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/disk
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/security/certificate
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/security/ssl
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/network/interface
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/network/port
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/network/port/ifgrp
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/node
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/qos/adaptive-policy-group
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/qos/policy-group
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/qos/workload
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/qtree
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/snapmirror
-    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/snapshot/policy
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/storage/failover
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/storage/shelf
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/system/chassis/fru
