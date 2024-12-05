@@ -96,6 +96,7 @@ security login role create -role harvest2-role -access readonly -cmddirname "eve
 security login role create -role harvest2-role -access readonly -cmddirname "lun"
 security login role create -role harvest2-role -access readonly -cmddirname "metrocluster configuration-settings mediator add"
 security login role create -role harvest2-role -access readonly -cmddirname "metrocluster"
+security login role create -role harvest2-role -access readonly -cmddirname "network connections active show"
 security login role create -role harvest2-role -access readonly -cmddirname "network fcp adapter show"
 security login role create -role harvest2-role -access readonly -cmddirname "network interface"
 security login role create -role harvest2-role -access readonly -cmddirname "network port show"
@@ -221,6 +222,7 @@ security login rest-role create -role harvest2-rest-role -access readonly -api /
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/disk
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/security/certificate
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/security/ssl
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/network/connections/active
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/network/interface
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/network/port
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/network/port/ifgrp
@@ -237,6 +239,7 @@ security login rest-role create -role harvest2-rest-role -access readonly -api /
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/system/health/subsystem
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/volume
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/vserver
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/vserver/cifs/share
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/vserver/object-store-server/bucket/policy
     ```
 
