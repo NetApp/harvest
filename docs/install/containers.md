@@ -176,10 +176,13 @@ password: admin
 
 ### How do I add a new poller?
 
+Note: All of your template customizations should follow the custom.yaml approach
+mentioned in [template customization](../configure-templates.md#templates-customization),
+otherwise any changes you've made in the `conf` directory will be overwritten.
+
 1. Add poller to `harvest.yml`
-2. All your template customization must follow the custom.yaml approach as mentioned in [Customization of templates](../configure-templates.md#customization-of-templates), Else they would be overwritten.
-3. Regenerate compose file by running [harvest generate](#generate-a-docker-compose-for-your-pollers)
-4. Run [docker compose up](#start-everything), for example,
+2. Regenerate compose file by running [harvest generate](#generate-a-docker-compose-for-your-pollers)
+3. Run [docker compose up](#start-everything), for example,
 
 ```bash
 docker compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans

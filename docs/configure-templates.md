@@ -1,8 +1,9 @@
-## Customization of templates
+## Templates customization
 
 This document covers how to use [Collector](configure-templates.md#collector-templates)
-and [Object](configure-templates.md#object-templates) templates to extend Harvest with `custom.yaml`.
-Customization of templates must follow the `custom.yaml` approach to avoid overwrite.
+and [Object](configure-templates.md#object-templates) templates to extend Harvest.
+Customization of templates should use the `custom.yaml` approach
+to avoid overwriting your changes when Harvest is upgraded, or you rerun the `generate` command.
 
 1. [How to add a new object template via custom.yaml](configure-templates.md#create-a-new-object-template)
 2. [How to extend an existing object template via custom.yaml](configure-templates.md#extend-an-existing-object-template)
