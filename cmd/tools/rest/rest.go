@@ -497,7 +497,6 @@ func FetchAllStream(client *Client, href string, processBatch func([]gjson.Resul
 				if err := processBatch([]gjson.Result{}); err != nil {
 					return err
 				}
-				break
 			}
 
 			prevLink = nextLink
