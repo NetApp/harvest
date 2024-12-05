@@ -492,6 +492,12 @@ func FetchAllStream(client *Client, href string, processBatch func([]gjson.Resul
 				if err := processBatch(data.Array()); err != nil {
 					return err
 				}
+			} else {
+				// Process an empty list of records
+				if err := processBatch([]gjson.Result{}); err != nil {
+					return err
+				}
+				break
 			}
 
 			prevLink = nextLink
