@@ -176,7 +176,6 @@ security login rest-role create -role harvest2-rest-role -access readonly -api /
     security login rest-role create -role harvest-rest-role -access readonly -api /api/network/ip/interfaces
     security login rest-role create -role harvest-rest-role -access readonly -api /api/network/ip/ports
     security login rest-role create -role harvest-rest-role -access readonly -api /api/network/ip/routes
-    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/support/alerts
     security login rest-role create -role harvest-rest-role -access readonly -api /api/protocols/cifs/services
     security login rest-role create -role harvest-rest-role -access readonly -api /api/protocols/cifs/sessions
     security login rest-role create -role harvest-rest-role -access readonly -api /api/protocols/cifs/shares
@@ -215,6 +214,8 @@ security login rest-role create -role harvest2-rest-role -access readonly -api /
     security login rest-role create -role harvest-rest-role -access readonly -api /api/svm/svms
 
     # Private CLI endpoints
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/support/alerts
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/aggr
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/cluster/date
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/disk
