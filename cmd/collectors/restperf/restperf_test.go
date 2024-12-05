@@ -87,8 +87,8 @@ func TestMain(m *testing.M) {
 	fullPollData[0].Timestamp = now.UnixNano()
 	mat := benchPerf.Matrix[benchPerf.Object]
 	_, _ = benchPerf.pollInstance(mat, perfToJSON(propertiesData), 0)
-	_, _ = benchPerf.processPerfRecords(fullPollData, mat, mat, set.New())
-	_, _ = benchPerf.cookCounters(0, mat, mat, set.New())
+	_, _, _ = benchPerf.processPerfRecords(fullPollData, mat, mat, set.New())
+	_, _ = benchPerf.cookCounters(mat, mat)
 
 	os.Exit(m.Run())
 }
@@ -106,8 +106,8 @@ func BenchmarkRestPerf_PollData(b *testing.B) {
 		for _, mm := range mi {
 			ms = append(ms, mm)
 		}
-		_, _ = benchPerf.processPerfRecords(fullPollData, mat, mat, set.New())
-		m, err := benchPerf.cookCounters(0, mat, mat, set.New())
+		_, _, _ = benchPerf.processPerfRecords(fullPollData, mat, mat, set.New())
+		m, err := benchPerf.cookCounters(mat, mat)
 		if err != nil {
 			b.Errorf("error: %v", err)
 		}
@@ -126,7 +126,7 @@ func TestRestPerf_pollData(t *testing.T) {
 		pollDataPath1 string
 		pollDataPath2 string
 		numInstances  int
-		numMetrics    int
+		numMetrics    uint64
 		sum           int64
 		pollCounters  string
 		pollCounters2 string
@@ -193,7 +193,7 @@ func TestRestPerf_pollData(t *testing.T) {
 			pollData[0].Timestamp = future.UnixNano()
 
 			prevMat = r.Matrix[r.Object]
-			got, _, err := processAndCookCounters(r, pollData, prevMat)
+			got, metricCount, err := processAndCookCounters(r, pollData, prevMat)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("pollData() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -204,10 +204,8 @@ func TestRestPerf_pollData(t *testing.T) {
 				t.Errorf("pollData() numInstances got=%v, want=%v", len(m.GetInstances()), tt.numInstances)
 			}
 
-			metadata := r.Metadata
-			numMetrics, _ := metadata.GetMetric("metrics").GetValueInt(metadata.GetInstance("data"))
-			if numMetrics != tt.numMetrics {
-				t.Errorf("pollData() numMetrics got=%v, want=%v", numMetrics, tt.numMetrics)
+			if metricCount != tt.numMetrics {
+				t.Errorf("pollData() numMetrics got=%v, want=%v", metricCount, tt.numMetrics)
 			}
 
 			var sum int64
@@ -405,7 +403,7 @@ func TestQosVolume(t *testing.T) {
 		pollDataPath1 string
 		pollDataPath2 string
 		numInstances  int
-		numMetrics    int
+		numMetrics    uint64
 		sum           int64
 		pollCounters  string
 		pollInstance  string
@@ -452,7 +450,7 @@ func TestQosVolume(t *testing.T) {
 			pollData[0].Timestamp = future.UnixNano()
 
 			prevMat = r.Matrix[r.Object]
-			got, _, err := processAndCookCounters(r, pollData, prevMat)
+			got, metricCount, err := processAndCookCounters(r, pollData, prevMat)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("pollData() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -463,10 +461,8 @@ func TestQosVolume(t *testing.T) {
 				t.Errorf("pollData() numInstances got=%v, want=%v", len(m.GetInstances()), tt.numInstances)
 			}
 
-			metadata := r.Metadata
-			numMetrics, _ := metadata.GetMetric("metrics").GetValueInt(metadata.GetInstance("data"))
-			if numMetrics != tt.numMetrics {
-				t.Errorf("pollData() numMetrics got=%v, want=%v", numMetrics, tt.numMetrics)
+			if metricCount != tt.numMetrics {
+				t.Errorf("pollData() numMetrics got=%v, want=%v", metricCount, tt.numMetrics)
 			}
 
 			var sum int64
@@ -494,7 +490,7 @@ func TestQosVolume(t *testing.T) {
 func processAndCookCounters(r *RestPerf, pollData []rest.PerfRecord, prevMat *matrix.Matrix) (map[string]*matrix.Matrix, uint64, error) {
 	curMat := prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
 	curMat.Reset()
-	metricCount, _ := r.processPerfRecords(pollData, curMat, prevMat, set.New())
-	got, err := r.cookCounters(metricCount, curMat, prevMat, set.New())
+	metricCount, _, _ := r.processPerfRecords(pollData, curMat, prevMat, set.New())
+	got, err := r.cookCounters(curMat, prevMat)
 	return got, metricCount, err
 }

@@ -473,7 +473,7 @@ func FetchAnalytics(client *Client, href string) ([]gjson.Result, gjson.Result, 
 func FetchRestPerfDataStream(client *Client, href string, processBatch func([]PerfRecord) error, headers ...map[string]string) error {
 	var prevLink string
 	nextLink := href
-
+	recordsFound := false
 	for {
 		response, err := client.GetRest(nextLink, headers...)
 		if err != nil {
@@ -487,13 +487,9 @@ func FetchRestPerfDataStream(client *Client, href string, processBatch func([]Pe
 		next := output.Get("_links.next.href")
 
 		if numRecords.Int() > 0 {
+			recordsFound = true
 			p := PerfRecord{Records: data, Timestamp: time.Now().UnixNano()}
 			if err := processBatch([]PerfRecord{p}); err != nil {
-				return err
-			}
-		} else {
-			// Call processBatch with an empty list to handle no records scenario
-			if err := processBatch([]PerfRecord{}); err != nil {
 				return err
 			}
 		}
@@ -505,6 +501,9 @@ func FetchRestPerfDataStream(client *Client, href string, processBatch func([]Pe
 			// no nextLink or nextLink is the same as the previous link, no progress is being made, exit
 			break
 		}
+	}
+	if !recordsFound {
+		return errs.New(errs.ErrNoInstance, "no instances found")
 	}
 
 	return nil

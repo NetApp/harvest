@@ -693,6 +693,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	var (
 		apiD, parseD time.Duration
 		metricCount  uint64
+		numPartials  uint64
 		startTime    time.Time
 		prevMat      *matrix.Matrix
 		curMat       *matrix.Matrix
@@ -761,14 +762,14 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	processBatch := func(perfRecords []rest.PerfRecord) error {
 		if len(perfRecords) == 0 {
-			return errs.New(errs.ErrNoInstance, "no "+r.Object+" instances on cluster")
+			return nil
 		}
 
 		// Process the current batch of records
-		count, batchParseD := r.processPerfRecords(perfRecords, curMat, prevMat, oldInstances)
+		count, np, batchParseD := r.processPerfRecords(perfRecords, curMat, prevMat, oldInstances)
+		numPartials += np
 		metricCount += count
 		parseD += batchParseD
-		apiD -= batchParseD
 		return nil
 	}
 
@@ -779,10 +780,33 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		return nil, err
 	}
 
-	return r.cookCounters(metricCount, curMat, prevMat, oldInstances)
+	if !r.hasInstanceSchedule {
+		// Remove old instances that are not found in new instances
+		for key := range oldInstances.Iter() {
+			curMat.RemoveInstance(key)
+		}
+	}
+
+	if isWorkloadDetailObject(r.Prop.Query) {
+		if err := r.getParentOpsCounters(curMat); err != nil {
+			// no point to continue as we can't calculate the other counters
+			return nil, err
+		}
+	}
+
+	_ = r.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
+	_ = r.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
+	_ = r.Metadata.LazySetValueUint64("metrics", "data", metricCount)
+	_ = r.Metadata.LazySetValueUint64("instances", "data", uint64(len(curMat.GetInstances())))
+	_ = r.Metadata.LazySetValueUint64("bytesRx", "data", r.Client.Metadata.BytesRx)
+	_ = r.Metadata.LazySetValueUint64("numCalls", "data", r.Client.Metadata.NumCalls)
+	_ = r.Metadata.LazySetValueUint64("numPartials", "data", numPartials)
+	r.AddCollectCount(metricCount)
+
+	return r.cookCounters(curMat, prevMat)
 }
 
-func (r *RestPerf) processPerfRecords(perfRecords []rest.PerfRecord, curMat *matrix.Matrix, prevMat *matrix.Matrix, oldInstances *set.Set) (uint64, time.Duration) {
+func (r *RestPerf) processPerfRecords(perfRecords []rest.PerfRecord, curMat *matrix.Matrix, prevMat *matrix.Matrix, oldInstances *set.Set) (uint64, uint64, time.Duration) {
 	var (
 		count        uint64
 		parseD       time.Duration
@@ -1092,7 +1116,7 @@ func (r *RestPerf) processPerfRecords(perfRecords []rest.PerfRecord, curMat *mat
 		})
 	}
 	parseD = time.Since(startTime)
-	return count, parseD
+	return count, numPartials, parseD
 }
 
 // getMetric retrieves the metric associated with the given key from the current matrix (curMat).
@@ -1129,37 +1153,11 @@ func (r *RestPerf) getMetric(curMat *matrix.Matrix, prevMat *matrix.Matrix, key 
 	return curMetric, nil
 }
 
-func (r *RestPerf) cookCounters(count uint64, curMat *matrix.Matrix, prevMat *matrix.Matrix, oldInstances *set.Set) (map[string]*matrix.Matrix, error) {
+func (r *RestPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (map[string]*matrix.Matrix, error) {
 	var (
-		apiD, parseD time.Duration
-		err          error
-		skips        int
-		numPartials  uint64
+		err   error
+		skips int
 	)
-
-	if !r.hasInstanceSchedule {
-		// Remove old instances that are not found in new instances
-		for key := range oldInstances.Iter() {
-			curMat.RemoveInstance(key)
-		}
-	}
-
-	if isWorkloadDetailObject(r.Prop.Query) {
-		if err := r.getParentOpsCounters(curMat); err != nil {
-			// no point to continue as we can't calculate the other counters
-			return nil, err
-		}
-	}
-
-	_ = r.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
-	_ = r.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
-	_ = r.Metadata.LazySetValueUint64("metrics", "data", count)
-	_ = r.Metadata.LazySetValueUint64("instances", "data", uint64(len(curMat.GetInstances())))
-	_ = r.Metadata.LazySetValueUint64("bytesRx", "data", r.Client.Metadata.BytesRx)
-	_ = r.Metadata.LazySetValueUint64("numCalls", "data", r.Client.Metadata.NumCalls)
-	_ = r.Metadata.LazySetValueUint64("numPartials", "data", numPartials)
-
-	r.AddCollectCount(count)
 
 	// skip calculating from delta if no data from previous poll
 	if r.perfProp.isCacheEmpty {
