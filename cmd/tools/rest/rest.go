@@ -499,7 +499,7 @@ func FetchRestPerfDataStream(client *Client, href string, processBatch func([]Pe
 		}
 
 		prevLink = nextLink
-		nextLink = next.String()
+		nextLink = next.ClonedString()
 
 		if nextLink == "" || nextLink == prevLink {
 			// no nextLink or nextLink is the same as the previous link, no progress is being made, exit
