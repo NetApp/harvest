@@ -1,10 +1,12 @@
-## Creating/editing templates
+## Templates customization
 
 This document covers how to use [Collector](configure-templates.md#collector-templates)
 and [Object](configure-templates.md#object-templates) templates to extend Harvest.
+Customization of templates should use the `custom.yaml` approach
+to avoid overwriting your changes when Harvest is upgraded, or you rerun the `generate` command.
 
-1. [How to add a new object template](configure-templates.md#create-a-new-object-template)
-2. [How to extend an existing object template](configure-templates.md#extend-an-existing-object-template)
+1. [How to add a new object template via custom.yaml](configure-templates.md#create-a-new-object-template)
+2. [How to extend an existing object template via custom.yaml](configure-templates.md#extend-an-existing-object-template)
 
 There are a couple of ways to learn about ZAPIs and their attributes:
 
@@ -260,7 +262,7 @@ Let's say you want to extend `lun.yaml` to:
 3. Add a new counter to the already collected lun metrics using the `value_to_num` plugin
 4. Add a new `application` instance_keys and labels to the collected metrics
 
-Let's assume the existing template is located at conf/zapi/cdot/9.8.0/lun.yaml and contains the following.
+Let's assume the existing template is located at `conf/zapi/cdot/9.8.0/lun.yaml` and contains the following.
 
 ```yaml
 name: Lun
