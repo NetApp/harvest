@@ -113,6 +113,7 @@ security login role create -role harvest2-role -access readonly -cmddirname "sto
 security login role create -role harvest2-role -access readonly -cmddirname "storage iscsi-initiator show"
 security login role create -role harvest2-role -access readonly -cmddirname "storage shelf"
 security login role create -role harvest2-role -access readonly -cmddirname "system chassis fru show"
+security login role create -role harvest2-role -access readonly -cmddirname "system controller fru show"
 security login role create -role harvest2-role -access readonly -cmddirname "system health alert show"
 security login role create -role harvest2-role -access readonly -cmddirname "system health status show"
 security login role create -role harvest2-role -access readonly -cmddirname "system health subsystem show"
@@ -227,6 +228,7 @@ security login rest-role create -role harvest2-rest-role -access readonly -api /
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/storage/failover
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/storage/shelf
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/system/chassis/fru
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/system/controller/fru
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/system/health/subsystem
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/volume
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/vserver
