@@ -1919,7 +1919,7 @@
 <th>parameter</th>
 <th>type</th>
 <th>description</th>
-<th style="text-align: right;">default</th>
+<th align="right">default</th>
 </tr>
 </thead>
 <tbody>
@@ -1927,43 +1927,43 @@
 <td><code>use_insecure_tls</code></td>
 <td>bool, optional</td>
 <td>skip verifying TLS certificate of the target system</td>
-<td style="text-align: right;">false</td>
+<td align="right">false</td>
 </tr>
 <tr>
 <td><code>client_timeout</code></td>
 <td>duration (Go-syntax)</td>
 <td>how long to wait for server responses</td>
-<td style="text-align: right;">30s</td>
+<td align="right">30s</td>
 </tr>
 <tr>
 <td><code>latency_io_reqd</code></td>
 <td>int, optional</td>
 <td>threshold of IOPs for calculating latency metrics (latencies based on very few IOPs are unreliable)</td>
-<td style="text-align: right;">10</td>
+<td align="right">10</td>
 </tr>
 <tr>
 <td><code>jitter</code></td>
 <td>duration (Go-syntax), optional</td>
 <td>Each Harvest collector runs independently, which means that at startup, each collector may send its REST queries at nearly the same time. To spread out the collector startup times over a broader period, you can use <code>jitter</code> to randomly distribute collector startup across a specified duration. For example, a <code>jitter</code> of <code>1m</code> starts each collector after a random delay between 0 and 60 seconds. For more details, refer to <a href="https://github.com/NetApp/harvest/discussions/2856">this discussion</a>.</td>
-<td style="text-align: right;"></td>
+<td align="right"></td>
 </tr>
 <tr>
 <td><code>schedule</code></td>
 <td>list, required</td>
 <td>the poll frequencies of the collector/object, should include exactly these three elements in the exact same other:</td>
-<td style="text-align: right;"></td>
+<td align="right"></td>
 </tr>
 <tr>
 <td>- <code>counter</code></td>
 <td>duration (Go-syntax)</td>
 <td>poll frequency of updating the counter metadata cache</td>
-<td style="text-align: right;">20 minutes</td>
+<td align="right">20 minutes</td>
 </tr>
 <tr>
 <td>- <code>data</code></td>
 <td>duration (Go-syntax)</td>
 <td>poll frequency of updating the data cache <br /><br /><strong>Note</strong> Harvest allows defining poll intervals on sub-second level (e.g. <code>1ms</code>), however keep in mind the following:<br /><ul><li>API response of an ONTAP system can take several seconds, so the collector is likely to enter failed state if the poll interval is less than <code>client_timeout</code>.</li><li>Small poll intervals will create significant workload on the ONTAP system, as many counters are aggregated on-demand.</li><li>Some metric values become less significant if they are calculated for very short intervals (e.g. latencies)</li></ul></td>
-<td style="text-align: right;">1  minute</td>
+<td align="right">1  minute</td>
 </tr>
 </tbody>
 </table>
