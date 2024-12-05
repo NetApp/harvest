@@ -691,9 +691,11 @@ func (r *RestPerf) processWorkLoadCounter() (map[string]*matrix.Matrix, error) {
 
 func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	var (
-		err         error
-		perfRecords []rest.PerfRecord
-		startTime   time.Time
+		apiD, parseD time.Duration
+		metricCount  uint64
+		startTime    time.Time
+		prevMat      *matrix.Matrix
+		curMat       *matrix.Matrix
 	)
 
 	timestamp := r.Matrix[r.Object].GetMetric(timestampMetricName)
@@ -743,88 +745,57 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 	}
 
-	err = rest.FetchRestPerfData(r.Client, href, &perfRecords, headers)
-
-	if err != nil {
-		return nil, fmt.Errorf("failed to fetch href=%s %w", href, err)
-	}
-
-	return r.pollData(startTime, perfRecords)
-}
-
-// getMetric retrieves the metric associated with the given key from the current matrix (curMat).
-// If the metric does not exist in curMat, it is created with the provided display settings.
-// The function also ensures that the same metric exists in the previous matrix (prevMat) to
-// allow for subsequent calculations (e.g., prevMetric - curMetric).
-// This is particularly important in cases such as ONTAP upgrades, where curMat may contain
-// additional metrics that are not present in prevMat. If prevMat does not have the metric,
-// it is created to prevent a panic when attempting to perform calculations with non-existent metrics.
-//
-// This metric creation process within RestPerf is necessary during PollData because the information about whether a metric
-// is an array is not available in the RestPerf PollCounter. The determination of whether a metric is an array
-// is made by examining the actual data in RestPerf. Therefore, metric creation in RestPerf is performed during
-// the poll data phase, and special handling is required for such cases.
-//
-// The function returns the current metric and any error encountered during its retrieval or creation.
-func (r *RestPerf) getMetric(curMat *matrix.Matrix, prevMat *matrix.Matrix, key string, display ...string) (*matrix.Metric, error) {
-	var err error
-	curMetric := curMat.GetMetric(key)
-	if curMetric == nil {
-		curMetric, err = curMat.NewMetricFloat64(key, display...)
-		if err != nil {
-			return nil, err
+	// Track old instances before processing batches
+	oldInstances := set.New()
+	// The creation and deletion of objects with an instance schedule are managed through pollInstance.
+	if !r.hasInstanceSchedule {
+		for key := range r.Matrix[r.Object].GetInstances() {
+			oldInstances.Add(key)
 		}
 	}
-
-	prevMetric := prevMat.GetMetric(key)
-	if prevMetric == nil {
-		_, err = prevMat.NewMetricFloat64(key, display...)
-		if err != nil {
-			return nil, err
-		}
-	}
-	return curMetric, nil
-}
-
-func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) (map[string]*matrix.Matrix, error) {
-	var (
-		count        uint64
-		apiD, parseD time.Duration
-		err          error
-		instanceKeys []string
-		skips        int
-		numPartials  uint64
-		instIndex    int
-		ts           float64
-		prevMat      *matrix.Matrix
-		curMat       *matrix.Matrix
-	)
 
 	prevMat = r.Matrix[r.Object]
 	// clone matrix without numeric data
 	curMat = prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
 	curMat.Reset()
-	instanceKeys = r.Prop.InstanceKeys
 
-	apiD = time.Since(startTime)
+	processBatch := func(perfRecords []rest.PerfRecord) error {
+		if len(perfRecords) == 0 {
+			return errs.New(errs.ErrNoInstance, "no "+r.Object+" instances on cluster")
+		}
+
+		// Process the current batch of records
+		count, batchParseD := r.processPerfRecords(perfRecords, curMat, prevMat, oldInstances)
+		metricCount += count
+		parseD += batchParseD
+		apiD -= batchParseD
+		return nil
+	}
+
+	err = rest.FetchRestPerfDataStream(r.Client, href, processBatch, headers)
+	apiD += time.Since(startTime)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return r.cookCounters(metricCount, curMat, prevMat, oldInstances)
+}
+
+func (r *RestPerf) processPerfRecords(perfRecords []rest.PerfRecord, curMat *matrix.Matrix, prevMat *matrix.Matrix, oldInstances *set.Set) (uint64, time.Duration) {
+	var (
+		count        uint64
+		parseD       time.Duration
+		instanceKeys []string
+		numPartials  uint64
+		ts           float64
+		err          error
+	)
+	instanceKeys = r.Prop.InstanceKeys
+	startTime := time.Now()
+
 	// init current time
 	ts = float64(startTime.UnixNano()) / BILLION
-
-	startTime = time.Now()
-	instIndex = -1
-
-	if len(perfRecords) == 0 {
-		return nil, errs.New(errs.ErrNoInstance, "no "+r.Object+" instances on cluster")
-	}
-
-	// Call pollInstance to handle instance creation/deletion for objects without an instance schedule
-	if !r.hasInstanceSchedule {
-		_, err = r.pollInstance(curMat, perfToJSON(perfRecords), apiD)
-		if err != nil {
-			return nil, err
-		}
-	}
-
 	for _, perfRecord := range perfRecords {
 		pr := perfRecord.Records
 		t := perfRecord.Timestamp
@@ -842,7 +813,6 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 				isHistogram     bool
 				histogramMetric *matrix.Metric
 			)
-			instIndex++
 
 			if !instanceData.IsObject() {
 				r.Logger.Warn("Instance data is not object, skipping", slog.String("type", instanceData.Type.String()))
@@ -910,6 +880,8 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 					return true
 				}
 			}
+
+			oldInstances.Remove(instanceKey)
 
 			// check for partial aggregation
 			if instanceData.Get("aggregation.complete").ClonedString() == "false" {
@@ -1072,7 +1044,6 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 									slog.String("name", name),
 									slog.String("label", label),
 									slog.String("value", values[i]),
-									slog.Int("instIndex", instIndex),
 								)
 								continue
 							}
@@ -1086,7 +1057,6 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 									"NewMetricFloat64",
 									slogx.Err(err),
 									slog.String("name", name),
-									slog.Int("instIndex", instIndex),
 								)
 							}
 						}
@@ -1098,7 +1068,6 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 									slogx.Err(err),
 									slog.String("key", metric.Name),
 									slog.String("metric", metric.Label),
-									slog.Int("instIndex", instIndex),
 								)
 							}
 						} else {
@@ -1107,7 +1076,6 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 								slogx.Err(err),
 								slog.String("key", metric.Name),
 								slog.String("metric", metric.Label),
-								slog.Int("instIndex", instIndex),
 							)
 						}
 						count++
@@ -1123,6 +1091,58 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 			return true
 		})
 	}
+	parseD = time.Since(startTime)
+	return count, parseD
+}
+
+// getMetric retrieves the metric associated with the given key from the current matrix (curMat).
+// If the metric does not exist in curMat, it is created with the provided display settings.
+// The function also ensures that the same metric exists in the previous matrix (prevMat) to
+// allow for subsequent calculations (e.g., prevMetric - curMetric).
+// This is particularly important in cases such as ONTAP upgrades, where curMat may contain
+// additional metrics that are not present in prevMat. If prevMat does not have the metric,
+// it is created to prevent a panic when attempting to perform calculations with non-existent metrics.
+//
+// This metric creation process within RestPerf is necessary during PollData because the information about whether a metric
+// is an array is not available in the RestPerf PollCounter. The determination of whether a metric is an array
+// is made by examining the actual data in RestPerf. Therefore, metric creation in RestPerf is performed during
+// the poll data phase, and special handling is required for such cases.
+//
+// The function returns the current metric and any error encountered during its retrieval or creation.
+func (r *RestPerf) getMetric(curMat *matrix.Matrix, prevMat *matrix.Matrix, key string, display ...string) (*matrix.Metric, error) {
+	var err error
+	curMetric := curMat.GetMetric(key)
+	if curMetric == nil {
+		curMetric, err = curMat.NewMetricFloat64(key, display...)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	prevMetric := prevMat.GetMetric(key)
+	if prevMetric == nil {
+		_, err = prevMat.NewMetricFloat64(key, display...)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return curMetric, nil
+}
+
+func (r *RestPerf) cookCounters(count uint64, curMat *matrix.Matrix, prevMat *matrix.Matrix, oldInstances *set.Set) (map[string]*matrix.Matrix, error) {
+	var (
+		apiD, parseD time.Duration
+		err          error
+		skips        int
+		numPartials  uint64
+	)
+
+	if !r.hasInstanceSchedule {
+		// Remove old instances that are not found in new instances
+		for key := range oldInstances.Iter() {
+			curMat.RemoveInstance(key)
+		}
+	}
 
 	if isWorkloadDetailObject(r.Prop.Query) {
 		if err := r.getParentOpsCounters(curMat); err != nil {
@@ -1131,7 +1151,6 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 		}
 	}
 
-	parseD = time.Since(startTime)
 	_ = r.Metadata.LazySetValueInt64("api_time", "data", apiD.Microseconds())
 	_ = r.Metadata.LazySetValueInt64("parse_time", "data", parseD.Microseconds())
 	_ = r.Metadata.LazySetValueUint64("metrics", "data", count)
@@ -1253,7 +1272,6 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 				slog.String("key", key),
 				slog.String("property", property),
 				slog.String("denominator", counter.denominator),
-				slog.Int("instIndex", instIndex),
 			)
 			continue
 		}
@@ -1296,7 +1314,6 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 			"Unknown property",
 			slog.String("key", key),
 			slog.String("property", property),
-			slog.Int("instIndex", instIndex),
 		)
 	}
 
@@ -1314,7 +1331,6 @@ func (r *RestPerf) pollData(startTime time.Time, perfRecords []rest.PerfRecord) 
 						slog.Int("i", i),
 						slog.String("metric", metric.GetName()),
 						slog.String("key", key),
-						slog.Int("instIndex", instIndex),
 					)
 					continue
 				}
