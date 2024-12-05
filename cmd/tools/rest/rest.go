@@ -491,6 +491,11 @@ func FetchRestPerfDataStream(client *Client, href string, processBatch func([]Pe
 			if err := processBatch([]PerfRecord{p}); err != nil {
 				return err
 			}
+		} else {
+			// Call processBatch with an empty list to handle no records scenario
+			if err := processBatch([]PerfRecord{}); err != nil {
+				return err
+			}
 		}
 
 		prevLink = nextLink
