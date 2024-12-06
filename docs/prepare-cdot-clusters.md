@@ -93,6 +93,8 @@ Warnings are fine.
 security login role create -role harvest2-role -access readonly -cmddirname "cluster"
 security login role create -role harvest2-role -access readonly -cmddirname "event notification destination show"
 security login role create -role harvest2-role -access readonly -cmddirname "event notification destination"
+security login role create -role harvest2-role -access readonly -cmddirname "event log"
+security login role create -role harvest2-role -access readonly -cmddirname "event catalog show"
 security login role create -role harvest2-role -access readonly -cmddirname "lun"
 security login role create -role harvest2-role -access readonly -cmddirname "metrocluster configuration-settings mediator add"
 security login role create -role harvest2-role -access readonly -cmddirname "metrocluster"
@@ -126,7 +128,6 @@ security login role create -role harvest2-role -access readonly -cmddirname "sys
 security login role create -role harvest2-role -access readonly -cmddirname "version"
 security login role create -role harvest2-role -access readonly -cmddirname "volume"
 security login role create -role harvest2-role -access readonly -cmddirname "vserver"
-security login role create -role harvest2-role -access readonly -cmddirname "event log"
 ```
 
 #### Create harvest user and associate with the harvest role
