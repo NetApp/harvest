@@ -470,6 +470,45 @@ func FetchAnalytics(client *Client, href string) ([]gjson.Result, gjson.Result, 
 	return result, *analytics, nil
 }
 
+func FetchRestPerfDataStream(client *Client, href string, processBatch func([]PerfRecord) error, headers ...map[string]string) error {
+	var prevLink string
+	nextLink := href
+	recordsFound := false
+	for {
+		response, err := client.GetRest(nextLink, headers...)
+		if err != nil {
+			return fmt.Errorf("error making request %w", err)
+		}
+
+		// extract returned records since paginated records need to be merged into a single list
+		output := gjson.ParseBytes(response)
+		data := output.Get("records")
+		numRecords := output.Get("num_records")
+		next := output.Get("_links.next.href")
+
+		if numRecords.Int() > 0 {
+			recordsFound = true
+			p := PerfRecord{Records: data, Timestamp: time.Now().UnixNano()}
+			if err := processBatch([]PerfRecord{p}); err != nil {
+				return err
+			}
+		}
+
+		prevLink = nextLink
+		nextLink = next.ClonedString()
+
+		if nextLink == "" || nextLink == prevLink {
+			// no nextLink or nextLink is the same as the previous link, no progress is being made, exit
+			break
+		}
+	}
+	if !recordsFound {
+		return errs.New(errs.ErrNoInstance, "no instances found")
+	}
+
+	return nil
+}
+
 func FetchAllStream(client *Client, href string, processBatch func([]gjson.Result) error, headers ...map[string]string) error {
 	var prevLink string
 	nextLink := href
@@ -694,41 +733,6 @@ func fetchAnalytics(client *Client, href string, records *[]gjson.Result, analyt
 
 		if nextLink == "" || nextLink == prevLink || !downloadAll {
 			// no nextLink, nextLink is the same as the previous link, or not all records are desired, exit
-			break
-		}
-	}
-
-	return nil
-}
-
-// FetchRestPerfData This method is used in PerfRest collector. This method returns timestamp per batch
-func FetchRestPerfData(client *Client, href string, perfRecords *[]PerfRecord, headers ...map[string]string) error {
-
-	var prevLink string
-	nextLink := href
-
-	for {
-		response, err := client.GetRest(nextLink, headers...)
-		if err != nil {
-			return fmt.Errorf("error making request %w", err)
-		}
-
-		// extract returned records since paginated records need to be merged into a single list
-		output := gjson.ParseBytes(response)
-		data := output.Get("records")
-		numRecords := output.Get("num_records")
-		next := output.Get("_links.next.href")
-
-		if numRecords.Int() > 0 {
-			p := PerfRecord{Records: data, Timestamp: time.Now().UnixNano()}
-			*perfRecords = append(*perfRecords, p)
-		}
-
-		prevLink = nextLink
-		nextLink = next.ClonedString()
-
-		if nextLink == "" || nextLink == prevLink {
-			// no nextLink or nextLink is the same as the previous link, no progress is being made, exit
 			break
 		}
 	}
