@@ -73,7 +73,6 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 			v.SLogger.Error("Failed to fetch volumes, retaining cached volumesMap", slog.Any("err", err))
 		} else {
 			// Only update volumesMap if fetchVolumes was successful
-			clear(v.volumesMap)
 			v.volumesMap = newVolumesMap
 		}
 	}
