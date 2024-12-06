@@ -473,6 +473,7 @@ func FetchAnalytics(client *Client, href string) ([]gjson.Result, gjson.Result, 
 func FetchAllStream(client *Client, href string, processBatch func([]gjson.Result) error, headers ...map[string]string) error {
 	var prevLink string
 	nextLink := href
+	recordsFound := false
 
 	for {
 		var records []gjson.Result
@@ -483,12 +484,16 @@ func FetchAllStream(client *Client, href string, processBatch func([]gjson.Resul
 
 		output := gjson.ParseBytes(response)
 		data := output.Get("records")
+		numRecords := output.Get("num_records")
 		next := output.Get("_links.next.href")
 
 		if data.Exists() {
-			// Process the current batch of records
-			if err := processBatch(data.Array()); err != nil {
-				return err
+			if numRecords.Int() > 0 {
+				recordsFound = true
+				// Process the current batch of records
+				if err := processBatch(data.Array()); err != nil {
+					return err
+				}
 			}
 
 			prevLink = nextLink
@@ -506,12 +511,18 @@ func FetchAllStream(client *Client, href string, processBatch func([]gjson.Resul
 			}
 			value := gjson.GetBytes(response, "records")
 			records = append(records, value.Array()...)
-			// Process the current batch of records
-			if err := processBatch(records); err != nil {
-				return err
+			if len(records) > 0 {
+				recordsFound = true
+				// Process the current batch of records
+				if err := processBatch(records); err != nil {
+					return err
+				}
 			}
 			break
 		}
+	}
+	if !recordsFound {
+		return errs.New(errs.ErrNoInstance, "no instances found")
 	}
 
 	return nil
