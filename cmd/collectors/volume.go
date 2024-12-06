@@ -18,7 +18,7 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 	var err error
 
 	if volumesMap == nil {
-		logger.Info("volumes config data not found")
+		logger.Debug("volumes config data is empty")
 		return nil, nil, nil
 	}
 

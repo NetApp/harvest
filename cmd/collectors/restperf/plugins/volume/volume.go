@@ -64,16 +64,22 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 	opsKeyPrefix := "temp_"
 	if v.currentVal >= v.PluginInvocationRate {
 		v.currentVal = 0
-		// Clean volumesMap map
-		clear(v.volumesMap)
-		v.volumesMap = v.fetchVolumes()
+		// Attempt to fetch new volumes
+		newVolumesMap, err := v.fetchVolumes()
+		if err != nil {
+			v.SLogger.Error("Failed to fetch volumes, retaining cached volumesMap", slog.Any("err", err))
+		} else {
+			// Only update volumesMap if fetchVolumes was successful
+			clear(v.volumesMap)
+			v.volumesMap = newVolumesMap
+		}
 	}
 
 	v.currentVal++
 	return collectors.ProcessFlexGroupData(v.SLogger, data, style, v.includeConstituents, opsKeyPrefix, v.volumesMap)
 }
 
-func (v *Volume) fetchVolumes() map[string]string {
+func (v *Volume) fetchVolumes() (map[string]string, error) {
 	volumesMap := make(map[string]string)
 	query := "api/private/cli/volume"
 
@@ -86,12 +92,11 @@ func (v *Volume) fetchVolumes() map[string]string {
 
 	records, err := rest.FetchAll(v.client, href)
 	if err != nil {
-		v.SLogger.Error("Failed to fetch data", slog.Any("err", err), slog.String("href", href))
-		return nil
+		return nil, err
 	}
 
 	if len(records) == 0 {
-		return nil
+		return volumesMap, nil
 	}
 
 	for _, volume := range records {
@@ -105,5 +110,5 @@ func (v *Volume) fetchVolumes() map[string]string {
 		volumesMap[svm+name] = styleExtended
 	}
 
-	return volumesMap
+	return volumesMap, nil
 }
