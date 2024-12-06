@@ -367,7 +367,7 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 
 	processBatch := func(records []gjson.Result) error {
 		if len(records) == 0 {
-			return errs.New(errs.ErrNoInstance, "no "+r.Object+" instances on cluster")
+			return nil
 		}
 
 		// Process the current batch of records
