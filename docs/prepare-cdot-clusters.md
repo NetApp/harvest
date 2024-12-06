@@ -121,6 +121,7 @@ security login role create -role harvest2-role -access readonly -cmddirname "sys
 security login role create -role harvest2-role -access readonly -cmddirname "system health subsystem show"
 security login role create -role harvest2-role -access readonly -cmddirname "system license show"
 security login role create -role harvest2-role -access readonly -cmddirname "system node"
+security login role create -role harvest2-role -access readonly -cmddirname "system node environment sensors show"
 security login role create -role harvest2-role -access readonly -cmddirname "system service-processor show"
 security login role create -role harvest2-role -access readonly -cmddirname "version"
 security login role create -role harvest2-role -access readonly -cmddirname "volume"
@@ -237,6 +238,7 @@ security login rest-role create -role harvest2-rest-role -access readonly -api /
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/system/chassis/fru
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/system/controller/fru
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/system/health/subsystem
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/system/node/environment/sensors
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/volume
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/vserver
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/vserver/cifs/share
