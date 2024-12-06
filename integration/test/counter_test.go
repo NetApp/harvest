@@ -35,6 +35,12 @@ var skipTemplates = map[string]bool{
 	"9.12.0/metrocluster_check.yaml": true,
 }
 
+var skipEndpoints = []string{
+	"api/private/cli/snapshot/policy",
+	"api/support/autosupport",
+	"api/private/cli/export-policy/rule",
+}
+
 // TestCounters extracts non-hidden counters from all of the rest and restperf templates and then invokes an HTTP GET for each api path + counters.
 // Valid responses are status code = 200. Objects do not need to exist on the cluster, only the api path and counter names are checked.
 func TestCounters(t *testing.T) {
@@ -86,6 +92,10 @@ func TestCounters(t *testing.T) {
 func invokeRestCall(client *rest2.Client, counters map[string][]counterData) error {
 	for _, countersDetail := range counters {
 		for _, counterDetail := range countersDetail {
+			// Skip the endpoints that are failing due to permission issues
+			if shouldSkipEndpoint(counterDetail.api, skipEndpoints) {
+				continue
+			}
 			href := rest2.NewHrefBuilder().
 				APIPath(counterDetail.api).
 				Fields(counterDetail.restCounters).
@@ -98,6 +108,15 @@ func invokeRestCall(client *rest2.Client, counters map[string][]counterData) err
 		}
 	}
 	return nil
+}
+
+func shouldSkipEndpoint(api string, skipEndpoints []string) bool {
+	for _, endpoint := range skipEndpoints {
+		if strings.Contains(api, endpoint) {
+			return true
+		}
+	}
+	return false
 }
 
 func processRestCounters(client *rest2.Client) map[string][]counterData {

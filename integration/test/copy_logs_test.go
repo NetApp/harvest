@@ -93,5 +93,5 @@ func checkLogs(t *testing.T, container docker.Container, info containerInfo) {
 
 // pollerIgnore returns a list of regex patterns that will be ignored
 func pollerIgnore() string {
-	return `RPC: Remote system error|connection error|Code: 2426405`
+	return `RPC: Remote system error|connection error|Code: 2426405|failed to fetch data: error making request StatusCode: 403, Error: Permission denied, Message: not authorized for that command, API: (/api/private/cli/snapshot/policy|/api/support/autosupport)`
 }
