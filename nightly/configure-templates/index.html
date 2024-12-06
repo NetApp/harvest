@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#creatingediting-templates" class="md-skip">
+        <a href="#templates-customization" class="md-skip">
           Skip to content
         </a>
       
@@ -1047,9 +1047,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#creatingediting-templates" class="md-nav__link">
+  <a href="#templates-customization" class="md-nav__link">
     <span class="md-ellipsis">
-      Creating/editing templates
+      Templates customization
     </span>
   </a>
   
@@ -1750,9 +1750,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#creatingediting-templates" class="md-nav__link">
+  <a href="#templates-customization" class="md-nav__link">
     <span class="md-ellipsis">
-      Creating/editing templates
+      Templates customization
     </span>
   </a>
   
@@ -1910,12 +1910,14 @@
 
   <h1>Templates</h1>
 
-<h2 id="creatingediting-templates">Creating/editing templates<a class="headerlink" href="#creatingediting-templates" title="Permanent link">&para;</a></h2>
+<h2 id="templates-customization">Templates customization<a class="headerlink" href="#templates-customization" title="Permanent link">&para;</a></h2>
 <p>This document covers how to use <a href="./#collector-templates">Collector</a>
-and <a href="./#object-templates">Object</a> templates to extend Harvest.</p>
+and <a href="./#object-templates">Object</a> templates to extend Harvest.
+Customization of templates should use the <code>custom.yaml</code> approach
+to avoid overwriting your changes when Harvest is upgraded, or you rerun the <code>generate</code> command.</p>
 <ol>
-<li><a href="./#create-a-new-object-template">How to add a new object template</a></li>
-<li><a href="./#extend-an-existing-object-template">How to extend an existing object template</a></li>
+<li><a href="./#create-a-new-object-template">How to add a new object template via custom.yaml</a></li>
+<li><a href="./#extend-an-existing-object-template">How to extend an existing object template via custom.yaml</a></li>
 </ol>
 <p>There are a couple of ways to learn about ZAPIs and their attributes:</p>
 <ul>
@@ -2119,7 +2121,7 @@ e.g. <code>conf/zapi/cdot/9.8.0/lun.yaml</code> and collect additional informati
 <li>Add a new counter to the already collected lun metrics using the <code>value_to_num</code> plugin</li>
 <li>Add a new <code>application</code> instance_keys and labels to the collected metrics</li>
 </ol>
-<p>Let's assume the existing template is located at conf/zapi/cdot/9.8.0/lun.yaml and contains the following.</p>
+<p>Let's assume the existing template is located at <code>conf/zapi/cdot/9.8.0/lun.yaml</code> and contains the following.</p>
 <div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Lun</span>
 <span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lun-get-iter</span>
 <span class="nt">object</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lun</span>

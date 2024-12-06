@@ -2084,6 +2084,9 @@ password: admin
 </code></pre></div>
 <h2 id="manage-pollers">Manage pollers<a class="headerlink" href="#manage-pollers" title="Permanent link">&para;</a></h2>
 <h3 id="how-do-i-add-a-new-poller">How do I add a new poller?<a class="headerlink" href="#how-do-i-add-a-new-poller" title="Permanent link">&para;</a></h3>
+<p>Note: All of your template customizations should follow the custom.yaml approach
+mentioned in <a href="../../configure-templates/#templates-customization">template customization</a>,
+otherwise any changes you've made in the <code>conf</code> directory will be overwritten.</p>
 <ol>
 <li>Add poller to <code>harvest.yml</code></li>
 <li>Regenerate compose file by running <a href="#generate-a-docker-compose-for-your-pollers">harvest generate</a></li>
