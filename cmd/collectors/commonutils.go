@@ -356,6 +356,9 @@ func AggregatePerScanner(logger *slog.Logger, data *matrix.Matrix, latencyKey st
 	counts := make(map[string]map[string]int) // map[scanner][counter] => value
 
 	for _, i := range data.GetInstances() {
+		if !i.IsExportable() {
+			continue
+		}
 		scanner := i.GetLabel("scanner")
 		ps := cache.GetInstance(scanner)
 		if ps == nil {
