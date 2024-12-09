@@ -1668,7 +1668,6 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		}
 
 		responseData, err := z.Client.InvokeBatchRequest(request, batchTag, z.testFilePath, headers)
-
 		if err != nil {
 			if errors.Is(err, errs.ErrAPIRequestRejected) {
 				z.Logger.Info(
@@ -1685,9 +1684,7 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 				)
 			}
 			apiD += time.Since(apiT)
-			// Mark the state as inconsistent and exit the loop
-			z.Logger.Error("Exiting due to timeout or error, state may be inconsistent")
-			return nil, err
+			break
 		}
 
 		results = responseData.Result
@@ -1706,9 +1703,9 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		}
 
 		for _, i := range instances.GetChildren() {
-
 			key := z.buildKeyValue(i, keyAttrs)
-			if key == "" {
+			switch {
+			case key == "":
 				// instance key missing
 				name := i.GetChildContentS(nameAttr)
 				uuid := i.GetChildContentS(uuidAttr)
@@ -1720,19 +1717,15 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 						slog.String("uuid", uuid),
 					)
 				}
-			} else if oldInstances.Has(key) {
+			case oldInstances.Has(key):
 				// instance already in cache
 				oldInstances.Remove(key)
 				instance := mat.GetInstance(key)
 				z.updateQosLabels(i, instance, key)
-				continue
-			} else {
-				instance := mat.GetInstance(key)
-				if instance == nil {
-					instance, err = mat.NewInstance(key)
-					if err != nil {
-						z.Logger.Error("add instance", slogx.Err(err))
-					}
+			default:
+				instance, err := mat.NewInstance(key)
+				if err != nil {
+					z.Logger.Error("add instance", slogx.Err(err))
 				}
 				z.updateQosLabels(i, instance, key)
 			}
