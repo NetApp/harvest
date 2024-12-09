@@ -1723,11 +1723,15 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 				instance := mat.GetInstance(key)
 				z.updateQosLabels(i, instance, key)
 			default:
-				instance, err := mat.NewInstance(key)
-				if err != nil {
-					z.Logger.Error("add instance", slogx.Err(err))
+				instance := mat.GetInstance(key)
+				if instance == nil {
+					instance, err = mat.NewInstance(key)
+					if err != nil {
+						z.Logger.Error("add instance", slogx.Err(err))
+					}
+				} else {
+					z.updateQosLabels(i, instance, key)
 				}
-				z.updateQosLabels(i, instance, key)
 			}
 		}
 		parseD += time.Since(parseT)
