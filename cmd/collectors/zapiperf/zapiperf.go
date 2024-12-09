@@ -1729,7 +1729,8 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 					if err != nil {
 						z.Logger.Error("add instance", slogx.Err(err))
 					}
-				} else {
+				}
+				if instance != nil {
 					z.updateQosLabels(i, instance, key)
 				}
 			}
