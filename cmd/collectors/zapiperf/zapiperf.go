@@ -1585,7 +1585,6 @@ func parseHistogramLabels(elem *node.Node) ([]string, string) {
 
 // PollInstance updates instance cache
 func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
-
 	var (
 		err                               error
 		request, results                  *node.Node
@@ -1686,7 +1685,9 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 				)
 			}
 			apiD += time.Since(apiT)
-			break
+			// Mark the state as inconsistent and exit the loop
+			z.Logger.Error("Exiting due to timeout or error, state may be inconsistent")
+			return nil, err
 		}
 
 		results = responseData.Result
@@ -1725,9 +1726,14 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 				instance := mat.GetInstance(key)
 				z.updateQosLabels(i, instance, key)
 				continue
-			} else if instance, err := mat.NewInstance(key); err != nil {
-				z.Logger.Error("add instance", slogx.Err(err))
 			} else {
+				instance := mat.GetInstance(key)
+				if instance == nil {
+					instance, err = mat.NewInstance(key)
+					if err != nil {
+						z.Logger.Error("add instance", slogx.Err(err))
+					}
+				}
 				z.updateQosLabels(i, instance, key)
 			}
 		}
