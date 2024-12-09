@@ -81,7 +81,7 @@ PACKAGE_DIR="$SRC/dist/$HARVEST_VERSION-$HARVEST_RELEASE"
 PACKAGE_NAME="harvest-${HARVEST_VERSION}-${HARVEST_RELEASE}.${HARVEST_ARCH}.deb"
 mkdir -p "$PACKAGE_DIR"
 rm -f "$PACKAGE_DIR/$PACKAGE_NAME"
-dpkg-deb --build "$BUILD" "$PACKAGE_DIR/$PACKAGE_NAME"
+dpkg-deb --build -Zxz "$BUILD" "$PACKAGE_DIR/$PACKAGE_NAME"
 if [ ! $? -eq 0 ]; then
     error "dpkg build failed"
     exit 1
