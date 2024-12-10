@@ -1,5 +1,5 @@
 name:                         SnapMirrorPolicy
-query:                        api/private/cli/snapmirror
+query:                        api/snapmirror/policies
 object:                       snapmirror_policy
 
 counters:

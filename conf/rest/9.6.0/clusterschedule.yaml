@@ -4,16 +4,17 @@ object:                       cluster_schedule
 
 counters:
   - ^^uuid                       => uuid
+  - ^name                        => name
   - ^crone                       => crone
-  - ^interval                    => interval
   - ^svm.name                    => svm
   - ^type
+  - interval(duration)           => interval
 
 export_options:
   instance_keys:
-    - svm
+    - name
+    - type
   instance_labels:
     - crone
-    - interval
-    - type
+    - svm
 
