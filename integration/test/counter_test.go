@@ -47,14 +47,16 @@ func TestCounters(t *testing.T) {
 	var (
 		poller *conf.Poller
 		client *rest2.Client
+		err    error
 	)
 
 	utils.SkipIfMissing(t, utils.Regression)
-	_, err := conf.LoadHarvestConfig(installer.HarvestConfigFile)
+	err = validateRolePermissions()
 	if err != nil {
-		slog.Error("Unable to load harvest config", slogx.Err(err))
+		slog.Error("role permission validation failed", slogx.Err(err))
 		os.Exit(1)
 	}
+	conf.TestLoadHarvestConfig(installer.HarvestConfigFile)
 
 	pollerName := "dc1"
 	if poller, err = conf.PollerNamed(pollerName); err != nil {
@@ -87,6 +89,55 @@ func TestCounters(t *testing.T) {
 		os.Exit(1)
 	}
 
+}
+
+func validateRolePermissions() error {
+	var (
+		adminPoller *conf.Poller
+		adminClient *rest2.Client
+		err         error
+	)
+
+	// Load the admin poller from harvest_admin.yml
+	conf.TestLoadHarvestConfig(installer.HarvestAdminConfigFile)
+
+	pollerName := "dc1-admin"
+	if adminPoller, err = conf.PollerNamed(pollerName); err != nil {
+		return fmt.Errorf("unable to find poller %s: %w", pollerName, err)
+	}
+	if adminPoller.Addr == "" {
+		return fmt.Errorf("admin poller address is empty for poller %s", pollerName)
+	}
+
+	timeout, _ := time.ParseDuration(rest2.DefaultTimeout)
+	if adminClient, err = rest2.New(adminPoller, timeout, auth.NewCredentials(adminPoller, slog.Default())); err != nil {
+		return fmt.Errorf("error creating new admin client for poller %s: %w", pollerName, err)
+	}
+
+	if err = adminClient.Init(5, conf.Remote{}); err != nil {
+		return fmt.Errorf("admin client init failed for poller %s: %w", pollerName, err)
+	}
+
+	// Invoke the REST call to the specified endpoint
+	apiEndpoint := "api/private/cli/security/login/rest-role"
+	href := rest2.NewHrefBuilder().
+		APIPath(apiEndpoint).
+		Filter([]string{"role=harvest-rest-role", "api=/api/private/cli"}).
+		Build()
+
+	response, err := collectors.InvokeRestCall(adminClient, href)
+	if err != nil {
+		return fmt.Errorf("failed to invoke admin rest call to %s: %w", apiEndpoint, err)
+	}
+
+	for _, instanceData := range response {
+		api := instanceData.Get("api")
+		if api.Exists() {
+			return fmt.Errorf("unexpected 'api' field found in the response data; permissions for /api/private/cli should not be present")
+		}
+	}
+
+	return nil
 }
 
 func invokeRestCall(client *rest2.Client, counters map[string][]counterData) error {
