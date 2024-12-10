@@ -1,0 +1,19 @@
+name:                         ClusterSchedule
+query:                        api/cluster/schedules
+object:                       cluster_schedule
+
+counters:
+  - ^^uuid                       => uuid
+  - ^crone                       => crone
+  - ^interval                    => interval
+  - ^svm.name                    => svm
+  - ^type
+
+export_options:
+  instance_keys:
+    - svm
+  instance_labels:
+    - crone
+    - interval
+    - type
+

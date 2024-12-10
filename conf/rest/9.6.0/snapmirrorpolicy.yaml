@@ -1,0 +1,23 @@
+name:                         SnapMirrorPolicy
+query:                        api/private/cli/snapmirror
+object:                       snapmirror_policy
+
+counters:
+  - ^^uuid                       => uuid
+  - ^name                        => policy_name
+  - ^scope
+  - ^svm.name                    => svm
+  - ^transfer_schedule.name      => schedule_name
+  - ^type
+
+
+export_options:
+  instance_keys:
+    - policy_name
+    - svm
+  instance_labels:
+    - policy_name
+    - schedule_name
+    - scope
+    - type
+
