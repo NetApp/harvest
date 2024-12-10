@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1733818694570,
+  "iteration": 1733818694587,
   "links": [
     {
       "asDropdown": true,
@@ -2627,7 +2627,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(\n    sum by (datacenter,cluster,node,hostadapter) (hostadapter_bytes_written{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",node=~\"$Node\"})\n)\nand on(datacenter,cluster,node,hostadapter)\ntopk(\n    $TopResources,\n    sum by (datacenter,cluster,node,hostadapter) (\n        avg_over_time(hostadapter_bytes_written{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",node=~\"$Node\"}[3h])\n    )\n)",
+              "expr": "(\n    sum by (datacenter,cluster,node,hostadapter) (hostadapter_bytes_written{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",node=~\"$Node\",hostadapter=~\"$HostAdapter\"})\n)\nand on(datacenter,cluster,node,hostadapter)\ntopk(\n    $TopResources,\n    sum by (datacenter,cluster,node,hostadapter) (\n        avg_over_time(hostadapter_bytes_written{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",node=~\"$Node\",hostadapter=~\"$HostAdapter\"}[3h])\n    )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{node}} - {{hostadapter}} - WRITE",
@@ -2635,7 +2635,7 @@
             },
             {
               "exemplar": false,
-              "expr": "(\n    sum by (datacenter,cluster,node,hostadapter) (hostadapter_bytes_read{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",node=~\"$Node\"})\n)\nand on(datacenter,cluster,node,hostadapter)\ntopk(\n    $TopResources,\n    sum by (datacenter,cluster,node,hostadapter) (\n        avg_over_time(hostadapter_bytes_read{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",node=~\"$Node\"}[3h])\n    )\n)",
+              "expr": "(\n    sum by (datacenter,cluster,node,hostadapter) (hostadapter_bytes_read{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",node=~\"$Node\",hostadapter=~\"$HostAdapter\"})\n)\nand on(datacenter,cluster,node,hostadapter)\ntopk(\n    $TopResources,\n    sum by (datacenter,cluster,node,hostadapter) (\n        avg_over_time(hostadapter_bytes_read{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",node=~\"$Node\",hostadapter=~\"$HostAdapter\"}[3h])\n    )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{node}} - {{hostadapter}} - READ",
@@ -3149,7 +3149,7 @@
         "options": [],
         "query": {
           "query": "label_values(disk_labels{system_type!=\"7mode\",cluster=~\"$Cluster\"}, node)",
-          "refId": "Prometheus-Node-Variable-Query"
+          "refId": "StandardVariableQuery"
         },
         "refresh": 2,
         "regex": "",
@@ -3175,7 +3175,7 @@
         "options": [],
         "query": {
           "query": "label_values(aggr_disk_busy{cluster=~\"$Cluster\",node=~\"$Node\"}, aggr)",
-          "refId": "Prometheus-Aggregate-Variable-Query"
+          "refId": "StandardVariableQuery"
         },
         "refresh": 2,
         "regex": "",
@@ -3237,6 +3237,29 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(hostadapter_bytes_read{system_type!=\"7mode\",cluster=~\"$Cluster\",node=~\"$Node\"}, hostadapter)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "HostAdapter",
+        "options": [],
+        "query": {
+          "query": "label_values(hostadapter_bytes_read{system_type!=\"7mode\",cluster=~\"$Cluster\",node=~\"$Node\"}, hostadapter)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
       },
       {
         "allValue": null,
