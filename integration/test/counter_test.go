@@ -51,11 +51,7 @@ func TestCounters(t *testing.T) {
 	)
 
 	utils.SkipIfMissing(t, utils.Regression)
-	err = validateRolePermissions()
-	if err != nil {
-		slog.Error("role permission validation failed", slogx.Err(err))
-		os.Exit(1)
-	}
+	validateRolePermissions()
 	conf.TestLoadHarvestConfig(installer.HarvestConfigFile)
 
 	pollerName := "dc1"
@@ -91,7 +87,7 @@ func TestCounters(t *testing.T) {
 
 }
 
-func validateRolePermissions() error {
+func validateRolePermissions() {
 	var (
 		adminPoller *conf.Poller
 		adminClient *rest2.Client
@@ -103,22 +99,25 @@ func validateRolePermissions() error {
 
 	pollerName := "dc1-admin"
 	if adminPoller, err = conf.PollerNamed(pollerName); err != nil {
-		return fmt.Errorf("unable to find poller %s: %w", pollerName, err)
+		slog.Error("unable to find poller", slogx.Err(err), slog.String("poller", pollerName))
+		os.Exit(1)
 	}
 	if adminPoller.Addr == "" {
-		return fmt.Errorf("admin poller address is empty for poller %s", pollerName)
+		slog.Error("admin poller address is empty", slog.String("poller", pollerName))
+		os.Exit(1)
 	}
 
 	timeout, _ := time.ParseDuration(rest2.DefaultTimeout)
 	if adminClient, err = rest2.New(adminPoller, timeout, auth.NewCredentials(adminPoller, slog.Default())); err != nil {
-		return fmt.Errorf("error creating new admin client for poller %s: %w", pollerName, err)
+		slog.Error("error creating new admin client", slogx.Err(err), slog.String("poller", pollerName))
+		os.Exit(1)
 	}
 
 	if err = adminClient.Init(5, conf.Remote{}); err != nil {
-		return fmt.Errorf("admin client init failed for poller %s: %w", pollerName, err)
+		slog.Error("admin client init failed", slogx.Err(err), slog.String("poller", pollerName))
+		os.Exit(1)
 	}
 
-	// Invoke the REST call to the specified endpoint
 	apiEndpoint := "api/private/cli/security/login/rest-role"
 	href := rest2.NewHrefBuilder().
 		APIPath(apiEndpoint).
@@ -127,17 +126,17 @@ func validateRolePermissions() error {
 
 	response, err := collectors.InvokeRestCall(adminClient, href)
 	if err != nil {
-		return fmt.Errorf("failed to invoke admin rest call to %s: %w", apiEndpoint, err)
+		slog.Error("failed to invoke admin rest call", slogx.Err(err), slog.String("endpoint", apiEndpoint))
+		os.Exit(1)
 	}
 
 	for _, instanceData := range response {
 		api := instanceData.Get("api")
 		if api.Exists() {
-			return fmt.Errorf("unexpected 'api' field found in the response data; permissions for /api/private/cli should not be present")
+			slog.Error("unexpected 'api' field found in the response data; permissions for /api/private/cli should not be present")
+			os.Exit(1)
 		}
 	}
-
-	return nil
 }
 
 func invokeRestCall(client *rest2.Client, counters map[string][]counterData) error {
