@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1733818694587,
+  "iteration": 1733915992490,
   "links": [
     {
       "asDropdown": true,
@@ -2446,7 +2446,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Disk Throughput",
+          "title": "Disk Throughput by Node",
           "transformations": [],
           "type": "timeseries"
         },
@@ -3027,6 +3027,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
+              "exemplar": false,
               "expr": "sum(wafl_cp_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",metric=~\"back_to_back_CP|deferred_back_to_back_CP\"})",
               "hide": false,
               "interval": "",
@@ -3048,7 +3049,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "Disk Utilization: Node-level Overview",
+      "title": "Disk Utilization",
       "type": "row"
     }
   ],
@@ -3374,5 +3375,5 @@
   "timezone": "",
   "title": "ONTAP: Disk",
   "uid": "cdot-disk",
-  "version": 33
+  "version": 15
 }
