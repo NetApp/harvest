@@ -4,6 +4,7 @@ object:                       snapmirror_policy
 
 counters:
   - ^^uuid                       => uuid
+  - ^comment                     => comment
   - ^name                        => policy_name
   - ^scope
   - ^svm.name                    => svm
@@ -16,6 +17,7 @@ export_options:
     - policy_name
     - svm
   instance_labels:
+    - comment
     - policy_name
     - schedule_name
     - scope

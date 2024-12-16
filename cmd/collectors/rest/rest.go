@@ -19,6 +19,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/securityaccount"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/shelf"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/snapmirror"
+	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/snapshotpolicy"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/svm"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/systemnode"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/volume"
@@ -498,6 +499,8 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return collectors.NewSensor(abc)
 	case "Shelf":
 		return shelf.New(abc)
+	case "SnapshotPolicy":
+		return snapshotpolicy.New(abc)
 	case "SecurityAccount":
 		return securityaccount.New(abc)
 	case "QosPolicyFixed":

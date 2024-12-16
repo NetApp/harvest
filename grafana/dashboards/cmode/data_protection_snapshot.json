@@ -1562,6 +1562,538 @@
       ],
       "title": "Snapshot Copies Analysis",
       "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 2
+      },
+      "id": 23,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel displays volumes detail with snapshot count.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "transparent",
+                "mode": "fixed"
+              },
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Policy Type"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "async": {
+                            "index": 0,
+                            "text": "Asynchronous"
+                          },
+                          "continuous": {
+                            "index": 2,
+                            "text": "Continuous"
+                          },
+                          "sync": {
+                            "index": 1,
+                            "text": "Synchronous"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 152
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Transfer Schedule"
+                },
+                "properties": [
+                  {
+                    "id": "noValue",
+                    "value": "-"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 151
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Description"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 306
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Name"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 260
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Scope"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 124
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 171
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Cluster"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 217
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 15,
+            "w": 24,
+            "x": 0,
+            "y": 7
+          },
+          "id": 100,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.4.11",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "snapmirror_policy_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Protection policies",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "cluster",
+                    "datacenter",
+                    "policy_name",
+                    "scope",
+                    "type",
+                    "schedule_name",
+                    "comment"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "cluster": 1,
+                  "comment": 3,
+                  "datacenter": 0,
+                  "policy_name": 2,
+                  "schedule_name": 6,
+                  "scope": 5,
+                  "type": 4
+                },
+                "renameByName": {
+                  "Value": "Snapshot Copies",
+                  "cluster": "",
+                  "comment": "Description",
+                  "policy_name": "Name",
+                  "schedule_name": "Transfer Schedule",
+                  "scope": "Scope",
+                  "type": "Policy Type",
+                  "volume": ""
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel displays volumes detail with snapshot count.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "transparent",
+                "mode": "fixed"
+              },
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Policy Type"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "async": {
+                            "index": 0,
+                            "text": "Asynchronous"
+                          },
+                          "continuous": {
+                            "index": 2,
+                            "text": "Continuous"
+                          },
+                          "sync": {
+                            "index": 1,
+                            "text": "Synchronous"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 152
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Transfer Schedule"
+                },
+                "properties": [
+                  {
+                    "id": "noValue",
+                    "value": "-"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 151
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Description"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 306
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Name"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 260
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Scope"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 124
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 171
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Cluster"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 217
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 15,
+            "w": 24,
+            "x": 0,
+            "y": 22
+          },
+          "id": 101,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.4.11",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "snapshot_policy_total_schedules{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Snapshot policies",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "cluster",
+                    "datacenter",
+                    "policy_name",
+                    "scope",
+                    "type",
+                    "schedule_name",
+                    "comment"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "cluster": 1,
+                  "comment": 3,
+                  "datacenter": 0,
+                  "policy_name": 2,
+                  "schedule_name": 6,
+                  "scope": 5,
+                  "type": 4
+                },
+                "renameByName": {
+                  "Value": "Snapshot Copies",
+                  "cluster": "",
+                  "comment": "Description",
+                  "policy_name": "Name",
+                  "schedule_name": "Transfer Schedule",
+                  "scope": "Scope",
+                  "type": "Policy Type",
+                  "volume": ""
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Local policy settings",
+      "type": "row"
     }
   ],
   "refresh": "",
