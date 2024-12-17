@@ -2523,6 +2523,8 @@ See <a href="https://github.com/NetApp/harvest/discussions/884">#884</a> for exa
 </ul>
 <p>The script should communicate the credentials to Harvest by writing the response to its standard output (stdout).
 Harvest supports two output formats from the script: YAML and plain text.</p>
+<p>When running Harvest inside a container, tools like <code>jq</code> and <code>curl</code> are not available.
+In such cases, you can use a Go binary as a credential script to fetch authentication information. For details on using a Go binary as a credential script for Harvest container deployment, please refer to the <a href="https://github.com/NetApp/harvest/discussions/3380">GitHub discussion</a>.</p>
 <h3 id="yaml-format">YAML format<a class="headerlink" href="#yaml-format" title="Permanent link">&para;</a></h3>
 <p>If the script outputs a YAML object with <code>username</code> and <code>password</code> keys, Harvest will use both the <code>username</code> and <code>password</code> from the output. For example, if the script writes the following, Harvest will use <code>myuser</code> and <code>mypassword</code> for the poller's credentials.
    <div class="highlight"><pre><span></span><code><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myuser</span>
