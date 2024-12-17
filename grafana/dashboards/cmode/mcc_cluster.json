@@ -4241,7 +4241,7 @@
         "error": null,
         "hide": 0,
         "includeAll": false,
-        "label": "",
+        "label": null,
         "multi": false,
         "name": "TopResources",
         "options": [
