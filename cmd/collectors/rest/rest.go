@@ -7,6 +7,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/aggregate"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/certificate"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/cluster"
+	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/clusterschedule"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/clustersoftware"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/disk"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/health"
@@ -475,6 +476,8 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return aggregate.New(abc)
 	case "Cluster":
 		return cluster.New(abc)
+	case "ClusterSchedule":
+		return clusterschedule.New(abc)
 	case "ClusterSoftware":
 		return clustersoftware.New(abc)
 	case "Disk":
@@ -633,9 +636,9 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 				var floatValue float64
 				switch metric.MetricType {
 				case "duration":
-					floatValue = HandleDuration(f.ClonedString())
+					floatValue = collectors.HandleDuration(f.ClonedString())
 				case "timestamp":
-					floatValue = HandleTimestamp(f.ClonedString())
+					floatValue = collectors.HandleTimestamp(f.ClonedString())
 				case "":
 					floatValue = f.Float()
 				default:

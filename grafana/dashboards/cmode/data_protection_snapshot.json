@@ -1674,7 +1674,7 @@
                   },
                   {
                     "id": "custom.width",
-                    "value": 152
+                    "value": 179
                   }
                 ]
               },
@@ -1702,7 +1702,7 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 306
+                    "value": 529
                   }
                 ]
               },
@@ -1726,7 +1726,21 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 124
+                    "value": 166
+                  },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "cluster": {
+                            "index": 0,
+                            "text": "Cluster"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
                   }
                 ]
               },
@@ -1906,74 +1920,12 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Policy Type"
-                },
-                "properties": [
-                  {
-                    "id": "mappings",
-                    "value": [
-                      {
-                        "options": {
-                          "async": {
-                            "index": 0,
-                            "text": "Asynchronous"
-                          },
-                          "continuous": {
-                            "index": 2,
-                            "text": "Continuous"
-                          },
-                          "sync": {
-                            "index": 1,
-                            "text": "Synchronous"
-                          }
-                        },
-                        "type": "value"
-                      }
-                    ]
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 152
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Transfer Schedule"
-                },
-                "properties": [
-                  {
-                    "id": "noValue",
-                    "value": "-"
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 151
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
                   "options": "Description"
                 },
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 306
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Name"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 260
+                    "value": 456
                   }
                 ]
               },
@@ -2012,11 +1964,79 @@
                     "value": 217
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Scope"
+                },
+                "properties": [
+                  {
+                    "id": "noValue",
+                    "value": "Cluster"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "copies"
+                },
+                "properties": [
+                  {
+                    "id": "noValue",
+                    "value": "0"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Policy Name"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 215
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Status"
+                },
+                "properties": [
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background-solid"
+                  },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "false": {
+                            "color": "semi-dark-red",
+                            "index": 1,
+                            "text": "Disabled"
+                          },
+                          "true": {
+                            "color": "semi-dark-green",
+                            "index": 0,
+                            "text": "Enabled"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  }
+                ]
               }
             ]
           },
           "gridPos": {
-            "h": 15,
+            "h": 8,
             "w": 24,
             "x": 0,
             "y": 22
@@ -2037,7 +2057,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "snapshot_policy_total_schedules{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "snapshot_policy_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -2053,12 +2073,12 @@
                 "include": {
                   "names": [
                     "cluster",
+                    "comment",
                     "datacenter",
-                    "policy_name",
-                    "scope",
-                    "type",
-                    "schedule_name",
-                    "comment"
+                    "snapshot_policy",
+                    "status",
+                    "copies",
+                    "svm"
                   ]
                 }
               }
@@ -2070,11 +2090,11 @@
                 "indexByName": {
                   "cluster": 1,
                   "comment": 3,
+                  "copies": 6,
                   "datacenter": 0,
-                  "policy_name": 2,
-                  "schedule_name": 6,
-                  "scope": 5,
-                  "type": 4
+                  "snapshot_policy": 2,
+                  "status": 4,
+                  "svm": 5
                 },
                 "renameByName": {
                   "Value": "Snapshot Copies",
@@ -2083,7 +2103,251 @@
                   "policy_name": "Name",
                   "schedule_name": "Transfer Schedule",
                   "scope": "Scope",
+                  "snapshot_policy": "Policy Name",
+                  "status": "Status",
+                  "svm": "Scope",
                   "type": "Policy Type",
+                  "volume": ""
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel displays volumes detail with snapshot count.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "transparent",
+                "mode": "fixed"
+              },
+              "custom": {
+                "align": "left",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true,
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Type"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "cron": {
+                            "index": 0,
+                            "text": "Time-based"
+                          },
+                          "interval": {
+                            "index": 1,
+                            "text": "Interval-based"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 152
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Description"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 306
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Name"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 360
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Scope"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 124
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 171
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Cluster"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 233
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 15,
+            "w": 24,
+            "x": 0,
+            "y": 30
+          },
+          "id": 102,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.4.11",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "cluster_schedule_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Schedules",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "cluster",
+                    "cron",
+                    "datacenter",
+                    "name",
+                    "type",
+                    "scope"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "includeByName": {},
+                "indexByName": {
+                  "cluster": 1,
+                  "datacenter": 0,
+                  "name": 2,
+                  "type": 3
+                },
+                "renameByName": {
+                  "Value": "Snapshot Copies",
+                  "cluster": "",
+                  "comment": "Description",
+                  "cron": "Schedule",
+                  "name": "Name",
+                  "policy_name": "Name",
+                  "schedule_name": "Transfer Schedule",
+                  "scope": "Scope",
+                  "type": "Type",
                   "volume": ""
                 }
               }
