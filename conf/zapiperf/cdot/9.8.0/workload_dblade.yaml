@@ -1,0 +1,73 @@
+
+# object Workload provides counters about workload usage
+
+name:                     WorkloadDBlade
+query:                    workload_queue_dblade
+object:                   qos_dblade
+
+instance_key:             uuid
+
+# recommended to use large interval, since workload objects are expensive
+client_timeout:           1m30s
+schedule:
+  - counter:  24h
+  - instance: 10m
+  - data:      3m
+
+counters:
+  - cpu_dblade_background_service_time
+  - cpu_dblade_residence_time
+  - cpu_dblade_util_service_time
+  - delay_cloud_io_wait_time
+  - delay_cop_wait_time
+  - delay_disk_io_wait_time
+  - delay_flexcache_ral_wait_time
+  - delay_flexcache_spinhi_wait_time
+  - delay_nvlog_transfer_wait_time
+  - delay_sync_repl_wait_time
+  - delay_wafl_adm_ctrl_wait_time
+  - delay_wafl_susp_cp_wait_time
+  - delay_wafl_susp_other_wait_time
+  - delay_wem_wait_time
+  - disk_hdd_background_service_time
+  - disk_ssd_background_service_time
+  - instance_name                            => workload
+  - instance_uuid
+  - node_name                                => node
+  - filter:
+      - workload-name: "!User-Work" # Exclude 'User-Work' to avoid double counting, as it aggregates all user workloads
+
+override:
+  - cpu_dblade_background_service_time: rate
+  - cpu_dblade_residence_time: rate
+  - cpu_dblade_util_service_time: rate
+  - delay_cloud_io_wait_time: rate
+  - delay_cop_wait_time: rate
+  - delay_disk_io_wait_time: rate
+  - delay_flexcache_ral_wait_time: rate
+  - delay_flexcache_spinhi_wait_time: rate
+  - delay_nvlog_transfer_wait_time: rate
+  - delay_sync_repl_wait_time: rate
+  - delay_wafl_adm_ctrl_wait_time: rate
+  - delay_wafl_susp_cp_wait_time: rate
+  - delay_wafl_susp_other_wait_time: rate
+  - delay_wem_wait_time: rate
+  - disk_hdd_background_service_time: rate
+  - disk_ssd_background_service_time: rate
+
+qos_labels:
+  - vserver       => svm
+  - volume
+  - policy-group
+  - wid
+  - workload-name => workload
+
+export_options:
+  instance_keys:
+    - node
+    - policy_group
+    - svm
+    - volume
+    - wid
+    - workload
+

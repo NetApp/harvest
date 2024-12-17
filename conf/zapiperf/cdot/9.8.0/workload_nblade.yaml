@@ -1,0 +1,62 @@
+#
+## object Workload provides counters about workload usage
+#
+name:                     WorkloadNBlade
+query:                    workload_queue_nblade
+object:                   qos_nblade
+
+# recommended to use large interval, since workload objects are expensive
+client_timeout:           1m30s
+schedule:
+  - counter:  24h
+  - instance: 10m
+  - data:      3m
+
+counters:
+  - cpu_nblade_residence_time
+  - cpu_nblade_util_service_time
+  - delay_avscan_wait_time
+  - delay_cluster_interconnect_wait_time
+  - delay_network_wait_time
+  - delay_qos_limit_wait_time
+  - delay_qos_min_throughput_wait_time
+  - instance_name                            => workload
+  - instance_uuid
+  - iops
+  - node_name                                => node
+  - read_data
+  - total_latency
+  - write_data
+  - filter:
+      - workload-name: "!User-Work" # Exclude 'User-Work' to avoid double counting, as it aggregates all user workloads
+
+override:
+  - cpu_nblade_residence_time: rate
+  - cpu_nblade_util_service_time: rate
+  - delay_avscan_wait_time: rate
+  - delay_cluster_interconnect_wait_time: rate
+  - delay_network_wait_time: rate
+  - delay_qos_limit_wait_time: rate
+  - delay_qos_min_throughput_wait_time: rate
+
+qos_labels:
+  - vserver       => svm
+  - volume
+  - policy-group
+  - wid
+  - workload-name => workload
+
+plugins:
+  - MetricAgent:
+      compute_metric:
+        - total_data ADD read_data write_data
+
+export_options:
+  instance_keys:
+    - node
+    - policy_group
+    - svm
+    - volume
+    - wid
+    - workload
+

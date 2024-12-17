@@ -63,12 +63,15 @@ const (
 	latencyIoReqd = 10
 	keyToken      = "?#"
 	// objects that need special handling
+	objWorkloadQueueNblade  = "workload_queue_nblade"
+	objWorkloadQueueDblade  = "workload_queue_dblade"
 	objWorkload             = "workload"
 	objWorkloadDetail       = "workload_detail"
 	objWorkloadVolume       = "workload_volume"
 	objWorkloadDetailVolume = "workload_detail_volume"
 	objWorkloadClass        = "user_defined|system_defined"
 	objWorkloadVolumeClass  = "autovolume"
+	objWorkloadBladeClass   = "user_defined|system_defined|autovolume"
 	BILLION                 = 1_000_000_000
 	timestampMetricName     = "timestamp"
 )
@@ -315,20 +318,29 @@ func (z *ZapiPerf) updateWorkloadQuery(query *node.Node) {
 	}
 	if workloadClass == "" {
 		var workloadClassQuery string
-		if z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume {
+		switch z.Query {
+		case objWorkloadVolume, objWorkloadDetailVolume:
 			workloadClassQuery = z.loadWorkloadClassQuery(objWorkloadVolumeClass)
-		} else {
+		case objWorkload, objWorkloadDetail:
 			workloadClassQuery = z.loadWorkloadClassQuery(objWorkloadClass)
+		case objWorkloadQueueDblade, objWorkloadQueueNblade:
+			workloadClassQuery = z.loadWorkloadClassQuery(objWorkloadBladeClass)
 		}
 		query.NewChildS("workload-class", workloadClassQuery)
 	}
-	if isConstituent == "" {
-		if counters != nil {
-			refine := counters.GetChildS("refine")
-			if refine != nil {
-				isConstituent = refine.GetChildContentS("with_constituents")
-				if isConstituent == "false" {
-					query.NewChildS("is-constituent", isConstituent)
+
+	if z.Query == objWorkloadQueueNblade || z.Query == objWorkloadQueueDblade {
+		// for nblade,dblade disable constituent collection
+		query.NewChildS("is-constituent", "false")
+	} else {
+		if isConstituent == "" {
+			if counters != nil {
+				refine := counters.GetChildS("refine")
+				if refine != nil {
+					isConstituent = refine.GetChildContentS("with_constituents")
+					if isConstituent == "false" {
+						query.NewChildS("is-constituent", isConstituent)
+					}
 				}
 			}
 		}
@@ -377,6 +389,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	var (
 		instanceKeys []string
+		nodeNames    []string
 		err          error
 		skips        int
 		numPartials  uint64
@@ -400,9 +413,13 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	count := uint64(0)
 	batchCount := 0
 
+	// add some dummy name so loop later runs once
+	nodeNames = []string{"dummy"}
+
 	// list of instance keys (instance names or uuids) for which
 	// we will request counter data
-	if z.Query == objWorkloadDetail || z.Query == objWorkloadDetailVolume {
+	switch z.Query {
+	case objWorkloadDetail, objWorkloadDetailVolume:
 		resourceMap := z.Params.GetChildS("resource_map")
 		if resourceMap == nil {
 			return nil, errs.New(errs.ErrMissingParam, "resource_map")
@@ -413,7 +430,18 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 				instanceKeys = append(instanceKeys, key+"."+layer)
 			}
 		}
-	} else {
+	case objWorkloadQueueDblade, objWorkloadQueueNblade:
+		nodeNames, err = z.getNodes()
+		if err != nil {
+			z.Logger.Error("get nodes failed", slogx.Err(err))
+			return nil, err
+		}
+		iKeys := set.New()
+		for key := range prevMat.GetInstances() {
+			iKeys.Add(strings.Split(key, keyToken)[0])
+		}
+		instanceKeys = iKeys.Slice()
+	default:
 		instanceKeys = curMat.GetInstanceKeys()
 	}
 
@@ -445,312 +473,354 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	slices.Sort(instanceKeys)
 
-	// batch indices
-	startIndex := 0
-	endIndex := 0
-
-	for endIndex < len(instanceKeys) {
-
-		// update batch indices
-		endIndex += z.batchSize
-		// In case of unit test, for loop should run once
-		if z.testFilePath != "" {
-			endIndex = len(instanceKeys)
-		}
-		if endIndex > len(instanceKeys) {
-			endIndex = len(instanceKeys)
-		}
-
-		request.PopChildS(z.keyName + "s")
-		requestInstances := request.NewChildS(z.keyName+"s", "")
-		addedKeys := make(map[string]bool)
-		for _, key := range instanceKeys[startIndex:endIndex] {
-			if len(z.instanceKeys) == 1 {
-				requestInstances.NewChildS(z.keyName, key)
+	templateFilterData := request.GetChildS("filter-data")
+	for _, n := range nodeNames {
+		if z.Query == objWorkloadQueueDblade || z.Query == objWorkloadQueueNblade {
+			if templateFilterData != nil {
+				request.SetChildContentS("filter-data", templateFilterData.GetContentS()+","+"node_name="+n)
 			} else {
-				if strings.Contains(key, keyToken) {
-					v := strings.Split(key, keyToken)
-					if z.keyNameIndex < len(v) {
-						key = v[z.keyNameIndex]
-					}
-				}
-				// Avoid adding duplicate keys. It can happen for flex-cache case
-				if !addedKeys[key] {
-					requestInstances.NewChildS(z.keyName, key)
-					addedKeys[key] = true
-				}
-			}
-		}
-
-		startIndex = endIndex
-
-		if err = z.Client.BuildRequest(request); err != nil {
-			z.Logger.Error("Build request", slogx.Err(err), slog.String("objectname", z.Query))
-			return nil, err
-		}
-
-		z.pollDataCalls++
-		if z.pollDataCalls >= z.recordsToSave {
-			z.pollDataCalls = 0
-		}
-
-		var headers map[string]string
-
-		poller, err := conf.PollerNamed(z.Options.Poller)
-		if err != nil {
-			slog.Error("failed to find poller", slogx.Err(err), slog.String("poller", z.Options.Poller))
-		}
-
-		if poller.IsRecording() {
-			headers = map[string]string{
-				"From": strconv.Itoa(z.pollDataCalls),
-			}
-		}
-
-		response, rd, pd, err := z.Client.InvokeWithTimers(z.testFilePath, headers)
-
-		if err != nil {
-			errMsg := strings.ToLower(err.Error())
-			// if ONTAP complains about batch size, use a smaller batch size
-			if strings.Contains(errMsg, "resource limit exceeded") && z.batchSize > 100 {
-				z.Logger.Error(
-					"Changed batch_size",
-					slogx.Err(err),
-					slog.Int("oldBatchSize", z.batchSize),
-					slog.Int("newBatchSize", z.batchSize-100),
-				)
-				z.batchSize -= 100
-				return nil, nil
-			} else if strings.Contains(errMsg, "timeout: operation") && z.batchSize > 100 {
-				z.Logger.Error(
-					"ONTAP timeout, reducing batch size",
-					slogx.Err(err),
-					slog.Int("oldBatchSize", z.batchSize),
-					slog.Int("newBatchSize", z.batchSize-100),
-				)
-				z.batchSize -= 100
-				return nil, nil
-			}
-			return nil, err
-		}
-
-		apiT += rd
-		parseT += pd
-		batchCount++
-
-		// fetch instances
-		instances := response.GetChildS("instances")
-		if instances == nil || len(instances.GetChildren()) == 0 {
-			break
-		}
-
-		// timestamp for batch instances
-		// ignore timestamp from ZAPI which is always integer
-		// we want float, since our poll interval can be a float
-		ts := float64(time.Now().UnixNano()) / BILLION
-
-		for instIndex, i := range instances.GetChildren() {
-
-			key := z.buildKeyValue(i, z.instanceKeys)
-
-			var layer = "" // latency layer (resource) for workloads
-
-			// special case for these two objects
-			// we need to process each latency layer for each instance/counter
-			if z.Query == objWorkloadDetail || z.Query == objWorkloadDetailVolume {
-
-				if x := strings.Split(key, "."); len(x) == 2 {
-					key = x[0]
-					layer = x[1]
+				filterData := request.GetChildS("filter-data")
+				if filterData != nil {
+					request.SetChildContentS("filter-data", "node_name="+n)
 				} else {
-					z.Logger.Warn("Instance key has unexpected format", slog.String("key", key))
-					continue
+					request.NewChildS("filter-data", "node_name="+n)
 				}
+			}
+		}
+		// batch indices
+		startIndex := 0
+		endIndex := 0
 
-				for _, wm := range workloadDetailMetrics {
-					mLayer := layer + wm
-					if l := curMat.GetMetric(mLayer); l == nil {
-						z.Logger.Warn("metric missing in cache", slog.String("layer", mLayer))
-						continue
+		for endIndex < len(instanceKeys) {
+
+			// update batch indices
+			endIndex += z.batchSize
+			// In case of unit test, for loop should run once
+			if z.testFilePath != "" {
+				endIndex = len(instanceKeys)
+			}
+			if endIndex > len(instanceKeys) {
+				endIndex = len(instanceKeys)
+			}
+
+			request.PopChildS(z.keyName + "s")
+			requestInstances := request.NewChildS(z.keyName+"s", "")
+			addedKeys := make(map[string]bool)
+			for _, key := range instanceKeys[startIndex:endIndex] {
+				if len(z.instanceKeys) == 1 {
+					requestInstances.NewChildS(z.keyName, key)
+				} else {
+					if strings.Contains(key, keyToken) {
+						v := strings.Split(key, keyToken)
+						if z.keyNameIndex < len(v) {
+							key = v[z.keyNameIndex]
+						}
+					}
+					// Avoid adding duplicate keys. It can happen for flex-cache case
+					if !addedKeys[key] {
+						requestInstances.NewChildS(z.keyName, key)
+						addedKeys[key] = true
 					}
 				}
 			}
 
-			if key == "" {
-				if z.Logger.Enabled(context.Background(), slog.LevelDebug) {
-					z.Logger.Debug(
-						"Skip instance, key is empty",
-						slog.Any("instanceKey", z.instanceKeys),
-						slog.String("name", i.GetChildContentS("name")),
-						slog.String("uuid", i.GetChildContentS("uuid")),
+			startIndex = endIndex
+
+			if err = z.Client.BuildRequest(request); err != nil {
+				z.Logger.Error("Build request", slogx.Err(err), slog.String("objectname", z.Query))
+				return nil, err
+			}
+
+			z.pollDataCalls++
+			if z.pollDataCalls >= z.recordsToSave {
+				z.pollDataCalls = 0
+			}
+
+			var headers map[string]string
+
+			poller, err := conf.PollerNamed(z.Options.Poller)
+			if err != nil {
+				slog.Error("failed to find poller", slogx.Err(err), slog.String("poller", z.Options.Poller))
+			}
+
+			if poller.IsRecording() {
+				headers = map[string]string{
+					"From": strconv.Itoa(z.pollDataCalls),
+				}
+			}
+
+			response, rd, pd, err := z.Client.InvokeWithTimers(z.testFilePath, headers)
+
+			if err != nil {
+				errMsg := strings.ToLower(err.Error())
+				// if ONTAP complains about batch size, use a smaller batch size
+				if strings.Contains(errMsg, "resource limit exceeded") && z.batchSize > 100 {
+					z.Logger.Error(
+						"Changed batch_size",
+						slogx.Err(err),
+						slog.Int("oldBatchSize", z.batchSize),
+						slog.Int("newBatchSize", z.batchSize-100),
 					)
+					z.batchSize -= 100
+					return nil, nil
+				} else if strings.Contains(errMsg, "timeout: operation") && z.batchSize > 100 {
+					z.Logger.Error(
+						"ONTAP timeout, reducing batch size",
+						slogx.Err(err),
+						slog.Int("oldBatchSize", z.batchSize),
+						slog.Int("newBatchSize", z.batchSize-100),
+					)
+					z.batchSize -= 100
+					return nil, nil
 				}
-				continue
+				return nil, err
 			}
 
-			instance := curMat.GetInstance(key)
-			if instance == nil {
-				z.Logger.Debug("Skip instance key, not found in cache", slog.String("key", key))
-				continue
+			apiT += rd
+			parseT += pd
+			batchCount++
+
+			// fetch instances
+			instances := response.GetChildS("instances")
+			if instances == nil || len(instances.GetChildren()) == 0 {
+				break
 			}
 
-			if z.isPartialAggregation(i) {
-				instance.SetPartial(true)
-				instance.SetExportable(false)
-				numPartials++
-			} else {
-				instance.SetPartial(false)
-				instance.SetExportable(true)
-			}
+			// timestamp for batch instances
+			// ignore timestamp from ZAPI which is always integer
+			// we want float, since our poll interval can be a float
+			ts := float64(time.Now().UnixNano()) / BILLION
 
-			counters := i.GetChildS("counters")
-			if counters == nil {
-				z.Logger.Debug("Skip instance key, no data counters", slog.String("key", key))
-				continue
-			}
+			for instIndex, i := range instances.GetChildren() {
 
-			// add batch timestamp as custom counter
-			if err := timestamp.SetValueFloat64(instance, ts); err != nil {
-				z.Logger.Error("set timestamp value", slogx.Err(err))
-			}
+				key := z.buildKeyValue(i, z.instanceKeys)
 
-			for _, cnt := range counters.GetChildren() {
-
-				name := cnt.GetChildContentS("name")
-				value := cnt.GetChildContentS("value")
-
-				// validation
-				if name == "" || value == "" {
-					// skip counters with empty value or name
-					continue
-				}
-
-				// ZAPI counter for us is either instance label (string)
-				// or numeric metric (scalar or histogram)
-
-				// store as instance label
-				if display, has := z.instanceLabels[name]; has {
-					instance.SetLabel(display, value)
-					continue
-				}
-
-				// store as array counter / histogram
-				if labels, has := z.histogramLabels[name]; has {
-
-					values := strings.Split(value, ",")
-
-					if len(labels) != len(values) {
-						// warn & skip
-						z.Logger.Error(
-							"Histogram labels don't match parsed values",
-							slog.String("labels", name),
-							slog.String("value", value),
-							slog.Int("instIndex", instIndex),
-						)
+				if z.Query == objWorkloadQueueDblade || z.Query == objWorkloadQueueNblade {
+					counters := i.GetChildS("counters")
+					if counters == nil {
+						z.Logger.Debug("Skip instance key, no data counters", slog.String("key", key))
 						continue
 					}
 
-					for i, label := range labels {
-						if metric := curMat.GetMetric(name + "." + label); metric != nil {
-							if err = metric.SetValueString(instance, values[i]); err != nil {
-								z.Logger.Error(
-									"Set histogram value failed",
-									slogx.Err(err),
-									slog.String("name", name),
-									slog.String("label", label),
-									slog.String("value", values[i]),
-									slog.Int("instIndex", instIndex),
-								)
-							} else {
-								count++
-							}
-						} else {
-							z.Logger.Warn(
-								"Histogram name. Label not in cache",
-								slog.String("name", name),
-								slog.String("label", label),
+					var exists bool
+					for _, cnt := range counters.GetChildren() {
+						name := cnt.GetChildContentS("name")
+						value := cnt.GetChildContentS("value")
+
+						// validation
+						if name == "" || value == "" {
+							// skip counters with empty value or name
+							continue
+						}
+						if name == "node_name" {
+							key = key + keyToken + value
+							exists = true
+							break
+						}
+					}
+					if !exists {
+						continue
+					}
+				}
+				var layer = "" // latency layer (resource) for workloads
+
+				// special case for these two objects
+				// we need to process each latency layer for each instance/counter
+				if z.Query == objWorkloadDetail || z.Query == objWorkloadDetailVolume {
+
+					if x := strings.Split(key, "."); len(x) == 2 {
+						key = x[0]
+						layer = x[1]
+					} else {
+						z.Logger.Warn("Instance key has unexpected format", slog.String("key", key))
+						continue
+					}
+
+					for _, wm := range workloadDetailMetrics {
+						mLayer := layer + wm
+						if l := curMat.GetMetric(mLayer); l == nil {
+							z.Logger.Warn("metric missing in cache", slog.String("layer", mLayer))
+							continue
+						}
+					}
+				}
+
+				if key == "" {
+					if z.Logger.Enabled(context.Background(), slog.LevelDebug) {
+						z.Logger.Debug(
+							"Skip instance, key is empty",
+							slog.Any("instanceKey", z.instanceKeys),
+							slog.String("name", i.GetChildContentS("name")),
+							slog.String("uuid", i.GetChildContentS("uuid")),
+						)
+					}
+					continue
+				}
+
+				instance := curMat.GetInstance(key)
+				if instance == nil {
+					z.Logger.Debug("Skip instance key, not found in cache", slog.String("key", key))
+					continue
+				}
+
+				if z.isPartialAggregation(i) {
+					instance.SetPartial(true)
+					instance.SetExportable(false)
+					numPartials++
+				} else {
+					instance.SetPartial(false)
+					instance.SetExportable(true)
+				}
+
+				counters := i.GetChildS("counters")
+				if counters == nil {
+					z.Logger.Debug("Skip instance key, no data counters", slog.String("key", key))
+					continue
+				}
+
+				// add batch timestamp as custom counter
+				if err := timestamp.SetValueFloat64(instance, ts); err != nil {
+					z.Logger.Error("set timestamp value", slogx.Err(err))
+				}
+
+				for _, cnt := range counters.GetChildren() {
+
+					name := cnt.GetChildContentS("name")
+					value := cnt.GetChildContentS("value")
+
+					// validation
+					if name == "" || value == "" {
+						// skip counters with empty value or name
+						continue
+					}
+
+					// ZAPI counter for us is either instance label (string)
+					// or numeric metric (scalar or histogram)
+
+					// store as instance label
+					if display, has := z.instanceLabels[name]; has {
+						instance.SetLabel(display, value)
+						continue
+					}
+
+					// store as array counter / histogram
+					if labels, has := z.histogramLabels[name]; has {
+
+						values := strings.Split(value, ",")
+
+						if len(labels) != len(values) {
+							// warn & skip
+							z.Logger.Error(
+								"Histogram labels don't match parsed values",
+								slog.String("labels", name),
 								slog.String("value", value),
 								slog.Int("instIndex", instIndex),
 							)
-						}
-					}
-					continue
-				}
-
-				// special case for workload_detail
-				if z.Query == objWorkloadDetail || z.Query == objWorkloadDetailVolume {
-					for _, wm := range workloadDetailMetrics {
-						wMetric := curMat.GetMetric(layer + wm)
-
-						switch {
-						case wm == "resource_latency" && (name == "wait_time" || name == "service_time"):
-							if err := wMetric.AddValueString(instance, value); err != nil {
-								z.Logger.Error(
-									"Add resource_latency failed",
-									slogx.Err(err),
-									slog.String("name", name),
-									slog.String("value", value),
-									slog.Int("instIndex", instIndex),
-								)
-							} else {
-								count++
-							}
 							continue
-						case wm == "service_time_latency" && name == "service_time":
-							if err = wMetric.SetValueString(instance, value); err != nil {
-								z.Logger.Error(
-									"Add service_time_latency failed",
-									slogx.Err(err),
+						}
+
+						for i, label := range labels {
+							if metric := curMat.GetMetric(name + "." + label); metric != nil {
+								if err = metric.SetValueString(instance, values[i]); err != nil {
+									z.Logger.Error(
+										"Set histogram value failed",
+										slogx.Err(err),
+										slog.String("name", name),
+										slog.String("label", label),
+										slog.String("value", values[i]),
+										slog.Int("instIndex", instIndex),
+									)
+								} else {
+									count++
+								}
+							} else {
+								z.Logger.Warn(
+									"Histogram name. Label not in cache",
 									slog.String("name", name),
+									slog.String("label", label),
 									slog.String("value", value),
 									slog.Int("instIndex", instIndex),
 								)
-							} else {
-								count++
-							}
-						case wm == "wait_time_latency" && name == "wait_time":
-							if err = wMetric.SetValueString(instance, value); err != nil {
-								z.Logger.Error(
-									"Add wait_time_latency failed",
-									slogx.Err(err),
-									slog.String("name", name),
-									slog.String("value", value),
-									slog.Int("instIndex", instIndex),
-								)
-							} else {
-								count++
 							}
 						}
+						continue
 					}
-					continue
-				}
 
-				// store as scalar metric
-				if metric := curMat.GetMetric(name); metric != nil {
-					if err = metric.SetValueString(instance, value); err != nil {
-						z.Logger.Error(
-							"Set metric failed",
-							slogx.Err(err),
-							slog.String("name", name),
-							slog.String("value", value),
-							slog.Int("instIndex", instIndex),
-						)
-					} else {
-						count++
+					// special case for workload_detail
+					if z.Query == objWorkloadDetail || z.Query == objWorkloadDetailVolume {
+						for _, wm := range workloadDetailMetrics {
+							wMetric := curMat.GetMetric(layer + wm)
+
+							switch {
+							case wm == "resource_latency" && (name == "wait_time" || name == "service_time"):
+								if err := wMetric.AddValueString(instance, value); err != nil {
+									z.Logger.Error(
+										"Add resource_latency failed",
+										slogx.Err(err),
+										slog.String("name", name),
+										slog.String("value", value),
+										slog.Int("instIndex", instIndex),
+									)
+								} else {
+									count++
+								}
+								continue
+							case wm == "service_time_latency" && name == "service_time":
+								if err = wMetric.SetValueString(instance, value); err != nil {
+									z.Logger.Error(
+										"Add service_time_latency failed",
+										slogx.Err(err),
+										slog.String("name", name),
+										slog.String("value", value),
+										slog.Int("instIndex", instIndex),
+									)
+								} else {
+									count++
+								}
+							case wm == "wait_time_latency" && name == "wait_time":
+								if err = wMetric.SetValueString(instance, value); err != nil {
+									z.Logger.Error(
+										"Add wait_time_latency failed",
+										slogx.Err(err),
+										slog.String("name", name),
+										slog.String("value", value),
+										slog.Int("instIndex", instIndex),
+									)
+								} else {
+									count++
+								}
+							}
+						}
+						continue
 					}
-					continue
-				}
 
-				z.Logger.Warn(
-					"Counter not in cache",
-					slog.Int("instIndex", instIndex),
-					slog.String("name", name),
-					slog.String("value", value),
-				)
-			} // end loop over counters
-		} // end loop over instances
-	} // end batch request
+					// store as scalar metric
+					if metric := curMat.GetMetric(name); metric != nil {
+						if err = metric.SetValueString(instance, value); err != nil {
+							z.Logger.Error(
+								"Set metric failed",
+								slogx.Err(err),
+								slog.String("name", name),
+								slog.String("value", value),
+								slog.Int("instIndex", instIndex),
+							)
+						} else {
+							count++
+						}
+						continue
+					}
 
+					z.Logger.Warn(
+						"Counter not in cache",
+						slog.Int("instIndex", instIndex),
+						slog.String("name", name),
+						slog.String("value", value),
+					)
+				} // end loop over counters
+			} // end loop over instances
+		} // end batch request
+
+	}
 	if z.Query == objWorkloadDetail || z.Query == objWorkloadDetailVolume {
 		if rd, pd, err := z.getParentOpsCounters(curMat, z.keyName); err == nil {
 			apiT += rd
@@ -1260,7 +1330,7 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 	}
 
 	// hack for workload objects, @TODO replace with a plugin
-	if z.Query == objWorkload || z.Query == objWorkloadDetail || z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume {
+	if z.Query == objWorkload || z.Query == objWorkloadDetail || z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume || z.Query == objWorkloadQueueDblade || z.Query == objWorkloadQueueNblade {
 
 		// for these two objects, we need to create latency/ops counters for each of the workload layers
 		// there original counters will be discarded
@@ -1583,6 +1653,31 @@ func parseHistogramLabels(elem *node.Node) ([]string, string) {
 	return labels, msg
 }
 
+func (z *ZapiPerf) getNodes() ([]string, error) {
+	var (
+		result []*node.Node
+		err    error
+	)
+	request := node.NewXMLS("system-node-get-iter")
+	desired := node.NewXMLS("desired-attributes")
+	nodeDetailsInfo := node.NewXMLS("node-details-info")
+	nodeDetailsInfo.NewChildS("node", "")
+	desired.AddChild(nodeDetailsInfo)
+	request.AddChild(desired)
+
+	if result, err = z.Client.InvokeZapiCall(request); err != nil {
+		return nil, err
+	}
+
+	names := make([]string, 0, len(result))
+
+	for _, n := range result {
+		name := n.GetChildContentS("node")
+		names = append(names, name)
+	}
+	return names, nil
+}
+
 // PollInstance updates instance cache
 func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 
@@ -1595,6 +1690,7 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		keyAttrs                          []string
 		apiD, parseD                      time.Duration
 		apiT, parseT                      time.Time
+		nodeNames                         []string
 	)
 
 	oldInstances = set.New()
@@ -1608,10 +1704,17 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 	nameAttr = "name"
 	uuidAttr = "uuid"
 	keyAttrs = z.instanceKeys
+	if z.Query == objWorkloadQueueDblade || z.Query == objWorkloadQueueNblade {
+		nodeNames, err = z.getNodes()
+		if err != nil {
+			z.Logger.Error("get nodes failed", slogx.Err(err))
+			return nil, err
+		}
+	}
 
 	// hack for workload objects: get instances from Zapi
 	switch {
-	case z.Query == objWorkload || z.Query == objWorkloadDetail || z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume:
+	case z.Query == objWorkload || z.Query == objWorkloadDetail || z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume || z.Query == objWorkloadQueueDblade || z.Query == objWorkloadQueueNblade:
 		request = node.NewXMLS("qos-workload-get-iter")
 		queryElem := request.NewChildS("query", "")
 		infoElem := queryElem.NewChildS("qos-workload-info", "")
@@ -1705,7 +1808,6 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		}
 
 		for _, i := range instances.GetChildren() {
-
 			key := z.buildKeyValue(i, keyAttrs)
 			if key == "" {
 				// instance key missing
@@ -1719,16 +1821,50 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 						slog.String("uuid", uuid),
 					)
 				}
-			} else if oldInstances.Has(key) {
-				// instance already in cache
-				oldInstances.Remove(key)
-				instance := mat.GetInstance(key)
-				z.updateQosLabels(i, instance, key)
 				continue
-			} else if instance, err := mat.NewInstance(key); err != nil {
-				z.Logger.Error("add instance", slogx.Err(err))
-			} else {
-				z.updateQosLabels(i, instance, key)
+			}
+
+			switch z.Query {
+			case objWorkloadQueueDblade, objWorkloadQueueNblade:
+				// multiply keys
+				var keys []string
+				for _, n := range nodeNames {
+					keys = append(keys, key+keyToken+n)
+				}
+				for _, k := range keys {
+					// nblade/dblade doesn't have these workloads
+					if i.GetChildContentS("lun") != "" || i.GetChildContentS("file") != "" || i.GetChildContentS("qtree") != "" {
+						continue
+					}
+					if oldInstances.Has(k) {
+						// instance already in cache
+						oldInstances.Remove(k)
+						instance := mat.GetInstance(k)
+						z.updateQosLabels(i, instance, k)
+						continue
+					}
+					instance, err := mat.NewInstance(k)
+					if err != nil {
+						z.Logger.Error("add instance", slogx.Err(err))
+					} else {
+						z.updateQosLabels(i, instance, k)
+					}
+				}
+			default:
+				if oldInstances.Has(key) {
+					// instance already in cache
+					oldInstances.Remove(key)
+					instance := mat.GetInstance(key)
+					z.updateQosLabels(i, instance, key)
+					continue
+				} else {
+					instance, err := mat.NewInstance(key)
+					if err != nil {
+						z.Logger.Error("add instance", slogx.Err(err))
+					} else {
+						z.updateQosLabels(i, instance, key)
+					}
+				}
 			}
 		}
 		parseD += time.Since(parseT)
@@ -1755,7 +1891,7 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 }
 
 func (z *ZapiPerf) updateQosLabels(qos *node.Node, instance *matrix.Instance, key string) {
-	if z.Query == objWorkload || z.Query == objWorkloadDetail || z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume {
+	if z.Query == objWorkload || z.Query == objWorkloadDetail || z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume || z.Query == objWorkloadQueueNblade || z.Query == objWorkloadQueueDblade {
 		for label, display := range z.qosLabels {
 			if value := qos.GetChildContentS(label); value != "" {
 				instance.SetLabel(display, value)
