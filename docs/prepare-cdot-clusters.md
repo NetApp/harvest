@@ -222,6 +222,7 @@ security login rest-role create -role harvest2-rest-role -access readonly -api /
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/aggr
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/cluster/date
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/disk
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/vserver/export-policy/rule
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/security/certificate
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/security/ssl
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/network/connections/active
