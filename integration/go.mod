@@ -8,7 +8,7 @@ replace github.com/netapp/harvest/v2 => ../
 
 require (
 	github.com/carlmjohnson/requests v0.24.3
-	github.com/netapp/harvest/v2 v2.0.0-20241209123857-e401e50ef260
+	github.com/netapp/harvest/v2 v2.0.0-20241217100501-6f5c2ad8ca3a
 	golang.org/x/text v0.21.0
 )
 

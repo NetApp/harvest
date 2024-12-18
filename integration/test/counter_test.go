@@ -36,7 +36,6 @@ var skipTemplates = map[string]bool{
 }
 
 var skipEndpoints = []string{
-	"api/private/cli/snapshot/policy",
 	"api/support/autosupport",
 	"api/private/cli/export-policy/rule",
 }

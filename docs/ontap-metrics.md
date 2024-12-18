@@ -7,8 +7,8 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2024-Dec-02
-ONTAP Version: 9.16.1
+Creation Date : 2024-Dec-18
+ONTAP Version: 9.15.1
 ```
 ## Understanding the structure
 
@@ -455,7 +455,7 @@ Number of user-visible files used in the referenced file system. If the referenc
 
 ### aggr_inode_inodefile_private_capacity
 
-Number of files that can currently be stored on disk for system metadata files. This number will dynamically increase as more system files are created.This is an advanced property; there is an added computational cost to retrieving its value. The field is not populated for either a collection GET or an instance GET unless it is explicitly requested using the <i>fields</i> query parameter containing either footprint or **.
+Number of files that can currently be stored on disk for system metadata files. This number will dynamically increase as more system files are created.This is an advanced property; there is an added computationl cost to retrieving its value. The field is not populated for either a collection GET or an instance GET unless it is explicitly requested using the <i>fields</i> query parameter containing either footprint or **.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -1031,7 +1031,7 @@ The aggregate's volume count, which includes both FlexVols and FlexGroup constit
 
 ### aggr_write_data
 
-Performance metric for write I/O operations.
+Peformance metric for write I/O operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -1040,7 +1040,7 @@ Performance metric for write I/O operations.
 
 ### aggr_write_latency
 
-Performance metric for write I/O operations.
+Peformance metric for write I/O operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -1049,7 +1049,7 @@ Performance metric for write I/O operations.
 
 ### aggr_write_ops
 
-Performance metric for write I/O operations.
+Peformance metric for write I/O operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -1245,7 +1245,7 @@ Performance metric aggregated over all types of I/O operations.
 
 ### cluster_write_data
 
-Performance metric for write I/O operations.
+Peformance metric for write I/O operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -1254,7 +1254,7 @@ Performance metric for write I/O operations.
 
 ### cluster_write_latency
 
-Performance metric for write I/O operations.
+Peformance metric for write I/O operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -1263,7 +1263,7 @@ Performance metric for write I/O operations.
 
 ### cluster_write_ops
 
-Performance metric for write I/O operations.
+Peformance metric for write I/O operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -3683,6 +3683,7 @@ Average read latency in microseconds for all operations on the LUN
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/lun` | `average_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/restperf/9.12.0/lun.yaml | 
+| KeyPerf | `api/storage/luns` | `statistics.latency_raw.read`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lun_statistics.iops_raw.read | conf/keyperf/9.15.0/lun.yaml | 
 | ZAPI | `perf-object-get-instances lun` | `avg_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/lun.yaml | 
 
 
@@ -3693,6 +3694,7 @@ Average write latency in microseconds for all operations on the LUN
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/lun` | `average_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/restperf/9.12.0/lun.yaml | 
+| KeyPerf | `api/storage/luns` | `statistics.latency_raw.write`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lun_statistics.iops_raw.write | conf/keyperf/9.15.0/lun.yaml | 
 | ZAPI | `perf-object-get-instances lun` | `avg_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/lun.yaml | 
 
 
@@ -3736,6 +3738,33 @@ This metric indicates a value of 1 if the LUN state is online (indicating the LU
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/lun.yaml |
 
 
+### lun_other_data
+
+Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/luns` | `statistics.throughput_raw.other`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/lun.yaml | 
+
+
+### lun_other_latency
+
+Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/luns` | `statistics.latency_raw.other`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lun_statistics.iops_raw.other | conf/keyperf/9.15.0/lun.yaml | 
+
+
+### lun_other_ops
+
+Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/luns` | `statistics.iops_raw.other`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/lun.yaml | 
+
+
 ### lun_queue_full
 
 Queue full responses
@@ -3763,6 +3792,7 @@ Read bytes
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/lun` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/lun.yaml | 
+| KeyPerf | `api/storage/luns` | `statistics.throughput_raw.read`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/lun.yaml | 
 | ZAPI | `perf-object-get-instances lun` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml | 
 
 
@@ -3773,6 +3803,7 @@ Number of read operations
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/lun` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/lun.yaml | 
+| KeyPerf | `api/storage/luns` | `statistics.iops_raw.read`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/lun.yaml | 
 | ZAPI | `perf-object-get-instances lun` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml | 
 
 
@@ -3836,6 +3867,33 @@ This metric represents the percentage of a LUN that is currently being used.
 | ZAPI | `lun-get-iter` | `size_used, size` | conf/zapi/cdot/9.8.0/lun.yaml |
 
 
+### lun_total_data
+
+Performance metric aggregated over all types of I/O operations.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/luns` | `statistics.throughput_raw.total`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/lun.yaml | 
+
+
+### lun_total_latency
+
+Performance metric aggregated over all types of I/O operations.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/luns` | `statistics.latency_raw.total`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lun_statistics.iops_raw.total | conf/keyperf/9.15.0/lun.yaml | 
+
+
+### lun_total_ops
+
+Performance metric aggregated over all types of I/O operations.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/luns` | `statistics.iops_raw.total`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/lun.yaml | 
+
+
 ### lun_unmap_reqs
 
 Number of unmap command requests
@@ -3863,6 +3921,7 @@ Write bytes
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/lun` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/lun.yaml | 
+| KeyPerf | `api/storage/luns` | `statistics.throughput_raw.write`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/lun.yaml | 
 | ZAPI | `perf-object-get-instances lun` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml | 
 
 
@@ -3873,6 +3932,7 @@ Number of write operations
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/lun` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/lun.yaml | 
+| KeyPerf | `api/storage/luns` | `statistics.iops_raw.write`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/lun.yaml | 
 | ZAPI | `perf-object-get-instances lun` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml | 
 
 
@@ -4159,6 +4219,7 @@ Average other ops latency in microseconds for all operations on the Namespace
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/namespace` | `average_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/restperf/9.12.0/namespace.yaml | 
+| KeyPerf | `api/storage/namespaces` | `statistics.latency_raw.other`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> namespace_statistics.iops_raw.other | conf/keyperf/9.15.0/namespace.yaml | 
 | ZAPI | `perf-object-get-instances namespace` | `avg_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/zapiperf/cdot/9.10.1/namespace.yaml | 
 
 
@@ -4169,7 +4230,17 @@ Average read latency in microseconds for all operations on the Namespace
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/namespace` | `average_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/restperf/9.12.0/namespace.yaml | 
+| KeyPerf | `api/storage/namespaces` | `statistics.latency_raw.read`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> namespace_statistics.iops_raw.read | conf/keyperf/9.15.0/namespace.yaml | 
 | ZAPI | `perf-object-get-instances namespace` | `avg_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.10.1/namespace.yaml | 
+
+
+### namespace_avg_total_latency
+
+Performance metric aggregated over all types of I/O operations.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/namespaces` | `statistics.latency_raw.total`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> namespace_statistics.iops_raw.total | conf/keyperf/9.15.0/namespace.yaml | 
 
 
 ### namespace_avg_write_latency
@@ -4179,6 +4250,7 @@ Average write latency in microseconds for all operations on the Namespace
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/namespace` | `average_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/restperf/9.12.0/namespace.yaml | 
+| KeyPerf | `api/storage/namespaces` | `statistics.latency_raw.write`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> namespace_statistics.iops_raw.write | conf/keyperf/9.15.0/namespace.yaml | 
 | ZAPI | `perf-object-get-instances namespace` | `avg_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.10.1/namespace.yaml | 
 
 
@@ -4199,6 +4271,7 @@ Number of other operations
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/namespace` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/namespace.yaml | 
+| KeyPerf | `api/storage/namespaces` | `statistics.iops_raw.other`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/namespace.yaml | 
 | ZAPI | `perf-object-get-instances namespace` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml | 
 
 
@@ -4209,6 +4282,7 @@ Read bytes
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/namespace` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/namespace.yaml | 
+| KeyPerf | `api/storage/namespaces` | `statistics.throughput_raw.read`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/namespace.yaml | 
 | ZAPI | `perf-object-get-instances namespace` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml | 
 
 
@@ -4219,6 +4293,7 @@ Number of read operations
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/namespace` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/namespace.yaml | 
+| KeyPerf | `api/storage/namespaces` | `statistics.iops_raw.read`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/namespace.yaml | 
 | ZAPI | `perf-object-get-instances namespace` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml | 
 
 
@@ -4282,6 +4357,24 @@ The amount of space consumed by the main data stream of the NVMe namespace.<br/>
 | ZAPI | `nvme-namespace-get-iter` | `nvme-namespace-info.size-used` | conf/zapi/cdot/9.8.0/namespace.yaml |
 
 
+### namespace_total_data
+
+Performance metric aggregated over all types of I/O operations.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/namespaces` | `statistics.throughput_raw.total`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/namespace.yaml | 
+
+
+### namespace_total_ops
+
+Performance metric aggregated over all types of I/O operations.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/namespaces` | `statistics.iops_raw.total`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/namespace.yaml | 
+
+
 ### namespace_write_data
 
 Write bytes
@@ -4289,6 +4382,7 @@ Write bytes
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/namespace` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/namespace.yaml | 
+| KeyPerf | `api/storage/namespaces` | `statistics.throughput_raw.write`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/namespace.yaml | 
 | ZAPI | `perf-object-get-instances namespace` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml | 
 
 
@@ -4299,6 +4393,7 @@ Number of write operations
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/namespace` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/namespace.yaml | 
+| KeyPerf | `api/storage/namespaces` | `statistics.iops_raw.write`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/namespace.yaml | 
 | ZAPI | `perf-object-get-instances namespace` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml | 
 
 
@@ -10427,7 +10522,7 @@ Summation of NFS ops, CIFS ops, CSS ops and internal ops
 
 ### qtree_write_data
 
-Performance metric for write I/O operations.
+Peformance metric for write I/O operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -10436,7 +10531,7 @@ Performance metric for write I/O operations.
 
 ### qtree_write_ops
 
-Performance metric for write I/O operations.
+Peformance metric for write I/O operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -10734,41 +10829,37 @@ Number of disk write operations initiated each second for storing data or metada
 
 ### rw_ctx_cifs_giveups
 
-Array of number of give-ups of CIFS ops because they rewind more than a certain threshold, categorized by their rewind reasons.
+Array of number of given-ups of cifs ops because they rewind more than a certain threshold, categorized by their rewind reasons.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/rewind_context` | `cifs_give_ups`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.16.0/rwctx.yaml |
 | ZAPI | `perf-object-get-instances rw_ctx` | `cifs_giveups`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml | 
 
 
 ### rw_ctx_cifs_rewinds
 
-Array of number of rewinds for CIFS ops based on their reasons.
+Array of number of rewinds for cifs ops based on their reasons.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/rewind_context` | `cifs_rewinds`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.16.0/rwctx.yaml |
 | ZAPI | `perf-object-get-instances rw_ctx` | `cifs_rewinds`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml | 
 
 
 ### rw_ctx_nfs_giveups
 
-Array of number of give-ups of NFS ops because they rewind more than a certain threshold, categorized by their rewind reasons.
+Array of number of given-ups of nfs ops because they rewind more than a certain threshold, categorized by their rewind reasons.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/rewind_context` | `nfs_give_ups`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.16.0/rwctx.yaml |
 | ZAPI | `perf-object-get-instances rw_ctx` | `nfs_giveups`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml | 
 
 
 ### rw_ctx_nfs_rewinds
 
-Array of number of rewinds for NFS ops based on their reasons.
+Array of number of rewinds for nfs ops based on their reasons.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/rewind_context` | `nfs_rewinds`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.16.0/rwctx.yaml |
 | ZAPI | `perf-object-get-instances rw_ctx` | `nfs_rewinds`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml | 
 
 
@@ -11414,7 +11505,7 @@ Total Number of Schedules in this Policy
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/snapshot/policy` | `total_schedules` | conf/rest/9.12.0/snapshotpolicy.yaml |
+| REST | `api/private/cli/volume/snapshot/policy` | `total_schedules` | conf/rest/9.12.0/snapshotpolicy.yaml |
 | ZAPI | `snapshot-policy-get-iter` | `snapshot-policy-info.total-schedules` | conf/zapi/cdot/9.8.0/snapshotpolicy.yaml |
 
 
@@ -11557,7 +11648,7 @@ Performance metric aggregated over all types of I/O operations.
 
 ### svm_cifs_write_data
 
-Performance metric for write I/O operations.
+Peformance metric for write I/O operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -14928,7 +15019,7 @@ Performance metric aggregated over all types of I/O operations. svm_volume_total
 
 ### svm_volume_write_data
 
-Performance metric for write I/O operations. svm_volume_write_data is [volume_write_data](#volume_write_data) aggregated by `svm`.
+Peformance metric for write I/O operations. svm_volume_write_data is [volume_write_data](#volume_write_data) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -14937,7 +15028,7 @@ Performance metric for write I/O operations. svm_volume_write_data is [volume_wr
 
 ### svm_volume_write_latency
 
-Performance metric for write I/O operations. svm_volume_write_latency is [volume_write_latency](#volume_write_latency) aggregated by `svm`.
+Peformance metric for write I/O operations. svm_volume_write_latency is [volume_write_latency](#volume_write_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -14946,7 +15037,7 @@ Performance metric for write I/O operations. svm_volume_write_latency is [volume
 
 ### svm_volume_write_ops
 
-Performance metric for write I/O operations. svm_volume_write_ops is [volume_write_ops](#volume_write_ops) aggregated by `svm`.
+Peformance metric for write I/O operations. svm_volume_write_ops is [volume_write_ops](#volume_write_ops) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|

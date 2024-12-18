@@ -1,11 +1,11 @@
 name:                     SnapshotPolicy
-query:                    api/private/cli/snapshot/policy
+query:                    api/private/cli/volume/snapshot/policy
 object:                   snapshot_policy
 
 counters:
-  - ^^policy          =>  snapshot_policy
+  - ^^policy          => snapshot_policy
   - ^^vserver         => svm
-  - ^comment          =>  comment
+  - ^comment          => comment
   - total_schedules   => total_schedules
 
 export_options:
