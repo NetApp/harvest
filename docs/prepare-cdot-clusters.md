@@ -235,6 +235,7 @@ security login rest-role create -role harvest2-rest-role -access readonly -api /
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/qos/workload
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/qtree
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/snapmirror
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/volume/snapshot/policy
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/storage/failover
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/storage/shelf
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/system/chassis/fru

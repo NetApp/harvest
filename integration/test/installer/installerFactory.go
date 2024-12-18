@@ -5,11 +5,12 @@ import (
 )
 
 const (
-	RHEL              = "rpm"
-	NATIVE            = "tar"
-	HarvestConfigFile = "harvest.yml"
-	GRAFANA           = "grafana"
-	PROMETHEUS        = "prometheus"
+	RHEL                   = "rpm"
+	NATIVE                 = "tar"
+	HarvestConfigFile      = "harvest.yml"
+	HarvestAdminConfigFile = "harvest_admin.yml"
+	GRAFANA                = "grafana"
+	PROMETHEUS             = "prometheus"
 )
 
 func GetInstaller(installType string, path string) (Installer, error) {

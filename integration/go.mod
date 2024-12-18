@@ -7,9 +7,9 @@ toolchain go1.23.0
 replace github.com/netapp/harvest/v2 => ../
 
 require (
-	github.com/carlmjohnson/requests v0.24.2
-	github.com/netapp/harvest/v2 v2.0.0-20241001142758-f137ab714dd8
-	golang.org/x/text v0.20.0
+	github.com/carlmjohnson/requests v0.24.3
+	github.com/netapp/harvest/v2 v2.0.0-20241217100501-6f5c2ad8ca3a
+	golang.org/x/text v0.21.0
 )
 
 require (
@@ -31,11 +31,11 @@ require (
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
 	github.com/tklauser/go-sysconf v0.3.14 // indirect
-	github.com/tklauser/numcpus v0.8.0 // indirect
+	github.com/tklauser/numcpus v0.9.0 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
-	golang.org/x/net v0.29.0 // indirect
-	golang.org/x/sys v0.27.0 // indirect
-	golang.org/x/term v0.26.0 // indirect
+	golang.org/x/net v0.32.0 // indirect
+	golang.org/x/sys v0.28.0 // indirect
+	golang.org/x/term v0.27.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

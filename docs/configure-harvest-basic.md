@@ -293,6 +293,9 @@ At runtime, Harvest will invoke the script specified in the `credentials_script`
 The script should communicate the credentials to Harvest by writing the response to its standard output (stdout).
 Harvest supports two output formats from the script: YAML and plain text.
 
+When running Harvest inside a container, tools like `jq` and `curl` are not available.
+In such cases, you can use a Go binary as a credential script to fetch authentication information. For details on using a Go binary as a credential script for Harvest container deployment, please refer to the [GitHub discussion](https://github.com/NetApp/harvest/discussions/3380).
+
 ### YAML format
 
 If the script outputs a YAML object with `username` and `password` keys, Harvest will use both the `username` and `password` from the output. For example, if the script writes the following, Harvest will use `myuser` and `mypassword` for the poller's credentials.

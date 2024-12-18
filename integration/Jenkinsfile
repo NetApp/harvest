@@ -301,6 +301,7 @@ def void setupWorkspace() {
     git clone --single-branch --branch $BRANCH https://github.com/NetApp/harvest.git
     cp /u/mpeg/harvest/harvest_cert.yml $WORKSPACE/harvest/integration/test/
     cp /u/mpeg/harvest/harvest.yml $WORKSPACE/harvest/integration/test/
+    cp /u/mpeg/harvest/harvest_admin.yml $WORKSPACE/harvest/integration/test/
     ls -ltr $WORKSPACE/harvest/integration/test/
 '''
 }

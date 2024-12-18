@@ -3204,7 +3204,7 @@
         "error": null,
         "hide": 0,
         "includeAll": true,
-        "label": "",
+        "label": null,
         "multi": true,
         "name": "Hostname",
         "options": [],

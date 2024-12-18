@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1715672476697,
+  "iteration": 1733915992490,
   "links": [
     {
       "asDropdown": true,
@@ -2410,7 +2410,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 48
+            "y": 32
           },
           "id": 32,
           "options": {
@@ -2446,7 +2446,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Disk Throughput",
+          "title": "Disk Throughput by Node",
           "transformations": [],
           "type": "timeseries"
         },
@@ -2508,7 +2508,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 48
+            "y": 32
           },
           "id": 34,
           "options": {
@@ -2544,13 +2544,13 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Disk and Tape Drives Throughput",
+          "title": "Disk and Tape Drives Throughput by Node",
           "transformations": [],
           "type": "timeseries"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel displays detail of array of counts of different types of Consistency Points (CP) and average latency in microseconds for the WAFL filesystem to process write request to the volume.",
+          "description": "This panel displays detail of bytes written/read through a host adapter.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2598,58 +2598,17 @@
                   }
                 ]
               },
-              "unit": "µs"
+              "unit": "binBps"
             },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byFrameRefID",
-                  "options": "A"
-                },
-                "properties": [
-                  {
-                    "id": "custom.axisPlacement",
-                    "value": "right"
-                  },
-                  {
-                    "id": "custom.axisLabel",
-                    "value": "Back to Back CP Count"
-                  },
-                  {
-                    "id": "unit",
-                    "value": "locale"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byFrameRefID",
-                  "options": "B"
-                },
-                "properties": [
-                  {
-                    "id": "custom.axisPlacement",
-                    "value": "left"
-                  },
-                  {
-                    "id": "custom.axisLabel",
-                    "value": "Write Latency"
-                  },
-                  {
-                    "id": "unit",
-                    "value": "µs"
-                  }
-                ]
-              }
-            ]
+            "overrides": []
           },
           "gridPos": {
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 48
+            "y": 32
           },
-          "id": 40,
+          "id": 62,
           "options": {
             "legend": {
               "calcs": [
@@ -2667,23 +2626,25 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "sum(wafl_cp_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",metric=~\"back_to_back_CP|deferred_back_to_back_CP\"})",
+              "exemplar": false,
+              "expr": "(\n    sum by (datacenter,cluster,node,hostadapter) (hostadapter_bytes_written{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",node=~\"$Node\",hostadapter=~\"$HostAdapter\"})\n)\nand on(datacenter,cluster,node,hostadapter)\ntopk(\n    $TopResources,\n    sum by (datacenter,cluster,node,hostadapter) (\n        avg_over_time(hostadapter_bytes_written{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",node=~\"$Node\",hostadapter=~\"$HostAdapter\"}[3h])\n    )\n)",
               "hide": false,
               "interval": "",
-              "legendFormat": "Back-to-back CP Count",
+              "legendFormat": "{{node}} - {{hostadapter}} - WRITE",
               "refId": "A"
             },
             {
-              "expr": "node_vol_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}",
+              "exemplar": false,
+              "expr": "(\n    sum by (datacenter,cluster,node,hostadapter) (hostadapter_bytes_read{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",node=~\"$Node\",hostadapter=~\"$HostAdapter\"})\n)\nand on(datacenter,cluster,node,hostadapter)\ntopk(\n    $TopResources,\n    sum by (datacenter,cluster,node,hostadapter) (\n        avg_over_time(hostadapter_bytes_read{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",node=~\"$Node\",hostadapter=~\"$HostAdapter\"}[3h])\n    )\n)",
               "hide": false,
               "interval": "",
-              "legendFormat": "Write Latency {{node}}",
+              "legendFormat": "{{node}} - {{hostadapter}} - READ",
               "refId": "B"
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "CP (Consistency Points) Counts",
+          "title": "Top $TopResources Disk and Tape Drives Throughput by Host Adapter",
           "transformations": [],
           "type": "timeseries"
         },
@@ -2777,7 +2738,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 57
+            "y": 41
           },
           "id": 36,
           "options": {
@@ -2907,7 +2868,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 57
+            "y": 41
           },
           "id": 38,
           "options": {
@@ -2946,9 +2907,149 @@
           "title": "Flash Pool",
           "transformations": [],
           "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel displays detail of array of counts of different types of Consistency Points (CP) and average latency in microseconds for the WAFL filesystem to process write request to the volume.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "µs"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byFrameRefID",
+                  "options": "A"
+                },
+                "properties": [
+                  {
+                    "id": "custom.axisPlacement",
+                    "value": "right"
+                  },
+                  {
+                    "id": "custom.axisLabel",
+                    "value": "Back to Back CP Count"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "locale"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byFrameRefID",
+                  "options": "B"
+                },
+                "properties": [
+                  {
+                    "id": "custom.axisPlacement",
+                    "value": "left"
+                  },
+                  {
+                    "id": "custom.axisLabel",
+                    "value": "Write Latency"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "µs"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 8,
+            "x": 16,
+            "y": 41
+          },
+          "id": 40,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum(wafl_cp_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",metric=~\"back_to_back_CP|deferred_back_to_back_CP\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "Back-to-back CP Count",
+              "refId": "A"
+            },
+            {
+              "expr": "node_vol_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "Write Latency {{node}}",
+              "refId": "B"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "CP (Consistency Points) Counts",
+          "transformations": [],
+          "type": "timeseries"
         }
       ],
-      "title": "Disk Utilization: Node-level Overview",
+      "title": "Disk Utilization",
       "type": "row"
     }
   ],
@@ -3049,7 +3150,7 @@
         "options": [],
         "query": {
           "query": "label_values(disk_labels{system_type!=\"7mode\",cluster=~\"$Cluster\"}, node)",
-          "refId": "Prometheus-Node-Variable-Query"
+          "refId": "StandardVariableQuery"
         },
         "refresh": 2,
         "regex": "",
@@ -3075,7 +3176,7 @@
         "options": [],
         "query": {
           "query": "label_values(aggr_disk_busy{cluster=~\"$Cluster\",node=~\"$Node\"}, aggr)",
-          "refId": "Prometheus-Aggregate-Variable-Query"
+          "refId": "StandardVariableQuery"
         },
         "refresh": 2,
         "regex": "",
@@ -3137,6 +3238,29 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(hostadapter_bytes_read{system_type!=\"7mode\",cluster=~\"$Cluster\",node=~\"$Node\"}, hostadapter)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "HostAdapter",
+        "options": [],
+        "query": {
+          "query": "label_values(hostadapter_bytes_read{system_type!=\"7mode\",cluster=~\"$Cluster\",node=~\"$Node\"}, hostadapter)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
       },
       {
         "allValue": null,
@@ -3251,5 +3375,5 @@
   "timezone": "",
   "title": "ONTAP: Disk",
   "uid": "cdot-disk",
-  "version": 32
+  "version": 15
 }

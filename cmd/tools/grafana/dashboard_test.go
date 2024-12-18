@@ -1713,6 +1713,24 @@ func checkVariablesAreFSxFriendly(t *testing.T, path string, data []byte) {
 	})
 }
 
+func TestLabelsNullVariables(t *testing.T) {
+	VisitDashboards(cDotDashboards,
+		func(path string, data []byte) {
+			checkVariablesLabelNull(t, path, data)
+		})
+}
+
+func checkVariablesLabelNull(t *testing.T, path string, data []byte) {
+	gjson.GetBytes(data, "templating.list").ForEach(func(key, value gjson.Result) bool {
+		if value.Get("label").Type != gjson.Null && value.Get("label").ClonedString() == "" {
+			varName := value.Get("name").ClonedString()
+			t.Errorf("dashboard=%s path=templating.list[%s]. variable=%s label should not be empty",
+				ShortPath(path), key.ClonedString(), varName)
+		}
+		return true
+	})
+}
+
 var linkPath = regexp.MustCompile(`/d/(.*?)/`)
 var supportedLinkedObjects = []string{"cluster", "datacenter", "aggr", "svm", "volume", "node", "qtree", "home_node", "tenant"}
 var exceptionPathPanelObject = []string{
