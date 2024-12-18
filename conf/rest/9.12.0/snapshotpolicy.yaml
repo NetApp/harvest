@@ -1,5 +1,5 @@
 name:                     SnapshotPolicy
-query:                    api/private/cli/volume/snapshot/policy
+query:                    api/storage/snapshot-policies
 object:                   snapshot_policy
 
 counters:
