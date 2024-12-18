@@ -2,18 +2,33 @@ name:                     SnapshotPolicy
 query:                    snapshot-policy-get-iter
 object:                   snapshot_policy
 
-
 counters:
   snapshot-policy-info:
-    - ^^policy           =>  snapshot_policy
-    - ^^vserver-name     =>  svm
-    - ^comment           =>  comment
-    - total-schedules    =>  total_schedules
+    - ^^policy               => snapshot_policy
+    - ^^vserver-name         => svm
+    - ^comment               => comment
+    - ^enabled               => status
+    - ^policy-owner          => policy_owner
+    - snapshot-policy-schedules:
+        - snapshot-schedule-info:
+            - ^count         => copies
+            - ^schedule      => schedules
+
+plugins:
+  - LabelAgent:
+      split:
+        - policy_owner `-admin` scope,
+  - SnapshotPolicy
 
 export_options:
   instance_keys:
-    - comment
     - snapshot_policy
+  instance_labels:
+    - comment
+    - copies
+    - schedules
+    - scope
+    - status
     - svm
 
 

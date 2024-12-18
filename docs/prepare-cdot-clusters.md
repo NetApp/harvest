@@ -197,6 +197,7 @@ security login rest-role create -role harvest2-rest-role -access readonly -api /
     security login rest-role create -role harvest-rest-role -access readonly -api /api/security/login/messages
     security login rest-role create -role harvest-rest-role -access readonly -api /api/security/ssh
     security login rest-role create -role harvest-rest-role -access readonly -api /api/snapmirror/relationships
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/snapmirror/policies
     security login rest-role create -role harvest-rest-role -access readonly -api /api/storage/aggregates
     security login rest-role create -role harvest-rest-role -access readonly -api /api/storage/disks
     security login rest-role create -role harvest-rest-role -access readonly -api /api/storage/flexcache/flexcaches
@@ -207,6 +208,7 @@ security login rest-role create -role harvest2-rest-role -access readonly -api /
     security login rest-role create -role harvest-rest-role -access readonly -api /api/storage/qos/workloads
     security login rest-role create -role harvest-rest-role -access readonly -api /api/storage/quota/reports
     security login rest-role create -role harvest-rest-role -access readonly -api /api/storage/shelves
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/storage/snapshot-policies
     security login rest-role create -role harvest-rest-role -access readonly -api /api/storage/volumes
     security login rest-role create -role harvest-rest-role -access readonly -api /api/support/auto-update
     security login rest-role create -role harvest-rest-role -access readonly -api /api/support/autosupport
@@ -235,7 +237,6 @@ security login rest-role create -role harvest2-rest-role -access readonly -api /
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/qos/workload
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/qtree
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/snapmirror
-    security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/volume/snapshot/policy
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/storage/failover
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/storage/shelf
     security login rest-role create -role harvest-rest-role -access readonly -api /api/private/cli/system/chassis/fru

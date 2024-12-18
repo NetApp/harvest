@@ -11,6 +11,7 @@ counters:
   - ^protection_status.is_protected              => is_protected
   - ^qos_policy.name                             => qos_policy_group
   - ^svm.name                                    => svm
+  - ^type                                        => type
   - ^volume.name                                 => volume
   - logical_used_size
   - size
@@ -38,4 +39,5 @@ export_options:
     - protected_in_cloud
     - protected_in_ontap
     - qos_policy_group
+    - type
     - url

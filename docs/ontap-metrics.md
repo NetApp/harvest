@@ -11503,16 +11503,6 @@ Number of Successful Updates
 | ZAPI | `snapmirror-get-iter` | `snapmirror-info.update-successful-count` | conf/zapi/cdot/9.8.0/snapmirror.yaml |
 
 
-### snapshot_policy_total_schedules
-
-Total Number of Schedules in this Policy
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/private/cli/volume/snapshot/policy` | `total_schedules` | conf/rest/9.12.0/snapshotpolicy.yaml |
-| ZAPI | `snapshot-policy-get-iter` | `snapshot-policy-info.total-schedules` | conf/zapi/cdot/9.8.0/snapshotpolicy.yaml |
-
-
 ### svm_cifs_connections
 
 Number of connections
