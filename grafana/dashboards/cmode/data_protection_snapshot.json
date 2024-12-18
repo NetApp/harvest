@@ -1576,7 +1576,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Number of unhealthy snapmirrors.",
+          "description": "Number of total buckets.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1643,7 +1643,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Number of unhealthy snapmirrors.",
+          "description": "Number of buckets which are not protected.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1710,7 +1710,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Number of unhealthy snapmirrors.",
+          "description": "Number of buckets which are not backed up to cloud.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1777,7 +1777,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel displays volumes detail with snapshot count.",
+          "description": "This panel displays bucket detail.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1989,7 +1989,7 @@
             ]
           },
           "gridPos": {
-            "h": 15,
+            "h": 7,
             "w": 24,
             "x": 0,
             "y": 8
@@ -2122,7 +2122,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel displays volumes detail with snapshot count.",
+          "description": "This panel displays protection policy detail.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2394,7 +2394,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel displays volumes detail with snapshot count.",
+          "description": "This panel displays Snapshot policy detail.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2662,7 +2662,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel displays volumes detail with snapshot count.",
+          "description": "This panel displays cluster schedules detail.",
           "fieldConfig": {
             "defaults": {
               "color": {
