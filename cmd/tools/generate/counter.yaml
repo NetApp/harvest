@@ -873,9 +873,6 @@ counters:
   - Name: snapmirror_update_successful_count
     Description: Number of Successful Updates
 
-  - Name: snapshot_policy_total_schedules
-    Description: Total Number of Schedules in this Policy
-
   - Name: svm_nfs_read_throughput
     APIs:
       - API: REST

@@ -5,10 +5,9 @@ object:                   snapshot_policy
 counters:
   - ^^uuid            => uuid
   - ^comment          => comment
-  - ^copies.#.count   => copies
+  - ^copies           => copies
   - ^enabled          => status
   - ^name             => snapshot_policy
-  - ^schedules        => schedules
   - ^scope            => scope
   - ^svm.name         => svm
 
