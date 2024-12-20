@@ -63,6 +63,8 @@ type options struct {
 	customizeDir        string
 	customAllValue      string
 	customCluster       string
+	varDefaults         string
+	defaultDropdownMap  map[string][]string
 }
 
 type Folder struct {
@@ -437,6 +439,30 @@ func initImportVars() {
 		}
 		opts.dirGrafanaFolderMap[k] = v
 	}
+
+	// Parse default dropdown values
+	opts.defaultDropdownMap = make(map[string][]string)
+	if opts.varDefaults != "" {
+		if !validateVarDefaults(opts.varDefaults) {
+			fmt.Println("Error: Invalid format for --var-defaults. Expected format is 'variable1=value1,value2;variable2=value3'")
+			os.Exit(1)
+		}
+		pairs := strings.Split(opts.varDefaults, ";")
+		for _, pair := range pairs {
+			parts := strings.SplitN(pair, "=", 2)
+			if len(parts) == 2 {
+				values := strings.Split(parts[1], ",")
+				opts.defaultDropdownMap[parts[0]] = values
+			}
+		}
+	}
+}
+
+// validateVarDefaults validates the format of the --var-defaults input string.
+// The expected format is 'variable1=value1,value2;variable2=value3'.
+func validateVarDefaults(input string) bool {
+	re := regexp.MustCompile(`^([^=;,]+=[^=;,]+(,[^=;,]+)*)(;[^=;,]+=[^=;,]+(,[^=;,]+)*)*$`)
+	return re.MatchString(input)
 }
 
 func checkAndCreateServerFolder(folder *Folder) error {
@@ -519,6 +545,11 @@ func importFiles(dir string, folder *Folder) {
 			data = changeClusterLabel(data, opts.customCluster)
 		}
 
+		// Set default dropdown values if provided
+		if len(opts.defaultDropdownMap) > 0 {
+			data = setDefaultDropdownValues(data, opts.defaultDropdownMap)
+		}
+
 		// labelMap is used to ensure we don't modify the query of one of the new labels we're adding
 		labelMap := make(map[string]string)
 		caser := cases.Title(language.Und)
@@ -588,6 +619,24 @@ func importFiles(dir string, folder *Folder) {
 			fmt.Printf("No dashboards found in [%s] is the directory correct?\n", dir)
 		}
 	}
+}
+
+// setDefaultDropdownValues sets the default values for specified dropdown variables in the dashboard JSON data.
+// It takes a map of variable names to their default values and updates the JSON data accordingly.
+func setDefaultDropdownValues(data []byte, defaultValues map[string][]string) []byte {
+	for variable, defaultValues := range defaultValues {
+		variablePath := fmt.Sprintf("templating.list.#(name=%q)", variable)
+		variableData := gjson.GetBytes(data, variablePath)
+		if variableData.Exists() {
+			current := map[string]any{
+				"selected": true,
+				"text":     defaultValues,
+				"value":    defaultValues,
+			}
+			data, _ = sjson.SetBytes(data, variablePath+".current", current)
+		}
+	}
+	return data
 }
 
 // This function will rewrite all panel expressions in the dashboard to use the new cluster label.
@@ -1293,11 +1342,38 @@ func init() {
 	addCommonFlags(importCmd, exportCmd, customizeCmd)
 	addImportExportFlags(importCmd, exportCmd)
 	addImportCustomizeFlags(importCmd, customizeCmd)
+	addImportFlags(importCmd)
 
 	customizeCmd.PersistentFlags().StringVarP(&opts.customizeDir, "output-dir", "o", "", "Write customized dashboards to the local directory. The directory must not exist")
 
 	metricsCmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d",
 		"", "local directory that contains dashboards (searched recursively).")
+}
+
+func addImportFlags(cmd *cobra.Command) {
+	cmd.PersistentFlags().StringVar(&opts.varDefaults, "var-defaults", "", `
+Default values for dropdown variables in the format 'variable1=value1,value2;variable2=value3'.
+
+Examples:
+
+1. Set a single variable:
+   To set the default value for the 'Datacenter' variable to 'DC1':
+   --var-defaults "Datacenter=DC1"
+
+2. Set multiple values for a single variable:
+   To set the default values for the 'Datacenter' variable to 'DC1' and 'DC2':
+   --var-defaults "Datacenter=DC1,DC2"
+
+3. Set multiple variables in one command:
+   To set the default values for 'Datacenter' to 'DC1' and 'DC2', and 'Cluster' to 'Cluster1':
+   --var-defaults "Datacenter=DC1,DC2;Cluster=Cluster1"
+
+4. Set multiple values for multiple variables:
+   To set the default values for 'Datacenter' to 'DC1' and 'DC2', and 'Cluster' to 'Cluster1' and 'Cluster2':
+   --var-defaults "Datacenter=DC1,DC2;Cluster=Cluster1,Cluster2"
+
+Note: Ensure that variable names and values do not contain the characters '=', ',', or ';' as these are used as delimiters.
+`)
 }
 
 func addImportCustomizeFlags(commands ...*cobra.Command) {
