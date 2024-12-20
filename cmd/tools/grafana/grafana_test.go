@@ -675,3 +675,33 @@ func TestClusterRewrite(t *testing.T) {
 		})
 	}
 }
+
+func TestValidateVarDefaults(t *testing.T) {
+	tests := []struct {
+		input string
+		want  bool
+	}{
+		{input: "Datacenter=DC1,DC2;Cluster=Cluster1", want: true},
+		{input: "Datacenter=DC1;Cluster=Cluster1,Cluster2", want: true},
+		{input: "Datacenter=DC1,DC2;Cluster=Cluster1;Region=US,EU", want: true},
+		{input: "Datacenter=DC1,DC2;Cluster=Cluster1;Region=US,EU;SVM=SAN,NAS", want: true},
+		{input: "Datacenter=DC1,DC2", want: true},
+		{input: "Datacenter=nane,rtp;Cluster=Cluster2,A250-15-28-29", want: true},
+		{input: "Datacenter=nane,rtp;Cluster=Cluster2,A250-15-28#29", want: true},
+		{input: "Datacenter=DC1,DC2;", want: false},                  // trailing semicolon
+		{input: "=DC1,DC2;Cluster=Cluster1", want: false},            // missing variable name
+		{input: "Datacenter=;Cluster=Cluster1", want: false},         // missing value
+		{input: "Datacenter=DC1,DC2;Cluster=", want: false},          // missing value
+		{input: "Datacenter=DC1,DC2;Cluster", want: false},           // missing equals sign
+		{input: "Datacenter=DC1,DC2;Cluster=Cluster1;", want: false}, // trailing semicolon
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			got := validateVarDefaults(tt.input)
+			if got != tt.want {
+				t.Errorf("validateVarDefaults(%q) = %v, want %v", tt.input, got, tt.want)
+			}
+		})
+	}
+}
