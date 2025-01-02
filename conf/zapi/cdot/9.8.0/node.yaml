@@ -65,7 +65,6 @@ export_options:
     - max_vol_size
     - model
     - partner_healthy
-    - uptime
     - vendor
     - version
     - warnings
