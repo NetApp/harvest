@@ -203,8 +203,6 @@ func (r *Rest) InitClient() error {
 		return err
 	}
 
-	r.Client.TraceLogSet(r.Name, r.Params)
-
 	return nil
 }
 
