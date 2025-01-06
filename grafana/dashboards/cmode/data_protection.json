@@ -116,13 +116,6 @@
             "displayMode": "auto",
             "filterable": true
           },
-          "links": [
-            {
-              "targetBlank": true,
-              "title": "",
-              "url": "/d/cdot-snapmirror-destinations/ontap-snapmirror-destinations?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}"
-            }
-          ],
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -135,7 +128,26 @@
           },
           "unit": "locale"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Count"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-snapmirror-destinations/ontap-snapmirror-destinations?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 5,
