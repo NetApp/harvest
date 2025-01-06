@@ -105,374 +105,35 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Number of unhealthy snapmirrors.",
+      "description": "This panel displays Healthy/Unhealthy SnapMirror relationships count.",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "filterable": true
           },
           "links": [
             {
               "targetBlank": true,
               "title": "",
-              "url": "/d/cdot-snapmirror/ontap-snapmirror-sources?orgId=1&${Datacenter:queryparam}﻿&﻿${Cluster:queryparam}﻿&﻿${__url_time_range}﻿\n"
+              "url": "/d/cdot-snapmirror-destinations/ontap-snapmirror-destinations?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}"
             }
           ],
           "mappings": [],
-          "noValue": "0",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "red",
+                "color": "green",
                 "value": null
               }
             ]
           },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 5,
-        "x": 0,
-        "y": 1
-      },
-      "id": 139,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "text": {},
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "count (count by (relationship_id) (snapmirror_labels{source_cluster=~\"$Cluster\",healthy=\"false\",relationship_id!=\"\"}))",
-          "format": "time_series",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Unhealthy SnapMirrors",
-      "type": "stat"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "Total number of snapmirror transfers that have failed.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 5,
-        "x": 5,
-        "y": 1
-      },
-      "id": 138,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "text": {},
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "sum(snapmirror_break_failed_count{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"})+sum(snapmirror_resync_failed_count{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"})+sum(snapmirror_update_failed_count{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}) OR on() vector(0)",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Failed SnapMirror Transfers",
-      "type": "stat"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "Total number of snapmirror transfers that have been successfully completed without any errors or issues.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "semi-dark-green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 5,
-        "x": 10,
-        "y": 1
-      },
-      "id": 137,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "text": {},
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "sum(snapmirror_break_successful_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})+sum(snapmirror_resync_successful_count{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"})+sum(snapmirror_update_successful_count{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"})OR on() vector(0)",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "range": false,
-          "refId": "A"
-        }
-      ],
-      "title": "Successful SnapMirror Transfers",
-      "type": "stat"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "Number of unprotected volumes.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "yellow",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 5,
-        "x": 15,
-        "y": 1
-      },
-      "id": 148,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "text": {},
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",type=\"rw\",state!=\"\"}) - count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",type=\"rw\",state!=\"\",isProtected=\"true\",isDestinationOntap=\"true\", svm_root=\"false\"}) or vector(0)",
-          "format": "time_series",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Volumes aren't replicated",
-      "type": "stat"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "Total number of volumes that are not protected.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "color": "rgb(21, 118, 171)",
-                  "text": "0"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "dark-yellow",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 20,
-        "y": 1
-      },
-      "id": 145,
-      "links": [],
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "count((volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",snapshot_policy=~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_policy_labels{}))) OR on() vector(0)",
-          "format": "time_series",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Volumes haven't snapshot policy",
-      "type": "stat"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "Number of total buckets.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "noValue": "0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "semi-dark-blue",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
+          "unit": "locale"
         },
         "overrides": []
       },
@@ -480,66 +141,95 @@
         "h": 5,
         "w": 8,
         "x": 0,
-        "y": 6
+        "y": 1
       },
-      "id": 151,
-      "links": [],
+      "id": 155,
       "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "text": {},
-        "textMode": "auto",
-        "wideLayout": true
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Object"
+          }
+        ]
       },
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": "${DS_PROMETHEUS}",
-          "editorMode": "code",
           "exemplar": false,
-          "expr": "count(ontaps3_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",healthy=\"true\",relationship_id!=\"\"}) or vector (0)",
           "format": "time_series",
           "hide": false,
           "instant": true,
           "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
+          "legendFormat": "Healthy",
           "refId": "A"
+        },
+        {
+          "exemplar": false,
+          "expr": "count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",healthy=\"false\",relationship_id!=\"\"}) or vector (0)",
+          "format": "time_series",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Unhealthy",
+          "refId": "B"
         }
       ],
-      "title": "Total Buckets",
-      "type": "stat"
+      "title": "SnapMirrors",
+      "transformations": [
+        {
+          "id": "reduce",
+          "options": {
+            "includeTimeField": false,
+            "mode": "seriesToRows",
+            "reducers": [
+              "lastNotNull"
+            ]
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Field": "Status",
+              "Last *": "Count"
+            }
+          }
+        }
+      ],
+      "type": "table"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Number of buckets which are not protected.",
+      "description": "This panel displays Not replicated/Not protected Volumes count.",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "filterable": true
+          },
           "mappings": [],
-          "noValue": "0",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "red",
+                "color": "green",
                 "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
               }
             ]
           },
-          "unit": "short"
+          "unit": "locale"
         },
         "overrides": []
       },
@@ -547,66 +237,93 @@
         "h": 5,
         "w": 8,
         "x": 8,
-        "y": 6
+        "y": 1
       },
-      "id": 149,
-      "links": [],
+      "id": 157,
       "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "text": {},
-        "textMode": "auto",
-        "wideLayout": true
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Object"
+          }
+        ]
       },
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": "${DS_PROMETHEUS}",
-          "editorMode": "code",
           "exemplar": false,
-          "expr": "count(ontaps3_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",is_protected=\"false\"})",
+          "expr": "count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",type=\"rw\",state!=\"\"}) - count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",type=\"rw\",state!=\"\",isProtected=\"true\",isDestinationOntap=\"true\", svm_root=\"false\"}) or vector(0)",
           "format": "time_series",
           "hide": false,
-          "instant": true,
+          "instant": false,
           "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
+          "legendFormat": "Not replicated",
           "refId": "A"
+        },
+        {
+          "exemplar": false,
+          "expr": "count((volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",snapshot_policy=~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_policy_labels{}))) OR on() vector(0)",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Not protected",
+          "refId": "B"
         }
       ],
-      "title": "Unprotected Buckets",
-      "type": "stat"
+      "title": "Volumes",
+      "transformations": [
+        {
+          "id": "reduce",
+          "options": {
+            "reducers": [
+              "lastNotNull"
+            ]
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Field": "Status",
+              "Last *": "Count"
+            }
+          }
+        }
+      ],
+      "type": "table"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Number of buckets which are not backed up to cloud.",
+      "description": "This panel displays Not protected/Not backed-up to cloud Buckets count.",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "filterable": true
+          },
           "mappings": [],
-          "noValue": "0",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "red",
+                "color": "green",
                 "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
               }
             ]
           },
-          "unit": "short"
+          "unit": "locale"
         },
         "overrides": []
       },
@@ -614,45 +331,64 @@
         "h": 5,
         "w": 8,
         "x": 16,
-        "y": 6
+        "y": 1
       },
-      "id": 150,
-      "links": [],
+      "id": 156,
       "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "text": {},
-        "textMode": "auto",
-        "wideLayout": true
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Object"
+          }
+        ]
       },
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": "${DS_PROMETHEUS}",
-          "editorMode": "code",
+          "exemplar": false,
+          "expr": "count(ontaps3_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",is_protected=\"false\"})",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Not protected",
+          "refId": "A"
+        },
+        {
           "exemplar": false,
           "expr": "count(ontaps3_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",protected_in_cloud=\"false\"})",
           "format": "time_series",
           "hide": false,
-          "instant": true,
+          "instant": false,
           "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
+          "legendFormat": "Not backed-up to cloud",
+          "refId": "B"
         }
       ],
-      "title": "Not Backed up to Cloud",
-      "type": "stat"
+      "title": "Buckets",
+      "transformations": [
+        {
+          "id": "reduce",
+          "options": {
+            "reducers": [
+              "lastNotNull"
+            ]
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Field": "Status",
+              "Last *": "Count"
+            }
+          }
+        }
+      ],
+      "type": "table"
     },
     {
       "collapsed": true,
@@ -661,7 +397,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 11
+        "y": 6
       },
       "id": 45,
       "panels": [
@@ -736,7 +472,7 @@
               "refId": "A"
             }
           ],
-          "title": "Volumes haven't snapshot policy",
+          "title": "Volumes not protected",
           "type": "stat"
         },
         {
@@ -799,7 +535,7 @@
               "refId": "A"
             }
           ],
-          "title": "Volumes haven snapshot policy",
+          "title": "Volumes protected",
           "type": "stat"
         },
         {
@@ -862,7 +598,7 @@
               "refId": "A"
             }
           ],
-          "title": "Volumes snapshot size breached",
+          "title": "Volumes breached",
           "type": "stat"
         },
         {
@@ -936,7 +672,7 @@
               "refId": "A"
             }
           ],
-          "title": "Volumes snapshot size not breached",
+          "title": "Volumes not breached",
           "type": "stat"
         },
         {
@@ -974,10 +710,6 @@
                   {
                     "id": "custom.filterable",
                     "value": true
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 150
                   }
                 ]
               },
@@ -990,10 +722,6 @@
                   {
                     "id": "displayName",
                     "value": "Volume"
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 350
                   },
                   {
                     "id": "links",
@@ -1010,32 +738,12 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "snapshot_policy"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Snapshot Policy"
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 220
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
                   "options": "svm"
                 },
                 "properties": [
                   {
                     "id": "displayName",
                     "value": "SVM"
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 250
                   },
                   {
                     "id": "links",
@@ -1104,6 +812,9 @@
                   "snapshot_policy": 2,
                   "svm": 1,
                   "volume": 0
+                },
+                "renameByName": {
+                  "snapshot_policy": "Snapshot Policy"
                 }
               }
             }
@@ -1140,10 +851,6 @@
                 },
                 "properties": [
                   {
-                    "id": "custom.width",
-                    "value": 320
-                  },
-                  {
                     "id": "displayName",
                     "value": "Volume"
                   },
@@ -1172,10 +879,6 @@
                   {
                     "id": "unit",
                     "value": "bytes"
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 130
                   }
                 ]
               },
@@ -1192,10 +895,6 @@
                   {
                     "id": "unit",
                     "value": "bytes"
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 130
                   }
                 ]
               },
@@ -1235,10 +934,6 @@
                   {
                     "id": "custom.filterable",
                     "value": true
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 150
                   }
                 ]
               },
@@ -1251,10 +946,6 @@
                   {
                     "id": "displayName",
                     "value": "SVM"
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 240
                   },
                   {
                     "id": "links",
@@ -1387,22 +1078,7 @@
             }
           ],
           "type": "table"
-        }
-      ],
-      "title": "Snapshot Copies Overview",
-      "type": "row"
-    },
-    {
-      "collapsed": true,
-      "datasource": "${DS_PROMETHEUS}",
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 12
-      },
-      "id": 22,
-      "panels": [
+        },
         {
           "datasource": "${DS_PROMETHEUS}",
           "description": "Total number of volumes whose snapshot count is < 10.",
@@ -1430,7 +1106,7 @@
             "h": 5,
             "w": 6,
             "x": 0,
-            "y": 2
+            "y": 30
           },
           "id": 96,
           "links": [],
@@ -1493,7 +1169,7 @@
             "h": 5,
             "w": 6,
             "x": 6,
-            "y": 2
+            "y": 30
           },
           "id": 97,
           "links": [],
@@ -1556,7 +1232,7 @@
             "h": 5,
             "w": 6,
             "x": 12,
-            "y": 2
+            "y": 30
           },
           "id": 98,
           "links": [],
@@ -1619,7 +1295,7 @@
             "h": 5,
             "w": 6,
             "x": 18,
-            "y": 2
+            "y": 30
           },
           "id": 99,
           "links": [],
@@ -1741,10 +1417,6 @@
                     ]
                   },
                   {
-                    "id": "custom.width",
-                    "value": 290
-                  },
-                  {
                     "id": "displayName",
                     "value": "Snapshot Copies Bucket"
                   }
@@ -1759,10 +1431,6 @@
                   {
                     "id": "displayName",
                     "value": "Volume"
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 500
                   },
                   {
                     "id": "links",
@@ -1787,10 +1455,6 @@
                     "value": "SVM"
                   },
                   {
-                    "id": "custom.width",
-                    "value": 500
-                  },
-                  {
                     "id": "links",
                     "value": [
                       {
@@ -1805,28 +1469,12 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Snapshot Copies"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 260
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
                   "options": "cluster"
                 },
                 "properties": [
                   {
                     "id": "displayName",
                     "value": "Cluster"
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 400
                   },
                   {
                     "id": "links",
@@ -1846,7 +1494,7 @@
             "h": 15,
             "w": 24,
             "x": 0,
-            "y": 7
+            "y": 35
           },
           "id": 94,
           "options": {
@@ -1920,7 +1568,7 @@
           "type": "table"
         }
       ],
-      "title": "Snapshot Copies Analysis",
+      "title": "Snapshot Copies",
       "type": "row"
     },
     {
@@ -1930,7 +1578,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 13
+        "y": 7
       },
       "id": 24,
       "panels": [
@@ -2516,7 +2164,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 14
+        "y": 8
       },
       "id": 23,
       "panels": [
@@ -2617,50 +2265,6 @@
                         "type": "value"
                       }
                     ]
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 179
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Transfer Schedule"
-                },
-                "properties": [
-                  {
-                    "id": "noValue",
-                    "value": "-"
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 156
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Description"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 579
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Name"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 260
                   }
                 ]
               },
@@ -2670,10 +2274,6 @@
                   "options": "Scope"
                 },
                 "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 166
-                  },
                   {
                     "id": "mappings",
                     "value": [
@@ -2687,30 +2287,6 @@
                         "type": "value"
                       }
                     ]
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Datacenter"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 171
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Cluster"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 217
                   }
                 ]
               }
@@ -2871,54 +2447,6 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Description"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 548
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Scope"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 124
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Datacenter"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 171
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Cluster"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 217
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
                   "options": "Scope"
                 },
                 "properties": [
@@ -2937,22 +2465,6 @@
                   {
                     "id": "noValue",
                     "value": "0"
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 103
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Policy Name"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 243
                   }
                 ]
               },
@@ -2985,10 +2497,6 @@
                         "type": "value"
                       }
                     ]
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 291
                   }
                 ]
               }
@@ -3172,70 +2680,6 @@
                         "type": "value"
                       }
                     ]
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 152
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Description"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 306
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Name"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 360
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Scope"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 124
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Datacenter"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 171
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Cluster"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 233
                   }
                 ]
               }
@@ -3317,7 +2761,7 @@
           "type": "table"
         }
       ],
-      "title": "Local policy settings",
+      "title": "Local Policy",
       "type": "row"
     }
   ],
@@ -3354,11 +2798,7 @@
       },
       {
         "allValue": null,
-        "current": {
-          "selected": false,
-          "text": "DC-01",
-          "value": "DC-01"
-        },
+        "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"},datacenter)",
         "description": null,
