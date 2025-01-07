@@ -62,15 +62,15 @@ plugins:
             - ^location
             - ^state                    => status
             - current                   => reading
+        # psu and module type of frus detail would be handled in plugin
         - frus => psu:
-            - ^^id                      => psu_id
-            - ^^type                    => type
+            - ^^id                      => id
             - ^firmware_version         => firmware_version
             - ^installed                => enabled
             #  - ^location
             - ^part_number
             - ^serial_number            => serial
-            - ^psu.model                => psu_type
+            - ^psu.model                => type
             - ^state                    => status
             - psu.power_drawn           => power_drawn
             - psu.power_rating          => power_rating

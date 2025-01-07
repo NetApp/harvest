@@ -147,42 +147,19 @@ func (d *Disk) Init(remote conf.Remote) error {
 			objectName = strings.TrimSpace(x[1])
 		}
 
-		d.instanceLabels[attribute] = make(map[string]string)
-
-		d.shelfData[attribute] = matrix.New(d.Parent+".Shelf", "shelf_"+objectName, "shelf_"+objectName)
-		d.shelfData[attribute].SetGlobalLabel("datacenter", d.ParentParams.GetChildContentS("datacenter"))
-
-		exportOptions := node.NewS("export_options")
-		instanceLabels := exportOptions.NewChildS("instance_labels", "")
-		instanceKeys := exportOptions.NewChildS("instance_keys", "")
-		instanceKeys.NewChildS("", "shelf")
-		instanceKeys.NewChildS("", "channel")
-
-		// artificial metric for status of child object of shelf
-		_, _ = d.shelfData[attribute].NewMetricUint8("status")
-
-		for _, c := range obj.GetAllChildContentS() {
-			metricName, display, kind, _ := util.ParseMetric(c)
-
-			switch kind {
-			case "key":
-				d.instanceKeys[attribute] = append(d.instanceKeys[attribute], metricName)
-				d.instanceLabels[attribute][metricName] = display
-				instanceLabels.NewChildS("", display)
-				instanceKeys.NewChildS("", display)
-			case "label":
-				d.instanceLabels[attribute][metricName] = display
-				instanceLabels.NewChildS("", display)
-			case "float":
-				_, err := d.shelfData[attribute].NewMetricFloat64(metricName, display)
-				if err != nil {
-					d.SLogger.Error("add metric", slogx.Err(err))
-					return err
-				}
+		// frus has 2 types[psu, module], special handling to create 2 different metrics
+		if attribute == "frus" {
+			if err := d.initMetrics(attribute+"-psu", "psu", obj); err != nil {
+				return err
+			}
+			if err := d.initMetrics(attribute+"-module", "module", obj); err != nil {
+				return err
+			}
+		} else {
+			if err := d.initMetrics(attribute, objectName, obj); err != nil {
+				return err
 			}
 		}
-
-		d.shelfData[attribute].SetExportOptions(exportOptions)
 	}
 
 	d.initShelfPowerMatrix()
@@ -190,6 +167,50 @@ func (d *Disk) Init(remote conf.Remote) error {
 	d.initMaps()
 
 	d.SLogger.Debug("initialized", slog.Any("shelfData", len(d.shelfData)))
+	return nil
+}
+
+func (d *Disk) initMetrics(attribute, objectName string, obj *node.Node) error {
+	d.instanceLabels[attribute] = make(map[string]string)
+
+	d.shelfData[attribute] = matrix.New(d.Parent+".Shelf", "shelf_"+objectName, "shelf_"+objectName)
+	d.shelfData[attribute].SetGlobalLabel("datacenter", d.ParentParams.GetChildContentS("datacenter"))
+
+	exportOptions := node.NewS("export_options")
+	instanceLabels := exportOptions.NewChildS("instance_labels", "")
+	instanceKeys := exportOptions.NewChildS("instance_keys", "")
+	instanceKeys.NewChildS("", "shelf")
+	instanceKeys.NewChildS("", "channel")
+
+	// artificial metric for status of child object of shelf
+	_, _ = d.shelfData[attribute].NewMetricUint8("status")
+
+	for _, c := range obj.GetAllChildContentS() {
+		metricName, display, kind, _ := util.ParseMetric(c)
+
+		switch kind {
+		case "key":
+			// For shelf child level object's id field converted to psu_id or module_id based on the type.
+			if strings.Contains(attribute, "frus") {
+				display = objectName + "_" + display
+			}
+			d.instanceKeys[attribute] = append(d.instanceKeys[attribute], metricName)
+			d.instanceLabels[attribute][metricName] = display
+			instanceLabels.NewChildS("", display)
+			instanceKeys.NewChildS("", display)
+		case "label":
+			d.instanceLabels[attribute][metricName] = display
+			instanceLabels.NewChildS("", display)
+		case "float":
+			_, err := d.shelfData[attribute].NewMetricFloat64(metricName, display)
+			if err != nil {
+				d.SLogger.Error("add metric", slogx.Err(err))
+				return err
+			}
+		}
+	}
+
+	d.shelfData[attribute].SetExportOptions(exportOptions)
 	return nil
 }
 
@@ -244,6 +265,8 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 		shelfSerialNumber := shelf.Get("serial_number").ClonedString()
 
 		for attribute, data1 := range d.shelfData {
+			attributeName := attribute
+			attributeValue := ""
 			if statusMetric := data1.GetMetric("status"); statusMetric != nil {
 
 				if len(d.instanceKeys[attribute]) == 0 {
@@ -251,9 +274,19 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 					continue
 				}
 
-				if childObj := shelf.Get(attribute); childObj.Exists() {
+				if strings.Contains(attribute, "-") {
+					attr := strings.Split(attribute, "-")
+					attributeName = attr[0]
+					attributeValue = attr[1]
+				}
+				if childObj := shelf.Get(attributeName); childObj.Exists() {
 					if childObj.IsArray() {
 						for _, obj := range childObj.Array() {
+
+							// This is special condition, because child records can't be filterable in parent REST call
+							if attributeName == "frus" && obj.Get("type").Exists() && obj.Get("type").ClonedString() != attributeValue {
+								continue
+							}
 
 							if keys := d.instanceKeys[attribute]; len(keys) != 0 {
 
