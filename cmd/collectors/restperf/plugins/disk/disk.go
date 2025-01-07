@@ -255,12 +255,6 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 					if childObj.IsArray() {
 						for _, obj := range childObj.Array() {
 
-							// This is special condition, because child records can't be filterable in parent REST call
-							// frus type can be [module, psu] and we would only need psu for our use-case.
-							if attribute == "frus" && obj.Get("type").Exists() && obj.Get("type").ClonedString() != "psu" {
-								continue
-							}
-
 							if keys := d.instanceKeys[attribute]; len(keys) != 0 {
 
 								var skey []string

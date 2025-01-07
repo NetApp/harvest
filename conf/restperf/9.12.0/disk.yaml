@@ -64,11 +64,13 @@ plugins:
             - current                   => reading
         - frus => psu:
             - ^^id                      => psu_id
+            - ^^type                    => type
+            - ^firmware_version         => firmware_version
             - ^installed                => enabled
             #  - ^location
             - ^part_number
             - ^serial_number            => serial
-            - ^psu.model                => type
+            - ^psu.model                => psu_type
             - ^state                    => status
             - psu.power_drawn           => power_drawn
             - psu.power_rating          => power_rating
