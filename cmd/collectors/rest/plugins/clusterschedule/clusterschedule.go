@@ -26,24 +26,10 @@ func (c *ClusterScheule) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 		cron := instance.GetLabel("cron")
 		updateDetailsJSON := gjson.Result{Type: gjson.JSON, Raw: cron}
 		var cronVal, minStr, hourStr, weekDayStr string
-		if minutes := updateDetailsJSON.Get("minutes"); minutes.Exists() {
-			for _, m := range minutes.Array() {
-				minStr = minStr + m.String() + ", "
-			}
-			minStr = strings.TrimSuffix(minStr, ", ")
-		}
-		if hours := updateDetailsJSON.Get("hours"); hours.Exists() {
-			for _, h := range hours.Array() {
-				hourStr = hourStr + h.String() + ", "
-			}
-			hourStr = strings.TrimSuffix(hourStr, ", ")
-		}
-		if weekdays := updateDetailsJSON.Get("weekdays"); weekdays.Exists() {
-			for _, w := range weekdays.Array() {
-				weekDayStr = weekDayStr + w.String() + ", "
-			}
-			weekDayStr = strings.TrimSuffix(weekDayStr, ", ")
-		}
+
+		minStr = list(updateDetailsJSON.Get("minutes"))
+		hourStr = list(updateDetailsJSON.Get("hours"))
+		weekDayStr = list(updateDetailsJSON.Get("weekdays"))
 
 		if minStr != "" {
 			cronVal = cronVal + "minutes: " + "[" + minStr + "] "
@@ -54,7 +40,19 @@ func (c *ClusterScheule) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 		if weekDayStr != "" {
 			cronVal = cronVal + "weekdays: " + "[" + weekDayStr + "]"
 		}
-		instance.SetLabel("cron", cronVal)
+		instance.SetLabel("cron", strings.TrimSpace(cronVal))
 	}
 	return nil, nil, nil
+}
+
+func list(get gjson.Result) string {
+	if !get.IsArray() {
+		return ""
+	}
+	array := get.Array()
+	items := make([]string, 0, len(array))
+	for _, e := range array {
+		items = append(items, e.ClonedString())
+	}
+	return strings.Join(items, ", ")
 }

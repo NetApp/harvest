@@ -8,6 +8,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -27,17 +28,21 @@ func (m *SnapshotPolicy) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 	for _, instance := range data.GetInstances() {
 		copies := strings.Split(instance.GetLabel("copies"), ",")
 		schedules := strings.Split(instance.GetLabel("schedules"), ",")
+		var schedulesS []string
 
-		var scheduleVal string
 		var copiesValue int
 		if len(copies) > 1 {
 			for index, copiesData := range copies {
 				countVal, _ := strconv.Atoi(copiesData)
 				schedule := schedules[index]
-				scheduleVal = scheduleVal + schedule + ":" + copiesData + ","
+				schedulesS = append(schedulesS, schedule+":"+copiesData)
+
 				copiesValue += countVal
 			}
-			instance.SetLabel("schedules", strings.TrimSuffix(scheduleVal, ","))
+
+			slices.Sort(schedulesS)
+
+			instance.SetLabel("schedules", strings.Join(schedulesS, ","))
 			instance.SetLabel("copies", strconv.Itoa(copiesValue))
 		}
 	}
