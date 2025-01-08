@@ -9,6 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -28,16 +29,19 @@ func (m *SnapshotPolicy) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 	for _, instance := range data.GetInstances() {
 		copies := instance.GetLabel("copies")
 		copiesJSON := gjson.Result{Type: gjson.JSON, Raw: "[" + copies + "]"}
-		var scheduleVal string
 		var copiesValue int
+		var schedules []string
 		for _, copiesData := range copiesJSON.Array() {
-			count := copiesData.Get("count").String()
+			count := copiesData.Get("count").ClonedString()
 			countVal, _ := strconv.Atoi(count)
 			schedule := copiesData.Get("schedule.name").ClonedString()
-			scheduleVal = scheduleVal + schedule + ":" + count + ","
+			schedules = append(schedules, schedule+":"+count)
 			copiesValue += countVal
 		}
-		instance.SetLabel("schedules", strings.TrimSuffix(scheduleVal, ","))
+
+		slices.Sort(schedules)
+
+		instance.SetLabel("schedules", strings.Join(schedules, ","))
 		instance.SetLabel("copies", strconv.Itoa(copiesValue))
 	}
 
