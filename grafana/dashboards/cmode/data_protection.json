@@ -2147,7 +2147,6 @@
                   "bucket": "Name",
                   "cluster": "",
                   "comment": "Description",
-                  "cron": "Schedule",
                   "is_protected": "Protected",
                   "name": "Name",
                   "policy_name": "Name",
@@ -2483,7 +2482,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Status"
+                  "options": "Enabled"
                 },
                 "properties": [
                   {
@@ -2533,7 +2532,7 @@
             "sortBy": [
               {
                 "desc": false,
-                "displayName": "Status"
+                "displayName": "Enabled"
               }
             ]
           },
@@ -2560,7 +2559,7 @@
                     "comment",
                     "datacenter",
                     "snapshot_policy",
-                    "status",
+                    "enabled",
                     "copies",
                     "svm"
                   ]
@@ -2576,19 +2575,19 @@
                   "comment": 3,
                   "copies": 6,
                   "datacenter": 0,
+                  "enabled": 4,
                   "snapshot_policy": 2,
-                  "status": 4,
                   "svm": 5
                 },
                 "renameByName": {
                   "Value": "Snapshot Copies",
                   "cluster": "",
                   "comment": "Description",
+                  "enabled": "Enabled",
                   "policy_name": "Name",
                   "schedule_name": "Transfer Schedule",
                   "scope": "Scope",
                   "snapshot_policy": "Policy Name",
-                  "status": "Status",
                   "svm": "Scope",
                   "type": "Policy Type",
                   "volume": ""
@@ -2735,7 +2734,7 @@
                 "include": {
                   "names": [
                     "cluster",
-                    "cron",
+                    "schedule",
                     "datacenter",
                     "name",
                     "type",
@@ -2759,9 +2758,9 @@
                   "Value": "Snapshot Copies",
                   "cluster": "",
                   "comment": "Description",
-                  "cron": "Schedule",
                   "name": "Name",
                   "policy_name": "Name",
+                  "schedule": "Schedule",
                   "schedule_name": "Transfer Schedule",
                   "scope": "Scope",
                   "type": "Type",

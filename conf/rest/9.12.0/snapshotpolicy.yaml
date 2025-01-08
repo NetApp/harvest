@@ -6,7 +6,7 @@ counters:
   - ^^uuid            => uuid
   - ^comment          => comment
   - ^copies           => copies
-  - ^enabled          => status
+  - ^enabled          => enabled
   - ^name             => snapshot_policy
   - ^scope            => scope
   - ^svm.name         => svm
@@ -20,8 +20,8 @@ export_options:
   instance_labels:
     - comment
     - copies
+    - enabled
     - schedules
     - scope
-    - status
     - svm
 

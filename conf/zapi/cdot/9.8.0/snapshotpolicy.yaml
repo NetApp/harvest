@@ -7,7 +7,7 @@ counters:
     - ^^policy               => snapshot_policy
     - ^^vserver-name         => svm
     - ^comment               => comment
-    - ^enabled               => status
+    - ^enabled               => enabled
     - ^policy-owner          => policy_owner
     - snapshot-policy-schedules:
         - snapshot-schedule-info:
@@ -26,9 +26,9 @@ export_options:
   instance_labels:
     - comment
     - copies
+    - enabled
     - schedules
     - scope
-    - status
     - svm
 
 

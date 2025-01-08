@@ -21,6 +21,7 @@ export_options:
   instance_labels:
     - cron
     - interval
+    - schedule
     - scope
     - svm
 
