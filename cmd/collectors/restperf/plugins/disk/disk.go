@@ -265,20 +265,13 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 		shelfSerialNumber := shelf.Get("serial_number").ClonedString()
 
 		for attribute, data1 := range d.shelfData {
-			attributeName := attribute
-			attributeValue := ""
 			if statusMetric := data1.GetMetric("status"); statusMetric != nil {
 
 				if len(d.instanceKeys[attribute]) == 0 {
 					d.SLogger.Warn("no instance keys defined for object, skipping", slog.String("attribute", attribute))
 					continue
 				}
-
-				if strings.Contains(attribute, "-") {
-					attr := strings.Split(attribute, "-")
-					attributeName = attr[0]
-					attributeValue = attr[1]
-				}
+				attributeName, attributeValue, _ := strings.Cut(attribute, "-")
 				if childObj := shelf.Get(attributeName); childObj.Exists() {
 					if childObj.IsArray() {
 						for _, obj := range childObj.Array() {
