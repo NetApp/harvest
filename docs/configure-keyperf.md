@@ -44,7 +44,7 @@ The template should define objects in the `objects` section. Example:
 
 ```yaml
 objects:
-Aggregate: aggr.yaml
+  Aggregate: aggr.yaml
 ```
 
 For each object, we define the filename of the object configuration file. The object configuration files are located in subdirectories matching the ONTAP version that was used to create these files. It is possible to have multiple version-subdirectories for multiple ONTAP versions. At runtime, the collector will select the object configuration file that closest matches the version of the target ONTAP system.
