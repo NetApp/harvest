@@ -1147,7 +1147,13 @@ func checkVersion(inputVersion string) bool {
 
 func checkFolder(folder *Folder) error {
 
-	result, status, code, err := sendRequestArray(opts, "GET", "/api/folders?limit=1000", nil)
+	q := "/api/folders?limit=1000"
+
+	if folder.parentUID != "" {
+		q += "&parentUid=" + folder.parentUID
+	}
+
+	result, status, code, err := sendRequestArray(opts, "GET", q, nil)
 
 	if err != nil {
 		return err
@@ -1227,11 +1233,11 @@ func createServerFolders(folder *Folder) error {
 			if err := createServerFolder(curFolder); err != nil {
 				return err
 			}
-			folder.name = f
-			folder.id = curFolder.id
 		}
 
 		parentUID = curFolder.uid
+		folder.name = f
+		folder.id = curFolder.id
 	}
 
 	return nil
