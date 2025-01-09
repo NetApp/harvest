@@ -882,6 +882,11 @@ func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 
 					for label, labelDisplay := range d.instanceLabels[attribute] {
 						if value := obj.GetChildContentS(label); value != "" {
+							// This is to parity with rest for modules, Convert A -> 0, B -> 1 in zapi
+							if attribute == "shelf-modules" && len(value) == 1 {
+								num := int(value[0] - 'A')
+								value = strconv.Itoa(num)
+							}
 							instance.SetLabel(labelDisplay, value)
 						}
 					}
