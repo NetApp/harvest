@@ -722,6 +722,18 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 							}
 						}
 					}
+					if name == "visits" {
+						vMetric := curMat.GetMetric(layer + "visits")
+						if err := vMetric.AddValueString(instance, value); err != nil {
+							z.Logger.Error(
+								"Set visits failed",
+								slogx.Err(err),
+								slog.String("name", name),
+								slog.String("value", value),
+								slog.String("layer", layer),
+							)
+						}
+					}
 					continue
 				}
 
@@ -752,6 +764,27 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 	} // end batch request
 
 	if z.Query == objWorkloadDetail || z.Query == objWorkloadDetailVolume {
+		//// set latency values
+		//for _, met := range curMat.GetMetrics() {
+		//	vis := met.GetVisit()
+		//	if vis == "" {
+		//		continue
+		//	}
+		//	visit := curMat.GetMetric(vis)
+		//	if visit != nil {
+		//		for _, instance := range curMat.GetInstances() {
+		//			value, _ := met.GetValueFloat64(instance)
+		//			visits, _ := visit.GetValueFloat64(instance)
+		//			if err = met.SetValueFloat64(instance, value*visits); err != nil {
+		//				z.Logger.Error(
+		//					"Set metric failed",
+		//					slogx.Err(err),
+		//					slog.String("name", met.GetName()),
+		//				)
+		//			}
+		//		}
+		//	}
+		//}
 		if rd, pd, err := z.getParentOpsCounters(curMat, z.keyName); err == nil {
 			apiT += rd
 			parseT += pd
@@ -847,13 +880,6 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		// We assume that delta of base counters is already calculated
 		// (name of base counter is stored as Comment)
 		if base = curMat.GetMetric(metric.GetComment()); base == nil {
-			if z.Query == objWorkloadDetail || z.Query == objWorkloadDetailVolume {
-				// The workload detail generates metrics at the resource level. The 'service_time' and 'wait_time' metrics are used as raw values for these resource-level metrics. Their denominator, 'visits', is not collected; therefore, a check is added here to prevent warnings.
-				// There is no need to cook these metrics further.
-				if key == "service_time" || key == "wait_time" {
-					continue
-				}
-			}
 			z.Logger.Warn(
 				"Base counter missing",
 				slog.String("key", key),
@@ -1197,12 +1223,6 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 			if r := z.addCounter(counter, key, display, true, counters); r != "" {
 				_, ok = wanted[r]
 				if !ok {
-					if z.Query == objWorkloadDetail || z.Query == objWorkloadDetailVolume {
-						// It is not needed because 'ops' is used as the denominator in latency calculations.
-						if r == "visits" {
-							continue
-						}
-					}
 					missing.Add(r) // required base counter, missing in template
 				}
 			}
@@ -1266,9 +1286,10 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		// there original counters will be discarded
 		if z.Query == objWorkloadDetail || z.Query == objWorkloadDetailVolume {
 
-			var service, wait, ops *matrix.Metric
+			var service, wait, ops, visits *matrix.Metric
 			oldMetrics.Remove("service_time")
 			oldMetrics.Remove("wait_time")
+			oldMetrics.Remove("visits")
 			oldMetrics.Remove("ops")
 
 			if service = mat.GetMetric("service_time"); service == nil {
@@ -1279,7 +1300,11 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 				z.Logger.Error("metric [wait_time] required to calculate workload missing")
 			}
 
-			if service == nil || wait == nil {
+			if visits = mat.GetMetric("visits"); visits == nil {
+				z.Logger.Error("metric [visits] required to calculate workload missing")
+			}
+
+			if service == nil || wait == nil || visits == nil {
 				return nil, errs.New(errs.ErrMissingParam, "workload metrics")
 			}
 
@@ -1292,6 +1317,7 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 
 			service.SetExportable(false)
 			wait.SetExportable(false)
+			visits.SetExportable(false)
 
 			resourceMap := z.Params.GetChildS("resource_map")
 			if resourceMap == nil {
@@ -1314,10 +1340,25 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 					m.SetLabel("resource", resource)
 					m.SetProperty(service.GetProperty())
 					// base counter is the ops of the same resource
+					//m.SetComment(x.GetNameS() + "visits")
 					m.SetComment("ops")
+					m.SetVisit(x.GetNameS() + "visits")
 
 					oldMetrics.Remove(name)
 				}
+				visitsName := x.GetNameS() + "visits"
+				if m := mat.GetMetric(visitsName); m != nil {
+					oldMetrics.Remove(visitsName)
+					continue
+				}
+				resource := x.GetContentS()
+				mv, err := mat.NewMetricFloat64(visitsName, "visits")
+				if err != nil {
+					return nil, err
+				}
+				mv.SetLabel("resource", resource)
+				mv.SetExportable(true)
+				mv.SetProperty(visits.GetProperty())
 			}
 		}
 

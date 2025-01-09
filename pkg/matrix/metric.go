@@ -22,6 +22,7 @@ type Metric struct {
 	dataType   string
 	property   string
 	comment    string
+	visit      string
 	array      bool
 	histogram  bool
 	exportable bool
@@ -37,6 +38,7 @@ func (m *Metric) Clone(deep bool) *Metric {
 		dataType:   m.dataType,
 		property:   m.property,
 		comment:    m.comment,
+		visit:      m.visit,
 		exportable: m.exportable,
 		array:      m.array,
 		histogram:  m.histogram,
@@ -86,6 +88,14 @@ func (m *Metric) GetComment() string {
 
 func (m *Metric) SetComment(c string) {
 	m.comment = c
+}
+
+func (m *Metric) GetVisit() string {
+	return m.visit
+}
+
+func (m *Metric) SetVisit(v string) {
+	m.visit = v
 }
 
 func (m *Metric) IsArray() bool {
