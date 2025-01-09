@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1736418739481,
+  "iteration": 1736426669242,
   "links": [
     {
       "asDropdown": true,
@@ -215,7 +215,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(\n    topk(\n        $TopResources, \n        volume_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\",  volume=~\"$Volume\", style!=\"flexgroup_constituent\"} * on (datacenter, cluster, svm, volume) group_left(node) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",tags=~\".*$Tag.*\"} \n        +\n        volume_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\",  volume=~\"$Volume\", style!=\"flexgroup_constituent\"} * on (datacenter, cluster, svm, volume) group_left(node) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",tags=~\".*$Tag.*\"} \n    )\n)",
+          "expr": "sum(\n  topk(\n    $TopResources,\n    volume_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\n    * on(datacenter, cluster, svm, volume) group_left(node)\n    volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n  )\n)\n+\nsum(\n  topk(\n    $TopResources,\n    volume_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\n    * on(datacenter, cluster, svm, volume) group_left(node)\n    volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n  )\n)",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
