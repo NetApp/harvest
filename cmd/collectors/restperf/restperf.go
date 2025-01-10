@@ -715,6 +715,22 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	filter = append(filter, "counters.name="+strings.Join(metrics, "|"))
 
+	if isWorkloadDetailObject(r.Prop.Query) {
+		resourceMap := r.Params.GetChildS("resource_map")
+		if resourceMap == nil {
+			return nil, errs.New(errs.ErrMissingParam, "resource_map")
+		}
+		workloadDetailFilter := make([]string, 0, len(resourceMap.GetChildren()))
+		for _, x := range resourceMap.GetChildren() {
+			workloadDetailFilter = append(workloadDetailFilter, x.GetNameS())
+		}
+		if len(workloadDetailFilter) > 0 {
+			filter = append(filter,
+				"query="+strings.Join(workloadDetailFilter, "|"),
+				"query_fields=properties.value")
+		}
+	}
+
 	href := rest.NewHrefBuilder().
 		APIPath(dataQuery).
 		Fields([]string{"*"}).

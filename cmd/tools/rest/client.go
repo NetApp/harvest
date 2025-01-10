@@ -10,7 +10,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/requests"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"io"
@@ -86,13 +85,6 @@ func New(poller *conf.Poller, timeout time.Duration, credentials *auth.Credentia
 	}
 
 	return &client, nil
-}
-
-func (c *Client) TraceLogSet(collectorName string, config *node.Node) {
-	// check for log sets and enable Rest request logging if collectorName is in the set
-	if llogs := config.GetChildS("log"); llogs != nil {
-		c.logRest = slices.Contains(llogs.GetAllChildContentS(), collectorName)
-	}
 }
 
 func (c *Client) printRequestAndResponse(req string, response []byte) {

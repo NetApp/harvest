@@ -1,5 +1,5 @@
 name:                     ExportRule
-query:                    api/private/cli/export-policy/rule
+query:                    api/private/cli/vserver/export-policy/rule
 object:                   export_rule
 
 counters:

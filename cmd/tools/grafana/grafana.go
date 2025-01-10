@@ -38,6 +38,7 @@ const (
 var (
 	grafanaMinVers = "7.1.0" // lowest grafana version we require
 	homePath       string
+	grafanaVersion *goversion.Version
 )
 
 type options struct {
@@ -63,12 +64,15 @@ type options struct {
 	customizeDir        string
 	customAllValue      string
 	customCluster       string
+	varDefaults         string
+	defaultDropdownMap  map[string][]string
 }
 
 type Folder struct {
-	name string // Grafana folder where to upload from where to download dashboards
-	id   int64
-	uid  string
+	name      string // Grafana folder where to upload from where to download dashboards
+	id        int64
+	uid       string
+	parentUID string // If nested folders are enabled, and the folder is nested, this is the parent folder's uid
 }
 
 func adjustOptions() {
@@ -437,6 +441,30 @@ func initImportVars() {
 		}
 		opts.dirGrafanaFolderMap[k] = v
 	}
+
+	// Parse default dropdown values
+	opts.defaultDropdownMap = make(map[string][]string)
+	if opts.varDefaults != "" {
+		if !validateVarDefaults(opts.varDefaults) {
+			fmt.Println("Error: Invalid format for --var-defaults. Expected format is 'variable1=value1,value2;variable2=value3'")
+			os.Exit(1)
+		}
+		pairs := strings.Split(opts.varDefaults, ";")
+		for _, pair := range pairs {
+			parts := strings.SplitN(pair, "=", 2)
+			if len(parts) == 2 {
+				values := strings.Split(parts[1], ",")
+				opts.defaultDropdownMap[parts[0]] = values
+			}
+		}
+	}
+}
+
+// validateVarDefaults validates the format of the --var-defaults input string.
+// The expected format is 'variable1=value1,value2;variable2=value3'.
+func validateVarDefaults(input string) bool {
+	re := regexp.MustCompile(`^([^=;,]+=[^=;,]+(,[^=;,]+)*)(;[^=;,]+=[^=;,]+(,[^=;,]+)*)*$`)
+	return re.MatchString(input)
 }
 
 func checkAndCreateServerFolder(folder *Folder) error {
@@ -446,12 +474,13 @@ func checkAndCreateServerFolder(folder *Folder) error {
 		os.Exit(1)
 	}
 
+	folderName := folder.name
 	if folder.uid != "" && folder.id != 0 {
 		fmt.Printf("folder [%s] exists in Grafana - OK\n", folder.name)
-	} else if err := createServerFolder(folder); err != nil {
+	} else if err := createServerFolders(folder); err != nil {
 		return err
 	} else {
-		fmt.Printf("created Grafana folder [%s] - OK\n", folder.name)
+		fmt.Printf("created Grafana folder [%s] - OK\n", folderName)
 	}
 	return nil
 }
@@ -517,6 +546,11 @@ func importFiles(dir string, folder *Folder) {
 		// change cluster label if needed
 		if opts.customCluster != "" {
 			data = changeClusterLabel(data, opts.customCluster)
+		}
+
+		// Set default dropdown values if provided
+		if len(opts.defaultDropdownMap) > 0 {
+			data = setDefaultDropdownValues(data, opts.defaultDropdownMap)
 		}
 
 		// labelMap is used to ensure we don't modify the query of one of the new labels we're adding
@@ -588,6 +622,24 @@ func importFiles(dir string, folder *Folder) {
 			fmt.Printf("No dashboards found in [%s] is the directory correct?\n", dir)
 		}
 	}
+}
+
+// setDefaultDropdownValues sets the default values for specified dropdown variables in the dashboard JSON data.
+// It takes a map of variable names to their default values and updates the JSON data accordingly.
+func setDefaultDropdownValues(data []byte, defaultValues map[string][]string) []byte {
+	for variable, defaultValues := range defaultValues {
+		variablePath := fmt.Sprintf("templating.list.#(name=%q)", variable)
+		variableData := gjson.GetBytes(data, variablePath)
+		if variableData.Exists() {
+			current := map[string]any{
+				"selected": true,
+				"text":     defaultValues,
+				"value":    defaultValues,
+			}
+			data, _ = sjson.SetBytes(data, variablePath+".current", current)
+		}
+	}
+	return data
 }
 
 // This function will rewrite all panel expressions in the dashboard to use the new cluster label.
@@ -1074,27 +1126,34 @@ func isValidDatasource(result map[string]any) bool {
 }
 
 func checkVersion(inputVersion string) bool {
-	v1, err := goversion.NewVersion(inputVersion)
+	var err error
+
+	grafanaVersion, err = goversion.NewVersion(inputVersion)
 	if err != nil {
 		fmt.Println(err)
 		return false
 	}
-
 	minV, _ := goversion.NewVersion(grafanaMinVers)
 
 	// Not using a constraint check since a pre-release version (e.g. 8.4.0-beta1) never matches
 	// a constraint specified without a pre-release https://github.com/hashicorp/go-version/pull/35
 
-	satisfies := v1.GreaterThanOrEqual(minV)
+	satisfies := grafanaVersion.GreaterThanOrEqual(minV)
 	if !satisfies {
-		fmt.Printf("%s is not >= %s", v1, minV)
+		fmt.Printf("%s is not >= %s", grafanaVersion, minV)
 	}
 	return satisfies
 }
 
 func checkFolder(folder *Folder) error {
 
-	result, status, code, err := sendRequestArray(opts, "GET", "/api/folders?limit=1000", nil)
+	q := "/api/folders?limit=1000"
+
+	if folder.parentUID != "" {
+		q += "&parentUid=" + folder.parentUID
+	}
+
+	result, status, code, err := sendRequestArray(opts, "GET", q, nil)
 
 	if err != nil {
 		return err
@@ -1125,10 +1184,13 @@ func checkFolder(folder *Folder) error {
 }
 
 func createServerFolder(folder *Folder) error {
-
 	request := make(map[string]any)
 
 	request["title"] = folder.name
+
+	if folder.parentUID != "" {
+		request["parentUid"] = folder.parentUID
+	}
 
 	result, status, code, err := sendRequest(opts, "POST", "/api/folders", request)
 
@@ -1142,6 +1204,41 @@ func createServerFolder(folder *Folder) error {
 
 	folder.id = int64(result["id"].(float64))
 	folder.uid = result["uid"].(string)
+
+	return nil
+}
+
+func createServerFolders(folder *Folder) error {
+
+	if grafanaVersion == nil || grafanaVersion.LessThan(goversion.Must(goversion.NewVersion("11.0.0"))) {
+		return createServerFolder(folder)
+	}
+
+	// handle nested folders
+	folders := strings.Split(folder.name, "/")
+	var parentUID string
+
+	for _, f := range folders {
+		curFolder := &Folder{name: f}
+		if parentUID != "" {
+			curFolder.parentUID = parentUID
+		}
+
+		if err := checkFolder(curFolder); err != nil {
+			return err
+		}
+
+		if curFolder.id == 0 {
+			curFolder.name = f
+			if err := createServerFolder(curFolder); err != nil {
+				return err
+			}
+		}
+
+		parentUID = curFolder.uid
+		folder.name = f
+		folder.id = curFolder.id
+	}
 
 	return nil
 }
@@ -1293,11 +1390,38 @@ func init() {
 	addCommonFlags(importCmd, exportCmd, customizeCmd)
 	addImportExportFlags(importCmd, exportCmd)
 	addImportCustomizeFlags(importCmd, customizeCmd)
+	addImportFlags(importCmd)
 
 	customizeCmd.PersistentFlags().StringVarP(&opts.customizeDir, "output-dir", "o", "", "Write customized dashboards to the local directory. The directory must not exist")
 
 	metricsCmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d",
 		"", "local directory that contains dashboards (searched recursively).")
+}
+
+func addImportFlags(cmd *cobra.Command) {
+	cmd.PersistentFlags().StringVar(&opts.varDefaults, "var-defaults", "", `
+Default values for dropdown variables in the format 'variable1=value1,value2;variable2=value3'.
+
+Examples:
+
+1. Set a single variable:
+   To set the default value for the 'Datacenter' variable to 'DC1':
+   --var-defaults "Datacenter=DC1"
+
+2. Set multiple values for a single variable:
+   To set the default values for the 'Datacenter' variable to 'DC1' and 'DC2':
+   --var-defaults "Datacenter=DC1,DC2"
+
+3. Set multiple variables in one command:
+   To set the default values for 'Datacenter' to 'DC1' and 'DC2', and 'Cluster' to 'Cluster1':
+   --var-defaults "Datacenter=DC1,DC2;Cluster=Cluster1"
+
+4. Set multiple values for multiple variables:
+   To set the default values for 'Datacenter' to 'DC1' and 'DC2', and 'Cluster' to 'Cluster1' and 'Cluster2':
+   --var-defaults "Datacenter=DC1,DC2;Cluster=Cluster1,Cluster2"
+
+Note: Ensure that variable names and values do not contain the characters '=', ',', or ';' as these are used as delimiters.
+`)
 }
 
 func addImportCustomizeFlags(commands ...*cobra.Command) {

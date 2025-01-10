@@ -15,6 +15,7 @@ linters:
     - errname
     - errorlint
     - exhaustive
+    - exptostd
     - gocheckcompilerdirectives
     - gochecksumtype
     - gocritic
@@ -29,6 +30,7 @@ linters:
     - misspell
     - nakedret
     - nilerr
+    - nilnesserr
     - nolintlint
     - nonamedreturns
     - nosprintfhostport
@@ -50,6 +52,7 @@ linters:
     - unparam
     - unused
     - usestdlibvars
+    - usetesting
     - wastedassign
 
 run:

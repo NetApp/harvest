@@ -37,7 +37,6 @@ var skipTemplates = map[string]bool{
 
 var skipEndpoints = []string{
 	"api/support/autosupport",
-	"api/private/cli/export-policy/rule",
 }
 
 // TestCounters extracts non-hidden counters from all of the rest and restperf templates and then invokes an HTTP GET for each api path + counters.
