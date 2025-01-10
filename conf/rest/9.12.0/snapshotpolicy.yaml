@@ -1,15 +1,27 @@
 name:                     SnapshotPolicy
-query:                    api/private/cli/volume/snapshot/policy
+query:                    api/storage/snapshot-policies
 object:                   snapshot_policy
 
 counters:
-  - ^^policy          => snapshot_policy
-  - ^^vserver         => svm
+  - ^^uuid            => uuid
   - ^comment          => comment
-  - total_schedules   => total_schedules
+  - ^copies           => copies
+  - ^enabled          => enabled
+  - ^name             => snapshot_policy
+  - ^scope            => scope
+  - ^svm.name         => svm
 
+plugins:
+  - SnapshotPolicy
+  
 export_options:
   instance_keys:
-    - comment
     - snapshot_policy
+  instance_labels:
+    - comment
+    - copies
+    - enabled
+    - schedules
+    - scope
     - svm
+

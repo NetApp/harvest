@@ -873,9 +873,6 @@ counters:
   - Name: snapmirror_update_successful_count
     Description: Number of Successful Updates
 
-  - Name: snapshot_policy_total_schedules
-    Description: Total Number of Schedules in this Policy
-
   - Name: svm_nfs_read_throughput
     APIs:
       - API: REST
@@ -2061,3 +2058,15 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.6.0/clustersoftware.yaml
+
+  - Name: shelf_module_status
+    Description: Displays the shelf module labels with their status.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/restperf/9.12.0/disk.yaml
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapiperf/cdot/9.8.0/disk.yaml
