@@ -79,7 +79,12 @@ func (c *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 			return nil, nil, nil
 		}
 
-		// invoke private ssl cli rest and get the admin SVM's serial number
+		// invoke private ssl cli rest when admin SVM is non-empty and get the admin SVM's serial number
+		if adminVserver == "" {
+			c.SLogger.Error("Admin SVM is missing in the cluster")
+			return nil, nil, nil
+		}
+
 		if adminVserverSerial, err = c.GetSecuritySsl(adminVserver); err != nil {
 			if ontap.IsRestErr(err, ontap.APINotFound) {
 				c.SLogger.Debug("Failed to collect admin SVM's serial number", slogx.Err(err))
