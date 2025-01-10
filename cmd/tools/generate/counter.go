@@ -175,7 +175,6 @@ var (
 		"_labels",
 		"volume_arw_status",
 		"ALERTS",
-		"shelf_module_status",
 	}
 
 	// Exclude extra metrics for ZAPI
@@ -185,7 +184,6 @@ var (
 		"security_",
 		"svm_ldap",
 		"ALERTS",
-		"shelf_module_status",
 	}
 )
 

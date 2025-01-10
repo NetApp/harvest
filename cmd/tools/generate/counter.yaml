@@ -2058,3 +2058,15 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.6.0/clustersoftware.yaml
+
+  - Name: shelf_module_status
+    Description: Displays the shelf module labels with their status.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/restperf/9.12.0/disk.yaml
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapiperf/cdot/9.8.0/disk.yaml
