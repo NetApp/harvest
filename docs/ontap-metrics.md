@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2024-Dec-02
+Creation Date : 2025-Jan-10
 ONTAP Version: 9.16.1
 ```
 ## Understanding the structure
@@ -11023,6 +11023,16 @@ Minimum temperature of all non-ambient sensors for shelf in Celsius.
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
 
 
+### shelf_module_status
+
+Displays the shelf module labels with their status.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
+
 ### shelf_new_status
 
 This metric indicates a value of 1 if the shelf state is online or ok (indicating the shelf is operational) and a value of 0 for any other state (indicating the shelf is not operational).
@@ -11501,16 +11511,6 @@ Number of Successful Updates
 |--------|----------|--------|---------|
 | REST | `api/private/cli/snapmirror` | `update_successful_count` | conf/rest/9.12.0/snapmirror.yaml |
 | ZAPI | `snapmirror-get-iter` | `snapmirror-info.update-successful-count` | conf/zapi/cdot/9.8.0/snapmirror.yaml |
-
-
-### snapshot_policy_total_schedules
-
-Total Number of Schedules in this Policy
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/private/cli/volume/snapshot/policy` | `total_schedules` | conf/rest/9.12.0/snapshotpolicy.yaml |
-| ZAPI | `snapshot-policy-get-iter` | `snapshot-policy-info.total-schedules` | conf/zapi/cdot/9.8.0/snapshotpolicy.yaml |
 
 
 ### svm_cifs_connections
