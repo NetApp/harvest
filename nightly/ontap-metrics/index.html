@@ -10960,6 +10960,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#shelf_module_status" class="md-nav__link">
+    <span class="md-ellipsis">
+      shelf_module_status
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#shelf_new_status" class="md-nav__link">
     <span class="md-ellipsis">
       shelf_new_status
@@ -11386,15 +11395,6 @@
   <a href="#snapmirror_update_successful_count" class="md-nav__link">
     <span class="md-ellipsis">
       snapmirror_update_successful_count
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#snapshot_policy_total_schedules" class="md-nav__link">
-    <span class="md-ellipsis">
-      snapshot_policy_total_schedules
     </span>
   </a>
   
@@ -25231,6 +25231,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#shelf_module_status" class="md-nav__link">
+    <span class="md-ellipsis">
+      shelf_module_status
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#shelf_new_status" class="md-nav__link">
     <span class="md-ellipsis">
       shelf_new_status
@@ -25657,15 +25666,6 @@
   <a href="#snapmirror_update_successful_count" class="md-nav__link">
     <span class="md-ellipsis">
       snapmirror_update_successful_count
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#snapshot_policy_total_schedules" class="md-nav__link">
-    <span class="md-ellipsis">
-      snapshot_policy_total_schedules
     </span>
   </a>
   
@@ -29673,7 +29673,7 @@ These can be generated on demand by running <code>bin/harvest grafana metrics</c
 <p>More information about ONTAP REST performance counters can be found <a href="https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html">here</a>.</p>
 </li>
 </ul>
-<div class="highlight"><pre><span></span><code>Creation Date : 2025-Jan-10
+<div class="highlight"><pre><span></span><code>Creation Date : 2025-Jan-14
 ONTAP Version: 9.15.1
 </code></pre></div>
 <h2 id="understanding-the-structure">Understanding the structure<a class="headerlink" href="#understanding-the-structure" title="Permanent link">&para;</a></h2>
@@ -59332,6 +59332,32 @@ ONTAP Version: 9.15.1
 </tr>
 </tbody>
 </table>
+<h3 id="shelf_module_status">shelf_module_status<a class="headerlink" href="#shelf_module_status" title="Permanent link">&para;</a></h3>
+<p>Displays the shelf module labels with their status.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/restperf/9.12.0/disk.yaml</td>
+</tr>
+<tr>
+<td>ZAPI</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/zapiperf/cdot/9.8.0/disk.yaml</td>
+</tr>
+</tbody>
+</table>
 <h3 id="shelf_new_status">shelf_new_status<a class="headerlink" href="#shelf_new_status" title="Permanent link">&para;</a></h3>
 <p>This metric indicates a value of 1 if the shelf state is online or ok (indicating the shelf is operational) and a value of 0 for any other state (indicating the shelf is not operational).</p>
 <table>
@@ -60577,32 +60603,6 @@ ONTAP Version: 9.15.1
 <td><code>snapmirror-get-iter</code></td>
 <td><code>snapmirror-info.update-successful-count</code></td>
 <td>conf/zapi/cdot/9.8.0/snapmirror.yaml</td>
-</tr>
-</tbody>
-</table>
-<h3 id="snapshot_policy_total_schedules">snapshot_policy_total_schedules<a class="headerlink" href="#snapshot_policy_total_schedules" title="Permanent link">&para;</a></h3>
-<p>Total Number of Schedules in this Policy</p>
-<table>
-<thead>
-<tr>
-<th>API</th>
-<th>Endpoint</th>
-<th>Metric</th>
-<th>Template</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>REST</td>
-<td><code>api/private/cli/volume/snapshot/policy</code></td>
-<td><code>total_schedules</code></td>
-<td>conf/rest/9.12.0/snapshotpolicy.yaml</td>
-</tr>
-<tr>
-<td>ZAPI</td>
-<td><code>snapshot-policy-get-iter</code></td>
-<td><code>snapshot-policy-info.total-schedules</code></td>
-<td>conf/zapi/cdot/9.8.0/snapshotpolicy.yaml</td>
 </tr>
 </tbody>
 </table>
