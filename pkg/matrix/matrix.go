@@ -360,6 +360,7 @@ func (m *Matrix) Delta(metricKey string, prevMat *Matrix, logger *slog.Logger) (
 	curMetric := m.GetMetric(metricKey)
 	prevRaw := prevMetric.values
 	prevRecord := prevMetric.GetRecords()
+	metName := curMetric.GetName()
 	for key, currInstance := range m.GetInstances() {
 		// check if this instance key exists in previous matrix
 		prevInstance := prevMat.GetInstance(key)
@@ -389,7 +390,7 @@ func (m *Matrix) Delta(metricKey string, prevMat *Matrix, logger *slog.Logger) (
 				if ppaOk || cpaOk {
 					logger.Debug(
 						"Partial Aggregation",
-						slog.String("metric", curMetric.GetName()),
+						slog.String("metric", metName),
 						slog.Float64("currentRaw", curRaw),
 						slog.Float64("previousRaw", prevRaw[prevIndex]),
 						slog.Bool("prevPartial", ppaOk),
@@ -397,6 +398,40 @@ func (m *Matrix) Delta(metricKey string, prevMat *Matrix, logger *slog.Logger) (
 						slog.Any("instanceLabels", currInstance.GetLabels()),
 						slog.String("instKey", key),
 					)
+				}
+
+				if isInvalidZero || isNegative {
+					if m.Object == "qtree" && (metName == "nfs_ops" || metName == "total_ops") {
+						logger.Warn(
+							"Invalid data",
+							slog.String("metric", metName),
+							slog.Float64("currentRaw", curRaw),
+							slog.Float64("previousRaw", prevRaw[prevIndex]),
+							slog.Float64("curCooked", curCooked),
+							slog.Bool("prevPartial", ppaOk),
+							slog.Bool("curPartial", cpaOk),
+							slog.Any("instanceLabels", currInstance.GetLabels()),
+							slog.String("instKey", key),
+						)
+					}
+				}
+
+				// 'ops' represents a rate. If the time delta is 60 seconds, the 'cooked' value will be calculated as 'curCooked / 60'.
+				// If the calculated 'cooked' rate exceeds 250,000, a warning is logged to indicate a potential spike.
+				if curCooked > 15_000_000 {
+					if m.Object == "qtree" && (metName == "nfs_ops" || metName == "total_ops") {
+						logger.Warn(
+							"possible spike detected",
+							slog.String("metric", metName),
+							slog.Float64("currentRaw", curRaw),
+							slog.Float64("previousRaw", prevRaw[prevIndex]),
+							slog.Float64("curCooked", curCooked),
+							slog.Bool("prevPartial", ppaOk),
+							slog.Bool("curPartial", cpaOk),
+							slog.Any("instanceLabels", currInstance.GetLabels()),
+							slog.String("instKey", key),
+						)
+					}
 				}
 			} else {
 				curMetric.record[currIndex] = false
