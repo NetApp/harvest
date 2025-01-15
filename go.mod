@@ -1,6 +1,6 @@
 module github.com/netapp/harvest/v2
 
-go 1.23.4
+go 1.23
 
 require (
 	github.com/go-openapi/spec v0.21.0
