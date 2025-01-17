@@ -161,15 +161,22 @@ license-check:
 ci: clean deps fmt harvest lint test govulncheck license-check
 
 ci-local: ## Run CI locally
-ifeq ($(origin ci),undefined)
-	@echo ci-local requires a path to the CI harvest.yml like so:
-	@echo make ci=/path/to/harvest.yml ci-local
+ifeq ($(origin ci), undefined)
+	@echo ci-local requires that both the ci and admin variables are defined at the CLI, ci is missing. e.g.:
+	@echo make ci=/path/to/harvest.yml admin=/path/to/harvest_admin.yml ci-local
 	@exit 1
 endif
+ifeq ($(origin admin), undefined)
+	@echo ci-local requires that both the ci and admin variables are defined at the CLI, admin is missing. e.g.
+	@echo make ci=/path/to/harvest.yml admin=/path/to/harvest_admin.yml ci-local
+	@exit 1
+else
+# Both variables are defined
 	-@docker stop $$(docker ps -a --format '{{.ID}} {{.Names}}' | grep -E 'grafana|prometheus|poller') 2>/dev/null || true
 	-@docker rm $$(docker ps -a --format '{{.ID}} {{.Names}}' | grep -E 'grafana|prometheus|poller') 2>/dev/null || true
 	-@docker volume rm harvest_grafana_data harvest_prometheus_data 2>/dev/null || true
-	@if [ "$(ci)" != "harvest.yml" ]; then cp $(ci) harvest.yml; else echo "Source and destination files are the same, skipping copy"; fi
+	@if [ "$(ci)" != "harvest.yml" ]; then cp $(ci) harvest.yml; else echo "Source and destination harvest.yml are the same, skipping copy"; fi
+	@if [ "$(admin)" != "harvest_admin.yml" ]; then cp $(admin) integration/test/harvest_admin.yml; else echo "Source and destination harvest_admin.yml are the same, skipping copy"; fi
 	@./bin/harvest generate docker full --port --output harvest-compose.yml
 	@docker build -f container/onePollerPerContainer/Dockerfile -t ghcr.io/netapp/harvest:latest . --no-cache --build-arg GO_VERSION=${GO_VERSION} --build-arg VERSION=${VERSION}
 	@docker compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
@@ -178,5 +185,4 @@ endif
 	VERSION=${VERSION} REGRESSION=1 ./integration/test/test.sh
 	VERSION=${VERSION} ANALYZE_DOCKER_LOGS=1 ./integration/test/test.sh
 	VERSION=${VERSION} CHECK_METRICS=1 ./integration/test/test.sh
-
-
+endif
