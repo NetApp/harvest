@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Jan-10
+Creation Date : 2025-Jan-17
 ONTAP Version: 9.16.1
 ```
 ## Understanding the structure
@@ -10170,39 +10170,6 @@ This is the average number of concurrent requests for the workload.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/qos_volume` | `concurrency`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload_volume.yaml | 
 | ZAPI | `perf-object-get-instances workload_volume` | `concurrency`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload_volume.yaml | 
-
-
-### qos_detail_ops
-
-This field is the workload's rate of operations that completed during the measurement interval measured per second.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/qos, api/cluster/counter/tables/qos_volume` | `ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload_detail.yaml | 
-| ZAPI | `perf-object-get-instances workload, workload_volume` | `ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/9.12.0/workload_detail.yaml | 
-
-
-### qos_detail_resource_latency
-
-This refers to the average latency for workloads within the subsystems of Data ONTAP. These subsystems are the various modules or components within the system that could contribute to delays or latency during data or task processing. The calculated latency includes both the processing time within the subsystem and the waiting time at that subsystem. Below is the description of subsystems' latency.
-
-* **frontend**: Represents the delays in the network layer of ONTAP.
-* **backend**: Represents the delays in the data/WAFL layer of ONTAP.
-* **cluster**: Represents delays caused by the cluster switches, cables, and adapters which physically connect clustered nodes.If the cluster interconnect component is in contention, it means high wait time for I/O requests at the cluster interconnect is impacting the latency of one or more workloads.
-* **cp**: Represents delays due to buffered write flushes, called consistency points (cp).
-* **disk**: Represents slowness due to attached hard drives or solid state drives.
-* **network**: `Note:` Typically these latencies only apply to SAN not NAS. Represents the wait time of I/O requests by the external networking protocols on the cluster. The wait time is time spent waiting for transfer ready transactions to finish before the cluster can respond to an I/O request. If the network component is in contention, it means high wait time at the protocol layer is impacting the latency of one or more workloads.
-* **nvlog**: Represents delays due to mirroring writes to the NVRAM/NVLOG memory and to the HA partner NVRAM/NVLOG memory.
-* **suspend**: Represents delays due to operations suspending on a delay mechanism. Typically this is diagnosed by NetApp Support.
-* **throttle**: Represents the throughput maximum (ceiling) setting of the storage Quality of Service (QoS) policy group assigned to the workload. If the policy group component is in contention, it means all workloads in the policy group are being throttled by the set throughput limit, which is impacting the latency of one or more of those workloads.
-* **qos_min**: Represents the latency to a workload that is being caused by QoS throughput floor (expected) setting assigned to other workloads. If the QoS floor set on certain workloads use the majority of the bandwidth to guarantee the promised throughput, other workloads will be throttled and see more latency.
-* **cloud**: Represents the software component in the cluster involved with I/O processing between the cluster and the cloud tier on which user data is stored. If the cloud latency component is in contention, it means that a large amount of reads from volumes that are hosted on the cloud tier are impacting the latency of one or more workloads.
-
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/qos_detail` | `Harvest generated`<br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> average<br><span class="key">Base:</span> ops | conf/restperf/9.12.0/workload_detail.yaml | 
-| ZAPI | `perf-object-get-instances workload_detail` | `Harvest generated`<br><span class="key">Unit:</span> microseconds<br><span class="key">Type:</span> average<br><span class="key">Base:</span> ops | conf/zapiperf/9.12.0/workload_detail.yaml | 
 
 
 ### qos_latency

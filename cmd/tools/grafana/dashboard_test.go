@@ -270,19 +270,17 @@ func TestUnitsAndExprMatch(t *testing.T) {
 
 	// Exceptions are meant to reduce false negatives
 	allowedSuffix := map[string][]string{
-		"_count":                          {"none", "short", "locale"},
-		"_lag_time":                       {"", "s", "short"},
-		"qos_detail_service_time_latency": {"µs", "percent"},
-		"qos_detail_resource_latency":     {"µs", "percent"},
-		"volume_space_physical_used":      {"bytes", "binBps"}, // Growth rate uses bytes/sec unit
-		"volume_space_logical_used":       {"bytes", "binBps"}, // Growth rate uses bytes/sec unit
-		"qos_ops":                         {"iops", "percent"},
-		"qos_total_data":                  {"Bps", "percent"},
-		"aggr_space_used":                 {"bytes", "percent"},
-		"volume_size_used":                {"bytes", "percent"},
-		"shelf_power":                     {"watt", "watth"},
-		"environment_sensor_power":        {"watt", "watth"},
-		"volume_num_compress_fail":        {"percent", "short"},
+		"_count":                     {"none", "short", "locale"},
+		"_lag_time":                  {"", "s", "short"},
+		"volume_space_physical_used": {"bytes", "binBps"}, // Growth rate uses bytes/sec unit
+		"volume_space_logical_used":  {"bytes", "binBps"}, // Growth rate uses bytes/sec unit
+		"qos_ops":                    {"iops", "percent"},
+		"qos_total_data":             {"Bps", "percent"},
+		"aggr_space_used":            {"bytes", "percent"},
+		"volume_size_used":           {"bytes", "percent"},
+		"shelf_power":                {"watt", "watth"},
+		"environment_sensor_power":   {"watt", "watth"},
+		"volume_num_compress_fail":   {"percent", "short"},
 	}
 
 	// Normalize rates to their base unit
