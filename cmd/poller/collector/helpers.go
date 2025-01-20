@@ -31,6 +31,17 @@ import (
 	"strings"
 )
 
+var ExcludeTemplates = map[string]map[string]struct{}{
+	"ZapiPerf": {
+		"workload_detail":        {},
+		"workload_detail_volume": {},
+	},
+	"RestPerf": {
+		"api/cluster/counter/tables/qos_detail":        {},
+		"api/cluster/counter/tables/qos_detail_volume": {},
+	},
+}
+
 // ImportTemplate looks for a collector's template by searching confPaths for the first template that exists in
 // confPath/collectorName/templateName
 func ImportTemplate(confPaths []string, templateName, collectorName string) (*node.Node, error) {
@@ -132,6 +143,15 @@ nextFile:
 			}
 			return nil, "", fmt.Errorf("no best-fit template for %s on confPath %s %w",
 				filename, c.Options.ConfPath, errors.Join(importErrs...))
+		}
+	}
+
+	if finalTemplate != nil {
+		if queries, exists := ExcludeTemplates[c.Name]; exists {
+			templateQuery := finalTemplate.GetChildContentS("query")
+			if _, ok := queries[templateQuery]; ok {
+				return nil, "", fmt.Errorf("%w: template '%s' does not support query '%s' in template '%s'", errs.ErrTemplateNotSupported, c.Object, templateQuery, filename)
+			}
 		}
 	}
 
