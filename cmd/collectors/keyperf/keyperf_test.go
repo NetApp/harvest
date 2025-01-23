@@ -7,11 +7,12 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"sort"
 	"testing"
-	"time"
 )
 
 const (
@@ -65,16 +66,16 @@ func TestPartialAggregationSequence(t *testing.T) {
 
 func (kp *KeyPerf) testPollInstanceAndDataWithMetrics(t *testing.T, pollDataFile string, expectedExportedInst, expectedExportedMetrics int) *matrix.Matrix {
 	// Additional logic to count metrics
+	prevMat := kp.Matrix[kp.Object]
 	pollData := collectors.JSONToGson(pollDataFile, true)
-	now := time.Now().Truncate(time.Second)
-	data, err := kp.pollData(now, pollData, nil)
+	got, _, err := processAndCookCounters(kp, pollData, prevMat)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	totalMetrics := 0
 	exportableInstance := 0
-	mat := data[kp.Object]
+	mat := got[kp.Object]
 	if mat != nil {
 		for _, instance := range mat.GetInstances() {
 			if instance.IsExportable() {
@@ -103,6 +104,14 @@ func (kp *KeyPerf) testPollInstanceAndDataWithMetrics(t *testing.T, pollDataFile
 		t.Errorf("Total metrics got=%d, expected=%d", totalMetrics, expectedExportedMetrics)
 	}
 	return mat
+}
+
+func processAndCookCounters(kp *KeyPerf, pollData []gjson.Result, prevMat *matrix.Matrix) (map[string]*matrix.Matrix, uint64, error) {
+	curMat := prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
+	curMat.Reset()
+	metricCount, _, _ := kp.processPerfRecords(pollData, curMat, set.New())
+	got, err := kp.cookCounters(curMat, prevMat)
+	return got, metricCount, err
 }
 
 func TestKeyPerf_pollData(t *testing.T) {
