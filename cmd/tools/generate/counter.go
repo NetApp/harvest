@@ -9,7 +9,10 @@ import (
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	template2 "github.com/netapp/harvest/v2/cmd/tools/template"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
+	"github.com/netapp/harvest/v2/pkg/auth"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/logging"
+	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -17,9 +20,12 @@ import (
 	tw "github.com/netapp/harvest/v2/third_party/olekukonko/tablewriter"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"gopkg.in/yaml.v3"
+	"io"
 	"log"
+	"log/slog"
 	"maps"
 	"net/http"
+	"net/http/httputil"
 	"net/url"
 	"os"
 	"os/exec"
@@ -247,7 +253,7 @@ func (c Counter) HasAPIs() bool {
 // readSwaggerJSON downloads poller swagger and convert to json format
 func readSwaggerJSON() []byte {
 	var f []byte
-	path, err := rest.ReadOrDownloadSwagger(opts.Poller)
+	path, err := downloadSwaggerForPoller(opts.Poller)
 	if err != nil {
 		log.Fatal("failed to download swagger:", err)
 		return nil
@@ -259,6 +265,96 @@ func readSwaggerJSON() []byte {
 		return nil
 	}
 	return f
+}
+func downloadSwaggerForPoller(pName string) (string, error) {
+	var (
+		poller         *conf.Poller
+		err            error
+		addr           string
+		shouldDownload = true
+		swagTime       time.Time
+	)
+
+	if poller, addr, err = rest.GetPollerAndAddr(pName); err != nil {
+		return "", err
+	}
+
+	tmp := os.TempDir()
+	swaggerPath := filepath.Join(tmp, addr+"-swagger.yaml")
+	fileInfo, err := os.Stat(swaggerPath)
+
+	if os.IsNotExist(err) {
+		fmt.Printf("%s does not exist downloading\n", swaggerPath)
+	} else {
+		swagTime = fileInfo.ModTime()
+		twoWeeksAgo := swagTime.Local().AddDate(0, 0, -14)
+		if swagTime.Before(twoWeeksAgo) {
+			fmt.Printf("%s is more than two weeks old, re-download", swaggerPath)
+		} else {
+			shouldDownload = false
+		}
+	}
+
+	if shouldDownload {
+		swaggerURL := "https://" + addr + "/docs/api/swagger.yaml"
+		bytesDownloaded, err := downloadSwagger(poller, swaggerPath, swaggerURL, false)
+		if err != nil {
+			fmt.Printf("error downloading swagger %s\n", err)
+			if bytesDownloaded == 0 {
+				// if the tmp file exists, remove it since it is empty
+				_ = os.Remove(swaggerPath)
+			}
+			return "", err
+		}
+		fmt.Printf("downloaded %d bytes from %s\n", bytesDownloaded, swaggerURL)
+	}
+
+	fmt.Printf("Using downloaded file %s with timestamp %s\n", swaggerPath, swagTime)
+	return swaggerPath, nil
+}
+
+func downloadSwagger(poller *conf.Poller, path string, url string, verbose bool) (int64, error) {
+	out, err := os.Create(path)
+	if err != nil {
+		return 0, fmt.Errorf("unable to create %s to save swagger.yaml", path)
+	}
+	defer func(out *os.File) { _ = out.Close() }(out)
+	request, err := requests.New("GET", url, nil)
+	if err != nil {
+		return 0, err
+	}
+
+	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
+	credentials := auth.NewCredentials(poller, slog.Default())
+	transport, err := credentials.Transport(request, poller)
+	if err != nil {
+		return 0, err
+	}
+	httpclient := &http.Client{Transport: transport, Timeout: timeout}
+
+	if verbose {
+		requestOut, _ := httputil.DumpRequestOut(request, false)
+		fmt.Printf("REQUEST: %s\n%s\n", url, requestOut)
+	}
+	response, err := httpclient.Do(request)
+	if err != nil {
+		return 0, err
+	}
+	//goland:noinspection GoUnhandledErrorResult
+	defer response.Body.Close()
+
+	if verbose {
+		debugResp, _ := httputil.DumpResponse(response, false)
+		fmt.Printf("RESPONSE: \n%s", debugResp)
+	}
+	if response.StatusCode != http.StatusOK {
+		return 0, fmt.Errorf("error making request. server response statusCode=[%d]", response.StatusCode)
+	}
+	n, err := io.Copy(out, response.Body)
+	if err != nil {
+		return 0, fmt.Errorf("error while downloading %s err=%w", url, err)
+	}
+	return n, nil
 }
 
 // searchDescriptionSwagger returns ontap counter description from swagger

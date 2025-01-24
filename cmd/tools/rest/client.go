@@ -15,8 +15,6 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
-	"net/http/httputil"
-	"os"
 	"slices"
 	"strings"
 	"time"
@@ -270,50 +268,6 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 		}
 	}
 	return body, err
-}
-
-func downloadSwagger(poller *conf.Poller, path string, url string, verbose bool) (int64, error) {
-	out, err := os.Create(path)
-	if err != nil {
-		return 0, fmt.Errorf("unable to create %s to save swagger.yaml", path)
-	}
-	defer func(out *os.File) { _ = out.Close() }(out)
-	request, err := requests.New("GET", url, nil)
-	if err != nil {
-		return 0, err
-	}
-
-	timeout, _ := time.ParseDuration(DefaultTimeout)
-	credentials := auth.NewCredentials(poller, slog.Default())
-	transport, err := credentials.Transport(request, poller)
-	if err != nil {
-		return 0, err
-	}
-	httpclient := &http.Client{Transport: transport, Timeout: timeout}
-
-	if verbose {
-		requestOut, _ := httputil.DumpRequestOut(request, false)
-		fmt.Printf("REQUEST: %s\n%s\n", url, requestOut)
-	}
-	response, err := httpclient.Do(request)
-	if err != nil {
-		return 0, err
-	}
-	//goland:noinspection GoUnhandledErrorResult
-	defer response.Body.Close()
-
-	if verbose {
-		debugResp, _ := httputil.DumpResponse(response, false)
-		fmt.Printf("RESPONSE: \n%s", debugResp)
-	}
-	if response.StatusCode != http.StatusOK {
-		return 0, fmt.Errorf("error making request. server response statusCode=[%d]", response.StatusCode)
-	}
-	n, err := io.Copy(out, response.Body)
-	if err != nil {
-		return 0, fmt.Errorf("error while downloading %s err=%w", url, err)
-	}
-	return n, nil
 }
 
 func (c *Client) UpdateClusterInfo(retries int) error {
