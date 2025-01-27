@@ -77,6 +77,53 @@ func TestZapiPerfSequence(t *testing.T) {
 	}
 }
 
+func TestSkipsSequence(t *testing.T) {
+	z := NewZapiPerf("Qtree", "qtree.yaml")
+
+	z.testFilePath = "testdata/skips/pollCounter.xml"
+	if _, err := z.PollCounter(); err != nil {
+		t.Fatalf("Failed to fetch poll counter %v", err)
+	}
+	z.testFilePath = "testdata/skips/pollInstance1.xml"
+	if _, err := z.PollInstance(); err != nil {
+		t.Fatalf("Failed to fetch poll instance %v", err)
+	}
+
+	// First Poll
+	t.Log("Running First Poll")
+	z.testPollInstanceAndDataWithMetrics(t, "testdata/skips/pollData1.xml", 0, 0)
+	if t.Failed() {
+		t.Fatal("First Poll failed")
+	}
+
+	// Complete Poll
+	t.Log("Running Complete Poll")
+	z.testPollInstanceAndDataWithMetrics(t, "testdata/skips/pollData1.xml", 1, 4)
+	if t.Failed() {
+		t.Fatal("Complete Poll failed")
+	}
+
+	// Skips Poll
+	t.Log("Running Skips Poll")
+	z.testPollInstanceAndDataWithMetrics(t, "testdata/skips/pollData2.xml", 1, 3)
+	if t.Failed() {
+		t.Fatal("Skips Poll failed")
+	}
+
+	// Skips Poll 2
+	t.Log("Running Skips Poll 2")
+	z.testPollInstanceAndDataWithMetrics(t, "testdata/skips/pollData3.xml", 1, 3)
+	if t.Failed() {
+		t.Fatal("Skips Poll 2 failed")
+	}
+
+	t.Log("Running Poll 3")
+	z.testPollInstanceAndDataWithMetrics(t, "testdata/skips/pollData4.xml", 1, 4)
+	if t.Failed() {
+		t.Fatal("Poll 3 failed")
+	}
+}
+
 func TestPartialAggregationSequence(t *testing.T) {
 	z := NewZapiPerf("Workload", "workload.yaml")
 

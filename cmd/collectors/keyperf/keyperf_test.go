@@ -19,6 +19,45 @@ const (
 	pollerName = "test"
 )
 
+func TestSkipsSequence(t *testing.T) {
+	conf.TestLoadHarvestConfig("testdata/config.yml")
+	kp := newKeyPerf("Volume", "volume.yaml")
+
+	// First Poll
+	t.Log("Running First Poll")
+	kp.testPollInstanceAndDataWithMetrics(t, "testdata/skips/pollData1.json", 0, 0)
+	if t.Failed() {
+		t.Fatal("First Poll failed")
+	}
+
+	// Complete Poll
+	t.Log("Running Complete Poll")
+	kp.testPollInstanceAndDataWithMetrics(t, "testdata/skips/pollData1.json", 1, 12)
+	if t.Failed() {
+		t.Fatal("Complete Poll failed")
+	}
+
+	// Skips Poll
+	t.Log("Running Skips Poll")
+	kp.testPollInstanceAndDataWithMetrics(t, "testdata/skips/pollData2.json", 1, 10)
+	if t.Failed() {
+		t.Fatal("Skips Poll failed")
+	}
+
+	// Skips Poll 2
+	t.Log("Running Skips Poll 2")
+	kp.testPollInstanceAndDataWithMetrics(t, "testdata/skips/pollData3.json", 1, 10)
+	if t.Failed() {
+		t.Fatal("Skips Poll 2 failed")
+	}
+
+	t.Log("Running Poll 3")
+	kp.testPollInstanceAndDataWithMetrics(t, "testdata/skips/pollData4.json", 1, 12)
+	if t.Failed() {
+		t.Fatal("Poll 3 failed")
+	}
+}
+
 func TestPartialAggregationSequence(t *testing.T) {
 	conf.TestLoadHarvestConfig("testdata/config.yml")
 	kp := newKeyPerf("Volume", "volume.yaml")

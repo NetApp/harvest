@@ -352,7 +352,13 @@ func TestPartialAggregationSequence(t *testing.T) {
 
 func newRestPerf(object string, path string) *RestPerf {
 	var err error
-	opts := options.New(options.WithConfPath("testdata/conf"))
+	homePath := "../../../"
+	conf.TestLoadHarvestConfig("testdata/config.yml")
+	opts := options.New(options.WithConfPath(homePath + "/conf"))
+	// An additional histogram metric is being tested, so load the data from the test dataset.
+	if path == "volume.yaml" {
+		opts = options.New(options.WithConfPath("testdata/conf"))
+	}
 	opts.Poller = pollerName
 	opts.HomePath = "testdata"
 	opts.IsTest = true
@@ -415,7 +421,7 @@ func TestQosVolume(t *testing.T) {
 			pollDataPath1: "testdata/qos-volume-poll-1.json",
 			pollDataPath2: "testdata/qos-volume-poll-2.json",
 			numInstances:  9,
-			numMetrics:    234,
+			numMetrics:    243,
 			sum:           18,
 		},
 	}
@@ -484,6 +490,50 @@ func TestQosVolume(t *testing.T) {
 				t.Errorf("pollData() sum got=%v, want=%v", sum, tt.sum)
 			}
 		})
+	}
+}
+
+func TestSkipsSequence(t *testing.T) {
+	r := newRestPerf("Qtree", "qtree.yaml")
+
+	counters := jsonToPerfRecords("testdata/skips/pollCounter.json")
+	_, err := r.pollCounter(counters[0].Records.Array(), 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// First Poll
+	t.Log("Running First Poll")
+	r.testPollInstanceAndDataWithMetrics(t, "testdata/skips/pollData1.json", 0, 0)
+	if t.Failed() {
+		t.Fatal("First Poll failed")
+	}
+
+	// Complete Poll
+	t.Log("Running Complete Poll")
+	r.testPollInstanceAndDataWithMetrics(t, "testdata/skips/pollData1.json", 1, 4)
+	if t.Failed() {
+		t.Fatal("Complete Poll failed")
+	}
+
+	// Skips Poll
+	t.Log("Running Skips Poll")
+	r.testPollInstanceAndDataWithMetrics(t, "testdata/skips/pollData2.json", 1, 3)
+	if t.Failed() {
+		t.Fatal("Skips Poll failed")
+	}
+
+	// Skips Poll 2
+	t.Log("Running Skips Poll 2")
+	r.testPollInstanceAndDataWithMetrics(t, "testdata/skips/pollData3.json", 1, 3)
+	if t.Failed() {
+		t.Fatal("Skips Poll 2 failed")
+	}
+
+	t.Log("Running Poll 3")
+	r.testPollInstanceAndDataWithMetrics(t, "testdata/skips/pollData4.json", 1, 4)
+	if t.Failed() {
+		t.Fatal("Poll 3 failed")
 	}
 }
 

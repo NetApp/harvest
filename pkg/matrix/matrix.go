@@ -354,10 +354,11 @@ func CreateMetric(key string, data *Matrix) error {
 }
 
 // Delta vector arithmetics
-func (m *Matrix) Delta(metricKey string, prevMat *Matrix, logger *slog.Logger) (int, error) {
+func (m *Matrix) Delta(metricKey string, prevMat *Matrix, cachedData *Matrix, logger *slog.Logger) (int, error) {
 	var skips int
 	prevMetric := prevMat.GetMetric(metricKey)
 	curMetric := m.GetMetric(metricKey)
+	cachedMetric := cachedData.GetMetric(metricKey)
 	prevRaw := prevMetric.values
 	prevRecord := prevMetric.GetRecords()
 	for key, currInstance := range m.GetInstances() {
@@ -384,6 +385,12 @@ func (m *Matrix) Delta(metricKey string, prevMat *Matrix, logger *slog.Logger) (
 				if isInvalidZero || isNegative || ppaOk || cpaOk {
 					curMetric.record[currIndex] = false
 					skips++
+				}
+
+				if isInvalidZero || isNegative {
+					if cachedMetric != nil {
+						cachedMetric.record[currIndex] = false
+					}
 				}
 
 				if ppaOk || cpaOk {
