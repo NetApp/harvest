@@ -15,6 +15,7 @@ nav:
           - 'Docker': 'install/containers.md'
           - 'K8': 'install/k8.md'
           - 'Podman': 'install/podman.md'
+          - 'Quadlet': 'install/quadlet.md'
           - 'Containerd': 'install/containerd.md'
       - 'Native': 'install/native.md'
   - System Requirements: 'system-requirements.md'

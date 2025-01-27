@@ -134,4 +134,4 @@ The `export_options` section defines how to handle the collected data. It includ
 
 ### Endpoints
 
-Refer to the [endpoints](configure-rest/#endpoints) section for more details.
+Refer to the [endpoints](configure-rest.md#endpoints) section for more details.
