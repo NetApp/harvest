@@ -1,0 +1,61 @@
+{
+  "records": [
+    {
+      "uuid": "03613247-54ac-4127-a512-afb331f1c207",
+      "name": "osc_vol01",
+      "style": "flexvol",
+      "svm": {
+        "name": "osc"
+      },
+      "statistics": {
+        "timestamp": "2025-01-27T07:00:16Z",
+        "status": "ok",
+        "latency_raw": {
+          "other": 1092346493,
+          "total": 15717305666890,
+          "read": 15711857370185,
+          "write": 4355950212
+        },
+        "iops_raw": {
+          "read": 157,
+          "write": 10437797,
+          "other": 7805846,
+          "total": 15767627331
+        },
+        "throughput_raw": {
+          "read": 1032148923371343,
+          "write": 54906830868,
+          "other": 0,
+          "total": 1032203830202211
+        },
+        "cloud": {
+          "timestamp": "2025-01-27T07:00:16Z",
+          "status": "ok",
+          "iops_raw": {
+            "read": 192314,
+            "write": 18302,
+            "other": 0,
+            "total": 210616
+          },
+          "latency_raw": {
+            "read": 13811084776,
+            "write": 78515374639,
+            "other": 0,
+            "total": 92326459415
+          }
+        }
+      },
+      "_links": {
+        "self": {
+          "href": "/api/storage/volumes/03613247-54ac-4127-a512-afb331f1c207"
+        }
+      }
+    }
+  ],
+  "num_records": 1,
+  "_links": {
+    "self": {
+      "href": "/api/storage/volumes?fields=statistics,svm.name,style&name=osc_vol01"
+    }
+  }
+}

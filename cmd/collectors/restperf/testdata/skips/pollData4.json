@@ -1,0 +1,69 @@
+{
+  "records": [
+    {
+      "counter_table": {
+        "name": "qtree"
+      },
+      "id": "osc:volharvest/:ff82ac73-d7f8-11eb-80e3-00a098d39e12:364732:0",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "umeng-aff300-03"
+        },
+        {
+          "name": "svm.name",
+          "value": "osc"
+        },
+        {
+          "name": "parent_volume.name",
+          "value": "volharvest"
+        },
+        {
+          "name": "parent_constituent_volume.name",
+          "value": "volharvest"
+        },
+        {
+          "name": "uuid",
+          "value": "ff82ac73-d7f8-11eb-80e3-00a098d39e12:364732:0"
+        }
+      ],
+      "counters": [
+        {
+          "name": "nfs_ops",
+          "value": 1965609
+        },
+        {
+          "name": "cifs_ops",
+          "value": 0
+        },
+        {
+          "name": "css_ops",
+          "value": 0
+        },
+        {
+          "name": "internal_ops",
+          "value": 585448
+        },
+        {
+          "name": "total_ops",
+          "value": 2351057
+        }
+      ],
+      "aggregation": {
+        "count": 2,
+        "complete": true
+      },
+      "_links": {
+        "self": {
+          "href": "/api/cluster/counter/tables/qtree/rows/osc%3Avolharvest%2F%3Aff82ac73-d7f8-11eb-80e3-00a098d39e12%3A364732%3A0"
+        }
+      }
+    }
+  ],
+  "num_records": 1,
+  "_links": {
+    "self": {
+      "href": "/api/cluster/counter/tables/qtree/rows?fields=*&id=*ff82ac73-d7f8-11eb-80e3-00a098d39e12:364732:0*"
+    }
+  }
+}
