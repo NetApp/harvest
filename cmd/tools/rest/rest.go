@@ -18,7 +18,6 @@ import (
 	"net/url"
 	"os"
 	"os/signal"
-	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -35,21 +34,18 @@ type check struct {
 var args = &Args{}
 
 type Args struct {
-	Item          string
-	Poller        string
-	API           string
-	Endpoint      string
-	Config        string
-	SwaggerPath   string
-	Fields        string
-	Field         []string
-	QueryField    string
-	QueryValue    string
-	DownloadAll   bool
-	MaxRecords    string
-	ForceDownload bool
-	Verbose       bool
-	Timeout       string
+	Item        string
+	Poller      string
+	API         string
+	Endpoint    string
+	Config      string
+	Fields      string
+	Field       []string
+	QueryField  string
+	QueryValue  string
+	DownloadAll bool
+	MaxRecords  string
+	Timeout     string
 }
 
 var Cmd = &cobra.Command{
@@ -66,49 +62,17 @@ var showCmd = &cobra.Command{
 	Run:       doShow,
 }
 
-func ReadOrDownloadSwagger(pName string) (string, error) {
+func OntapRestAPIHref(pName string) (string, error) {
 	var (
-		poller         *conf.Poller
-		err            error
-		addr           string
-		shouldDownload = true
-		swagTime       time.Time
+		err  error
+		addr string
 	)
 
-	if poller, addr, err = GetPollerAndAddr(pName); err != nil {
+	if _, addr, err = GetPollerAndAddr(pName); err != nil {
 		return "", err
 	}
 
-	tmp := os.TempDir()
-	swaggerPath := filepath.Join(tmp, addr+"-swagger.yaml")
-	fileInfo, err := os.Stat(swaggerPath)
-
-	if os.IsNotExist(err) {
-		fmt.Printf("%s does not exist downloading\n", swaggerPath)
-	} else if !args.ForceDownload {
-		swagTime = fileInfo.ModTime()
-		twoWeeksAgo := swagTime.Local().AddDate(0, 0, -14)
-		if swagTime.Before(twoWeeksAgo) {
-			fmt.Printf("%s is more than two weeks old, re-download", swaggerPath)
-		} else {
-			shouldDownload = false
-		}
-	}
-	if shouldDownload {
-		swaggerURL := "https://" + addr + "/docs/api/swagger.yaml"
-		bytesDownloaded, err := downloadSwagger(poller, swaggerPath, swaggerURL, args.Verbose)
-		if err != nil {
-			fmt.Printf("error downloading swagger %s\n", err)
-			if bytesDownloaded == 0 {
-				// if the tmp file exists, remove it since it is empty
-				_ = os.Remove(swaggerPath)
-			}
-			return "", err
-		}
-		fmt.Printf("downloaded %d bytes from %s\n", bytesDownloaded, swaggerURL)
-	}
-	fmt.Printf("Using downloaded file %s with timestamp %s\n", swaggerPath, swagTime)
-	return swaggerPath, nil
+	return "https://" + addr + "/docs/api/", nil
 }
 
 func doShow(_ *cobra.Command, a []string) {
@@ -120,19 +84,10 @@ func doShow(_ *cobra.Command, a []string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	if args.SwaggerPath != "" {
-		doSwagger(*args)
-	} else {
-		doCmd()
-	}
+	doCmd()
 }
 
 func validateArgs(slice []string) check {
-	// One of Poller or SwaggerPath are allowed, but not both
-	if args.Poller != "" && args.SwaggerPath != "" {
-		fmt.Printf("Both poller and swagger are set. Only one or the other can be set, not both\n")
-		return check{isValid: false}
-	}
 	if len(slice) == 0 {
 		args.Item = ""
 	} else {
@@ -150,13 +105,12 @@ func validateArgs(slice []string) check {
 func doCmd() {
 	switch args.Item {
 	case "apis", "params", "models":
-		swaggerPath, err := ReadOrDownloadSwagger(args.Poller)
+		ontapRestAPI, err := OntapRestAPIHref(args.Poller)
 		if err != nil {
 			fmt.Printf("error %+v\n", err)
 			return
 		}
-		args.SwaggerPath = swaggerPath
-		doSwagger(*args)
+		fmt.Printf("Find the ONTAP REST API reference for %s here: %s\n", args.Poller, ontapRestAPI)
 	case "data":
 		doData()
 	}
@@ -750,16 +704,13 @@ func init() {
 	Cmd.AddCommand(showCmd)
 	flags := Cmd.PersistentFlags()
 	flags.StringVarP(&args.Poller, "poller", "p", "", "Name of poller (cluster), as defined in your harvest config. * for all pollers")
-	flags.StringVarP(&args.SwaggerPath, "swagger", "s", "", "Path to Swagger (OpenAPI) file to read from")
 	flags.StringVar(&args.Config, "config", configPath, "Harvest config file path")
 	flags.StringVarP(&args.Timeout, "timeout", "t", DefaultTimeout, "Duration to wait before giving up")
 
 	showFlags := showCmd.Flags()
 	showFlags.StringVarP(&args.API, "api", "a", "", "REST API PATTERN to show")
 	showFlags.BoolVar(&args.DownloadAll, "all", false, "Collect all records by walking pagination links")
-	showFlags.BoolVarP(&args.Verbose, "verbose", "v", false, "Be verbose")
 	showFlags.StringVarP(&args.MaxRecords, "max-records", "m", "", "Limit the number of records returned before providing pagination link")
-	showFlags.BoolVar(&args.ForceDownload, "download", false, "Force download Swagger file instead of using local copy")
 	showFlags.StringVarP(&args.Fields, "fields", "f", "*", "Fields to return in the response <field>[,...].")
 	showFlags.StringArrayVar(&args.Field, "field", []string{}, "Query a field by value (can be specified multiple times.)\n"+
 		`If the value contains query characters (*|,!<>..), it must be quoted to avoid their special meaning
@@ -776,15 +727,9 @@ func init() {
 
 	Cmd.SetUsageTemplate(Cmd.UsageTemplate() + `
 Examples:
-  # Query cluster infinity for available APIs
+  # Print cluster infinity's' ONTAP REST API Online Reference 
   bin/harvest rest -p infinity show apis
   
-  # Query cluster infinity for svm parameters. These query parameters are used to filter requests.
-  bin/harvest rest -p infinity show params --api svm/svms
-
-  # Query cluster infinity for svm models. These describe the REST response of sending the svm/svms GET request.
-  bin/harvest rest -p infinity show models --api svm/svms
-
   # Query cluster infinity for stopped svms.
   bin/harvest rest -p infinity show data --api svm/svms --field "state=stopped"
 
