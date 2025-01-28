@@ -14,6 +14,8 @@ counters:
             - ^count         => copies
             - ^schedule      => schedules
 
+collect_only_labels: true
+
 plugins:
   - LabelAgent:
       split:
