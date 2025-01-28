@@ -30,6 +30,7 @@ const (
 	ErrResponseNotFound          = harvestError("response not found")
 	ErrWrongTemplate             = harvestError("wrong template")
 	ErrMetroClusterNotConfigured = harvestError("MetroCluster is not configured in cluster")
+	ErrTemplateNotSupported      = harvestError("template not supported")
 )
 
 const (
