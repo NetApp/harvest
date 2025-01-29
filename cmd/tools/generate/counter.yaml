@@ -537,7 +537,7 @@ counters:
       - API: REST
         Endpoint: api/storage/quota/reports
         ONTAPCounter: space.hard_limit
-        Template: conf/rest/9.12.0/qtree.yaml
+        Template: conf/rest/9.12.0/quota.yaml
       - API: ZAPI
         Endpoint: quota-report-iter
         ONTAPCounter: disk-limit
@@ -549,7 +549,7 @@ counters:
       - API: REST
         Endpoint: api/storage/quota/reports
         ONTAPCounter: space.used.total
-        Template: conf/rest/9.12.0/qtree.yaml
+        Template: conf/rest/9.12.0/quota.yaml
       - API: ZAPI
         Endpoint: quota-report-iter
         ONTAPCounter: disk-used
@@ -561,7 +561,7 @@ counters:
       - API: REST
         Endpoint: api/storage/quota/reports
         ONTAPCounter: space.used.hard_limit_percent
-        Template: conf/rest/9.12.0/qtree.yaml
+        Template: conf/rest/9.12.0/quota.yaml
       - API: ZAPI
         Endpoint: quota-report-iter
         ONTAPCounter: disk-used-pct-disk-limit
@@ -573,7 +573,7 @@ counters:
       - API: REST
         Endpoint: api/storage/quota/reports
         ONTAPCounter: space.used.soft_limit_percent
-        Template: conf/rest/9.12.0/qtree.yaml
+        Template: conf/rest/9.12.0/quota.yaml
       - API: ZAPI
         Endpoint: quota-report-iter
         ONTAPCounter: disk-used-pct-soft-disk-limit
@@ -594,7 +594,7 @@ counters:
       - API: REST
         Endpoint: api/storage/quota/reports
         ONTAPCounter: files.hard_limit
-        Template: conf/rest/9.12.0/qtree.yaml
+        Template: conf/rest/9.12.0/quota.yaml
       - API: ZAPI
         Endpoint: quota-report-iter
         ONTAPCounter: file-limit
@@ -606,7 +606,7 @@ counters:
       - API: REST
         Endpoint: api/storage/quota/reports
         ONTAPCounter: files.used.total
-        Template: conf/rest/9.12.0/qtree.yaml
+        Template: conf/rest/9.12.0/quota.yaml
       - API: ZAPI
         Endpoint: quota-report-iter
         ONTAPCounter: files-used
@@ -619,7 +619,7 @@ counters:
       - API: REST
         Endpoint: api/storage/quota/reports
         ONTAPCounter: files.used.hard_limit_percent
-        Template: conf/rest/9.12.0/qtree.yaml
+        Template: conf/rest/9.12.0/quota.yaml
       - API: ZAPI
         Endpoint: quota-report-iter
         ONTAPCounter: files-used-pct-file-limit
@@ -632,7 +632,7 @@ counters:
       - API: REST
         Endpoint: api/storage/quota/reports
         ONTAPCounter: files.used.soft_limit_percent
-        Template: conf/rest/9.12.0/qtree.yaml
+        Template: conf/rest/9.12.0/quota.yaml
       - API: ZAPI
         Endpoint: quota-report-iter
         ONTAPCounter: files-used-pct-soft-file-limit
@@ -645,7 +645,7 @@ counters:
       - API: REST
         Endpoint: api/storage/quota/reports
         ONTAPCounter: space.soft_limit
-        Template: conf/rest/9.12.0/qtree.yaml
+        Template: conf/rest/9.12.0/quota.yaml
       - API: ZAPI
         Endpoint: quota-report-iter
         ONTAPCounter: soft-disk-limit
@@ -658,7 +658,7 @@ counters:
       - API: REST
         Endpoint: api/storage/quota/reports
         ONTAPCounter: files.soft_limit
-        Template: conf/rest/9.12.0/qtree.yaml
+        Template: conf/rest/9.12.0/quota.yaml
       - API: ZAPI
         Endpoint: quota-report-iter
         ONTAPCounter: soft-file-limit
@@ -1110,7 +1110,7 @@ counters:
       - API: REST
         Endpoint: NA
         ONTAPCounter: Harvest generated
-        Template: conf/rest/9.12.0/qtree.yaml
+        Template: conf/rest/9.12.0/quota.yaml
 
   - Name: volume_space_performance_tier_inactive_user_data
     Description: The size that is physically used in the performance tier of the volume and has a cold temperature. This parameter is only supported if the volume is in an aggregate that is either attached to object store or could be attached to an object store.
