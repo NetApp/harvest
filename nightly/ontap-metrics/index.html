@@ -29658,8 +29658,8 @@ These can be generated on demand by running <code>bin/harvest grafana metrics</c
 <p>More information about ONTAP REST performance counters can be found <a href="https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html">here</a>.</p>
 </li>
 </ul>
-<div class="highlight"><pre><span></span><code>Creation Date : 2025-Jan-29
-ONTAP Version: 9.15.1
+<div class="highlight"><pre><span></span><code>Creation Date : 2025-Jan-17
+ONTAP Version: 9.16.1
 </code></pre></div>
 <h2 id="understanding-the-structure">Understanding the structure<a class="headerlink" href="#understanding-the-structure" title="Permanent link">&para;</a></h2>
 <p>Below is an <span class="key">annotated</span> example of how to interpret the structure of each of the <a href="#metrics">metrics</a>.</p>
@@ -58782,7 +58782,7 @@ ONTAP Version: 9.15.1
 </tbody>
 </table>
 <h3 id="rw_ctx_cifs_giveups">rw_ctx_cifs_giveups<a class="headerlink" href="#rw_ctx_cifs_giveups" title="Permanent link">&para;</a></h3>
-<p>Array of number of given-ups of cifs ops because they rewind more than a certain threshold, categorized by their rewind reasons.</p>
+<p>Array of number of give-ups of CIFS ops because they rewind more than a certain threshold, categorized by their rewind reasons.</p>
 <table>
 <thead>
 <tr>
@@ -58793,6 +58793,12 @@ ONTAP Version: 9.15.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/rewind_context</code></td>
+<td><code>cifs_give_ups</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.16.0/rwctx.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances rw_ctx</code></td>
@@ -58802,7 +58808,7 @@ ONTAP Version: 9.15.1
 </tbody>
 </table>
 <h3 id="rw_ctx_cifs_rewinds">rw_ctx_cifs_rewinds<a class="headerlink" href="#rw_ctx_cifs_rewinds" title="Permanent link">&para;</a></h3>
-<p>Array of number of rewinds for cifs ops based on their reasons.</p>
+<p>Array of number of rewinds for CIFS ops based on their reasons.</p>
 <table>
 <thead>
 <tr>
@@ -58813,6 +58819,12 @@ ONTAP Version: 9.15.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/rewind_context</code></td>
+<td><code>cifs_rewinds</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.16.0/rwctx.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances rw_ctx</code></td>
@@ -58822,7 +58834,7 @@ ONTAP Version: 9.15.1
 </tbody>
 </table>
 <h3 id="rw_ctx_nfs_giveups">rw_ctx_nfs_giveups<a class="headerlink" href="#rw_ctx_nfs_giveups" title="Permanent link">&para;</a></h3>
-<p>Array of number of given-ups of nfs ops because they rewind more than a certain threshold, categorized by their rewind reasons.</p>
+<p>Array of number of give-ups of NFS ops because they rewind more than a certain threshold, categorized by their rewind reasons.</p>
 <table>
 <thead>
 <tr>
@@ -58833,6 +58845,12 @@ ONTAP Version: 9.15.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/rewind_context</code></td>
+<td><code>nfs_give_ups</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.16.0/rwctx.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances rw_ctx</code></td>
@@ -58842,7 +58860,7 @@ ONTAP Version: 9.15.1
 </tbody>
 </table>
 <h3 id="rw_ctx_nfs_rewinds">rw_ctx_nfs_rewinds<a class="headerlink" href="#rw_ctx_nfs_rewinds" title="Permanent link">&para;</a></h3>
-<p>Array of number of rewinds for nfs ops based on their reasons.</p>
+<p>Array of number of rewinds for NFS ops based on their reasons.</p>
 <table>
 <thead>
 <tr>
@@ -58853,6 +58871,12 @@ ONTAP Version: 9.15.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/rewind_context</code></td>
+<td><code>nfs_rewinds</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.16.0/rwctx.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances rw_ctx</code></td>
