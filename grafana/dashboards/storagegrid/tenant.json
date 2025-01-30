@@ -877,7 +877,7 @@
         "type": "datasource"
       },
       {
-        "allValue": null,
+        "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(tenant_labels{system_type!=\"7mode\"}, datacenter)",

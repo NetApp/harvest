@@ -4119,15 +4119,14 @@
         "type": "datasource"
       },
       {
-        "allFormat": "wildcard",
-        "allValue": null,
+        "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"}, datacenter)",
         "description": null,
         "error": null,
         "hide": 0,
-        "includeAll": false,
+        "includeAll": true,
         "label": null,
         "multi": true,
         "multiFormat": "glob",
