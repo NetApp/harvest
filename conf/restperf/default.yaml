@@ -24,7 +24,7 @@ objects:
   Namespace:         namespace.yaml
   NicCommon:         nic_common.yaml
   Path:              path.yaml
-  Qtree:             qtree.yaml
+#  Qtree:             qtree.yaml
   Rwctx:             rwctx.yaml
   SystemNode:        system_node.yaml
 #  TokenManager:      token_manager.yaml

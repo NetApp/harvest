@@ -115,6 +115,10 @@ var excludeCounters = []string{
 	"volume_top_files_",
 	// Based on the cluster upgrade, these metrics existence would be changed.
 	"cluster_software_",
+	"qtree_cifs_",
+	"qtree_nfs_",
+	"qtree_total_",
+	"qtree_internal_",
 }
 
 var flakyCounters = []string{

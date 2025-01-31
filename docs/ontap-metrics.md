@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Jan-17
+Creation Date : 2025-Jan-29
 ONTAP Version: 9.16.1
 ```
 ## Understanding the structure
@@ -10511,7 +10511,7 @@ Maximum amount of disk space, in kilobytes, allowed for the quota target (hard d
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/storage/quota/reports` | `space.hard_limit` | conf/rest/9.12.0/qtree.yaml |
+| REST | `api/storage/quota/reports` | `space.hard_limit` | conf/rest/9.12.0/quota.yaml |
 | ZAPI | `quota-report-iter` | `disk-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
 
 
@@ -10521,7 +10521,7 @@ Current amount of disk space, in kilobytes, used by the quota target.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/storage/quota/reports` | `space.used.total` | conf/rest/9.12.0/qtree.yaml |
+| REST | `api/storage/quota/reports` | `space.used.total` | conf/rest/9.12.0/quota.yaml |
 | ZAPI | `quota-report-iter` | `disk-used` | conf/zapi/cdot/9.8.0/qtree.yaml |
 
 
@@ -10531,7 +10531,7 @@ Current disk space used expressed as a percentage of hard disk limit.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/storage/quota/reports` | `space.used.hard_limit_percent` | conf/rest/9.12.0/qtree.yaml |
+| REST | `api/storage/quota/reports` | `space.used.hard_limit_percent` | conf/rest/9.12.0/quota.yaml |
 | ZAPI | `quota-report-iter` | `disk-used-pct-disk-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
 
 
@@ -10541,7 +10541,7 @@ Current disk space used expressed as a percentage of soft disk limit.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/storage/quota/reports` | `space.used.soft_limit_percent` | conf/rest/9.12.0/qtree.yaml |
+| REST | `api/storage/quota/reports` | `space.used.soft_limit_percent` | conf/rest/9.12.0/quota.yaml |
 | ZAPI | `quota-report-iter` | `disk-used-pct-soft-disk-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
 
 
@@ -10560,7 +10560,7 @@ Maximum number of files allowed for the quota target (hard files limit). The val
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/storage/quota/reports` | `files.hard_limit` | conf/rest/9.12.0/qtree.yaml |
+| REST | `api/storage/quota/reports` | `files.hard_limit` | conf/rest/9.12.0/quota.yaml |
 | ZAPI | `quota-report-iter` | `file-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
 
 
@@ -10570,7 +10570,7 @@ Current number of files used by the quota target.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/storage/quota/reports` | `files.used.total` | conf/rest/9.12.0/qtree.yaml |
+| REST | `api/storage/quota/reports` | `files.used.total` | conf/rest/9.12.0/quota.yaml |
 | ZAPI | `quota-report-iter` | `files-used` | conf/zapi/cdot/9.8.0/qtree.yaml |
 
 
@@ -10580,7 +10580,7 @@ Current number of files used expressed as a percentage of hard file limit.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/storage/quota/reports` | `files.used.hard_limit_percent` | conf/rest/9.12.0/qtree.yaml |
+| REST | `api/storage/quota/reports` | `files.used.hard_limit_percent` | conf/rest/9.12.0/quota.yaml |
 | ZAPI | `quota-report-iter` | `files-used-pct-file-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
 
 
@@ -10590,7 +10590,7 @@ Current number of files used expressed as a percentage of soft file limit.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/storage/quota/reports` | `files.used.soft_limit_percent` | conf/rest/9.12.0/qtree.yaml |
+| REST | `api/storage/quota/reports` | `files.used.soft_limit_percent` | conf/rest/9.12.0/quota.yaml |
 | ZAPI | `quota-report-iter` | `files-used-pct-soft-file-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
 
 
@@ -10600,7 +10600,7 @@ soft disk space limit, in kilobytes, for the quota target. The value is -1 if th
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/storage/quota/reports` | `space.soft_limit` | conf/rest/9.12.0/qtree.yaml |
+| REST | `api/storage/quota/reports` | `space.soft_limit` | conf/rest/9.12.0/quota.yaml |
 | ZAPI | `quota-report-iter` | `soft-disk-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
 
 
@@ -10610,7 +10610,7 @@ Soft file limit, in number of files, for the quota target. The value is -1 if th
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/storage/quota/reports` | `files.soft_limit` | conf/rest/9.12.0/qtree.yaml |
+| REST | `api/storage/quota/reports` | `files.soft_limit` | conf/rest/9.12.0/quota.yaml |
 | ZAPI | `quota-report-iter` | `soft-file-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
 
 
@@ -10621,7 +10621,7 @@ Disk space threshold, in kilobytes, for the quota target. The value is -1 if the
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | ZAPI | `quota-report-iter` | `threshold` | conf/zapi/cdot/9.8.0/qtree.yaml |
-| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/qtree.yaml |
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/quota.yaml |
 
 
 ### raid_disk_busy

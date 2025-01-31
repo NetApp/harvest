@@ -73,13 +73,30 @@
   ],
   "panels": [
     {
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 131,
+      "options": {
+        "content": "This dashboard requires enabling a qtree template. <br>Please see [How to enable qtree templates](https://github.com/NetApp/harvest/discussions/3446) for more details. Enabling `qtree.yaml` may slow down data collection.",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.1.8",
+      "title": "Important Information about Qtree dashboard",
+      "type": "text"
+    },
+    {
       "collapsed": false,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 3
       },
       "id": 121,
       "panels": [],
@@ -145,7 +162,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 1
+        "y": 4
       },
       "id": 92,
       "links": [],
@@ -235,7 +252,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 1
+        "y": 4
       },
       "id": 120,
       "links": [],
@@ -327,7 +344,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 11
+        "y": 14
       },
       "id": 122,
       "links": [],
@@ -419,7 +436,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 11
+        "y": 14
       },
       "id": 123,
       "links": [],
@@ -459,7 +476,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 21
+        "y": 24
       },
       "id": 128,
       "panels": [
@@ -988,5 +1005,5 @@
   "timezone": "",
   "title": "ONTAP: Qtree",
   "uid": "cdot-qtree",
-  "version": 8
+  "version": 9
 }
