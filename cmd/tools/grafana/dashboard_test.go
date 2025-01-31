@@ -687,6 +687,7 @@ var exceptionToAll = map[string]bool{
 
 func checkVariablesHaveAll(t *testing.T, path string, data []byte) {
 	shouldHaveAll := map[string]bool{
+		"Datacenter":  true,
 		"Cluster":     true,
 		"Node":        true,
 		"Volume":      true,

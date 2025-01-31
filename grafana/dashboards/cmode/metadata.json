@@ -3170,7 +3170,7 @@
         "type": "datasource"
       },
       {
-        "allValue": null,
+        "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(metadata_target_status, datacenter)",
