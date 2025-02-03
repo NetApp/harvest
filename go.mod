@@ -5,7 +5,7 @@ go 1.23
 require (
 	github.com/google/go-cmp v0.6.0
 	github.com/rivo/uniseg v0.4.7
-	github.com/shirou/gopsutil/v4 v4.24.12
+	github.com/shirou/gopsutil/v4 v4.25.1
 	github.com/spf13/cobra v1.8.1
 	github.com/tidwall/match v1.1.1
 	github.com/tidwall/pretty v1.2.1
@@ -18,7 +18,7 @@ require (
 )
 
 require (
-	github.com/ebitengine/purego v0.8.1 // indirect
+	github.com/ebitengine/purego v0.8.2 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/lufia/plan9stats v0.0.0-20240909124753-873cd0166683 // indirect
