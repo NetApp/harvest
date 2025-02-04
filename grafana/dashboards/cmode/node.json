@@ -1859,7 +1859,7 @@
               "exemplar": false,
               "expr": "nic_util_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} \n  and \ntopk($TopResources, avg_over_time(nic_util_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}[3h] @ end()))",
               "interval": "",
-              "legendFormat": "{{cluster}} - {{svm}} - {{node}} - {{nic}}",
+              "legendFormat": "{{cluster}} - {{node}} - {{nic}}",
               "refId": "A"
             }
           ],
