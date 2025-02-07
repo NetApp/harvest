@@ -99,7 +99,7 @@
       },
       "id": 91,
       "options": {
-        "content": "Workload volume metrics are more useful for NAS and detailed view would be available in QoS row. <br>Refer ONTAP Performance - https://kb.netapp.com/on-prem/ontap/Perf/Perf-KBs/What_is_the_difference_in_latency_of_the_same_volume_between_statistics_volume_show_and_qos_statistics_volume_latency_show_commands",
+        "content": "Volume latencies are missing some latencies from NAS protocols. Use the workload volume metrics in the QoS row for a more detailed breakdown. <br>[Details in ONTAP Performance KB article](https://kb.netapp.com/on-prem/ontap/Perf/Perf-KBs/What_is_the_difference_in_latency_of_the_same_volume_between_statistics_volume_show_and_qos_statistics_volume_latency_show_commands)",
         "mode": "markdown"
       },
       "pluginVersion": "8.1.8",
@@ -2142,6 +2142,22 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "gridPos": {
+            "h": 2,
+            "w": 24,
+            "x": 0,
+            "y": 0
+          },
+          "id": 131,
+          "options": {
+            "content": "Volume latencies are missing some latencies from NAS protocols. Use the workload volume metrics in the QoS row for a more detailed breakdown. <br>[Details in ONTAP Performance KB article](https://kb.netapp.com/on-prem/ontap/Perf/Perf-KBs/What_is_the_difference_in_latency_of_the_same_volume_between_statistics_volume_show_and_qos_statistics_volume_latency_show_commands)",
+            "mode": "markdown"
+          },
+          "pluginVersion": "8.1.8",
+          "type": "text"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Average latency in microseconds for the WAFL filesystem to process read request to the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
@@ -3901,7 +3917,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This is the workload&apos;s write operations that completed during the measurement interval; measured per second.",
+          "description": "This is the rate of this workload&apos;s other operations that completed during the measurement interval.",
           "fieldConfig": {
             "defaults": {
               "color": {
