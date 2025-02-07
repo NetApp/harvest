@@ -2910,7 +2910,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel displays detail of array of counts of different types of Consistency Points (CP) and average latency in microseconds for the WAFL filesystem to process write request to the volume.",
+          "description": "This panel displays details of the counts of two types of Consistency Points (CP) and the average latency in microseconds for the WAFL filesystem to process write requests to the volume.\n\n- **Back-to-Back CP (back_to_back_CP)**: For more information, see [Write Performance Impacted by Back to Back Consistency Points](https://kb.netapp.com/on-prem/ontap/Perf/Perf-KBs/Write_Performance_Impacted_by_Back_to_Back_Consistency_Points).\n- **Deferred Back-to-Back CP (deferred_back_to_back_CP)**: For more information, see [What are the different Consistency Point types and how are they measured](https://kb.netapp.com/on-prem/ontap/Perf/Perf-KBs/What_are_the_different_Consistency_Point_types_and_how_are_they_measured).",
           "fieldConfig": {
             "defaults": {
               "color": {
