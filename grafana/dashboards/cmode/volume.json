@@ -3356,7 +3356,7 @@
               "exemplar": false,
               "expr": "qos_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",volume!=\"\"}\nand on (datacenter, cluster, svm, volume)\ntopk($TopResources, avg_over_time(qos_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",volume!=\"\"}[3h] @ end()) * on (datacenter, cluster, svm, volume) group_left() volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",tags=~\".*$Tag.*\"})",
               "interval": "",
-              "legendFormat": "{{svm}} - {{volume}}",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -3447,7 +3447,7 @@
               "exemplar": false,
               "expr": "(\n    qos_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",volume!=\"\"} \n    +\n    qos_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",volume!=\"\"}\n)\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(qos_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",volume!=\"\"}[3h] @ end()) * on (datacenter, cluster, svm, volume) group_left() volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",tags=~\".*$Tag.*\"} \n        + avg_over_time(qos_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",volume!=\"\"}[3h] @ end()) * on (datacenter, cluster, svm, volume) group_left() volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",tags=~\".*$Tag.*\"}\n    )\n)",
               "interval": "",
-              "legendFormat": "{{svm}} - {{volume}}",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
@@ -3539,7 +3539,7 @@
               "exemplar": false,
               "expr": "qos_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",volume!=\"\"}\nand on (datacenter, cluster, svm, volume)\ntopk($TopResources, avg_over_time(qos_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",volume!=\"\"}[3h] @ end()) * on (datacenter, cluster, svm, volume) group_left() volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",tags=~\".*$Tag.*\"})",
               "interval": "",
-              "legendFormat": "{{svm}} - {{volume}}",
+              "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
             }
           ],
