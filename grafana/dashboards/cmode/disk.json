@@ -3028,10 +3028,10 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(wafl_cp_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",metric=~\"back_to_back_CP|deferred_back_to_back_CP|back_to_back_cp|deferred_back_to_back_cp\"})",
+              "expr": "sum by (datacenter, cluster, node) (wafl_cp_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",metric=~\"back_to_back_CP|deferred_back_to_back_CP|back_to_back_cp|deferred_back_to_back_cp\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Back-to-back CP Count",
+              "legendFormat": "Back-to-back CP Count {{node}}",
               "refId": "A"
             },
             {
