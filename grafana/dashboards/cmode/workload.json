@@ -100,14 +100,14 @@
     {
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
-        "h": 5,
+        "h": 2,
         "w": 24,
         "x": 0,
         "y": 1
       },
       "id": 107,
       "options": {
-        "content": "This dashboard requires Workload/QOS counter templates. They are disabled by default because they typically slow down data collection due to a high number of metrics. Two actions are required to use this dashboard: <br>\n1. If you are using the ZapiPerf collector, then you must enable the Workload/QOS counters in $HARVEST/conf/zapiperf/default.yaml. <br>\n2. If you are using the RestPerf Collector, then you must enable the Workload/QOS counters in $HARVEST/conf/restperf/default.yaml. <br>\n3. Please enable the `workload.yaml` and `workload_volume.yaml` templates.\n\n\nMore information about [ONTAP Performance](https://kb.netapp.com/Advice_and_Troubleshooting/Data_Storage_Software/ONTAP_OS/ONTAP_9_Performance_-_Resolution_Guide).",
+        "content": "This dashboard requires Workload/QOS counter templates. <br>More information about [ONTAP Performance Guide](https://kb.netapp.com/Advice_and_Troubleshooting/Data_Storage_Software/ONTAP_OS/ONTAP_9_Performance_-_Resolution_Guide) and [Details in ONTAP Performance KB article](https://kb.netapp.com/on-prem/ontap/Perf/Perf-KBs/What_is_the_difference_in_latency_of_the_same_volume_between_statistics_volume_show_and_qos_statistics_volume_latency_show_commands).",
         "mode": "markdown"
       },
       "pluginVersion": "8.1.8",
