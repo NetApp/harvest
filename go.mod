@@ -10,9 +10,9 @@ require (
 	github.com/tidwall/match v1.1.1
 	github.com/tidwall/pretty v1.2.1
 	github.com/zekroTJA/timedmap/v2 v2.0.0
-	golang.org/x/sys v0.29.0
-	golang.org/x/term v0.28.0
-	golang.org/x/text v0.21.0
+	golang.org/x/sys v0.30.0
+	golang.org/x/term v0.29.0
+	golang.org/x/text v0.22.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gopkg.in/yaml.v3 v3.0.1
 )
