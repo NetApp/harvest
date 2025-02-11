@@ -150,6 +150,12 @@ func (c *ClusterSoftware) handleUpdateDetails(updateDetailsJSON gjson.Result, gl
 		state := updateDetail.Get("state").ClonedString()
 		elapsedDuration := updateDetail.Get("elapsed_duration").ClonedString()
 		nodeName := updateDetail.Get("node.name").ClonedString()
+
+		// If nodeName is empty the skip further processing
+		if nodeName == "" {
+			continue
+		}
+
 		key = phase + state + nodeName
 
 		if clusterUpdateInstance, err = c.data[updateMatrix].NewInstance(key); err != nil {
