@@ -1,6 +1,156 @@
 # Change Log
 ## [Releases](https://github.com/NetApp/harvest/releases)
 
+## 25.02.0 / 2025-02-11 Release
+:pushpin: Highlights of this major release include:
+## :star: New Features
+
+- :star: The Volume dashboard was updated to clarify that volume latencies are missing some latencies from NAS protocols. Use the workload volume metrics in the QoS row for a more detailed breakdown. Thanks to MatthiasS for reporting.
+
+- All Harvest dashboards default to Datacenter=All instead of the first datacenter in the list. Thanks to @roybatty2019 for reporting.
+
+- :ear_of_rice: Harvest `bin/grafana import`
+  - Supports nested Grafana folders. Thanks to @IvanZenger for reporting.
+  - Supports setting variables' default values during import. See [#3384](https://github.com/NetApp/harvest/issues/3384) for details. Thanks to @mamoep for reporting.
+
+- Harvest collects shelf firmware versions and shows them in the Shelf dashboard, Module row. Thanks to @summertony15 for reporting.
+
+- :star: Several of the existing dashboards include new panels in this release:
+  - The `Disk` dashboard includes a `Top Disk and Tape Drives Throughput by Host Adapter` panel. Thanks to Amir for reporting.
+  - The `Datacenter` and `Data Protection` dashboards were updated with data protection buckets and policy rows.
+
+- The volumes templates exclude transient volumes by default. Thanks to Yann for reporting.
+
+- :closed_book: Documentation additions
+  - Document [Podman Quadlet](https://netapp.github.io/harvest/nightly/install/quadlet/) as a deployment option. Thanks to ttlexceeded for reporting.
+  - Describe how to use a [Go binary as a credential script](https://github.com/NetApp/harvest/discussions/3380) for Harvest. Thanks to AdiZ for reporting.
+
+## :rocket: Performance Improvements
+
+- RestPerf collector uses less memory by streaming results.
+
+In case you missed the previous `24.11.1` dot release, here are the features included in it:
+
+## :rocket: Performance Improvements in 24.11.1
+
+- Significant memory footprint improvements for the REST collector. More details [here](https://github.com/NetApp/harvest/pull/3310#issue-2676698124). Thanks to @Ryan for reporting it.
+- Reduced memory footprint by using streaming in the REST collector.
+
+## :star: New Features in 24.11.1
+
+- Harvest supports Top files metrics collection. More details [here](https://github.com/NetApp/harvest/discussions/3130).
+- Volume and Cluster tags are supported via Volume and Cluster dashboards.
+- Field Replaceable Unit (FRU) details have been added to the power dashboard.
+- Track ONTAP image update progress for a cluster via the Cluster dashboard. Thanks to @knappmi for reporting it.
+- `prom_port` is now supported within the poller. More details [here](https://netapp.github.io/harvest/nightly/prometheus-exporter/#per-poller-prom_port).
+- We've fixed an intermittent latency/operations spike issue in the plugin-generated Harvest performance metrics. Thanks to @wooyoungAhn for reporting it.
+
+## Announcements
+
+:bangbang: **IMPORTANT** Harvest version 25.02.0 disables the out-of-the-box `Qtree` templates because of reported ONTAP slowdowns when collecting a large number of qtree objects. If you want to enable the Qtree templates, please see these [instructions](https://github.com/NetApp/harvest/discussions/3446).
+
+:bangbang: **IMPORTANT** Harvest version 25.02.0 removes the `WorkloadDetail` and `WorkloadDetailVolume` templates and all dashboard panels that use them. These templates are removed because they are expensive to collect and currently there is no way to collect them from ONTAP without introducing an unacceptable amount of skew in the results. See [#3423](https://github.com/NetApp/harvest/issues/3423) for details.
+
+:bangbang: **IMPORTANT** If using Docker Compose and you want to keep your historical Prometheus data, please read [how to migrate your Prometheus volume](https://github.com/NetApp/harvest/blob/main/docs/MigratePrometheusDocker.md)
+
+:bulb: **IMPORTANT** After upgrade, don't forget to re-import your dashboards, so you get all the new enhancements and fixes. You can import them via the 'bin/harvest grafana import' CLI, from the Grafana UI, or from the 'Maintenance > Reset Harvest Dashboards' button in NAbox3. For NAbox4, this step is not needed.
+
+## Known Issues
+
+:bulb: **IMPORTANT** FSx ZapiPerf workload collector fails to collect metrics, please use RestPerf instead.
+
+## Thanks to all the awesome contributors
+
+:metal: Thanks to all the people who've opened issues, asked questions on Discord, and contributed code or dashboards this release:
+
+@Falcon667, @IvanZenger, @cheese1, @embusalacchi, @mamoep, @roybatty2019, @summertony15, AdiZ, Amir, MatthiasS, Yann, ttlexceeded
+
+:seedling: This release includes 18 features, 22 bug fixes, 8 documentation, 1 performance, 1 refactoring, 6 miscellaneous, and 12 ci pull requests.
+
+### :rocket: Features
+- Hide Transient Volumes ([#3337](https://github.com/NetApp/harvest/pull/3337))
+- Adding Ifgrp Api To Fetch Ifgrp Labels In Net_port ([#3342](https://github.com/NetApp/harvest/pull/3342))
+- Adding Rwctx Template For Restperf In 9.16.0 ([#3349](https://github.com/NetApp/harvest/pull/3349))
+- Add Disk And Tape Drives Throughput By Host Adapter ([#3372](https://github.com/NetApp/harvest/pull/3372))
+- Adding The Bucket And Policy Rest Template ([#3374](https://github.com/NetApp/harvest/pull/3374))
+- Include Lun And Namespace Templates In Keyperf ([#3379](https://github.com/NetApp/harvest/pull/3379))
+- Dashboard Variables Set Default Value On Import ([#3399](https://github.com/NetApp/harvest/pull/3399))
+- Optimize Workload_detail And Workload_detail_volume Through Delay Center Filter ([#3406](https://github.com/NetApp/harvest/pull/3406))
+- Handled Empty Admin Svm In Plugin Call ([#3410](https://github.com/NetApp/harvest/pull/3410))
+- Support Metric For Module Type In Frus ([#3411](https://github.com/NetApp/harvest/pull/3411))
+- Harvest Grafana Import Should Support Nested Grafana Folders ([#3417](https://github.com/NetApp/harvest/pull/3417))
+- Remove Workload Detail Templates ([#3433](https://github.com/NetApp/harvest/pull/3433))
+- Add Streaming To Keyperf Collector ([#3435](https://github.com/NetApp/harvest/pull/3435))
+- Negative Metrics Spike Handling ([#3439](https://github.com/NetApp/harvest/pull/3439))
+- Disabled Qtree Perf Template And Update Docs ([#3445](https://github.com/NetApp/harvest/pull/3445))
+- Harvest Dashboards Should Default To Datacenter=All ([#3448](https://github.com/NetApp/harvest/pull/3448))
+- Update Qos Row In Volume Dashboard ([#3453](https://github.com/NetApp/harvest/pull/3453))
+- Improve Cp Summary In Disk Dashboard ([#3456](https://github.com/NetApp/harvest/pull/3456))
+
+### :bug: Bug Fixes
+- Include Instances Generated By Inbuilt Plugins In Plugininstances Log ([#3343](https://github.com/NetApp/harvest/pull/3343))
+- Handled Duplicate Key In Securityauditdestination ([#3348](https://github.com/NetApp/harvest/pull/3348))
+- Harvest Permissions Should Include Fru ([#3354](https://github.com/NetApp/harvest/pull/3354))
+- No Instances Handling In Rest Collector ([#3358](https://github.com/NetApp/harvest/pull/3358))
+- Rest No Instance Handling ([#3360](https://github.com/NetApp/harvest/pull/3360))
+- Don't Clear Performance Volume Cache When There Is An Error ([#3361](https://github.com/NetApp/harvest/pull/3361))
+- Failed To Find Scanner Instance In Cache Zapiperf ([#3366](https://github.com/NetApp/harvest/pull/3366))
+- Installation Broken On Debian 11 Bullseye ([#3368](https://github.com/NetApp/harvest/pull/3368))
+- Changed Var Label To Ne Null From Empty ([#3385](https://github.com/NetApp/harvest/pull/3385))
+- Update Snapshot Policy Endpoint ([#3391](https://github.com/NetApp/harvest/pull/3391))
+- Update Export Rule Endpoint ([#3392](https://github.com/NetApp/harvest/pull/3392))
+- Upgrade Golang.org/X/Net Due To Dependabot Alert ([#3395](https://github.com/NetApp/harvest/pull/3395))
+- Update Export Rule Endpoint ([#3396](https://github.com/NetApp/harvest/pull/3396))
+- Remove Redundant Label From Node Template ([#3404](https://github.com/NetApp/harvest/pull/3404))
+- Enable Request/Response Logging For Restperf ([#3408](https://github.com/NetApp/harvest/pull/3408))
+- Disable Cache To Avoid Cache Poisoning Attack ([#3409](https://github.com/NetApp/harvest/pull/3409))
+- Duplicate Time Series In Volume Dashboard ([#3418](https://github.com/NetApp/harvest/pull/3418))
+- Update Tr Link In Security Dashboard ([#3419](https://github.com/NetApp/harvest/pull/3419))
+- Typo ([#3425](https://github.com/NetApp/harvest/pull/3425))
+- Handle Only Labels In Zapi Snapshotpolicy ([#3444](https://github.com/NetApp/harvest/pull/3444))
+- "Top Ethernet Ports By Utilization %" Panel Legend Should Not In… ([#3451](https://github.com/NetApp/harvest/pull/3451))
+- Handle Cp Labels In Dashboard ([#3455](https://github.com/NetApp/harvest/pull/3455))
+
+### :closed_book: Documentation
+- Fix Release Announcements ([#3330](https://github.com/NetApp/harvest/pull/3330))
+- Keyperf Documentation ([#3345](https://github.com/NetApp/harvest/pull/3345))
+- Updating Doc For Custom.yaml ([#3352](https://github.com/NetApp/harvest/pull/3352))
+- Rest Endpoint Permissions ([#3359](https://github.com/NetApp/harvest/pull/3359))
+- Add Go Binary Steps For Credential Script ([#3381](https://github.com/NetApp/harvest/pull/3381))
+- Fix Alignment Of Template ([#3421](https://github.com/NetApp/harvest/pull/3421))
+- Document Podman Quadlet As A Deployment Option ([#3442](https://github.com/NetApp/harvest/pull/3442))
+- Add Description About Cp In Disk Dashboard ([#3454](https://github.com/NetApp/harvest/pull/3454))
+
+### :zap: Performance
+- Restperf Should Stream Results While Parsing ([#3356](https://github.com/NetApp/harvest/pull/3356))
+
+### Refactoring
+- Remove Openapi Dependency ([#3436](https://github.com/NetApp/harvest/pull/3436))
+
+### Miscellaneous
+- Merge 24.11.1 To Main ([#3328](https://github.com/NetApp/harvest/pull/3328))
+- Update Module Github.com/Shirou/Gopsutil/V4 To V4.24.11 ([#3347](https://github.com/NetApp/harvest/pull/3347))
+- Update All Dependencies ([#3365](https://github.com/NetApp/harvest/pull/3365))
+- Update All Dependencies ([#3407](https://github.com/NetApp/harvest/pull/3407))
+- Update All Dependencies ([#3450](https://github.com/NetApp/harvest/pull/3450))
+- Update All Dependencies ([#3457](https://github.com/NetApp/harvest/pull/3457))
+
+### :hammer: CI
+- Fix Go Vet Errors ([#3331](https://github.com/NetApp/harvest/pull/3331))
+- Add Misspell, Nakedret, And Predeclared Linter ([#3350](https://github.com/NetApp/harvest/pull/3350))
+- Bump Go ([#3351](https://github.com/NetApp/harvest/pull/3351))
+- Add Role Permissions Validation ([#3375](https://github.com/NetApp/harvest/pull/3375))
+- Enable More Linters ([#3413](https://github.com/NetApp/harvest/pull/3413))
+- Add Workflow Permissions At Codeql Recommendation ([#3426](https://github.com/NetApp/harvest/pull/3426))
+- Add Workflow Permissions At Codeql Recommendation ([#3427](https://github.com/NetApp/harvest/pull/3427))
+- Pin Actions To Sha ([#3428](https://github.com/NetApp/harvest/pull/3428))
+- Cheese1 Has Signed The Ccla ([#3429](https://github.com/NetApp/harvest/pull/3429))
+- Bump Go ([#3430](https://github.com/NetApp/harvest/pull/3430))
+- Ci-Local Requires Passing Admin Argument ([#3431](https://github.com/NetApp/harvest/pull/3431))
+- Bump Go ([#3452](https://github.com/NetApp/harvest/pull/3452))
+
+---
+
 ## 24.11.1 / 2024-11-25 Release
 :pushpin: Highlights of this major release include:
 ## :rocket: Performance Improvements
