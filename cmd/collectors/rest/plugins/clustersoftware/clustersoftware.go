@@ -151,7 +151,7 @@ func (c *ClusterSoftware) handleUpdateDetails(updateDetailsJSON gjson.Result, gl
 		elapsedDuration := updateDetail.Get("elapsed_duration").ClonedString()
 		nodeName := updateDetail.Get("node.name").ClonedString()
 
-		// If nodeName is empty the skip further processing
+		// If nodeName is empty then skip further processing
 		if nodeName == "" {
 			continue
 		}
