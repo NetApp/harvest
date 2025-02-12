@@ -8,7 +8,7 @@ replace github.com/netapp/harvest/v2 => ../
 
 require (
 	github.com/carlmjohnson/requests v0.24.3
-	github.com/netapp/harvest/v2 v2.0.0-20250123144738-8a798a1dbc9b
+	github.com/netapp/harvest/v2 v2.0.0-20250211135802-9be30067439d
 	golang.org/x/text v0.22.0
 )
 
@@ -23,13 +23,13 @@ require (
 	github.com/rogpeppe/go-internal v1.11.0 // indirect
 	github.com/shirou/gopsutil/v4 v4.25.1 // indirect
 	github.com/spf13/cobra v1.8.1 // indirect
-	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/spf13/pflag v1.0.6 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
 	github.com/tklauser/go-sysconf v0.3.14 // indirect
 	github.com/tklauser/numcpus v0.9.0 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
-	golang.org/x/net v0.34.0 // indirect
+	golang.org/x/net v0.35.0 // indirect
 	golang.org/x/sys v0.30.0 // indirect
 	golang.org/x/term v0.29.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
