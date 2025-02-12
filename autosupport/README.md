@@ -2221,7 +2221,6 @@ An example payload sent by Harvest looks like this. You can see exactly what Har
      "ipspace.name",
      "scope",
      "ssl_enabled",
-     "access_key",
      "port",
      "provider_type",
      "server",

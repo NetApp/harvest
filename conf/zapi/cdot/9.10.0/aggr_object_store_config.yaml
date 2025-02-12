@@ -6,7 +6,6 @@ object:             cloud_target
 counters:
   aggr-object-store-config-info:
     - ^^object-store-uuid                => uuid
-    - ^access-key                        => access_key
     - ^auth-type                         => authentication_type
     - ^ipspace                           => ipspace
     - ^is-certificate-validation-enabled => certificate_validation_enabled
@@ -24,7 +23,6 @@ export_options:
     - name
     - server
   instance_labels:
-    - access_key
     - authentication_type
     - certificate_validation_enabled
     - ipspace
