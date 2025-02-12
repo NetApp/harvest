@@ -337,7 +337,6 @@ func newRequest() *requests.Builder {
 		AddValidator(func(response *http.Response) error {
 			if response.StatusCode >= 400 {
 				var ontapErr models.OntapError
-				//nolint:bodyclose
 				err := requests.ToJSON(&ontapErr)(response)
 				if err != nil {
 					return err
