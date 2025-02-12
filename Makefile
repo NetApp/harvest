@@ -4,7 +4,7 @@
 .PHONY: help deps clean build test fmt lint package asup dev fetch-asup ci
 
 SHELL := /bin/bash
-REQUIRED_GO_VERSION := 1.23
+REQUIRED_GO_VERSION := 1.24
 GOLANGCI_LINT_VERSION := latest
 GOVULNCHECK_VERSION := latest
 ifneq (, $(shell which go))
