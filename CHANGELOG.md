@@ -69,7 +69,7 @@ In case you missed the previous `24.11.1` dot release, here are the features inc
 
 @Falcon667, @IvanZenger, @cheese1, @embusalacchi, @mamoep, @roybatty2019, @summertony15, AdiZ, Amir, MatthiasS, Yann, ttlexceeded
 
-:seedling: This release includes 18 features, 22 bug fixes, 8 documentation, 1 performance, 1 refactoring, 6 miscellaneous, and 12 ci pull requests.
+:seedling: This release includes 18 features, 23 bug fixes, 8 documentation, 1 performance, 1 refactoring, 6 miscellaneous, and 12 ci pull requests.
 
 ### :rocket: Features
 - Hide Transient Volumes ([#3337](https://github.com/NetApp/harvest/pull/3337))
@@ -114,6 +114,7 @@ In case you missed the previous `24.11.1` dot release, here are the features inc
 - Handle Only Labels In Zapi Snapshotpolicy ([#3444](https://github.com/NetApp/harvest/pull/3444))
 - "Top Ethernet Ports By Utilization %" Panel Legend Should Not In… ([#3451](https://github.com/NetApp/harvest/pull/3451))
 - Handle Cp Labels In Dashboard ([#3455](https://github.com/NetApp/harvest/pull/3455))
+- Cloud Target Template Should Not Export Access_Key ([#3470](https://github.com/NetApp/harvest/pull/3470))
 
 ### :closed_book: Documentation
 - Fix Release Announcements ([#3330](https://github.com/NetApp/harvest/pull/3330))
