@@ -43,7 +43,6 @@ linters:
     - sloglint
     - staticcheck
     - stylecheck
-    - tenv
     - testableexamples
     - testifylint
     - thelper
