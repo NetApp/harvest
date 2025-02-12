@@ -9,6 +9,8 @@
 
 - All Harvest dashboards default to Datacenter=All instead of the first datacenter in the list. Thanks to @roybatty2019 for reporting.
 
+- Harvest provides a [FIPS 140-3 compliant](https://go.dev/doc/security/fips140) container image, available as a separate image at `ghcr.io/netapp/harvest:24.08.0-1-fips`. 
+
 - :ear_of_rice: Harvest `bin/grafana import`
   - Supports nested Grafana folders. Thanks to @IvanZenger for reporting.
   - Supports setting variables' default values during import. See [#3384](https://github.com/NetApp/harvest/issues/3384) for details. Thanks to @mamoep for reporting.
