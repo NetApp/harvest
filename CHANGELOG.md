@@ -21,6 +21,8 @@
 
 - The volumes templates exclude transient volumes by default. Thanks to Yann for reporting.
 
+- Harvest collects rewind context (rwctx) metrics for ONTAP 9.16.0 and later. Thanks to @shawnahall71 for reporting.
+
 - :closed_book: Documentation additions
   - Document [Podman Quadlet](https://netapp.github.io/harvest/nightly/install/quadlet/) as a deployment option. Thanks to ttlexceeded for reporting.
   - Describe how to use a [Go binary as a credential script](https://github.com/NetApp/harvest/discussions/3380) for Harvest. Thanks to AdiZ for reporting.
