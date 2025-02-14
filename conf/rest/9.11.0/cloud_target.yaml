@@ -5,7 +5,6 @@ object:             cloud_target
   
 counters:
   - ^^uuid                          => uuid
-  - ^access_key                     => access_key
   - ^authentication_type            => authentication_type
   - ^certificate_validation_enabled => certificate_validation_enabled
   - ^container                      => container
@@ -24,7 +23,6 @@ export_options:
     - name
     - server
   instance_labels:
-    - access_key
     - authentication_type
     - certificate_validation_enabled
     - ipspace

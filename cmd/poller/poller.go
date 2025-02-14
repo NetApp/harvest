@@ -26,6 +26,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"crypto/fips140"
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/json"
@@ -233,6 +234,7 @@ func (p *Poller) Init() error {
 		slog.String("configPath", configPath),
 		slog.String("cwd", getwd),
 		slog.String("version", strings.TrimSpace(version.String())),
+		slog.Bool("fips", fips140.Enabled()),
 		slog.Any("options", p.options),
 	)
 
