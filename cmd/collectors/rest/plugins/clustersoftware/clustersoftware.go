@@ -157,11 +157,15 @@ func (c *ClusterSoftware) handleUpdateDetails(updateDetailsJSON gjson.Result, gl
 		}
 
 		key = phase + state + nodeName
+		clusterUpdateInstance = c.data[updateMatrix].GetInstance(key)
 
-		if clusterUpdateInstance, err = c.data[updateMatrix].NewInstance(key); err != nil {
-			c.SLogger.Error("Failed to create instance", slogx.Err(err), slog.String("key", key))
-			continue
+		if clusterUpdateInstance == nil {
+			if clusterUpdateInstance, err = c.data[updateMatrix].NewInstance(key); err != nil {
+				c.SLogger.Error("Failed to create instance", slogx.Err(err), slog.String("key", key))
+				continue
+			}
 		}
+
 		clusterUpdateInstance.SetLabel("node", nodeName)
 		clusterUpdateInstance.SetLabel("state", state)
 		clusterUpdateInstance.SetLabel("phase", phase)
@@ -200,11 +204,14 @@ func (c *ClusterSoftware) handleStatusDetails(statusDetailsJSON gjson.Result, gl
 		state := updateDetail.Get("state").ClonedString()
 		nodeName := updateDetail.Get("node.name").ClonedString()
 		key = name + state + nodeName
-
-		if clusterStatusInstance, err = c.data[statusMatrix].NewInstance(key); err != nil {
-			c.SLogger.Error("Failed to create instance", slogx.Err(err), slog.String("key", key))
-			continue
+		clusterStatusInstance = c.data[statusMatrix].GetInstance(key)
+		if clusterStatusInstance == nil {
+			if clusterStatusInstance, err = c.data[statusMatrix].NewInstance(key); err != nil {
+				c.SLogger.Error("Failed to create instance", slogx.Err(err), slog.String("key", key))
+				continue
+			}
 		}
+
 		clusterStatusInstance.SetLabel("node", nodeName)
 		clusterStatusInstance.SetLabel("state", state)
 		clusterStatusInstance.SetLabel("name", name)
@@ -242,10 +249,14 @@ func (c *ClusterSoftware) handleValidationDetails(validationDetailsJSON gjson.Re
 		status := updateDetail.Get("status").ClonedString()
 		key = updateCheck + status
 
-		if clusterValidationInstance, err = c.data[validationMatrix].NewInstance(key); err != nil {
-			c.SLogger.Error("Failed to create instance", slogx.Err(err), slog.String("key", key))
-			continue
+		clusterValidationInstance = c.data[validationMatrix].GetInstance(key)
+		if clusterValidationInstance == nil {
+			if clusterValidationInstance, err = c.data[validationMatrix].NewInstance(key); err != nil {
+				c.SLogger.Error("Failed to create instance", slogx.Err(err), slog.String("key", key))
+				continue
+			}
 		}
+
 		clusterValidationInstance.SetLabel("update_check", updateCheck)
 		clusterValidationInstance.SetLabel("status", status)
 
