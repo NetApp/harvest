@@ -1,0 +1,12 @@
+name:               AuditLog
+query:              api/cluster
+object:             audit
+
+counters:
+  - ^^uuid
+  - ^name
+
+plugins:
+  - AuditLog
+
+export_data: false

@@ -67,6 +67,7 @@ var restCounterMap = map[string]struct{}{
 var excludeCounters = []string{
 	"aggr_physical_",
 	"change_log",
+	"audit_log",
 	"cifs_session",
 	"cluster_peer",
 	"efficiency_savings",
