@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/aggregate"
+	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/auditlog"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/certificate"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/cluster"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/clusterschedule"
@@ -472,6 +473,8 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 	switch kind {
 	case "Aggregate":
 		return aggregate.New(abc)
+	case "AuditLog":
+		return auditlog.New(abc)
 	case "Cluster":
 		return cluster.New(abc)
 	case "ClusterSchedule":

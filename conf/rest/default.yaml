@@ -11,6 +11,7 @@ schedule:
 objects:
   Aggregate:                   aggr.yaml
   AggregateEfficiency:         aggr_efficiency.yaml
+#  AuditLog:                    audit_log.yaml
 # The CIFSSession template may slow down data collection due to a high number of metrics.
 #  CIFSSession:                 cifs_session.yaml
 #  CIFSShare:                    cifs_share.yaml
