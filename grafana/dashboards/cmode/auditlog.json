@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1739796842503,
+  "iteration": 1739889087590,
   "links": [
     {
       "asDropdown": true,
@@ -334,7 +334,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Time"
+              "options": "ClusterTime"
             },
             "properties": [
               {
@@ -518,7 +518,7 @@
         {
           "id": "calculateField",
           "options": {
-            "alias": "Time",
+            "alias": "ClusterTime",
             "binary": {
               "left": "Value #A",
               "operator": "*",
@@ -537,7 +537,6 @@
           "options": {
             "include": {
               "names": [
-                "Time",
                 "application",
                 "cluster",
                 "datacenter",
@@ -546,7 +545,8 @@
                 "svm",
                 "user",
                 "volume",
-                "Value #B"
+                "Value #A",
+                "ClusterTime"
               ]
             }
           }
@@ -568,27 +568,26 @@
               "volume 2": true
             },
             "indexByName": {
-              "Time": 0,
-              "Time 2": 10,
-              "Time 3": 18,
-              "Value #B": 9,
+              "ClusterTime": 0,
+              "Value #A": 16,
               "application": 8,
-              "application 2": 11,
+              "application 2": 9,
               "cluster": 2,
-              "cluster 2": 12,
+              "cluster 2": 10,
               "datacenter": 1,
-              "datacenter 2": 13,
+              "datacenter 2": 11,
               "location": 7,
-              "location 2": 14,
+              "location 2": 12,
               "op": 5,
-              "op 2": 15,
+              "op 2": 13,
               "svm": 3,
               "user": 6,
-              "user 2": 16,
+              "user 2": 14,
               "volume": 4,
-              "volume 2": 17
+              "volume 2": 15
             },
             "renameByName": {
+              "ClusterTime": "Cluster Time",
               "Value #B": "Count",
               "application": "Application",
               "op": "OP",
@@ -717,5 +716,5 @@
   "timezone": "",
   "title": "ONTAP: AuditLog",
   "uid": "cdot-auditlog",
-  "version": 1
+  "version": 27
 }
