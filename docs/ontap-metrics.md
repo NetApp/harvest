@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Feb-12
+Creation Date : 2025-Feb-18
 ONTAP Version: 9.16.1
 ```
 ## Understanding the structure
@@ -11368,6 +11368,56 @@ The number of successful SnapMirror break operations for the relationship
 |--------|----------|--------|---------|
 | REST | `api/private/cli/snapmirror` | `break_successful_count` | conf/rest/9.12.0/snapmirror.yaml |
 | ZAPI | `snapmirror-get-iter` | `snapmirror-info.break-successful-count` | conf/zapi/cdot/9.8.0/snapmirror.yaml |
+
+
+### snapmirror_history_bandwidth
+
+Displays the bandwidth of the snapmirror data transfer job.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.6.0/snapmirrorhistory.yaml |
+| ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/snapmirrorhistory.yaml |
+
+
+### snapmirror_history_duration
+
+Displays the duration of the snapmirror data transfer job.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.6.0/snapmirrorhistory.yaml |
+| ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/snapmirrorhistory.yaml |
+
+
+### snapmirror_history_end_time
+
+Displays the time at which the snapmirror data transfer job ended.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/snapmirror/show-history` | `end_time` | conf/rest/9.6.0/snapmirrorhistory.yaml |
+| ZAPI | `snapmirror-history-get-iter` | `snapmirror-history-info.end-time` | conf/zapi/cdot/9.8.0/snapmirrorhistory.yaml |
+
+
+### snapmirror_history_start_time
+
+Displays the time at which the snapmirror data transfer job started.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/snapmirror/show-history` | `start_time` | conf/rest/9.6.0/snapmirrorhistory.yaml |
+| ZAPI | `snapmirror-history-get-iter` | `snapmirror-history-info.start-time` | conf/zapi/cdot/9.8.0/snapmirrorhistory.yaml |
+
+
+### snapmirror_history_transfer_size
+
+Displays the amount of data (in bytes) being transferred from source to destination in the snapmirror job.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/snapmirror/show-history` | `transfer_size` | conf/rest/9.6.0/snapmirrorhistory.yaml |
+| ZAPI | `snapmirror-history-get-iter` | `snapmirror-history-info.transfer-size` | conf/zapi/cdot/9.8.0/snapmirrorhistory.yaml |
 
 
 ### snapmirror_lag_time
