@@ -35,6 +35,7 @@ objects:
   Sensor:                      sensor.yaml
   Shelf:                       shelf.yaml
   SnapMirror:                  snapmirror.yaml
+  SnapMirrorHistory:           snapmirrorhistory.yaml
   SnapshotPolicy:              snapshotpolicy.yaml
   Status:                      status.yaml
   Status_7mode:                status_7.yaml
