@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1739889087590,
+  "iteration": 1739889087593,
   "links": [
     {
       "asDropdown": true,
@@ -557,6 +557,7 @@
             "excludeByName": {
               "Time 2": true,
               "Time 3": true,
+              "Value #A": true,
               "application 2": true,
               "cluster 2": true,
               "datacenter 2": true,
@@ -716,5 +717,5 @@
   "timezone": "",
   "title": "ONTAP: AuditLog",
   "uid": "cdot-auditlog",
-  "version": 27
+  "version": 1
 }
