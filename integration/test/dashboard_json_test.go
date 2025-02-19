@@ -302,21 +302,23 @@ func counterIsMissing(flavor string, counter string, waitFor time.Duration) bool
 	return !hasDataInDB(query, waitFor)
 }
 
-func shouldIgnoreCounter(counter string, flavor string) bool {
+func shouldIgnoreCounter(counter, flavor string) bool {
 	if counter == "" {
 		return true
 	}
-	if flavor == zapi {
+
+	switch flavor {
+	case zapi:
 		if _, ok := zapiCounterMap[counter]; ok {
 			return true
 		}
-	} else if flavor == rest {
+	case rest:
 		for k := range restCounterMap {
 			if strings.Contains(counter, k) {
 				return true
 			}
 		}
-	} else {
+	default:
 		for _, pattern := range excludeCounters {
 			if strings.Contains(counter, pattern) {
 				return true
