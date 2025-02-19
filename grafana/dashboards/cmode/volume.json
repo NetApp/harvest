@@ -379,7 +379,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "volume_avg_latency{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n  $TopResources,\n  (\n    avg_over_time(volume_avg_latency{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n    * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n      max by (datacenter, cluster, svm, volume, node) (\n        volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n      )\n    )\n  )\n)",
+          "expr": "volume_avg_latency{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n  $TopResources,\n  (\n    avg_over_time(volume_avg_latency{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n    * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n      max by (datacenter, cluster, svm, volume, node) (\n        volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n      )\n    )\n  )\n)",
           "interval": "",
           "legendFormat": "{{svm}} - {{volume}}",
           "refId": "A"
@@ -2601,7 +2601,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_write_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_write_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "volume_write_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_write_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
               "refId": "A"
@@ -2693,7 +2693,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_other_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_other_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "volume_other_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_other_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
               "refId": "A"
@@ -2784,7 +2784,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "volume_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "interval": "",
               "intervalFactor": 1,
               "legendFormat": "{{svm}} - {{volume}}",
@@ -2876,7 +2876,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "volume_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
               "refId": "A"
@@ -3354,7 +3354,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_latency{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(qos_latency{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left()\n        (\n            max by (datacenter, cluster, svm, volume) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "qos_latency{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(qos_latency{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left()\n        (\n            max by (datacenter, cluster, svm, volume) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
@@ -3445,7 +3445,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(\n    qos_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"} \n    +\n    qos_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}\n)\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(qos_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left()\n        (\n            max by (datacenter, cluster, svm, volume) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n        +\n        avg_over_time(qos_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left()\n        (\n            max by (datacenter, cluster, svm, volume) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "(\n    qos_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"} \n    +\n    qos_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}\n)\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(qos_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left()\n        (\n            max by (datacenter, cluster, svm, volume) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n        +\n        avg_over_time(qos_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left()\n        (\n            max by (datacenter, cluster, svm, volume) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
@@ -3537,7 +3537,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left()\n        (\n            max by (datacenter, cluster, svm, volume) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left()\n        (\n            max by (datacenter, cluster, svm, volume) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
@@ -3812,7 +3812,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_read_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(qos_read_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left()\n        (\n            max by (datacenter, cluster, svm, volume) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "qos_read_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(qos_read_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left()\n        (\n            max by (datacenter, cluster, svm, volume) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
@@ -3904,7 +3904,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_write_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(qos_write_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left()\n        (\n            max by (datacenter, cluster, svm, volume) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "qos_write_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(qos_write_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left()\n        (\n            max by (datacenter, cluster, svm, volume) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
@@ -3996,7 +3996,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_other_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(qos_other_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left()\n        (\n            max by (datacenter, cluster, svm, volume) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "qos_other_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(qos_other_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left()\n        (\n            max by (datacenter, cluster, svm, volume) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
@@ -4087,7 +4087,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(qos_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left()\n        (\n            max by (datacenter, cluster, svm, volume) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "qos_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(qos_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left()\n        (\n            max by (datacenter, cluster, svm, volume) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
@@ -4178,7 +4178,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(qos_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left()\n        (\n            max by (datacenter, cluster, svm, volume) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "qos_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(qos_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left()\n        (\n            max by (datacenter, cluster, svm, volume) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
@@ -4271,7 +4271,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_sequential_reads{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(qos_sequential_reads{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left()\n        (\n            max by (datacenter, cluster, svm, volume) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "qos_sequential_reads{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(qos_sequential_reads{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left()\n        (\n            max by (datacenter, cluster, svm, volume) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
@@ -4364,7 +4364,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_sequential_writes{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(qos_sequential_writes{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left()\n        (\n            max by (datacenter, cluster, svm, volume) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "qos_sequential_writes{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(qos_sequential_writes{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", volume!=\"\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left()\n        (\n            max by (datacenter, cluster, svm, volume) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "interval": "",
               "legendFormat": "{{svm}} / {{workload}} / {{volume}}",
               "refId": "A"
@@ -4470,7 +4470,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(\n  volume_total_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\n  / on (datacenter, cluster, svm, volume)\n  clamp_min(\n    volume_space_logical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"} / 1099511627776,\n    1\n  )\n)\nand on (datacenter, cluster, svm, volume)\ntopk(\n  $TopResources,\n  (\n    avg_over_time(\n      volume_total_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h]\n    ) * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n      max by (datacenter, cluster, svm, volume, node) (\n        volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n      )\n    )\n    /\n    clamp_min(\n      avg_over_time(\n        volume_space_logical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h]\n      ) * on (datacenter, cluster, svm, volume) group_left(node)\n      (\n        max by (datacenter, cluster, svm, volume, node) (\n          volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n        )\n      ) / 1099511627776,\n      1\n    )\n  )\n)\nunless on (datacenter, cluster, svm, volume)\nvolume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", root_volume=\"Yes\", style!=\"flexgroup_constituent\"}",
+              "expr": "(\n  volume_total_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\n  / on (datacenter, cluster, svm, volume)\n  clamp_min(\n    volume_space_logical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"} / 1099511627776,\n    1\n  )\n)\nand on (datacenter, cluster, svm, volume)\ntopk(\n  $TopResources,\n  (\n    avg_over_time(\n      volume_total_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end()\n    ) * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n      max by (datacenter, cluster, svm, volume, node) (\n        volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n      )\n    )\n    /\n    clamp_min(\n      avg_over_time(\n        volume_space_logical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end()\n      ) * on (datacenter, cluster, svm, volume) group_left(node)\n      (\n        max by (datacenter, cluster, svm, volume, node) (\n          volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n        )\n      ) / 1099511627776,\n      1\n    )\n  )\n)\nunless on (datacenter, cluster, svm, volume)\nvolume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", root_volume=\"Yes\", style!=\"flexgroup_constituent\"}",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
               "refId": "A"
@@ -4562,7 +4562,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(\n  volume_total_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\n  / on (datacenter, cluster, svm, volume)\n  clamp_min(\n    volume_space_logical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"} / 1099511627776,\n    1\n  )\n)\nand on (datacenter, cluster, svm, volume)\nbottomk(\n  $TopResources,\n  (\n    avg_over_time(\n      volume_total_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h]\n    ) * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n      max by (datacenter, cluster, svm, volume, node) (\n        volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n      )\n    )\n    /\n    clamp_min(\n      avg_over_time(\n        volume_space_logical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h]\n      ) * on (datacenter, cluster, svm, volume) group_left(node)\n      (\n        max by (datacenter, cluster, svm, volume, node) (\n          volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n        )\n      ) / 1099511627776,\n      1\n    )\n  )\n  and on (datacenter, cluster, svm, volume)\n  (\n    volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", root_volume!=\"Yes\", style!=\"flexgroup_constituent\"}\n    * on (datacenter, cluster, svm, volume)\n    avg_over_time(\n      volume_total_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h]\n    ) * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n      max by (datacenter, cluster, svm, volume, node) (\n        volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n      )\n    ) > 50\n  )\n)",
+              "expr": "(\n  volume_total_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\n  / on (datacenter, cluster, svm, volume)\n  clamp_min(\n    volume_space_logical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"} / 1099511627776,\n    1\n  )\n)\nand on (datacenter, cluster, svm, volume)\nbottomk(\n  $TopResources,\n  (\n    avg_over_time(\n      volume_total_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end()\n    ) * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n      max by (datacenter, cluster, svm, volume, node) (\n        volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n      )\n    )\n    /\n    clamp_min(\n      avg_over_time(\n        volume_space_logical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end()\n      ) * on (datacenter, cluster, svm, volume) group_left(node)\n      (\n        max by (datacenter, cluster, svm, volume, node) (\n          volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n        )\n      ) / 1099511627776,\n      1\n    )\n  )\n  and on (datacenter, cluster, svm, volume)\n  (\n    volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", root_volume!=\"Yes\", style!=\"flexgroup_constituent\"}\n    * on (datacenter, cluster, svm, volume)\n    avg_over_time(\n      volume_total_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end()\n    ) * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n      max by (datacenter, cluster, svm, volume, node) (\n        volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n      )\n    ) > 50\n  )\n)",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
               "refId": "A"
@@ -4665,7 +4665,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_space_physical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_space_physical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "volume_space_physical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_space_physical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
@@ -4754,7 +4754,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_space_logical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_space_logical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "volume_space_logical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_space_logical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
@@ -4843,7 +4843,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "volume_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
@@ -4932,7 +4932,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_size{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_size{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "volume_size{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_size{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
@@ -5025,7 +5025,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_snapshots_size_available{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_snapshots_size_available{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "volume_snapshots_size_available{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_snapshots_size_available{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
@@ -5118,7 +5118,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_snapshot_reserve_size{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_snapshot_reserve_size{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "volume_snapshot_reserve_size{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_snapshot_reserve_size{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
@@ -5211,7 +5211,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_snapshot_reserve_available{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_snapshot_reserve_available{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "volume_snapshot_reserve_available{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_snapshot_reserve_available{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
@@ -5304,7 +5304,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_snapshots_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_snapshots_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "volume_snapshots_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_snapshots_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
@@ -5397,7 +5397,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_space_performance_tier_inactive_user_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_space_performance_tier_inactive_user_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "volume_space_performance_tier_inactive_user_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_space_performance_tier_inactive_user_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
@@ -5507,7 +5507,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_space_physical_used_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_space_physical_used_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "volume_space_physical_used_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_space_physical_used_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
@@ -5602,7 +5602,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_space_logical_used_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_space_logical_used_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "volume_space_logical_used_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_space_logical_used_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
@@ -5697,7 +5697,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_size_used_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_size_used_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "volume_size_used_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_size_used_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
@@ -5792,7 +5792,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_snapshot_reserve_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_snapshot_reserve_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "volume_snapshot_reserve_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_snapshot_reserve_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
@@ -5886,7 +5886,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_snapshot_reserve_used_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_snapshot_reserve_used_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "volume_snapshot_reserve_used_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_snapshot_reserve_used_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
@@ -5981,7 +5981,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_space_performance_tier_inactive_user_data_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_space_performance_tier_inactive_user_data_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "volume_space_performance_tier_inactive_user_data_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_space_performance_tier_inactive_user_data_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
@@ -6105,7 +6105,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_top_clients_read_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    avg_over_time(volume_top_clients_read_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[3h])\n    * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n        max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n        )\n    )\n)",
+              "expr": "volume_top_clients_read_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    avg_over_time(volume_top_clients_read_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[3h] @ end())\n    * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n        max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n        )\n    )\n)",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - {{client_ip}}",
               "refId": "A"
@@ -6197,7 +6197,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_top_clients_write_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    avg_over_time(volume_top_clients_write_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[3h])\n    * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n        max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n        )\n    )\n)",
+              "expr": "volume_top_clients_write_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    avg_over_time(volume_top_clients_write_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[3h] @ end())\n    * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n        max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n        )\n    )\n)",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - {{client_ip}}",
               "refId": "A"
@@ -6288,7 +6288,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_top_clients_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    avg_over_time(volume_top_clients_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[3h])\n    * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n        max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n        )\n    )\n)",
+              "expr": "volume_top_clients_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    avg_over_time(volume_top_clients_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[3h] @ end())\n    * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n        max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n        )\n    )\n)",
               "interval": "",
               "intervalFactor": 1,
               "legendFormat": "{{svm}} - {{volume}} - {{client_ip}}",
@@ -6380,7 +6380,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_top_clients_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    avg_over_time(volume_top_clients_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[3h])\n    * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n        max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n        )\n    )\n)",
+              "expr": "volume_top_clients_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    avg_over_time(volume_top_clients_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[3h] @ end())\n    * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n        max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n        )\n    )\n)",
               "interval": "",
               "intervalFactor": 1,
               "legendFormat": "{{svm}} - {{volume}} - {{client_ip}}",
@@ -6504,7 +6504,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_top_files_read_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    avg_over_time(volume_top_files_read_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[3h])\n    * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n        max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n        )\n    )\n)",
+              "expr": "volume_top_files_read_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    avg_over_time(volume_top_files_read_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[3h] @ end())\n    * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n        max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n        )\n    )\n)",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - {{path}}",
               "refId": "A"
@@ -6596,7 +6596,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_top_files_write_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    avg_over_time(volume_top_files_write_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[3h])\n    * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n        max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n        )\n    )\n)",
+              "expr": "volume_top_files_write_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    avg_over_time(volume_top_files_write_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[3h] @ end())\n    * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n        max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n        )\n    )\n)",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - {{path}}",
               "refId": "A"
@@ -6687,7 +6687,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_top_files_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    avg_over_time(volume_top_files_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[3h])\n    * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n        max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n        )\n    )\n)",
+              "expr": "volume_top_files_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    avg_over_time(volume_top_files_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[3h] @ end())\n    * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n        max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n        )\n    )\n)",
               "interval": "",
               "intervalFactor": 1,
               "legendFormat": "{{svm}} - {{volume}} - {{path}}",
@@ -6779,7 +6779,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_top_files_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    avg_over_time(volume_top_files_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[3h])\n    * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n        max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n        )\n    )\n)",
+              "expr": "volume_top_files_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    avg_over_time(volume_top_files_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[3h] @ end())\n    * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n        max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n        )\n    )\n)",
               "interval": "",
               "intervalFactor": 1,
               "legendFormat": "{{svm}} - {{volume}} - {{path}}",
@@ -6889,7 +6889,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", metric=\"GET\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    avg_over_time(fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", metric=\"GET\"}[3h])\n    * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n        max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n        )\n    )\n)",
+              "expr": "fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", metric=\"GET\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    avg_over_time(fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", metric=\"GET\"}[3h] @ end())\n    * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n        max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n        )\n    )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - {{cloud_target}}",
@@ -6982,7 +6982,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", metric=\"GET\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", metric=\"GET\"}[3h])\n    * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n        max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n        )\n    )\n)",
+              "expr": "fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", metric=\"GET\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", metric=\"GET\"}[3h] @ end())\n    * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n        max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n        )\n    )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - {{cloud_target}}",
@@ -7075,7 +7075,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", metric=\"PUT\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    avg_over_time(fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", metric=\"PUT\"}[3h])\n    * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n        max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n        )\n    )\n)",
+              "expr": "fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", metric=\"PUT\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    avg_over_time(fabricpool_cloud_bin_op_latency_average{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", metric=\"PUT\"}[3h] @ end())\n    * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n        max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n        )\n    )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - {{cloud_target}}",
@@ -7168,7 +7168,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", metric=\"PUT\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", metric=\"PUT\"}[3h])\n    * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n        max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n        )\n    )\n)",
+              "expr": "fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", metric=\"PUT\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", metric=\"PUT\"}[3h] @ end())\n    * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n        max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n        )\n    )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - {{cloud_target}}",
@@ -7250,7 +7250,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (volume) (fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"})\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    sum by (volume) (\n        avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "sum by (volume) (fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"})\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    sum by (volume) (\n        avg_over_time(fabricpool_cloud_bin_operation{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -7384,7 +7384,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_performance_tier_footprint{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_performance_tier_footprint{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "volume_performance_tier_footprint{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_performance_tier_footprint{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} ",
@@ -7480,7 +7480,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_performance_tier_footprint_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_performance_tier_footprint_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "volume_performance_tier_footprint_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_performance_tier_footprint_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} ",
@@ -7574,7 +7574,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_capacity_tier_footprint{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_capacity_tier_footprint{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "volume_capacity_tier_footprint{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_capacity_tier_footprint{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} ",
@@ -7670,7 +7670,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_capacity_tier_footprint_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_capacity_tier_footprint_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "volume_capacity_tier_footprint_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_capacity_tier_footprint_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} ",
@@ -7774,7 +7774,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_inode_files_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_inode_files_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "volume_inode_files_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_inode_files_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
@@ -7862,7 +7862,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_inode_files_total{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_inode_files_total{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "volume_inode_files_total{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_inode_files_total{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
               "refId": "A"
@@ -7952,7 +7952,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_inode_used_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_inode_used_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "volume_inode_used_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_inode_used_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
               "refId": "A"
@@ -8074,7 +8074,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(\n  (\n    volume_num_compress_fail{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"} * 100\n  )\n  / \n  volume_num_compress_attempts{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\n)\nand on (datacenter, cluster, svm, volume)\ntopk(\n  $TopResources,\n  (\n    avg_over_time(\n      volume_num_compress_fail{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h]\n    ) * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n      max by (datacenter, cluster, svm, volume, node) (\n        volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n      )\n    )\n    /\n    avg_over_time(\n      volume_num_compress_attempts{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h]\n    ) * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n      max by (datacenter, cluster, svm, volume, node) (\n        volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n      )\n    )\n  )\n)",
+              "expr": "(\n  (\n    volume_num_compress_fail{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"} * 100\n  )\n  / \n  volume_num_compress_attempts{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\n)\nand on (datacenter, cluster, svm, volume)\ntopk(\n  $TopResources,\n  (\n    avg_over_time(\n      volume_num_compress_fail{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end()\n    ) * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n      max by (datacenter, cluster, svm, volume, node) (\n        volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n      )\n    )\n    /\n    avg_over_time(\n      volume_num_compress_attempts{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end()\n    ) * on (datacenter, cluster, svm, volume) group_left(node)\n    (\n      max by (datacenter, cluster, svm, volume, node) (\n        volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n      )\n    )\n  )\n)",
               "interval": "",
               "legendFormat": "{{svm}} / {{volume}}",
               "refId": "A"
@@ -8166,7 +8166,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_num_compress_attempts{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_num_compress_attempts{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "volume_num_compress_attempts{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_num_compress_attempts{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "interval": "",
               "legendFormat": "{{svm}} / {{volume}}",
               "refId": "A"
@@ -8258,7 +8258,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_num_compress_fail{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_num_compress_fail{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "volume_num_compress_fail{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_num_compress_fail{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "interval": "",
               "legendFormat": "{{svm}} / {{volume}}",
               "refId": "A"
@@ -8373,7 +8373,7 @@
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
-              "expr": "deriv(volume_space_physical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[4m])\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_space_physical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "deriv(volume_space_physical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[4m])\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_space_physical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
@@ -8473,7 +8473,7 @@
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
-              "expr": "deriv(volume_space_logical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[4m])\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_space_logical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "deriv(volume_space_logical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[4m])\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_space_logical_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
@@ -8792,7 +8792,7 @@
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
-              "expr": "predict_linear(volume_size_used_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3d], 15*24*3600)\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_size_used_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "predict_linear(volume_size_used_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3d], 15*24*3600)\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_size_used_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -8805,7 +8805,7 @@
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
-              "expr": "volume_size_used_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_size_used_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h])\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
+              "expr": "volume_size_used_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}\nand on (datacenter, cluster, svm, volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_size_used_percent{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", style!=\"flexgroup_constituent\"}[3h] @ end())\n        * on (datacenter, cluster, svm, volume) group_left(node)\n        (\n            max by (datacenter, cluster, svm, volume, node) (\n                volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", tags=~\".*$Tag.*\"}\n            )\n        )\n    )\n)",
               "format": "table",
               "hide": false,
               "instant": true,
