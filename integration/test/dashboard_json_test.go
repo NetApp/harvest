@@ -316,6 +316,12 @@ func shouldIgnoreCounter(counter string, flavor string) bool {
 				return true
 			}
 		}
+	} else {
+		for _, pattern := range excludeCounters {
+			if strings.Contains(counter, pattern) {
+				return true
+			}
+		}
 	}
 
 	return false
@@ -379,6 +385,10 @@ func validateExpr(expression string) (bool, string) {
 		newExpression := expression
 		if len(counters) > 0 {
 			for _, counter := range counters {
+				// if expression contains an excluded counter then return true
+				if shouldIgnoreCounter(counter, "") {
+					return true, newExpression
+				}
 				newExpression = generateQueryWithValue(counter, newExpression)
 			}
 		}
