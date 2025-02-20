@@ -125,4 +125,4 @@ license-check:
 ci: clean deps fmt harvest lint test govulncheck license-check
 
 build-image: ## Run CI locally
-	@docker build --label "source_repository=https://github.com/NetApp/harvest" -f container/onePollerPerContainer/Dockerfile -t ${IMAGE_TAG}:${HARVEST_RELEASE}-${TIMESTAMP} . --no-cache --build-arg GO_VERSION=${GO_VERSION} --build-arg VERSION=${VERSION}
+	@docker build --label "source_repository=https://github.com/sapcc/dme-storage-harvest" -f container/onePollerPerContainer/Dockerfile -t ${IMAGE_TAG}:${HARVEST_RELEASE}-${TIMESTAMP} . --no-cache --build-arg GO_VERSION=${GO_VERSION} --build-arg VERSION=${VERSION}
