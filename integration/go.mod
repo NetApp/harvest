@@ -1,8 +1,8 @@
 module github.com/Netapp/harvest-automation
 
-go 1.23
+go 1.24
 
-toolchain go1.23.0
+toolchain go1.24.0
 
 replace github.com/netapp/harvest/v2 => ../
 
