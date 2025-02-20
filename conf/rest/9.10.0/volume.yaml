@@ -1,0 +1,142 @@
+name:                     Volume
+query:                    api/private/cli/volume
+object:                   volume
+
+counters:
+  - ^^volume
+  - ^^vserver                                     => svm
+  - ^aggr_list                                    => aggr
+  - ^clone_parent_name                            => clone_parent_volume
+  - ^clone_parent_vserver                         => clone_parent_svm
+  - ^clone_volume                                 => is_flexclone
+  - ^is_encrypted                                 => isEncrypted
+  - ^is_sis_volume                                => is_sis_volume
+  - ^junction_path                                => junction_path
+  - ^nodes                                        => node
+  - ^snaplock_type                                => snaplock_type
+  - ^snapshot_policy                              => snapshot_policy
+  - ^state                                        => state
+  - ^type                                         => type
+  - ^uuid                                         => uuid
+  - ^volume_style_extended                        => style
+  - ^vsroot                                       => svm_root
+  - autosize_grow_threshold_percent               => autosize_grow_threshold_percent
+  - available                                     => size_available
+  - compression_space_saved                       => sis_compress_saved
+  - compression_space_saved_percent               => sis_compress_saved_percent
+  - dedupe_space_saved                            => sis_dedup_saved
+  - dedupe_space_saved_percent                    => sis_dedup_saved_percent
+  - expected_available                            => space_expected_available
+  - files                                         => inode_files_total
+  - files_used                                    => inode_files_used
+  - filesystem_size                               => filesystem_size
+  - logical_available                             => space_logical_available
+  - logical_used                                  => space_logical_used
+  - logical_used_by_afs                           => space_logical_used_by_afs
+  - logical_used_by_snapshots                     => space_logical_used_by_snapshots
+  - logical_used_percent                          => space_logical_used_percent
+  - max_autosize                                  => autosize_maximum_size
+  - overwrite_reserve                             => overwrite_reserve_total
+  - overwrite_reserve_used                        => overwrite_reserve_used
+  - percent_snapshot_space                        => snapshot_reserve_percent
+  - percent_used                                  => size_used_percent
+  - performance_tier_inactive_user_data           => space_performance_tier_inactive_user_data
+  - performance_tier_inactive_user_data_percent   => space_performance_tier_inactive_user_data_percent
+  - physical_used                                 => space_physical_used
+  - physical_used_percent                         => space_physical_used_percent
+  - sis_space_saved                               => sis_total_saved
+  - sis_space_saved_percent                       => sis_total_saved_percent
+  - size                                          => size
+  - size_available_for_snapshots                  => snapshots_size_available
+  - size_used_by_snapshots                        => snapshots_size_used
+  - snapshot_count
+  - snapshot_reserve_available                    => snapshot_reserve_available
+  - snapshot_reserve_size                         => snapshot_reserve_size
+  - snapshot_space_used                           => snapshot_reserve_used_percent
+  - total                                         => size_total
+  - used                                          => size_used
+  - filter:
+      - is_constituent=*
+
+endpoints:
+  - query: api/private/cli/volume/efficiency/stat
+    counters:
+      - ^^volume
+      - ^^vserver                                 => svm
+      - num_compress_attempts
+      - num_compress_fail
+      - filter:
+          - privilege_level=diagnostic
+
+  - query: api/private/cli/volume/footprint
+    counters:
+      - ^^volume
+      - ^^vserver                                 => svm
+      - volume_blocks_footprint_bin0              => performance_tier_footprint
+      - volume_blocks_footprint_bin0_percent      => performance_tier_footprint_percent
+      - volume_blocks_footprint_bin1              => capacity_tier_footprint
+      - volume_blocks_footprint_bin1_percent      => capacity_tier_footprint_percent
+
+  - query: api/private/cli/volume/snapshot/autodelete
+    counters:
+      - ^^volume
+      - ^^vserver                                 => svm
+      - ^enabled                                  => snapshot_autodelete
+
+plugins:
+  - Volume:
+      schedule:
+        - data: 15m  # should be multiple of poll duration
+      include_constituents: false
+  - MetricAgent:
+      compute_metric:
+        - inode_used_percent PERCENT inode_files_used inode_files_total
+        - snapshot_reserve_used SUBTRACT snapshot_reserve_size snapshot_reserve_available
+        - overwrite_reserve_available SUBTRACT overwrite_reserve_total overwrite_reserve_used
+  - LabelAgent:
+      value_to_num:
+        - new_status state online online `0`
+      replace_regex:
+        - svm_root root_volume `false` `No`
+        - svm_root root_volume `true` `Yes`
+        - svm_root root_volume `^$` `Yes`      # svm_root is not available in Rest response for volumes like vol0
+
+      # To prevent visibility of transient volumes, uncomment the following lines
+#      exclude_regex:
+#        # Exclude SnapProtect/CommVault Intellisnap, Clone volumes have a “_CVclone” suffix
+#        - volume `.+_CVclone`
+#        # Exclude SnapCenter, Clone volumes have a “DDMMYYhhmmss” suffix
+#        - volume `.+(0[1-9]|[12][0-9]|3[01])(0[1-9]|1[012])\d\d[0-9]{6}`
+#        # Exclude manually created SnapCreator clones, Clone volumes have a “cl_” prefix and a “_YYYYMMDDhhmmss” suffix
+#        - volume `cl_.+_(19|20)\d\d(0[1-9]|1[012])( 0[1-9]|[12][0-9]|3[01])[0-9]{6}`
+#        # Exclude SnapDrive/SnapManager, Clone volumes have a “sdw_cl_” prefix
+#        - volume `sdw_cl_.+`
+#        # Exclude Metadata volumes, CRS volumes in SVM-DR or MetroCluster have a “MDV_CRS_” prefix
+#        - volume `MDV_CRS_.+`
+#        # Exclude Metadata volumes, Audit volumes have a “MDV_aud_” prefix
+#        - volume `MDV_aud_.+`
+#  - ChangeLog
+
+export_options:
+  instance_keys:
+    - aggr
+    - node
+    - style
+    - svm
+    - volume
+  instance_labels:
+    - antiRansomwareState
+    - clone_parent_snapshot
+    - clone_parent_svm
+    - clone_parent_volume
+    - isEncrypted
+    - isHardwareEncrypted
+    - is_sis_volume
+    - junction_path
+    - root_volume
+    - snaplock_type
+    - snapshot_autodelete
+    - snapshot_policy
+    - state
+    - svm_root
+    - type

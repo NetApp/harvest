@@ -10,20 +10,16 @@ schedule:
 
 objects:
   Aggregate:                   aggr.yaml
-  AggregateEfficiency:         aggr_efficiency.yaml
 # The CIFSSession template may slow down data collection due to a high number of metrics.
 #  CIFSSession:                 cifs_session.yaml
 #  CIFSShare:                    cifs_share.yaml
   CloudTarget:                 cloud_target.yaml
   ClusterPeer:                 clusterpeer.yaml
-  ClusterSchedule:             clusterschedule.yaml
-  ClusterSoftware:             clustersoftware.yaml
   Disk:                        disk.yaml
   EmsDestination:              ems_destination.yaml
 #  ExportRule:                  exports.yaml
   FlexCache:                   flexcache.yaml
   FCP:                         fcp.yaml
-  FRU:                         fru.yaml
   LIF:                         lif.yaml
 #  Lock:                        lock.yaml
   Health:                      health.yaml
@@ -33,7 +29,7 @@ objects:
   Namespace:                   namespace.yaml
 #  NDMPSession:                ndmp_session.yaml
 #  NetConnections:              netconnections.yaml
-  NetPort:                     netport.yaml
+#  NetPort:                     netport.yaml
   NetRoute:                    netroute.yaml
 #  NFSClients:                  nfs_clients.yaml
   Node:                        node.yaml
@@ -54,7 +50,6 @@ objects:
   Sensor:                      sensor.yaml
   Shelf:                       shelf.yaml
   SnapMirror:                  snapmirror.yaml
-  SnapMirrorPolicy:            snapmirrorpolicy.yaml
   SnapshotPolicy:              snapshotpolicy.yaml
   Status:                      status.yaml
   Subsystem:                   subsystem.yaml

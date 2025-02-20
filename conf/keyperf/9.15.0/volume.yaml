@@ -5,49 +5,37 @@ object:                   volume
 counters:
   - ^^name                                => volume
   - ^^svm.name                            => svm
-  - ^statistics.status                    => status
   - ^style                                => style
-  - statistics.iops_raw.other             => other_ops
-  - statistics.iops_raw.read              => read_ops
-  - statistics.iops_raw.total             => total_ops
-  - statistics.iops_raw.write             => write_ops
-  - statistics.latency_raw.other          => other_latency
-  - statistics.latency_raw.read           => read_latency
-  - statistics.latency_raw.total          => avg_latency
-  - statistics.latency_raw.write          => write_latency
-  - statistics.throughput_raw.other       => other_data
-  - statistics.throughput_raw.read        => read_data
-  - statistics.throughput_raw.total       => total_data
-  - statistics.throughput_raw.write       => write_data
+  - ^statistics.status                    => status
   - statistics.timestamp(timestamp)       => timestamp
+  - statistics.latency_raw.other          => other_latency
+  - statistics.latency_raw.total          => total_latency
+  - statistics.latency_raw.read           => read_latency
+  - statistics.latency_raw.write          => write_latency
+  - statistics.iops_raw.other             => other_ops
+  - statistics.iops_raw.total             => total_ops
+  - statistics.iops_raw.read              => read_ops
+  - statistics.iops_raw.write             => write_ops
+  - statistics.throughput_raw.other       => other_data
+  - statistics.throughput_raw.total       => total_data
+  - statistics.throughput_raw.read        => read_data
+  - statistics.throughput_raw.write       => write_data
   - hidden_fields:
       - statistics
-  - filter:
-      - statistics.timestamp=!"-"
 
 endpoints:
   - query: api/private/cli/volume
     counters:
-      - ^^volume                          => volume
-      - ^^vserver                         => svm
-      - ^aggr_list                        => aggr
-      - ^nodes                            => node
+      - ^^volume                              => volume
+      - ^^vserver                             => svm
+      - ^aggr_list                            => aggr
+      - ^nodes                                => node
 
 plugins:
-#  - VolumeTopClients:
-#      # `max_volumes` is the maximum number of volumes to consider for top client metrics. This value is capped at 50, even if a higher number is specified.
-#      # When enabled, this plugin will collect read/write operations and throughput metrics for the top clients of each volume.
-#      - schedule:
-#          - data: 1h  # This value should be a multiple of the poll duration. By default, Harvest will check once an hour to see how many volumes have activity_tracking.state set to on.
-#      - max_volumes: 5
-#      - objects:
-#          - client  # collect read/write operations and throughput metrics for the top clients.
-#          - file    # collect read/write operations and throughput metrics for the top files
   - Aggregator:
       # plugin will create summary/average for each object
       # any names after the object names will be treated as label names that will be added to instances
       - node
-      - svm<>svm_vol
 
 export_options:
   instance_keys:

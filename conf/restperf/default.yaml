@@ -4,6 +4,7 @@ collector:          RestPerf
 # Order here matters!
 schedule:
   - counter:  24h
+  - instance: 10m
   - data:      1m
 
 objects:
@@ -24,8 +25,7 @@ objects:
   Namespace:         namespace.yaml
   NicCommon:         nic_common.yaml
   Path:              path.yaml
-#  Qtree:             qtree.yaml
-  Rwctx:             rwctx.yaml
+  Qtree:             qtree.yaml
   SystemNode:        system_node.yaml
 #  TokenManager:      token_manager.yaml
   VolumeNode:        volume_node.yaml
@@ -52,9 +52,13 @@ objects:
   Volume:            volume.yaml
   VolumeSvm:         volume_svm.yaml
   WAFLCompBin:       wafl_comp_aggr_vol_bin.yaml
-  Vscan:             vscan.yaml
+#  Vscan:             vscan.yaml
   VscanSVM:          vscan_svm.yaml
 
 #  Uncomment to collect workload/QOS counters.
-  Workload:             workload.yaml
-  WorkloadVolume:       workload_volume.yaml
+#  Workload:             workload.yaml
+#  WorkloadVolume:       workload_volume.yaml
+
+# The following workload templates may slow down data collection due to a high number of metrics.
+#  WorkloadDetail:       workload_detail.yaml
+#  WorkloadDetailVolume: workload_detail_volume.yaml

@@ -7,8 +7,6 @@ object:                   svm
 counters:
   - ^^vserver                               => svm
   - ^anti_ransomware_default_volume_state   => anti_ransomware_state
-  - ^is_space_enforcement_logical           => is_space_enforcement_logical
-  - ^is_space_reporting_logical             => is_space_reporting_logical
   - ^operational_state                      => state
   - ^type                                   => type
   - ^uuid                                   => uuid
@@ -75,8 +73,6 @@ export_options:
     - fpolicy_enabled
     - fpolicy_name
     - insecured
-    - is_space_enforcement_logical
-    - is_space_reporting_logical
     - iscsi_authentication_type
     - iscsi_service_enabled
     - ldap_session_security

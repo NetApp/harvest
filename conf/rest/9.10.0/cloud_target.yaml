@@ -1,0 +1,34 @@
+
+name:               CloudTarget
+query:              api/cloud/targets
+object:             cloud_target
+  
+counters:
+  - ^^uuid                          => uuid
+  - ^access_key                     => access_key
+  - ^authentication_type            => authentication_type
+  - ^certificate_validation_enabled => certificate_validation_enabled
+  - ^container                      => container
+  - ^ipspace.name                   => ipspace
+  - ^name                           => name
+  - ^owner                          => owner
+  - ^port                           => port
+  - ^provider_type                  => provider_type
+  - ^server                         => server
+  - ^ssl_enabled                    => ssl_enabled
+  - used                            => used
+
+export_options:
+  instance_keys:
+    - container
+    - name
+    - server
+  instance_labels:
+    - access_key
+    - authentication_type
+    - certificate_validation_enabled
+    - ipspace
+    - owner
+    - port
+    - provider_type
+    - ssl_enabled

@@ -1,0 +1,278 @@
+name:   EMS
+query:  api/support/ems/events
+object: ems
+
+# default list of exports attached to all EMS event
+exports:
+  - message.name                            => message
+  - node.name                               => node
+  - node.uuid                               => node_uuid
+  - message.severity                        => severity
+  - index                                   => index
+
+events:
+  - name: LUN.vol.no.space
+    exports:
+      - parameters.lun_path    => lun_path
+      - parameters.volume_name => volume
+      - parameters.volume_dsid => volume_ds_id
+
+  - name: Nblade.nfsV4PoolExhaust
+    exports:
+      - parameters.poolname    => poolname
+      - parameters.object_type => object_type
+      - parameters.object_uuid => object_uuid
+
+  - name: cf.disk.inventory.mismatch
+    exports:
+      - parameters.diskName => disk
+      - parameters.uid      => object_uid
+      - parameters.hostname => host
+    resolve_when_ems:
+      - name: cf.disk.inventory.mismatchOK
+        resolve_after: 672h 
+
+  - name: cf.fm.takeoverFailed
+    exports:
+      - parameters.reson             => reason
+      - parameters.token             => token
+      - parameters.partner_node_uuid => partner_node_uuid
+
+  - name: cf.fm.versionMismatch
+    exports:
+      - parameters.subsystem      => subsystem
+      - parameters.myVersion      => version
+      - parameters.partnerVersion => partner_version
+
+  - name: cf.fsm.takeover.noHeartbeat
+
+  - name: cf.fsm.takeoverByPartnerDisabled
+    exports:
+      - parameters.local   => local
+      - parameters.partner => partner
+      - parameters.reason  => reason
+
+  - name: cf.fsm.takeoverHung
+    exports:
+      - parameters.moduleName   => moduleName
+
+  - name: cf.hwassist.notifyCfgFailed
+    exports:
+      - parameters.hwtype   => hwtype
+      - parameters.errorstr => errorstr
+      - parameters.error    => error
+
+  - name: cf.takeover.disabled
+    exports:
+      - parameters.reason => reason
+
+  - name: clam.node.ooq
+    exports:
+      - parameters.hostname => hostname
+      - parameters.nodeid   => nodeid
+      - parameters.reason   => reason
+
+  - name: clus.net.noNeighbors
+
+  - name: ds.sas.drivephy.disableErr
+    exports:
+      - parameters.phy       => phy
+      - parameters.disk_data => disk_data
+      - parameters.channels  => channels
+      - parameters.shelfID   => shelfID
+      - parameters.element   => element
+      - parameters.bay       => bay
+      - parameters.reason    => reason
+      
+  - name: fcp.io.status
+
+  - name: license.check.warn.expiring
+    exports:
+      - parameters.package    => package
+      - parameters.expiration => expiration
+
+  - name: mgmt.nfslisteners.failure
+    exports:
+      - parameters.reason => reason
+
+  - name: mgmt.snapmir.ls.catchup.fail
+    exports:
+      - parameters.srcpath => srcpath
+      - parameters.dstpath => dstpath
+      - parameters.error   => error
+      - parameters.jobID   => jobID
+  
+  - name: mgmtgwd.certificate.expired
+    exports:
+      - parameters.common_name           => common_name
+      - parameters.serial_number         => serial_number
+      - parameters.certificate_authority => certificate_authority
+      - parameters.type                  => type
+      - parameters.vserver               => vserver
+      
+  - name: mgmtgwd.certificate.expiring
+    exports:
+      - parameters.common_name           => common_name
+      - parameters.serial_number         => serial_number
+      - parameters.certificate_authority => certificate_authority
+      - parameters.type                  => type
+      - parameters.vserver               => vserver
+      - parameters.days                  => days
+      
+  - name: mgmtgwd.sign.cert.expired
+    exports:
+      - parameters.common_name           => common_name
+      - parameters.serial_number         => serial_number
+      - parameters.certificate_authority => certificate_authority
+      - parameters.ca_serial_number      => ca_serial_number
+      - parameters.vserver               => vserver
+
+  - name: net.ifgrp.lacp.link.inactive
+    exports:
+      - parameters.aggregateName => link_aggregate_name
+      - parameters.portName      => port
+
+  - name: netif.badEeprom
+    exports:
+      - parameters.ifName => interface_name
+
+  - name: netif.excessLinkInterrupts
+    exports:
+      - parameters.ifName => interface_name
+
+  - name: netif.linkErrors
+    exports:
+      - parameters.ifName => if_name
+
+  - name: netif.sfpNotSupported
+    exports:
+      - parameters.sfpVendor => sfp_vendor
+      - parameters.sfpPn => sfp_pn
+      - parameters.ifName => if_name
+
+  - name: netif.speedDowngraded
+    exports:
+      - parameters.ifName => if_name
+      - parameters.speed => speed
+
+  - name: netif.uncorEccError
+    exports:
+      - parameters.ifName => if_name
+
+  - name: netinet.ethr.duplct.ipAdrr
+    exports:
+      - parameters.ipaddr => ip_address
+      - parameters.ethaddr => ethernet_address
+
+  - name: nvram.excessive.cecc.errs
+    exports: []
+
+  - name: pvif.lacp.outofsync
+    exports:
+      - parameters.vifName => vif_name
+      - parameters.linkName => link_name
+
+  - name: rdb.recovery.failed
+    exports:
+      - parameters.message => error_message
+      - parameters.unit => unit
+
+  - name: ses.status.ModuleError
+    exports:
+      - parameters.prodChannel => product_channel
+      - parameters.moduleType => module_type
+      - parameters.typeText => type_text
+      - parameters.ModuleNumber => module_number
+      - parameters.errorMsg => error_message
+      - parameters.errorText => error_text
+      - parameters.locationText => location_text
+
+  - name: sis.changelog.full
+    exports:
+      - parameters.host => host
+      - parameters.vol => volume
+      - parameters.volident => volume_identifier
+
+  - name: tcpip.duplicate.ip
+    exports:
+      - parameters.ipAddress => ip_address
+      - parameters.macAddress => mac_address
+
+  - name: vifmgr.clus.linkdown
+    exports:
+      - parameters.portname => port_name
+      - parameters.nodename => node_name
+
+  - name: vifmgr.cluscheck.hwerrors
+    exports:
+      - parameters.portname => port_name
+      - parameters.nodename => node_name
+      - parameters.threshold => threshold
+
+  - name: vifmgr.lifdown.noports
+    exports:
+      - parameters.vifname => vif_name
+      - parameters.vsrvid => virtual_server_id
+      - parameters.vifip => vif_ip
+      - parameters.tonode => to_node
+      - parameters.toport => to_port
+
+  - name: vifmgr.lifs.clusterlimit
+    exports:
+      - parameters.numLifs => number_of_lifs
+      - parameters.lifLimit => lif_limit
+
+  - name: vifmgr.lifs.overcapacity
+    exports:
+      - parameters.overamount => over_amount
+
+  - name: vifmgr.port.monitor.failed
+    exports:
+      - parameters.healthCheckType => health_check_type
+      - parameters.portName => port_name
+      - parameters.nodeName => node_name
+
+  - name: vifmgr.port.mtumismatch
+    exports:
+      - parameters.port => port_name
+      - parameters.portmtu => port_mtu
+      - parameters.broadcast_domain => broadcast_domain
+      - parameters.bdmtu => broadcast_domain_mtu
+
+  - name: vifmgr.portDeg.lifHosted
+    exports:
+      - parameters.vifName => vif_name
+      - parameters.vsrvid => virtual_server_id
+      - parameters.portName => port_name
+      - parameters.nodeName => node_name
+
+  - name: wafl.dir.size.max.warning
+    exports:
+      - parameters.fileid => file_id
+      - parameters.vol => volume
+      - parameters.app => application_uuid
+      - parameters.volident => volume_identifier
+
+  - name: cf.fsm.takeoverOfPartnerDisabled
+    exports:
+      - parameters.partner => partner_node
+      - parameters.reason => reason
+
+  - name: disk.ioMediumError
+    exports:
+      - parameters.diskName => disk_name
+      - parameters.op => operation
+      - parameters.sector => sector
+      - parameters.senseInfo => sense_info
+      - parameters.sCode => sector_code
+      - parameters.disk_info => disk_info
+      - parameters.sense_key => sense_key
+      - parameters.sense_code => sense_code
+      - parameters.qualifier => qualifier
+      - parameters.fru_failed => fru_failed
+      - parameters.CTime => command_time
+      - parameters.disk_information => disk_information
+
+  - name: monitor.globalStatus.critical
+    exports:
+      - parameters.problem => problem_description

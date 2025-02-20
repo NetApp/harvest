@@ -1,0 +1,92 @@
+name:                     Disk
+query:                    api/cluster/counter/tables/disk:constituent
+object:                   disk
+
+counters:
+  - ^^id                     => instance_uuid
+  - ^name                    => partition
+  - ^node.name               => node
+  - ^physical_disk_id        => disk_uuid
+  - ^physical_disk_name      => disk
+  - ^raid.type               => raid_type
+  - ^raid_group              => raid_group
+  - ^speed                   => speed
+  - capacity                 => capacity
+  - cp_read_chain
+  - cp_read_count            => cp_reads
+  - cp_read_latency
+  - disk_busy_percent        => busy
+  - io_pending
+  - io_queued
+  - total_data
+  - total_transfer_count     => total_transfers
+  - user_read_block_count    => user_read_blocks
+  - user_read_chain
+  - user_read_count          => user_reads
+  - user_read_latency
+  - user_write_block_count   => user_write_blocks
+  - user_write_chain
+  - user_write_count         => user_writes
+  - user_write_latency
+
+plugins:
+  - LabelAgent:
+      split:
+        - raid_group `/` ,aggr,plex,raid
+      split_regex:
+        # Example: umeng-aff300-01:1.1.12.P3:6002538A:4775FAC0:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000
+        # output: instance_uuid value will be 6002538A:4775FAC0:500A0981:00000003:00000000:00000000:00000000:00000000:00000000:00000000
+        - instance_uuid `^[^:]*:[^:]*:(.+)` instance_uuid
+  - Aggregator:
+    # plugin will create summary/average for each object
+    # any names after the object names will be treated as
+    # label names that will be added to instances
+      - node
+      - aggr ...
+      - plex node,aggr,plex
+    #  - plex node aggr
+      - raid node,aggr,disk,plex,raid
+  - Max:
+      - node<>node_disk_max
+      - aggr<>aggr_disk_max ...
+
+  - Disk:
+      objects:
+        - fans => fan:
+            - ^^id                      => fan_id
+            - ^location
+            - ^state                    => status
+            - rpm
+        - current_sensors => sensor:
+            - ^^id                      => sensor_id
+            - ^location
+            - ^state                    => status
+            - current                   => reading
+        - frus => psu:
+            - ^^id                      => psu_id
+            - ^installed                => enabled
+            #  - ^location
+            - ^part_number
+            - ^serial_number            => serial
+            - ^psu.model                => type
+            - ^state                    => status
+            - psu.power_drawn           => power_drawn
+            - psu.power_rating          => power_rating
+        - temperature_sensors => temperature:
+            - ^^id                      => sensor_id
+            - ^threshold.high.critical  => high_critical
+            - ^threshold.high.warning   => high_warning
+            - ^ambient                  => temp_is_ambient
+            - ^threshold.low.critical   => low_critical
+            - ^threshold.low.warning    => low_warning
+            - ^state                    => status
+            - temperature               => reading
+        - voltage_sensors => voltage:
+            - ^^id                      => sensor_id
+            - ^location
+            - ^state                    => status
+            - voltage                   => reading
+
+# only export node/aggr aggregations from plugin
+# set this true or comment, to get data for each disk
+export_data: false
