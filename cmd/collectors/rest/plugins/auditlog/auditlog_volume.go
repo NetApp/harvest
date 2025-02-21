@@ -15,7 +15,7 @@ var (
 )
 
 type VolumeHandler interface {
-	ExtractNames(input string, refresher CacheRefresher) (string, string, string, error)
+	ExtractNames(string, *AuditLog) (string, string, string, error)
 	GetOperation() string
 	GetRefreshCache() bool
 }
@@ -39,8 +39,8 @@ type VolumeWriteHandler struct {
 	refreshCache bool
 }
 
-func (h VolumeWriteHandler) ExtractNames(input string, refresher CacheRefresher) (string, string, string, error) {
-	err := refresher.RefreshCache()
+func (v VolumeWriteHandler) ExtractNames(input string, a *AuditLog) (string, string, string, error) {
+	err := a.RefreshVolumeCache(v.GetRefreshCache())
 	if err != nil {
 		return "", "", "", err
 	}
@@ -60,12 +60,12 @@ func (h VolumeWriteHandler) ExtractNames(input string, refresher CacheRefresher)
 	return volumeName, svmName, "", nil
 }
 
-func (h VolumeWriteHandler) GetOperation() string {
-	return h.op
+func (v VolumeWriteHandler) GetOperation() string {
+	return v.op
 }
 
-func (h VolumeWriteHandler) GetRefreshCache() bool {
-	return h.refreshCache
+func (v VolumeWriteHandler) GetRefreshCache() bool {
+	return v.refreshCache
 }
 
 type VolumeRenameHandler struct {
@@ -73,8 +73,8 @@ type VolumeRenameHandler struct {
 	refreshCache bool
 }
 
-func (h VolumeRenameHandler) ExtractNames(input string, refresher CacheRefresher) (string, string, string, error) {
-	err := refresher.RefreshCache()
+func (v VolumeRenameHandler) ExtractNames(input string, a *AuditLog) (string, string, string, error) {
+	err := a.RefreshVolumeCache(v.GetRefreshCache())
 	if err != nil {
 		return "", "", "", err
 	}
@@ -95,12 +95,12 @@ func (h VolumeRenameHandler) ExtractNames(input string, refresher CacheRefresher
 	return newName, svmName, "", nil
 }
 
-func (h VolumeRenameHandler) GetOperation() string {
-	return h.op
+func (v VolumeRenameHandler) GetOperation() string {
+	return v.op
 }
 
-func (h VolumeRenameHandler) GetRefreshCache() bool {
-	return h.refreshCache
+func (v VolumeRenameHandler) GetRefreshCache() bool {
+	return v.refreshCache
 }
 
 // VolumePatchHandler handles PATCH /api/storage/volumes
@@ -109,8 +109,8 @@ type VolumePatchHandler struct {
 	refreshCache bool
 }
 
-func (h VolumePatchHandler) ExtractNames(input string, refresher CacheRefresher) (string, string, string, error) {
-	err := refresher.RefreshCache()
+func (v VolumePatchHandler) ExtractNames(input string, a *AuditLog) (string, string, string, error) {
+	err := a.RefreshVolumeCache(v.GetRefreshCache())
 	if err != nil {
 		return "", "", "", err
 	}
@@ -120,20 +120,20 @@ func (h VolumePatchHandler) ExtractNames(input string, refresher CacheRefresher)
 	}
 
 	uuid := matches[1]
-	volumeInfo, exists := GetVolumeInfo(uuid)
+	volumeInfo, exists := a.GetVolumeInfo(uuid)
 	if !exists {
 		return "", "", uuid, nil
 	}
 
-	return volumeInfo.Name, volumeInfo.SVM, uuid, nil
+	return volumeInfo.name, volumeInfo.svm, uuid, nil
 }
 
-func (h VolumePatchHandler) GetOperation() string {
-	return h.op
+func (v VolumePatchHandler) GetOperation() string {
+	return v.op
 }
 
-func (h VolumePatchHandler) GetRefreshCache() bool {
-	return h.refreshCache
+func (v VolumePatchHandler) GetRefreshCache() bool {
+	return v.refreshCache
 }
 
 // VolumePostHandler handles POST /api/storage/volumes
@@ -142,8 +142,8 @@ type VolumePostHandler struct {
 	refreshCache bool
 }
 
-func (v VolumePostHandler) ExtractNames(input string, refresher CacheRefresher) (string, string, string, error) {
-	err := refresher.RefreshCache()
+func (v VolumePostHandler) ExtractNames(input string, a *AuditLog) (string, string, string, error) {
+	err := a.RefreshVolumeCache(v.GetRefreshCache())
 	if err != nil {
 		return "", "", "", err
 	}
@@ -177,8 +177,8 @@ type VolumeDeleteHandler struct {
 	refreshCache bool
 }
 
-func (v VolumeDeleteHandler) ExtractNames(input string, refresher CacheRefresher) (string, string, string, error) {
-	err := refresher.RefreshCache()
+func (v VolumeDeleteHandler) ExtractNames(input string, a *AuditLog) (string, string, string, error) {
+	err := a.RefreshVolumeCache(v.GetRefreshCache())
 	if err != nil {
 		return "", "", "", err
 	}
@@ -188,12 +188,12 @@ func (v VolumeDeleteHandler) ExtractNames(input string, refresher CacheRefresher
 	}
 
 	uuid := matches[1]
-	volumeInfo, exists := GetVolumeInfo(uuid)
+	volumeInfo, exists := a.GetVolumeInfo(uuid)
 	if !exists {
 		return "", "", uuid, nil
 	}
 
-	return volumeInfo.Name, volumeInfo.SVM, uuid, nil
+	return volumeInfo.name, volumeInfo.svm, uuid, nil
 }
 
 func (v VolumeDeleteHandler) GetOperation() string {
@@ -210,8 +210,8 @@ type VolumePrivateCliPostHandler struct {
 	refreshCache bool
 }
 
-func (v VolumePrivateCliPostHandler) ExtractNames(input string, refresher CacheRefresher) (string, string, string, error) {
-	err := refresher.RefreshCache()
+func (v VolumePrivateCliPostHandler) ExtractNames(input string, a *AuditLog) (string, string, string, error) {
+	err := a.RefreshVolumeCache(v.GetRefreshCache())
 	if err != nil {
 		return "", "", "", err
 	}
@@ -245,8 +245,8 @@ type VolumePrivateCliRenameHandler struct {
 	refreshCache bool
 }
 
-func (v VolumePrivateCliRenameHandler) ExtractNames(input string, refresher CacheRefresher) (string, string, string, error) {
-	err := refresher.RefreshCache()
+func (v VolumePrivateCliRenameHandler) ExtractNames(input string, a *AuditLog) (string, string, string, error) {
+	err := a.RefreshVolumeCache(v.GetRefreshCache())
 	if err != nil {
 		return "", "", "", err
 	}
@@ -281,8 +281,8 @@ type VolumePrivateCliDeleteCliHandler struct {
 	refreshCache bool
 }
 
-func (v VolumePrivateCliDeleteCliHandler) ExtractNames(input string, refresher CacheRefresher) (string, string, string, error) {
-	err := refresher.RefreshCache()
+func (v VolumePrivateCliDeleteCliHandler) ExtractNames(input string, a *AuditLog) (string, string, string, error) {
+	err := a.RefreshVolumeCache(v.GetRefreshCache())
 	if err != nil {
 		return "", "", "", err
 	}
@@ -315,8 +315,8 @@ type ApplicationPostHandler struct {
 	refreshCache bool
 }
 
-func (a ApplicationPostHandler) ExtractNames(input string, refresher CacheRefresher) (string, string, string, error) {
-	err := refresher.RefreshCache()
+func (ap ApplicationPostHandler) ExtractNames(input string, a *AuditLog) (string, string, string, error) {
+	err := a.RefreshVolumeCache(ap.GetRefreshCache())
 	if err != nil {
 		return "", "", "", err
 	}
@@ -345,12 +345,12 @@ func (a ApplicationPostHandler) ExtractNames(input string, refresher CacheRefres
 	return payload.Name, payload.SVM.Name, "", nil
 }
 
-func (a ApplicationPostHandler) GetOperation() string {
-	return a.op
+func (ap ApplicationPostHandler) GetOperation() string {
+	return ap.op
 }
 
-func (a ApplicationPostHandler) GetRefreshCache() bool {
-	return a.refreshCache
+func (ap ApplicationPostHandler) GetRefreshCache() bool {
+	return ap.refreshCache
 }
 
 var volumeInputHandlers = map[*regexp.Regexp]VolumeHandler{
@@ -433,6 +433,7 @@ func (a *AuditLog) parseVolumeRecords(response []gjson.Result) {
 				instance.SetLabel("svm", svm)
 				err := a.setLogMetric(mat, instance, float64(auditTimeStamp))
 				if err != nil {
+					a.SLogger.Warn("error while setting metric value", slogx.Err(err))
 					return
 				}
 			}

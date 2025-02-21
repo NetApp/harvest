@@ -10,6 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
+	"maps"
 	"strings"
 	"time"
 )
@@ -19,18 +20,17 @@ const (
 	defaultDataPollDuration = 3 * time.Minute
 )
 
-type CacheRefresher interface {
-	RefreshCache() error
+var defaultFields = []string{"application", "location", "user", "timestamp", "state"}
+
+type VolumeCache struct {
+	cache             map[string]VolumeInfo
+	cacheCopy         map[string]VolumeInfo
+	hasCacheRefreshed bool
 }
 
-var defaultFields = []string{"application", "location", "user", "timestamp", "state"}
-var volumeCache = make(map[string]VolumeInfo)
-var volumeCacheCopy = make(map[string]VolumeInfo)
-var cacheForceRefresh bool
-
 type VolumeInfo struct {
-	Name string
-	SVM  string
+	name string
+	svm  string
 }
 
 type AuditLog struct {
@@ -40,6 +40,7 @@ type AuditLog struct {
 	client          *rest.Client
 	rootConfig      RootConfig
 	lastFilterTimes map[string]int64
+	volumeCache     VolumeCache
 }
 
 var metrics = []string{
@@ -71,8 +72,17 @@ func (a *AuditLog) Init(remote conf.Remote) error {
 	}
 	a.schedule = a.SetPluginInterval()
 	a.lastFilterTimes = make(map[string]int64)
+	a.InitVolumeCache()
 
 	return a.client.Init(5, remote)
+}
+
+func (a *AuditLog) InitVolumeCache() {
+	a.volumeCache = VolumeCache{
+		cache:             make(map[string]VolumeInfo),
+		cacheCopy:         make(map[string]VolumeInfo),
+		hasCacheRefreshed: false,
+	}
 }
 
 func (a *AuditLog) initMatrix() error {
@@ -99,7 +109,6 @@ func (a *AuditLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *ut
 		}
 	}
 	a.schedule++
-	cacheForceRefresh = false
 
 	err := a.initMatrix()
 	if err != nil {
@@ -114,6 +123,7 @@ func (a *AuditLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *ut
 	}
 
 	if a.HasVolumeConfig() {
+		a.volumeCache.hasCacheRefreshed = false
 		// process volume rootConfig
 		volume := a.rootConfig.AuditLog.Volume
 		var actions = make([]string, len(volume.Action))
@@ -182,11 +192,14 @@ func (a *AuditLog) getTimeStampFilter(clusterTime time.Time, lastFilterTime int6
 }
 
 func (a *AuditLog) populateVolumeCache() error {
-	volumeCacheCopy = make(map[string]VolumeInfo)
-	for key, value := range volumeCache {
-		volumeCacheCopy[key] = value
-	}
-	volumeCache = make(map[string]VolumeInfo)
+	// Initialize cacheCopy to store elements that will be removed from cache
+	a.volumeCache.cacheCopy = make(map[string]VolumeInfo)
+
+	// Clone the existing cache to compare later
+	oldCache := maps.Clone(a.volumeCache.cache)
+
+	a.volumeCache.cache = make(map[string]VolumeInfo)
+
 	query := "api/storage/volumes"
 	href := rest.NewHrefBuilder().
 		APIPath(query).
@@ -204,7 +217,6 @@ func (a *AuditLog) populateVolumeCache() error {
 	}
 
 	for _, volume := range records {
-
 		if !volume.IsObject() {
 			a.SLogger.Warn("volume is not object, skipping", slog.String("type", volume.Type.String()))
 			continue
@@ -212,20 +224,30 @@ func (a *AuditLog) populateVolumeCache() error {
 		uuid := volume.Get("uuid").ClonedString()
 		name := volume.Get("name").ClonedString()
 		svm := volume.Get("svm.name").ClonedString()
-		volumeCache[uuid] = VolumeInfo{
-			Name: name,
-			SVM:  svm,
+
+		// Update the cache with the current volume info
+		a.volumeCache.cache[uuid] = VolumeInfo{
+			name: name,
+			svm:  svm,
 		}
 	}
+
+	// Identify elements that were in the old cache but are not in the new cache
+	for uuid, volumeInfo := range oldCache {
+		if _, exists := a.volumeCache.cache[uuid]; !exists {
+			a.volumeCache.cacheCopy[uuid] = volumeInfo
+		}
+	}
+
 	return nil
 }
 
-func GetVolumeInfo(uuid string) (VolumeInfo, bool) {
-	volumeInfo, exists := volumeCache[uuid]
+func (a *AuditLog) GetVolumeInfo(uuid string) (VolumeInfo, bool) {
+	volumeInfo, exists := a.volumeCache.cache[uuid]
 	if exists {
 		return volumeInfo, true
 	}
-	volumeInfo, exists = volumeCacheCopy[uuid]
+	volumeInfo, exists = a.volumeCache.cacheCopy[uuid]
 	return volumeInfo, exists
 }
 
@@ -239,14 +261,14 @@ func (a *AuditLog) setLogMetric(mat *matrix.Matrix, instance *matrix.Instance, v
 	return nil
 }
 
-func (a *AuditLog) RefreshCache() error {
-	if !cacheForceRefresh {
-		a.SLogger.Debug("refreshing cache via handler")
+func (a *AuditLog) RefreshVolumeCache(refreshCache bool) error {
+	if refreshCache && !a.volumeCache.hasCacheRefreshed {
+		a.SLogger.Info("refreshing cache via handler")
 		err := a.populateVolumeCache()
 		if err != nil {
 			return err
 		}
-		cacheForceRefresh = true
+		a.volumeCache.hasCacheRefreshed = true
 	}
 	return nil
 }

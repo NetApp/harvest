@@ -4,20 +4,23 @@ import (
 	"testing"
 )
 
-// MockCacheRefresher is a mock implementation of the CacheRefresher interface
-type MockCacheRefresher struct{}
-
-func (m *MockCacheRefresher) RefreshCache() error {
-	return nil
+var auditlog = &AuditLog{
+	AbstractPlugin:  nil,
+	schedule:        0,
+	data:            nil,
+	client:          nil,
+	rootConfig:      RootConfig{},
+	lastFilterTimes: nil,
+	volumeCache:     VolumeCache{},
 }
 
 func init() {
-	volumeCache["123e4567-e89b-12d3-a456-426614174000"] = VolumeInfo{Name: "testVolume", SVM: "testSVM"}
+	auditlog.InitVolumeCache()
+	auditlog.volumeCache.cache["123e4567-e89b-12d3-a456-426614174000"] = VolumeInfo{name: "testVolume", svm: "testSVM"}
 }
 
 func TestVolumeWriteCreateHandler(t *testing.T) {
 	handler := VolumeWriteHandler{op: "create"}
-	refresher := &MockCacheRefresher{}
 	inputs := []string{
 		"volume create -vserver testSVM -volume testVolume -state online -policy default -size 200MB -aggregate umeng_aff300_aggr2",
 		"volume create -volume testVolume -size 200MB -vserver testSVM -state online -policy default -aggregate umeng_aff300_aggr2",
@@ -25,7 +28,7 @@ func TestVolumeWriteCreateHandler(t *testing.T) {
 
 	for _, input := range inputs {
 		input = normalizeInput(input)
-		volume, svm, _, _ := handler.ExtractNames(input, refresher)
+		volume, svm, _, _ := handler.ExtractNames(input, auditlog)
 		if volume != "testVolume" || svm != "testSVM" {
 			t.Errorf("Input: %s, Expected volume: testVolume, svm: testSVM, got volume: %s, svm: %s", input, volume, svm)
 		}
@@ -37,7 +40,6 @@ func TestVolumeWriteCreateHandler(t *testing.T) {
 
 func TestVolumeWriteModifyHandler(t *testing.T) {
 	handler := VolumeWriteHandler{op: "update"}
-	refresher := &MockCacheRefresher{}
 	inputs := []string{
 		"volume modify -vserver testSVM -volume testVolume -size 201MB -state online",
 		"volume modify -vserver testSVM -volume       testVolume -size 201MB -state online",
@@ -47,7 +49,7 @@ func TestVolumeWriteModifyHandler(t *testing.T) {
 
 	for _, input := range inputs {
 		input = normalizeInput(input)
-		volume, svm, _, _ := handler.ExtractNames(input, refresher)
+		volume, svm, _, _ := handler.ExtractNames(input, auditlog)
 		if volume != "testVolume" || svm != "testSVM" {
 			t.Errorf("Input: %s, Expected volume: testVolume, svm: testSVM, got volume: %s, svm: %s", input, volume, svm)
 		}
@@ -59,7 +61,6 @@ func TestVolumeWriteModifyHandler(t *testing.T) {
 
 func TestVolumeWriteRenameHandler(t *testing.T) {
 	handler := VolumeRenameHandler{op: "update"}
-	refresher := &MockCacheRefresher{}
 	inputs := []string{
 		"volume rename -vserver testSVM -volume testVolume -newname testVolume1",
 		"volume rename -vserver testSVM        -volume      testVolume      -newname       testVolume1",
@@ -67,7 +68,7 @@ func TestVolumeWriteRenameHandler(t *testing.T) {
 
 	for _, input := range inputs {
 		input = normalizeInput(input)
-		volume, svm, _, _ := handler.ExtractNames(input, refresher)
+		volume, svm, _, _ := handler.ExtractNames(input, auditlog)
 		if volume != "testVolume1" || svm != "testSVM" {
 			t.Errorf("Input: %s, Expected volume: testVolume1, svm: testSVM, got volume: %s, svm: %s", input, volume, svm)
 		}
@@ -79,7 +80,6 @@ func TestVolumeWriteRenameHandler(t *testing.T) {
 
 func TestVolumeWriteDeleteHandler(t *testing.T) {
 	handler := VolumeWriteHandler{op: "delete"}
-	refresher := &MockCacheRefresher{}
 	inputs := []string{
 		"volume create -volume testVolume -vserver testSVM",
 		"volume create -volume    testVolume    -vserver    testSVM",
@@ -89,7 +89,7 @@ func TestVolumeWriteDeleteHandler(t *testing.T) {
 
 	for _, input := range inputs {
 		input = normalizeInput(input)
-		volume, svm, _, _ := handler.ExtractNames(input, refresher)
+		volume, svm, _, _ := handler.ExtractNames(input, auditlog)
 		if volume != "testVolume" || svm != "testSVM" {
 			t.Errorf("Input: %s, Expected volume: testVolume, svm: testSVM, got volume: %s, svm: %s", input, volume, svm)
 		}
@@ -101,7 +101,6 @@ func TestVolumeWriteDeleteHandler(t *testing.T) {
 
 func TestVolumePatchHandler(t *testing.T) {
 	handler := VolumePatchHandler{op: "update"}
-	refresher := &MockCacheRefresher{}
 	inputs := []string{
 		"PATCH /api/storage/volumes/123e4567-e89b-12d3-a456-426614174000 : {\"name\": \"testVolume\", \"size\": \"220MB\"}",
 		"PATCH /api/storage/volumes/123e4567-e89b-12d3-a456-426614174000 : {\"name\": \"testVolume\", \"size\": \"220MB\"     }",
@@ -110,7 +109,7 @@ func TestVolumePatchHandler(t *testing.T) {
 
 	for _, input := range inputs {
 		input = normalizeInput(input)
-		volume, svm, _, _ := handler.ExtractNames(input, refresher)
+		volume, svm, _, _ := handler.ExtractNames(input, auditlog)
 		if volume != "testVolume" || svm != "testSVM" {
 			t.Errorf("Input: %s, Expected volume: testVolume, svm: testSVM, got volume: %s, svm: %s", input, volume, svm)
 		}
@@ -122,7 +121,6 @@ func TestVolumePatchHandler(t *testing.T) {
 
 func TestVolumePostHandler(t *testing.T) {
 	handler := VolumePostHandler{op: "create"}
-	refresher := &MockCacheRefresher{}
 	inputs := []string{
 		`POST /api/storage/volumes : {"svm":"testSVM","name":"testVolume"}`,
 		`POST /api/storage/volumes : {"svm": "testSVM", "name": "testVolume"}`,
@@ -130,7 +128,7 @@ func TestVolumePostHandler(t *testing.T) {
 
 	for _, input := range inputs {
 		input = normalizeInput(input)
-		volume, svm, _, _ := handler.ExtractNames(input, refresher)
+		volume, svm, _, _ := handler.ExtractNames(input, auditlog)
 		if volume != "testVolume" || svm != "testSVM" {
 			t.Errorf("Input: %s, Expected volume: testVolume, svm: testSVM, got volume: %s, svm: %s", input, volume, svm)
 		}
@@ -142,7 +140,6 @@ func TestVolumePostHandler(t *testing.T) {
 
 func TestVolumeDeleteHandler(t *testing.T) {
 	handler := VolumeDeleteHandler{op: "delete"}
-	refresher := &MockCacheRefresher{}
 	inputs := []string{
 		"DELETE /api/storage/volumes/123e4567-e89b-12d3-a456-426614174000",
 		"DELETE    /api/storage/volumes/123e4567-e89b-12d3-a456-426614174000",
@@ -150,7 +147,7 @@ func TestVolumeDeleteHandler(t *testing.T) {
 
 	for _, input := range inputs {
 		input = normalizeInput(input)
-		volume, svm, _, _ := handler.ExtractNames(input, refresher)
+		volume, svm, _, _ := handler.ExtractNames(input, auditlog)
 		if volume != "testVolume" || svm != "testSVM" {
 			t.Errorf("Input: %s, Expected volume: testVolume, svm: testSVM, got volume: %s, svm: %s", input, volume, svm)
 		}
@@ -162,7 +159,6 @@ func TestVolumeDeleteHandler(t *testing.T) {
 
 func TestVolumePrivateCliPostHandler(t *testing.T) {
 	handler := VolumePrivateCliPostHandler{op: "create"}
-	refresher := &MockCacheRefresher{}
 	inputs := []string{
 		`POST /api/private/cli/volume : {"vserver":"testSVM","volume":"testVolume"}`,
 		`POST /api/private/cli/volume : {"vserver": "testSVM", "volume": "testVolume"}`,
@@ -171,7 +167,7 @@ func TestVolumePrivateCliPostHandler(t *testing.T) {
 
 	for _, input := range inputs {
 		input = normalizeInput(input)
-		volume, svm, _, _ := handler.ExtractNames(input, refresher)
+		volume, svm, _, _ := handler.ExtractNames(input, auditlog)
 		if volume != "testVolume" || svm != "testSVM" {
 			t.Errorf("Input: %s, Expected volume: testVolume, svm: testSVM, got volume: %s, svm: %s", input, volume, svm)
 		}
@@ -183,7 +179,6 @@ func TestVolumePrivateCliPostHandler(t *testing.T) {
 
 func TestVolumePrivateCliRenameHandler(t *testing.T) {
 	handler := VolumePrivateCliRenameHandler{op: "update"}
-	refresher := &MockCacheRefresher{}
 	inputs := []string{
 		`POST /api/private/cli/volume/rename : {"vserver":"testSVM","volume":"testVolume","newname":"newTestVolume"}`,
 		`POST /api/private/cli/volume/rename : {"vserver": "testSVM", "volume": "testVolume", "newname": "newTestVolume"}`,
@@ -191,7 +186,7 @@ func TestVolumePrivateCliRenameHandler(t *testing.T) {
 
 	for _, input := range inputs {
 		input = normalizeInput(input)
-		volume, svm, _, _ := handler.ExtractNames(input, refresher)
+		volume, svm, _, _ := handler.ExtractNames(input, auditlog)
 		if volume != "newTestVolume" || svm != "testSVM" {
 			t.Errorf("Input: %s, Expected volume: newTestVolume, svm: testSVM, got volume: %s, svm: %s", input, volume, svm)
 		}
@@ -203,7 +198,6 @@ func TestVolumePrivateCliRenameHandler(t *testing.T) {
 
 func TestVolumePrivateCliDeleteCliHandler(t *testing.T) {
 	handler := VolumePrivateCliDeleteCliHandler{op: "delete"}
-	refresher := &MockCacheRefresher{}
 	inputs := []string{
 		`DELETE /api/private/cli/volume : {"vserver":"testSVM","volume":"testVolume"}`,
 		`DELETE /api/private/cli/volume : {"vserver": "testSVM", "volume": "testVolume"}`,
@@ -212,7 +206,7 @@ func TestVolumePrivateCliDeleteCliHandler(t *testing.T) {
 
 	for _, input := range inputs {
 		input = normalizeInput(input)
-		volume, svm, _, _ := handler.ExtractNames(input, refresher)
+		volume, svm, _, _ := handler.ExtractNames(input, auditlog)
 		if volume != "testVolume" || svm != "testSVM" {
 			t.Errorf("Input: %s, Expected volume: testVolume, svm: testSVM, got volume: %s, svm: %s", input, volume, svm)
 		}
@@ -224,7 +218,6 @@ func TestVolumePrivateCliDeleteCliHandler(t *testing.T) {
 
 func TestApplicationPostHandler(t *testing.T) {
 	handler := ApplicationPostHandler{op: "create"}
-	refresher := &MockCacheRefresher{}
 	inputs := []string{
 		`POST /api/application/applications : ["X-Dot-Client-App: SMv4"] {"name":"testApp","svm":{"name":"testSVM"},"template":{"name":"nas"}}`,
 		`POST /api/application/applications : ["X-Dot-Client-App: SMv4"] {"name": "testApp", "svm": {"name": "testSVM"}, "template": {"name": "nas"}}`,
@@ -233,7 +226,7 @@ func TestApplicationPostHandler(t *testing.T) {
 
 	for _, input := range inputs {
 		input = normalizeInput(input)
-		volume, svm, _, _ := handler.ExtractNames(input, refresher)
+		volume, svm, _, _ := handler.ExtractNames(input, auditlog)
 		if volume != "testApp" || svm != "testSVM" {
 			t.Errorf("Input: %s, Expected volume: testApp, svm: testSVM, got volume: %s, svm: %s", input, volume, svm)
 		}

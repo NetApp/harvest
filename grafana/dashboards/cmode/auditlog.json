@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1739889087593,
+  "iteration": 1740047780335,
   "links": [
     {
       "asDropdown": true,
@@ -546,7 +546,8 @@
                 "user",
                 "volume",
                 "Value #A",
-                "ClusterTime"
+                "ClusterTime",
+                "Value #B"
               ]
             }
           }

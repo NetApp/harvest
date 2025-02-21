@@ -1,7 +1,6 @@
 package auditlog
 
 import (
-	"fmt"
 	"gopkg.in/yaml.v3"
 )
 
@@ -50,7 +49,6 @@ AuditLog:
 	var config RootConfig
 	err := yaml.Unmarshal([]byte(data), &config)
 	if err != nil {
-		fmt.Printf("Error parsing YAML: %s\n", err)
 		return RootConfig{}, err
 	}
 
