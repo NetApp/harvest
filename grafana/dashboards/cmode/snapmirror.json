@@ -240,7 +240,7 @@
           "refId": "A"
         }
       ],
-      "title": "Failed SnapMirror Transfers",
+      "title": "Number of Failed SnapMirror Transfers",
       "type": "stat"
     },
     {
@@ -308,7 +308,7 @@
           "refId": "A"
         }
       ],
-      "title": "Successful SnapMirror Transfers",
+      "title": "Number of Successful SnapMirror Transfers",
       "type": "stat"
     },
     {
