@@ -1053,6 +1053,7 @@ func TestOnlyHighlightsExpanded(t *testing.T) {
 		"cmode/health.json":             2,
 		"cmode/power.json":              2,
 		"storagegrid/fabricpool.json":   2,
+		"cmode/auditlog.json":           2,
 		"cmode/nfsTroubleshooting.json": 3,
 	}
 	// count the number of expanded sections in the dashboard and ensure num expanded = 1
@@ -1555,13 +1556,24 @@ func checkDashboardTime(t *testing.T, path string, data []byte) {
 	from := gjson.GetBytes(data, "time.from")
 	to := gjson.GetBytes(data, "time.to")
 
-	fromWant := "now-3h"
-	toWant := "now"
-	if from.ClonedString() != fromWant {
-		t.Errorf("dashboard=%s time.from got=%s want=%s", dashPath, from.ClonedString(), fromWant)
+	expectedTimeRanges := map[string]struct {
+		from string
+		to   string
+	}{
+		"cmode/auditlog.json": {"now-24h", "now"},
+		"default":             {"now-3h", "now"},
 	}
-	if to.ClonedString() != toWant {
-		t.Errorf("dashboard=%s time.to got=%s want=%s", dashPath, to.ClonedString(), toWant)
+
+	expected, exists := expectedTimeRanges[dashPath]
+	if !exists {
+		expected = expectedTimeRanges["default"]
+	}
+
+	if from.ClonedString() != expected.from {
+		t.Errorf("dashboard=%s time.from got=%s want=%s", dashPath, from.ClonedString(), expected.from)
+	}
+	if to.ClonedString() != expected.to {
+		t.Errorf("dashboard=%s time.to got=%s want=%s", dashPath, to.ClonedString(), expected.to)
 	}
 }
 
@@ -1633,7 +1645,6 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 		title := value.Get("title").ClonedString()
 		panelType := value.Get("type").ClonedString()
 		if slices.Contains(ignoreList, title) {
-			fmt.Printf(`dashboard=%s panel="%s" has different description\n`, dashPath, title)
 			return
 		}
 
@@ -1658,11 +1669,11 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 					t.Errorf(`dashboard=%s panel="%s" has many expressions %d`, dashPath, title, *count)
 				}
 			}
-		} else if !strings.HasPrefix(description, "$") && !strings.HasSuffix(description, ".") {
+		} else if !strings.HasPrefix(description, "$") && !strings.HasSuffix(strings.TrimSpace(description), ".") {
 			// A few panels take their description text from a variable.
 			// Those can be ignored.
 			// Descriptions must end with a period (.)
-			t.Errorf(`dashboard=%s panel="%s" description should end with a period`, dashPath, title)
+			t.Errorf(`dashboard=%s panel="%s" description "%s" should end with a period`, dashPath, title, description)
 		}
 	})
 }
