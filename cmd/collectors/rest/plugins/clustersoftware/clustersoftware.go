@@ -102,6 +102,7 @@ func (c *ClusterSoftware) createStatusMetrics() error {
 	instanceKeys.NewChildS("", "state")
 	instanceKeys.NewChildS("", "node")
 	instanceKeys.NewChildS("", "name")
+	instanceKeys.NewChildS("", "startTime")
 
 	mat.SetExportOptions(exportOptions)
 
@@ -199,7 +200,8 @@ func (c *ClusterSoftware) handleStatusDetails(statusDetailsJSON gjson.Result, gl
 		name := updateDetail.Get("name").ClonedString()
 		state := updateDetail.Get("state").ClonedString()
 		nodeName := updateDetail.Get("node.name").ClonedString()
-		key = name + state + nodeName
+		startTime := updateDetail.Get("start_time").ClonedString()
+		key = name + state + nodeName + startTime
 
 		if clusterStatusInstance, err = c.data[statusMatrix].NewInstance(key); err != nil {
 			c.SLogger.Error("Failed to create instance", slogx.Err(err), slog.String("key", key))
@@ -208,6 +210,7 @@ func (c *ClusterSoftware) handleStatusDetails(statusDetailsJSON gjson.Result, gl
 		clusterStatusInstance.SetLabel("node", nodeName)
 		clusterStatusInstance.SetLabel("state", state)
 		clusterStatusInstance.SetLabel("name", name)
+		clusterStatusInstance.SetLabel("startTime", startTime)
 
 		// populate numeric data
 		value := 0.0
