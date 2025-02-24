@@ -3,7 +3,7 @@ module github.com/netapp/harvest/v2
 go 1.24
 
 require (
-	github.com/google/go-cmp v0.6.0
+	github.com/google/go-cmp v0.7.0
 	github.com/rivo/uniseg v0.4.7
 	github.com/shirou/gopsutil/v4 v4.25.1
 	github.com/spf13/cobra v1.9.1
