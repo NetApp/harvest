@@ -29,7 +29,7 @@ objects:
   NicCommon:                nic_common.yaml
 #  ObjectStoreClient:        object_store_client_op.yaml
   Path:                     path.yaml
-#  Qtree:                    qtree.yaml
+#  Qtree:                    qtree.yaml           #Enabling `qtree.yaml` may slow down data collection
   Rwctx:                    rwctx.yaml
   SystemNode:               system_node.yaml
 #  TokenManager:             token_manager.yaml

@@ -18,4 +18,4 @@ objects:
   NFSv4:                       nfsv4.yaml
   SystemNode:                  system_node.yaml
   Volume:                      volume.yaml
-  Qtree:                       qtree.yaml
+#  Qtree:                       qtree.yaml           #Enabling `qtree.yaml` may slow down data collection
