@@ -102,6 +102,8 @@ func (c *ClusterSoftware) createStatusMetrics() error {
 	instanceKeys.NewChildS("", "state")
 	instanceKeys.NewChildS("", "node")
 	instanceKeys.NewChildS("", "name")
+	instanceKeys.NewChildS("", "startTime")
+	instanceKeys.NewChildS("", "endTime")
 
 	mat.SetExportOptions(exportOptions)
 
@@ -195,11 +197,13 @@ func (c *ClusterSoftware) handleStatusDetails(statusDetailsJSON gjson.Result, gl
 	// Set all global labels
 	c.data[statusMatrix].SetGlobalLabels(globalLabels)
 
-	for _, updateDetail := range statusDetailsJSON.Array() {
-		name := updateDetail.Get("name").ClonedString()
-		state := updateDetail.Get("state").ClonedString()
-		nodeName := updateDetail.Get("node.name").ClonedString()
-		key = name + state + nodeName
+	for _, statusDetail := range statusDetailsJSON.Array() {
+		name := statusDetail.Get("name").ClonedString()
+		state := statusDetail.Get("state").ClonedString()
+		nodeName := statusDetail.Get("node.name").ClonedString()
+		startTime := statusDetail.Get("start_time").ClonedString()
+		endTime := statusDetail.Get("end_time").ClonedString()
+		key = name + state + nodeName + startTime
 
 		if clusterStatusInstance, err = c.data[statusMatrix].NewInstance(key); err != nil {
 			c.SLogger.Error("Failed to create instance", slogx.Err(err), slog.String("key", key))
@@ -208,6 +212,8 @@ func (c *ClusterSoftware) handleStatusDetails(statusDetailsJSON gjson.Result, gl
 		clusterStatusInstance.SetLabel("node", nodeName)
 		clusterStatusInstance.SetLabel("state", state)
 		clusterStatusInstance.SetLabel("name", name)
+		clusterStatusInstance.SetLabel("startTime", startTime)
+		clusterStatusInstance.SetLabel("endTime", endTime)
 
 		// populate numeric data
 		value := 0.0
@@ -237,9 +243,9 @@ func (c *ClusterSoftware) handleValidationDetails(validationDetailsJSON gjson.Re
 	// Set all global labels
 	c.data[validationMatrix].SetGlobalLabels(globalLabels)
 
-	for _, updateDetail := range validationDetailsJSON.Array() {
-		updateCheck := updateDetail.Get("update_check").ClonedString()
-		status := updateDetail.Get("status").ClonedString()
+	for _, validationDetail := range validationDetailsJSON.Array() {
+		updateCheck := validationDetail.Get("update_check").ClonedString()
+		status := validationDetail.Get("status").ClonedString()
 		key = updateCheck + status
 
 		if clusterValidationInstance, err = c.data[validationMatrix].NewInstance(key); err != nil {
