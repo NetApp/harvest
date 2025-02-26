@@ -4819,6 +4819,30 @@
                     "value": "color-background"
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Start Time"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "dateTimeAsIso"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "End Time"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "dateTimeAsIso"
+                  }
+                ]
               }
             ]
           },
@@ -4865,7 +4889,9 @@
                     "cluster",
                     "name",
                     "node",
-                    "datacenter"
+                    "datacenter",
+                    "startTime",
+                    "endTime"
                   ]
                 }
               }
@@ -4877,12 +4903,16 @@
                 "indexByName": {
                   "cluster": 1,
                   "datacenter": 0,
+                  "endtime": 6,
                   "name": 3,
                   "node": 2,
+                  "startTime": 5,
                   "state": 4
                 },
                 "renameByName": {
+                  "endTime": "End Time",
                   "name": "Job Name",
+                  "startTime": "Start Time",
                   "state": "Status"
                 }
               }
