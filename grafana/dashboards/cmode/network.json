@@ -708,7 +708,7 @@
                 "properties": [
                   {
                     "id": "unit",
-                    "value": "bps"
+                    "value": "Mbits"
                   }
                 ]
               },
