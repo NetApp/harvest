@@ -708,7 +708,7 @@
                 "properties": [
                   {
                     "id": "unit",
-                    "value": "bps"
+                    "value": "Mbits"
                   }
                 ]
               },
@@ -748,6 +748,18 @@
                         "type": "value"
                       }
                     ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Admin Speed"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "Mbits"
                   }
                 ]
               }
@@ -932,6 +944,10 @@
                   {
                     "id": "custom.width",
                     "value": 169
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "Link Speed"
                   }
                 ]
               },
