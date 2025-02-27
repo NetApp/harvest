@@ -641,7 +641,7 @@ The ChangeLog feature only detects changes when Harvest is up and running. It do
 
 ## Enabling the Plugin
 
-The plugin can be enabled in the templates under the plugins section.
+The plugin can be enabled in the templates under the plugins section. Steps are documented [here](https://github.com/NetApp/harvest/discussions/3494).
 
 For volume, svm, and node objects, you can enable the plugin with the following configuration:
 
