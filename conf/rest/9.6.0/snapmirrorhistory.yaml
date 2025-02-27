@@ -1,0 +1,43 @@
+name:                         SnapMirrorHistory
+query:                        api/private/cli/snapmirror/show-history
+object:                       snapmirror_history
+
+counters:
+  - ^^operation_id
+  - ^destination_path                        => destination_location
+  - ^destination_volume
+  - ^destination_vserver
+  - ^operation_type
+  - ^relationship_group_type                 => group_type
+  - ^relationship_id                         => relationship_id
+  - ^result                                  => result
+  - ^source_path                             => source_location
+  - ^source_volume
+  - ^source_vserver
+  - end_time(timestamp)                      => end_time
+  - start_time(timestamp)                    => start_time
+  - transfer_size
+
+#  - filter:
+#      - expand=true
+
+plugins:
+  - MetricAgent:
+      compute_metric:
+        - duration SUBTRACT end_time start_time
+        - bandwidth DIVIDE transfer_size duration
+
+export_options:
+  instance_keys:
+    - destination_location
+    - destination_volume
+    - destination_vserver
+    - operation_id
+    - relationship_id
+    - source_volume
+    - source_vserver
+  instance_labels:
+    - group_type
+    - operation_type
+    - result
+
