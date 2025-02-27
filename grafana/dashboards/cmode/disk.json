@@ -2736,7 +2736,7 @@
           },
           "gridPos": {
             "h": 9,
-            "w": 8,
+            "w": 12,
             "x": 0,
             "y": 41
           },
@@ -2866,8 +2866,8 @@
           },
           "gridPos": {
             "h": 9,
-            "w": 8,
-            "x": 8,
+            "w": 12,
+            "x": 12,
             "y": 41
           },
           "id": 38,
@@ -2910,7 +2910,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel displays details of the counts of two types of Consistency Points (CP) and the average latency in microseconds for the WAFL filesystem to process write requests to the volume.\n\n- **Back-to-Back CP (back_to_back_CP)**: For more information, see [Write Performance Impacted by Back to Back Consistency Points](https://kb.netapp.com/on-prem/ontap/Perf/Perf-KBs/Write_Performance_Impacted_by_Back_to_Back_Consistency_Points).\n- **Deferred Back-to-Back CP (deferred_back_to_back_CP)**: For more information, see [What are the different Consistency Point types and how are they measured](https://kb.netapp.com/on-prem/ontap/Perf/Perf-KBs/What_are_the_different_Consistency_Point_types_and_how_are_they_measured).",
+          "description": "This panel displays details of the counts of two types of Consistency Points (CP).\n\n- **Back-to-Back CP (back_to_back_CP)**: For more information, see [Write Performance Impacted by Back to Back Consistency Points](https://kb.netapp.com/on-prem/ontap/Perf/Perf-KBs/Write_Performance_Impacted_by_Back_to_Back_Consistency_Points).\n- **Deferred Back-to-Back CP (deferred_back_to_back_CP)**: For more information, see [What are the different Consistency Point types and how are they measured](https://kb.netapp.com/on-prem/ontap/Perf/Perf-KBs/What_are_the_different_Consistency_Point_types_and_how_are_they_measured).",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2968,10 +2968,6 @@
                 },
                 "properties": [
                   {
-                    "id": "custom.axisPlacement",
-                    "value": "right"
-                  },
-                  {
                     "id": "custom.axisLabel",
                     "value": "Back to Back CP Count"
                   },
@@ -2980,36 +2976,16 @@
                     "value": "locale"
                   }
                 ]
-              },
-              {
-                "matcher": {
-                  "id": "byFrameRefID",
-                  "options": "B"
-                },
-                "properties": [
-                  {
-                    "id": "custom.axisPlacement",
-                    "value": "left"
-                  },
-                  {
-                    "id": "custom.axisLabel",
-                    "value": "Write Latency"
-                  },
-                  {
-                    "id": "unit",
-                    "value": "µs"
-                  }
-                ]
               }
             ]
           },
           "gridPos": {
             "h": 9,
-            "w": 8,
-            "x": 16,
-            "y": 41
+            "w": 12,
+            "x": 0,
+            "y": 50
           },
-          "id": 40,
+          "id": 63,
           "options": {
             "legend": {
               "calcs": [
@@ -3031,20 +3007,122 @@
               "expr": "sum by (datacenter, cluster, node) (wafl_cp_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\",metric=~\"back_to_back_CP|deferred_back_to_back_CP|back_to_back_cp|deferred_back_to_back_cp\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Back-to-back CP Count {{node}}",
+              "legendFormat": "{{node}}",
               "refId": "A"
-            },
-            {
-              "expr": "node_vol_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "Write Latency {{node}}",
-              "refId": "B"
             }
           ],
           "timeFrom": null,
           "timeShift": null,
           "title": "CP (Consistency Points) Counts",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel displays details of the average latency in microseconds for the WAFL filesystem to process write requests to the volume.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "µs"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byFrameRefID",
+                  "options": "A"
+                },
+                "properties": [
+                  {
+                    "id": "custom.axisLabel",
+                    "value": "Write Latency"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "µs"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 50
+          },
+          "id": 64,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "node_vol_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{node}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Write Latency by Node",
           "transformations": [],
           "type": "timeseries"
         }
