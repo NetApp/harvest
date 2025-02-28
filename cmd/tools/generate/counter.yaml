@@ -2023,3 +2023,36 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
+
+  - Name: snapmirror_history_start_time
+    Description: Displays the time at which the snapmirror data transfer job started.
+
+  - Name: snapmirror_history_end_time
+    Description: Displays the time at which the snapmirror data transfer job ended.
+
+  - Name: snapmirror_history_transfer_size
+    Description: Displays the amount of data (in bytes) being transferred from source to destination in the snapmirror job.
+
+  - Name: snapmirror_history_duration
+    Description: Displays the duration of the snapmirror data transfer job.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.6.0/snapmirrorhistory.yaml
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapi/cdot/9.8.0/snapmirrorhistory.yaml
+
+  - Name: snapmirror_history_bandwidth
+    Description: Displays the bandwidth of the snapmirror data transfer job.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.6.0/snapmirrorhistory.yaml
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapi/cdot/9.8.0/snapmirrorhistory.yaml
