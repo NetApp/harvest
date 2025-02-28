@@ -2885,7 +2885,7 @@ value of a given metric, perform the requested mathematical operation, and store
 <p>Please note that the ChangeLog plugin requires the <code>uuid</code> label, which is unique, to be collected by the template. Without the <code>uuid</code> label, the plugin will not function.</p>
 <p>The ChangeLog feature only detects changes when Harvest is up and running. It does not detect changes that occur when Harvest is down. Additionally, the plugin does not detect changes in metric values by default, but it can be configured to do so.</p>
 <h2 id="enabling-the-plugin">Enabling the Plugin<a class="headerlink" href="#enabling-the-plugin" title="Permanent link">&para;</a></h2>
-<p>The plugin can be enabled in the templates under the plugins section.</p>
+<p>The plugin can be enabled in the templates under the plugins section. Steps are documented <a href="https://github.com/NetApp/harvest/discussions/3494">here</a>.</p>
 <p>For volume, svm, and node objects, you can enable the plugin with the following configuration:</p>
 <div class="highlight"><pre><span></span><code><span class="nt">plugins</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChangeLog</span>
