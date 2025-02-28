@@ -1519,18 +1519,19 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		records []gjson.Result
 	)
 
-	dataQuery := path.Join(r.Prop.Query, "rows")
-	fields := "properties"
+	// The PollInstance method is only needed for `workload` and `workload_detail` objects.
+	if !(isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query)) {
+		return nil, nil
+	}
+
 	var filter []string
 
-	if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
-		fields = "*"
-		dataQuery = qosWorkloadQuery
-		if r.Prop.Query == qosVolumeQuery || r.Prop.Query == qosDetailVolumeQuery {
-			filter = append(filter, "workload_class="+r.loadWorkloadClassQuery(objWorkloadVolumeClass))
-		} else {
-			filter = append(filter, "workload_class="+r.loadWorkloadClassQuery(objWorkloadClass))
-		}
+	fields := "*"
+	dataQuery := qosWorkloadQuery
+	if r.Prop.Query == qosVolumeQuery || r.Prop.Query == qosDetailVolumeQuery {
+		filter = append(filter, "workload_class="+r.loadWorkloadClassQuery(objWorkloadVolumeClass))
+	} else {
+		filter = append(filter, "workload_class="+r.loadWorkloadClassQuery(objWorkloadClass))
 	}
 
 	r.pollInstanceCalls++

@@ -4,6 +4,7 @@ collector:          RestPerf
 # Order here matters!
 schedule:
   - counter:  24h
+  - instance: 720h   # The instance schedule is only used by the `workload` and `workload_volume` templates
   - data:      1m
 
 objects:
@@ -55,6 +56,5 @@ objects:
   Vscan:             vscan.yaml
   VscanSVM:          vscan_svm.yaml
 
-#  Uncomment to collect workload/QOS counters.
   Workload:             workload.yaml
   WorkloadVolume:       workload_volume.yaml
