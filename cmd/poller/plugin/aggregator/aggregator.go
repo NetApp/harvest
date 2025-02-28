@@ -314,7 +314,11 @@ func (a *Aggregator) NewLabels() []string {
 func (a *Aggregator) NewMetrics() []plugin.DerivedMetric {
 	derivedMetrics := make([]plugin.DerivedMetric, 0, len(a.rules))
 	for _, r := range a.rules {
-		derivedMetrics = append(derivedMetrics, plugin.DerivedMetric{Name: r.label, Source: r.object})
+		customName := false
+		if r.object != "" {
+			customName = true
+		}
+		derivedMetrics = append(derivedMetrics, plugin.DerivedMetric{Name: r.label, Source: r.object, CustomName: customName})
 	}
 
 	return derivedMetrics
