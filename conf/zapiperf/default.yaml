@@ -61,6 +61,5 @@ objects:
   Vscan:                    vscan.yaml
   VscanSVM:                 vscan_svm.yaml
 
-#  Uncomment to collect workload/QOS counters.
   Workload:             workload.yaml
   WorkloadVolume:       workload_volume.yaml
