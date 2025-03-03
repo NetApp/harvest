@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Feb-12
+Creation Date : 2025-Feb-27
 ONTAP Version: 9.16.1
 ```
 ## Understanding the structure
@@ -8595,7 +8595,7 @@ Specifies the bucket size in bytes; ranges from 190MB to 62PB.
 
 ### ontaps3_svm_abort_multipart_upload_failed
 
-Number of failed Abort Multipart Upload operations.
+Number of failed Abort Multipart Upload operations. ontaps3_svm_abort_multipart_upload_failed is [ontaps3_svm_abort_multipart_upload_failed](#ontaps3_svm_abort_multipart_upload_failed) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8605,7 +8605,7 @@ Number of failed Abort Multipart Upload operations.
 
 ### ontaps3_svm_abort_multipart_upload_failed_client_close
 
-Number of times Abort Multipart Upload operation failed because client terminated connection while the operation was still pending on server.
+Number of times Abort Multipart Upload operation failed because client terminated connection while the operation was still pending on server. ontaps3_svm_abort_multipart_upload_failed_client_close is [ontaps3_svm_abort_multipart_upload_failed_client_close](#ontaps3_svm_abort_multipart_upload_failed_client_close) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8615,7 +8615,7 @@ Number of times Abort Multipart Upload operation failed because client terminate
 
 ### ontaps3_svm_abort_multipart_upload_latency
 
-Average latency for Abort Multipart Upload operations.
+Average latency for Abort Multipart Upload operations. ontaps3_svm_abort_multipart_upload_latency is [ontaps3_svm_abort_multipart_upload_latency](#ontaps3_svm_abort_multipart_upload_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8625,7 +8625,7 @@ Average latency for Abort Multipart Upload operations.
 
 ### ontaps3_svm_abort_multipart_upload_rate
 
-Number of Abort Multipart Upload operations per second.
+Number of Abort Multipart Upload operations per second. ontaps3_svm_abort_multipart_upload_rate is [ontaps3_svm_abort_multipart_upload_rate](#ontaps3_svm_abort_multipart_upload_rate) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8635,7 +8635,7 @@ Number of Abort Multipart Upload operations per second.
 
 ### ontaps3_svm_abort_multipart_upload_total
 
-Number of Abort Multipart Upload operations.
+Number of Abort Multipart Upload operations. ontaps3_svm_abort_multipart_upload_total is [ontaps3_svm_abort_multipart_upload_total](#ontaps3_svm_abort_multipart_upload_total) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8645,7 +8645,7 @@ Number of Abort Multipart Upload operations.
 
 ### ontaps3_svm_allow_access
 
-Number of times access was allowed.
+Number of times access was allowed. ontaps3_svm_allow_access is [ontaps3_svm_allow_access](#ontaps3_svm_allow_access) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8655,7 +8655,7 @@ Number of times access was allowed.
 
 ### ontaps3_svm_anonymous_access
 
-Number of times anonymous access was allowed.
+Number of times anonymous access was allowed. ontaps3_svm_anonymous_access is [ontaps3_svm_anonymous_access](#ontaps3_svm_anonymous_access) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8665,7 +8665,7 @@ Number of times anonymous access was allowed.
 
 ### ontaps3_svm_anonymous_deny_access
 
-Number of times anonymous access was denied.
+Number of times anonymous access was denied. ontaps3_svm_anonymous_deny_access is [ontaps3_svm_anonymous_deny_access](#ontaps3_svm_anonymous_deny_access) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8675,7 +8675,7 @@ Number of times anonymous access was denied.
 
 ### ontaps3_svm_authentication_failures
 
-Number of authentication failures.
+Number of authentication failures. ontaps3_svm_authentication_failures is [ontaps3_svm_authentication_failures](#ontaps3_svm_authentication_failures) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8685,7 +8685,7 @@ Number of authentication failures.
 
 ### ontaps3_svm_chunked_upload_reqs
 
-Total number of object store server chunked object upload requests
+Total number of object store server chunked object upload requests. ontaps3_svm_chunked_upload_reqs is [ontaps3_svm_chunked_upload_reqs](#ontaps3_svm_chunked_upload_reqs) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8695,7 +8695,7 @@ Total number of object store server chunked object upload requests
 
 ### ontaps3_svm_complete_multipart_upload_failed
 
-Number of failed Complete Multipart Upload operations.
+Number of failed Complete Multipart Upload operations. ontaps3_svm_complete_multipart_upload_failed is [ontaps3_svm_complete_multipart_upload_failed](#ontaps3_svm_complete_multipart_upload_failed) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8705,7 +8705,7 @@ Number of failed Complete Multipart Upload operations.
 
 ### ontaps3_svm_complete_multipart_upload_failed_client_close
 
-Number of times Complete Multipart Upload operation failed because client terminated connection while the operation was still pending on server.
+Number of times Complete Multipart Upload operation failed because client terminated connection while the operation was still pending on server. ontaps3_svm_complete_multipart_upload_failed_client_close is [ontaps3_svm_complete_multipart_upload_failed_client_close](#ontaps3_svm_complete_multipart_upload_failed_client_close) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8715,7 +8715,7 @@ Number of times Complete Multipart Upload operation failed because client termin
 
 ### ontaps3_svm_complete_multipart_upload_latency
 
-Average latency for Complete Multipart Upload operations.
+Average latency for Complete Multipart Upload operations. ontaps3_svm_complete_multipart_upload_latency is [ontaps3_svm_complete_multipart_upload_latency](#ontaps3_svm_complete_multipart_upload_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8725,7 +8725,7 @@ Average latency for Complete Multipart Upload operations.
 
 ### ontaps3_svm_complete_multipart_upload_rate
 
-Number of Complete Multipart Upload operations per second.
+Number of Complete Multipart Upload operations per second. ontaps3_svm_complete_multipart_upload_rate is [ontaps3_svm_complete_multipart_upload_rate](#ontaps3_svm_complete_multipart_upload_rate) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8735,7 +8735,7 @@ Number of Complete Multipart Upload operations per second.
 
 ### ontaps3_svm_complete_multipart_upload_total
 
-Number of Complete Multipart Upload operations.
+Number of Complete Multipart Upload operations. ontaps3_svm_complete_multipart_upload_total is [ontaps3_svm_complete_multipart_upload_total](#ontaps3_svm_complete_multipart_upload_total) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8745,7 +8745,7 @@ Number of Complete Multipart Upload operations.
 
 ### ontaps3_svm_connected_connections
 
-Number of object store server connections currently established
+Number of object store server connections currently established. ontaps3_svm_connected_connections is [ontaps3_svm_connected_connections](#ontaps3_svm_connected_connections) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8755,7 +8755,7 @@ Number of object store server connections currently established
 
 ### ontaps3_svm_connections
 
-Total number of object store server connections.
+Total number of object store server connections. ontaps3_svm_connections is [ontaps3_svm_connections](#ontaps3_svm_connections) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8765,7 +8765,7 @@ Total number of object store server connections.
 
 ### ontaps3_svm_create_bucket_failed
 
-Number of failed Create Bucket operations.
+Number of failed Create Bucket operations. ontaps3_svm_create_bucket_failed is [ontaps3_svm_create_bucket_failed](#ontaps3_svm_create_bucket_failed) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8775,7 +8775,7 @@ Number of failed Create Bucket operations.
 
 ### ontaps3_svm_create_bucket_failed_client_close
 
-Number of times Create Bucket operation failed because client terminated connection while the operation was still pending on server.
+Number of times Create Bucket operation failed because client terminated connection while the operation was still pending on server. ontaps3_svm_create_bucket_failed_client_close is [ontaps3_svm_create_bucket_failed_client_close](#ontaps3_svm_create_bucket_failed_client_close) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8785,7 +8785,7 @@ Number of times Create Bucket operation failed because client terminated connect
 
 ### ontaps3_svm_create_bucket_latency
 
-Average latency for Create Bucket operations.
+Average latency for Create Bucket operations. ontaps3_svm_create_bucket_latency is [ontaps3_svm_create_bucket_latency](#ontaps3_svm_create_bucket_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8795,7 +8795,7 @@ Average latency for Create Bucket operations.
 
 ### ontaps3_svm_create_bucket_rate
 
-Number of Create Bucket operations per second.
+Number of Create Bucket operations per second. ontaps3_svm_create_bucket_rate is [ontaps3_svm_create_bucket_rate](#ontaps3_svm_create_bucket_rate) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8805,7 +8805,7 @@ Number of Create Bucket operations per second.
 
 ### ontaps3_svm_create_bucket_total
 
-Number of Create Bucket operations.
+Number of Create Bucket operations. ontaps3_svm_create_bucket_total is [ontaps3_svm_create_bucket_total](#ontaps3_svm_create_bucket_total) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8815,7 +8815,7 @@ Number of Create Bucket operations.
 
 ### ontaps3_svm_default_deny_access
 
-Number of times access was denied by default and not through any policy statement.
+Number of times access was denied by default and not through any policy statement. ontaps3_svm_default_deny_access is [ontaps3_svm_default_deny_access](#ontaps3_svm_default_deny_access) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8825,7 +8825,7 @@ Number of times access was denied by default and not through any policy statemen
 
 ### ontaps3_svm_delete_bucket_failed
 
-Number of failed Delete Bucket operations.
+Number of failed Delete Bucket operations. ontaps3_svm_delete_bucket_failed is [ontaps3_svm_delete_bucket_failed](#ontaps3_svm_delete_bucket_failed) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8835,7 +8835,7 @@ Number of failed Delete Bucket operations.
 
 ### ontaps3_svm_delete_bucket_failed_client_close
 
-Number of times Delete Bucket operation failed because client terminated connection while the operation was still pending on server.
+Number of times Delete Bucket operation failed because client terminated connection while the operation was still pending on server. ontaps3_svm_delete_bucket_failed_client_close is [ontaps3_svm_delete_bucket_failed_client_close](#ontaps3_svm_delete_bucket_failed_client_close) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8845,7 +8845,7 @@ Number of times Delete Bucket operation failed because client terminated connect
 
 ### ontaps3_svm_delete_bucket_latency
 
-Average latency for Delete Bucket operations.
+Average latency for Delete Bucket operations. ontaps3_svm_delete_bucket_latency is [ontaps3_svm_delete_bucket_latency](#ontaps3_svm_delete_bucket_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8855,7 +8855,7 @@ Average latency for Delete Bucket operations.
 
 ### ontaps3_svm_delete_bucket_rate
 
-Number of Delete Bucket operations per second.
+Number of Delete Bucket operations per second. ontaps3_svm_delete_bucket_rate is [ontaps3_svm_delete_bucket_rate](#ontaps3_svm_delete_bucket_rate) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8865,7 +8865,7 @@ Number of Delete Bucket operations per second.
 
 ### ontaps3_svm_delete_bucket_total
 
-Number of Delete Bucket operations.
+Number of Delete Bucket operations. ontaps3_svm_delete_bucket_total is [ontaps3_svm_delete_bucket_total](#ontaps3_svm_delete_bucket_total) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8875,7 +8875,7 @@ Number of Delete Bucket operations.
 
 ### ontaps3_svm_delete_object_failed
 
-Number of failed DELETE object operations
+Number of failed DELETE object operations. ontaps3_svm_delete_object_failed is [ontaps3_svm_delete_object_failed](#ontaps3_svm_delete_object_failed) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8885,7 +8885,7 @@ Number of failed DELETE object operations
 
 ### ontaps3_svm_delete_object_failed_client_close
 
-Number of times DELETE object operation failed due to the case where client closed the connection while the operation was still pending on server.
+Number of times DELETE object operation failed due to the case where client closed the connection while the operation was still pending on server. ontaps3_svm_delete_object_failed_client_close is [ontaps3_svm_delete_object_failed_client_close](#ontaps3_svm_delete_object_failed_client_close) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8895,7 +8895,7 @@ Number of times DELETE object operation failed due to the case where client clos
 
 ### ontaps3_svm_delete_object_latency
 
-Average latency for DELETE object operations
+Average latency for DELETE object operations. ontaps3_svm_delete_object_latency is [ontaps3_svm_delete_object_latency](#ontaps3_svm_delete_object_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8905,7 +8905,7 @@ Average latency for DELETE object operations
 
 ### ontaps3_svm_delete_object_rate
 
-Number of DELETE object operations per second
+Number of DELETE object operations per second. ontaps3_svm_delete_object_rate is [ontaps3_svm_delete_object_rate](#ontaps3_svm_delete_object_rate) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8915,7 +8915,7 @@ Number of DELETE object operations per second
 
 ### ontaps3_svm_delete_object_tagging_failed
 
-Number of failed DELETE object tagging operations.
+Number of failed DELETE object tagging operations. ontaps3_svm_delete_object_tagging_failed is [ontaps3_svm_delete_object_tagging_failed](#ontaps3_svm_delete_object_tagging_failed) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8925,7 +8925,7 @@ Number of failed DELETE object tagging operations.
 
 ### ontaps3_svm_delete_object_tagging_failed_client_close
 
-Number of times DELETE object tagging operation failed because client terminated connection while the operation was still pending on server.
+Number of times DELETE object tagging operation failed because client terminated connection while the operation was still pending on server. ontaps3_svm_delete_object_tagging_failed_client_close is [ontaps3_svm_delete_object_tagging_failed_client_close](#ontaps3_svm_delete_object_tagging_failed_client_close) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8935,7 +8935,7 @@ Number of times DELETE object tagging operation failed because client terminated
 
 ### ontaps3_svm_delete_object_tagging_latency
 
-Average latency for DELETE object tagging operations.
+Average latency for DELETE object tagging operations. ontaps3_svm_delete_object_tagging_latency is [ontaps3_svm_delete_object_tagging_latency](#ontaps3_svm_delete_object_tagging_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8945,7 +8945,7 @@ Average latency for DELETE object tagging operations.
 
 ### ontaps3_svm_delete_object_tagging_rate
 
-Number of DELETE object tagging operations per second.
+Number of DELETE object tagging operations per second. ontaps3_svm_delete_object_tagging_rate is [ontaps3_svm_delete_object_tagging_rate](#ontaps3_svm_delete_object_tagging_rate) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8955,7 +8955,7 @@ Number of DELETE object tagging operations per second.
 
 ### ontaps3_svm_delete_object_tagging_total
 
-Number of DELETE object tagging operations.
+Number of DELETE object tagging operations. ontaps3_svm_delete_object_tagging_total is [ontaps3_svm_delete_object_tagging_total](#ontaps3_svm_delete_object_tagging_total) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8965,7 +8965,7 @@ Number of DELETE object tagging operations.
 
 ### ontaps3_svm_delete_object_total
 
-Number of DELETE object operations
+Number of DELETE object operations. ontaps3_svm_delete_object_total is [ontaps3_svm_delete_object_total](#ontaps3_svm_delete_object_total) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8975,7 +8975,7 @@ Number of DELETE object operations
 
 ### ontaps3_svm_explicit_deny_access
 
-Number of times access was denied explicitly by a policy statement.
+Number of times access was denied explicitly by a policy statement. ontaps3_svm_explicit_deny_access is [ontaps3_svm_explicit_deny_access](#ontaps3_svm_explicit_deny_access) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8985,7 +8985,7 @@ Number of times access was denied explicitly by a policy statement.
 
 ### ontaps3_svm_get_bucket_acl_failed
 
-Number of failed GET Bucket ACL operations
+Number of failed GET Bucket ACL operations. ontaps3_svm_get_bucket_acl_failed is [ontaps3_svm_get_bucket_acl_failed](#ontaps3_svm_get_bucket_acl_failed) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8995,7 +8995,7 @@ Number of failed GET Bucket ACL operations
 
 ### ontaps3_svm_get_bucket_acl_total
 
-Number of GET Bucket ACL operations
+Number of GET Bucket ACL operations. ontaps3_svm_get_bucket_acl_total is [ontaps3_svm_get_bucket_acl_total](#ontaps3_svm_get_bucket_acl_total) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9005,7 +9005,7 @@ Number of GET Bucket ACL operations
 
 ### ontaps3_svm_get_bucket_versioning_failed
 
-Number of failed Get Bucket Versioning operations
+Number of failed Get Bucket Versioning operations. ontaps3_svm_get_bucket_versioning_failed is [ontaps3_svm_get_bucket_versioning_failed](#ontaps3_svm_get_bucket_versioning_failed) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9015,7 +9015,7 @@ Number of failed Get Bucket Versioning operations
 
 ### ontaps3_svm_get_bucket_versioning_total
 
-Number of Get Bucket Versioning operations.
+Number of Get Bucket Versioning operations. ontaps3_svm_get_bucket_versioning_total is [ontaps3_svm_get_bucket_versioning_total](#ontaps3_svm_get_bucket_versioning_total) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9025,7 +9025,7 @@ Number of Get Bucket Versioning operations.
 
 ### ontaps3_svm_get_data
 
-Rate of GET object data transfers per second
+Rate of GET object data transfers per second. ontaps3_svm_get_data is [ontaps3_svm_get_data](#ontaps3_svm_get_data) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9035,7 +9035,7 @@ Rate of GET object data transfers per second
 
 ### ontaps3_svm_get_object_acl_failed
 
-Number of failed GET Object ACL operations
+Number of failed GET Object ACL operations. ontaps3_svm_get_object_acl_failed is [ontaps3_svm_get_object_acl_failed](#ontaps3_svm_get_object_acl_failed) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9045,7 +9045,7 @@ Number of failed GET Object ACL operations
 
 ### ontaps3_svm_get_object_acl_total
 
-Number of GET Object ACL operations
+Number of GET Object ACL operations. ontaps3_svm_get_object_acl_total is [ontaps3_svm_get_object_acl_total](#ontaps3_svm_get_object_acl_total) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9055,7 +9055,7 @@ Number of GET Object ACL operations
 
 ### ontaps3_svm_get_object_failed
 
-Number of failed GET object operations
+Number of failed GET object operations. ontaps3_svm_get_object_failed is [ontaps3_svm_get_object_failed](#ontaps3_svm_get_object_failed) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9065,7 +9065,7 @@ Number of failed GET object operations
 
 ### ontaps3_svm_get_object_failed_client_close
 
-Number of times GET object operation failed due to the case where client closed the connection while the operation was still pending on server.
+Number of times GET object operation failed due to the case where client closed the connection while the operation was still pending on server. ontaps3_svm_get_object_failed_client_close is [ontaps3_svm_get_object_failed_client_close](#ontaps3_svm_get_object_failed_client_close) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9075,7 +9075,7 @@ Number of times GET object operation failed due to the case where client closed 
 
 ### ontaps3_svm_get_object_lastbyte_latency
 
-Average last-byte latency for GET object operations
+Average last-byte latency for GET object operations. ontaps3_svm_get_object_lastbyte_latency is [ontaps3_svm_get_object_lastbyte_latency](#ontaps3_svm_get_object_lastbyte_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9085,7 +9085,7 @@ Average last-byte latency for GET object operations
 
 ### ontaps3_svm_get_object_latency
 
-Average first-byte latency for GET object operations
+Average first-byte latency for GET object operations. ontaps3_svm_get_object_latency is [ontaps3_svm_get_object_latency](#ontaps3_svm_get_object_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9095,7 +9095,7 @@ Average first-byte latency for GET object operations
 
 ### ontaps3_svm_get_object_rate
 
-Number of GET object operations per second
+Number of GET object operations per second. ontaps3_svm_get_object_rate is [ontaps3_svm_get_object_rate](#ontaps3_svm_get_object_rate) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9105,7 +9105,7 @@ Number of GET object operations per second
 
 ### ontaps3_svm_get_object_tagging_failed
 
-Number of failed GET object tagging operations
+Number of failed GET object tagging operations. ontaps3_svm_get_object_tagging_failed is [ontaps3_svm_get_object_tagging_failed](#ontaps3_svm_get_object_tagging_failed) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9115,7 +9115,7 @@ Number of failed GET object tagging operations
 
 ### ontaps3_svm_get_object_tagging_failed_client_close
 
-Number of times GET object tagging operation failed due to the case where client closed the connection while the operation was still pending on server.
+Number of times GET object tagging operation failed due to the case where client closed the connection while the operation was still pending on server. ontaps3_svm_get_object_tagging_failed_client_close is [ontaps3_svm_get_object_tagging_failed_client_close](#ontaps3_svm_get_object_tagging_failed_client_close) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9125,7 +9125,7 @@ Number of times GET object tagging operation failed due to the case where client
 
 ### ontaps3_svm_get_object_tagging_latency
 
-Average latency for GET object tagging operations
+Average latency for GET object tagging operations. ontaps3_svm_get_object_tagging_latency is [ontaps3_svm_get_object_tagging_latency](#ontaps3_svm_get_object_tagging_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9135,7 +9135,7 @@ Average latency for GET object tagging operations
 
 ### ontaps3_svm_get_object_tagging_rate
 
-Number of GET object tagging operations per second
+Number of GET object tagging operations per second. ontaps3_svm_get_object_tagging_rate is [ontaps3_svm_get_object_tagging_rate](#ontaps3_svm_get_object_tagging_rate) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9145,7 +9145,7 @@ Number of GET object tagging operations per second
 
 ### ontaps3_svm_get_object_tagging_total
 
-Number of GET object tagging operations
+Number of GET object tagging operations. ontaps3_svm_get_object_tagging_total is [ontaps3_svm_get_object_tagging_total](#ontaps3_svm_get_object_tagging_total) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9155,7 +9155,7 @@ Number of GET object tagging operations
 
 ### ontaps3_svm_get_object_total
 
-Number of GET object operations
+Number of GET object operations. ontaps3_svm_get_object_total is [ontaps3_svm_get_object_total](#ontaps3_svm_get_object_total) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9165,7 +9165,7 @@ Number of GET object operations
 
 ### ontaps3_svm_group_policy_evaluated
 
-Number of times group policies were evaluated.
+Number of times group policies were evaluated. ontaps3_svm_group_policy_evaluated is [ontaps3_svm_group_policy_evaluated](#ontaps3_svm_group_policy_evaluated) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9175,7 +9175,7 @@ Number of times group policies were evaluated.
 
 ### ontaps3_svm_head_bucket_failed
 
-Number of failed HEAD bucket operations
+Number of failed HEAD bucket operations. ontaps3_svm_head_bucket_failed is [ontaps3_svm_head_bucket_failed](#ontaps3_svm_head_bucket_failed) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9185,7 +9185,7 @@ Number of failed HEAD bucket operations
 
 ### ontaps3_svm_head_bucket_failed_client_close
 
-Number of times HEAD bucket operation failed due to the case where client closed the connection while the operation was still pending on server.
+Number of times HEAD bucket operation failed due to the case where client closed the connection while the operation was still pending on server. ontaps3_svm_head_bucket_failed_client_close is [ontaps3_svm_head_bucket_failed_client_close](#ontaps3_svm_head_bucket_failed_client_close) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9195,7 +9195,7 @@ Number of times HEAD bucket operation failed due to the case where client closed
 
 ### ontaps3_svm_head_bucket_latency
 
-Average latency for HEAD bucket operations
+Average latency for HEAD bucket operations. ontaps3_svm_head_bucket_latency is [ontaps3_svm_head_bucket_latency](#ontaps3_svm_head_bucket_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9205,7 +9205,7 @@ Average latency for HEAD bucket operations
 
 ### ontaps3_svm_head_bucket_rate
 
-Number of HEAD bucket operations per second
+Number of HEAD bucket operations per second. ontaps3_svm_head_bucket_rate is [ontaps3_svm_head_bucket_rate](#ontaps3_svm_head_bucket_rate) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9215,7 +9215,7 @@ Number of HEAD bucket operations per second
 
 ### ontaps3_svm_head_bucket_total
 
-Number of HEAD bucket operations
+Number of HEAD bucket operations. ontaps3_svm_head_bucket_total is [ontaps3_svm_head_bucket_total](#ontaps3_svm_head_bucket_total) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9225,7 +9225,7 @@ Number of HEAD bucket operations
 
 ### ontaps3_svm_head_object_failed
 
-Number of failed HEAD Object operations
+Number of failed HEAD Object operations. ontaps3_svm_head_object_failed is [ontaps3_svm_head_object_failed](#ontaps3_svm_head_object_failed) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9235,7 +9235,7 @@ Number of failed HEAD Object operations
 
 ### ontaps3_svm_head_object_failed_client_close
 
-Number of times HEAD object operation failed due to the case where client closed the connection while the operation was still pending on server.
+Number of times HEAD object operation failed due to the case where client closed the connection while the operation was still pending on server. ontaps3_svm_head_object_failed_client_close is [ontaps3_svm_head_object_failed_client_close](#ontaps3_svm_head_object_failed_client_close) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9245,7 +9245,7 @@ Number of times HEAD object operation failed due to the case where client closed
 
 ### ontaps3_svm_head_object_latency
 
-Average latency for HEAD object operations
+Average latency for HEAD object operations. ontaps3_svm_head_object_latency is [ontaps3_svm_head_object_latency](#ontaps3_svm_head_object_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9255,7 +9255,7 @@ Average latency for HEAD object operations
 
 ### ontaps3_svm_head_object_rate
 
-Number of HEAD Object operations per second
+Number of HEAD Object operations per second. ontaps3_svm_head_object_rate is [ontaps3_svm_head_object_rate](#ontaps3_svm_head_object_rate) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9265,7 +9265,7 @@ Number of HEAD Object operations per second
 
 ### ontaps3_svm_head_object_total
 
-Number of HEAD Object operations
+Number of HEAD Object operations. ontaps3_svm_head_object_total is [ontaps3_svm_head_object_total](#ontaps3_svm_head_object_total) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9275,7 +9275,7 @@ Number of HEAD Object operations
 
 ### ontaps3_svm_initiate_multipart_upload_failed
 
-Number of failed Initiate Multipart Upload operations.
+Number of failed Initiate Multipart Upload operations. ontaps3_svm_initiate_multipart_upload_failed is [ontaps3_svm_initiate_multipart_upload_failed](#ontaps3_svm_initiate_multipart_upload_failed) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9285,7 +9285,7 @@ Number of failed Initiate Multipart Upload operations.
 
 ### ontaps3_svm_initiate_multipart_upload_failed_client_close
 
-Number of times Initiate Multipart Upload operation failed because client terminated connection while the operation was still pending on server.
+Number of times Initiate Multipart Upload operation failed because client terminated connection while the operation was still pending on server. ontaps3_svm_initiate_multipart_upload_failed_client_close is [ontaps3_svm_initiate_multipart_upload_failed_client_close](#ontaps3_svm_initiate_multipart_upload_failed_client_close) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9295,7 +9295,7 @@ Number of times Initiate Multipart Upload operation failed because client termin
 
 ### ontaps3_svm_initiate_multipart_upload_latency
 
-Average latency for Initiate Multipart Upload operations.
+Average latency for Initiate Multipart Upload operations. ontaps3_svm_initiate_multipart_upload_latency is [ontaps3_svm_initiate_multipart_upload_latency](#ontaps3_svm_initiate_multipart_upload_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9305,7 +9305,7 @@ Average latency for Initiate Multipart Upload operations.
 
 ### ontaps3_svm_initiate_multipart_upload_rate
 
-Number of Initiate Multipart Upload operations per second.
+Number of Initiate Multipart Upload operations per second. ontaps3_svm_initiate_multipart_upload_rate is [ontaps3_svm_initiate_multipart_upload_rate](#ontaps3_svm_initiate_multipart_upload_rate) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9315,7 +9315,7 @@ Number of Initiate Multipart Upload operations per second.
 
 ### ontaps3_svm_initiate_multipart_upload_total
 
-Number of Initiate Multipart Upload operations.
+Number of Initiate Multipart Upload operations. ontaps3_svm_initiate_multipart_upload_total is [ontaps3_svm_initiate_multipart_upload_total](#ontaps3_svm_initiate_multipart_upload_total) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9325,7 +9325,7 @@ Number of Initiate Multipart Upload operations.
 
 ### ontaps3_svm_input_flow_control_entry
 
-Number of times input flow control was entered.
+Number of times input flow control was entered. ontaps3_svm_input_flow_control_entry is [ontaps3_svm_input_flow_control_entry](#ontaps3_svm_input_flow_control_entry) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9335,7 +9335,7 @@ Number of times input flow control was entered.
 
 ### ontaps3_svm_input_flow_control_exit
 
-Number of times input flow control was exited.
+Number of times input flow control was exited. ontaps3_svm_input_flow_control_exit is [ontaps3_svm_input_flow_control_exit](#ontaps3_svm_input_flow_control_exit) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9345,7 +9345,7 @@ Number of times input flow control was exited.
 
 ### ontaps3_svm_list_buckets_failed
 
-Number of failed LIST Buckets operations
+Number of failed LIST Buckets operations. ontaps3_svm_list_buckets_failed is [ontaps3_svm_list_buckets_failed](#ontaps3_svm_list_buckets_failed) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9355,7 +9355,7 @@ Number of failed LIST Buckets operations
 
 ### ontaps3_svm_list_buckets_failed_client_close
 
-Number of times LIST Bucket operation failed due to the case where client closed the connection while the operation was still pending on server.
+Number of times LIST Bucket operation failed due to the case where client closed the connection while the operation was still pending on server. ontaps3_svm_list_buckets_failed_client_close is [ontaps3_svm_list_buckets_failed_client_close](#ontaps3_svm_list_buckets_failed_client_close) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9365,7 +9365,7 @@ Number of times LIST Bucket operation failed due to the case where client closed
 
 ### ontaps3_svm_list_buckets_latency
 
-Average latency for LIST Buckets operations
+Average latency for LIST Buckets operations. ontaps3_svm_list_buckets_latency is [ontaps3_svm_list_buckets_latency](#ontaps3_svm_list_buckets_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9375,7 +9375,7 @@ Average latency for LIST Buckets operations
 
 ### ontaps3_svm_list_buckets_rate
 
-Number of LIST Buckets operations per second
+Number of LIST Buckets operations per second. ontaps3_svm_list_buckets_rate is [ontaps3_svm_list_buckets_rate](#ontaps3_svm_list_buckets_rate) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9385,7 +9385,7 @@ Number of LIST Buckets operations per second
 
 ### ontaps3_svm_list_buckets_total
 
-Number of LIST Buckets operations
+Number of LIST Buckets operations. ontaps3_svm_list_buckets_total is [ontaps3_svm_list_buckets_total](#ontaps3_svm_list_buckets_total) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9395,7 +9395,7 @@ Number of LIST Buckets operations
 
 ### ontaps3_svm_list_object_versions_failed
 
-Number of failed LIST object versions operations
+Number of failed LIST object versions operations. ontaps3_svm_list_object_versions_failed is [ontaps3_svm_list_object_versions_failed](#ontaps3_svm_list_object_versions_failed) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9405,7 +9405,7 @@ Number of failed LIST object versions operations
 
 ### ontaps3_svm_list_object_versions_failed_client_close
 
-Number of times LIST object versions operation failed due to the case where client closed the connection while the operation was still pending on server.
+Number of times LIST object versions operation failed due to the case where client closed the connection while the operation was still pending on server. ontaps3_svm_list_object_versions_failed_client_close is [ontaps3_svm_list_object_versions_failed_client_close](#ontaps3_svm_list_object_versions_failed_client_close) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9415,7 +9415,7 @@ Number of times LIST object versions operation failed due to the case where clie
 
 ### ontaps3_svm_list_object_versions_latency
 
-Average latency for LIST Object versions operations
+Average latency for LIST Object versions operations. ontaps3_svm_list_object_versions_latency is [ontaps3_svm_list_object_versions_latency](#ontaps3_svm_list_object_versions_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9425,7 +9425,7 @@ Average latency for LIST Object versions operations
 
 ### ontaps3_svm_list_object_versions_rate
 
-Number of LIST Object Versions operations per second
+Number of LIST Object Versions operations per second. ontaps3_svm_list_object_versions_rate is [ontaps3_svm_list_object_versions_rate](#ontaps3_svm_list_object_versions_rate) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9435,7 +9435,7 @@ Number of LIST Object Versions operations per second
 
 ### ontaps3_svm_list_object_versions_total
 
-Number of LIST Object Versions operations
+Number of LIST Object Versions operations. ontaps3_svm_list_object_versions_total is [ontaps3_svm_list_object_versions_total](#ontaps3_svm_list_object_versions_total) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9445,7 +9445,7 @@ Number of LIST Object Versions operations
 
 ### ontaps3_svm_list_objects_failed
 
-Number of failed LIST objects operations
+Number of failed LIST objects operations. ontaps3_svm_list_objects_failed is [ontaps3_svm_list_objects_failed](#ontaps3_svm_list_objects_failed) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9455,7 +9455,7 @@ Number of failed LIST objects operations
 
 ### ontaps3_svm_list_objects_failed_client_close
 
-Number of times LIST objects operation failed due to the case where client closed the connection while the operation was still pending on server.
+Number of times LIST objects operation failed due to the case where client closed the connection while the operation was still pending on server. ontaps3_svm_list_objects_failed_client_close is [ontaps3_svm_list_objects_failed_client_close](#ontaps3_svm_list_objects_failed_client_close) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9465,7 +9465,7 @@ Number of times LIST objects operation failed due to the case where client close
 
 ### ontaps3_svm_list_objects_latency
 
-Average latency for LIST Objects operations
+Average latency for LIST Objects operations. ontaps3_svm_list_objects_latency is [ontaps3_svm_list_objects_latency](#ontaps3_svm_list_objects_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9475,7 +9475,7 @@ Average latency for LIST Objects operations
 
 ### ontaps3_svm_list_objects_rate
 
-Number of LIST Objects operations per second
+Number of LIST Objects operations per second. ontaps3_svm_list_objects_rate is [ontaps3_svm_list_objects_rate](#ontaps3_svm_list_objects_rate) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9485,7 +9485,7 @@ Number of LIST Objects operations per second
 
 ### ontaps3_svm_list_objects_total
 
-Number of LIST Objects operations
+Number of LIST Objects operations. ontaps3_svm_list_objects_total is [ontaps3_svm_list_objects_total](#ontaps3_svm_list_objects_total) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9495,7 +9495,7 @@ Number of LIST Objects operations
 
 ### ontaps3_svm_list_uploads_failed
 
-Number of failed LIST Upload operations
+Number of failed LIST Upload operations. ontaps3_svm_list_uploads_failed is [ontaps3_svm_list_uploads_failed](#ontaps3_svm_list_uploads_failed) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9505,7 +9505,7 @@ Number of failed LIST Upload operations
 
 ### ontaps3_svm_list_uploads_failed_client_close
 
-Number of times LIST Upload operation failed due to the case where client closed the connection while the operation was still pending on server.
+Number of times LIST Upload operation failed due to the case where client closed the connection while the operation was still pending on server. ontaps3_svm_list_uploads_failed_client_close is [ontaps3_svm_list_uploads_failed_client_close](#ontaps3_svm_list_uploads_failed_client_close) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9515,7 +9515,7 @@ Number of times LIST Upload operation failed due to the case where client closed
 
 ### ontaps3_svm_list_uploads_latency
 
-Average latency for LIST Upload operations
+Average latency for LIST Upload operations. ontaps3_svm_list_uploads_latency is [ontaps3_svm_list_uploads_latency](#ontaps3_svm_list_uploads_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9525,7 +9525,7 @@ Average latency for LIST Upload operations
 
 ### ontaps3_svm_list_uploads_rate
 
-Number of LIST Upload operations per second
+Number of LIST Upload operations per second. ontaps3_svm_list_uploads_rate is [ontaps3_svm_list_uploads_rate](#ontaps3_svm_list_uploads_rate) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9535,7 +9535,7 @@ Number of LIST Upload operations per second
 
 ### ontaps3_svm_list_uploads_total
 
-Number of LIST Upload operations
+Number of LIST Upload operations. ontaps3_svm_list_uploads_total is [ontaps3_svm_list_uploads_total](#ontaps3_svm_list_uploads_total) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9545,7 +9545,7 @@ Number of LIST Upload operations
 
 ### ontaps3_svm_max_cmds_per_connection
 
-Maximum commands pipelined at any instance on a connection.
+Maximum commands pipelined at any instance on a connection. ontaps3_svm_max_cmds_per_connection is [ontaps3_svm_max_cmds_per_connection](#ontaps3_svm_max_cmds_per_connection) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9555,7 +9555,7 @@ Maximum commands pipelined at any instance on a connection.
 
 ### ontaps3_svm_max_connected_connections
 
-Maximum number of object store server connections established at one time
+Maximum number of object store server connections established at one time. ontaps3_svm_max_connected_connections is [ontaps3_svm_max_connected_connections](#ontaps3_svm_max_connected_connections) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9565,7 +9565,7 @@ Maximum number of object store server connections established at one time
 
 ### ontaps3_svm_max_requests_outstanding
 
-Maximum number of object store server requests in process at one time
+Maximum number of object store server requests in process at one time. ontaps3_svm_max_requests_outstanding is [ontaps3_svm_max_requests_outstanding](#ontaps3_svm_max_requests_outstanding) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9575,7 +9575,7 @@ Maximum number of object store server requests in process at one time
 
 ### ontaps3_svm_multi_delete_reqs
 
-Total number of object store server multiple object delete requests
+Total number of object store server multiple object delete requests. ontaps3_svm_multi_delete_reqs is [ontaps3_svm_multi_delete_reqs](#ontaps3_svm_multi_delete_reqs) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9585,7 +9585,7 @@ Total number of object store server multiple object delete requests
 
 ### ontaps3_svm_output_flow_control_entry
 
-Number of output flow control was entered.
+Number of output flow control was entered. ontaps3_svm_output_flow_control_entry is [ontaps3_svm_output_flow_control_entry](#ontaps3_svm_output_flow_control_entry) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9595,7 +9595,7 @@ Number of output flow control was entered.
 
 ### ontaps3_svm_output_flow_control_exit
 
-Number of times output flow control was exited.
+Number of times output flow control was exited. ontaps3_svm_output_flow_control_exit is [ontaps3_svm_output_flow_control_exit](#ontaps3_svm_output_flow_control_exit) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9605,7 +9605,7 @@ Number of times output flow control was exited.
 
 ### ontaps3_svm_presigned_url_reqs
 
-Total number of presigned object store server URL requests.
+Total number of presigned object store server URL requests. ontaps3_svm_presigned_url_reqs is [ontaps3_svm_presigned_url_reqs](#ontaps3_svm_presigned_url_reqs) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9615,7 +9615,7 @@ Total number of presigned object store server URL requests.
 
 ### ontaps3_svm_put_bucket_versioning_failed
 
-Number of failed Put Bucket Versioning operations
+Number of failed Put Bucket Versioning operations. ontaps3_svm_put_bucket_versioning_failed is [ontaps3_svm_put_bucket_versioning_failed](#ontaps3_svm_put_bucket_versioning_failed) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9625,7 +9625,7 @@ Number of failed Put Bucket Versioning operations
 
 ### ontaps3_svm_put_bucket_versioning_total
 
-Number of Put Bucket Versioning operations.
+Number of Put Bucket Versioning operations. ontaps3_svm_put_bucket_versioning_total is [ontaps3_svm_put_bucket_versioning_total](#ontaps3_svm_put_bucket_versioning_total) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9635,7 +9635,7 @@ Number of Put Bucket Versioning operations.
 
 ### ontaps3_svm_put_data
 
-Rate of PUT object data transfers per second
+Rate of PUT object data transfers per second. ontaps3_svm_put_data is [ontaps3_svm_put_data](#ontaps3_svm_put_data) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9645,7 +9645,7 @@ Rate of PUT object data transfers per second
 
 ### ontaps3_svm_put_object_failed
 
-Number of failed PUT object operations
+Number of failed PUT object operations. ontaps3_svm_put_object_failed is [ontaps3_svm_put_object_failed](#ontaps3_svm_put_object_failed) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9655,7 +9655,7 @@ Number of failed PUT object operations
 
 ### ontaps3_svm_put_object_failed_client_close
 
-Number of times PUT object operation failed due to the case where client closed the connection while the operation was still pending on server.
+Number of times PUT object operation failed due to the case where client closed the connection while the operation was still pending on server. ontaps3_svm_put_object_failed_client_close is [ontaps3_svm_put_object_failed_client_close](#ontaps3_svm_put_object_failed_client_close) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9665,7 +9665,7 @@ Number of times PUT object operation failed due to the case where client closed 
 
 ### ontaps3_svm_put_object_latency
 
-Average latency for PUT object operations
+Average latency for PUT object operations. ontaps3_svm_put_object_latency is [ontaps3_svm_put_object_latency](#ontaps3_svm_put_object_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9675,7 +9675,7 @@ Average latency for PUT object operations
 
 ### ontaps3_svm_put_object_rate
 
-Number of PUT object operations per second
+Number of PUT object operations per second. ontaps3_svm_put_object_rate is [ontaps3_svm_put_object_rate](#ontaps3_svm_put_object_rate) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9685,7 +9685,7 @@ Number of PUT object operations per second
 
 ### ontaps3_svm_put_object_tagging_failed
 
-Number of failed PUT object tagging operations.
+Number of failed PUT object tagging operations. ontaps3_svm_put_object_tagging_failed is [ontaps3_svm_put_object_tagging_failed](#ontaps3_svm_put_object_tagging_failed) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9695,7 +9695,7 @@ Number of failed PUT object tagging operations.
 
 ### ontaps3_svm_put_object_tagging_failed_client_close
 
-Number of times PUT object tagging operation failed because client terminated connection while the operation was still pending on server.
+Number of times PUT object tagging operation failed because client terminated connection while the operation was still pending on server. ontaps3_svm_put_object_tagging_failed_client_close is [ontaps3_svm_put_object_tagging_failed_client_close](#ontaps3_svm_put_object_tagging_failed_client_close) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9705,7 +9705,7 @@ Number of times PUT object tagging operation failed because client terminated co
 
 ### ontaps3_svm_put_object_tagging_latency
 
-Average latency for PUT object tagging operations.
+Average latency for PUT object tagging operations. ontaps3_svm_put_object_tagging_latency is [ontaps3_svm_put_object_tagging_latency](#ontaps3_svm_put_object_tagging_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9715,7 +9715,7 @@ Average latency for PUT object tagging operations.
 
 ### ontaps3_svm_put_object_tagging_rate
 
-Number of PUT object tagging operations per second.
+Number of PUT object tagging operations per second. ontaps3_svm_put_object_tagging_rate is [ontaps3_svm_put_object_tagging_rate](#ontaps3_svm_put_object_tagging_rate) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9725,7 +9725,7 @@ Number of PUT object tagging operations per second.
 
 ### ontaps3_svm_put_object_tagging_total
 
-Number of PUT object tagging operations.
+Number of PUT object tagging operations. ontaps3_svm_put_object_tagging_total is [ontaps3_svm_put_object_tagging_total](#ontaps3_svm_put_object_tagging_total) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9735,7 +9735,7 @@ Number of PUT object tagging operations.
 
 ### ontaps3_svm_put_object_total
 
-Number of PUT object operations
+Number of PUT object operations. ontaps3_svm_put_object_total is [ontaps3_svm_put_object_total](#ontaps3_svm_put_object_total) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9745,7 +9745,7 @@ Number of PUT object operations
 
 ### ontaps3_svm_request_parse_errors
 
-Number of request parser errors due to malformed requests.
+Number of request parser errors due to malformed requests. ontaps3_svm_request_parse_errors is [ontaps3_svm_request_parse_errors](#ontaps3_svm_request_parse_errors) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9755,7 +9755,7 @@ Number of request parser errors due to malformed requests.
 
 ### ontaps3_svm_requests
 
-Total number of object store server requests
+Total number of object store server requests. ontaps3_svm_requests is [ontaps3_svm_requests](#ontaps3_svm_requests) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9765,7 +9765,7 @@ Total number of object store server requests
 
 ### ontaps3_svm_requests_outstanding
 
-Number of object store server requests in process
+Number of object store server requests in process. ontaps3_svm_requests_outstanding is [ontaps3_svm_requests_outstanding](#ontaps3_svm_requests_outstanding) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9775,7 +9775,7 @@ Number of object store server requests in process
 
 ### ontaps3_svm_root_user_access
 
-Number of times access was done by root user.
+Number of times access was done by root user. ontaps3_svm_root_user_access is [ontaps3_svm_root_user_access](#ontaps3_svm_root_user_access) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9785,7 +9785,7 @@ Number of times access was done by root user.
 
 ### ontaps3_svm_server_connection_close
 
-Number of connection closes triggered by server due to fatal errors.
+Number of connection closes triggered by server due to fatal errors. ontaps3_svm_server_connection_close is [ontaps3_svm_server_connection_close](#ontaps3_svm_server_connection_close) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9795,7 +9795,7 @@ Number of connection closes triggered by server due to fatal errors.
 
 ### ontaps3_svm_signature_v2_reqs
 
-Total number of object store server signature V2 requests
+Total number of object store server signature V2 requests. ontaps3_svm_signature_v2_reqs is [ontaps3_svm_signature_v2_reqs](#ontaps3_svm_signature_v2_reqs) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9805,7 +9805,7 @@ Total number of object store server signature V2 requests
 
 ### ontaps3_svm_signature_v4_reqs
 
-Total number of object store server signature V4 requests
+Total number of object store server signature V4 requests. ontaps3_svm_signature_v4_reqs is [ontaps3_svm_signature_v4_reqs](#ontaps3_svm_signature_v4_reqs) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9815,7 +9815,7 @@ Total number of object store server signature V4 requests
 
 ### ontaps3_svm_tagging
 
-Number of requests with tagging specified.
+Number of requests with tagging specified. ontaps3_svm_tagging is [ontaps3_svm_tagging](#ontaps3_svm_tagging) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9825,7 +9825,7 @@ Number of requests with tagging specified.
 
 ### ontaps3_svm_upload_part_failed
 
-Number of failed Upload Part operations.
+Number of failed Upload Part operations. ontaps3_svm_upload_part_failed is [ontaps3_svm_upload_part_failed](#ontaps3_svm_upload_part_failed) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9835,7 +9835,7 @@ Number of failed Upload Part operations.
 
 ### ontaps3_svm_upload_part_failed_client_close
 
-Number of times Upload Part operation failed because client terminated connection while the operation was still pending on server.
+Number of times Upload Part operation failed because client terminated connection while the operation was still pending on server. ontaps3_svm_upload_part_failed_client_close is [ontaps3_svm_upload_part_failed_client_close](#ontaps3_svm_upload_part_failed_client_close) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9845,7 +9845,7 @@ Number of times Upload Part operation failed because client terminated connectio
 
 ### ontaps3_svm_upload_part_latency
 
-Average latency for Upload Part operations.
+Average latency for Upload Part operations. ontaps3_svm_upload_part_latency is [ontaps3_svm_upload_part_latency](#ontaps3_svm_upload_part_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9855,7 +9855,7 @@ Average latency for Upload Part operations.
 
 ### ontaps3_svm_upload_part_rate
 
-Number of Upload Part operations per second.
+Number of Upload Part operations per second. ontaps3_svm_upload_part_rate is [ontaps3_svm_upload_part_rate](#ontaps3_svm_upload_part_rate) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9865,7 +9865,7 @@ Number of Upload Part operations per second.
 
 ### ontaps3_svm_upload_part_total
 
-Number of Upload Part operations.
+Number of Upload Part operations. ontaps3_svm_upload_part_total is [ontaps3_svm_upload_part_total](#ontaps3_svm_upload_part_total) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -10886,8 +10886,8 @@ Average temperature of all ambient sensors for shelf in Celsius.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
-| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
 ### shelf_average_fan_speed
@@ -10996,8 +10996,8 @@ Displays the shelf module labels with their status.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
-| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml | 
 
 
 ### shelf_new_status
@@ -13527,1286 +13527,6 @@ Total number of Write procedure requests. It is the total number of write succes
 | ZAPI | `perf-object-get-instances nfsv4_2` | `write_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml | 
 
 
-### svm_ontaps3_svm_abort_multipart_upload_failed
-
-Number of failed Abort Multipart Upload operations. svm_ontaps3_svm_abort_multipart_upload_failed is [ontaps3_svm_abort_multipart_upload_failed](#ontaps3_svm_abort_multipart_upload_failed) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `abort_multipart_upload_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `abort_multipart_upload_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_abort_multipart_upload_failed_client_close
-
-Number of times Abort Multipart Upload operation failed because client terminated connection while the operation was still pending on server. svm_ontaps3_svm_abort_multipart_upload_failed_client_close is [ontaps3_svm_abort_multipart_upload_failed_client_close](#ontaps3_svm_abort_multipart_upload_failed_client_close) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `abort_multipart_upload_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `abort_multipart_upload_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_abort_multipart_upload_latency
-
-Average latency for Abort Multipart Upload operations. svm_ontaps3_svm_abort_multipart_upload_latency is [ontaps3_svm_abort_multipart_upload_latency](#ontaps3_svm_abort_multipart_upload_latency) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `abort_multipart_upload_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> abort_multipart_upload_total | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `abort_multipart_upload_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> abort_multipart_upload_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_abort_multipart_upload_rate
-
-Number of Abort Multipart Upload operations per second. svm_ontaps3_svm_abort_multipart_upload_rate is [ontaps3_svm_abort_multipart_upload_rate](#ontaps3_svm_abort_multipart_upload_rate) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `abort_multipart_upload_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `abort_multipart_upload_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_abort_multipart_upload_total
-
-Number of Abort Multipart Upload operations. svm_ontaps3_svm_abort_multipart_upload_total is [ontaps3_svm_abort_multipart_upload_total](#ontaps3_svm_abort_multipart_upload_total) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `abort_multipart_upload_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `abort_multipart_upload_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_allow_access
-
-Number of times access was allowed. svm_ontaps3_svm_allow_access is [ontaps3_svm_allow_access](#ontaps3_svm_allow_access) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `allow_access`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `allow_access`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_anonymous_access
-
-Number of times anonymous access was allowed. svm_ontaps3_svm_anonymous_access is [ontaps3_svm_anonymous_access](#ontaps3_svm_anonymous_access) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `anonymous_access`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `anonymous_access`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_anonymous_deny_access
-
-Number of times anonymous access was denied. svm_ontaps3_svm_anonymous_deny_access is [ontaps3_svm_anonymous_deny_access](#ontaps3_svm_anonymous_deny_access) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `anonymous_deny_access`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `anonymous_deny_access`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_authentication_failures
-
-Number of authentication failures. svm_ontaps3_svm_authentication_failures is [ontaps3_svm_authentication_failures](#ontaps3_svm_authentication_failures) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `authentication_failures`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `authentication_failures`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_chunked_upload_reqs
-
-Total number of object store server chunked object upload requests. svm_ontaps3_svm_chunked_upload_reqs is [ontaps3_svm_chunked_upload_reqs](#ontaps3_svm_chunked_upload_reqs) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `chunked_upload_requests`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `chunked_upload_reqs`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_complete_multipart_upload_failed
-
-Number of failed Complete Multipart Upload operations. svm_ontaps3_svm_complete_multipart_upload_failed is [ontaps3_svm_complete_multipart_upload_failed](#ontaps3_svm_complete_multipart_upload_failed) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `complete_multipart_upload_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `complete_multipart_upload_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_complete_multipart_upload_failed_client_close
-
-Number of times Complete Multipart Upload operation failed because client terminated connection while the operation was still pending on server. svm_ontaps3_svm_complete_multipart_upload_failed_client_close is [ontaps3_svm_complete_multipart_upload_failed_client_close](#ontaps3_svm_complete_multipart_upload_failed_client_close) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `complete_multipart_upload_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `complete_multipart_upload_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_complete_multipart_upload_latency
-
-Average latency for Complete Multipart Upload operations. svm_ontaps3_svm_complete_multipart_upload_latency is [ontaps3_svm_complete_multipart_upload_latency](#ontaps3_svm_complete_multipart_upload_latency) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `complete_multipart_upload_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> complete_multipart_upload_total | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `complete_multipart_upload_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> complete_multipart_upload_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_complete_multipart_upload_rate
-
-Number of Complete Multipart Upload operations per second. svm_ontaps3_svm_complete_multipart_upload_rate is [ontaps3_svm_complete_multipart_upload_rate](#ontaps3_svm_complete_multipart_upload_rate) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `complete_multipart_upload_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `complete_multipart_upload_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_complete_multipart_upload_total
-
-Number of Complete Multipart Upload operations. svm_ontaps3_svm_complete_multipart_upload_total is [ontaps3_svm_complete_multipart_upload_total](#ontaps3_svm_complete_multipart_upload_total) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `complete_multipart_upload_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `complete_multipart_upload_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_connected_connections
-
-Number of object store server connections currently established. svm_ontaps3_svm_connected_connections is [ontaps3_svm_connected_connections](#ontaps3_svm_connected_connections) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `connected_connections`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `connected_connections`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_connections
-
-Total number of object store server connections. svm_ontaps3_svm_connections is [ontaps3_svm_connections](#ontaps3_svm_connections) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `connections`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `connections`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_create_bucket_failed
-
-Number of failed Create Bucket operations. svm_ontaps3_svm_create_bucket_failed is [ontaps3_svm_create_bucket_failed](#ontaps3_svm_create_bucket_failed) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `create_bucket_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `create_bucket_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_create_bucket_failed_client_close
-
-Number of times Create Bucket operation failed because client terminated connection while the operation was still pending on server. svm_ontaps3_svm_create_bucket_failed_client_close is [ontaps3_svm_create_bucket_failed_client_close](#ontaps3_svm_create_bucket_failed_client_close) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `create_bucket_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `create_bucket_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_create_bucket_latency
-
-Average latency for Create Bucket operations. svm_ontaps3_svm_create_bucket_latency is [ontaps3_svm_create_bucket_latency](#ontaps3_svm_create_bucket_latency) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `create_bucket_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> create_bucket_total | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `create_bucket_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> create_bucket_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_create_bucket_rate
-
-Number of Create Bucket operations per second. svm_ontaps3_svm_create_bucket_rate is [ontaps3_svm_create_bucket_rate](#ontaps3_svm_create_bucket_rate) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `create_bucket_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `create_bucket_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_create_bucket_total
-
-Number of Create Bucket operations. svm_ontaps3_svm_create_bucket_total is [ontaps3_svm_create_bucket_total](#ontaps3_svm_create_bucket_total) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `create_bucket_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `create_bucket_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_default_deny_access
-
-Number of times access was denied by default and not through any policy statement. svm_ontaps3_svm_default_deny_access is [ontaps3_svm_default_deny_access](#ontaps3_svm_default_deny_access) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `default_deny_access`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `default_deny_access`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_delete_bucket_failed
-
-Number of failed Delete Bucket operations. svm_ontaps3_svm_delete_bucket_failed is [ontaps3_svm_delete_bucket_failed](#ontaps3_svm_delete_bucket_failed) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `delete_bucket_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `delete_bucket_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_delete_bucket_failed_client_close
-
-Number of times Delete Bucket operation failed because client terminated connection while the operation was still pending on server. svm_ontaps3_svm_delete_bucket_failed_client_close is [ontaps3_svm_delete_bucket_failed_client_close](#ontaps3_svm_delete_bucket_failed_client_close) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `delete_bucket_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `delete_bucket_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_delete_bucket_latency
-
-Average latency for Delete Bucket operations. svm_ontaps3_svm_delete_bucket_latency is [ontaps3_svm_delete_bucket_latency](#ontaps3_svm_delete_bucket_latency) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `delete_bucket_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> delete_bucket_total | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `delete_bucket_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delete_bucket_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_delete_bucket_rate
-
-Number of Delete Bucket operations per second. svm_ontaps3_svm_delete_bucket_rate is [ontaps3_svm_delete_bucket_rate](#ontaps3_svm_delete_bucket_rate) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `delete_bucket_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `delete_bucket_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_delete_bucket_total
-
-Number of Delete Bucket operations. svm_ontaps3_svm_delete_bucket_total is [ontaps3_svm_delete_bucket_total](#ontaps3_svm_delete_bucket_total) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `delete_bucket_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `delete_bucket_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_delete_object_failed
-
-Number of failed DELETE object operations. svm_ontaps3_svm_delete_object_failed is [ontaps3_svm_delete_object_failed](#ontaps3_svm_delete_object_failed) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `delete_object_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `delete_object_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_delete_object_failed_client_close
-
-Number of times DELETE object operation failed due to the case where client closed the connection while the operation was still pending on server. svm_ontaps3_svm_delete_object_failed_client_close is [ontaps3_svm_delete_object_failed_client_close](#ontaps3_svm_delete_object_failed_client_close) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `delete_object_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `delete_object_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_delete_object_latency
-
-Average latency for DELETE object operations. svm_ontaps3_svm_delete_object_latency is [ontaps3_svm_delete_object_latency](#ontaps3_svm_delete_object_latency) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `delete_object_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> delete_object_total | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `delete_object_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delete_object_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_delete_object_rate
-
-Number of DELETE object operations per second. svm_ontaps3_svm_delete_object_rate is [ontaps3_svm_delete_object_rate](#ontaps3_svm_delete_object_rate) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `delete_object_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `delete_object_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_delete_object_tagging_failed
-
-Number of failed DELETE object tagging operations. svm_ontaps3_svm_delete_object_tagging_failed is [ontaps3_svm_delete_object_tagging_failed](#ontaps3_svm_delete_object_tagging_failed) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `delete_object_tagging_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `delete_object_tagging_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_delete_object_tagging_failed_client_close
-
-Number of times DELETE object tagging operation failed because client terminated connection while the operation was still pending on server. svm_ontaps3_svm_delete_object_tagging_failed_client_close is [ontaps3_svm_delete_object_tagging_failed_client_close](#ontaps3_svm_delete_object_tagging_failed_client_close) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `delete_object_tagging_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `delete_object_tagging_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_delete_object_tagging_latency
-
-Average latency for DELETE object tagging operations. svm_ontaps3_svm_delete_object_tagging_latency is [ontaps3_svm_delete_object_tagging_latency](#ontaps3_svm_delete_object_tagging_latency) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `delete_object_tagging_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> delete_object_tagging_total | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `delete_object_tagging_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delete_object_tagging_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_delete_object_tagging_rate
-
-Number of DELETE object tagging operations per second. svm_ontaps3_svm_delete_object_tagging_rate is [ontaps3_svm_delete_object_tagging_rate](#ontaps3_svm_delete_object_tagging_rate) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `delete_object_tagging_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `delete_object_tagging_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_delete_object_tagging_total
-
-Number of DELETE object tagging operations. svm_ontaps3_svm_delete_object_tagging_total is [ontaps3_svm_delete_object_tagging_total](#ontaps3_svm_delete_object_tagging_total) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `delete_object_tagging_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `delete_object_tagging_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_delete_object_total
-
-Number of DELETE object operations. svm_ontaps3_svm_delete_object_total is [ontaps3_svm_delete_object_total](#ontaps3_svm_delete_object_total) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `delete_object_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `delete_object_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_explicit_deny_access
-
-Number of times access was denied explicitly by a policy statement. svm_ontaps3_svm_explicit_deny_access is [ontaps3_svm_explicit_deny_access](#ontaps3_svm_explicit_deny_access) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `explicit_deny_access`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `explicit_deny_access`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_get_bucket_acl_failed
-
-Number of failed GET Bucket ACL operations. svm_ontaps3_svm_get_bucket_acl_failed is [ontaps3_svm_get_bucket_acl_failed](#ontaps3_svm_get_bucket_acl_failed) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `get_bucket_acl_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `get_bucket_acl_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_get_bucket_acl_total
-
-Number of GET Bucket ACL operations. svm_ontaps3_svm_get_bucket_acl_total is [ontaps3_svm_get_bucket_acl_total](#ontaps3_svm_get_bucket_acl_total) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `get_bucket_acl_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `get_bucket_acl_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_get_bucket_versioning_failed
-
-Number of failed Get Bucket Versioning operations. svm_ontaps3_svm_get_bucket_versioning_failed is [ontaps3_svm_get_bucket_versioning_failed](#ontaps3_svm_get_bucket_versioning_failed) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `get_bucket_versioning_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `get_bucket_versioning_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_get_bucket_versioning_total
-
-Number of Get Bucket Versioning operations. svm_ontaps3_svm_get_bucket_versioning_total is [ontaps3_svm_get_bucket_versioning_total](#ontaps3_svm_get_bucket_versioning_total) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `get_bucket_versioning_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `get_bucket_versioning_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_get_data
-
-Rate of GET object data transfers per second. svm_ontaps3_svm_get_data is [ontaps3_svm_get_data](#ontaps3_svm_get_data) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `get_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `get_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_get_object_acl_failed
-
-Number of failed GET Object ACL operations. svm_ontaps3_svm_get_object_acl_failed is [ontaps3_svm_get_object_acl_failed](#ontaps3_svm_get_object_acl_failed) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `get_object_acl_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `get_object_acl_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_get_object_acl_total
-
-Number of GET Object ACL operations. svm_ontaps3_svm_get_object_acl_total is [ontaps3_svm_get_object_acl_total](#ontaps3_svm_get_object_acl_total) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `get_object_acl_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `get_object_acl_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_get_object_failed
-
-Number of failed GET object operations. svm_ontaps3_svm_get_object_failed is [ontaps3_svm_get_object_failed](#ontaps3_svm_get_object_failed) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `get_object_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `get_object_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_get_object_failed_client_close
-
-Number of times GET object operation failed due to the case where client closed the connection while the operation was still pending on server. svm_ontaps3_svm_get_object_failed_client_close is [ontaps3_svm_get_object_failed_client_close](#ontaps3_svm_get_object_failed_client_close) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `get_object_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `get_object_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_get_object_lastbyte_latency
-
-Average last-byte latency for GET object operations. svm_ontaps3_svm_get_object_lastbyte_latency is [ontaps3_svm_get_object_lastbyte_latency](#ontaps3_svm_get_object_lastbyte_latency) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `get_object_lastbyte_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> get_object_total | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `get_object_lastbyte_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> get_object_lastbyte_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_get_object_latency
-
-Average first-byte latency for GET object operations. svm_ontaps3_svm_get_object_latency is [ontaps3_svm_get_object_latency](#ontaps3_svm_get_object_latency) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `get_object_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> get_object_total | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `get_object_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> get_object_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_get_object_rate
-
-Number of GET object operations per second. svm_ontaps3_svm_get_object_rate is [ontaps3_svm_get_object_rate](#ontaps3_svm_get_object_rate) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `get_object_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `get_object_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_get_object_tagging_failed
-
-Number of failed GET object tagging operations. svm_ontaps3_svm_get_object_tagging_failed is [ontaps3_svm_get_object_tagging_failed](#ontaps3_svm_get_object_tagging_failed) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `get_object_tagging_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `get_object_tagging_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_get_object_tagging_failed_client_close
-
-Number of times GET object tagging operation failed due to the case where client closed the connection while the operation was still pending on server. svm_ontaps3_svm_get_object_tagging_failed_client_close is [ontaps3_svm_get_object_tagging_failed_client_close](#ontaps3_svm_get_object_tagging_failed_client_close) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `get_object_tagging_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `get_object_tagging_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_get_object_tagging_latency
-
-Average latency for GET object tagging operations. svm_ontaps3_svm_get_object_tagging_latency is [ontaps3_svm_get_object_tagging_latency](#ontaps3_svm_get_object_tagging_latency) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `get_object_tagging_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> get_object_tagging_total | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `get_object_tagging_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> get_object_tagging_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_get_object_tagging_rate
-
-Number of GET object tagging operations per second. svm_ontaps3_svm_get_object_tagging_rate is [ontaps3_svm_get_object_tagging_rate](#ontaps3_svm_get_object_tagging_rate) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `get_object_tagging_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `get_object_tagging_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_get_object_tagging_total
-
-Number of GET object tagging operations. svm_ontaps3_svm_get_object_tagging_total is [ontaps3_svm_get_object_tagging_total](#ontaps3_svm_get_object_tagging_total) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `get_object_tagging_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `get_object_tagging_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_get_object_total
-
-Number of GET object operations. svm_ontaps3_svm_get_object_total is [ontaps3_svm_get_object_total](#ontaps3_svm_get_object_total) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `get_object_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `get_object_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_group_policy_evaluated
-
-Number of times group policies were evaluated. svm_ontaps3_svm_group_policy_evaluated is [ontaps3_svm_group_policy_evaluated](#ontaps3_svm_group_policy_evaluated) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `group_policy_evaluated`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `group_policy_evaluated`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_head_bucket_failed
-
-Number of failed HEAD bucket operations. svm_ontaps3_svm_head_bucket_failed is [ontaps3_svm_head_bucket_failed](#ontaps3_svm_head_bucket_failed) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `head_bucket_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `head_bucket_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_head_bucket_failed_client_close
-
-Number of times HEAD bucket operation failed due to the case where client closed the connection while the operation was still pending on server. svm_ontaps3_svm_head_bucket_failed_client_close is [ontaps3_svm_head_bucket_failed_client_close](#ontaps3_svm_head_bucket_failed_client_close) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `head_bucket_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `head_bucket_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_head_bucket_latency
-
-Average latency for HEAD bucket operations. svm_ontaps3_svm_head_bucket_latency is [ontaps3_svm_head_bucket_latency](#ontaps3_svm_head_bucket_latency) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `head_bucket_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> head_bucket_total | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `head_bucket_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> head_bucket_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_head_bucket_rate
-
-Number of HEAD bucket operations per second. svm_ontaps3_svm_head_bucket_rate is [ontaps3_svm_head_bucket_rate](#ontaps3_svm_head_bucket_rate) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `head_bucket_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `head_bucket_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_head_bucket_total
-
-Number of HEAD bucket operations. svm_ontaps3_svm_head_bucket_total is [ontaps3_svm_head_bucket_total](#ontaps3_svm_head_bucket_total) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `head_bucket_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `head_bucket_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_head_object_failed
-
-Number of failed HEAD Object operations. svm_ontaps3_svm_head_object_failed is [ontaps3_svm_head_object_failed](#ontaps3_svm_head_object_failed) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `head_object_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `head_object_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_head_object_failed_client_close
-
-Number of times HEAD object operation failed due to the case where client closed the connection while the operation was still pending on server. svm_ontaps3_svm_head_object_failed_client_close is [ontaps3_svm_head_object_failed_client_close](#ontaps3_svm_head_object_failed_client_close) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `head_object_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `head_object_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_head_object_latency
-
-Average latency for HEAD object operations. svm_ontaps3_svm_head_object_latency is [ontaps3_svm_head_object_latency](#ontaps3_svm_head_object_latency) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `head_object_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> head_object_total | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `head_object_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> head_object_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_head_object_rate
-
-Number of HEAD Object operations per second. svm_ontaps3_svm_head_object_rate is [ontaps3_svm_head_object_rate](#ontaps3_svm_head_object_rate) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `head_object_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `head_object_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_head_object_total
-
-Number of HEAD Object operations. svm_ontaps3_svm_head_object_total is [ontaps3_svm_head_object_total](#ontaps3_svm_head_object_total) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `head_object_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `head_object_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_initiate_multipart_upload_failed
-
-Number of failed Initiate Multipart Upload operations. svm_ontaps3_svm_initiate_multipart_upload_failed is [ontaps3_svm_initiate_multipart_upload_failed](#ontaps3_svm_initiate_multipart_upload_failed) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `initiate_multipart_upload_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `initiate_multipart_upload_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_initiate_multipart_upload_failed_client_close
-
-Number of times Initiate Multipart Upload operation failed because client terminated connection while the operation was still pending on server. svm_ontaps3_svm_initiate_multipart_upload_failed_client_close is [ontaps3_svm_initiate_multipart_upload_failed_client_close](#ontaps3_svm_initiate_multipart_upload_failed_client_close) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `initiate_multipart_upload_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `initiate_multipart_upload_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_initiate_multipart_upload_latency
-
-Average latency for Initiate Multipart Upload operations. svm_ontaps3_svm_initiate_multipart_upload_latency is [ontaps3_svm_initiate_multipart_upload_latency](#ontaps3_svm_initiate_multipart_upload_latency) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `initiate_multipart_upload_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> initiate_multipart_upload_total | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `initiate_multipart_upload_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> initiate_multipart_upload_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_initiate_multipart_upload_rate
-
-Number of Initiate Multipart Upload operations per second. svm_ontaps3_svm_initiate_multipart_upload_rate is [ontaps3_svm_initiate_multipart_upload_rate](#ontaps3_svm_initiate_multipart_upload_rate) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `initiate_multipart_upload_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `initiate_multipart_upload_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_initiate_multipart_upload_total
-
-Number of Initiate Multipart Upload operations. svm_ontaps3_svm_initiate_multipart_upload_total is [ontaps3_svm_initiate_multipart_upload_total](#ontaps3_svm_initiate_multipart_upload_total) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `initiate_multipart_upload_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `initiate_multipart_upload_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_input_flow_control_entry
-
-Number of times input flow control was entered. svm_ontaps3_svm_input_flow_control_entry is [ontaps3_svm_input_flow_control_entry](#ontaps3_svm_input_flow_control_entry) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `input_flow_control_entry`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `input_flow_control_entry`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_input_flow_control_exit
-
-Number of times input flow control was exited. svm_ontaps3_svm_input_flow_control_exit is [ontaps3_svm_input_flow_control_exit](#ontaps3_svm_input_flow_control_exit) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `input_flow_control_exit`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `input_flow_control_exit`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_list_buckets_failed
-
-Number of failed LIST Buckets operations. svm_ontaps3_svm_list_buckets_failed is [ontaps3_svm_list_buckets_failed](#ontaps3_svm_list_buckets_failed) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `list_buckets_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `list_buckets_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_list_buckets_failed_client_close
-
-Number of times LIST Bucket operation failed due to the case where client closed the connection while the operation was still pending on server. svm_ontaps3_svm_list_buckets_failed_client_close is [ontaps3_svm_list_buckets_failed_client_close](#ontaps3_svm_list_buckets_failed_client_close) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `list_buckets_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `list_buckets_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_list_buckets_latency
-
-Average latency for LIST Buckets operations. svm_ontaps3_svm_list_buckets_latency is [ontaps3_svm_list_buckets_latency](#ontaps3_svm_list_buckets_latency) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `list_buckets_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> list_buckets_total | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `list_buckets_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> head_object_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_list_buckets_rate
-
-Number of LIST Buckets operations per second. svm_ontaps3_svm_list_buckets_rate is [ontaps3_svm_list_buckets_rate](#ontaps3_svm_list_buckets_rate) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `list_buckets_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `list_buckets_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_list_buckets_total
-
-Number of LIST Buckets operations. svm_ontaps3_svm_list_buckets_total is [ontaps3_svm_list_buckets_total](#ontaps3_svm_list_buckets_total) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `list_buckets_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `list_buckets_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_list_object_versions_failed
-
-Number of failed LIST object versions operations. svm_ontaps3_svm_list_object_versions_failed is [ontaps3_svm_list_object_versions_failed](#ontaps3_svm_list_object_versions_failed) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `list_object_versions_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `list_object_versions_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_list_object_versions_failed_client_close
-
-Number of times LIST object versions operation failed due to the case where client closed the connection while the operation was still pending on server. svm_ontaps3_svm_list_object_versions_failed_client_close is [ontaps3_svm_list_object_versions_failed_client_close](#ontaps3_svm_list_object_versions_failed_client_close) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `list_object_versions_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `list_object_versions_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_list_object_versions_latency
-
-Average latency for LIST Object versions operations. svm_ontaps3_svm_list_object_versions_latency is [ontaps3_svm_list_object_versions_latency](#ontaps3_svm_list_object_versions_latency) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `list_object_versions_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> list_object_versions_total | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `list_object_versions_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> list_object_versions_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_list_object_versions_rate
-
-Number of LIST Object Versions operations per second. svm_ontaps3_svm_list_object_versions_rate is [ontaps3_svm_list_object_versions_rate](#ontaps3_svm_list_object_versions_rate) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `list_object_versions_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `list_object_versions_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_list_object_versions_total
-
-Number of LIST Object Versions operations. svm_ontaps3_svm_list_object_versions_total is [ontaps3_svm_list_object_versions_total](#ontaps3_svm_list_object_versions_total) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `list_object_versions_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `list_object_versions_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_list_objects_failed
-
-Number of failed LIST objects operations. svm_ontaps3_svm_list_objects_failed is [ontaps3_svm_list_objects_failed](#ontaps3_svm_list_objects_failed) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `list_objects_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `list_objects_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_list_objects_failed_client_close
-
-Number of times LIST objects operation failed due to the case where client closed the connection while the operation was still pending on server. svm_ontaps3_svm_list_objects_failed_client_close is [ontaps3_svm_list_objects_failed_client_close](#ontaps3_svm_list_objects_failed_client_close) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `list_objects_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `list_objects_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_list_objects_latency
-
-Average latency for LIST Objects operations. svm_ontaps3_svm_list_objects_latency is [ontaps3_svm_list_objects_latency](#ontaps3_svm_list_objects_latency) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `list_objects_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> list_objects_total | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `list_objects_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> list_objects_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_list_objects_rate
-
-Number of LIST Objects operations per second. svm_ontaps3_svm_list_objects_rate is [ontaps3_svm_list_objects_rate](#ontaps3_svm_list_objects_rate) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `list_objects_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `list_objects_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_list_objects_total
-
-Number of LIST Objects operations. svm_ontaps3_svm_list_objects_total is [ontaps3_svm_list_objects_total](#ontaps3_svm_list_objects_total) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `list_objects_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `list_objects_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_list_uploads_failed
-
-Number of failed LIST Upload operations. svm_ontaps3_svm_list_uploads_failed is [ontaps3_svm_list_uploads_failed](#ontaps3_svm_list_uploads_failed) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `list_uploads_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `list_uploads_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_list_uploads_failed_client_close
-
-Number of times LIST Upload operation failed due to the case where client closed the connection while the operation was still pending on server. svm_ontaps3_svm_list_uploads_failed_client_close is [ontaps3_svm_list_uploads_failed_client_close](#ontaps3_svm_list_uploads_failed_client_close) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `list_uploads_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `list_uploads_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_list_uploads_latency
-
-Average latency for LIST Upload operations. svm_ontaps3_svm_list_uploads_latency is [ontaps3_svm_list_uploads_latency](#ontaps3_svm_list_uploads_latency) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `list_uploads_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> list_uploads_total | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `list_uploads_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> list_uploads_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_list_uploads_rate
-
-Number of LIST Upload operations per second. svm_ontaps3_svm_list_uploads_rate is [ontaps3_svm_list_uploads_rate](#ontaps3_svm_list_uploads_rate) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `list_uploads_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `list_uploads_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_list_uploads_total
-
-Number of LIST Upload operations. svm_ontaps3_svm_list_uploads_total is [ontaps3_svm_list_uploads_total](#ontaps3_svm_list_uploads_total) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `list_uploads_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `list_uploads_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_max_cmds_per_connection
-
-Maximum commands pipelined at any instance on a connection. svm_ontaps3_svm_max_cmds_per_connection is [ontaps3_svm_max_cmds_per_connection](#ontaps3_svm_max_cmds_per_connection) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `maximum_commands_per_connection`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `max_cmds_per_connection`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_max_connected_connections
-
-Maximum number of object store server connections established at one time. svm_ontaps3_svm_max_connected_connections is [ontaps3_svm_max_connected_connections](#ontaps3_svm_max_connected_connections) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `maximum_connected_connections`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `max_connected_connections`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_max_requests_outstanding
-
-Maximum number of object store server requests in process at one time. svm_ontaps3_svm_max_requests_outstanding is [ontaps3_svm_max_requests_outstanding](#ontaps3_svm_max_requests_outstanding) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `maximum_requests_outstanding`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `max_requests_outstanding`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_multi_delete_reqs
-
-Total number of object store server multiple object delete requests. svm_ontaps3_svm_multi_delete_reqs is [ontaps3_svm_multi_delete_reqs](#ontaps3_svm_multi_delete_reqs) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `multiple_delete_requests`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `multi_delete_reqs`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_output_flow_control_entry
-
-Number of output flow control was entered. svm_ontaps3_svm_output_flow_control_entry is [ontaps3_svm_output_flow_control_entry](#ontaps3_svm_output_flow_control_entry) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `output_flow_control_entry`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `output_flow_control_entry`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_output_flow_control_exit
-
-Number of times output flow control was exited. svm_ontaps3_svm_output_flow_control_exit is [ontaps3_svm_output_flow_control_exit](#ontaps3_svm_output_flow_control_exit) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `output_flow_control_exit`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `output_flow_control_exit`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_presigned_url_reqs
-
-Total number of presigned object store server URL requests. svm_ontaps3_svm_presigned_url_reqs is [ontaps3_svm_presigned_url_reqs](#ontaps3_svm_presigned_url_reqs) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `presigned_url_requests`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `presigned_url_reqs`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_put_bucket_versioning_failed
-
-Number of failed Put Bucket Versioning operations. svm_ontaps3_svm_put_bucket_versioning_failed is [ontaps3_svm_put_bucket_versioning_failed](#ontaps3_svm_put_bucket_versioning_failed) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `put_bucket_versioning_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `put_bucket_versioning_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_put_bucket_versioning_total
-
-Number of Put Bucket Versioning operations. svm_ontaps3_svm_put_bucket_versioning_total is [ontaps3_svm_put_bucket_versioning_total](#ontaps3_svm_put_bucket_versioning_total) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `put_bucket_versioning_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `put_bucket_versioning_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_put_data
-
-Rate of PUT object data transfers per second. svm_ontaps3_svm_put_data is [ontaps3_svm_put_data](#ontaps3_svm_put_data) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `put_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `put_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_put_object_failed
-
-Number of failed PUT object operations. svm_ontaps3_svm_put_object_failed is [ontaps3_svm_put_object_failed](#ontaps3_svm_put_object_failed) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `put_object_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `put_object_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_put_object_failed_client_close
-
-Number of times PUT object operation failed due to the case where client closed the connection while the operation was still pending on server. svm_ontaps3_svm_put_object_failed_client_close is [ontaps3_svm_put_object_failed_client_close](#ontaps3_svm_put_object_failed_client_close) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `put_object_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `put_object_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_put_object_latency
-
-Average latency for PUT object operations. svm_ontaps3_svm_put_object_latency is [ontaps3_svm_put_object_latency](#ontaps3_svm_put_object_latency) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `put_object_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> put_object_total | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `put_object_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> put_object_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_put_object_rate
-
-Number of PUT object operations per second. svm_ontaps3_svm_put_object_rate is [ontaps3_svm_put_object_rate](#ontaps3_svm_put_object_rate) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `put_object_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `put_object_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_put_object_tagging_failed
-
-Number of failed PUT object tagging operations. svm_ontaps3_svm_put_object_tagging_failed is [ontaps3_svm_put_object_tagging_failed](#ontaps3_svm_put_object_tagging_failed) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `put_object_tagging_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `put_object_tagging_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_put_object_tagging_failed_client_close
-
-Number of times PUT object tagging operation failed because client terminated connection while the operation was still pending on server. svm_ontaps3_svm_put_object_tagging_failed_client_close is [ontaps3_svm_put_object_tagging_failed_client_close](#ontaps3_svm_put_object_tagging_failed_client_close) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `put_object_tagging_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `put_object_tagging_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_put_object_tagging_latency
-
-Average latency for PUT object tagging operations. svm_ontaps3_svm_put_object_tagging_latency is [ontaps3_svm_put_object_tagging_latency](#ontaps3_svm_put_object_tagging_latency) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `put_object_tagging_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> put_object_tagging_total | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `put_object_tagging_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> put_object_tagging_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_put_object_tagging_rate
-
-Number of PUT object tagging operations per second. svm_ontaps3_svm_put_object_tagging_rate is [ontaps3_svm_put_object_tagging_rate](#ontaps3_svm_put_object_tagging_rate) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `put_object_tagging_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `put_object_tagging_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_put_object_tagging_total
-
-Number of PUT object tagging operations. svm_ontaps3_svm_put_object_tagging_total is [ontaps3_svm_put_object_tagging_total](#ontaps3_svm_put_object_tagging_total) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `put_object_tagging_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `put_object_tagging_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_put_object_total
-
-Number of PUT object operations. svm_ontaps3_svm_put_object_total is [ontaps3_svm_put_object_total](#ontaps3_svm_put_object_total) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `put_object_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `put_object_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_request_parse_errors
-
-Number of request parser errors due to malformed requests. svm_ontaps3_svm_request_parse_errors is [ontaps3_svm_request_parse_errors](#ontaps3_svm_request_parse_errors) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `request_parse_errors`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `request_parse_errors`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_requests
-
-Total number of object store server requests. svm_ontaps3_svm_requests is [ontaps3_svm_requests](#ontaps3_svm_requests) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `requests`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `requests`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_requests_outstanding
-
-Number of object store server requests in process. svm_ontaps3_svm_requests_outstanding is [ontaps3_svm_requests_outstanding](#ontaps3_svm_requests_outstanding) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `requests_outstanding`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `requests_outstanding`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_root_user_access
-
-Number of times access was done by root user. svm_ontaps3_svm_root_user_access is [ontaps3_svm_root_user_access](#ontaps3_svm_root_user_access) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `root_user_access`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `root_user_access`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_server_connection_close
-
-Number of connection closes triggered by server due to fatal errors. svm_ontaps3_svm_server_connection_close is [ontaps3_svm_server_connection_close](#ontaps3_svm_server_connection_close) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `server_connection_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `server_connection_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_signature_v2_reqs
-
-Total number of object store server signature V2 requests. svm_ontaps3_svm_signature_v2_reqs is [ontaps3_svm_signature_v2_reqs](#ontaps3_svm_signature_v2_reqs) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `signature_v2_requests`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `signature_v2_reqs`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_signature_v4_reqs
-
-Total number of object store server signature V4 requests. svm_ontaps3_svm_signature_v4_reqs is [ontaps3_svm_signature_v4_reqs](#ontaps3_svm_signature_v4_reqs) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `signature_v4_requests`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `signature_v4_reqs`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_tagging
-
-Number of requests with tagging specified. svm_ontaps3_svm_tagging is [ontaps3_svm_tagging](#ontaps3_svm_tagging) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `tagging`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `tagging`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_upload_part_failed
-
-Number of failed Upload Part operations. svm_ontaps3_svm_upload_part_failed is [ontaps3_svm_upload_part_failed](#ontaps3_svm_upload_part_failed) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `upload_part_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `upload_part_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_upload_part_failed_client_close
-
-Number of times Upload Part operation failed because client terminated connection while the operation was still pending on server. svm_ontaps3_svm_upload_part_failed_client_close is [ontaps3_svm_upload_part_failed_client_close](#ontaps3_svm_upload_part_failed_client_close) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `upload_part_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `upload_part_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_upload_part_latency
-
-Average latency for Upload Part operations. svm_ontaps3_svm_upload_part_latency is [ontaps3_svm_upload_part_latency](#ontaps3_svm_upload_part_latency) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `upload_part_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> upload_part_total | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `upload_part_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> upload_part_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_upload_part_rate
-
-Number of Upload Part operations per second. svm_ontaps3_svm_upload_part_rate is [ontaps3_svm_upload_part_rate](#ontaps3_svm_upload_part_rate) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `upload_part_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `upload_part_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
-### svm_ontaps3_svm_upload_part_total
-
-Number of Upload Part operations. svm_ontaps3_svm_upload_part_total is [ontaps3_svm_upload_part_total](#ontaps3_svm_upload_part_total) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/object_store_server` | `upload_part_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml | 
-| ZAPI | `perf-object-get-instances object_store_server` | `upload_part_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml | 
-
-
 ### svm_vol_avg_latency
 
 Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time
@@ -14814,7 +13534,17 @@ Average latency in microseconds for the WAFL filesystem to process all the opera
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume:svm` | `average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/restperf/9.12.0/volume_svm.yaml | 
+| KeyPerf | `api/storage/volumes` | `statistics.latency_raw.total`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.total | conf/keyperf/9.15.0/volume.yaml | 
 | ZAPI | `perf-object-get-instances volume:vserver` | `avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/volume_svm.yaml | 
+
+
+### svm_vol_other_data
+
+Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on. svm_vol_other_data is [volume_other_data](#volume_other_data) aggregated by `svm`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.other`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
 
 
 ### svm_vol_other_latency
@@ -14824,6 +13554,7 @@ Average latency in microseconds for the WAFL filesystem to process other operati
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume:svm` | `other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_other_ops | conf/restperf/9.12.0/volume_svm.yaml | 
+| KeyPerf | `api/storage/volumes` | `statistics.latency_raw.other`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.other | conf/keyperf/9.15.0/volume.yaml | 
 | ZAPI | `perf-object-get-instances volume:vserver` | `other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/zapiperf/cdot/9.8.0/volume_svm.yaml | 
 
 
@@ -14834,6 +13565,7 @@ Number of other operations per second to the volume
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume:svm` | `total_other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_svm.yaml | 
+| KeyPerf | `api/storage/volumes` | `statistics.iops_raw.other`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
 | ZAPI | `perf-object-get-instances volume:vserver` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_svm.yaml | 
 
 
@@ -14844,6 +13576,7 @@ Bytes read per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume:svm` | `bytes_read`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_svm.yaml | 
+| KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.read`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
 | ZAPI | `perf-object-get-instances volume:vserver` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_svm.yaml | 
 
 
@@ -14854,6 +13587,7 @@ Average latency in microseconds for the WAFL filesystem to process read request 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume:svm` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_read_ops | conf/restperf/9.12.0/volume_svm.yaml | 
+| KeyPerf | `api/storage/volumes` | `statistics.latency_raw.read`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.read | conf/keyperf/9.15.0/volume.yaml | 
 | ZAPI | `perf-object-get-instances volume:vserver` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/volume_svm.yaml | 
 
 
@@ -14864,7 +13598,17 @@ Number of read operations per second from the volume
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume:svm` | `total_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_svm.yaml | 
+| KeyPerf | `api/storage/volumes` | `statistics.iops_raw.read`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
 | ZAPI | `perf-object-get-instances volume:vserver` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_svm.yaml | 
+
+
+### svm_vol_total_data
+
+Performance metric aggregated over all types of I/O operations. svm_vol_total_data is [volume_total_data](#volume_total_data) aggregated by `svm`.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.total`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
 
 
 ### svm_vol_total_ops
@@ -14874,6 +13618,7 @@ Number of operations per second serviced by the volume
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume:svm` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_svm.yaml | 
+| KeyPerf | `api/storage/volumes` | `statistics.iops_raw.total`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
 | ZAPI | `perf-object-get-instances volume:vserver` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_svm.yaml | 
 
 
@@ -14884,6 +13629,7 @@ Bytes written per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume:svm` | `bytes_written`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_svm.yaml | 
+| KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.write`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
 | ZAPI | `perf-object-get-instances volume:vserver` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_svm.yaml | 
 
 
@@ -14894,6 +13640,7 @@ Average latency in microseconds for the WAFL filesystem to process write request
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume:svm` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_write_ops | conf/restperf/9.12.0/volume_svm.yaml | 
+| KeyPerf | `api/storage/volumes` | `statistics.latency_raw.write`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.write | conf/keyperf/9.15.0/volume.yaml | 
 | ZAPI | `perf-object-get-instances volume:vserver` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/volume_svm.yaml | 
 
 
@@ -14904,115 +13651,8 @@ Number of write operations per second to the volume
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume:svm` | `total_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_svm.yaml | 
-| ZAPI | `perf-object-get-instances volume:vserver` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_svm.yaml | 
-
-
-### svm_volume_avg_latency
-
-Performance metric aggregated over all types of I/O operations. svm_volume_avg_latency is [volume_avg_latency](#volume_avg_latency) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| KeyPerf | `api/storage/volumes` | `statistics.latency_raw.total`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.total | conf/keyperf/9.15.0/volume.yaml | 
-
-
-### svm_volume_other_data
-
-Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on. svm_volume_other_data is [volume_other_data](#volume_other_data) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.other`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
-
-
-### svm_volume_other_latency
-
-Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on. svm_volume_other_latency is [volume_other_latency](#volume_other_latency) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| KeyPerf | `api/storage/volumes` | `statistics.latency_raw.other`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.other | conf/keyperf/9.15.0/volume.yaml | 
-
-
-### svm_volume_other_ops
-
-Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on. svm_volume_other_ops is [volume_other_ops](#volume_other_ops) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| KeyPerf | `api/storage/volumes` | `statistics.iops_raw.other`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
-
-
-### svm_volume_read_data
-
-Performance metric for read I/O operations. svm_volume_read_data is [volume_read_data](#volume_read_data) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.read`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
-
-
-### svm_volume_read_latency
-
-Performance metric for read I/O operations. svm_volume_read_latency is [volume_read_latency](#volume_read_latency) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| KeyPerf | `api/storage/volumes` | `statistics.latency_raw.read`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.read | conf/keyperf/9.15.0/volume.yaml | 
-
-
-### svm_volume_read_ops
-
-Performance metric for read I/O operations. svm_volume_read_ops is [volume_read_ops](#volume_read_ops) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| KeyPerf | `api/storage/volumes` | `statistics.iops_raw.read`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
-
-
-### svm_volume_total_data
-
-Performance metric aggregated over all types of I/O operations. svm_volume_total_data is [volume_total_data](#volume_total_data) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.total`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
-
-
-### svm_volume_total_ops
-
-Performance metric aggregated over all types of I/O operations. svm_volume_total_ops is [volume_total_ops](#volume_total_ops) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| KeyPerf | `api/storage/volumes` | `statistics.iops_raw.total`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
-
-
-### svm_volume_write_data
-
-Peformance metric for write I/O operations. svm_volume_write_data is [volume_write_data](#volume_write_data) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.write`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
-
-
-### svm_volume_write_latency
-
-Peformance metric for write I/O operations. svm_volume_write_latency is [volume_write_latency](#volume_write_latency) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| KeyPerf | `api/storage/volumes` | `statistics.latency_raw.write`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.write | conf/keyperf/9.15.0/volume.yaml | 
-
-
-### svm_volume_write_ops
-
-Peformance metric for write I/O operations. svm_volume_write_ops is [volume_write_ops](#volume_write_ops) aggregated by `svm`.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
 | KeyPerf | `api/storage/volumes` | `statistics.iops_raw.write`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
+| ZAPI | `perf-object-get-instances volume:vserver` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_svm.yaml | 
 
 
 ### svm_vscan_connections_active
