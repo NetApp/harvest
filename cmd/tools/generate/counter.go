@@ -1286,15 +1286,12 @@ func addAggregatedCounter(c *Counter, metric plugin.DerivedMetric, withPrefix st
 		c.Description = fmt.Sprintf("%s %s is the maximum of [%s](#%s) for label `%s`.",
 			c.Description, c.Name, withPrefix, withPrefix, metric.Source)
 	} else {
-		if metric.CustomName {
+		c.Name = metric.Name + "_" + c.Name
+		if metric.HasCustomName {
 			c.Name = metric.Source + "_" + noPrefix
-			c.Description = fmt.Sprintf("%s %s is [%s](#%s) aggregated by `%s`.",
-				c.Description, c.Name, withPrefix, withPrefix, metric.Name)
-		} else {
-			c.Name = metric.Name + "_" + c.Name
-			c.Description = fmt.Sprintf("%s %s is [%s](#%s) aggregated by `%s`.",
-				c.Description, c.Name, withPrefix, withPrefix, metric.Name)
 		}
+		c.Description = fmt.Sprintf("%s %s is [%s](#%s) aggregated by `%s`.",
+			c.Description, c.Name, withPrefix, withPrefix, metric.Name)
 	}
 }
 

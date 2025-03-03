@@ -184,8 +184,8 @@ func GetInterval(param *node.Node, defaultInterval time.Duration) float64 {
 }
 
 type DerivedMetric struct {
-	Name       string
-	Source     string
-	IsMax      bool
-	CustomName bool
+	Name          string
+	Source        string
+	IsMax         bool
+	HasCustomName bool
 }
