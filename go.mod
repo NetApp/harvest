@@ -5,7 +5,7 @@ go 1.24
 require (
 	github.com/google/go-cmp v0.7.0
 	github.com/rivo/uniseg v0.4.7
-	github.com/shirou/gopsutil/v4 v4.25.1
+	github.com/shirou/gopsutil/v4 v4.25.2
 	github.com/spf13/cobra v1.9.1
 	github.com/tidwall/match v1.1.1
 	github.com/tidwall/pretty v1.2.1
