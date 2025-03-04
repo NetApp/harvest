@@ -346,11 +346,14 @@ func AggregatePerScanner(logger *slog.Logger, data *matrix.Matrix, latencyKey st
 			continue
 		}
 		scanner := i.GetLabel("scanner")
+		// scanner is key for cache matrix, skip when the scanner would be empty
+		if scanner == "" {
+			continue
+		}
 		if cache.GetInstance(scanner) == nil {
 			s, _ := cache.NewInstance(scanner)
 			s.SetLabel("scanner", scanner)
 		}
-		i.SetExportable(false)
 	}
 
 	// aggregate per scanner
@@ -360,7 +363,12 @@ func AggregatePerScanner(logger *slog.Logger, data *matrix.Matrix, latencyKey st
 		if !i.IsExportable() {
 			continue
 		}
+		i.SetExportable(false)
 		scanner := i.GetLabel("scanner")
+		// scanner is key for cache matrix, skip when the scanner would be empty
+		if scanner == "" {
+			continue
+		}
 		ps := cache.GetInstance(scanner)
 		if ps == nil {
 			logger.Error("Failed to find scanner instance in cache", slog.String("scanner", scanner))
