@@ -2,15 +2,14 @@
 package gjson
 
 import (
+	"github.com/netapp/harvest/v2/third_party/tidwall/match"
+	"github.com/netapp/harvest/v2/third_party/tidwall/pretty"
 	"strconv"
 	"strings"
 	"time"
 	"unicode/utf16"
 	"unicode/utf8"
 	"unsafe"
-
-	"github.com/tidwall/match"
-	"github.com/tidwall/pretty"
 )
 
 // Type is Result type

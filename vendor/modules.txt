@@ -43,12 +43,6 @@ github.com/spf13/cobra
 # github.com/spf13/pflag v1.0.6
 ## explicit; go 1.12
 github.com/spf13/pflag
-# github.com/tidwall/match v1.1.1
-## explicit; go 1.15
-github.com/tidwall/match
-# github.com/tidwall/pretty v1.2.1
-## explicit; go 1.16
-github.com/tidwall/pretty
 # github.com/tklauser/go-sysconf v0.3.14
 ## explicit; go 1.18
 github.com/tklauser/go-sysconf
