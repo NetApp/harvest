@@ -1,0 +1,104 @@
+{
+  "records": [
+    {
+      "counter_table": {
+        "name": "vscan"
+      },
+      "id": "dcfast11:tstsvm01",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "dcfast11"
+        },
+        {
+          "name": "server.id",
+          "value": "tstsvm01:10.10.33.118"
+        }
+      ],
+      "counters": [
+        {
+          "name": "scan.requests",
+          "value": 719
+        },
+        {
+          "name": "scan.latency",
+          "value": 15034279
+        },
+        {
+          "name": "scan.request_dispatched_rate",
+          "value": 719
+        },
+        {
+          "name": "scanner.stats_percent_cpu_used",
+          "value": 1
+        },
+        {
+          "name": "scanner.stats_percent_mem_used",
+          "value": 48
+        },
+        {
+          "name": "scanner.stats_percent_network_used",
+          "value": 0
+        }
+      ],
+      "_links": {
+        "self": {
+          "href": "/api/cluster/counter/tables/vscan/rows/dcfast11%3Atstsvm01%3A10.10.33.118"
+        }
+      }
+    },
+    {
+      "counter_table": {
+        "name": "vscan"
+      },
+      "id": "dcfast11",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "dcfast11"
+        },
+        {
+          "name": "server.id",
+          "value": "tstsvm01:10.10.33.128"
+        }
+      ],
+      "counters": [
+        {
+          "name": "scan.requests",
+          "value": 720
+        },
+        {
+          "name": "scan.latency",
+          "value": 15001939
+        },
+        {
+          "name": "scan.request_dispatched_rate",
+          "value": 720
+        },
+        {
+          "name": "scanner.stats_percent_cpu_used",
+          "value": 0
+        },
+        {
+          "name": "scanner.stats_percent_mem_used",
+          "value": 42
+        },
+        {
+          "name": "scanner.stats_percent_network_used",
+          "value": 1
+        }
+      ],
+      "_links": {
+        "self": {
+          "href": "/api/cluster/counter/tables/vscan/rows/dcfast11%3Atstsvm01%3A10.10.33.128"
+        }
+      }
+    }
+  ],
+  "num_records": 2,
+  "_links": {
+    "self": {
+      "href": "/api/cluster/counter/tables/vscan/rows?return_records=true&fields=*"
+    }
+  }
+}
