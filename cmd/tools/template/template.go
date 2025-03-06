@@ -398,12 +398,19 @@ func findCustomPlugins(path string, template *node.Node, model *Model) error {
 func toPluginPath(path string, pluginName string) string {
 	// ../../../conf/rest/9.10.0/sensor.yaml -> ../../../cmd/collectors/rest/plugins/sensor/sensor.go
 	// conf/rest/9.10.0/sensor.yaml          -> cmd/collectors/rest/plugins/sensor/sensor.go
+	// ../../../conf/rest/9.12.0/lif.yaml -> ../../../cmd/collectors/rest/plugins/lif/lif.go
+	// conf/rest/9.12.0/lif.yaml          -> cmd/collectors/rest/plugins/lif/lif.go
 
 	before, after, _ := strings.Cut(path, "conf/")
 
 	// Both Zapi and REST sensor.yaml templates uses a single plugin defined in power.go
 	if strings.Contains(path, "sensor.yaml") {
 		return before + "cmd/collectors/power.go"
+	}
+
+	// Both Zapi and REST lif.yaml templates uses a single plugin defined in lif.go
+	if strings.Contains(path, "lif.yaml") {
+		return before + "cmd/collectors/lif.go"
 	}
 
 	// Both Zapi and REST volume.yaml templates uses a single plugin defined in volume.go

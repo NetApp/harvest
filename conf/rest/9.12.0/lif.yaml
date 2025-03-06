@@ -25,6 +25,9 @@ endpoints:
       - ^^vserver                  => svm
       - ^data_protocol             => protocols
 
+plugins:
+  - LIF
+
 export_options:
   instance_keys:
     - address

@@ -23,6 +23,9 @@ counters:
 
 collect_only_labels: true
 
+plugins:
+  - LIF
+
 export_options:
   instance_keys:
     - address

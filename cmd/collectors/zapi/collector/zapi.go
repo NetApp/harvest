@@ -157,6 +157,8 @@ func (z *Zapi) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return qtree.New(abc)
 	case "Volume":
 		return volume.New(abc)
+	case "LIF":
+		return collectors.NewLif(abc)
 	case "Sensor":
 		return collectors.NewSensor(abc)
 	case "Certificate":

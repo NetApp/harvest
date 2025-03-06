@@ -14,7 +14,9 @@ counters:
   - sent_data
   - sent_errors
   - sent_packet
+  - up_time                  => uptime
   - vserver_name             => svm
+
 
 export_options:
   instance_keys:
@@ -22,3 +24,6 @@ export_options:
     - node
     - port
     - svm
+
+override:
+  up_time: raw
