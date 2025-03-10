@@ -40,6 +40,10 @@ func (i *Instance) ClearLabels() {
 	clear(i.labels)
 }
 
+func (i *Instance) RemoveLabel(key string) {
+	delete(i.labels, key)
+}
+
 func (i *Instance) SetLabel(key, value string) {
 	i.labels[key] = value
 }
