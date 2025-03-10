@@ -3419,7 +3419,7 @@
                 "mode": "thresholds"
               },
               "custom": {
-                "align": "auto",
+                "align": "left",
                 "displayMode": "auto",
                 "filterable": true
               },
@@ -3574,6 +3574,18 @@
                     ]
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Uptime"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "ms"
+                  }
+                ]
               }
             ]
           },
@@ -3591,16 +3603,39 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "lif_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
+              "expr": "label_join(lif_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}, \"unique_id\", \"-\", \"datacenter\", \"cluster\", \"node\", \"svm\", \"lif\")",
               "format": "table",
               "instant": true,
               "interval": "",
               "legendFormat": "",
               "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "label_join(lif_uptime{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}, \"unique_id\", \"-\", \"datacenter\", \"cluster\", \"node\", \"svm\", \"lif\")",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "B"
             }
           ],
           "title": "LIF Details",
           "transformations": [
+            {
+              "id": "seriesToColumns",
+              "options": {
+                "byField": "unique_id"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "(.*) 1$",
+                "renamePattern": "$1"
+              }
+            },
             {
               "id": "filterFieldsByName",
               "options": {
@@ -3617,10 +3652,11 @@
                     "node",
                     "port",
                     "protocols",
+                    "services",
                     "status",
                     "subnet",
                     "svm",
-                    "services"
+                    "Value #B"
                   ]
                 }
               }
@@ -3628,26 +3664,44 @@
             {
               "id": "organize",
               "options": {
-                "excludeByName": {},
+                "excludeByName": {
+                  "cluster 2": true,
+                  "datacenter 2": true,
+                  "lif 2": true,
+                  "node 2": true,
+                  "port 2": true,
+                  "svm 2": true
+                },
                 "indexByName": {
-                  "address": 6,
+                  "Value #B": 5,
+                  "address": 7,
                   "cluster": 1,
+                  "cluster 2": 16,
                   "datacenter": 0,
-                  "home_node": 10,
-                  "home_port": 11,
-                  "ipspace": 5,
-                  "is_home": 9,
+                  "datacenter 2": 17,
+                  "home_node": 11,
+                  "home_port": 12,
+                  "ipspace": 6,
+                  "is_home": 10,
                   "lif": 2,
-                  "node": 7,
-                  "port": 8,
-                  "protocols": 13,
+                  "lif 2": 18,
+                  "node": 8,
+                  "node 2": 19,
+                  "port": 9,
+                  "port 2": 20,
+                  "protocols": 14,
+                  "services": 15,
                   "status": 3,
-                  "subnet": 12,
+                  "subnet": 13,
                   "svm": 4,
-                  "type": 14
+                  "svm 2": 21
                 },
                 "renameByName": {
+                  "Value #B": "Uptime",
                   "address": "Address",
+                  "cluster": "Cluster",
+                  "cluster 2": "",
+                  "datacenter": "Datacenter",
                   "home_port": "Home Port",
                   "ipspace": "IPspace",
                   "is_home": "At Home",
@@ -3657,6 +3711,7 @@
                   "services": "Services",
                   "status": "Status",
                   "subnet": "Subnet",
+                  "svm": "SVM",
                   "type": "Type"
                 }
               }
@@ -15778,5 +15833,5 @@
   "timezone": "",
   "title": "ONTAP: SVM",
   "uid": "cdot-svm",
-  "version": 30
+  "version": 31
 }

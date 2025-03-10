@@ -485,6 +485,8 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return disk.New(abc)
 	case "Health":
 		return health.New(abc)
+	case "LIF":
+		return collectors.NewLif(abc)
 	case "NetRoute":
 		return netroute.New(abc)
 	case "Quota":
