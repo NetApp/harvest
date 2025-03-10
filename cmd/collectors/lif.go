@@ -21,7 +21,7 @@ func (l *Lif) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 	for _, lif := range data.GetInstances() {
 		if svm := lif.GetLabel("svm"); svm == "" {
 			if ipspace := lif.GetLabel("ipspace"); ipspace == "Cluster" {
-				svm = ipspace
+				svm = "Cluster"
 			} else {
 				svm = clusterName
 			}
