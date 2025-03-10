@@ -3,6 +3,7 @@ package ems
 import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors"
+	"github.com/netapp/harvest/v2/cmd/collectors/ems/metrictransformer"
 	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
@@ -135,8 +136,13 @@ func (e *Ems) InitMatrix() error {
 	return nil
 }
 
-func (e *Ems) LoadPlugin(kind string, _ *plugin.AbstractPlugin) plugin.Plugin {
-	e.Logger.Warn("no ems plugin found", slog.String("kind", kind))
+func (e *Ems) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin {
+	switch kind {
+	case "MetricTransformer":
+		return metrictransformer.New(abc)
+	default:
+		e.Logger.Warn("no ems plugin found", slog.String("kind", kind))
+	}
 	return nil
 }
 
