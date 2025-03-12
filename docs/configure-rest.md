@@ -343,6 +343,50 @@ the missing data won't be exported.
 
 See [Export Options](configure-rest.md#export_options)
 
+### Filter
+
+This guide provides instructions on how to use the `filter` feature in RestPerf. Filtering is useful when you need to query a subset of instances. For example, suppose you have a small number of high-value volumes from which you want Harvest to collect performance metrics every five seconds. Collecting data from all volumes at this frequency would be too resource-intensive. Therefore, filtering allows you to create/modify a template that includes only the high-value volumes.
+
+#### Objects (Excluding Workload)
+
+In RestPerf templates, you can set up filters under `counters`. Wildcards like `*` are useful if you don't want to specify all instances.
+
+For instance, to filter `volume` performance instances by volume name is `NS_svm_nvme` or contains `Test`, use the following configuration in RestPerf `volume.yaml` under `counters`:
+
+```yaml
+counters:
+...
+  - filter:
+    - query=NS_svm_nvme|*Test*
+    - query_fields=properties.value
+```
+
+### Workload Templates
+
+Performance workload templates require a different syntax because instances are retrieved from the `api/storage/qos/workloads` Rest call.
+
+The `api/storage/qos/workloads` Rest supports filtering on the following fields:
+
+- name
+- workload_class
+- wid
+- policy.name
+- svm.name
+- volume
+- lun
+- file
+- qtree
+
+You can include these fields under the `filter` parameter. For example, to filter Workload performance instances by `name` where the name contains `NS` or `Test` and `svm` is `vs1`, use the following configuration in RestPerf `workload.yaml` under `counters`:
+
+```yaml
+counters:
+...
+  - filter:
+    - name: *NS*|*Test*
+    - svm.name: vs1
+```
+
 ## ONTAP Private CLI
 
 The ONTAP private CLI allows for more granular control and access to non-public counters. It can be used to fill gaps in the REST API, especially in cases where certain data is not yet available through the REST API. Harvest's REST collector can make full use of ONTAP's private CLI. This means when ONTAP's public REST API is missing counters, Harvest can still collect them as long as those counters are available via ONTAP's CLI.
