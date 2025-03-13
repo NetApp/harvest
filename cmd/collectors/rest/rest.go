@@ -26,6 +26,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/systemnode"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/volume"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/volumeanalytics"
+	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/vscanpool"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/workload"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
@@ -521,6 +522,8 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return systemnode.New(abc)
 	case "Workload":
 		return workload.New(abc)
+	case "VscanPool":
+		return vscanpool.New(abc)
 	default:
 		r.Logger.Warn("no rest plugin found", slog.String("kind", kind))
 	}
