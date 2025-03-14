@@ -64,8 +64,9 @@ type Rest struct {
 }
 
 type EndPoint struct {
-	prop *prop
-	name string
+	prop        *prop
+	name        string
+	instanceAdd bool
 }
 
 type prop struct {
@@ -277,6 +278,12 @@ func (r *Rest) InitEndPoints() error {
 					p.Query = line1.GetContentS()
 					p.IsPublic = util.IsPublicAPI(p.Query)
 				}
+				if line1.GetNameS() == "instance_add" {
+					iAdd := line1.GetContentS()
+					if iAdd == "true" {
+						e.instanceAdd = true
+					}
+				}
 				if line1.GetNameS() == "counters" {
 					r.ParseRestCounters(line1, &p)
 				}
@@ -463,7 +470,11 @@ func (r *Rest) ProcessEndPoints(mat *matrix.Matrix, endpointFunc func(e *EndPoin
 			r.Logger.Debug("no instances on cluster", slog.String("APIPath", endpoint.prop.Query))
 			continue
 		}
-		count, _ = r.HandleResults(mat, records, endpoint.prop, true, oldInstances)
+		isEndPoint := true
+		if endpoint.instanceAdd {
+			isEndPoint = false
+		}
+		count, _ = r.HandleResults(mat, records, endpoint.prop, isEndPoint, oldInstances)
 	}
 
 	return count, totalAPID
