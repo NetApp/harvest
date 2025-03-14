@@ -64,3 +64,4 @@ objects:
   SVM:                         svm.yaml
   Volume:                      volume.yaml
   VolumeAnalytics:             volume_analytics.yaml
+  Vscan:                       vscan.yaml

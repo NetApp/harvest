@@ -1,0 +1,21 @@
+{
+  "records": [
+    {
+      "svm": {
+        "name": "vs_8272"
+      },
+      "ip": "10.92.153.245",
+      "state": "connected",
+      "update_time": "2025-02-03T00:35:07+01:00"
+    },
+    {
+      "svm": {
+        "name": "vs_8272"
+      },
+      "ip": "10.92.153.246",
+      "state": "connected",
+      "update_time": "2025-02-03T02:33:57+01:00"
+    }
+  ],
+  "num_records": 2
+}
