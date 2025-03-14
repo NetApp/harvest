@@ -48,10 +48,13 @@ func TestRunForAllImplementations(t *testing.T) {
       ],`
 
 	tests := []test{
-		{name: "TestValidScannerPoolNoDisconnected", svm: svm, scannerPools: scannerPool1, testFile: "vscan-server-status1.json", expectedInstances: 0, expectedDisconnectedServers: ""},
 		{name: "TestEmptyScannerPool", svm: svm, scannerPools: "", testFile: "vscan-server-status1.json", expectedInstances: 0, expectedDisconnectedServers: ""},
+		{name: "TestValidScannerPoolNoDisconnected", svm: svm, scannerPools: scannerPool1, testFile: "vscan-server-status1.json", expectedInstances: 0, expectedDisconnectedServers: ""},
 		{name: "TestValidScannerPoolOneDisconnected", svm: svm, scannerPools: scannerPool1, testFile: "vscan-server-status2.json", expectedInstances: 1, expectedDisconnectedServers: "10.92.153.245"},
 		{name: "TestValidScannerPoolTwoDisconnected", svm: svm, scannerPools: scannerPool1, testFile: "vscan-server-status3.json", expectedInstances: 1, expectedDisconnectedServers: "10.92.153.245,10.92.153.246"},
+		{name: "TestValidScannerPoolZeroDisconnectedBasedOnUpdatetime", svm: svm, scannerPools: scannerPool1, testFile: "vscan-server-status4.json", expectedInstances: 0, expectedDisconnectedServers: ""},
+		{name: "TestValidScannerPoolOneDisconnectedBasedOnUpdatetime", svm: svm, scannerPools: scannerPool1, testFile: "vscan-server-status5.json", expectedInstances: 1, expectedDisconnectedServers: "10.92.153.245"},
+		{name: "TestValidScannerPoolTwoDisconnectedBasedOnUpdatetime", svm: svm, scannerPools: scannerPool1, testFile: "vscan-server-status6.json", expectedInstances: 1, expectedDisconnectedServers: "10.92.153.245,10.92.153.246"},
 	}
 
 	for _, tt := range tests {

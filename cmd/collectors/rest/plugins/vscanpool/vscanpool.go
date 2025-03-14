@@ -76,6 +76,11 @@ func (v *VscanPool) Init(remote conf.Remote) error {
 func (v *VscanPool) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	data := dataMap[v.Object]
 	v.client.Metadata.Reset()
+	v.vscanServer.Reset()
+
+	// Purge and reset data
+	v.vscanServer.PurgeInstances()
+	v.vscanServer.Reset()
 
 	// Set all global labels if they do not already exist
 	v.vscanServer.SetGlobalLabels(data.GetGlobalLabels())
@@ -168,6 +173,7 @@ func (v *VscanPool) fetchPool(data *matrix.Matrix) map[string][]string {
 	var vsName string
 	var servers []string
 	for _, instance := range data.GetInstances() {
+		instance.SetExportable(false)
 		if scannerPools := instance.GetLabel("scanner_pools"); scannerPools != "" {
 			pools := gjson.Result{Type: gjson.JSON, Raw: scannerPools}
 			for _, pool := range pools.Array() {
