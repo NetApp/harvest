@@ -14,7 +14,7 @@ import (
 
 var flexgroupRegex = regexp.MustCompile(`^(.*)__(\d{4})$`)
 
-func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string, includeConstituents bool, opsKeyPrefix string, volumesMap map[string]string) ([]*matrix.Matrix, *util.Metadata, error) {
+func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string, includeConstituents bool, opsKeyPrefix string, volumesMap map[string]string, enableVolumeAggrMatrix bool) ([]*matrix.Matrix, *util.Metadata, error) {
 	var err error
 
 	if volumesMap == nil {
@@ -26,10 +26,10 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 	flexgroupAggrsMap := make(map[string]*set.Set)
 
 	metricName := "labels"
-	volumeAggrmetric := matrix.New(".Volume", "volume_aggr", "volume_aggr")
-	volumeAggrmetric.SetGlobalLabels(data.GetGlobalLabels())
+	volumeAggrMatrix := matrix.New(".Volume", "volume_aggr", "volume_aggr")
+	volumeAggrMatrix.SetGlobalLabels(data.GetGlobalLabels())
 
-	metric, err := volumeAggrmetric.NewMetricFloat64(metricName)
+	metric, err := volumeAggrMatrix.NewMetricFloat64(metricName)
 	if err != nil {
 		logger.Error("add metric", slogx.Err(err), slog.String("key", metricName))
 		return nil, nil, err
@@ -55,8 +55,8 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 				fgAggrMap[key] = set.New()
 			}
 
-			if volumeAggrmetric.GetInstance(key) == nil {
-				flexgroupInstance, _ := volumeAggrmetric.NewInstance(key)
+			if volumeAggrMatrix.GetInstance(key) == nil {
+				flexgroupInstance, _ := volumeAggrMatrix.NewInstance(key)
 				flexgroupInstance.SetLabels(maps.Clone(i.GetLabels()))
 				flexgroupInstance.SetLabel("volume", match[1])
 				flexgroupInstance.SetLabel("node", "")
@@ -74,7 +74,7 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 		case "flexvol":
 			i.SetLabel(style, "flexvol")
 			key := svmName + "." + volName
-			flexvolInstance, err := volumeAggrmetric.NewInstance(key)
+			flexvolInstance, err := volumeAggrMatrix.NewInstance(key)
 			if err != nil {
 				logger.Error("Failed to create new instance", slogx.Err(err), slog.String("key", key))
 				continue
@@ -99,7 +99,7 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 		match := flexgroupRegex.FindStringSubmatch(volName)
 		key := svmName + "." + match[1]
 
-		flexgroupInstance := volumeAggrmetric.GetInstance(key)
+		flexgroupInstance := volumeAggrMatrix.GetInstance(key)
 		if flexgroupInstance != nil {
 			aggrs := flexgroupAggrsMap[key].Values()
 			sort.Strings(aggrs)
@@ -222,5 +222,8 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 		}
 	}
 
-	return []*matrix.Matrix{cache, volumeAggrmetric}, nil, nil
+	if enableVolumeAggrMatrix {
+		return []*matrix.Matrix{cache, volumeAggrMatrix}, nil, nil
+	}
+	return []*matrix.Matrix{cache}, nil, nil
 }

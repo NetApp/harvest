@@ -2,6 +2,7 @@ package keyperf
 
 import (
 	"fmt"
+	"github.com/netapp/harvest/v2/cmd/collectors/keyperf/plugins/volume"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest"
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/volumetopmetrics"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
@@ -149,6 +150,8 @@ func (kp *KeyPerf) loadParamInt(name string, defaultValue int) int {
 
 func (kp *KeyPerf) LoadPlugin(kind string, p *plugin.AbstractPlugin) plugin.Plugin {
 	switch kind {
+	case "Volume":
+		return volume.New(p)
 	case "VolumeTopClients":
 		return volumetopmetrics.New(p)
 	default:

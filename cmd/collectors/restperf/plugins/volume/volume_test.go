@@ -87,7 +87,7 @@ func runVolumeTest(t *testing.T, createVolume func(params *node.Node) plugin.Plu
 
 	// Run the plugin
 	boolValue, _ := strconv.ParseBool(includeConstituents)
-	output, _, err := collectors.ProcessFlexGroupData(slog.Default(), data, StyleType, boolValue, OpsKeyPrefix, volumesMap)
+	output, _, err := collectors.ProcessFlexGroupData(slog.Default(), data, StyleType, boolValue, OpsKeyPrefix, volumesMap, true)
 	if err != nil {
 		t.Fatalf("Run method failed: %v", err)
 	}
