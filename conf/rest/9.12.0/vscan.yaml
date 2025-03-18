@@ -2,9 +2,6 @@ name:                     Vscan
 query:                    api/protocols/vscan
 object:                   vscan
 
-schedule:
-  - data: 10s
-
 counters:
   - ^^svm.name                          => svm
   - ^scanner_pools                      => scanner_pools

@@ -16,7 +16,7 @@ func createRestVscanServer(params *node.Node, testFile string) plugin.Plugin {
 	o := options.Options{IsTest: true}
 	v := &VscanPool{AbstractPlugin: plugin.New("vscan_server", &o, params, nil, "vscan_server", nil)}
 	v.SLogger = slog.Default()
-	v.testFile = testFile
+	v.testFile = "../../testdata/" + testFile
 	v.client = &rest.Client{Metadata: &util.Metadata{}}
 	return v
 }

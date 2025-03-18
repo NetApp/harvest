@@ -1,6 +1,7 @@
 package vscanpool
 
 import (
+	"cmp"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
@@ -12,7 +13,6 @@ import (
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"slices"
-	"sort"
 	"strings"
 	"time"
 )
@@ -114,6 +114,7 @@ func (v *VscanPool) updateVscanLabels(svmPoolMap map[string][]string, vserverSer
 			vscanDisconnectedInstance, err := v.vscanServer.NewInstance(instanceKey)
 			if err != nil {
 				v.SLogger.Error("Failed to create new instance", slogx.Err(err), slog.String("instanceKey", instanceKey))
+				continue
 			}
 			vscanDisconnectedInstance.SetLabel("vscan_server", strings.Join(notConectedServers, ","))
 			if err = v.vscanServer.GetMetric("disconnected").SetValueFloat64(vscanDisconnectedInstance, 1); err != nil {
@@ -151,11 +152,11 @@ func (v *VscanPool) getVScanServerInfo() (map[string]map[string]string, error) {
 	for svm, serverData := range serverMap {
 		serverStateMap := make(map[string]string)
 		// Sort the slice by serverData in descending order
-		sort.Slice(serverData, func(i, j int) bool {
-			if serverData[i].ip == serverData[j].ip {
-				return serverData[i].updateTime > serverData[j].updateTime
-			}
-			return true
+		slices.SortFunc(serverData, func(a, b ServerData) int {
+			return cmp.Or(
+				strings.Compare(a.ip, b.ip),
+				cmp.Compare(b.updateTime, a.updateTime),
+			)
 		})
 
 		for _, serverDetail := range serverData {
