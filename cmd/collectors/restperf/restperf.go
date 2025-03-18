@@ -44,6 +44,7 @@ const (
 	objWorkloadClass       = "user_defined|system_defined"
 	objWorkloadVolumeClass = "autovolume"
 	timestampMetricName    = "timestamp"
+	idBatchSize            = 100
 )
 
 var (
@@ -689,6 +690,19 @@ func (r *RestPerf) processWorkLoadCounter() (map[string]*matrix.Matrix, error) {
 	return r.Matrix, nil
 }
 
+// batchIDs splits the id values into smaller batches
+func batchIDs(ids []string) [][]string {
+	var batches [][]string
+	for i := 0; i < len(ids); i += idBatchSize {
+		end := i + idBatchSize
+		if end > len(ids) {
+			end = len(ids)
+		}
+		batches = append(batches, ids[i:end])
+	}
+	return batches
+}
+
 func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	var (
 		apiD, parseD time.Duration
@@ -731,75 +745,113 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 	}
 
-	href := rest.NewHrefBuilder().
-		APIPath(dataQuery).
-		Fields([]string{"*"}).
-		Filter(filter).
-		MaxRecords(r.BatchSize).
-		ReturnTimeout(r.Prop.ReturnTimeOut).
-		Build()
-
-	r.Logger.Debug("", slog.String("href", href))
-	if href == "" {
-		return nil, errs.New(errs.ErrConfig, "empty url")
+	// filter is applied to api/storage/qos/workloads for workload objects in pollInstance method
+	if !(isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query)) {
+		filter = append(filter, r.Prop.Filter...)
 	}
 
-	r.pollDataCalls++
-	if r.pollDataCalls >= r.recordsToSave {
-		r.pollDataCalls = 0
-	}
-
-	var headers map[string]string
-
-	poller, err := conf.PollerNamed(r.Options.Poller)
-	if err != nil {
-		slog.Error("failed to find poller", slogx.Err(err), slog.String("poller", r.Options.Poller))
-	}
-
-	if poller.IsRecording() {
-		headers = map[string]string{
-			"From": strconv.Itoa(r.pollDataCalls),
+	// No batching needed, use a single batch with all ids
+	idBatches := [][]string{nil}
+	if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
+		// if filtering is enabled then collected uuid in pollInstance need to be passed as filter as id
+		if r.Prop.Filter != nil {
+			if isWorkloadObject(r.Prop.Query) {
+				// id is of form workloadName:uuid
+				// Test-wid13148:8333dc06-8b7a-11ed-86dd-00a098d390f2
+				var ids []string
+				for uuid, instance := range r.Matrix[r.Object].GetInstances() {
+					id := instance.GetLabel("workload") + ":" + uuid
+					ids = append(ids, id)
+				}
+				idBatches = batchIDs(ids)
+			} else if isWorkloadDetailObject(r.Prop.Query) {
+				// id is of form node:workloadName:subsystemname
+				// umeng-aff300-02:Test-wid8678.CPU_dblade
+				var ids []string
+				for _, instance := range r.Matrix[r.Object].GetInstances() {
+					id := "*" + instance.GetLabel("workload") + "*"
+					ids = append(ids, id)
+				}
+				idBatches = batchIDs(ids)
+			}
 		}
 	}
 
-	// Track old instances before processing batches
-	oldInstances := set.New()
-	// The creation and deletion of objects with an instance schedule are managed through pollInstance.
-	if !r.hasInstanceSchedule {
-		for key := range r.Matrix[r.Object].GetInstances() {
-			oldInstances.Add(key)
+	for _, idBatch := range idBatches {
+		if idBatch != nil {
+			idFilter := "id=" + strings.Join(idBatch, "|")
+			filter = append(filter, idFilter)
 		}
-	}
+		href := rest.NewHrefBuilder().
+			APIPath(dataQuery).
+			Fields([]string{"*"}).
+			Filter(filter).
+			MaxRecords(r.BatchSize).
+			ReturnTimeout(r.Prop.ReturnTimeOut).
+			Build()
 
-	prevMat = r.Matrix[r.Object]
-	// clone matrix without numeric data
-	curMat = prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
-	curMat.Reset()
+		r.Logger.Info("", slog.String("href", href))
+		if href == "" {
+			return nil, errs.New(errs.ErrConfig, "empty url")
+		}
 
-	processBatch := func(perfRecords []rest.PerfRecord) error {
-		if len(perfRecords) == 0 {
+		r.pollDataCalls++
+		if r.pollDataCalls >= r.recordsToSave {
+			r.pollDataCalls = 0
+		}
+
+		var headers map[string]string
+
+		poller, err := conf.PollerNamed(r.Options.Poller)
+		if err != nil {
+			slog.Error("failed to find poller", slogx.Err(err), slog.String("poller", r.Options.Poller))
+		}
+
+		if poller.IsRecording() {
+			headers = map[string]string{
+				"From": strconv.Itoa(r.pollDataCalls),
+			}
+		}
+
+		// Track old instances before processing batches
+		oldInstances := set.New()
+		// The creation and deletion of objects with an instance schedule are managed through pollInstance.
+		if !r.hasInstanceSchedule {
+			for key := range r.Matrix[r.Object].GetInstances() {
+				oldInstances.Add(key)
+			}
+		}
+
+		prevMat = r.Matrix[r.Object]
+		// clone matrix without numeric data
+		curMat = prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
+		curMat.Reset()
+
+		processBatch := func(perfRecords []rest.PerfRecord) error {
+			if len(perfRecords) == 0 {
+				return nil
+			}
+
+			// Process the current batch of records
+			count, np, batchParseD := r.processPerfRecords(perfRecords, curMat, prevMat, oldInstances)
+			numPartials += np
+			metricCount += count
+			parseD += batchParseD
 			return nil
 		}
 
-		// Process the current batch of records
-		count, np, batchParseD := r.processPerfRecords(perfRecords, curMat, prevMat, oldInstances)
-		numPartials += np
-		metricCount += count
-		parseD += batchParseD
-		return nil
-	}
+		err = rest.FetchRestPerfDataStream(r.Client, href, processBatch, headers)
+		apiD += time.Since(startTime)
 
-	err = rest.FetchRestPerfDataStream(r.Client, href, processBatch, headers)
-	apiD += time.Since(startTime)
+		if err != nil {
+			return nil, err
+		}
 
-	if err != nil {
-		return nil, err
-	}
-
-	if !r.hasInstanceSchedule {
-		// Remove old instances that are not found in new instances
-		for key := range oldInstances.Iter() {
-			curMat.RemoveInstance(key)
+		if !r.hasInstanceSchedule {
+			// Remove old instances that are not found in new instances
+			for key := range oldInstances.Iter() {
+				curMat.RemoveInstance(key)
+			}
 		}
 	}
 
@@ -1524,14 +1576,19 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		return nil, nil
 	}
 
+	dataQuery := path.Join(r.Prop.Query, "rows")
+	fields := "properties"
 	var filter []string
 
-	fields := "*"
-	dataQuery := qosWorkloadQuery
-	if r.Prop.Query == qosVolumeQuery || r.Prop.Query == qosDetailVolumeQuery {
-		filter = append(filter, "workload_class="+r.loadWorkloadClassQuery(objWorkloadVolumeClass))
-	} else {
-		filter = append(filter, "workload_class="+r.loadWorkloadClassQuery(objWorkloadClass))
+	if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
+		fields = "*"
+		dataQuery = qosWorkloadQuery
+		if r.Prop.Query == qosVolumeQuery || r.Prop.Query == qosDetailVolumeQuery {
+			filter = append(filter, "workload_class="+r.loadWorkloadClassQuery(objWorkloadVolumeClass))
+		} else {
+			filter = append(filter, "workload_class="+r.loadWorkloadClassQuery(objWorkloadClass))
+		}
+		filter = append(filter, r.Prop.Filter...)
 	}
 
 	r.pollInstanceCalls++
