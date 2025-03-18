@@ -351,7 +351,7 @@ This guide provides instructions on how to use the `filter` feature in RestPerf.
 
 In RestPerf templates, you can set up filters under `counters`. Wildcards like `*` are useful if you don't want to specify all instances.
 
-For instance, to filter `volume` performance instances by volume name is `NS_svm_nvme` or contains `Test`, use the following configuration in RestPerf `volume.yaml` under `counters`:
+For instance, to filter `volume` performance instances by volume name, use the following configuration in RestPerf `volume.yaml` under `counters`. This example will return the volumes named `NS_svm_nvme` or the volumes with `Test` in their name.
 
 ```yaml
 counters:
