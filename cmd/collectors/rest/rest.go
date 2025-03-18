@@ -64,8 +64,9 @@ type Rest struct {
 }
 
 type EndPoint struct {
-	prop *prop
-	name string
+	prop        *prop
+	name        string
+	instanceAdd bool
 }
 
 type prop struct {
@@ -277,6 +278,12 @@ func (r *Rest) InitEndPoints() error {
 					p.Query = line1.GetContentS()
 					p.IsPublic = util.IsPublicAPI(p.Query)
 				}
+				if line1.GetNameS() == "instance_add" {
+					iAdd := line1.GetContentS()
+					if iAdd == "true" {
+						e.instanceAdd = true
+					}
+				}
 				if line1.GetNameS() == "counters" {
 					r.ParseRestCounters(line1, &p)
 				}
@@ -463,7 +470,8 @@ func (r *Rest) ProcessEndPoints(mat *matrix.Matrix, endpointFunc func(e *EndPoin
 			r.Logger.Debug("no instances on cluster", slog.String("APIPath", endpoint.prop.Query))
 			continue
 		}
-		count, _ = r.HandleResults(mat, records, endpoint.prop, true, oldInstances)
+		isImmutable := !endpoint.instanceAdd
+		count, _ = r.HandleResults(mat, records, endpoint.prop, isImmutable, oldInstances)
 	}
 
 	return count, totalAPID
@@ -529,7 +537,7 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 
 // HandleResults function is used for handling the rest response for parent as well as endpoints calls,
 // isEndPoint would be true only for the endpoint call, and it can't create/delete instance.
-func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *prop, isEndPoint bool, oldInstances *set.Set) (uint64, uint64) {
+func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *prop, isImmutable bool, oldInstances *set.Set) (uint64, uint64) {
 	var (
 		err         error
 		count       uint64
@@ -566,7 +574,7 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 		instance = mat.GetInstance(instanceKey)
 
 		// Used for endpoints as we don't want to create additional instances
-		if isEndPoint && instance == nil {
+		if isImmutable && instance == nil {
 			// Moved to trace as with filter, this log may spam
 			continue
 		}
@@ -585,7 +593,7 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 		}
 		// clear all instance labels as there are some fields which may be missing between polls
 		// Don't remove instance labels when endpoints are being processed because endpoints uses parent instance only.
-		if !isEndPoint {
+		if !isImmutable {
 			oldInstances.Remove(instanceKey)
 			instance.ClearLabels()
 		}
@@ -660,8 +668,8 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 			}
 		}
 
-		// for endpoints, we want to remove common keys from metric count
-		if isEndPoint {
+		// for isImmutable, we want to remove common keys from metric count
+		if isImmutable {
 			count -= uint64(len(prop.InstanceKeys))
 		}
 	}
