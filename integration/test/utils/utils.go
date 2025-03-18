@@ -55,7 +55,7 @@ func GetConfigDir() string {
 	if value != "" {
 		return value
 	}
-	return "/u/mpeg/harvest"
+	return "/home/harvestfiles"
 }
 
 func Exec(dir string, command string, env []string, arg ...string) (string, error) {
