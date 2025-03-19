@@ -1174,6 +1174,39 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#filter_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filter
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Filter">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#objects-excluding-workload" class="md-nav__link">
+    <span class="md-ellipsis">
+      Objects (Excluding Workload)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workload-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      Workload Templates
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2118,6 +2151,39 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#filter_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filter
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Filter">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#objects-excluding-workload" class="md-nav__link">
+    <span class="md-ellipsis">
+      Objects (Excluding Workload)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workload-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      Workload Templates
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2582,6 +2648,38 @@ RestPerf will fetch and validate counter metadata from the system.)</p>
 the missing data won't be exported.</p>
 <h4 id="export_options_1">Export_options<a class="headerlink" href="#export_options_1" title="Permanent link">&para;</a></h4>
 <p>See <a href="./#export_options">Export Options</a></p>
+<h3 id="filter_1">Filter<a class="headerlink" href="#filter_1" title="Permanent link">&para;</a></h3>
+<p>This guide provides instructions on how to use the <code>filter</code> feature in RestPerf. Filtering is useful when you need to query a subset of instances. For example, suppose you have a small number of high-value volumes from which you want Harvest to collect performance metrics every five seconds. Collecting data from all volumes at this frequency would be too resource-intensive. Therefore, filtering allows you to create/modify a template that includes only the high-value volumes.</p>
+<h4 id="objects-excluding-workload">Objects (Excluding Workload)<a class="headerlink" href="#objects-excluding-workload" title="Permanent link">&para;</a></h4>
+<p>In RestPerf templates, you can set up filters under <code>counters</code>. Wildcards like <code>*</code> are useful if you don't want to specify all instances.</p>
+<p>For instance, to filter <code>volume</code> performance instances by volume name, use the following configuration in RestPerf <code>volume.yaml</code> under <code>counters</code>. This example will return the volumes named <code>NS_svm_nvme</code> or the volumes with <code>Test</code> in their name.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">counters</span><span class="p">:</span>
+<span class="nn">...</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">filter</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">query=NS_svm_nvme|*Test*</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">query_fields=properties.value</span>
+</code></pre></div>
+<h3 id="workload-templates">Workload Templates<a class="headerlink" href="#workload-templates" title="Permanent link">&para;</a></h3>
+<p>Performance workload templates require a different syntax because instances are retrieved from the <code>api/storage/qos/workloads</code> Rest call.</p>
+<p>The <code>api/storage/qos/workloads</code> Rest supports filtering on the following fields:</p>
+<ul>
+<li>name</li>
+<li>workload_class</li>
+<li>wid</li>
+<li>policy.name</li>
+<li>svm.name</li>
+<li>volume</li>
+<li>lun</li>
+<li>file</li>
+<li>qtree</li>
+</ul>
+<p>You can include these fields under the <code>filter</code> parameter. For example, to filter Workload performance instances by <code>name</code> where the name contains <code>NS</code> or <code>Test</code> and <code>svm</code> is <code>vs1</code>, use the following configuration in RestPerf <code>workload.yaml</code> under <code>counters</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">counters</span><span class="p">:</span>
+<span class="nn">...</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">filter</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="nv">*NS</span><span class="err">*</span><span class="p p-Indicator">|</span><span class="err">*Test*</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">svm.name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vs1</span>
+</code></pre></div>
 <h2 id="ontap-private-cli">ONTAP Private CLI<a class="headerlink" href="#ontap-private-cli" title="Permanent link">&para;</a></h2>
 <p>The ONTAP private CLI allows for more granular control and access to non-public counters. It can be used to fill gaps in the REST API, especially in cases where certain data is not yet available through the REST API. Harvest's REST collector can make full use of ONTAP's private CLI. This means when ONTAP's public REST API is missing counters, Harvest can still collect them as long as those counters are available via ONTAP's CLI.</p>
 <p>For more information on using the ONTAP private CLI with the REST API, you can refer to the following resources:</p>
