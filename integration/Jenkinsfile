@@ -61,7 +61,7 @@ pipeline {
                                 echo "Installing"
                                 export BUILD_PATH=$NATIVE
                                 export VERSION=$VERSION
-                                cp /u/mpeg/harvest/harvest_targets.yml $WORKSPACE/harvest/container/prometheus/
+                                cp /home/harvestfiles/harvest_targets.yml $WORKSPACE/harvest/container/prometheus/
                                 INSTALL_NATIVE=1 bash $WORKSPACE/harvest/integration/test/test.sh
                                 '''
                             }
@@ -92,7 +92,7 @@ pipeline {
                                          sh '''
                                          cp -r /opt/harvest/bin $WORKSPACE/harvest
                                          cd $WORKSPACE/harvest
-                                         bin/harvest generate metrics --poller dc1 --config /u/mpeg/harvest/harvest.yml --prom-url $PROMETHEUS_URL
+                                         bin/harvest generate metrics --poller dc1 --config /home/harvestfiles/harvest.yml --prom-url $PROMETHEUS_URL
                                          '''
                                          }
                                 }
@@ -119,7 +119,7 @@ pipeline {
                                 echo "Installing"
                                 export BUILD_PATH=http://harvest-jenkins.rtp.openenglab.netapp.com:8080/job/harvest2_0/job/artifcats/lastSuccessfulBuild/artifact/harvest-21.11.0-1.x86_64.rpm
                                 export VERSION=$VERSION
-                                cp /u/mpeg/harvest/harvest_targets.yml $WORKSPACE/harvest/container/prometheus/
+                                cp /home/harvestfiles/harvest_targets.yml $WORKSPACE/harvest/container/prometheus/
                                 INSTALL_RPM=1 bash $WORKSPACE/harvest/integration/test/test.sh
                                 '''
                             }
@@ -299,9 +299,9 @@ def void setupWorkspace() {
     wget --quiet -O go.tar.gz "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz"
     rm -rf /usr/local/go && tar -C /usr/local -xzf ./go.tar.gz
     git clone --single-branch --branch $BRANCH https://github.com/NetApp/harvest.git
-    cp /u/mpeg/harvest/harvest_cert.yml $WORKSPACE/harvest/integration/test/
-    cp /u/mpeg/harvest/harvest.yml $WORKSPACE/harvest/integration/test/
-    cp /u/mpeg/harvest/harvest_admin.yml $WORKSPACE/harvest/integration/test/
+    cp /home/harvestfiles/harvest_cert.yml $WORKSPACE/harvest/integration/test/
+    cp /home/harvestfiles/harvest.yml $WORKSPACE/harvest/integration/test/
+    cp /home/harvestfiles/harvest_admin.yml $WORKSPACE/harvest/integration/test/
     ls -ltr $WORKSPACE/harvest/integration/test/
 '''
 }

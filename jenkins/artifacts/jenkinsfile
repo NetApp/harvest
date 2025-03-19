@@ -245,7 +245,7 @@ pipeline {
             steps {
                 script {
                     currentStage = 'Test and Generate Harvest Metrics'
-                    def result = sh(script: 'bin/harvest generate metrics --poller dc1 --config /u/mpeg/harvest/harvest.yml', returnStatus: true)
+                    def result = sh(script: 'bin/harvest generate metrics --poller dc1 --config /home/harvestfiles/harvest.yml', returnStatus: true)
                     if (result != 0) {
                         error("Generate Harvest metrics command failed.")
                     }
