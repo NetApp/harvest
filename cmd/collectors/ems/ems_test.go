@@ -212,7 +212,7 @@ func (e *Ems) testAutoResolvingEms(t *testing.T, path string) {
 	// Check bookend ems event got removed from cache successfully.
 	if e.Matrix["LUN.offline"] != nil {
 		if len(e.Matrix["LUN.offline"].GetInstances()) != 0 {
-			t.Fatalf("Instances haven't been removed from bookend cache: %s", "LUN.offline")
+			t.Fatalf("Instances haven't been removed from bookend cache: LUN.offline")
 		}
 	}
 	for generatedEmsName, mx := range e.Matrix {
