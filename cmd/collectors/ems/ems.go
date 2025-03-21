@@ -733,8 +733,7 @@ func (e *Ems) updateMatrix(begin time.Time) {
 		}
 	}
 
-	// clone all present matrix without any data
-	// We want to ensure that the existing matrix remains empty so that it gets updated in the Prometheus cache.
+	// We want to ensure that the existing matrix is an empty clone so that it gets updated in the Prometheus cache.
 	// This prevents older instances from appearing in the previous poll.
 	for k, v := range e.Matrix {
 		e.Matrix[k] = v.Clone(matrix.With{Data: false, Metrics: false, Instances: false, ExportInstances: false})
