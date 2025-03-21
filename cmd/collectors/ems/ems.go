@@ -736,7 +736,7 @@ func (e *Ems) updateMatrix(begin time.Time) {
 	// We want to ensure that the existing matrix is an empty clone so that it gets updated in the Prometheus cache.
 	// This prevents older instances from appearing in the previous poll.
 	for k, v := range e.Matrix {
-		e.Matrix[k] = v.Clone(matrix.With{Data: false, Metrics: false, Instances: false, ExportInstances: false})
+		e.Matrix[k] = v.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: false})
 	}
 
 	for issuingEms, mx := range tempMap {
@@ -786,7 +786,9 @@ func (e *Ems) updateMatrix(begin time.Time) {
 			}
 		}
 		if instances := mx.GetInstances(); len(instances) == 0 {
-			delete(e.Matrix, issuingEms)
+			// We want to ensure that the existing matrix is an empty clone so that it gets updated in the Prometheus cache.
+			// This prevents older instances from appearing in the previous poll.
+			e.Matrix[issuingEms] = mx.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: false})
 			continue
 		}
 		e.Matrix[issuingEms] = mx
