@@ -733,10 +733,12 @@ func (e *Ems) updateMatrix(begin time.Time) {
 		}
 	}
 
-	// remove all ems matrix except parent object
-	mat := e.Matrix[e.Object]
-	e.Matrix = make(map[string]*matrix.Matrix)
-	e.Matrix[e.Object] = mat
+	// clone all present matrix without any data
+	// We want to ensure that the existing matrix remains empty so that it gets updated in the Prometheus cache.
+	// This prevents older instances from appearing in the previous poll.
+	for k, v := range e.Matrix {
+		e.Matrix[k] = v.Clone(matrix.With{Data: false, Metrics: false, Instances: false, ExportInstances: false})
+	}
 
 	for issuingEms, mx := range tempMap {
 		eventMetric, ok := mx.GetMetrics()["events"]
