@@ -143,7 +143,6 @@ func UseCertFile(harvestHome string) {
 	harvestCertFile := "harvest_cert.yml"
 	harvestFile := "harvest.yml"
 	_, _ = Run("cp", "-p", GetConfigDir()+"/"+harvestCertFile, harvestHome+"/"+harvestFile)
-	_, _ = Run("certer", "-ip", "10.193.48.11")
 
 	path := harvestHome + "/cert"
 	slog.Info("Copy certificate files", slog.String("path", path))
