@@ -790,7 +790,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 			ReturnTimeout(r.Prop.ReturnTimeOut).
 			Build()
 
-		r.Logger.Info("", slog.String("href", href))
+		r.Logger.Debug("", slog.String("href", href))
 		if href == "" {
 			return nil, errs.New(errs.ErrConfig, "empty url")
 		}
