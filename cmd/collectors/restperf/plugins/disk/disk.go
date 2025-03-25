@@ -762,8 +762,8 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 				shelfEnvironmentMetricMap[iKey] = &shelfEnvironmentMetric{key: iKey, ambientTemperature: []float64{}, nonAmbientTemperature: []float64{}, fanSpeed: []float64{}}
 			}
 			for mkey, metric := range o.GetMetrics() {
-				switch {
-				case o.Object == "shelf_temperature":
+				switch o.Object {
+				case "shelf_temperature":
 					if mkey == "temperature" {
 						isAmbient := instance.GetLabel("temp_is_ambient")
 						if isAmbient == "true" {
@@ -777,13 +777,13 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 							}
 						}
 					}
-				case o.Object == "shelf_fan":
+				case "shelf_fan":
 					if mkey == "rpm" {
 						if value, ok := metric.GetValueFloat64(instance); ok {
 							shelfEnvironmentMetricMap[iKey].fanSpeed = append(shelfEnvironmentMetricMap[iKey].fanSpeed, value)
 						}
 					}
-				case o.Object == "shelf_voltage":
+				case "shelf_voltage":
 					if mkey == "voltage" {
 						if value, ok := metric.GetValueFloat64(instance); ok {
 							if shelfEnvironmentMetricMap[iKey].voltageSensor == nil {
@@ -792,7 +792,7 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 							shelfEnvironmentMetricMap[iKey].voltageSensor[iKey2] = value
 						}
 					}
-				case o.Object == "shelf_sensor":
+				case "shelf_sensor":
 					if mkey == "current" {
 						if value, ok := metric.GetValueFloat64(instance); ok {
 							if shelfEnvironmentMetricMap[iKey].currentSensor == nil {

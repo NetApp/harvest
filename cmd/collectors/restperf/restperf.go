@@ -746,7 +746,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	}
 
 	// filter is applied to api/storage/qos/workloads for workload objects in pollInstance method
-	if !(isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query)) {
+	if !isWorkloadObject(r.Prop.Query) && !isWorkloadDetailObject(r.Prop.Query) {
 		filter = append(filter, r.Prop.Filter...)
 	}
 
@@ -1572,7 +1572,7 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 	)
 
 	// The PollInstance method is only needed for `workload` and `workload_detail` objects.
-	if !(isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query)) {
+	if !isWorkloadObject(r.Prop.Query) && !isWorkloadDetailObject(r.Prop.Query) {
 		return nil, nil
 	}
 

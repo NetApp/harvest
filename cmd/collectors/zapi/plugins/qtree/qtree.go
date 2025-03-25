@@ -262,16 +262,16 @@ func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, data *matrix.Matrix, q
 
 		// ignore default quotas and set user/group
 		// Rest uses service side filtering to remove default records
-		switch {
-		case quotaType == "user":
+		switch quotaType {
+		case "user":
 			if (uName == "*" && uid == "*") || (uName == "" && uid == "") {
 				continue
 			}
-		case quotaType == "group":
+		case "group":
 			if uName == "*" || uName == "" {
 				continue
 			}
-		case quotaType == "tree":
+		case "tree":
 			if !q.historicalLabels && tree == "" {
 				continue
 			}
@@ -339,13 +339,14 @@ func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, data *matrix.Matrix, q
 					}
 				}
 
-				if quotaType == "user" {
+				switch quotaType {
+				case "user":
 					if uName != "" {
 						quotaInstance.SetLabel("user", uName)
 					} else if uid != "" {
 						quotaInstance.SetLabel("user", uid)
 					}
-				} else if quotaType == "group" {
+				case "group":
 					if uName != "" {
 						quotaInstance.SetLabel("group", uName)
 					} else if uid != "" {

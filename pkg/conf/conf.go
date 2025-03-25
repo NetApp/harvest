@@ -156,7 +156,7 @@ func fixupExporters() {
 			exporterName := e.Name
 			if exporterName == "" {
 				// This is an embedded exporter, synthesize a name for it
-				e.Exporter.IsEmbedded = true
+				e.IsEmbedded = true
 				exporterName = fmt.Sprintf("%s-%d", pollerName, i)
 				Config.Exporters[exporterName] = e.Exporter
 			}

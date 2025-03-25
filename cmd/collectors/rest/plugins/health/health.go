@@ -654,9 +654,10 @@ func (h *Health) collectDiskAlerts() int {
 		diskAlertCount++
 		instance.SetLabel("disk", name)
 		instance.SetLabel("container_type", containerType)
-		if containerType == "broken" {
+		switch containerType {
+		case "broken":
 			instance.SetLabel(severityLabel, string(errr))
-		} else if containerType == "unassigned" {
+		case "unassigned":
 			instance.SetLabel(severityLabel, string(warning))
 		}
 

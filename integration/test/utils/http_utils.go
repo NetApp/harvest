@@ -38,7 +38,7 @@ func GetResponseBody(url string) ([]byte, error) {
 		os.Exit(1)
 	}
 	//goland:noinspection GoUnhandledErrorResult
-	resp.Body.Close()
+	resp.Body.Close() //nolint:gosec
 	return body, nil
 }
 

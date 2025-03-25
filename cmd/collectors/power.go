@@ -235,10 +235,10 @@ func calculateEnvironmentMetrics(data *matrix.Matrix, logger *slog.Logger, value
 				switch {
 				case len(v.powerSensor) > 0:
 					for _, v1 := range v.powerSensor {
-						switch {
-						case v1.unit == "mW" || v1.unit == "mW*hr":
+						switch v1.unit {
+						case "mW", "mW*hr":
 							sumPower += v1.value / 1000
-						case v1.unit == "W" || v1.unit == "W*hr":
+						case "W", "W*hr":
 							sumPower += v1.value
 						default:
 							logger.Warn(
