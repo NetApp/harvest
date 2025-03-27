@@ -16,6 +16,7 @@ import (
 	"log"
 	"log/slog"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
 	"slices"
@@ -24,6 +25,9 @@ import (
 	"text/template"
 	"time"
 )
+
+// todotask This is temp local location, need to decide the proper place of promtool binary
+var PromToolLocation = "./promtool"
 
 type PollerInfo struct {
 	ServiceName   string
@@ -120,6 +124,13 @@ var descCmd = &cobra.Command{
 	Run:    doDescription,
 }
 
+var formatCmd = &cobra.Command{
+	Use:    "format",
+	Short:  "formating the promQL queries of panels",
+	Hidden: true,
+	Run:    doFormat,
+}
+
 func doDockerFull(cmd *cobra.Command, _ []string) {
 	addRootOptions(cmd)
 	generateDocker(full)
@@ -149,6 +160,50 @@ func doDescription(cmd *cobra.Command, _ []string) {
 		func(path string, data []byte) {
 			generateDescription(path, data, counters)
 		})
+}
+
+func doFormat(_ *cobra.Command, _ []string) {
+	grafana.VisitDashboards(
+		// dashboards,
+		[]string{"grafana/dashboards/cmode/cluster.json"},
+		func(path string, data []byte) {
+			checkExprFormat(grafana.ShortPath(path), data)
+		},
+	)
+}
+
+func checkExprFormat(path string, data []byte) {
+	count := 0
+	// collect all expressions
+	expressions := grafana.AllExpressions(data)
+	for _, expr := range expressions {
+		query := expr.Metric
+		updatedQuery := format(query)
+		if strings.Compare(updatedQuery, query) != 0 {
+			count++
+			fmt.Printf("error count:%d dashboard: %s panel title: `%s` %s query should be \n%s \n", count, path, expr.Title, expr.Kind, updatedQuery)
+		}
+	}
+}
+
+func format(query string) string {
+	query = strings.Replace(query, "$TopResources", "999999", 1)
+	cli := fmt.Sprintf(`%s %s '%s'`, PromToolLocation, "--experimental promql format", query)
+	command := exec.Command("bash", "-c", cli)
+	output, err := command.CombinedOutput()
+	if err != nil {
+		// An exit code can't be used since we need to ignore metrics that are not valid but can't change
+		fmt.Printf("ERR checking metrics cli=%s err=%v output=%s", cli, err, string(output))
+		return ""
+	}
+
+	if len(output) == 0 {
+		return ""
+	}
+
+	updatedQuery := strings.TrimSpace(string(output))
+	updatedQuery = strings.Replace(updatedQuery, "999999", "$TopResources", 1)
+	return updatedQuery
 }
 
 func addRootOptions(cmd *cobra.Command) {
@@ -690,6 +745,7 @@ func init() {
 	Cmd.AddCommand(systemdCmd)
 	Cmd.AddCommand(metricCmd)
 	Cmd.AddCommand(descCmd)
+	Cmd.AddCommand(formatCmd)
 	Cmd.AddCommand(dockerCmd)
 	dockerCmd.AddCommand(fullCmd)
 

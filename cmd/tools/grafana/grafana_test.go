@@ -141,13 +141,13 @@ func getExp(expr string, expressions *[]string) {
 func readExprs(data []byte) []string {
 	expressions := make([]string, 0)
 	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
-		doExpr("", key, value, func(anExpr expression) {
-			getExp(anExpr.metric, &expressions)
+		DoExpr("", key, value, func(anExpr Expression) {
+			getExp(anExpr.Metric, &expressions)
 		})
 		value.Get("panels").ForEach(func(key2, value2 gjson.Result) bool {
 			pathPrefix := fmt.Sprintf("panels[%d].", key.Int())
-			doExpr(pathPrefix, key2, value2, func(anExpr expression) {
-				getExp(anExpr.metric, &expressions)
+			DoExpr(pathPrefix, key2, value2, func(anExpr Expression) {
+				getExp(anExpr.Metric, &expressions)
 			})
 			return true
 		})

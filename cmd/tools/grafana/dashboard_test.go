@@ -386,12 +386,7 @@ type override struct {
 	unit    string
 	path    string
 }
-type expression struct {
-	metric string
-	refID  string
-	kind   string
-	expr   string
-}
+
 type units struct {
 	units map[string][]*metricLoc
 }
@@ -466,7 +461,7 @@ func doPanel(t *testing.T, pathPrefix string, key gjson.Result, value gjson.Resu
 
 	propertiesMap := make(map[string]map[string]string)
 	overrides := make([]override, 0, len(overridesSlice))
-	expressions := make([]expression, 0)
+	expressions := make([]Expression, 0)
 	valueToName := make(map[string]string) // only used with panels[*].transformations[*].options.renameByName
 
 	for oi, overrideN := range overridesSlice {
@@ -549,8 +544,8 @@ func doPanel(t *testing.T, pathPrefix string, key gjson.Result, value gjson.Resu
 		}
 
 		exprRefID := targetN.Get("refId").ClonedString()
-		expressions = append(expressions, expression{
-			metric: metric,
+		expressions = append(expressions, Expression{
+			Metric: metric,
 			refID:  exprRefID,
 			expr:   expr,
 		})
@@ -567,15 +562,15 @@ func doPanel(t *testing.T, pathPrefix string, key gjson.Result, value gjson.Resu
 	numExpressions := len(expressions)
 	for _, e := range expressions {
 		// Ignore labels and _status
-		if strings.HasSuffix(e.metric, "_labels") || strings.HasSuffix(e.metric, "_status") || strings.HasSuffix(e.metric, "_events") || strings.HasSuffix(e.metric, "_alerts") {
+		if strings.HasSuffix(e.Metric, "_labels") || strings.HasSuffix(e.Metric, "_status") || strings.HasSuffix(e.Metric, "_events") || strings.HasSuffix(e.Metric, "_alerts") {
 			continue
 		}
 		unit := unitForExpr(e, overrides, defaultUnit, valueToName, numExpressions)
-		mt.addMetric(e.metric, unit, path, sPath, title, e.expr)
+		mt.addMetric(e.Metric, unit, path, sPath, title, e.expr)
 	}
 }
 
-func unitForExpr(e expression, overrides []override, defaultUnit string,
+func unitForExpr(e Expression, overrides []override, defaultUnit string,
 	valueToName map[string]string, numExpressions int) string {
 
 	if len(overrides) == 0 {
@@ -774,13 +769,13 @@ func checkUnusedVariables(t *testing.T, path string, data []byte) {
 		}
 	})
 
-	expressions := allExpressions(data)
+	expressions := AllExpressions(data)
 
 	// check that each variable is used in at least one expression
 varLoop:
 	for _, variable := range vars {
 		for _, expr := range expressions {
-			if strings.Contains(expr.metric, variable) {
+			if strings.Contains(expr.Metric, variable) {
 				continue varLoop
 			}
 		}
@@ -797,43 +792,6 @@ varLoop:
 		}
 
 		t.Errorf("dashboard=%s has unused variable [%s]", ShortPath(path), variable)
-	}
-}
-
-func allExpressions(data []byte) []expression {
-	exprs := make([]expression, 0)
-
-	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
-		doExpr("", key, value, func(expr expression) {
-			exprs = append(exprs, expr)
-		})
-		value.Get("panels").ForEach(func(key2, value2 gjson.Result) bool {
-			pathPrefix := fmt.Sprintf("panels[%d].", key.Int())
-			doExpr(pathPrefix, key2, value2, func(expr expression) {
-				exprs = append(exprs, expr)
-			})
-			return true
-		})
-		return true
-	})
-	return exprs
-}
-
-func doExpr(pathPrefix string, key gjson.Result, value gjson.Result, exprFunc func(exp expression)) {
-	kind := value.Get("type").ClonedString()
-	if kind == "row" {
-		return
-	}
-	path := fmt.Sprintf("%spanels[%d]", pathPrefix, key.Int())
-	targetsSlice := value.Get("targets").Array()
-	for i, targetN := range targetsSlice {
-		expr := targetN.Get("expr").ClonedString()
-		pathWithTarget := path + ".targets[" + strconv.Itoa(i) + "]"
-		exprFunc(expression{
-			refID:  pathWithTarget,
-			metric: expr,
-			kind:   kind,
-		})
 	}
 }
 
@@ -1214,10 +1172,10 @@ func TestRatesAreNot1m(t *testing.T) {
 }
 
 func checkRate1m(t *testing.T, path string, data []byte) {
-	expressions := allExpressions(data)
+	expressions := AllExpressions(data)
 	for _, expr := range expressions {
-		if strings.Contains(expr.metric, "[1m]") {
-			t.Errorf("dashboard=%s, expr should not use rate of [1m] expr=%s", path, expr.metric)
+		if strings.Contains(expr.Metric, "[1m]") {
+			t.Errorf("dashboard=%s, expr should not use rate of [1m] expr=%s", path, expr.Metric)
 		}
 	}
 }
@@ -1300,9 +1258,9 @@ func TestTitlesOfTopN(t *testing.T) {
 }
 
 func checkTitlesOfTopN(t *testing.T, path string, data []byte) {
-	expressions := allExpressions(data)
+	expressions := AllExpressions(data)
 	for _, expr := range expressions {
-		if !strings.Contains(expr.metric, "topk") || expr.kind == "stat" {
+		if !strings.Contains(expr.Metric, "topk") || expr.Kind == "stat" {
 			continue
 		}
 		titleRef := asTitle(expr.refID)
