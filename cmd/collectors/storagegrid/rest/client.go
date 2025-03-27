@@ -230,7 +230,7 @@ func (c *Client) fetch() ([]byte, error) {
 
 	if c.request.Body != nil {
 		//goland:noinspection GoUnhandledErrorResult
-		c.request.Body.Close()
+		c.request.Body.Close() //nolint:gosec
 	}
 	if c.buffer != nil {
 		defer c.buffer.Reset()

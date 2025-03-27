@@ -80,13 +80,14 @@ func (q *Quota) handlingQuotaMetrics(instanceMap map[string]*matrix.Instance, me
 		group := quota.GetLabel("groupName")
 		quotaType := quota.GetLabel("type")
 
-		if quotaType == "user" {
+		switch quotaType {
+		case "user":
 			if uName != "" {
 				quota.SetLabel("user", uName)
 			} else if uid != "" {
 				quota.SetLabel("user", uid)
 			}
-		} else if quotaType == "group" {
+		case "group":
 			if group != "" {
 				quota.SetLabel("group", group)
 			} else if uid != "" {

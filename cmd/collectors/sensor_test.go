@@ -96,7 +96,7 @@ func loadTestdata() {
 	sensor.data = matrix.New("Sensor", "environment_sensor", "environment_sensor")
 	sensor.instanceKeys = make(map[string]string)
 	sensor.instanceLabels = make(map[string]map[string]string)
-	sensor.AbstractPlugin.SLogger = slog.Default()
+	sensor.SLogger = slog.Default()
 
 	for _, k := range eMetrics {
 		_ = matrix.CreateMetric(k, sensor.data)

@@ -1534,9 +1534,10 @@ func categorizeCounters(counters map[string]Counter) (map[string]Counter, map[st
 
 	for _, counter := range counters {
 		for _, api := range counter.APIs {
-			if api.API == "REST" {
+			switch api.API {
+			case "REST":
 				restCounters[counter.Name] = counter
-			} else if api.API == "ZAPI" {
+			case "ZAPI":
 				zapiCounters[counter.Name] = counter
 			}
 		}

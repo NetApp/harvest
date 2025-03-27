@@ -660,8 +660,8 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 							}
 							metr.SetExportable(metric.Exportable)
 						}
-						switch {
-						case metric.Name == "events":
+						switch metric.Name {
+						case "events":
 							if err = metr.SetValueFloat64(instance, 1); err != nil {
 								e.Logger.Error("Unable to set float key on metric",
 									slogx.Err(err),
@@ -669,7 +669,7 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 									slog.String("metric", metric.Label),
 								)
 							}
-						case metric.Name == "timestamp":
+						case "timestamp":
 							if err = metr.SetValueFloat64(instance, float64(time.Now().UnixMicro())); err != nil {
 								e.Logger.Error("Unable to set timestamp on metric",
 									slogx.Err(err),

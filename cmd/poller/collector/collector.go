@@ -596,8 +596,8 @@ func (c *AbstractCollector) logMetadata(taskName string, stats exporter.Stats) {
 		return slog.Int64(field, metricValue)
 	}
 
-	switch {
-	case taskName == "data":
+	switch taskName {
+	case "data":
 		c.Logger.Info(
 			"Collected",
 			timeToMilli("api_time"),
@@ -618,7 +618,7 @@ func (c *AbstractCollector) logMetadata(taskName string, stats exporter.Stats) {
 			int64Field("skips"),
 			int64Field("zBegin"),
 		)
-	case taskName == "instance":
+	case "instance":
 		c.Logger.Info(
 			"Collected",
 			slog.String("task", "instance"),
@@ -629,7 +629,7 @@ func (c *AbstractCollector) logMetadata(taskName string, stats exporter.Stats) {
 			timeToMilli("poll_time"),
 			int64Field("zBegin"),
 		)
-	case taskName == "counter":
+	case "counter":
 		c.Logger.Info(
 			"Collected",
 			slog.String("task", "counter"),

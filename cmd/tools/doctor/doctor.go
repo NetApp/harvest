@@ -391,12 +391,10 @@ func checkExporterTypes(config conf.HarvestConfig) validation {
 		if exporter.Type == "" {
 			continue
 		}
-		switch exporter.Type {
-		case "Prometheus", "InfluxDB":
-			break
-		default:
-			invalidTypes[name] = exporter.Type
+		if exporter.Type == "Prometheus" || exporter.Type == "InfluxDB" {
+			continue
 		}
+		invalidTypes[name] = exporter.Type
 	}
 
 	valid := validation{isValid: true}
