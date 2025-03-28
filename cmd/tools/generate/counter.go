@@ -156,7 +156,9 @@ var (
 		"metrocluster_",
 		"path_",
 		"ndmp_session",
-		"_labels",
+		"export_rule_labels",
+		"mediator_labels",
+		"net_connection_labels",
 		"health_",
 		"aggr_hybrid_disk_count",
 		"nfs_clients_idle_duration",
@@ -176,16 +178,16 @@ var (
 
 	// Exclude extra metrics for REST
 	excludeNotDocumentedRestMetrics = []string{
+		"volume_aggr_labels",
 		"flexcache_",
 		"hist_",
-		"_labels",
 		"volume_arw_status",
 		"ALERTS",
 	}
 
 	// Exclude extra metrics for ZAPI
 	excludeNotDocumentedZapiMetrics = []string{
-		"_labels",
+		"volume_aggr_labels",
 		"hist_",
 		"security_",
 		"svm_ldap",
@@ -486,7 +488,8 @@ func handleZapiCounter(path []string, content string, object string) (string, st
 // processRestConfigCounters process Rest config templates
 func processRestConfigCounters(path string, api string) map[string]Counter {
 	var (
-		counters = make(map[string]Counter)
+		counters         = make(map[string]Counter)
+		isInstanceLabels bool
 	)
 	var metricLabels []string
 	var labels []string
@@ -508,11 +511,26 @@ func processRestConfigCounters(path string, api string) map[string]Counter {
 	}
 
 	if templateCounters != nil {
-		metricLabels, labels = getAllExportedLabels(t, templateCounters.GetAllChildContentS())
+		metricLabels, labels, isInstanceLabels = getAllExportedLabels(t, templateCounters.GetAllChildContentS())
 		processCounters(templateCounters.GetAllChildContentS(), &model, path, model.Query, counters, metricLabels, api)
-		// This is for object_labels metrics
-		harvestName := model.Object + "_" + "labels"
-		counters[harvestName] = Counter{Name: harvestName, Labels: labels}
+		if isInstanceLabels {
+			// This is for object_labels metrics
+			harvestName := model.Object + "_" + "labels"
+			description := "This metric provides information about " + model.Name
+			counters[harvestName] = Counter{
+				Name:        harvestName,
+				Description: description,
+				APIs: []MetricDef{
+					{
+						API:          "REST",
+						Endpoint:     model.Query,
+						Template:     path,
+						ONTAPCounter: "Harvest generated",
+					},
+				},
+				Labels: labels,
+			}
+		}
 	}
 
 	endpoints := t.GetChildS("endpoints")
@@ -738,7 +756,25 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 		}
 	}
 
-	metricLabels, _ := getAllExportedLabels(t, templateCounters.GetAllChildContentS())
+	metricLabels, labels, isInstanceLabels := getAllExportedLabels(t, templateCounters.GetAllChildContentS())
+	if isInstanceLabels {
+		// This is for object_labels metrics
+		harvestName := model.Object + "_" + "labels"
+		description := "This metric provides information about " + model.Name
+		counters[harvestName] = Counter{
+			Name:        harvestName,
+			Description: description,
+			APIs: []MetricDef{
+				{
+					API:          "ZAPI",
+					Endpoint:     model.Query,
+					Template:     path,
+					ONTAPCounter: "Harvest generated",
+				},
+			},
+			Labels: labels,
+		}
+	}
 	for _, c := range templateCounters.GetAllChildContentS() {
 		if c != "" {
 			name, display, m, _ := util.ParseMetric(c)
@@ -833,7 +869,8 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 
 func processZapiConfigCounters(path string) map[string]Counter {
 	var (
-		counters = make(map[string]Counter)
+		counters         = make(map[string]Counter)
+		isInstanceLabels bool
 	)
 	var metricLabels []string
 	var labels []string
@@ -857,10 +894,25 @@ func processZapiConfigCounters(path string) map[string]Counter {
 	}
 
 	zc := make(map[string]string)
-	metricLabels, labels = getAllExportedLabels(t, templateCounters.GetAllChildContentS())
-	// This is for object_labels metrics
-	harvestName := model.Object + "_" + "labels"
-	counters[harvestName] = Counter{Name: harvestName, Labels: labels}
+	metricLabels, labels, isInstanceLabels = getAllExportedLabels(t, templateCounters.GetAllChildContentS())
+	if isInstanceLabels {
+		// This is for object_labels metrics
+		harvestName := model.Object + "_" + "labels"
+		description := "This metric provides information about " + model.Name
+		counters[harvestName] = Counter{
+			Name:        harvestName,
+			Description: description,
+			APIs: []MetricDef{
+				{
+					API:          "ZAPI",
+					Endpoint:     model.Query,
+					Template:     path,
+					ONTAPCounter: "Harvest generated",
+				},
+			},
+			Labels: labels,
+		}
+	}
 	for _, c := range templateCounters.GetChildren() {
 		parseZapiCounters(c, []string{}, model.Object, zc)
 	}
@@ -983,9 +1035,6 @@ func generateCounterTemplate(counters map[string]Counter, version string) {
 
 	keys := make([]string, 0, len(counters))
 	for k := range counters {
-		if strings.Contains(k, "_labels") {
-			continue
-		}
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
@@ -1166,7 +1215,25 @@ func processRestPerfCounters(path string, client *rest.Client) map[string]Counte
 	}
 	counterMap := make(map[string]string)
 	counterMapNoPrefix := make(map[string]string)
-	metricLabels, _ := getAllExportedLabels(t, templateCounters.GetAllChildContentS())
+	metricLabels, labels, isInstanceLabels := getAllExportedLabels(t, templateCounters.GetAllChildContentS())
+	if isInstanceLabels {
+		description := "This metric provides information about " + model.Name
+		// This is for object_labels metrics
+		harvestName := model.Object + "_" + "labels"
+		counters[harvestName] = Counter{
+			Name:        harvestName,
+			Description: description,
+			APIs: []MetricDef{
+				{
+					API:          "REST",
+					Endpoint:     model.Query,
+					Template:     path,
+					ONTAPCounter: "Harvest generated",
+				},
+			},
+			Labels: labels,
+		}
+	}
 	for _, c := range templateCounters.GetAllChildContentS() {
 		if c != "" {
 			name, display, m, _ := util.ParseMetric(c)
@@ -1546,9 +1613,16 @@ func categorizeCounters(counters map[string]Counter) (map[string]Counter, map[st
 	return restCounters, zapiCounters
 }
 
-func getAllExportedLabels(t *node.Node, counterContents []string) ([]string, []string) {
+func getAllExportedLabels(t *node.Node, counterContents []string) ([]string, []string, bool) {
 	metricLabels := make([]string, 0)
 	labels := make([]string, 0)
+	isInstanceLabels := false
+	eData := true
+	if exportData := t.GetChildS("export_data"); exportData != nil {
+		if exportData.GetContentS() == "false" {
+			eData = false
+		}
+	}
 	if exportOptions := t.GetChildS("export_options"); exportOptions != nil {
 		if iAllLabels := exportOptions.GetChildS("include_all_labels"); iAllLabels != nil {
 			if iAllLabels.GetContentS() == "true" {
@@ -1560,7 +1634,7 @@ func getAllExportedLabels(t *node.Node, counterContents []string) ([]string, []s
 						metricLabels = append(metricLabels, display)
 					}
 				}
-				return metricLabels, metricLabels
+				return metricLabels, metricLabels, false
 			}
 		}
 
@@ -1569,7 +1643,8 @@ func getAllExportedLabels(t *node.Node, counterContents []string) ([]string, []s
 		}
 		if iLabels := exportOptions.GetChildS("instance_labels"); iLabels != nil {
 			labels = append(labels, iLabels.GetAllChildContentS()...)
+			isInstanceLabels = eData
 		}
 	}
-	return metricLabels, append(labels, metricLabels...)
+	return metricLabels, append(labels, metricLabels...), isInstanceLabels
 }
