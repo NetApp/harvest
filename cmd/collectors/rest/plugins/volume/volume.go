@@ -172,7 +172,6 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]vo
 		}
 	}
 
-	v.SLogger.Info("private cli", slog.Int("records", len(data.GetInstances())))
 	for vKey, volume := range data.GetInstances() {
 		// update volumeTagMap used to update tag details
 		svm := volume.GetLabel("svm")
@@ -185,7 +184,6 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]vo
 		}
 
 		if volume.GetLabel("style") == "flexgroup_constituent" {
-			v.SLogger.Info("set export to false", slog.String("vKey", vKey))
 			volume.SetExportable(v.includeConstituents)
 		}
 
@@ -193,7 +191,6 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]vo
 
 		if vInfo, ok := volumeMap[volume.GetLabel("volume")+volume.GetLabel("svm")]; ok {
 			if vInfo.isObjectStoreVolume {
-				v.SLogger.Info("set export to false", slog.String("key", volume.GetLabel("volume")+volume.GetLabel("svm")))
 				volume.SetExportable(false)
 				continue
 			}
@@ -215,7 +212,6 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]vo
 			}
 		} else {
 			// The public API does not include node root and temp volumes, while the private CLI does include them. Harvest will exclude them the same as the public API by not exporting them.
-			v.SLogger.Info("set export to false", slog.String("key", volume.GetLabel("volume")+volume.GetLabel("svm")))
 			volume.SetExportable(false)
 		}
 	}
@@ -349,12 +345,9 @@ func (v *Volume) getVolume(field string, fields []string, volumeMap map[string]v
 		Filter([]string{field}).
 		Build()
 
-	v.SLogger.Info(href)
 	if result, err = collectors.InvokeRestCall(v.client, href); err != nil {
 		return nil, err
 	}
-
-	v.SLogger.Info("public api call", slog.Int("records", len(result)))
 
 	for _, volume := range result {
 		volName := volume.Get("name").ClonedString()
