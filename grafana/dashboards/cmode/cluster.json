@@ -152,7 +152,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(aggr_space_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "sum(aggr_space_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -210,7 +210,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "sum(aggr_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -268,7 +268,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(aggr_space_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "sum(aggr_space_available{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -327,7 +327,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "100*sum(aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/sum(aggr_space_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "100 * sum(aggr_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n/\n  sum(aggr_space_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -446,7 +446,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "topk($TopResources, sum(node_volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node))",
+          "expr": "topk(\n  $TopResources,\n  sum by (node) (node_volume_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n)",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -590,7 +590,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "topk($TopResources, sum(node_volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node))",
+          "expr": "topk(\n  $TopResources,\n  sum by (node) (node_volume_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n)",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -710,7 +710,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "sum by (node) (\n    (\n        node_volume_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"} \n        +\n        node_volume_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}\n    )\n    and\n    topk(\n        5,\n        (\n            avg_over_time(node_volume_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h] @ end())\n            +\n            avg_over_time(node_volume_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h] @ end())\n        )\n    )\n)",
+          "expr": "sum by (node) (\n    (\n        node_volume_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n      +\n        node_volume_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n    )\n  and\n    topk(\n      5,\n      (\n          avg_over_time(\n            node_volume_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node!=\"\"}[3h] @ end()\n          )\n        +\n          avg_over_time(\n            node_volume_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node!=\"\"}[3h] @ end()\n          )\n      )\n    )\n)",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -830,7 +830,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "sum(node_volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node)\nand\ntopk(\n  $TopResources,\n  sum by (node) (\n    avg_over_time(node_volume_total_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h])\n  )\n)",
+          "expr": "sum by (node) (node_volume_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    sum by (node) (\n      avg_over_time(node_volume_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node!=\"\"}[3h])\n    )\n  )",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -974,7 +974,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "topk($TopResources, sum by (node)(node_avg_processor_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}))",
+          "expr": "topk($TopResources, sum by (node) (node_avg_processor_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -1118,7 +1118,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "topk($TopResources, sum by (node)(node_cpu_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}))",
+          "expr": "topk($TopResources, sum by (node) (node_cpu_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -1235,7 +1235,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "sum(node_volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node)\nand\ntopk(\n  $TopResources,\n  sum by (node) (\n    avg_over_time(node_volume_avg_latency{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h])\n  )\n)",
+          "expr": "sum by (node) (node_volume_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    sum by (node) (\n      avg_over_time(node_volume_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node!=\"\"}[3h])\n    )\n  )",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -1327,7 +1327,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "sum by (node) (\n    (\n        node_volume_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"} \n        +\n        node_volume_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}\n    )\n    and\n    topk(\n        5,\n        (\n            avg_over_time(node_volume_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h] @ end())\n            +\n            avg_over_time(node_volume_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h] @ end())\n        )\n    )\n)",
+          "expr": "sum by (node) (\n    (\n        node_volume_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n      +\n        node_volume_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n    )\n  and\n    topk(\n      5,\n      (\n          avg_over_time(\n            node_volume_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node!=\"\"}[3h] @ end()\n          )\n        +\n          avg_over_time(\n            node_volume_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node!=\"\"}[3h] @ end()\n          )\n      )\n    )\n)",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -1420,7 +1420,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "sum(node_volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node)\nand\ntopk(\n  $TopResources,\n  sum by (node) (\n    avg_over_time(node_volume_total_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h])\n  )\n)",
+          "expr": "sum by (node) (node_volume_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    sum by (node) (\n      avg_over_time(node_volume_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node!=\"\"}[3h])\n    )\n  )",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -1539,7 +1539,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "topk($TopResources, sum by (node)(node_disk_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}))",
+          "expr": "topk($TopResources, sum by (node) (node_disk_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -1747,7 +1747,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "node_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on (datacenter, cluster) group_left(tags) cluster_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "node_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n* on (datacenter, cluster) group_left (tags)\n  cluster_new_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1757,7 +1757,7 @@
             },
             {
               "exemplar": false,
-              "expr": "node_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on (datacenter, cluster) group_left(tags) cluster_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} ",
+              "expr": "node_new_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n* on (datacenter, cluster) group_left (tags)\n  cluster_new_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1943,7 +1943,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "cluster_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "cluster_new_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "instant": true,
               "interval": "",
               "legendFormat": "",
@@ -2027,7 +2027,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg(node_cpu_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "avg(node_cpu_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "",
@@ -2101,7 +2101,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg(node_avg_processor_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "avg(node_avg_processor_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "",
@@ -2304,7 +2304,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "cluster_subsystem_suppressed_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "cluster_subsystem_suppressed_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -2315,7 +2315,7 @@
             },
             {
               "exemplar": false,
-              "expr": "cluster_subsystem_outstanding_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "cluster_subsystem_outstanding_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -2326,7 +2326,7 @@
             },
             {
               "exemplar": false,
-              "expr": "cluster_subsystem_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "cluster_subsystem_new_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -2433,7 +2433,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "max(node_disk_max_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "max(node_disk_max_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "",
@@ -2508,7 +2508,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg(node_disk_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "avg(node_disk_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "",
@@ -2582,7 +2582,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "100*sum(aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/sum(aggr_space_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "100 * sum(aggr_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n/\n  sum(aggr_space_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "instant": false,
               "interval": "",
               "legendFormat": "",
@@ -2670,7 +2670,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "node_cpu_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "node_cpu_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "interval": "",
               "legendFormat": "{{node}}",
               "refId": "A"
@@ -2757,7 +2757,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "node_avg_processor_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "node_avg_processor_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "interval": "",
               "legendFormat": "{{node}}",
               "refId": "A"
@@ -2863,7 +2863,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "max(volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by(cluster)",
+              "expr": "max by (cluster) (volume_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -2954,7 +2954,7 @@
           "pluginVersion": "7.5.4",
           "targets": [
             {
-              "expr": "sum(volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster)",
+              "expr": "sum by (cluster) (volume_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -3046,7 +3046,7 @@
           "pluginVersion": "7.5.4",
           "targets": [
             {
-              "expr": "sum(volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster)",
+              "expr": "sum by (cluster) (volume_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -3140,7 +3140,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg(aggr_disk_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster, aggr)",
+              "expr": "avg by (cluster, aggr) (aggr_disk_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "interval": "",
               "legendFormat": "{{cluster}} - {{aggr}}",
               "refId": "A"
@@ -3234,7 +3234,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg(aggr_space_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster, aggr)",
+              "expr": "avg by (cluster, aggr) (aggr_space_used_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "interval": "",
               "legendFormat": "{{cluster}} - {{aggr}}",
               "refId": "A"
@@ -3328,7 +3328,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg(node_avg_processor_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster, node)",
+              "expr": "avg by (cluster, node) (node_avg_processor_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "interval": "",
               "legendFormat": "{{cluster}} - {{node}}",
               "refId": "A"
@@ -3422,7 +3422,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg(node_cpu_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster, node)",
+              "expr": "avg by (cluster, node) (node_cpu_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "interval": "",
               "legendFormat": "{{cluster}} - {{node}}",
               "refId": "A"
@@ -3495,7 +3495,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(aggr_logical_used_wo_snapshots_flexclones{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/sum(aggr_physical_used_wo_snapshots_flexclones{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum(aggr_logical_used_wo_snapshots_flexclones{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n/\n  sum(aggr_physical_used_wo_snapshots_flexclones{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "interval": "",
               "legendFormat": "",
               "refId": "A"
@@ -3551,7 +3551,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(aggr_logical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/sum(aggr_physical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum(aggr_logical_used_wo_snapshots{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n/\n  sum(aggr_physical_used_wo_snapshots{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "interval": "",
               "legendFormat": "",
               "refId": "A"
@@ -3607,13 +3607,13 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(aggr_total_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/sum(aggr_total_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum(aggr_total_logical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n/\n  sum(aggr_total_physical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "interval": "",
               "legendFormat": "",
               "refId": "A"
             }
           ],
-          "title": "Data Reduction with Snapshots &FlexClones",
+          "title": "Data Reduction with Snapshots & FlexClones",
           "type": "stat"
         },
         {
@@ -3691,7 +3691,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (aggr_logical_used_wo_snapshots_flexclones{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum by (cluster) (\n  aggr_logical_used_wo_snapshots_flexclones{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n)",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -3775,7 +3775,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (aggr_physical_used_wo_snapshots_flexclones{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum by (cluster) (\n  aggr_physical_used_wo_snapshots_flexclones{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n)",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -3859,7 +3859,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (aggr_logical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum by (cluster) (aggr_logical_used_wo_snapshots{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -3943,7 +3943,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (aggr_physical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum by (cluster) (aggr_physical_used_wo_snapshots{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -4027,7 +4027,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (aggr_total_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum by (cluster) (aggr_total_logical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -4111,7 +4111,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (aggr_space_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum by (cluster) (aggr_space_physical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -4212,7 +4212,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "svm_vol_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}\nand\ntopk($TopResources, avg_over_time(svm_vol_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end()))",
+              "expr": "svm_vol_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(svm_vol_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n  )",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}}",
               "refId": "A"
@@ -4298,7 +4298,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(\n    svm_vol_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"} \n    +\n    svm_vol_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}\n)\nand on(datacenter,cluster, svm)\ntopk(\n  $TopResources,\n  (\n    avg_over_time(svm_vol_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}[3h])\n    + avg_over_time(svm_vol_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}[3h])\n  )\n)",
+              "expr": "(\n      svm_vol_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n    +\n      svm_vol_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n  )\nand on (datacenter, cluster, svm)\n  topk(\n    $TopResources,\n    (\n        avg_over_time(svm_vol_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h])\n      +\n        avg_over_time(svm_vol_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h])\n    )\n  )",
               "format": "time_series",
               "instant": false,
               "interval": "",
@@ -4387,7 +4387,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "svm_vol_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}\nand\ntopk($TopResources, avg_over_time(svm_vol_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end()))",
+              "expr": "svm_vol_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(svm_vol_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n  )",
               "format": "time_series",
               "instant": false,
               "interval": "",
@@ -4611,7 +4611,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "cluster_software_update{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "cluster_software_update{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -4869,7 +4869,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "cluster_software_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "cluster_software_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -5049,7 +5049,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "cluster_software_validation{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "cluster_software_validation{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "instant": true,
               "interval": "",
