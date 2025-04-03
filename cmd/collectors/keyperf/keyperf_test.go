@@ -10,9 +10,11 @@ import (
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"sort"
 	"testing"
+	"time"
 )
 
 const (
@@ -148,7 +150,7 @@ func (kp *KeyPerf) testPollInstanceAndDataWithMetrics(t *testing.T, pollDataFile
 func processAndCookCounters(kp *KeyPerf, pollData []gjson.Result, prevMat *matrix.Matrix) (map[string]*matrix.Matrix, uint64, error) {
 	curMat := prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
 	curMat.Reset()
-	metricCount, _, _ := kp.processPerfRecords(pollData, curMat, set.New())
+	metricCount, _, _ := kp.processPerfRecords(pollData, curMat, set.New(), time.Now().UnixNano()/util.BILLION)
 	got, err := kp.cookCounters(curMat, prevMat)
 	return got, metricCount, err
 }
@@ -165,6 +167,7 @@ func TestKeyPerf_pollData(t *testing.T) {
 		numInstances  int
 		numMetrics    int
 		record        bool
+		checksum      bool
 	}{
 		{
 			name:          "statistics.iops_raw.read",
@@ -175,6 +178,7 @@ func TestKeyPerf_pollData(t *testing.T) {
 			numMetrics:    48,
 			sum:           4608,
 			record:        true,
+			checksum:      true,
 		},
 		{
 			name:          "statistics.latency_raw.read",
@@ -185,6 +189,7 @@ func TestKeyPerf_pollData(t *testing.T) {
 			numMetrics:    48,
 			sum:           1114,
 			record:        true,
+			checksum:      true,
 		},
 		{
 			name:          "statistics.latency_raw.read",
@@ -195,6 +200,18 @@ func TestKeyPerf_pollData(t *testing.T) {
 			numMetrics:    0,
 			sum:           0,
 			record:        false,
+			checksum:      true,
+		},
+		{
+			name:          "statistics.latency_raw.read",
+			counter:       "statistics.latency_raw.read",
+			pollDataPath1: "testdata/missingTimestamp/volume-poll-1.json",
+			pollDataPath2: "testdata/missingTimestamp/volume-poll-2.json",
+			numInstances:  4,
+			numMetrics:    48,
+			sum:           4608,
+			record:        true,
+			checksum:      false, // given timestamp is synthesized so calculated metrics value may differ with very run
 		},
 	}
 	for _, tt := range tests {
@@ -221,7 +238,7 @@ func TestKeyPerf_pollData(t *testing.T) {
 				}
 				sum += val
 			}
-			if sum != tt.sum {
+			if sum != tt.sum && tt.checksum {
 				t.Errorf("pollData() sum got=%v, want=%v", sum, tt.sum)
 			}
 		})

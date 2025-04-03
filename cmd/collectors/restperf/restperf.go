@@ -39,7 +39,6 @@ import (
 
 const (
 	latencyIoReqd          = 10
-	BILLION                = 1_000_000_000
 	arrayKeyToken          = "#"
 	objWorkloadClass       = "user_defined|system_defined"
 	objWorkloadVolumeClass = "autovolume"
@@ -887,13 +886,13 @@ func (r *RestPerf) processPerfRecords(perfRecords []rest.PerfRecord, curMat *mat
 	startTime := time.Now()
 
 	// init current time
-	ts = float64(startTime.UnixNano()) / BILLION
+	ts = float64(startTime.UnixNano()) / util.BILLION
 	for _, perfRecord := range perfRecords {
 		pr := perfRecord.Records
 		t := perfRecord.Timestamp
 
 		if t != 0 {
-			ts = float64(t) / BILLION
+			ts = float64(t) / util.BILLION
 		} else {
 			r.Logger.Warn("Missing timestamp in response")
 		}
