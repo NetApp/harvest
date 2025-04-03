@@ -211,7 +211,7 @@ func TestKeyPerf_pollData(t *testing.T) {
 			numMetrics:    48,
 			sum:           4608,
 			record:        true,
-			checksum:      false, // given timestamp is synthesized so calculated metrics value may differ withe very run
+			checksum:      false, // given timestamp is synthesized so calculated metrics value may differ with very run
 		},
 	}
 	for _, tt := range tests {
@@ -233,7 +233,6 @@ func TestKeyPerf_pollData(t *testing.T) {
 			for _, name := range names {
 				i := m.GetInstance(name)
 				val, recorded := metric.GetValueInt64(i)
-				fmt.Println(val)
 				if recorded != tt.record {
 					t.Errorf("pollData() recorded got=%v, want=%v", recorded, tt.record)
 				}
