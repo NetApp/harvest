@@ -160,7 +160,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "headroom_aggr_optimal_point_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$OptimalPointAggr\"} - headroom_aggr_current_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",aggr=~\"$OptimalPointAggr\"}",
+          "expr": "headroom_aggr_optimal_point_ops{aggr=~\"$OptimalPointAggr\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n-\n  headroom_aggr_current_ops{aggr=~\"$OptimalPointAggr\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -244,7 +244,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "headroom_cpu_optimal_point_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$OptimalPointCPU\"} - headroom_cpu_current_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$OptimalPointCPU\"}",
+          "expr": "headroom_cpu_optimal_point_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$OptimalPointCPU\"}\n-\n  headroom_cpu_current_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$OptimalPointCPU\"}",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -339,7 +339,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "headroom_aggr_current_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "headroom_aggr_current_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{aggr}}",
@@ -427,7 +427,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "headroom_aggr_current_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "headroom_aggr_current_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{aggr}}",
@@ -518,7 +518,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "headroom_aggr_current_utilization{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "headroom_aggr_current_utilization{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{aggr}}",
@@ -606,7 +606,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "headroom_aggr_optimal_point_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "headroom_aggr_optimal_point_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{aggr}}",
@@ -695,7 +695,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "headroom_aggr_optimal_point_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "headroom_aggr_optimal_point_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{aggr}}",
@@ -786,7 +786,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "headroom_aggr_optimal_point_utilization{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "headroom_aggr_optimal_point_utilization{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{aggr}}",
@@ -874,7 +874,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "headroom_aggr_ewma_${Interval}{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",metric=\"latency\"}",
+              "expr": "headroom_aggr_ewma_${Interval}{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"latency\"}",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{aggr}}",
@@ -963,7 +963,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "headroom_aggr_ewma_${Interval}{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",metric=\"ops\"}",
+              "expr": "headroom_aggr_ewma_${Interval}{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"ops\"}",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{aggr}}",
@@ -1054,7 +1054,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "headroom_aggr_ewma_${Interval}{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",metric=\"utilization\"}",
+              "expr": "headroom_aggr_ewma_${Interval}{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"utilization\"}",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{aggr}}",
@@ -1142,7 +1142,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "headroom_aggr_ewma_${Interval}{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",metric=\"optimal_point_latency\"}",
+              "expr": "headroom_aggr_ewma_${Interval}{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"optimal_point_latency\"}",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{aggr}}",
@@ -1231,7 +1231,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "headroom_aggr_ewma_${Interval}{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",metric=\"optimal_point_ops\"}",
+              "expr": "headroom_aggr_ewma_${Interval}{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"optimal_point_ops\"}",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{aggr}}",
@@ -1322,7 +1322,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "headroom_aggr_ewma_${Interval}{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",metric=\"optimal_point_utilization\"}",
+              "expr": "headroom_aggr_ewma_${Interval}{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"optimal_point_utilization\"}",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{aggr}}",
@@ -1425,7 +1425,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "headroom_cpu_current_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "headroom_cpu_current_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}}",
@@ -1513,7 +1513,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "headroom_cpu_current_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "headroom_cpu_current_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}}",
@@ -1604,7 +1604,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "headroom_cpu_current_utilization{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "headroom_cpu_current_utilization{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}}",
@@ -1692,7 +1692,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "headroom_cpu_optimal_point_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "headroom_cpu_optimal_point_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}}",
@@ -1781,7 +1781,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "headroom_cpu_optimal_point_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "headroom_cpu_optimal_point_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}}",
@@ -1872,7 +1872,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "headroom_cpu_optimal_point_utilization{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "headroom_cpu_optimal_point_utilization{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}}",
@@ -1960,7 +1960,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "headroom_cpu_ewma_${Interval}{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",metric=\"latency\"}",
+              "expr": "headroom_cpu_ewma_${Interval}{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"latency\"}",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}}",
@@ -2049,7 +2049,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "headroom_cpu_ewma_${Interval}{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",metric=\"ops\"}",
+              "expr": "headroom_cpu_ewma_${Interval}{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"ops\"}",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}}",
@@ -2140,7 +2140,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "headroom_cpu_ewma_${Interval}{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",metric=\"utilization\"}",
+              "expr": "headroom_cpu_ewma_${Interval}{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"utilization\"}",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{aggr}}",
@@ -2228,7 +2228,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "headroom_cpu_ewma_${Interval}{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",metric=\"optimal_point_latency\"}",
+              "expr": "headroom_cpu_ewma_${Interval}{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"optimal_point_latency\"}",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}}",
@@ -2317,7 +2317,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "headroom_cpu_ewma_${Interval}{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",metric=\"optimal_point_ops\"}",
+              "expr": "headroom_cpu_ewma_${Interval}{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"optimal_point_ops\"}",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}}",
@@ -2408,7 +2408,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "headroom_cpu_ewma_${Interval}{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",metric=\"optimal_point_utilization\"}",
+              "expr": "headroom_cpu_ewma_${Interval}{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"optimal_point_utilization\"}",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}}",

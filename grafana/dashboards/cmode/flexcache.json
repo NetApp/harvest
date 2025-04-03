@@ -210,7 +210,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "clamp_max(flexcache_miss_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"},100)\nand\ntopk($TopResources, avg_over_time(flexcache_miss_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()))",
+          "expr": "clamp_max(\n    flexcache_miss_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"},\n    100\n  )\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      flexcache_miss_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()\n    )\n  )",
           "interval": "",
           "legendFormat": "{{svm}} - {{volume}}",
           "refId": "A"
@@ -301,7 +301,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "flexcache_blocks_requested_from_client{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\ntopk($TopResources, avg_over_time(flexcache_blocks_requested_from_client{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()))",
+          "expr": "flexcache_blocks_requested_from_client{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      flexcache_blocks_requested_from_client{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()\n    )\n  )",
           "interval": "",
           "legendFormat": "{{svm}} - {{volume}}",
           "refId": "A"
@@ -392,7 +392,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "flexcache_blocks_retrieved_from_origin{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\ntopk($TopResources, avg_over_time(flexcache_blocks_retrieved_from_origin{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()))",
+          "expr": "flexcache_blocks_retrieved_from_origin{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      flexcache_blocks_retrieved_from_origin{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()\n    )\n  )",
           "interval": "",
           "legendFormat": "{{svm}} - {{volume}}",
           "refId": "A"
@@ -641,7 +641,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "flexcache_size{system_type!=\"7mode\",datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}",
+          "expr": "flexcache_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",system_type!=\"7mode\",volume=~\"$FlexCache\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -782,7 +782,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "flexcache_reconciled_data_entries{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\ntopk($TopResources, avg_over_time(flexcache_reconciled_data_entries{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()))",
+              "expr": "flexcache_reconciled_data_entries{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      flexcache_reconciled_data_entries{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
               "refId": "A"
@@ -873,7 +873,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "flexcache_reconciled_lock_entries{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\ntopk($TopResources, avg_over_time(flexcache_reconciled_lock_entries{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()))",
+              "expr": "flexcache_reconciled_lock_entries{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      flexcache_reconciled_lock_entries{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
               "refId": "A"
@@ -979,7 +979,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "flexcache_evict_skipped_reason_config_noent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\ntopk($TopResources, avg_over_time(flexcache_evict_skipped_reason_config_noent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()))",
+              "expr": "flexcache_evict_skipped_reason_config_noent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      flexcache_evict_skipped_reason_config_noent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
               "refId": "A"
@@ -1070,7 +1070,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "flexcache_evict_skipped_reason_disconnected{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\ntopk($TopResources, avg_over_time(flexcache_evict_skipped_reason_disconnected{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()))",
+              "expr": "flexcache_evict_skipped_reason_disconnected{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      flexcache_evict_skipped_reason_disconnected{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
               "refId": "A"
@@ -1161,7 +1161,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "flexcache_evict_skipped_reason_offline{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\ntopk($TopResources, avg_over_time(flexcache_evict_skipped_reason_offline{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()))",
+              "expr": "flexcache_evict_skipped_reason_offline{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      flexcache_evict_skipped_reason_offline{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
               "refId": "A"
@@ -1252,7 +1252,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "flexcache_evict_rw_cache_skipped_reason_disconnected{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\ntopk($TopResources, avg_over_time(flexcache_evict_rw_cache_skipped_reason_disconnected{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()))",
+              "expr": "flexcache_evict_rw_cache_skipped_reason_disconnected{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      flexcache_evict_rw_cache_skipped_reason_disconnected{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
               "refId": "A"
@@ -1358,7 +1358,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "flexcache_invalidate_skipped_reason_config_noent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\ntopk($TopResources, avg_over_time(flexcache_invalidate_skipped_reason_config_noent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()))",
+              "expr": "flexcache_invalidate_skipped_reason_config_noent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      flexcache_invalidate_skipped_reason_config_noent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
               "refId": "A"
@@ -1449,7 +1449,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "flexcache_invalidate_skipped_reason_disconnected{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\ntopk($TopResources, avg_over_time(flexcache_invalidate_skipped_reason_disconnected{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()))",
+              "expr": "flexcache_invalidate_skipped_reason_disconnected{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      flexcache_invalidate_skipped_reason_disconnected{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
               "refId": "A"
@@ -1540,7 +1540,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "flexcache_evict_skipped_reason_offline{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\ntopk($TopResources, avg_over_time(flexcache_evict_skipped_reason_offline{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()))",
+              "expr": "flexcache_evict_skipped_reason_offline{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      flexcache_evict_skipped_reason_offline{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
               "refId": "A"
@@ -1646,7 +1646,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "flexcache_nix_skipped_reason_in_progress{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\ntopk($TopResources, avg_over_time(flexcache_nix_skipped_reason_in_progress{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()))",
+              "expr": "flexcache_nix_skipped_reason_in_progress{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      flexcache_nix_skipped_reason_in_progress{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
               "refId": "A"
@@ -1737,7 +1737,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "flexcache_nix_retry_skipped_reason_initiator_retrieve{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\ntopk($TopResources, avg_over_time(flexcache_nix_retry_skipped_reason_initiator_retrieve{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()))",
+              "expr": "flexcache_nix_retry_skipped_reason_initiator_retrieve{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      flexcache_nix_retry_skipped_reason_initiator_retrieve{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
               "refId": "A"
@@ -1828,7 +1828,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "flexcache_nix_skipped_reason_config_noent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\ntopk($TopResources, avg_over_time(flexcache_nix_skipped_reason_config_noent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()))",
+              "expr": "flexcache_nix_skipped_reason_config_noent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      flexcache_nix_skipped_reason_config_noent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
               "refId": "A"
@@ -1919,7 +1919,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "flexcache_nix_skipped_reason_disconnected{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\ntopk($TopResources, avg_over_time(flexcache_nix_skipped_reason_disconnected{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()))",
+              "expr": "flexcache_nix_skipped_reason_disconnected{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      flexcache_nix_skipped_reason_disconnected{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
               "refId": "A"
@@ -2010,7 +2010,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "flexcache_nix_skipped_reason_offline{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\ntopk($TopResources, avg_over_time(flexcache_nix_skipped_reason_offline{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()))",
+              "expr": "flexcache_nix_skipped_reason_offline{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      flexcache_nix_skipped_reason_offline{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$FlexCache\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
               "refId": "A"

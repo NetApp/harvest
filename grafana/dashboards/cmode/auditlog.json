@@ -176,7 +176,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(changes(audit_log{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", object=~\"volume\", op=\"create\"}[$__range]) + 1) by (cluster, datacenter, object)",
+          "expr": "sum by (cluster, datacenter, object) (\n    changes(\n      audit_log{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",object=~\"volume\",op=\"create\"}[10d6h54m48s]\n    )\n  +\n    1\n)",
           "format": "time_series",
           "instant": true,
           "interval": "",
@@ -236,7 +236,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(changes(audit_log{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", object=~\"volume\", op=\"update\"}[$__range]) + 1) by (cluster, datacenter, object)",
+          "expr": "sum by (cluster, datacenter, object) (\n    changes(\n      audit_log{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",object=~\"volume\",op=\"update\"}[10d6h54m48s]\n    )\n  +\n    1\n)",
           "instant": true,
           "interval": "",
           "legendFormat": "",
@@ -295,7 +295,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(changes(audit_log{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", object=~\"volume\", op=\"delete\"}[$__range]) + 1) by (cluster, datacenter, object)",
+          "expr": "sum by (cluster, datacenter, object) (\n    changes(\n      audit_log{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",object=~\"volume\",op=\"delete\"}[10d6h54m48s]\n    )\n  +\n    1\n)",
           "instant": true,
           "interval": "",
           "legendFormat": "",
@@ -482,7 +482,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "label_join(last_over_time(audit_log{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", object=~\"volume\"}[$__range]), \"unique_id\", \"-\", \"datacenter\", \"cluster\", \"object\", \"volume\",\"uuid\",\"op\",\"application\",\"location\", \"user\")",
+          "expr": "label_join(\n  last_over_time(\n    audit_log{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",object=~\"volume\"}[10d6h54m48s]\n  ),\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"object\",\n  \"volume\",\n  \"uuid\",\n  \"op\",\n  \"application\",\n  \"location\",\n  \"user\"\n)",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -491,7 +491,7 @@
         },
         {
           "exemplar": false,
-          "expr": "label_join(sum(changes(audit_log{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", object=~\"volume\"}[$__range]) + 1) by (cluster, datacenter, object, volume, uuid, op,application, location, user), \"unique_id\", \"-\", \"datacenter\", \"cluster\", \"object\", \"volume\",\"uuid\",\"op\",\"application\",\"location\",\"user\")",
+          "expr": "label_join(\n  sum by (cluster, datacenter, object, volume, uuid, op, application, location, user) (\n    changes(audit_log{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",object=~\"volume\"}[10d6h54m48s]) + 1\n  ),\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"object\",\n  \"volume\",\n  \"uuid\",\n  \"op\",\n  \"application\",\n  \"location\",\n  \"user\"\n)",
           "format": "table",
           "hide": false,
           "instant": true,

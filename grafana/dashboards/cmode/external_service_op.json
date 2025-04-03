@@ -190,7 +190,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg by (datacenter, cluster, svm, operation, service_name) (external_service_op_request_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\",operation=~\"$Operation\"})\nand \ntopk(\n    $TopResources,\n    avg by (datacenter, cluster, svm, operation, service_name) (avg_over_time(external_service_op_request_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\",operation=~\"$Operation\"}[3h]))\n)",
+          "expr": "avg by (datacenter, cluster, svm, operation, service_name) (\n    external_service_op_request_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",operation=~\"$Operation\",service_name=~\"$ServiceName\",svm=~\"$SVM\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (datacenter, cluster, svm, operation, service_name) (\n      avg_over_time(\n        external_service_op_request_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",operation=~\"$Operation\",service_name=~\"$ServiceName\",svm=~\"$SVM\"}[3h]\n      )\n    )\n  )",
           "interval": "",
           "legendFormat": "{{cluster}} - {{svm}} - {{operation}}",
           "refId": "A"
@@ -233,7 +233,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(increase(external_service_op_request_latency_hist_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\",operation=~\"$Operation\"}[$__interval])) by (le)",
+          "expr": "sum by (le) (\n  increase(\n    external_service_op_request_latency_hist_bucket{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",operation=~\"$Operation\",service_name=~\"$ServiceName\",svm=~\"$SVM\"}[9d2m57s]\n  )\n)",
           "format": "heatmap",
           "instant": false,
           "interval": "",
@@ -344,7 +344,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg by (datacenter, cluster, svm, operation, service_name) (external_service_op_num_not_found_responses{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\",operation=~\"$Operation\"})\nand \ntopk(\n    $TopResources,\n    avg by (datacenter, cluster, svm, operation, service_name) (avg_over_time(external_service_op_num_not_found_responses{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\",operation=~\"$Operation\"}[3h]))\n)",
+          "expr": "avg by (datacenter, cluster, svm, operation, service_name) (\n    external_service_op_num_not_found_responses{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",operation=~\"$Operation\",service_name=~\"$ServiceName\",svm=~\"$SVM\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (datacenter, cluster, svm, operation, service_name) (\n      avg_over_time(\n        external_service_op_num_not_found_responses{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",operation=~\"$Operation\",service_name=~\"$ServiceName\",svm=~\"$SVM\"}[3h]\n      )\n    )\n  )",
           "interval": "",
           "legendFormat": "{{cluster}} - {{svm}} - {{operation}}",
           "refId": "A"
@@ -431,7 +431,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg by (datacenter, cluster, svm, operation, service_name) (external_service_op_num_request_failures{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\",operation=~\"$Operation\"})\nand \ntopk(\n    $TopResources,\n    avg by (datacenter, cluster, svm, operation, service_name) (avg_over_time(external_service_op_num_request_failures{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\",operation=~\"$Operation\"}[3h]))\n)",
+          "expr": "avg by (datacenter, cluster, svm, operation, service_name) (\n    external_service_op_num_request_failures{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",operation=~\"$Operation\",service_name=~\"$ServiceName\",svm=~\"$SVM\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (datacenter, cluster, svm, operation, service_name) (\n      avg_over_time(\n        external_service_op_num_request_failures{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",operation=~\"$Operation\",service_name=~\"$ServiceName\",svm=~\"$SVM\"}[3h]\n      )\n    )\n  )",
           "interval": "",
           "legendFormat": "{{cluster}} - {{svm}} - {{operation}}",
           "refId": "A"
@@ -518,7 +518,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg by (datacenter, cluster, svm, operation, service_name) (external_service_op_num_requests_sent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\",operation=~\"$Operation\"})\nand \ntopk(\n    $TopResources,\n    avg by (datacenter, cluster, svm, operation, service_name) (avg_over_time(external_service_op_num_requests_sent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\",operation=~\"$Operation\"}[3h]))\n)",
+          "expr": "avg by (datacenter, cluster, svm, operation, service_name) (\n    external_service_op_num_requests_sent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",operation=~\"$Operation\",service_name=~\"$ServiceName\",svm=~\"$SVM\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (datacenter, cluster, svm, operation, service_name) (\n      avg_over_time(\n        external_service_op_num_requests_sent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",operation=~\"$Operation\",service_name=~\"$ServiceName\",svm=~\"$SVM\"}[3h]\n      )\n    )\n  )",
           "interval": "",
           "legendFormat": "{{cluster}} - {{svm}} - {{operation}}",
           "refId": "A"
@@ -605,7 +605,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg by (datacenter, cluster, svm, operation, service_name) (external_service_op_num_responses_received{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\",operation=~\"$Operation\"})\nand \ntopk(\n    $TopResources,\n    avg by (datacenter, cluster, svm, operation, service_name) (avg_over_time(external_service_op_num_responses_received{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\",operation=~\"$Operation\"}[3h]))\n)",
+          "expr": "avg by (datacenter, cluster, svm, operation, service_name) (\n    external_service_op_num_responses_received{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",operation=~\"$Operation\",service_name=~\"$ServiceName\",svm=~\"$SVM\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (datacenter, cluster, svm, operation, service_name) (\n      avg_over_time(\n        external_service_op_num_responses_received{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",operation=~\"$Operation\",service_name=~\"$ServiceName\",svm=~\"$SVM\"}[3h]\n      )\n    )\n  )",
           "interval": "",
           "legendFormat": "{{cluster}} - {{svm}} - {{operation}}",
           "refId": "A"
@@ -692,7 +692,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg by (datacenter, cluster, svm, operation, service_name) (external_service_op_num_successful_responses{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\",operation=~\"$Operation\"})\nand \ntopk(\n    $TopResources,\n    avg by (datacenter, cluster, svm, operation, service_name) (avg_over_time(external_service_op_num_successful_responses{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\",operation=~\"$Operation\"}[3h]))\n)",
+          "expr": "avg by (datacenter, cluster, svm, operation, service_name) (\n    external_service_op_num_successful_responses{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",operation=~\"$Operation\",service_name=~\"$ServiceName\",svm=~\"$SVM\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (datacenter, cluster, svm, operation, service_name) (\n      avg_over_time(\n        external_service_op_num_successful_responses{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",operation=~\"$Operation\",service_name=~\"$ServiceName\",svm=~\"$SVM\"}[3h]\n      )\n    )\n  )",
           "interval": "",
           "legendFormat": "{{cluster}} - {{svm}} - {{operation}}",
           "refId": "A"
@@ -779,7 +779,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg by (datacenter, cluster, svm, operation, service_name) (external_service_op_num_timeouts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\",operation=~\"$Operation\"})\nand \ntopk(\n    $TopResources,\n    avg by (datacenter, cluster, svm, operation, service_name) (avg_over_time(external_service_op_num_timeouts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\",operation=~\"$Operation\"}[3h]))\n)",
+          "expr": "avg by (datacenter, cluster, svm, operation, service_name) (\n    external_service_op_num_timeouts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",operation=~\"$Operation\",service_name=~\"$ServiceName\",svm=~\"$SVM\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (datacenter, cluster, svm, operation, service_name) (\n      avg_over_time(\n        external_service_op_num_timeouts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",operation=~\"$Operation\",service_name=~\"$ServiceName\",svm=~\"$SVM\"}[3h]\n      )\n    )\n  )",
           "interval": "",
           "legendFormat": "{{cluster}} - {{svm}} - {{operation}}",
           "refId": "A"

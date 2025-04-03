@@ -204,7 +204,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "qos_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[3h] @ end()))",
+          "expr": "qos_read_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_read_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -292,7 +292,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "qos_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[3h] @ end()))",
+          "expr": "qos_write_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_write_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -380,7 +380,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "qos_other_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_other_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[3h] @ end()))",
+          "expr": "qos_other_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_other_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -468,7 +468,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "qos_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[3h] @ end()))",
+          "expr": "qos_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -555,7 +555,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "qos_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[3h] @ end()))",
+          "expr": "qos_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -642,7 +642,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "qos_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[3h] @ end()))",
+          "expr": "qos_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -729,7 +729,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "qos_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[3h] @ end()))",
+          "expr": "qos_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -816,7 +816,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "qos_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[3h] @ end()))",
+          "expr": "qos_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -903,7 +903,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "qos_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[3h] @ end()))",
+          "expr": "qos_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -990,7 +990,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "qos_concurrency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"} \n  and \ntopk($TopResources, avg_over_time(qos_concurrency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[3h] @ end()))",
+          "expr": "qos_concurrency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_concurrency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -1083,7 +1083,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "qos_sequential_reads{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}\nand\ntopk($TopResources, avg_over_time(qos_sequential_reads{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[3h] @ end()))",
+          "expr": "qos_sequential_reads{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_sequential_reads{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -1176,7 +1176,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "qos_sequential_writes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}\nand\ntopk($TopResources, avg_over_time(qos_sequential_writes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\"}[3h] @ end()))",
+          "expr": "qos_sequential_writes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_sequential_writes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
           "interval": "",
           "legendFormat": "{{cluster}} - {{workload}}",
           "refId": "A"
@@ -1279,7 +1279,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "clamp_max(\n  sum by (cluster, datacenter, policy_group) (\n    (\n      qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload!~\".*__[0-9]{4}-.*\"} * 100\n      / on(datacenter, cluster, policy_group)\n      group_left\n      label_replace(\n        qos_policy_fixed_max_throughput_iops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"},\n        \"policy_group\",\n        \"$1\",\n        \"name\",\n        \"(.*)\"\n      )\n    )\n    * on(datacenter, cluster, policy_group)\n    group_left(capacity_shared)\n    label_replace(\n      qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_iops!=\"\", capacity_shared=\"true\"},\n      \"policy_group\",\n      \"$1\",\n      \"name\",\n      \"(.*)\"\n    )\n  ),  100\n)\nand\ntopk(\n  $TopResources,\n  sum by (cluster, datacenter, policy_group) (\n    (\n      avg_over_time(\n        qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload!~\".*__[0-9]{4}-.*\"}[3h] @ end()\n      )\n      / on(datacenter, cluster, policy_group)\n      group_left\n      avg_over_time(\n        (\n          label_replace(\n            qos_policy_fixed_max_throughput_iops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"},\n            \"policy_group\",\n            \"$1\",\n            \"name\",\n            \"(.*)\"\n          )\n          * on(datacenter, cluster, policy_group)\n          group_left(capacity_shared)\n          label_replace(\n            qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_iops!=\"\", capacity_shared=\"true\"},\n            \"policy_group\",\n            \"$1\",\n            \"name\",\n            \"(.*)\"\n          )\n        )[3h:] @ end()\n      )\n    )\n  )\n)",
+              "expr": "clamp_max(\n    sum by (cluster, datacenter, policy_group) (\n        (\n            qos_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload!~\".*__[0-9]{4}-.*\"} * 100\n          / on (datacenter, cluster, policy_group) group_left ()\n            label_replace(\n              qos_policy_fixed_max_throughput_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n              \"policy_group\",\n              \"$1\",\n              \"name\",\n              \"(.*)\"\n            )\n        )\n      * on (datacenter, cluster, policy_group) group_left (capacity_shared)\n        label_replace(\n          qos_policy_fixed_labels{capacity_shared=\"true\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",max_throughput_iops!=\"\"},\n          \"policy_group\",\n          \"$1\",\n          \"name\",\n          \"(.*)\"\n        )\n    ),\n    100\n  )\nand\n  topk(\n    $TopResources,\n    sum by (cluster, datacenter, policy_group) (\n      (\n          avg_over_time(\n            qos_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload!~\".*__[0-9]{4}-.*\"}[3h] @ end()\n          )\n        / on (datacenter, cluster, policy_group) group_left ()\n          avg_over_time(\n            (\n                label_replace(\n                  qos_policy_fixed_max_throughput_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n                  \"policy_group\",\n                  \"$1\",\n                  \"name\",\n                  \"(.*)\"\n                )\n              * on (datacenter, cluster, policy_group) group_left (capacity_shared)\n                label_replace(\n                  qos_policy_fixed_labels{capacity_shared=\"true\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",max_throughput_iops!=\"\"},\n                  \"policy_group\",\n                  \"$1\",\n                  \"name\",\n                  \"(.*)\"\n                )\n            )[3h:] @ end()\n          )\n      )\n    )\n  )",
               "hide": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{policy_group}}",
@@ -1371,7 +1371,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "clamp_max(\n  sum by (cluster, datacenter, policy_group) (\n    (\n      qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload!~\".*__[0-9]{4}-.*\"} * 100 / (1000 * 1000)\n      / on(datacenter, cluster, policy_group)\n      group_left\n      label_replace(\n        qos_policy_fixed_max_throughput_mbps{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"},\n        \"policy_group\",\n        \"$1\",\n        \"name\",\n        \"(.*)\"\n      )\n    )\n    * on(datacenter, cluster, policy_group)\n    group_left(capacity_shared)\n    label_replace(\n      qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_mbps!=\"\", capacity_shared=\"true\"},\n      \"policy_group\",\n      \"$1\",\n      \"name\",\n      \"(.*)\"\n    )\n  ),  100\n)\nand\ntopk(\n  $TopResources,\n  sum by (cluster, datacenter, policy_group) (\n    (\n      avg_over_time(\n        qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload!~\".*__[0-9]{4}-.*\"}[3h] @ end()\n      )\n      / on(datacenter, cluster, policy_group)\n      group_left\n      avg_over_time(\n        (\n          label_replace(\n            qos_policy_fixed_max_throughput_mbps{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"},\n            \"policy_group\",\n            \"$1\",\n            \"name\",\n            \"(.*)\"\n          )\n          * on(datacenter, cluster, policy_group)\n          group_left(capacity_shared)\n          label_replace(\n            qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_mbps!=\"\", capacity_shared=\"true\"},\n            \"policy_group\",\n            \"$1\",\n            \"name\",\n            \"(.*)\"\n          )\n        )[3h:] @ end()\n      )\n    )\n  )\n)",
+              "expr": "clamp_max(\n    sum by (cluster, datacenter, policy_group) (\n        (\n              qos_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload!~\".*__[0-9]{4}-.*\"} * 100\n            /\n              (1000 * 1000)\n          / on (datacenter, cluster, policy_group) group_left ()\n            label_replace(\n              qos_policy_fixed_max_throughput_mbps{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n              \"policy_group\",\n              \"$1\",\n              \"name\",\n              \"(.*)\"\n            )\n        )\n      * on (datacenter, cluster, policy_group) group_left (capacity_shared)\n        label_replace(\n          qos_policy_fixed_labels{capacity_shared=\"true\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",max_throughput_mbps!=\"\"},\n          \"policy_group\",\n          \"$1\",\n          \"name\",\n          \"(.*)\"\n        )\n    ),\n    100\n  )\nand\n  topk(\n    $TopResources,\n    sum by (cluster, datacenter, policy_group) (\n      (\n          avg_over_time(\n            qos_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload!~\".*__[0-9]{4}-.*\"}[3h] @ end()\n          )\n        / on (datacenter, cluster, policy_group) group_left ()\n          avg_over_time(\n            (\n                label_replace(\n                  qos_policy_fixed_max_throughput_mbps{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n                  \"policy_group\",\n                  \"$1\",\n                  \"name\",\n                  \"(.*)\"\n                )\n              * on (datacenter, cluster, policy_group) group_left (capacity_shared)\n                label_replace(\n                  qos_policy_fixed_labels{capacity_shared=\"true\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",max_throughput_mbps!=\"\"},\n                  \"policy_group\",\n                  \"$1\",\n                  \"name\",\n                  \"(.*)\"\n                )\n            )[3h:] @ end()\n          )\n      )\n    )\n  )",
               "interval": "",
               "legendFormat": "{{cluster}} - {{policy_group}}",
               "refId": "A"
@@ -1515,7 +1515,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg_over_time(\n  clamp_max(\n    sum by (cluster, datacenter, policy_group, object_count, max_throughput_iops, max_throughput_mbps, min_throughput_iops, min_throughput_mbps) (\n      (\n        qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload!~\".*__[0-9]{4}-.*\"} * 100\n        / on(datacenter, cluster, policy_group)\n        group_left\n        label_replace(\n          qos_policy_fixed_max_throughput_iops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"},\n          \"policy_group\",\n          \"$1\",\n          \"name\",\n          \"(.*)\"\n        )\n      )\n      * on(datacenter, cluster, policy_group)\n      group_left(capacity_shared, object_count, max_throughput_iops, max_throughput_mbps, min_throughput_iops, min_throughput_mbps)\n      label_replace(\n        qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_iops!=\"\", capacity_shared=\"true\"},\n        \"policy_group\",\n        \"$1\",\n        \"name\",\n        \"(.*)\"\n      )\n    ), 100\n  )[3h:]\n)",
+              "expr": "avg_over_time(\n  clamp_max(\n    sum by (cluster, datacenter, policy_group, object_count, max_throughput_iops, max_throughput_mbps, min_throughput_iops, min_throughput_mbps) (\n        (\n            qos_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload!~\".*__[0-9]{4}-.*\"} * 100\n          / on (datacenter, cluster, policy_group) group_left ()\n            label_replace(\n              qos_policy_fixed_max_throughput_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n              \"policy_group\",\n              \"$1\",\n              \"name\",\n              \"(.*)\"\n            )\n        )\n      * on (datacenter, cluster, policy_group) group_left (capacity_shared, object_count, max_throughput_iops, max_throughput_mbps, min_throughput_iops, min_throughput_mbps)\n        label_replace(\n          qos_policy_fixed_labels{capacity_shared=\"true\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",max_throughput_iops!=\"\"},\n          \"policy_group\",\n          \"$1\",\n          \"name\",\n          \"(.*)\"\n        )\n    ),\n    100\n  )[3h:]\n)",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1701,7 +1701,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg_over_time(\n  clamp_max(\n    sum by (cluster, datacenter, policy_group, object_count, max_throughput_iops, max_throughput_mbps, min_throughput_iops, min_throughput_mbps) (\n      (\n        qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload!~\".*__[0-9]{4}-.*\"} * 100 / (1000 * 1000)\n        / on(datacenter, cluster, policy_group)\n        group_left\n        label_replace(\n          qos_policy_fixed_max_throughput_mbps{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"},\n          \"policy_group\",\n          \"$1\",\n          \"name\",\n          \"(.*)\"\n        )\n      )\n      * on(datacenter, cluster, policy_group)\n      group_left(capacity_shared, object_count, max_throughput_iops, max_throughput_mbps, min_throughput_iops, min_throughput_mbps)\n      label_replace(\n        qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_mbps!=\"\", capacity_shared=\"true\"},\n        \"policy_group\",\n        \"$1\",\n        \"name\",\n        \"(.*)\"\n      )\n    ), 100\n  )[3h:]\n)",
+              "expr": "avg_over_time(\n  clamp_max(\n    sum by (cluster, datacenter, policy_group, object_count, max_throughput_iops, max_throughput_mbps, min_throughput_iops, min_throughput_mbps) (\n        (\n              qos_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload!~\".*__[0-9]{4}-.*\"} * 100\n            /\n              (1000 * 1000)\n          / on (datacenter, cluster, policy_group) group_left ()\n            label_replace(\n              qos_policy_fixed_max_throughput_mbps{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n              \"policy_group\",\n              \"$1\",\n              \"name\",\n              \"(.*)\"\n            )\n        )\n      * on (datacenter, cluster, policy_group) group_left (capacity_shared, object_count, max_throughput_iops, max_throughput_mbps, min_throughput_iops, min_throughput_mbps)\n        label_replace(\n          qos_policy_fixed_labels{capacity_shared=\"true\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",max_throughput_mbps!=\"\"},\n          \"policy_group\",\n          \"$1\",\n          \"name\",\n          \"(.*)\"\n        )\n    ),\n    100\n  )[3h:]\n)",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1849,7 +1849,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "clamp_max(\n  (\n    (\n      qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"}\n      / on(datacenter,cluster,policy_group)\n      group_left\n      label_replace(\n        qos_policy_fixed_max_throughput_iops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"},\n        \"policy_group\",\n        \"$1\",\n        \"name\",\n        \"(.*)\"\n      )\n    ) * 100\n  ),\n  100\n)\nand\ntopk(\n  $TopResources,\n  (\n    avg_over_time(\n      qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"}[3h] @ end()\n    )\n    / on(datacenter,cluster,policy_group)\n    group_left\n    avg_over_time(\n      label_replace(\n        qos_policy_fixed_max_throughput_iops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"},\n        \"policy_group\",\n        \"$1\",\n        \"name\",\n        \"(.*)\"\n      )[3h:] @ end()\n    )\n  )\n)",
+              "expr": "clamp_max(\n    (\n        (\n            qos_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}\n          / on (datacenter, cluster, policy_group) group_left ()\n            label_replace(\n              qos_policy_fixed_max_throughput_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n              \"policy_group\",\n              \"$1\",\n              \"name\",\n              \"(.*)\"\n            )\n        )\n      *\n        100\n    ),\n    100\n  )\nand\n  topk(\n    $TopResources,\n    (\n        avg_over_time(\n          qos_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n        )\n      / on (datacenter, cluster, policy_group) group_left ()\n        avg_over_time(\n          label_replace(\n            qos_policy_fixed_max_throughput_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n            \"policy_group\",\n            \"$1\",\n            \"name\",\n            \"(.*)\"\n          )[3h:] @ end()\n        )\n    )\n  )",
               "hide": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{policy_group}} - {{workload}}",
@@ -1941,7 +1941,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "clamp_max(\n  (\n    (\n      (\n        qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * 100 / (1000 * 1000)\n      )\n      / on(datacenter,cluster,policy_group)\n      group_left\n      label_replace(\n        qos_policy_fixed_max_throughput_mbps{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"},\n        \"policy_group\",\n        \"$1\",\n        \"name\",\n        \"(.*)\"\n      )\n    )\n  ),\n  100\n)\nand\ntopk(\n  $TopResources,\n  (\n    avg_over_time(\n      qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"}[3h] @ end()\n    )\n    / on(datacenter,cluster,policy_group)\n    group_left\n    avg_over_time(\n      label_replace(\n        qos_policy_fixed_max_throughput_mbps{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"},\n        \"policy_group\",\n        \"$1\",\n        \"name\",\n        \"(.*)\"\n      )[3h:] @ end()\n    )\n  )\n)",
+              "expr": "clamp_max(\n    (\n      (\n          (\n              qos_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"} * 100\n            /\n              (1000 * 1000)\n          )\n        / on (datacenter, cluster, policy_group) group_left ()\n          label_replace(\n            qos_policy_fixed_max_throughput_mbps{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n            \"policy_group\",\n            \"$1\",\n            \"name\",\n            \"(.*)\"\n          )\n      )\n    ),\n    100\n  )\nand\n  topk(\n    $TopResources,\n    (\n        avg_over_time(\n          qos_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n        )\n      / on (datacenter, cluster, policy_group) group_left ()\n        avg_over_time(\n          label_replace(\n            qos_policy_fixed_max_throughput_mbps{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n            \"policy_group\",\n            \"$1\",\n            \"name\",\n            \"(.*)\"\n          )[3h:] @ end()\n        )\n    )\n  )",
               "interval": "",
               "legendFormat": "{{cluster}} - {{policy_group}} - {{workload}}",
               "refId": "A"
@@ -2221,7 +2221,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg_over_time(qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"}[3h]) * on(datacenter,cluster,policy_group) group_left(max_throughput_iops,max_throughput_mbps,min_throughput_iops,min_throughput_mbps,capacity_shared) label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_iops != \"\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\")",
+              "expr": "avg_over_time(qos_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h])\n* on (datacenter, cluster, policy_group) group_left (max_throughput_iops, max_throughput_mbps, min_throughput_iops, min_throughput_mbps, capacity_shared)\n  label_replace(\n    qos_policy_fixed_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",max_throughput_iops!=\"\"},\n    \"policy_group\",\n    \"$1\",\n    \"name\",\n    \"(.*)\"\n  )",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -2582,7 +2582,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg_over_time(qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"}[3h]) * on(datacenter,cluster,policy_group) group_left(max_throughput_iops,max_throughput_mbps,min_throughput_iops,min_throughput_mbps,capacity_shared) label_replace(qos_policy_fixed_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", max_throughput_mbps != \"\"}, \"policy_group\", \"$1\", \"name\", \"(.*)\")",
+              "expr": "avg_over_time(\n    qos_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h]\n  )\n* on (datacenter, cluster, policy_group) group_left (max_throughput_iops, max_throughput_mbps, min_throughput_iops, min_throughput_mbps, capacity_shared)\n  label_replace(\n    qos_policy_fixed_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",max_throughput_mbps!=\"\"},\n    \"policy_group\",\n    \"$1\",\n    \"name\",\n    \"(.*)\"\n  )",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -2792,7 +2792,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "clamp_max(\n  (\n    (\n      qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * 100\n    )\n    / on(datacenter,cluster,workload,policy_group,volume,lun,svm,qtree,file,wid)\n    qos_workload_max_throughput_iops{\n      datacenter=~\"$Datacenter\",\n      cluster=~\"$Cluster\",\n      workload=~\"$Workload\",\n      is_adaptive=\"Yes\"\n    }\n  ),\n  100\n)\nand\ntopk(\n  $TopResources,\n  (\n    avg_over_time(\n      qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"}[3h] @ end()\n    )\n    / on(datacenter,cluster,workload,policy_group,volume,lun,svm,qtree,file,wid)\n    avg_over_time(\n      qos_workload_max_throughput_iops{\n        datacenter=~\"$Datacenter\",\n        cluster=~\"$Cluster\",\n        workload=~\"$Workload\",\n        is_adaptive=\"Yes\"\n      }[3h] @ end()\n    )\n  )\n)",
+              "expr": "clamp_max(\n    (\n        (qos_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"} * 100)\n      / on (datacenter, cluster, workload, policy_group, volume, lun, svm, qtree, file, wid)\n        qos_workload_max_throughput_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}\n    ),\n    100\n  )\nand\n  topk(\n    $TopResources,\n    (\n        avg_over_time(\n          qos_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n        )\n      / on (datacenter, cluster, workload, policy_group, volume, lun, svm, qtree, file, wid)\n        avg_over_time(\n          qos_workload_max_throughput_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}[3h] @ end()\n        )\n    )\n  )",
               "hide": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{policy_group}} - {{workload}}",
@@ -2884,7 +2884,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "clamp_max(\n  (\n    (\n      (qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * 100) / (1000*1000)\n    )\n    / on(datacenter,cluster,workload,policy_group,volume,lun,svm,qtree,file,wid)\n    qos_workload_max_throughput_mbps{\n      datacenter=~\"$Datacenter\",\n      cluster=~\"$Cluster\",\n      workload=~\"$Workload\",\n      is_adaptive=\"Yes\"\n    }\n  ),\n  100\n)\nand\ntopk(\n  $TopResources,\n  (\n    avg_over_time(\n      qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"}[3h] @ end()\n    )\n    / on(datacenter,cluster,workload,policy_group,volume,lun,svm,qtree,file,wid)\n    avg_over_time(\n      qos_workload_max_throughput_mbps{\n        datacenter=~\"$Datacenter\",\n        cluster=~\"$Cluster\",\n        workload=~\"$Workload\",\n        is_adaptive=\"Yes\"\n      }[3h] @ end()\n    )\n  )\n)",
+              "expr": "clamp_max(\n    (\n        (\n            (qos_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"} * 100)\n          /\n            (1000 * 1000)\n        )\n      / on (datacenter, cluster, workload, policy_group, volume, lun, svm, qtree, file, wid)\n        qos_workload_max_throughput_mbps{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}\n    ),\n    100\n  )\nand\n  topk(\n    $TopResources,\n    (\n        avg_over_time(\n          qos_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n        )\n      / on (datacenter, cluster, workload, policy_group, volume, lun, svm, qtree, file, wid)\n        avg_over_time(\n          qos_workload_max_throughput_mbps{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}[3h] @ end()\n        )\n    )\n  )",
               "hide": false,
               "interval": "",
               "legendFormat": "{{cluster}} - {{policy_group}} - {{workload}}",
@@ -3130,7 +3130,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg_over_time(\n  label_join(\n    clamp_max(\n      (\n        (\n          qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * 100\n        )\n        / on(datacenter,cluster,workload,policy_group,volume,lun,svm,qtree,file,wid)\n        qos_workload_max_throughput_iops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\", is_adaptive=\"Yes\"}\n      ),\n      100\n    ),\n    \"unique_id\", \"-\", \"datacenter\", \"cluster\", \"workload\"\n  )[3h:]\n)",
+              "expr": "avg_over_time(\n  label_join(\n    clamp_max(\n      (\n          (qos_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"} * 100)\n        / on (datacenter, cluster, workload, policy_group, volume, lun, svm, qtree, file, wid)\n          qos_workload_max_throughput_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}\n      ),\n      100\n    ),\n    \"unique_id\",\n    \"-\",\n    \"datacenter\",\n    \"cluster\",\n    \"workload\"\n  )[3h:]\n)",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -3139,7 +3139,7 @@
             },
             {
               "exemplar": false,
-              "expr": "label_join(\n  (\n    qos_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"}\n    * on(datacenter,cluster,workload,policy_group,volume,lun,svm,qtree,file,wid)\n    (\n      qos_workload_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\", is_adaptive=\"Yes\"}\n      and\n      qos_workload_max_throughput_iops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\", is_adaptive=\"Yes\"}\n    )\n  ),\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"workload\"\n)",
+              "expr": "label_join(\n  (\n      qos_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}\n    * on (datacenter, cluster, workload, policy_group, volume, lun, svm, qtree, file, wid)\n      (\n          qos_workload_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}\n        and\n          qos_workload_max_throughput_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}\n      )\n  ),\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"workload\"\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -3149,7 +3149,7 @@
             },
             {
               "exemplar": false,
-              "expr": "label_join(\n  qos_workload_max_throughput_iops{\n    datacenter=~\"$Datacenter\",\n    cluster=~\"$Cluster\",\n    workload=~\"$Workload\",\n    is_adaptive=\"Yes\"\n  },\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"workload\"\n)",
+              "expr": "label_join(\n  qos_workload_max_throughput_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"workload\"\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -3483,7 +3483,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg_over_time(\n  label_join(\n    clamp_max(\n      (\n        (\n          (qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"} * 100)\n          / (1000 * 1000)\n        )\n        / on(datacenter,cluster,workload,policy_group,volume,lun,svm,qtree,file,wid)\n        qos_workload_max_throughput_mbps{\n          datacenter=~\"$Datacenter\",\n          cluster=~\"$Cluster\",\n          workload=~\"$Workload\",\n          is_adaptive=\"Yes\"\n        }\n      ),\n      100\n    ),\n    \"unique_id\",\n    \"-\",\n    \"datacenter\",\n    \"cluster\",\n    \"workload\"\n  )[3h:]\n)",
+              "expr": "avg_over_time(\n  label_join(\n    clamp_max(\n      (\n          (\n              (qos_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"} * 100)\n            /\n              (1000 * 1000)\n          )\n        / on (datacenter, cluster, workload, policy_group, volume, lun, svm, qtree, file, wid)\n          qos_workload_max_throughput_mbps{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}\n      ),\n      100\n    ),\n    \"unique_id\",\n    \"-\",\n    \"datacenter\",\n    \"cluster\",\n    \"workload\"\n  )[3h:]\n)",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -3492,7 +3492,7 @@
             },
             {
               "exemplar": false,
-              "expr": "avg_over_time(\n  label_join(\n    (\n      qos_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\"}\n      * on(datacenter,cluster,workload,policy_group,volume,lun,svm,qtree,file,wid)\n      (\n        qos_workload_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\", is_adaptive=\"Yes\"}\n        and\n        qos_workload_max_throughput_mbps{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", workload=~\"$Workload\", is_adaptive=\"Yes\"}\n      )\n    ),\n    \"unique_id\",\n    \"-\",\n    \"datacenter\",\n    \"cluster\",\n    \"workload\"\n  )[3h:]\n)",
+              "expr": "avg_over_time(\n  label_join(\n    (\n        qos_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}\n      * on (datacenter, cluster, workload, policy_group, volume, lun, svm, qtree, file, wid)\n        (\n            qos_workload_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}\n          and\n            qos_workload_max_throughput_mbps{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}\n        )\n    ),\n    \"unique_id\",\n    \"-\",\n    \"datacenter\",\n    \"cluster\",\n    \"workload\"\n  )[3h:]\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -3502,7 +3502,7 @@
             },
             {
               "exemplar": false,
-              "expr": "label_join(\n  qos_workload_max_throughput_mbps{\n    datacenter=~\"$Datacenter\",\n    cluster=~\"$Cluster\",\n    workload=~\"$Workload\",\n    is_adaptive=\"Yes\"\n  },\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"workload\"\n)",
+              "expr": "label_join(\n  qos_workload_max_throughput_mbps{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"workload\"\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -3693,7 +3693,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"bamboo_ssd\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"bamboo_ssd\"}[3h] @ end()))",
+              "expr": "qos_read_io_type{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"bamboo_ssd\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_read_io_type{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"bamboo_ssd\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -3782,7 +3782,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"cache\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"cache\"}[3h] @ end()))",
+              "expr": "qos_read_io_type{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"cache\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_read_io_type{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"cache\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -3871,7 +3871,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"cloud\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"cloud\"}[3h] @ end()))",
+              "expr": "qos_read_io_type{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"cloud\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_read_io_type{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"cloud\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -3960,7 +3960,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"cloud_s2c\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"cloud_s2c\"}[3h] @ end()))",
+              "expr": "qos_read_io_type{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"cloud_s2c\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_read_io_type{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"cloud_s2c\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -4049,7 +4049,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"disk\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"disk\"}[3h] @ end()))",
+              "expr": "qos_read_io_type{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"disk\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_read_io_type{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"disk\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -4138,7 +4138,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"ext_cache\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"ext_cache\"}[3h] @ end()))",
+              "expr": "qos_read_io_type{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"ext_cache\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_read_io_type{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"ext_cache\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -4227,7 +4227,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"fc_miss\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"fc_miss\"}[3h] @ end()))",
+              "expr": "qos_read_io_type{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"fc_miss\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_read_io_type{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"fc_miss\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -4316,7 +4316,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"hya_cache\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"hya_cache\"}[3h] @ end()))",
+              "expr": "qos_read_io_type{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"hya_cache\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_read_io_type{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"hya_cache\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -4405,7 +4405,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"hya_hdd\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"hya_hdd\"}[3h] @ end()))",
+              "expr": "qos_read_io_type{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"hya_hdd\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_read_io_type{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"hya_hdd\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
@@ -4494,7 +4494,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"hya_non_cache\"} \n  and \ntopk($TopResources, avg_over_time(qos_read_io_type{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",workload=~\"$Workload\", metric=\"hya_non_cache\"}[3h] @ end()))",
+              "expr": "qos_read_io_type{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"hya_non_cache\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_read_io_type{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"hya_non_cache\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{cluster}} - {{workload}}",
               "refId": "A"
