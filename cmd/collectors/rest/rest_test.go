@@ -86,7 +86,7 @@ func Test_pollDataVolume(t *testing.T) {
 }
 
 func volumeEndpoints(e *EndPoint) ([]gjson.Result, time.Duration, error) {
-	path := "testdata/" + strings.ReplaceAll(e.prop.Query, "/", "-") + ".json.gz"
+	path := "testdata/" + strings.ReplaceAll(e.Prop.Query, "/", "-") + ".json.gz"
 	gson := collectors.JSONToGson(path, true)
 	return gson, 0, nil
 }

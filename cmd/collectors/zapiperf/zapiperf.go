@@ -46,6 +46,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"maps"
 	"slices"
@@ -69,7 +70,6 @@ const (
 	objWorkloadDetailVolume = "workload_detail_volume"
 	objWorkloadClass        = "user_defined|system_defined"
 	objWorkloadVolumeClass  = "autovolume"
-	BILLION                 = 1_000_000_000
 	timestampMetricName     = "timestamp"
 )
 
@@ -547,7 +547,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		// timestamp for batch instances
 		// ignore timestamp from ZAPI which is always integer
 		// we want float, since our poll interval can be a float
-		ts := float64(time.Now().UnixNano()) / BILLION
+		ts := float64(time.Now().UnixNano()) / util.BILLION
 
 		for instIndex, i := range instances.GetChildren() {
 
