@@ -342,7 +342,7 @@ func TestUnitsAndExprMatch(t *testing.T) {
 			}
 
 			for _, l := range location {
-				match := reg.MatchString(l.expr)
+				match := reg.MatchString(strings.ReplaceAll(strings.ReplaceAll(l.expr, "\n", ""), " ", ""))
 				if match {
 					if expectedGrafanaUnit == unit {
 						t.Errorf(`%s should not have unit=%s because there is a division by a number %s path=%s title="%s"`,
@@ -515,6 +515,7 @@ func doPanel(t *testing.T, pathPrefix string, key gjson.Result, value gjson.Resu
 
 	for _, targetN := range targetsSlice {
 		expr := targetN.Get("expr").ClonedString()
+		expr = strings.ReplaceAll(strings.ReplaceAll(expr, "\n", ""), " ", "")
 		matches := metricName.FindStringSubmatch(expr)
 		if len(matches) != 2 {
 			continue
@@ -523,6 +524,12 @@ func doPanel(t *testing.T, pathPrefix string, key gjson.Result, value gjson.Resu
 		if strings.Contains(expr, "count(") {
 			continue
 		}
+
+		// If the expression includes count by ignore since it is unit-less
+		if strings.Contains(expr, "countby") {
+			continue
+		}
+
 		// Filter percentages since they are unit-less
 		if strings.Contains(expr, "/") {
 			match := metricDivideMetric1.FindStringSubmatch(expr)

@@ -6717,7 +6717,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg(iscsi_lif_avg_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}) / 1000",
+              "expr": "avg(iscsi_lif_avg_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "interval": "",
               "legendFormat": "",
               "refId": "A"

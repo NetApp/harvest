@@ -598,7 +598,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(\n  sum_over_time(\n    metadata_component_count{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",name=~\"$Collector\",poller=~\"$Poller\",target=~\"$Object\",type=\"collector\"}[1m]\n  )\n)",
+          "expr": "sum(\n  sum_over_time(\n    metadata_component_count{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",name=~\"$Collector\",poller=~\"$Poller\",target=~\"$Object\",type=\"collector\"}[2m]\n  )\n)",
           "format": "time_series",
           "hide": false,
           "instant": false,
