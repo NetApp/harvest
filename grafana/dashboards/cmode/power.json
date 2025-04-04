@@ -183,7 +183,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "(sum(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(0)) + (sum(shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(datacenter,cluster,shelf) shelf_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",isEmbedded=\"No\"}) or vector(0))",
+          "expr": "(sum(environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) or vector(0))\n+\n  (\n      sum(\n          shelf_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n        * on (datacenter, cluster, shelf)\n          shelf_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",isEmbedded=\"No\"}\n      )\n    or\n      vector(0)\n  )",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -248,7 +248,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "(avg(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(0)) / ((sum(aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/1024/1024/1024/1024) / count(sum(node_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})) > 1 or max(aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}/aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}))",
+          "expr": "(avg(environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) or vector(0))\n/\n  (\n          (sum(aggr_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) / 1024 / 1024 / 1024 / 1024)\n        /\n          count(sum(node_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))\n      \u003e\n        1\n    or\n      max(\n          aggr_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n        /\n          aggr_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n      )\n  )",
           "hide": false,
           "interval": "",
           "legendFormat": "",
@@ -323,7 +323,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "max(environment_sensor_max_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "max(environment_sensor_max_temperature{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
           "format": "time_series",
           "instant": false,
           "interval": "",
@@ -382,7 +382,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "max(shelf_max_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "max(shelf_max_fan_speed{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -441,7 +441,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(node_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) / (avg(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(1))",
+          "expr": "avg(node_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n/\n  (avg(environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) or vector(1))",
           "hide": false,
           "interval": "",
           "legendFormat": "",
@@ -516,7 +516,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "max(shelf_max_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "max(shelf_max_temperature{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
           "format": "time_series",
           "instant": false,
           "interval": "",
@@ -576,7 +576,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "max(environment_sensor_max_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "max(environment_sensor_max_fan_speed{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -701,7 +701,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "sum(environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Node",
@@ -709,7 +709,7 @@
         },
         {
           "exemplar": false,
-          "expr": "sum(shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "sum(shelf_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "Shelf",
@@ -717,7 +717,7 @@
         },
         {
           "exemplar": false,
-          "expr": "(sum(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(0)) + (sum(shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(datacenter,cluster,shelf) shelf_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",isEmbedded=\"No\"}) or vector(0))",
+          "expr": "(sum(environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) or vector(0))\n+\n  (\n      sum(\n          shelf_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n        * on (datacenter, cluster, shelf)\n          shelf_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",isEmbedded=\"No\"}\n      )\n    or\n      vector(0)\n  )",
           "hide": false,
           "interval": "",
           "legendFormat": "Total",
@@ -845,7 +845,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(avg_over_time(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[1h]))",
+          "expr": "sum(avg_over_time(environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[1h]))",
           "hide": false,
           "interval": "",
           "legendFormat": "Node",
@@ -853,7 +853,7 @@
         },
         {
           "exemplar": false,
-          "expr": "sum(avg_over_time(shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[1h]))",
+          "expr": "sum(avg_over_time(shelf_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[1h]))",
           "hide": false,
           "interval": "",
           "legendFormat": "Shelf",
@@ -861,7 +861,7 @@
         },
         {
           "exemplar": false,
-          "expr": "sum(\n  avg_over_time(\n    environment_sensor_power{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}[1h]\n  )\n) + sum(\n  avg_over_time(\n    shelf_power{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}[1h]\n  ) * on(datacenter, cluster, shelf) shelf_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", isEmbedded=\"No\"}\n)",
+          "expr": "sum(avg_over_time(environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[1h]))\n+\n  sum(\n      avg_over_time(shelf_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[1h])\n    * on (datacenter, cluster, shelf)\n      shelf_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",isEmbedded=\"No\"}\n  )",
           "hide": false,
           "interval": "",
           "legendFormat": "Total",
@@ -952,7 +952,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} \n  and \ntopk($TopResources, avg_over_time(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end()))",
+          "expr": "environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n  )",
           "hide": false,
           "interval": "",
           "legendFormat": "{{node}}",
@@ -1043,7 +1043,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "environment_sensor_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} \n  and \ntopk($TopResources, avg_over_time(environment_sensor_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end()))",
+          "expr": "environment_sensor_average_temperature{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      environment_sensor_average_temperature{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end()\n    )\n  )",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -1133,7 +1133,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} \n  and \ntopk($TopResources, avg_over_time(shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end()))",
+          "expr": "shelf_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\nand\n  topk($TopResources, avg_over_time(shelf_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end()))",
           "hide": false,
           "interval": "",
           "legendFormat": "{{shelf}} ({{cluster}})",
@@ -1224,7 +1224,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} \n  and \ntopk($TopResources, avg_over_time(shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end()))",
+          "expr": "shelf_average_temperature{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(shelf_average_temperature{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n  )",
           "hide": false,
           "interval": "",
           "legendFormat": "{{shelf}} ({{cluster}})",
@@ -1315,7 +1315,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "aggr_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} \n  and \ntopk($TopResources, avg_over_time(aggr_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end()))",
+          "expr": "aggr_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\nand\n  topk($TopResources, avg_over_time(aggr_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end()))",
           "hide": false,
           "interval": "",
           "legendFormat": "{{cluster}} - {{aggr}}",
@@ -1406,7 +1406,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(aggr_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (derivedType,cluster)",
+          "expr": "sum by (derivedType, cluster) (aggr_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "{{cluster}} - {{derivedType}}",
@@ -1498,7 +1498,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "(\n    sum by (datacenter,cluster, aggr) (aggr_disk_user_reads{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"})\n)\nand on(datacenter,cluster, aggr)\ntopk(\n    $TopResources,\n    sum by (datacenter,cluster, aggr) (\n        avg_over_time(aggr_disk_user_reads{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}[3h])\n    )\n)",
+          "expr": "(\n    sum by (datacenter, cluster, aggr) (\n      aggr_disk_user_reads{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n    )\n  )\nand on (datacenter, cluster, aggr)\n  topk(\n    $TopResources,\n    sum by (datacenter, cluster, aggr) (\n      avg_over_time(aggr_disk_user_reads{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h])\n    )\n  )",
           "hide": false,
           "interval": "",
           "legendFormat": "Reads  - {{cluster}} - {{aggr}}",
@@ -1506,7 +1506,7 @@
         },
         {
           "exemplar": false,
-          "expr": "(\n    sum by (datacenter,cluster, aggr) (aggr_disk_user_writes{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"})\n)\nand on(datacenter,cluster, aggr)\ntopk(\n    $TopResources,\n    sum by (datacenter,cluster, aggr) (\n        avg_over_time(aggr_disk_user_writes{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}[3h])\n    )\n)",
+          "expr": "(\n    sum by (datacenter, cluster, aggr) (\n      aggr_disk_user_writes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n    )\n  )\nand on (datacenter, cluster, aggr)\n  topk(\n    $TopResources,\n    sum by (datacenter, cluster, aggr) (\n      avg_over_time(aggr_disk_user_writes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h])\n    )\n  )",
           "hide": false,
           "interval": "",
           "legendFormat": "Writes  - {{cluster}} - {{aggr}}",
@@ -1879,7 +1879,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "aggr_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "aggr_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1889,7 +1889,7 @@
             },
             {
               "exemplar": false,
-              "expr": "sum(aggr_disk_total_transfers{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (aggr,cluster,node)",
+              "expr": "sum by (aggr, cluster, node) (\n  aggr_disk_total_transfers{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1899,7 +1899,7 @@
             },
             {
               "exemplar": false,
-              "expr": "sum(aggr_disk_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (aggr,cluster,node)",
+              "expr": "sum by (aggr, cluster, node) (aggr_disk_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -2065,7 +2065,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "environment_sensor_threshold_value{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",threshold_state!=\"normal\"}",
+              "expr": "environment_sensor_threshold_value{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",threshold_state!=\"normal\"}",
               "format": "table",
               "instant": false,
               "interval": "",
@@ -2243,7 +2243,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "fru_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "fru_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -2726,7 +2726,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "node_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "node_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -2735,7 +2735,7 @@
             },
             {
               "exemplar": false,
-              "expr": "environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -2745,7 +2745,7 @@
             },
             {
               "exemplar": false,
-              "expr": "environment_sensor_average_ambient_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "environment_sensor_average_ambient_temperature{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -2755,7 +2755,7 @@
             },
             {
               "exemplar": false,
-              "expr": "environment_sensor_min_ambient_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "environment_sensor_min_ambient_temperature{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -2765,7 +2765,7 @@
             },
             {
               "exemplar": false,
-              "expr": "environment_sensor_max_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "environment_sensor_max_temperature{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -2775,7 +2775,7 @@
             },
             {
               "exemplar": false,
-              "expr": "environment_sensor_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "environment_sensor_average_temperature{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -2785,7 +2785,7 @@
             },
             {
               "exemplar": false,
-              "expr": "environment_sensor_min_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "environment_sensor_min_temperature{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -2795,7 +2795,7 @@
             },
             {
               "exemplar": false,
-              "expr": "environment_sensor_max_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "environment_sensor_max_fan_speed{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -2805,7 +2805,7 @@
             },
             {
               "exemplar": false,
-              "expr": "environment_sensor_average_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "environment_sensor_average_fan_speed{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -2815,7 +2815,7 @@
             },
             {
               "exemplar": false,
-              "expr": "environment_sensor_min_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "environment_sensor_min_fan_speed{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -3400,7 +3400,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "shelf_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "shelf_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -3409,7 +3409,7 @@
             },
             {
               "exemplar": false,
-              "expr": "shelf_disk_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "shelf_disk_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -3419,7 +3419,7 @@
             },
             {
               "exemplar": false,
-              "expr": "shelf_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "shelf_new_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -3429,7 +3429,7 @@
             },
             {
               "exemplar": false,
-              "expr": "shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(datacenter,cluster,shelf) shelf_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",isEmbedded=\"No\"}",
+              "expr": "shelf_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n* on (datacenter, cluster, shelf)\n  shelf_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",isEmbedded=\"No\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -3439,7 +3439,7 @@
             },
             {
               "exemplar": false,
-              "expr": "shelf_average_ambient_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "shelf_average_ambient_temperature{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -3449,7 +3449,7 @@
             },
             {
               "exemplar": false,
-              "expr": "shelf_min_ambient_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "shelf_min_ambient_temperature{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -3459,7 +3459,7 @@
             },
             {
               "exemplar": false,
-              "expr": "shelf_max_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "shelf_max_temperature{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -3469,7 +3469,7 @@
             },
             {
               "exemplar": false,
-              "expr": "shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "shelf_average_temperature{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -3479,7 +3479,7 @@
             },
             {
               "exemplar": false,
-              "expr": "shelf_min_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "shelf_min_temperature{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -3489,7 +3489,7 @@
             },
             {
               "exemplar": false,
-              "expr": "shelf_max_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "shelf_max_fan_speed{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -3499,7 +3499,7 @@
             },
             {
               "exemplar": false,
-              "expr": "shelf_average_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "shelf_average_fan_speed{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -3509,7 +3509,7 @@
             },
             {
               "exemplar": false,
-              "expr": "shelf_min_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "shelf_min_fan_speed{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "hide": false,
               "instant": true,

@@ -184,7 +184,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "qtree_nfs_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",qtree=~\"$Qtree\"} \n  and \ntopk($TopResources, avg_over_time(qtree_nfs_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",qtree=~\"$Qtree\"}[3h] @ end()))",
+          "expr": "qtree_nfs_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qtree_nfs_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n    )\n  )",
           "interval": "",
           "legendFormat": "{{svm}} - {{volume}} - {{qtree}}",
           "refId": "A"
@@ -274,7 +274,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "qtree_cifs_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",qtree=~\"$Qtree\"} \n  and \ntopk($TopResources, avg_over_time(qtree_cifs_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",qtree=~\"$Qtree\"}[3h] @ end()))",
+          "expr": "qtree_cifs_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qtree_cifs_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n    )\n  )",
           "format": "time_series",
           "instant": false,
           "interval": "",
@@ -366,7 +366,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "qtree_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",qtree=~\"$Qtree\"} \n  and \ntopk($TopResources, avg_over_time(qtree_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",qtree=~\"$Qtree\"}[3h] @ end()))",
+          "expr": "qtree_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qtree_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n    )\n  )",
           "format": "time_series",
           "instant": false,
           "interval": "",
@@ -458,7 +458,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "qtree_internal_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",qtree=~\"$Qtree\"} \n  and \ntopk($TopResources, avg_over_time(qtree_internal_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",qtree=~\"$Qtree\"}[3h] @ end()))",
+          "expr": "qtree_internal_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qtree_internal_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n    )\n  )",
           "format": "time_series",
           "instant": false,
           "interval": "",
@@ -560,7 +560,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "quota_disk_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",qtree=~\"$Qtree\"} \n  and \ntopk($TopResources, avg_over_time(quota_disk_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",qtree=~\"$Qtree\"}[3h] @ end()))",
+              "expr": "quota_disk_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      quota_disk_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - {{qtree}}",
               "refId": "A"
@@ -648,7 +648,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "quota_files_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",qtree=~\"$Qtree\"} \n  and \ntopk($TopResources, avg_over_time(quota_files_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",qtree=~\"$Qtree\"}[3h] @ end()))",
+              "expr": "quota_files_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      quota_files_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - {{qtree}}",
               "refId": "A"
@@ -736,7 +736,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "quota_disk_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",qtree=~\"$Qtree\"} \n  and \ntopk($TopResources, avg_over_time(quota_disk_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",qtree=~\"$Qtree\"}[3h] @ end()))",
+              "expr": "quota_disk_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      quota_disk_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - {{qtree}}",
               "refId": "A"

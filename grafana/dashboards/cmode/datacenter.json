@@ -158,7 +158,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(aggr_space_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "sum(aggr_space_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -218,7 +218,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "100*sum(aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/sum(aggr_space_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "100 * sum(aggr_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n/\n  sum(aggr_space_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -278,7 +278,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(count(node_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+          "expr": "sum(count by (cluster) (node_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -288,7 +288,7 @@
         },
         {
           "exemplar": false,
-          "expr": "sum(count(svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+          "expr": "sum(count by (cluster) (svm_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -298,7 +298,7 @@
         },
         {
           "exemplar": false,
-          "expr": "sum(count(aggr_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+          "expr": "sum(count by (cluster) (aggr_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -308,7 +308,7 @@
         },
         {
           "exemplar": false,
-          "expr": "sum(count(lun_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+          "expr": "sum(count by (cluster) (lun_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -318,7 +318,7 @@
         },
         {
           "exemplar": false,
-          "expr": "sum(count(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+          "expr": "sum(count by (cluster) (volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -328,7 +328,7 @@
         },
         {
           "exemplar": false,
-          "expr": "sum(count(namespace_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+          "expr": "sum(count by (cluster) (namespace_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -338,7 +338,7 @@
         },
         {
           "exemplar": false,
-          "expr": "sum(count(ontaps3_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+          "expr": "sum(count by (cluster) (ontaps3_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -348,7 +348,7 @@
         },
         {
           "exemplar": false,
-          "expr": "sum(count(disk_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+          "expr": "sum(count by (cluster) (disk_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -358,7 +358,7 @@
         },
         {
           "exemplar": false,
-          "expr": "sum(count(snapmirror_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+          "expr": "sum(count by (cluster) (snapmirror_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -368,7 +368,7 @@
         },
         {
           "exemplar": false,
-          "expr": "sum(count(lif_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+          "expr": "sum(count by (cluster) (lif_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -378,7 +378,7 @@
         },
         {
           "exemplar": false,
-          "expr": "sum(count(fcp_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+          "expr": "sum(count by (cluster) (fcp_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -388,7 +388,7 @@
         },
         {
           "exemplar": false,
-          "expr": "sum(count(qtree_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+          "expr": "sum(count by (cluster) (qtree_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -398,7 +398,7 @@
         },
         {
           "exemplar": false,
-          "expr": "sum(count(quota_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+          "expr": "sum(count by (cluster) (quota_disk_limit{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
           "hide": false,
           "interval": "",
           "legendFormat": "Quotas",
@@ -406,7 +406,7 @@
         },
         {
           "exemplar": false,
-          "expr": "sum(count(qos_workload_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+          "expr": "sum(count by (cluster) (qos_workload_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
           "hide": false,
           "interval": "",
           "legendFormat": "Workloads",
@@ -414,7 +414,7 @@
         },
         {
           "exemplar": false,
-          "expr": "sum(count(shelf_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster))",
+          "expr": "sum(count by (cluster) (shelf_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
           "hide": false,
           "interval": "",
           "legendFormat": "Shelves",
@@ -494,7 +494,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(aggr_space_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "sum(aggr_space_available{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -552,7 +552,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "sum(aggr_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -640,7 +640,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum by (cluster) (aggr_space_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})\nand\ntopk($TopResources, sum by (cluster) (avg_over_time(aggr_space_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end())))",
+          "expr": "sum by (cluster) (aggr_space_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    sum by (cluster) (\n      avg_over_time(aggr_space_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
           "interval": "",
           "legendFormat": "{{cluster}}",
           "refId": "A"
@@ -728,7 +728,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum by (cluster) (aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})\nand\ntopk($TopResources, sum by (cluster) (avg_over_time(aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end())))",
+          "expr": "sum by (cluster) (aggr_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    sum by (cluster) (\n      avg_over_time(aggr_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
           "interval": "",
           "legendFormat": "{{cluster}}",
           "refId": "A"
@@ -816,7 +816,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum by (cluster) (aggr_space_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})\nand\ntopk($TopResources, sum by (cluster) (avg_over_time(aggr_space_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end())))",
+          "expr": "sum by (cluster) (aggr_space_available{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    sum by (cluster) (\n      avg_over_time(aggr_space_available{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
           "interval": "",
           "legendFormat": "{{cluster}}",
           "refId": "A"
@@ -906,7 +906,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "(\n    100 * sum by (datacenter,cluster) (aggr_space_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}) \n    / on(datacenter,cluster) \n    sum by (datacenter,cluster) (aggr_space_total{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"})\n)\nand on(datacenter,cluster)\ntopk(\n  $TopResources,\n  (\n    100 * sum by (datacenter,cluster) (\n      avg_over_time(aggr_space_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}[3h] @ end())\n    )\n    / on(datacenter,cluster)\n    sum by (datacenter,cluster) (\n      avg_over_time(aggr_space_total{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}[3h] @ end())\n    )\n  )\n)",
+          "expr": "(\n      100 * sum by (datacenter, cluster) (aggr_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n    / on (datacenter, cluster)\n      sum by (datacenter, cluster) (aggr_space_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n  )\nand on (datacenter, cluster)\n  topk(\n    $TopResources,\n    (\n          100\n        *\n          sum by (datacenter, cluster) (\n            avg_over_time(aggr_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n          )\n      / on (datacenter, cluster)\n        sum by (datacenter, cluster) (\n          avg_over_time(aggr_space_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n        )\n    )\n  )",
           "interval": "",
           "legendFormat": "{{cluster}}",
           "refId": "A"
@@ -1051,7 +1051,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "cluster_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "cluster_new_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1291,7 +1291,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "node_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "node_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1301,7 +1301,7 @@
             },
             {
               "exemplar": false,
-              "expr": "node_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "node_new_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1448,7 +1448,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "count(health_disk_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"} == 1) or vector(0)",
+              "expr": "count(health_disk_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"error\"} == 1)\nor\n  vector(0)",
               "instant": true,
               "interval": "",
               "legendFormat": "Broken Disk",
@@ -1456,7 +1456,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count(health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"} == 1) or vector(0)",
+              "expr": "count(health_shelf_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"error\"} == 1)\nor\n  vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1465,7 +1465,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count(health_node_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"} == 1) or vector(0)",
+              "expr": "count(health_node_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"error\"} == 1)\nor\n  vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1474,7 +1474,7 @@
             },
             {
               "exemplar": false,
-              "expr": "(count(health_network_fc_port_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"} == 1) or vector(0))\n+\n(count(health_network_ethernet_port_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"} == 1) or vector(0))",
+              "expr": "(\n      count(\n        health_network_fc_port_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"error\"} == 1\n      )\n    or\n      vector(0)\n  )\n+\n  (\n      count(\n          health_network_ethernet_port_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"error\"}\n        ==\n          1\n      )\n    or\n      vector(0)\n  )",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1483,7 +1483,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count(health_license_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"} == 1) or vector(0)",
+              "expr": "count(health_license_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"error\"} == 1)\nor\n  vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1492,7 +1492,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count(health_ha_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"} == 1) or vector(0)",
+              "expr": "count(health_ha_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"error\"} == 1)\nor\n  vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1501,7 +1501,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count(environment_sensor_threshold_value{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",threshold_state!=\"normal\"} == 1) or vector(0)",
+              "expr": "count(\n      environment_sensor_threshold_value{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",threshold_state!=\"normal\"}\n    ==\n      1\n  )\nor\n  vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1599,7 +1599,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "count(health_disk_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"} == 1) or vector(0)",
+              "expr": "count(health_disk_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"} == 1)\nor\n  vector(0)",
               "instant": true,
               "interval": "",
               "legendFormat": "Unassigned Disk",
@@ -1607,7 +1607,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count(health_shelf_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"} == 1) or vector(0)",
+              "expr": "count(health_shelf_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"} == 1)\nor\n  vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1616,7 +1616,7 @@
             },
             {
               "exemplar": false,
-              "expr": "(count(last_over_time(health_support_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"}[24h]) == 1) or vector(0))",
+              "expr": "(\n    count(\n        last_over_time(\n          health_support_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"}[1d]\n        )\n      ==\n        1\n    )\n  or\n    vector(0)\n)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1625,7 +1625,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count(health_lif_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"} == 1) or vector(0)",
+              "expr": "count(health_lif_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"} == 1)\nor\n  vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1634,7 +1634,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count(health_volume_move_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"warning\"} == 1) or vector(0)",
+              "expr": "count(\n    health_volume_move_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"} == 1\n  )\nor\n  vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1643,7 +1643,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count(health_volume_ransomware_alerts{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"error\"} == 1) or vector(0)",
+              "expr": "count(\n    health_volume_ransomware_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"error\"} == 1\n  )\nor\n  vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -1732,7 +1732,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "count(last_over_time(ems_events{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",severity=\"emergency\"}[$__range]) == 1) by (message)",
+              "expr": "count by (message) (\n    last_over_time(\n      ems_events{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"emergency\"}[10d6h54m48s]\n    )\n  ==\n    1\n)",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1854,7 +1854,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "max by (cluster) (volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})\nand\ntopk($TopResources, max by (cluster) (avg_over_time(volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end())))",
+              "expr": "max by (cluster) (volume_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    max by (cluster) (\n      avg_over_time(volume_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -1946,7 +1946,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})\nand\ntopk($TopResources, sum by (cluster) (avg_over_time(volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end())))",
+              "expr": "sum by (cluster) (volume_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    sum by (cluster) (\n      avg_over_time(volume_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -2039,7 +2039,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})\nand\ntopk($TopResources, sum by (cluster) (avg_over_time(volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end())))",
+              "expr": "sum by (cluster) (volume_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    sum by (cluster) (\n      avg_over_time(volume_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -2133,7 +2133,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (cluster) (node_cpu_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})\nand\ntopk($TopResources, avg by (cluster) (avg_over_time(node_cpu_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end())))",
+              "expr": "avg by (cluster) (node_cpu_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    avg by (cluster) (\n      avg_over_time(node_cpu_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
               "interval": "",
               "legendFormat": "{{cluster}} ",
               "refId": "A"
@@ -2227,7 +2227,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (cluster) (node_avg_processor_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})\nand\ntopk($TopResources, avg by (cluster) (avg_over_time(node_avg_processor_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end())))",
+              "expr": "avg by (cluster) (node_avg_processor_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    avg by (cluster) (\n      avg_over_time(node_avg_processor_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -2319,7 +2319,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(sum(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(0)) + (sum(shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} * on(datacenter,cluster,shelf) shelf_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",isEmbedded=\"No\"}) or vector(0))",
+              "expr": "(sum(environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) or vector(0))\n+\n  (\n      sum(\n          shelf_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n        * on (datacenter, cluster, shelf)\n          shelf_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",isEmbedded=\"No\"}\n      )\n    or\n      vector(0)\n  )",
               "format": "time_series",
               "hide": false,
               "instant": false,
@@ -2384,7 +2384,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(avg(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(0)) / ((sum(aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/1024/1024/1024/1024) / count(sum(node_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})) > 1 or max(aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}/aggr_space_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}))",
+              "expr": "(avg(environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) or vector(0))\n/\n  (\n          (sum(aggr_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) / 1024 / 1024 / 1024 / 1024)\n        /\n          count(sum(node_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))\n      \u003e\n        1\n    or\n      max(\n          aggr_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n        /\n          aggr_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n      )\n  )",
               "hide": false,
               "interval": "",
               "legendFormat": "",
@@ -2459,7 +2459,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "max(environment_sensor_max_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "max(environment_sensor_max_temperature{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "format": "time_series",
               "instant": false,
               "interval": "",
@@ -2518,7 +2518,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "max(shelf_max_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "max(shelf_max_fan_speed{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "interval": "",
               "legendFormat": "",
               "refId": "A"
@@ -2577,7 +2577,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg(node_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) / (avg(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(1))",
+              "expr": "avg(node_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n/\n  (avg(environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) or vector(1))",
               "hide": false,
               "interval": "",
               "legendFormat": "",
@@ -2652,7 +2652,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "max(shelf_max_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "max(shelf_max_temperature{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "format": "time_series",
               "instant": false,
               "interval": "",
@@ -2712,7 +2712,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "max(environment_sensor_max_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "max(environment_sensor_max_fan_speed{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "interval": "",
               "legendFormat": "",
               "refId": "A"
@@ -2837,7 +2837,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum(environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "Node",
@@ -2845,7 +2845,7 @@
             },
             {
               "exemplar": false,
-              "expr": "sum(shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum(shelf_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "Shelf",
@@ -2853,7 +2853,7 @@
             },
             {
               "exemplar": false,
-              "expr": "(sum(environment_sensor_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(0)) + (sum(shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(0))",
+              "expr": "(sum(environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) or vector(0))\n+\n  (sum(shelf_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) or vector(0))",
               "hide": false,
               "interval": "",
               "legendFormat": "Total",
@@ -2980,7 +2980,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "count(volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_policy_labels{})) OR on() vector(0)",
+              "expr": "count(\n      volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\",volume!~\"MDV.*\"}\n    * on (snapshot_policy) group_left ()\n      group by (snapshot_policy) (snapshot_policy_labels)\n  )\nor on ()\n  vector(0)",
               "instant": true,
               "interval": "",
               "legendFormat": "Volumes protected",
@@ -2988,7 +2988,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count((volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",snapshot_policy=~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_policy_labels{}))) OR on() vector(0)",
+              "expr": "count(\n    (\n        volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy=~\"none.*\",volume!~\"MDV.*\"}\n      * on (snapshot_policy) group_left ()\n        group by (snapshot_policy) (snapshot_policy_labels)\n    )\n  )\nor on ()\n  vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -3083,7 +3083,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "count(volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_policy_labels{}) * on (volume, svm, cluster) group_right() ( volume_snapshot_reserve_size{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"} >= 0 and volume_snapshots_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"} >= 0 and volume_snapshots_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"} > volume_snapshot_reserve_size{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"})) OR on() vector(0)",
+              "expr": "count(\n        volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\"}\n      * on (snapshot_policy) group_left ()\n        group by (snapshot_policy) (snapshot_policy_labels)\n    * on (volume, svm, cluster) group_right ()\n      (\n            volume_snapshot_reserve_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e= 0\n          and\n            volume_snapshots_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e= 0\n        and\n            volume_snapshots_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n          \u003e\n            volume_snapshot_reserve_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n      )\n  )\nor on ()\n  vector(0)",
               "instant": true,
               "interval": "",
               "legendFormat": "Volumes breached",
@@ -3091,7 +3091,7 @@
             },
             {
               "exemplar": false,
-              "expr": "(count((volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_policy_labels{})) * on (volume, svm, cluster) group_right() (volume_snapshot_reserve_size{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"} >= 0 and volume_snapshots_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"} >= 0 and volume_snapshots_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"} <= volume_snapshot_reserve_size{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"})) OR on() vector(0)) + (count(volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_policy_labels{}) * on (volume, svm, cluster) group_right() ( volume_snapshot_reserve_size{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"} >= 0 and volume_snapshots_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"} == 0)) OR on() vector(0))",
+              "expr": "(\n      count(\n          (\n              volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\"}\n            * on (snapshot_policy) group_left ()\n              group by (snapshot_policy) (snapshot_policy_labels)\n          )\n        * on (volume, svm, cluster) group_right ()\n          (\n                volume_snapshot_reserve_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e= 0\n              and\n                volume_snapshots_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e= 0\n            and\n                volume_snapshots_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n              \u003c=\n                volume_snapshot_reserve_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n          )\n      )\n    or on ()\n      vector(0)\n  )\n+\n  (\n      count(\n            volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\"}\n          * on (snapshot_policy) group_left ()\n            group by (snapshot_policy) (snapshot_policy_labels)\n        * on (volume, svm, cluster) group_right ()\n          (\n              volume_snapshot_reserve_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e= 0\n            and\n              volume_snapshots_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} == 0\n          )\n      )\n    or on ()\n      vector(0)\n  )",
               "instant": true,
               "interval": "",
               "legendFormat": "Volumes not breached",
@@ -3185,7 +3185,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "count((volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_policy_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})) * on (volume,svm,cluster) (volume_snapshot_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} > 0 and volume_snapshot_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} < 10)) OR on() vector(0)",
+              "expr": "count(\n      (\n          volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\",volume!~\"MDV.*\"}\n        * on (snapshot_policy) group_left ()\n          group by (snapshot_policy) (snapshot_policy_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n      )\n    * on (volume, svm, cluster)\n      (\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e 0\n        and\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003c 10\n      )\n  )\nor on ()\n  vector(0)",
               "instant": true,
               "interval": "",
               "legendFormat": " <10 Copies ",
@@ -3193,7 +3193,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count((volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_policy_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})) * on (volume,svm,cluster) (volume_snapshot_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} >= 10 and volume_snapshot_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} <= 100)) OR on() vector(0)",
+              "expr": "count(\n      (\n          volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\",volume!~\"MDV.*\"}\n        * on (snapshot_policy) group_left ()\n          group by (snapshot_policy) (snapshot_policy_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n      )\n    * on (volume, svm, cluster)\n      (\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e= 10\n        and\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003c= 100\n      )\n  )\nor on ()\n  vector(0)",
               "instant": true,
               "interval": "",
               "legendFormat": "10-100 Copies",
@@ -3201,7 +3201,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count((volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_policy_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})) * on (volume,svm,cluster) (volume_snapshot_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} > 100 and volume_snapshot_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} <= 500)) OR on() vector(0)",
+              "expr": "count(\n      (\n          volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\",volume!~\"MDV.*\"}\n        * on (snapshot_policy) group_left ()\n          group by (snapshot_policy) (snapshot_policy_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n      )\n    * on (volume, svm, cluster)\n      (\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e 100\n        and\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003c= 500\n      )\n  )\nor on ()\n  vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -3210,7 +3210,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count((volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",snapshot_policy!=\"\", snapshot_policy!~\"none.*\", volume!~\"MDV.*\"}  * on (snapshot_policy) group_left () group by (snapshot_policy) (snapshot_policy_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})) * on (volume,svm,cluster) (volume_snapshot_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} > 500)) OR on() vector(0)",
+              "expr": "count(\n      (\n          volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\",volume!~\"MDV.*\"}\n        * on (snapshot_policy) group_left ()\n          group by (snapshot_policy) (snapshot_policy_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n      )\n    * on (volume, svm, cluster)\n      (volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e 500)\n  )\nor on ()\n  vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -3284,7 +3284,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(aggr_logical_used_wo_snapshots_flexclones{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/sum(aggr_physical_used_wo_snapshots_flexclones{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum(aggr_logical_used_wo_snapshots_flexclones{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n/\n  sum(aggr_physical_used_wo_snapshots_flexclones{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "interval": "",
               "legendFormat": "",
               "refId": "A"
@@ -3340,7 +3340,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(aggr_logical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/sum(aggr_physical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum(aggr_logical_used_wo_snapshots{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n/\n  sum(aggr_physical_used_wo_snapshots{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "interval": "",
               "legendFormat": "",
               "refId": "A"
@@ -3396,7 +3396,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(aggr_total_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/sum(aggr_total_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum(aggr_total_logical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n/\n  sum(aggr_total_physical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "interval": "",
               "legendFormat": "",
               "refId": "A"
@@ -3480,7 +3480,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (aggr_logical_used_wo_snapshots_flexclones{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})\nand\ntopk($TopResources, sum by (cluster) (avg_over_time(aggr_logical_used_wo_snapshots_flexclones{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end())))",
+              "expr": "sum by (cluster) (\n    aggr_logical_used_wo_snapshots_flexclones{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n  )\nand\n  topk(\n    $TopResources,\n    sum by (cluster) (\n      avg_over_time(\n        aggr_logical_used_wo_snapshots_flexclones{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -3564,7 +3564,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (aggr_physical_used_wo_snapshots_flexclones{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})\nand\ntopk($TopResources, sum by (cluster) (avg_over_time(aggr_physical_used_wo_snapshots_flexclones{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end())))",
+              "expr": "sum by (cluster) (\n    aggr_physical_used_wo_snapshots_flexclones{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n  )\nand\n  topk(\n    $TopResources,\n    sum by (cluster) (\n      avg_over_time(\n        aggr_physical_used_wo_snapshots_flexclones{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -3648,7 +3648,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (aggr_logical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})\nand\ntopk($TopResources, sum by (cluster) (avg_over_time(aggr_logical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end())))",
+              "expr": "sum by (cluster) (aggr_logical_used_wo_snapshots{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    sum by (cluster) (\n      avg_over_time(\n        aggr_logical_used_wo_snapshots{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -3732,7 +3732,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (aggr_physical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})\nand\ntopk($TopResources, sum by (cluster) (avg_over_time(aggr_physical_used_wo_snapshots{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end())))",
+              "expr": "sum by (cluster) (aggr_physical_used_wo_snapshots{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    sum by (cluster) (\n      avg_over_time(\n        aggr_physical_used_wo_snapshots{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -3816,7 +3816,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (aggr_total_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})\nand\ntopk($TopResources, sum by (cluster) (avg_over_time(aggr_total_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end())))",
+              "expr": "sum by (cluster) (aggr_total_logical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    sum by (cluster) (\n      avg_over_time(aggr_total_logical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -3900,7 +3900,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (aggr_space_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})\nand\ntopk($TopResources, sum by (cluster) (avg_over_time(aggr_space_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end())))",
+              "expr": "sum by (cluster) (aggr_space_physical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    sum by (cluster) (\n      avg_over_time(aggr_space_physical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"

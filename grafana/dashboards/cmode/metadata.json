@@ -144,7 +144,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "count (count by (datacenter) (metadata_target_status{hostname=~\"$Hostname\",datacenter!=\"\"}))",
+          "expr": "count(count by (datacenter) (metadata_target_status{datacenter!=\"\",hostname=~\"$Hostname\"}))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -216,7 +216,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "count (count by (poller) (poller_status{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\"}))",
+          "expr": "count(\n  count by (poller) (poller_status{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\"})\n)",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -289,7 +289,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "count (count by (poller, target) (metadata_component_status{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",name=~\"$Collector\",target=~\"$Object\",type=\"collector\"}))",
+          "expr": "count(\n  count by (poller, target) (\n    metadata_component_status{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",name=~\"$Collector\",poller=~\"$Poller\",target=~\"$Object\",type=\"collector\"}\n  )\n)",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -378,7 +378,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "count (count by (poller, name, target) (metadata_component_status{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",name=~\"$Collector\",target=~\"$Object\",type=\"collector\"} == 2))",
+          "expr": "count(\n  count by (poller, name, target) (\n      metadata_component_status{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",name=~\"$Collector\",poller=~\"$Poller\",target=~\"$Object\",type=\"collector\"}\n    ==\n      2\n  )\n)",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -453,7 +453,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "count (count by (poller, target) (metadata_component_status{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",type=\"exporter\"}))",
+          "expr": "count(\n  count by (poller, target) (\n    metadata_component_status{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",type=\"exporter\"}\n  )\n)",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -525,7 +525,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(sum_over_time(metadata_component_count{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",name=~\"$Collector\",target=~\"$Object\",type=\"collector\"}[1d:60s]))",
+          "expr": "sum(\n  sum_over_time(\n    metadata_component_count{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",name=~\"$Collector\",poller=~\"$Poller\",target=~\"$Object\",type=\"collector\"}[1d:1m]\n  )\n)",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -598,7 +598,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(sum_over_time(metadata_component_count{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",name=~\"$Collector\",target=~\"$Object\",type=\"collector\"}[60s]))",
+          "expr": "sum(\n  sum_over_time(\n    metadata_component_count{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",name=~\"$Collector\",poller=~\"$Poller\",target=~\"$Object\",type=\"collector\"}[2m]\n  )\n)",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -671,7 +671,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(sum_over_time(metadata_component_count{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",type=\"exporter\"}[2m]))",
+          "expr": "sum(\n  sum_over_time(\n    metadata_component_count{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",type=\"exporter\"}[2m]\n  )\n)",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -1374,7 +1374,7 @@
           "refId": "A"
         },
         {
-          "expr": "poller_memory{metric=\"rss\",datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\"}",
+          "expr": "poller_memory{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",metric=\"rss\",poller=~\"$Poller\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1679,7 +1679,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "metadata_component_status{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",name=~\"$Collector\",type=\"collector\"}",
+          "expr": "metadata_component_status{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",name=~\"$Collector\",poller=~\"$Poller\",type=\"collector\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -2072,7 +2072,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg by (poller) (metadata_collector_poll_time{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\",object=~\"$Object\",collector=~\"$Collector\"})",
+          "expr": "avg by (poller) (\n  metadata_collector_poll_time{collector=~\"$Collector\",datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",object=~\"$Object\",poller=~\"$Poller\",task=\"data\"}\n)",
           "hide": false,
           "interval": "",
           "legendFormat": "{{poller}}",
@@ -2161,7 +2161,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "avg by (collector) (metadata_collector_poll_time{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\",object=~\"$Object\",collector=~\"$Collector\"})",
+          "expr": "avg by (collector) (\n  metadata_collector_poll_time{collector=~\"$Collector\",datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",object=~\"$Object\",poller=~\"$Poller\",task=\"data\"}\n)",
           "hide": false,
           "interval": "",
           "legendFormat": "{{collector}}",
@@ -2250,7 +2250,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "sum by (exporter) (metadata_exporter_time{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\"})",
+          "expr": "sum by (exporter) (\n  metadata_exporter_time{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\"}\n)",
           "hide": false,
           "interval": "",
           "legendFormat": "{{exporter}}",
@@ -2335,7 +2335,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(poller_memory{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",metric=\"rss\"}) without (pid)",
+          "expr": "sum without (pid) (\n  poller_memory{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",metric=\"rss\",poller=~\"$Poller\"}\n)",
           "format": "time_series",
           "interval": "",
           "legendFormat": "{{poller}}",
@@ -2436,7 +2436,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "avg by (collector, object) (metadata_collector_poll_time{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\",object=~\"$Object\",collector=~\"$Collector\"})",
+              "expr": "avg by (collector, object) (\n  metadata_collector_poll_time{collector=~\"$Collector\",datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",object=~\"$Object\",poller=~\"$Poller\",task=\"data\"}\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{collector}} - {{object}}",
@@ -2528,7 +2528,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "ceil(avg by (collector, object) (metadata_collector_instances{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\",object=~\"$Object\",collector=~\"$Collector\"}))",
+              "expr": "ceil(\n  avg by (collector, object) (\n    metadata_collector_instances{collector=~\"$Collector\",datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",object=~\"$Object\",poller=~\"$Poller\",task=\"data\"}\n  )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{collector}} - {{object}}",
@@ -2620,7 +2620,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (collector, object) (metadata_collector_metrics{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\",object=~\"$Object\",collector=~\"$Collector\"})",
+              "expr": "avg by (collector, object) (\n  metadata_collector_metrics{collector=~\"$Collector\",datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",object=~\"$Object\",poller=~\"$Poller\",task=\"data\"}\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{collector}} - {{object}}",
@@ -2710,7 +2710,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "avg by (collector, object) (metadata_collector_api_time{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\",object=~\"$Object\",collector=~\"$Collector\"})",
+              "expr": "avg by (collector, object) (\n  metadata_collector_api_time{collector=~\"$Collector\",datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",object=~\"$Object\",poller=~\"$Poller\",task=\"data\"}\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{collector}} - {{object}}",
@@ -2800,7 +2800,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "avg by (collector, object) (metadata_collector_parse_time{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\",object=~\"$Object\",collector=~\"$Collector\"})",
+              "expr": "avg by (collector, object) (\n  metadata_collector_parse_time{collector=~\"$Collector\",datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",object=~\"$Object\",poller=~\"$Poller\",task=\"data\"}\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{collector}} - {{object}}",
@@ -2890,7 +2890,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "avg by (collector, object) (metadata_collector_calc_time{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",task=\"data\",object=~\"$Object\",collector=~\"$Collector\"})",
+              "expr": "avg by (collector, object) (\n  metadata_collector_calc_time{collector=~\"$Collector\",datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",object=~\"$Object\",poller=~\"$Poller\",task=\"data\"}\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{collector}} - {{object}}",
@@ -3019,14 +3019,14 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (target, task) (metadata_exporter_time{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\"})",
+              "expr": "sum by (target, task) (\n  metadata_exporter_time{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\"}\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{target}} - {{task}}",
               "refId": "C"
             },
             {
-              "expr": "sum by (target) (metadata_exporter_time{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",task!=\"info\",task!=\"render\"})",
+              "expr": "sum by (target) (\n  metadata_exporter_time{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",task!=\"info\",task!=\"render\"}\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{target}} - total",
@@ -3118,7 +3118,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (name, target) (metadata_component_count{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",type=\"exporter\"})",
+              "expr": "avg by (name, target) (\n  metadata_component_count{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\",type=\"exporter\"}\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{name}} - {{target}} - IN",
@@ -3126,7 +3126,7 @@
             },
             {
               "exemplar": false,
-              "expr": "avg by (exporter, target) (metadata_exporter_count{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\"})",
+              "expr": "avg by (exporter, target) (\n  metadata_exporter_count{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\"}\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{exporter}} - {{target}} - OUT",

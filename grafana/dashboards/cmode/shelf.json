@@ -164,7 +164,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "sum(count(shelf_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (shelf))",
+          "expr": "sum(count by (shelf) (shelf_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -240,7 +240,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "(sum(shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) or vector(0))",
+          "expr": "(sum(shelf_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) or vector(0))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -320,7 +320,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "max(shelf_max_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "max(shelf_max_temperature{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
           "format": "time_series",
           "instant": false,
           "interval": "",
@@ -396,7 +396,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(shelf_temperature_reading{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"})",
+          "expr": "avg(shelf_temperature_reading{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",shelf=~\"$Shelf\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -454,7 +454,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(shelf_fan_rpm{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "avg(shelf_fan_rpm{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -511,7 +511,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "max(shelf_max_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "max(shelf_max_fan_speed{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -569,7 +569,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(shelf_sensor_reading{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "avg(shelf_sensor_reading{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -672,7 +672,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"} \n  and \ntopk($TopResources, avg_over_time(shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}[3h] @ end()))",
+          "expr": "shelf_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",shelf=~\"$Shelf\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      shelf_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",shelf=~\"$Shelf\"}[3h] @ end()\n    )\n  )",
           "hide": false,
           "interval": "",
           "legendFormat": "{{shelf}} ({{cluster}})",
@@ -762,7 +762,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"} \n  and \ntopk($TopResources, avg_over_time(shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}[3h] @ end()))",
+          "expr": "shelf_average_temperature{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",shelf=~\"$Shelf\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      shelf_average_temperature{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",shelf=~\"$Shelf\"}[3h] @ end()\n    )\n  )",
           "interval": "",
           "legendFormat": "{{shelf}} ({{cluster}})",
           "refId": "A"
@@ -1262,7 +1262,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "shelf_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
+          "expr": "shelf_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",shelf=~\"$Shelf\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -1271,7 +1271,7 @@
         },
         {
           "exemplar": false,
-          "expr": "shelf_disk_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
+          "expr": "shelf_disk_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",shelf=~\"$Shelf\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1281,7 +1281,7 @@
         },
         {
           "exemplar": false,
-          "expr": "shelf_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
+          "expr": "shelf_new_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",shelf=~\"$Shelf\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1291,7 +1291,7 @@
         },
         {
           "exemplar": false,
-          "expr": "shelf_power{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
+          "expr": "shelf_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",shelf=~\"$Shelf\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1301,7 +1301,7 @@
         },
         {
           "exemplar": false,
-          "expr": "shelf_average_ambient_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
+          "expr": "shelf_average_ambient_temperature{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",shelf=~\"$Shelf\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1311,7 +1311,7 @@
         },
         {
           "exemplar": false,
-          "expr": "shelf_min_ambient_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
+          "expr": "shelf_min_ambient_temperature{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",shelf=~\"$Shelf\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1321,7 +1321,7 @@
         },
         {
           "exemplar": false,
-          "expr": "shelf_max_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
+          "expr": "shelf_max_temperature{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",shelf=~\"$Shelf\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1331,7 +1331,7 @@
         },
         {
           "exemplar": false,
-          "expr": "shelf_average_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
+          "expr": "shelf_average_temperature{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",shelf=~\"$Shelf\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1341,7 +1341,7 @@
         },
         {
           "exemplar": false,
-          "expr": "shelf_min_temperature{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
+          "expr": "shelf_min_temperature{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",shelf=~\"$Shelf\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1351,7 +1351,7 @@
         },
         {
           "exemplar": false,
-          "expr": "shelf_max_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
+          "expr": "shelf_max_fan_speed{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",shelf=~\"$Shelf\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1361,7 +1361,7 @@
         },
         {
           "exemplar": false,
-          "expr": "shelf_average_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
+          "expr": "shelf_average_fan_speed{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",shelf=~\"$Shelf\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1371,7 +1371,7 @@
         },
         {
           "exemplar": false,
-          "expr": "shelf_min_fan_speed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
+          "expr": "shelf_min_fan_speed{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",shelf=~\"$Shelf\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1686,7 +1686,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "shelf_psu_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
+              "expr": "shelf_psu_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",shelf=~\"$Shelf\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1694,7 +1694,7 @@
               "refId": "A"
             },
             {
-              "expr": "shelf_psu_power_drawn{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
+              "expr": "shelf_psu_power_drawn{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",shelf=~\"$Shelf\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1703,7 +1703,7 @@
               "refId": "B"
             },
             {
-              "expr": "shelf_psu_power_rating{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
+              "expr": "shelf_psu_power_rating{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",shelf=~\"$Shelf\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1972,7 +1972,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "shelf_module_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
+              "expr": "shelf_module_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",shelf=~\"$Shelf\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -2104,7 +2104,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "shelf_temperature_reading{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
+              "expr": "shelf_temperature_reading{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",shelf=~\"$Shelf\"}",
               "interval": "",
               "legendFormat": "{{shelf}} · {{sensor_id}}",
               "refId": "A"
@@ -2169,7 +2169,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "shelf_fan_rpm{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
+              "expr": "shelf_fan_rpm{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",shelf=~\"$Shelf\"}",
               "interval": "",
               "legendFormat": "{{shelf}} · {{fan_id}}",
               "refId": "A"
@@ -2249,7 +2249,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "shelf_voltage_reading{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
+              "expr": "shelf_voltage_reading{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",shelf=~\"$Shelf\"}",
               "interval": "",
               "legendFormat": "{{shelf}} · {{sensor_id}}",
               "refId": "A"
@@ -2312,7 +2312,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(shelf_psu_power_drawn{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (shelf, psu_id)",
+              "expr": "sum by (shelf, psu_id) (shelf_psu_power_drawn{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "interval": "",
               "legendFormat": "{{shelf}} - PSU {{psu_id}}",
               "refId": "A"
@@ -2375,7 +2375,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(shelf_psu_power_rating{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (shelf, psu_id)",
+              "expr": "sum by (shelf, psu_id) (shelf_psu_power_rating{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "interval": "",
               "legendFormat": "{{shelf}} - PSU {{psu_id}}",
               "refId": "A"
@@ -2455,7 +2455,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "shelf_sensor_reading{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",shelf=~\"$Shelf\"}",
+              "expr": "shelf_sensor_reading{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",shelf=~\"$Shelf\"}",
               "interval": "",
               "legendFormat": "{{shelf}} · {{sensor_id}}",
               "refId": "A"

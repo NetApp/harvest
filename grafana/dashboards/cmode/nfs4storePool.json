@@ -198,7 +198,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_DelegStateAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_DelegStateMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}) \u003e 50",
+              "expr": "100\n  *\n    (\n        nfs_diag_storePool_DelegStateAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n      /\n        nfs_diag_storePool_DelegStateMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    )\n\u003e\n  50",
               "hide": false,
               "interval": "5",
               "legendFormat": "{{node}} - DelegStateAlloc",
@@ -207,7 +207,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_ByteLockAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_ByteLockMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}) \u003e 50",
+              "expr": "100\n  *\n    (\n        nfs_diag_storePool_ByteLockAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n      /\n        nfs_diag_storePool_ByteLockMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    )\n\u003e\n  50",
               "hide": false,
               "interval": "5",
               "legendFormat": "{{node}} - ByteLockAlloc",
@@ -216,7 +216,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_ClientAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_ClientMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}) \u003e 50",
+              "expr": "100\n  *\n    (\n        nfs_diag_storePool_ClientAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n      /\n        nfs_diag_storePool_ClientMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    )\n\u003e\n  50",
               "hide": false,
               "interval": "5",
               "legendFormat": "{{node}} - ClientAlloc",
@@ -225,7 +225,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_CopyStateAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_CopyStateMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}) \u003e 50",
+              "expr": "100\n  *\n    (\n        nfs_diag_storePool_CopyStateAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n      /\n        nfs_diag_storePool_CopyStateMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    )\n\u003e\n  50",
               "hide": false,
               "interval": "5",
               "legendFormat": "{{node}} - CopyStateAlloc",
@@ -234,7 +234,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_ConnectionParentSessionReferenceAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_ConnectionParentSessionReferenceMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}) \u003e 50",
+              "expr": "100\n  *\n    (\n        nfs_diag_storePool_ConnectionParentSessionReferenceAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n      /\n        nfs_diag_storePool_ConnectionParentSessionReferenceMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    )\n\u003e\n  50",
               "hide": false,
               "interval": "5",
               "legendFormat": "{{node}} - ConnectionParentSessionReferenceAlloc",
@@ -243,7 +243,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_DelegAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_DelegMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}) \u003e 50",
+              "expr": "100\n  *\n    (\n        nfs_diag_storePool_DelegAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n      /\n        nfs_diag_storePool_DelegMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    )\n\u003e\n  50",
               "hide": false,
               "interval": "5",
               "legendFormat": "{{node}} - DelegAlloc",
@@ -252,7 +252,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_LockAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_LockMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}) \u003e 50",
+              "expr": "100\n  *\n    (\n        nfs_diag_storePool_LockAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n      /\n        nfs_diag_storePool_LockMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    )\n\u003e\n  50",
               "hide": false,
               "interval": "5",
               "legendFormat": "{{node}} - LockAlloc",
@@ -261,7 +261,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_LayoutStateAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_LayoutStateMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}) \u003e 50",
+              "expr": "100\n  *\n    (\n        nfs_diag_storePool_LayoutStateAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n      /\n        nfs_diag_storePool_LayoutStateMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    )\n\u003e\n  50",
               "hide": false,
               "interval": "5",
               "legendFormat": "{{node}} - LayoutStateAlloc",
@@ -270,7 +270,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_LockStateAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_LockStateMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}) \u003e 50",
+              "expr": "100\n  *\n    (\n        nfs_diag_storePool_LockStateAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n      /\n        nfs_diag_storePool_LockStateMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    )\n\u003e\n  50",
               "hide": false,
               "interval": "5",
               "legendFormat": "{{node}} - LockStateAlloc",
@@ -279,7 +279,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_OpenStateAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_OpenStateMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}) \u003e 50",
+              "expr": "100\n  *\n    (\n        nfs_diag_storePool_OpenStateAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n      /\n        nfs_diag_storePool_OpenStateMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    )\n\u003e\n  50",
               "hide": false,
               "interval": "5",
               "legendFormat": "{{node}} - OpenStateAlloc",
@@ -288,7 +288,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_OpenAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_OpenMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}) \u003e 50",
+              "expr": "100\n  *\n    (\n        nfs_diag_storePool_OpenAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n      /\n        nfs_diag_storePool_OpenMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    )\n\u003e\n  50",
               "hide": false,
               "interval": "5",
               "legendFormat": "{{node}} - OpenAlloc",
@@ -297,7 +297,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_OwnerAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_OwnerMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}) \u003e 50",
+              "expr": "100\n  *\n    (\n        nfs_diag_storePool_OwnerAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n      /\n        nfs_diag_storePool_OwnerMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    )\n\u003e\n  50",
               "hide": false,
               "interval": "5",
               "legendFormat": "{{node}} - OwnerAlloc",
@@ -306,7 +306,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_SessionConnectionHolderAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_SessionConnectionHolderMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}) \u003e 50",
+              "expr": "100\n  *\n    (\n        nfs_diag_storePool_SessionConnectionHolderAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n      /\n        nfs_diag_storePool_SessionConnectionHolderMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    )\n\u003e\n  50",
               "hide": false,
               "interval": "5",
               "legendFormat": "{{node}} - SessionConnectionHolderAlloc",
@@ -315,7 +315,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_SessionHolderAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_SessionHolderMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}) \u003e 50",
+              "expr": "100\n  *\n    (\n        nfs_diag_storePool_SessionHolderAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n      /\n        nfs_diag_storePool_SessionHolderMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    )\n\u003e\n  50",
               "hide": false,
               "interval": "5",
               "legendFormat": "{{node}} - SessionHolderAlloc",
@@ -324,7 +324,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_SessionAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_SessionMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}) \u003e 50",
+              "expr": "100\n  *\n    (\n        nfs_diag_storePool_SessionAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n      /\n        nfs_diag_storePool_SessionMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    )\n\u003e\n  50",
               "hide": false,
               "interval": "5",
               "legendFormat": "{{node}} - SessionAlloc",
@@ -333,7 +333,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_StateRefHistoryAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_StateRefHistoryMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}) \u003e 50",
+              "expr": "100\n  *\n    (\n        nfs_diag_storePool_StateRefHistoryAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n      /\n        nfs_diag_storePool_StateRefHistoryMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    )\n\u003e\n  50",
               "hide": false,
               "interval": "5",
               "legendFormat": "{{node}} - StateRefHistoryAlloc",
@@ -342,7 +342,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_StringAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_StringMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}) \u003e 50",
+              "expr": "100\n  *\n    (\n        nfs_diag_storePool_StringAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n      /\n        nfs_diag_storePool_StringMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    )\n\u003e\n  50",
               "hide": false,
               "interval": "5",
               "legendFormat": "{{node}} - StringAlloc",
@@ -455,7 +455,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_ByteLockAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_ByteLockMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "100\n*\n  (\n      nfs_diag_storePool_ByteLockAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    /\n      nfs_diag_storePool_ByteLockMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n  )",
               "interval": "5",
               "intervalFactor": 1,
               "legendFormat": "{{node}}",
@@ -553,7 +553,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_ClientAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_ClientMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "100\n*\n  (\n      nfs_diag_storePool_ClientAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    /\n      nfs_diag_storePool_ClientMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n  )",
               "interval": "5",
               "legendFormat": "{{node}}",
               "refId": "A"
@@ -650,7 +650,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_ConnectionParentSessionReferenceAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_ConnectionParentSessionReferenceMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "100\n*\n  (\n      nfs_diag_storePool_ConnectionParentSessionReferenceAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    /\n      nfs_diag_storePool_ConnectionParentSessionReferenceMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n  )",
               "interval": "5",
               "legendFormat": "{{node}}",
               "refId": "A"
@@ -747,7 +747,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_CopyStateAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_CopyStateMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "100\n*\n  (\n      nfs_diag_storePool_CopyStateAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    /\n      nfs_diag_storePool_CopyStateMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n  )",
               "interval": "5",
               "legendFormat": "{{node}}",
               "refId": "A"
@@ -844,7 +844,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_DelegAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_DelegMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "100\n*\n  (\n      nfs_diag_storePool_DelegAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    /\n      nfs_diag_storePool_DelegMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n  )",
               "interval": "5",
               "legendFormat": "{{node}}",
               "refId": "A"
@@ -941,7 +941,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_DelegStateAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_DelegStateMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "100\n*\n  (\n      nfs_diag_storePool_DelegStateAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    /\n      nfs_diag_storePool_DelegStateMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n  )",
               "interval": "5",
               "legendFormat": "{{node}}",
               "refId": "A"
@@ -1038,7 +1038,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_LayoutAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_LayoutMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "100\n*\n  (\n      nfs_diag_storePool_LayoutAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    /\n      nfs_diag_storePool_LayoutMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n  )",
               "interval": "5",
               "legendFormat": "{{node}}",
               "refId": "A"
@@ -1135,7 +1135,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_LayoutStateAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_LayoutStateMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "100\n*\n  (\n      nfs_diag_storePool_LayoutStateAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    /\n      nfs_diag_storePool_LayoutStateMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n  )",
               "interval": "5",
               "legendFormat": "{{node}}",
               "refId": "A"
@@ -1232,7 +1232,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_LockStateAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_LockStateMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "100\n*\n  (\n      nfs_diag_storePool_LockStateAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    /\n      nfs_diag_storePool_LockStateMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n  )",
               "interval": "5",
               "legendFormat": "{{node}}",
               "refId": "A"
@@ -1329,7 +1329,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_OpenAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_OpenMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "100\n*\n  (\n      nfs_diag_storePool_OpenAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    /\n      nfs_diag_storePool_OpenMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n  )",
               "interval": "5",
               "legendFormat": "{{node}}",
               "refId": "A"
@@ -1426,7 +1426,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_OpenStateAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_OpenStateMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "100\n*\n  (\n      nfs_diag_storePool_OpenStateAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    /\n      nfs_diag_storePool_OpenStateMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n  )",
               "interval": "5",
               "legendFormat": "{{node}}",
               "refId": "A"
@@ -1523,7 +1523,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_OwnerAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_OwnerMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "100\n*\n  (\n      nfs_diag_storePool_OwnerAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    /\n      nfs_diag_storePool_OwnerMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n  )",
               "interval": "5",
               "legendFormat": "{{node}}",
               "refId": "A"
@@ -1620,7 +1620,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_SessionConnectionHolderAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_SessionConnectionHolderMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "100\n*\n  (\n      nfs_diag_storePool_SessionConnectionHolderAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    /\n      nfs_diag_storePool_SessionConnectionHolderMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n  )",
               "interval": "5",
               "legendFormat": "{{node}}",
               "refId": "A"
@@ -1717,7 +1717,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_SessionHolderAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_SessionHolderMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "100\n*\n  (\n      nfs_diag_storePool_SessionHolderAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    /\n      nfs_diag_storePool_SessionHolderMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n  )",
               "interval": "5",
               "legendFormat": "{{node}}",
               "refId": "A"
@@ -1814,7 +1814,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_SessionAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_SessionMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "100\n*\n  (\n      nfs_diag_storePool_SessionAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    /\n      nfs_diag_storePool_SessionMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n  )",
               "interval": "5",
               "legendFormat": "{{node}}",
               "refId": "A"
@@ -1911,7 +1911,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_StateRefHistoryAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_StateRefHistoryMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "100\n*\n  (\n      nfs_diag_storePool_StateRefHistoryAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    /\n      nfs_diag_storePool_StateRefHistoryMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n  )",
               "interval": "5",
               "legendFormat": "{{node}}",
               "refId": "A"
@@ -2008,7 +2008,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "100 * (nfs_diag_storePool_StringAlloc{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"} / nfs_diag_storePool_StringMax{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "100\n*\n  (\n      nfs_diag_storePool_StringAlloc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    /\n      nfs_diag_storePool_StringMax{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n  )",
               "interval": "5",
               "legendFormat": "{{node}}",
               "refId": "A"

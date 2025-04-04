@@ -211,7 +211,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "cifs_session_connection_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"} \n  and \ntopk($TopResources, avg_over_time(cifs_session_connection_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h] @ end()))",
+          "expr": "cifs_session_connection_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      cifs_session_connection_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h] @ end()\n    )\n  )",
           "interval": "",
           "legendFormat": "{{cluster}} - {{svm}} - {{client_ip}} - {{protocol}}",
           "refId": "A"
@@ -323,7 +323,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(cifs_session_connection_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (protocol)",
+          "expr": "sum by (protocol) (\n  cifs_session_connection_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n)",
           "interval": "",
           "legendFormat": "{{protocol}}",
           "refId": "A"
@@ -518,7 +518,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "cifs_session_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
+          "expr": "cifs_session_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -675,14 +675,14 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(smb2_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+              "expr": "sum by (cluster) (smb2_read_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "interval": "",
               "legendFormat": "read_ops - {{cluster}}",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "sum(smb2_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+              "expr": "sum by (cluster) (smb2_write_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "write_ops - {{cluster}}",
@@ -769,14 +769,14 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg(smb2_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+              "expr": "avg by (cluster) (smb2_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "interval": "",
               "legendFormat": "Read - {{cluster}}",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "avg(smb2_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+              "expr": "avg by (cluster) (smb2_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "Write - {{cluster}}",
@@ -864,14 +864,14 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(smb2_negotiate_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+              "expr": "sum by (cluster) (smb2_negotiate_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "interval": "",
               "legendFormat": "negotiate_ops - {{cluster}}",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "sum(smb2_session_setup_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+              "expr": "sum by (cluster) (smb2_session_setup_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "session_setup_ops - {{cluster}}",
@@ -879,7 +879,7 @@
             },
             {
               "exemplar": false,
-              "expr": "sum(smb2_tree_connect_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+              "expr": "sum by (cluster) (smb2_tree_connect_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "tree_connect_ops - {{cluster}}",
@@ -887,7 +887,7 @@
             },
             {
               "exemplar": false,
-              "expr": "sum(smb2_create_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+              "expr": "sum by (cluster) (smb2_create_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "create_ops - {{cluster}}",
@@ -895,7 +895,7 @@
             },
             {
               "exemplar": false,
-              "expr": "sum(smb2_close_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
+              "expr": "sum(smb2_close_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "close_ops - {{cluster}}",
@@ -903,7 +903,7 @@
             },
             {
               "exemplar": false,
-              "expr": "sum(smb2_lock_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+              "expr": "sum by (cluster) (smb2_lock_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "lock_ops - {{cluster}}",
@@ -911,7 +911,7 @@
             },
             {
               "exemplar": false,
-              "expr": "sum(smb2_query_directory_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+              "expr": "sum by (cluster) (\n  smb2_query_directory_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "query_directory_ops - {{cluster}}",
@@ -919,7 +919,7 @@
             },
             {
               "exemplar": false,
-              "expr": "sum(smb2_query_info_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+              "expr": "sum by (cluster) (smb2_query_info_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "query_info_ops - {{cluster}}",
@@ -927,7 +927,7 @@
             },
             {
               "exemplar": false,
-              "expr": "sum(smb2_set_info_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+              "expr": "sum by (cluster) (smb2_set_info_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "set_info_ops - {{cluster}}",
@@ -935,7 +935,7 @@
             },
             {
               "exemplar": false,
-              "expr": "sum(smb2_tree_connect_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+              "expr": "sum by (cluster) (smb2_tree_connect_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "tree_connect_ops - {{cluster}}",
@@ -943,7 +943,7 @@
             },
             {
               "exemplar": false,
-              "expr": "sum(smb2_oplock_break_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+              "expr": "sum by (cluster) (smb2_oplock_break_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "oplock_break_ops - {{cluster}}",
@@ -1030,14 +1030,14 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg(smb2_negotiate_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+              "expr": "avg by (cluster) (smb2_negotiate_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "interval": "",
               "legendFormat": "negotiate_latency - {{cluster}}",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "avg(smb2_session_setup_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+              "expr": "avg by (cluster) (\n  smb2_session_setup_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "session_setup_latency - {{cluster}}",
@@ -1045,7 +1045,7 @@
             },
             {
               "exemplar": false,
-              "expr": "avg(smb2_tree_connect_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+              "expr": "avg by (cluster) (\n  smb2_tree_connect_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "tree_connect_latency - {{cluster}}",
@@ -1053,7 +1053,7 @@
             },
             {
               "exemplar": false,
-              "expr": "avg(smb2_create_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+              "expr": "avg by (cluster) (smb2_create_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "create_latency - {{cluster}}",
@@ -1061,7 +1061,7 @@
             },
             {
               "exemplar": false,
-              "expr": "avg(smb2_close_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+              "expr": "avg by (cluster) (smb2_close_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "close_latency - {{cluster}}",
@@ -1069,7 +1069,7 @@
             },
             {
               "exemplar": false,
-              "expr": "avg(smb2_lock_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+              "expr": "avg by (cluster) (smb2_lock_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "lock_latency - {{cluster}}",
@@ -1077,7 +1077,7 @@
             },
             {
               "exemplar": false,
-              "expr": "avg(smb2_query_directory_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+              "expr": "avg by (cluster) (\n  smb2_query_directory_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "query_directory_latency - {{cluster}}",
@@ -1085,7 +1085,7 @@
             },
             {
               "exemplar": false,
-              "expr": "avg(smb2_query_info_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+              "expr": "avg by (cluster) (\n  smb2_query_info_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "query_info_latency - {{cluster}}",
@@ -1093,7 +1093,7 @@
             },
             {
               "exemplar": false,
-              "expr": "avg(smb2_set_info_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+              "expr": "avg by (cluster) (smb2_set_info_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "set_info_latency - {{cluster}}",
@@ -1101,7 +1101,7 @@
             },
             {
               "exemplar": false,
-              "expr": "avg(smb2_oplock_break_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) by (cluster)",
+              "expr": "avg by (cluster) (\n  smb2_oplock_break_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "oplock_break_latency - {{cluster}}",
@@ -1184,7 +1184,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(increase(smb2_session_setup_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__interval])) by (le)",
+              "expr": "sum by (le) (\n  increase(\n    smb2_session_setup_latency_histogram_bucket{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[9d2m57s]\n  )\n)",
               "format": "heatmap",
               "instant": false,
               "interval": "",
@@ -1253,7 +1253,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(increase(smb2_create_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__interval])) by (le)",
+              "expr": "sum by (le) (\n  increase(\n    smb2_create_latency_histogram_bucket{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[9d2m57s]\n  )\n)",
               "format": "heatmap",
               "instant": false,
               "interval": "",
@@ -1322,7 +1322,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(increase(smb2_close_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__interval])) by (le)",
+              "expr": "sum by (le) (\n  increase(\n    smb2_close_latency_histogram_bucket{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[9d2m57s]\n  )\n)",
               "format": "heatmap",
               "instant": false,
               "interval": "",
@@ -1391,7 +1391,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(increase(smb2_lock_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__interval])) by (le)",
+              "expr": "sum by (le) (\n  increase(\n    smb2_lock_latency_histogram_bucket{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[9d2m57s]\n  )\n)",
               "format": "heatmap",
               "instant": false,
               "interval": "",
@@ -1460,7 +1460,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(increase(smb2_query_directory_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__interval])) by (le)",
+              "expr": "sum by (le) (\n  increase(\n    smb2_query_directory_latency_histogram_bucket{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[9d2m57s]\n  )\n)",
               "format": "heatmap",
               "instant": false,
               "interval": "",
@@ -1529,7 +1529,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(increase(smb2_query_info_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__interval])) by (le)",
+              "expr": "sum by (le) (\n  increase(\n    smb2_query_info_latency_histogram_bucket{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[9d2m57s]\n  )\n)",
               "format": "heatmap",
               "instant": false,
               "interval": "",
@@ -1598,7 +1598,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(increase(smb2_set_info_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__interval])) by (le)",
+              "expr": "sum by (le) (\n  increase(\n    smb2_set_info_latency_histogram_bucket{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[9d2m57s]\n  )\n)",
               "format": "heatmap",
               "instant": false,
               "interval": "",
@@ -1667,7 +1667,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(increase(smb2_oplock_break_latency_histogram_bucket{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[$__interval])) by (le)",
+              "expr": "sum by (le) (\n  increase(\n    smb2_oplock_break_latency_histogram_bucket{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[9d2m57s]\n  )\n)",
               "format": "heatmap",
               "instant": false,
               "interval": "",
