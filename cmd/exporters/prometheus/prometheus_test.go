@@ -76,7 +76,7 @@ func TestEscape(t *testing.T) {
 
 func BenchmarkEscape(b *testing.B) {
 	replacer := newReplacer()
-	for range b.N {
+	for b.Loop() {
 		escape(replacer, "abc", `a\c"foo"\ndef`)
 	}
 }

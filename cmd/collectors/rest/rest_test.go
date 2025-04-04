@@ -37,7 +37,7 @@ func TestMain(m *testing.M) {
 func BenchmarkRestPerf_PollData(b *testing.B) {
 	now := time.Now().Truncate(time.Second)
 
-	for range b.N {
+	for b.Loop() {
 		now = now.Add(time.Minute * 15)
 		_, _ = benchRest.pollData(fullPollData, set.New())
 	}
