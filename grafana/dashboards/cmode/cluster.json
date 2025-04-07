@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1722598083639,
+  "iteration": 1743755410959,
   "links": [
     {
       "asDropdown": true,
@@ -338,7 +338,284 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Average latency in microseconds for the WAFL filesystem to process read request to the volume; not including request processing or network communication time. node_volume_read_latency is [volume_read_latency](#volume_read_latency) aggregated by `node`.",
+      "description": "Average latency for all operations in the system.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 30,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "links": [],
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "µs"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 8
+      },
+      "id": 234,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "7.5.4",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "sum(node_total_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node)\nand\ntopk(\n  $TopResources,\n  sum by (node) (\n    avg_over_time(node_total_latency{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h])\n  )\n)",
+          "interval": "",
+          "legendFormat": "{{node}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Top $TopResources Nodes by Latency",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Total number of operations per second.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 30,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "links": [],
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "iops"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 8
+      },
+      "id": 235,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "7.5.4",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "sum(node_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node)\nand\ntopk(\n  $TopResources,\n  sum by (node) (\n    avg_over_time(node_total_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h])\n  )\n)",
+          "interval": "",
+          "legendFormat": "{{node}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Top $TopResources Nodes by IOPs",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Node total throughput.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 30,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "links": [],
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "Bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 8
+      },
+      "id": 231,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "7.5.4",
+      "targets": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
+          "expr": "sum by (node) (\n  (\n    node_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}\n  )\n  and\n  topk(\n    5,\n    (\n      avg_over_time(\n        node_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h] @ end()\n      )\n    )\n  )\n)",
+          "interval": "",
+          "legendFormat": "{{node}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Top $TopResources Nodes by Throughput",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Average latency for all operations in the system.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -427,7 +704,7 @@
         "h": 6,
         "w": 8,
         "x": 0,
-        "y": 8
+        "y": 16
       },
       "id": 238,
       "options": {
@@ -446,7 +723,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "topk($TopResources, sum(node_volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node))",
+          "expr": "topk($TopResources, sum(node_total_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node))",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -454,7 +731,7 @@
           "refId": "A"
         }
       ],
-      "title": "Top $TopResources Nodes by Read Latency",
+      "title": "Top $TopResources Nodes by Latency",
       "transformations": [
         {
           "id": "organize",
@@ -482,7 +759,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Average latency in microseconds for the WAFL filesystem to process write request to the volume; not including request processing or network communication time. node_volume_write_latency is [volume_write_latency](#volume_write_latency) aggregated by `node`.",
+      "description": "Total number of operations per second.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -493,7 +770,7 @@
             "displayMode": "auto",
             "filterable": true
           },
-          "decimals": 1,
+          "decimals": 0,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -504,7 +781,7 @@
               }
             ]
           },
-          "unit": "µs"
+          "unit": "iops"
         },
         "overrides": [
           {
@@ -516,30 +793,6 @@
               {
                 "id": "custom.width",
                 "value": null
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "green",
-                      "value": null
-                    },
-                    {
-                      "color": "orange",
-                      "value": 20000
-                    },
-                    {
-                      "color": "red",
-                      "value": 30000
-                    }
-                  ]
-                }
-              },
-              {
-                "id": "custom.displayMode",
-                "value": "color-background"
               }
             ]
           },
@@ -571,9 +824,9 @@
         "h": 6,
         "w": 8,
         "x": 8,
-        "y": 8
+        "y": 16
       },
-      "id": 233,
+      "id": 230,
       "options": {
         "footer": {
           "fields": "",
@@ -590,7 +843,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "topk($TopResources, sum(node_volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node))",
+          "expr": "sum(node_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node)\nand\ntopk(\n  $TopResources,\n  sum by (node) (\n    avg_over_time(node_total_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h])\n  )\n)",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -598,7 +851,7 @@
           "refId": "A"
         }
       ],
-      "title": "Top $TopResources Nodes by Write Latency",
+      "title": "Top $TopResources Nodes by IOPs",
       "transformations": [
         {
           "id": "organize",
@@ -691,7 +944,7 @@
         "h": 6,
         "w": 8,
         "x": 16,
-        "y": 8
+        "y": 16
       },
       "id": 232,
       "options": {
@@ -710,7 +963,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "sum by (node) (\n    (\n        node_volume_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"} \n        +\n        node_volume_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}\n    )\n    and\n    topk(\n        5,\n        (\n            avg_over_time(node_volume_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h] @ end())\n            +\n            avg_over_time(node_volume_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h] @ end())\n        )\n    )\n)",
+          "expr": "sum by (node) (\n  (\n    node_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}\n  )\n  and\n  topk(\n    5,\n    (\n      avg_over_time(\n        node_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h] @ end()\n      )\n    )\n  )\n)",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -746,7 +999,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Number of operations per second serviced by the volume. node_volume_total_ops is [volume_total_ops](#volume_total_ops) aggregated by `node`.",
+      "description": "The utilization percent of the disk. node_disk_busy is [disk_busy](#disk_busy) aggregated by `node`.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -768,7 +1021,7 @@
               }
             ]
           },
-          "unit": "iops"
+          "unit": "percent"
         },
         "overrides": [
           {
@@ -780,6 +1033,30 @@
               {
                 "id": "custom.width",
                 "value": null
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "orange",
+                      "value": 60
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
               }
             ]
           },
@@ -811,9 +1088,9 @@
         "h": 6,
         "w": 8,
         "x": 0,
-        "y": 14
+        "y": 22
       },
-      "id": 230,
+      "id": 237,
       "options": {
         "footer": {
           "fields": "",
@@ -830,7 +1107,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "sum(node_volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node)\nand\ntopk(\n  $TopResources,\n  sum by (node) (\n    avg_over_time(node_volume_total_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h])\n  )\n)",
+          "expr": "topk($TopResources, sum by (node)(node_disk_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}))",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -838,7 +1115,7 @@
           "refId": "A"
         }
       ],
-      "title": "Top $TopResources Nodes by IOPs",
+      "title": "Top $TopResources Nodes by Disk Utilization",
       "transformations": [
         {
           "id": "organize",
@@ -955,7 +1232,7 @@
         "h": 6,
         "w": 8,
         "x": 8,
-        "y": 14
+        "y": 22
       },
       "id": 236,
       "options": {
@@ -1099,7 +1376,7 @@
         "h": 6,
         "w": 8,
         "x": 16,
-        "y": 14
+        "y": 22
       },
       "id": 239,
       "options": {
@@ -1153,434 +1430,13 @@
       "type": "table"
     },
     {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time. node_volume_avg_latency is [volume_avg_latency](#volume_avg_latency) aggregated by `node`.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 30,
-            "gradientMode": "opacity",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "links": [],
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "µs"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 0,
-        "y": 20
-      },
-      "id": 234,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "7.5.4",
-      "targets": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "exemplar": false,
-          "expr": "sum(node_volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node)\nand\ntopk(\n  $TopResources,\n  sum by (node) (\n    avg_over_time(node_volume_avg_latency{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h])\n  )\n)",
-          "interval": "",
-          "legendFormat": "{{node}}",
-          "refId": "A"
-        }
-      ],
-      "title": "Top $TopResources Nodes by Latency",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "Node total throughput.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 30,
-            "gradientMode": "opacity",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "links": [],
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "Bps"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 20
-      },
-      "id": 231,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "7.5.4",
-      "targets": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "exemplar": false,
-          "expr": "sum by (node) (\n    (\n        node_volume_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"} \n        +\n        node_volume_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}\n    )\n    and\n    topk(\n        5,\n        (\n            avg_over_time(node_volume_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h] @ end())\n            +\n            avg_over_time(node_volume_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h] @ end())\n        )\n    )\n)",
-          "interval": "",
-          "legendFormat": "{{node}}",
-          "refId": "A"
-        }
-      ],
-      "title": "Top $TopResources Nodes by Throughput",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "Number of operations per second serviced by the volume. node_volume_total_ops is [volume_total_ops](#volume_total_ops) aggregated by `node`.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 30,
-            "gradientMode": "opacity",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 0,
-          "links": [],
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "iops"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 20
-      },
-      "id": 235,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "7.5.4",
-      "targets": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "exemplar": false,
-          "expr": "sum(node_volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node)\nand\ntopk(\n  $TopResources,\n  sum by (node) (\n    avg_over_time(node_volume_total_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h])\n  )\n)",
-          "interval": "",
-          "legendFormat": "{{node}}",
-          "refId": "A"
-        }
-      ],
-      "title": "Top $TopResources Nodes by IOPs",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "The utilization percent of the disk. node_disk_busy is [disk_busy](#disk_busy) aggregated by `node`.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "auto",
-            "displayMode": "auto",
-            "filterable": true
-          },
-          "decimals": 0,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Avg"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": null
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "green",
-                      "value": null
-                    },
-                    {
-                      "color": "orange",
-                      "value": 60
-                    },
-                    {
-                      "color": "red",
-                      "value": 80
-                    }
-                  ]
-                }
-              },
-              {
-                "id": "custom.displayMode",
-                "value": "color-background"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "node"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Node"
-              },
-              {
-                "id": "links",
-                "value": [
-                  {
-                    "targetBlank": true,
-                    "title": "",
-                    "url": "/d/cdot-node/ontap-node?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Node=${__value.raw}"
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 8,
-        "x": 0,
-        "y": 28
-      },
-      "id": 237,
-      "options": {
-        "footer": {
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true,
-        "sortBy": []
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "exemplar": false,
-          "expr": "topk($TopResources, sum by (node)(node_disk_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}))",
-          "format": "table",
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Top $TopResources Nodes by Disk Utilization",
-      "transformations": [
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {},
-            "indexByName": {},
-            "renameByName": {
-              "Value": "Avg"
-            }
-          }
-        },
-        {
-          "id": "filterFieldsByName",
-          "options": {
-            "include": {
-              "names": [
-                "Avg",
-                "node"
-              ]
-            }
-          }
-        }
-      ],
-      "type": "table"
-    },
-    {
       "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 34
+        "y": 28
       },
       "id": 79,
       "panels": [
@@ -1728,7 +1584,7 @@
             "h": 7,
             "w": 18,
             "x": 0,
-            "y": 35
+            "y": 29
           },
           "id": 52,
           "interval": "",
@@ -1920,7 +1776,7 @@
             "h": 3,
             "w": 6,
             "x": 18,
-            "y": 35
+            "y": 29
           },
           "id": 156,
           "links": [],
@@ -2006,7 +1862,7 @@
             "h": 3,
             "w": 6,
             "x": 18,
-            "y": 38
+            "y": 32
           },
           "id": 181,
           "links": [],
@@ -2080,7 +1936,7 @@
             "h": 3,
             "w": 6,
             "x": 18,
-            "y": 41
+            "y": 35
           },
           "id": 240,
           "links": [],
@@ -2285,7 +2141,7 @@
             "h": 11,
             "w": 18,
             "x": 0,
-            "y": 42
+            "y": 36
           },
           "id": 177,
           "interval": "",
@@ -2412,7 +2268,7 @@
             "h": 3,
             "w": 6,
             "x": 18,
-            "y": 44
+            "y": 38
           },
           "id": 157,
           "links": [],
@@ -2486,7 +2342,7 @@
             "h": 3,
             "w": 6,
             "x": 18,
-            "y": 47
+            "y": 41
           },
           "id": 220,
           "links": [],
@@ -2561,7 +2417,7 @@
             "h": 3,
             "w": 6,
             "x": 18,
-            "y": 50
+            "y": 44
           },
           "id": 158,
           "links": [],
@@ -2649,7 +2505,7 @@
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 53
+            "y": 47
           },
           "id": 222,
           "options": {
@@ -2736,7 +2592,7 @@
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 53
+            "y": 47
           },
           "id": 242,
           "options": {
@@ -2778,13 +2634,13 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 35
+        "y": 33
       },
       "id": 97,
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time.",
+          "description": "Average latency for all operations in the system.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2842,9 +2698,9 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 39
+            "y": 34
           },
-          "id": 106,
+          "id": 576,
           "options": {
             "legend": {
               "calcs": [
@@ -2856,118 +2712,27 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single"
+              "mode": "single",
+              "sort": "none"
             }
           },
           "pluginVersion": "7.5.4",
           "targets": [
             {
+              "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "max(volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by(cluster)",
+              "expr": "max(node_total_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster)",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "Latency",
           "type": "timeseries"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Volume total throughput.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 30,
-                "gradientMode": "opacity",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "never",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "links": [],
-              "mappings": [],
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "Bps"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 8,
-            "x": 8,
-            "y": 39
-          },
-          "id": 107,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "pluginVersion": "7.5.4",
-          "targets": [
-            {
-              "expr": "sum(volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster)",
-              "interval": "",
-              "legendFormat": "{{cluster}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Data",
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "Number of operations per second serviced by the volume.",
+          "description": "Total number of operations per second for Cluster.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3025,10 +2790,10 @@
           "gridPos": {
             "h": 8,
             "w": 8,
-            "x": 16,
-            "y": 39
+            "x": 8,
+            "y": 34
           },
-          "id": 108,
+          "id": 578,
           "options": {
             "legend": {
               "calcs": [
@@ -3040,21 +2805,114 @@
               "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single"
+              "mode": "single",
+              "sort": "none"
             }
           },
           "pluginVersion": "7.5.4",
           "targets": [
             {
-              "expr": "sum(volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster)",
+              "datasource": "${DS_PROMETHEUS}",
+              "exemplar": false,
+              "expr": "sum(node_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster)",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
           "title": "IOPs",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Cluster total throughput.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 30,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "Bps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 16,
+            "y": 34
+          },
+          "id": 580,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "7.5.4",
+          "targets": [
+            {
+              "datasource": "${DS_PROMETHEUS}",
+              "exemplar": false,
+              "expr": "sum by (cluster) (node_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"})",
+              "interval": "",
+              "legendFormat": "{{cluster}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Throughput",
           "type": "timeseries"
         },
         {
@@ -3119,7 +2977,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 47
+            "y": 42
           },
           "id": 136,
           "options": {
@@ -3213,7 +3071,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 47
+            "y": 42
           },
           "id": 180,
           "options": {
@@ -3307,7 +3165,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 47
+            "y": 42
           },
           "id": 2,
           "options": {
@@ -3401,7 +3259,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 56
+            "y": 51
           },
           "id": 241,
           "options": {
@@ -3444,7 +3302,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 36
+        "y": 34
       },
       "id": 184,
       "panels": [
@@ -4131,7 +3989,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 37
+        "y": 35
       },
       "id": 214,
       "panels": [
@@ -4409,7 +4267,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 38
+        "y": 36
       },
       "id": 482,
       "panels": [
@@ -5159,6 +5017,8 @@
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_tags{system_type!=\"7mode\", datacenter=~\"$Datacenter\"},tag)",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": true,
         "label": null,

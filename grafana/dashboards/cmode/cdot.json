@@ -59,7 +59,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1732182155791,
+  "iteration": 1743756496809,
   "links": [
     {
       "asDropdown": true,
@@ -272,7 +272,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Number of operations per second serviced by the volume.",
+          "description": "Total number of operations per second serviced by the node.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -351,7 +351,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})\nand\ntopk($TopResources, sum by (cluster) (avg_over_time(volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end())))",
+              "expr": "sum by (cluster) (node_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})\nand\ntopk($TopResources, sum by (cluster) (avg_over_time(node_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end())))",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -553,7 +553,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time. node_volume_avg_latency is [volume_avg_latency](#volume_avg_latency) aggregated by `node`.",
+          "description": "Maximum node latency across the cluster.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -633,13 +633,13 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (cluster) (node_volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})\nand\ntopk($TopResources, avg by (cluster) (avg_over_time(node_volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end())))",
+              "expr": "max by (cluster) (node_total_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})\nand\ntopk($TopResources, max by (cluster) (avg_over_time(node_total_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end())))",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
             }
           ],
-          "title": "Top $TopResources Clusters by Average Latency",
+          "title": "Top $TopResources Clusters by Max Node Latency",
           "type": "timeseries"
         }
       ],
