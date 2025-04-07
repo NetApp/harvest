@@ -3689,7 +3689,7 @@ Number of RDMA read I/Os issued.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/iwarp` | `read_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/iwarp.yaml | 
-| ZAPI | `perf-object-get-instances iwarp` | `iw_read_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iwarp.yaml | 
+| ZAPI | `perf-object-get-instances iwarp` | `iw_read_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iwarp.yaml |
 
 
 ### iw_write_ops
@@ -3699,7 +3699,7 @@ Number of RDMA write I/Os issued.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/iwarp` | `write_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/iwarp.yaml | 
-| ZAPI | `perf-object-get-instances iwarp` | `iw_write_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iwarp.yaml | 
+| ZAPI | `perf-object-get-instances iwarp` | `iw_write_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iwarp.yaml |
 
 
 ### lif_labels
