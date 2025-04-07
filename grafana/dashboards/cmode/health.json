@@ -4336,7 +4336,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "last_over_time(health_support_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[10d6h54m48s])\n==\n  1",
+              "expr": "last_over_time(health_support_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[$__range])\n==\n  1",
               "format": "table",
               "instant": true,
               "interval": "",

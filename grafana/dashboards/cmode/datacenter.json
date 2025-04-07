@@ -1732,7 +1732,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "count by (message) (\n    last_over_time(\n      ems_events{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"emergency\"}[10d6h54m48s]\n    )\n  ==\n    1\n)",
+              "expr": "count by (message) (\n    last_over_time(\n      ems_events{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"emergency\"}[$__range]\n    )\n  ==\n    1\n)",
               "format": "table",
               "instant": true,
               "interval": "",

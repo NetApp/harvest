@@ -256,7 +256,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+          "expr": "volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -265,7 +265,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg_over_time (volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} [$__range])",
+          "expr": "avg_over_time(\n  volume_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}[$__range]\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -275,7 +275,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg_over_time (volume_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} [$__range])",
+          "expr": "avg_over_time(\n  volume_read_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}[$__range]\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -285,7 +285,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg_over_time (volume_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} [$__range])",
+          "expr": "avg_over_time(\n  volume_write_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}[$__range]\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -295,7 +295,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg_over_time (volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} [$__range])",
+          "expr": "avg_over_time(\n  volume_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}[$__range]\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -305,7 +305,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg_over_time (volume_other_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} [$__range])",
+          "expr": "avg_over_time(\n  volume_other_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}[$__range]\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -315,7 +315,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg_over_time (volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} [$__range])",
+          "expr": "avg_over_time(\n  volume_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}[$__range]\n)",
           "format": "table",
           "hide": false,
           "instant": true,

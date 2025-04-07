@@ -250,7 +250,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+          "expr": "volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -259,7 +259,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg_over_time (volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} [$__range])",
+          "expr": "avg_over_time(\n  volume_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}[$__range]\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -269,7 +269,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg_over_time (volume_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} [$__range])",
+          "expr": "avg_over_time(\n  volume_read_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}[$__range]\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -279,7 +279,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg_over_time (volume_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} [$__range])",
+          "expr": "avg_over_time(\n  volume_write_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}[$__range]\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -289,7 +289,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg_over_time (volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} [$__range])",
+          "expr": "avg_over_time(\n  volume_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}[$__range]\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -299,7 +299,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg_over_time (volume_other_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} [$__range ])",
+          "expr": "avg_over_time(\n  volume_other_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}[$__range]\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -309,7 +309,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg_over_time (volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} [$__range])",
+          "expr": "avg_over_time(\n  volume_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}[$__range]\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -448,7 +448,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}/volume_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+          "expr": "volume_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n/\n  volume_read_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -505,7 +505,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}/volume_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+          "expr": "volume_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n/\n  volume_write_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -570,7 +570,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+          "expr": "volume_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -635,7 +635,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+          "expr": "volume_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -719,7 +719,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "volume_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+          "expr": "volume_read_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
           "interval": "",
           "legendFormat": "{{svm}} - {{volume}}",
           "refId": "A"
@@ -803,7 +803,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "volume_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+          "expr": "volume_write_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
           "interval": "",
           "legendFormat": "{{svm}} - {{volume}}",
           "refId": "A"
@@ -887,7 +887,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "volume_other_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+          "expr": "volume_other_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
           "interval": "",
           "legendFormat": "{{svm}} - {{volume}}",
           "refId": "A"
@@ -970,7 +970,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+          "expr": "volume_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
           "interval": "",
           "legendFormat": "{{svm}} - {{volume}}",
           "refId": "A"
@@ -1053,7 +1053,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+          "expr": "volume_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
           "interval": "",
           "legendFormat": "{{svm}} - {{volume}}",
           "refId": "A"
@@ -1140,7 +1140,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+          "expr": "volume_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
           "interval": "",
           "legendFormat": "{{svm}} - {{volume}}",
           "refId": "A"
@@ -1227,7 +1227,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+          "expr": "volume_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
           "interval": "",
           "legendFormat": "{{svm}} - {{volume}}",
           "refId": "A"
@@ -1315,7 +1315,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg_over_time (qtree_total_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\", qtree=~\"$Qtree\"} [$__range])",
+          "expr": "avg_over_time(\n  qtree_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}[$__range]\n)",
           "interval": "",
           "legendFormat": "{{svm}} - {{volume}} - {{qtree}}",
           "refId": "A"
@@ -1652,7 +1652,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "expr": "volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1661,7 +1661,7 @@
               "refId": "B"
             },
             {
-              "expr": "volume_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "expr": "volume_new_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1671,7 +1671,7 @@
               "refId": "A"
             },
             {
-              "expr": "volume_size_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "expr": "volume_size_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1681,7 +1681,7 @@
               "refId": "C"
             },
             {
-              "expr": "volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "expr": "volume_size_used_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1692,7 +1692,7 @@
             },
             {
               "exemplar": false,
-              "expr": "volume_sis_dedup_saved{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "expr": "volume_sis_dedup_saved{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1703,7 +1703,7 @@
             },
             {
               "exemplar": false,
-              "expr": "volume_sis_compress_saved{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "expr": "volume_sis_compress_saved{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1714,7 +1714,7 @@
             },
             {
               "exemplar": false,
-              "expr": "volume_sis_dedup_saved+volume_sis_compress_saved{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "expr": "volume_sis_dedup_saved\n+\n  volume_sis_compress_saved{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1725,7 +1725,7 @@
             },
             {
               "exemplar": false,
-              "expr": "volume_space_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "expr": "volume_space_logical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1736,7 +1736,7 @@
             },
             {
               "exemplar": false,
-              "expr": "volume_space_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "expr": "volume_space_physical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1747,7 +1747,7 @@
             },
             {
               "exemplar": false,
-              "expr": "volume_clone_split_estimate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "expr": "volume_clone_split_estimate{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1935,7 +1935,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "volume_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "expr": "volume_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - Volume Total Size",
@@ -1944,7 +1944,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "volume_space_physical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "expr": "volume_space_physical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - Physical Space Used",
@@ -1953,7 +1953,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "volume_space_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "expr": "volume_space_logical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - Logical Space Used",
@@ -1962,7 +1962,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "volume_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "expr": "volume_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - Volume Size Used",
@@ -2058,7 +2058,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "volume_space_physical_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "expr": "volume_space_physical_used_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - Physical Space Used",
@@ -2067,7 +2067,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "volume_space_logical_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "expr": "volume_space_logical_used_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - Logical Space Used",
@@ -2076,7 +2076,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "expr": "volume_size_used_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - Volume Size Used",
@@ -2170,7 +2170,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "volume_snapshots_size_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "expr": "volume_snapshots_size_available{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - Snapshot Size Available",
@@ -2179,7 +2179,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "volume_snapshot_reserve_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "expr": "volume_snapshot_reserve_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - Snapshot Reserve Size",
@@ -2188,7 +2188,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "volume_snapshot_reserve_available{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "expr": "volume_snapshot_reserve_available{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - Snapshot Reserve Available",
@@ -2197,7 +2197,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "volume_snapshots_size_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "expr": "volume_snapshots_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - Snapshot Size Used",
@@ -2293,7 +2293,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "volume_snapshot_reserve_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "expr": "volume_snapshot_reserve_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - Snapshot Reserve",
@@ -2302,7 +2302,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "volume_snapshot_reserve_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "expr": "volume_snapshot_reserve_used_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - Snapshot Reserve Used",
@@ -2311,7 +2311,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "volume_size_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "expr": "volume_size_used_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}} - Volume Size Used",
@@ -2418,7 +2418,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "volume_inode_files_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "expr": "volume_inode_files_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
@@ -2510,7 +2510,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "volume_inode_files_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "expr": "volume_inode_files_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
               "range": true,
@@ -2604,7 +2604,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "volume_inode_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "expr": "volume_inode_used_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
               "range": true,

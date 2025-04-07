@@ -173,7 +173,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "count by (cluster, datacenter, object) (\n  last_over_time(\n    change_log{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",object=~\"node\",op=\"create\"}[10d6h54m48s]\n  )\n)",
+              "expr": "count by (cluster, datacenter, object) (\n  last_over_time(\n    change_log{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",object=~\"node\",op=\"create\"}[$__range]\n  )\n)",
               "format": "time_series",
               "instant": true,
               "interval": "",
@@ -233,7 +233,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "count by (cluster, datacenter, object) (\n  last_over_time(\n    change_log{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",object=~\"node\",op=\"update\"}[10d6h54m48s]\n  )\n)",
+              "expr": "count by (cluster, datacenter, object) (\n  last_over_time(\n    change_log{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",object=~\"node\",op=\"update\"}[$__range]\n  )\n)",
               "instant": true,
               "interval": "",
               "legendFormat": "",
@@ -292,7 +292,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "count by (cluster, datacenter, object) (\n  last_over_time(\n    change_log{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",object=~\"node\",op=\"delete\"}[10d6h54m48s]\n  )\n)",
+              "expr": "count by (cluster, datacenter, object) (\n  last_over_time(\n    change_log{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",object=~\"node\",op=\"delete\"}[$__range]\n  )\n)",
               "instant": true,
               "interval": "",
               "legendFormat": "",
@@ -434,7 +434,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "last_over_time(\n  change_log{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",object=~\"node\"}[10d6h54m48s]\n)",
+              "expr": "last_over_time(\n  change_log{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",object=~\"node\"}[$__range]\n)",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -587,7 +587,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "count by (cluster, datacenter, object) (\n  last_over_time(\n    change_log{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",object=~\"svm\",op=\"create\"}[10d6h54m48s]\n  )\n)",
+              "expr": "count by (cluster, datacenter, object) (\n  last_over_time(\n    change_log{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",object=~\"svm\",op=\"create\"}[$__range]\n  )\n)",
               "format": "time_series",
               "instant": true,
               "interval": "",
@@ -647,7 +647,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "count by (cluster, datacenter, object) (\n  last_over_time(\n    change_log{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",object=~\"svm\",op=\"update\"}[10d6h54m48s]\n  )\n)",
+              "expr": "count by (cluster, datacenter, object) (\n  last_over_time(\n    change_log{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",object=~\"svm\",op=\"update\"}[$__range]\n  )\n)",
               "instant": true,
               "interval": "",
               "legendFormat": "",
@@ -706,7 +706,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "count by (cluster, datacenter, object) (\n  last_over_time(\n    change_log{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",object=~\"svm\",op=\"delete\"}[10d6h54m48s]\n  )\n)",
+              "expr": "count by (cluster, datacenter, object) (\n  last_over_time(\n    change_log{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",object=~\"svm\",op=\"delete\"}[$__range]\n  )\n)",
               "instant": true,
               "interval": "",
               "legendFormat": "",
@@ -871,7 +871,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "last_over_time(change_log{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",object=~\"svm\"}[10d6h54m48s])",
+              "expr": "last_over_time(change_log{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",object=~\"svm\"}[$__range])",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1027,7 +1027,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "count by (cluster, datacenter, object) (\n  last_over_time(\n    change_log{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",object=~\"volume\",op=\"create\"}[10d6h54m48s]\n  )\n)",
+              "expr": "count by (cluster, datacenter, object) (\n  last_over_time(\n    change_log{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",object=~\"volume\",op=\"create\"}[$__range]\n  )\n)",
               "format": "time_series",
               "instant": true,
               "interval": "",
@@ -1087,7 +1087,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "count by (cluster, datacenter, object) (\n  last_over_time(\n    change_log{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",object=~\"volume\",op=\"update\"}[10d6h54m48s]\n  )\n)",
+              "expr": "count by (cluster, datacenter, object) (\n  last_over_time(\n    change_log{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",object=~\"volume\",op=\"update\"}[$__range]\n  )\n)",
               "instant": true,
               "interval": "",
               "legendFormat": "",
@@ -1146,7 +1146,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "count by (cluster, datacenter, object) (\n  last_over_time(\n    change_log{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",object=~\"volume\",op=\"delete\"}[10d6h54m48s]\n  )\n)",
+              "expr": "count by (cluster, datacenter, object) (\n  last_over_time(\n    change_log{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",object=~\"volume\",op=\"delete\"}[$__range]\n  )\n)",
               "instant": true,
               "interval": "",
               "legendFormat": "",
@@ -1333,7 +1333,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "last_over_time(\n  change_log{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",object=~\"volume\"}[10d6h54m48s]\n)",
+              "expr": "last_over_time(\n  change_log{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",object=~\"volume\"}[$__range]\n)",
               "format": "table",
               "instant": true,
               "interval": "",

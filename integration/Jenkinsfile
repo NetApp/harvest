@@ -302,6 +302,7 @@ def void setupWorkspace() {
     cp /home/harvestfiles/harvest_cert.yml $WORKSPACE/harvest/integration/test/
     cp /home/harvestfiles/harvest.yml $WORKSPACE/harvest/integration/test/
     cp /home/harvestfiles/harvest_admin.yml $WORKSPACE/harvest/integration/test/
+    cp /home/harvestfiles/promtool $WORKSPACE/harvest/integration/test/
     ls -ltr $WORKSPACE/harvest/integration/test/
 '''
 }

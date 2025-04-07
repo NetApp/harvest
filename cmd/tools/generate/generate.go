@@ -9,6 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/color"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"github.com/netapp/harvest/v2/third_party/tidwall/sjson"
 	"github.com/spf13/cobra"
@@ -16,7 +17,6 @@ import (
 	"log"
 	"log/slog"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"regexp"
 	"slices"
@@ -164,7 +164,9 @@ func doDescription(cmd *cobra.Command, _ []string) {
 
 func doFormat(_ *cobra.Command, _ []string) {
 	grafana.VisitDashboards(
-		[]string{"grafana/dashboards/cmode"},
+		[]string{
+			"grafana/dashboards/cmode",
+			"grafana/dashboards/cmode-details"},
 		func(path string, data []byte) {
 			changeExpr(path, data)
 		},
@@ -179,7 +181,7 @@ func changeExpr(path string, data []byte) {
 		value.Get("targets").ForEach(func(targetKey, target gjson.Result) bool {
 			expr := target.Get("expr")
 			if expr.Exists() && expr.String() != "" {
-				updatedExpr := format(expr.ClonedString())
+				updatedExpr := util.Format(expr.ClonedString(), PromToolLocation)
 				data, _ = sjson.SetBytes(data, path+".targets."+targetKey.ClonedString()+".expr", []byte(updatedExpr))
 			}
 			return true
@@ -188,33 +190,6 @@ func changeExpr(path string, data []byte) {
 	if err := os.WriteFile(path, data, grafana.GPerm); err != nil {
 		log.Fatalf("failed to update dashboard=%s err=%v\n", path, err)
 	}
-}
-
-func format(query string) string {
-	query = strings.ReplaceAll(query, "$TopResources", "999999")
-	query = strings.ReplaceAll(query, "$__range", "888888")
-	query = strings.ReplaceAll(query, "$__interval", "777777")
-	query = strings.ReplaceAll(query, "${Interval}", "666666")
-
-	cli := fmt.Sprintf(`%s %s '%s'`, PromToolLocation, "--experimental promql format", query)
-	command := exec.Command("bash", "-c", cli)
-	output, err := command.CombinedOutput()
-	if err != nil {
-		// An exit code can't be used since we need to ignore metrics that are not valid but can't change
-		fmt.Printf("ERR checking metrics cli=%s err=%v output=%s", cli, err, string(output))
-		return ""
-	}
-
-	if len(output) == 0 {
-		return ""
-	}
-
-	updatedQuery := strings.TrimSpace(string(output))
-	updatedQuery = strings.ReplaceAll(updatedQuery, "999999", "$TopResources")
-	updatedQuery = strings.ReplaceAll(updatedQuery, "888888", "$__range")
-	updatedQuery = strings.ReplaceAll(updatedQuery, "777777", "$__interval")
-	updatedQuery = strings.ReplaceAll(updatedQuery, "666666", "${Interval}")
-	return updatedQuery
 }
 
 func addRootOptions(cmd *cobra.Command) {

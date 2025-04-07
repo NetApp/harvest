@@ -2060,7 +2060,7 @@
             },
             {
               "exemplar": false,
-              "expr": "sum_over_time(\n  nic_rx_crc_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[10d6h54m48s]\n)",
+              "expr": "sum_over_time(\n  nic_rx_crc_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -2070,7 +2070,7 @@
             },
             {
               "exemplar": false,
-              "expr": "sum_over_time(\n  nic_tx_hw_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[10d6h54m48s]\n)",
+              "expr": "sum_over_time(\n  nic_tx_hw_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -2080,7 +2080,7 @@
             },
             {
               "exemplar": false,
-              "expr": "sum_over_time(\n  nic_tx_total_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[10d6h54m48s]\n)",
+              "expr": "sum_over_time(\n  nic_tx_total_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -2090,7 +2090,7 @@
             },
             {
               "exemplar": false,
-              "expr": "sum_over_time(\n  nic_rx_total_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[10d6h54m48s]\n)",
+              "expr": "sum_over_time(\n  nic_rx_total_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -2100,7 +2100,7 @@
             },
             {
               "exemplar": false,
-              "expr": "sum_over_time(\n  nic_link_up_to_downs{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[10d6h54m48s]\n)",
+              "expr": "sum_over_time(\n  nic_link_up_to_downs{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
               "format": "table",
               "hide": false,
               "instant": true,

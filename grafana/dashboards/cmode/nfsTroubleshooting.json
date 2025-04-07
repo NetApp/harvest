@@ -513,7 +513,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg_over_time(\n  headroom_cpu_current_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[10d6h54m48s]\n)",
+          "expr": "avg_over_time(\n  headroom_cpu_current_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[$__range]\n)",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -522,7 +522,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg_over_time(\n  headroom_cpu_optimal_point_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[10d6h54m48s]\n)",
+          "expr": "avg_over_time(\n  headroom_cpu_optimal_point_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[$__range]\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -532,7 +532,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg_over_time(\n  headroom_cpu_current_utilization{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[10d6h54m48s]\n)",
+          "expr": "avg_over_time(\n  headroom_cpu_current_utilization{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[$__range]\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -542,7 +542,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg_over_time(\n  headroom_cpu_optimal_point_utilization{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[10d6h54m48s]\n)",
+          "expr": "avg_over_time(\n  headroom_cpu_optimal_point_utilization{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[$__range]\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1015,7 +1015,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg_over_time(\n  svm_vol_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[10d6h54m48s]\n)",
+          "expr": "avg_over_time(\n  svm_vol_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[$__range]\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1025,7 +1025,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg_over_time(\n  svm_vol_read_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[10d6h54m48s]\n)",
+          "expr": "avg_over_time(\n  svm_vol_read_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[$__range]\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1035,7 +1035,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg_over_time(\n  svm_vol_write_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[10d6h54m48s]\n)",
+          "expr": "avg_over_time(\n  svm_vol_write_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[$__range]\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1045,7 +1045,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg_over_time(\n  svm_vol_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[10d6h54m48s]\n)",
+          "expr": "avg_over_time(\n  svm_vol_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[$__range]\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1055,7 +1055,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg_over_time(\n  svm_vol_other_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[10d6h54m48s]\n)",
+          "expr": "avg_over_time(\n  svm_vol_other_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[$__range]\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1065,7 +1065,7 @@
         },
         {
           "exemplar": false,
-          "expr": "avg_over_time(\n  svm_vol_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[10d6h54m48s]\n)",
+          "expr": "avg_over_time(\n  svm_vol_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[$__range]\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1542,7 +1542,7 @@
             },
             {
               "exemplar": false,
-              "expr": "avg_over_time(\n  nic_util_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[10d6h54m48s]\n)",
+              "expr": "avg_over_time(\n  nic_util_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1552,7 +1552,7 @@
             },
             {
               "exemplar": false,
-              "expr": "avg_over_time(\n  nic_tx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[10d6h54m48s]\n)",
+              "expr": "avg_over_time(\n  nic_tx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1562,7 +1562,7 @@
             },
             {
               "exemplar": false,
-              "expr": "avg_over_time(\n  nic_rx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[10d6h54m48s]\n)",
+              "expr": "avg_over_time(\n  nic_rx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1572,7 +1572,7 @@
             },
             {
               "exemplar": false,
-              "expr": "sum_over_time(\n  nic_rx_total_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[10d6h54m48s]\n)",
+              "expr": "sum_over_time(\n  nic_rx_total_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1582,7 +1582,7 @@
             },
             {
               "exemplar": false,
-              "expr": "sum_over_time(\n  nic_tx_total_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[10d6h54m48s]\n)",
+              "expr": "sum_over_time(\n  nic_tx_total_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1592,7 +1592,7 @@
             },
             {
               "exemplar": false,
-              "expr": "sum_over_time(\n  nic_link_up_to_downs{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[10d6h54m48s]\n)",
+              "expr": "sum_over_time(\n  nic_link_up_to_downs{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
               "format": "table",
               "hide": false,
               "instant": true,

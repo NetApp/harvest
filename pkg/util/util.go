@@ -19,6 +19,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"os/exec"
 	"regexp"
 	"slices"
 	"strconv"
@@ -471,4 +472,36 @@ func SafeConvertToInt32(in int) (int32, error) {
 		return 0, fmt.Errorf("input %d is too large to convert to int32", in)
 	}
 	return int32(in), nil // #nosec G115
+}
+
+func Format(query string, promToolLocation string) string {
+	query = strings.ReplaceAll(query, "$TopResources", "999999")
+	query = strings.ReplaceAll(query, "$__range", "888888")
+	query = strings.ReplaceAll(query, "$__interval", "777777")
+	query = strings.ReplaceAll(query, "${Interval}", "666666")
+
+	cli := fmt.Sprintf(`%s %s '%s'`, promToolLocation, "--experimental promql format", query)
+	command := exec.Command("bash", "-c", cli)
+	output, err := command.CombinedOutput()
+	updatedQuery := strings.TrimSuffix(string(output), "\n")
+	if strings.HasPrefix(updatedQuery, "  ") {
+		updatedQuery = strings.TrimLeft(updatedQuery, " ")
+	}
+	if err != nil {
+		// An exit code can't be used since we need to ignore metrics that are not formatted but can't change
+		fmt.Printf("ERR formating metrics cli=%s err=%v output=%s", cli, err, string(output))
+		updatedQuery = query
+		updatedQuery = strings.ReplaceAll(updatedQuery, "888888", "$__range")
+	}
+
+	if len(output) == 0 {
+		updatedQuery = query
+		updatedQuery = strings.ReplaceAll(updatedQuery, "888888", "$__range")
+	}
+
+	updatedQuery = strings.ReplaceAll(updatedQuery, "999999", "$TopResources")
+	updatedQuery = strings.ReplaceAll(updatedQuery, "10d6h54m48s", "$__range")
+	updatedQuery = strings.ReplaceAll(updatedQuery, "777777", "$__interval")
+	updatedQuery = strings.ReplaceAll(updatedQuery, "666666", "${Interval}")
+	return updatedQuery
 }
