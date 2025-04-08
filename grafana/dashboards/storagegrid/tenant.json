@@ -160,7 +160,7 @@
           "datasource": "${DS_PROMETHEUS}",
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "tenant_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",id=~\"$Id\"}\nand\ntopk($TopResources, avg_over_time(tenant_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",id=~\"$Id\"}[3h] @ end()))",
+          "expr": "tenant_logical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",id=~\"$Id\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      tenant_logical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",id=~\"$Id\"}[3h] @ end()\n    )\n  )",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -259,7 +259,7 @@
           "datasource": "${DS_PROMETHEUS}",
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "bucket_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",tenant=~\"$Tenant\"}\nand\ntopk($TopResources, avg_over_time(bucket_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",tenant=~\"$Tenant\"}[3h] @ end()))",
+          "expr": "bucket_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",tenant=~\"$Tenant\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      bucket_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",tenant=~\"$Tenant\"}[3h] @ end()\n    )\n  )",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -475,7 +475,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "tenant_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",id=~\"$Id\"}",
+          "expr": "tenant_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",id=~\"$Id\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -484,7 +484,7 @@
         },
         {
           "exemplar": false,
-          "expr": "tenant_logical_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",id=~\"$Id\"}",
+          "expr": "tenant_logical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",id=~\"$Id\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -494,7 +494,7 @@
         },
         {
           "exemplar": false,
-          "expr": "tenant_logical_quota{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",id=~\"$Id\"}",
+          "expr": "tenant_logical_quota{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",id=~\"$Id\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -504,7 +504,7 @@
         },
         {
           "exemplar": false,
-          "expr": "tenant_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",id=~\"$Id\"}",
+          "expr": "tenant_used_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",id=~\"$Id\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -514,7 +514,7 @@
         },
         {
           "exemplar": false,
-          "expr": "tenant_objects{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",id=~\"$Id\"}",
+          "expr": "tenant_objects{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",id=~\"$Id\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -769,7 +769,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "bucket_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",tenant=~\"$Tenant\"}",
+          "expr": "bucket_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",tenant=~\"$Tenant\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -778,7 +778,7 @@
         },
         {
           "exemplar": false,
-          "expr": "bucket_objects{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",tenant=~\"$Tenant\"}",
+          "expr": "bucket_objects{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",tenant=~\"$Tenant\"}",
           "format": "table",
           "hide": false,
           "instant": true,

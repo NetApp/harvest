@@ -159,7 +159,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(count(aggr_labels{cluster=~\"$Cluster\",aggr=~\"$Aggregate\"}) by (aggr))",
+          "expr": "sum(count by (aggr) (aggr_labels{aggr=~\"$Aggregate\",cluster=~\"$Cluster\"}))",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -236,7 +236,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(aggr_raid_disk_count{cluster=~\"$Cluster\",aggr=~\"$Aggregate\"})",
+          "expr": "sum(aggr_raid_disk_count{aggr=~\"$Aggregate\",cluster=~\"$Cluster\"})",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -313,7 +313,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(aggr_volume_count{cluster=~\"$Cluster\",aggr=~\"$Aggregate\"})",
+          "expr": "sum(aggr_volume_count{aggr=~\"$Aggregate\",cluster=~\"$Cluster\"})",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -377,7 +377,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(aggr_space_total{cluster=~\"$Cluster\",aggr=~\"$Aggregate\"})",
+          "expr": "sum(aggr_space_total{aggr=~\"$Aggregate\",cluster=~\"$Cluster\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -435,7 +435,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(aggr_space_available{cluster=~\"$Cluster\",aggr=~\"$Aggregate\"})",
+          "expr": "sum(aggr_space_available{aggr=~\"$Aggregate\",cluster=~\"$Cluster\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -495,7 +495,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "100*sum(aggr_space_used{cluster=~\"$Cluster\",aggr=~\"$Aggregate\"})/sum(aggr_space_total{cluster=~\"$Cluster\",aggr=~\"$Aggregate\"})",
+          "expr": "100 * sum(aggr_space_used{aggr=~\"$Aggregate\",cluster=~\"$Cluster\"})\n/\n  sum(aggr_space_total{aggr=~\"$Aggregate\",cluster=~\"$Cluster\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -894,7 +894,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "aggr_new_status{cluster=~\"$Cluster\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_new_status{aggr=~\"$Aggregate\",cluster=~\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -904,7 +904,7 @@
         },
         {
           "exemplar": false,
-          "expr": "aggr_volume_count{cluster=~\"$Cluster\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_volume_count{aggr=~\"$Aggregate\",cluster=~\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -914,7 +914,7 @@
         },
         {
           "exemplar": false,
-          "expr": "aggr_raid_disk_count{cluster=~\"$Cluster\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_raid_disk_count{aggr=~\"$Aggregate\",cluster=~\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -924,7 +924,7 @@
         },
         {
           "exemplar": false,
-          "expr": "aggr_space_total{cluster=~\"$Cluster\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_space_total{aggr=~\"$Aggregate\",cluster=~\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -934,7 +934,7 @@
         },
         {
           "exemplar": false,
-          "expr": "aggr_space_used{cluster=~\"$Cluster\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_space_used{aggr=~\"$Aggregate\",cluster=~\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -944,7 +944,7 @@
         },
         {
           "exemplar": false,
-          "expr": "aggr_space_used_percent{cluster=~\"$Cluster\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_space_used_percent{aggr=~\"$Aggregate\",cluster=~\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -954,7 +954,7 @@
         },
         {
           "exemplar": false,
-          "expr": "aggr_labels{cluster=~\"$Cluster\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_labels{aggr=~\"$Aggregate\",cluster=~\"$Cluster\"}",
           "format": "table",
           "hide": false,
           "interval": "",
@@ -1111,7 +1111,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "aggr_space_physical_used{cluster=~\"$Cluster\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_space_physical_used{aggr=~\"$Aggregate\",cluster=~\"$Cluster\"}",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -1202,7 +1202,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "aggr_space_available{cluster=~\"$Cluster\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_space_available{aggr=~\"$Aggregate\",cluster=~\"$Cluster\"}",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -1294,7 +1294,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "aggr_space_capacity_tier_used{cluster=~\"$Cluster\",aggr=~\"$Aggregate\"}",
+          "expr": "aggr_space_capacity_tier_used{aggr=~\"$Aggregate\",cluster=~\"$Cluster\"}",
           "interval": "",
           "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
@@ -1397,7 +1397,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "8 * (sum by (cluster,policy)(rate(storagegrid_private_load_balancer_storage_rx_bytes{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[4m])) and on (cluster, policy) topk($TopResources, sum by (cluster,policy) (avg_over_time(storagegrid_private_load_balancer_storage_rx_bytes{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[3h]))))",
+          "expr": "8\n*\n  (\n      sum by (cluster, policy) (\n        rate(\n          storagegrid_private_load_balancer_storage_rx_bytes{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[4m]\n        )\n      )\n    and on (cluster, policy)\n      topk(\n        $TopResources,\n        sum by (cluster, policy) (\n          avg_over_time(\n            storagegrid_private_load_balancer_storage_rx_bytes{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[3h]\n          )\n        )\n      )\n  )",
           "hide": false,
           "instant": false,
           "interval": "3m",
@@ -1407,7 +1407,7 @@
         },
         {
           "exemplar": false,
-          "expr": "8 * (sum by (cluster,policy)(rate(storagegrid_private_load_balancer_storage_tx_bytes{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[4m])) and on (cluster, policy) topk($TopResources, sum by (cluster,policy) (avg_over_time(storagegrid_private_load_balancer_storage_tx_bytes{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[3h]))))",
+          "expr": "8\n*\n  (\n      sum by (cluster, policy) (\n        rate(\n          storagegrid_private_load_balancer_storage_tx_bytes{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[4m]\n        )\n      )\n    and on (cluster, policy)\n      topk(\n        $TopResources,\n        sum by (cluster, policy) (\n          avg_over_time(\n            storagegrid_private_load_balancer_storage_tx_bytes{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[3h]\n          )\n        )\n      )\n  )",
           "hide": false,
           "interval": "3m",
           "intervalFactor": 1,
@@ -1497,7 +1497,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum by (cluster,policy)(rate(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[4m])) > 0 and on (cluster, policy) topk($TopResources, sum by (cluster,policy) (avg_over_time(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[3h])))",
+          "expr": "sum by (cluster, policy) (\n      rate(\n        storagegrid_private_load_balancer_storage_request_count{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[4m]\n      )\n    )\n  \u003e\n    0\nand on (cluster, policy)\n  topk(\n    $TopResources,\n    sum by (cluster, policy) (\n      avg_over_time(\n        storagegrid_private_load_balancer_storage_request_count{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[3h]\n      )\n    )\n  )",
           "hide": false,
           "instant": false,
           "interval": "3m",
@@ -1507,7 +1507,7 @@
         },
         {
           "exemplar": false,
-          "expr": "sum by (cluster,policy,method)(rate(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[4m])) > 0 and on (cluster, policy, method) topk($TopResources, sum by (cluster,policy,method) (avg_over_time(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[3h])))",
+          "expr": "sum by (cluster, policy, method) (\n      rate(\n        storagegrid_private_load_balancer_storage_request_count{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[4m]\n      )\n    )\n  \u003e\n    0\nand on (cluster, policy, method)\n  topk(\n    $TopResources,\n    sum by (cluster, policy, method) (\n      avg_over_time(\n        storagegrid_private_load_balancer_storage_request_count{cluster=~\"$SGCluster\",policy=~\"$Policy\"}[3h]\n      )\n    )\n  )",
           "hide": false,
           "interval": "3m",
           "intervalFactor": 1,
@@ -1652,7 +1652,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "bucket_bytes{cluster=~\"$SGCluster\",bucket=~\"$Bucket\"}",
+          "expr": "bucket_bytes{bucket=~\"$Bucket\",cluster=~\"$SGCluster\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -1661,7 +1661,7 @@
         },
         {
           "exemplar": false,
-          "expr": "bucket_objects{cluster=~\"$SGCluster\",bucket=~\"$Bucket\"}",
+          "expr": "bucket_objects{bucket=~\"$Bucket\",cluster=~\"$SGCluster\"}",
           "format": "table",
           "hide": false,
           "instant": true,

@@ -70,6 +70,8 @@ test: ## Run tests
 	@# The ldflags force the old Apple linker to suppress ld warning messages on MacOS
 	@# See https://github.com/golang/go/issues/61229#issuecomment-1988965927
 	@go test -ldflags=-extldflags=-Wl,-ld_classic -race -shuffle=on ./...
+	@echo "Validating dashboard queries"
+	VERSION=${VERSION} CHECK_FORMAT=1 ./integration/test/test.sh
 
 fmt: ## Format the go source files
 	@echo "Formatting"

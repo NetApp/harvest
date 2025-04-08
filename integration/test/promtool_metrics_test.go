@@ -6,7 +6,6 @@ import (
 	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
-	"log/slog"
 	"os"
 	"os/exec"
 	"strings"
@@ -59,25 +58,18 @@ func checkMetrics(t *testing.T, port int) {
 
 func TestFormatQueries(t *testing.T) {
 	utils.SkipIfMissing(t, utils.CheckFormat)
-
 	jsonDir := utils.GetHarvestRootDir() + "/grafana/dashboards"
-	slog.Info("Dashboard directory path", slog.String("jsonDir", jsonDir))
 	fileSet = GetAllJsons(jsonDir)
 	if len(fileSet) == 0 {
 		t.Fatalf("No json file found @ %s", jsonDir)
 	}
-	slog.Info("Json files", slog.Int("fileSet", len(fileSet)))
-
-	if len(fileSet) == 0 {
-		TestDashboardsLoad(t)
-	}
 
 	for _, filePath := range fileSet {
-		dashPath := shortPath(filePath)
-		if shouldSkipDashboard(filePath) {
-			slog.Info("Skip", slog.String("path", dashPath))
+		// Skip 7mode dashboards
+		if strings.Contains(filePath, "7mode") {
 			continue
 		}
+		dashPath := shortPath(filePath)
 		byteValue, _ := os.ReadFile(filePath)
 		var allExpr []string
 		value := gjson.Get(string(byteValue), "panels")

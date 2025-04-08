@@ -165,7 +165,9 @@ func doFormat(_ *cobra.Command, _ []string) {
 	grafana.VisitDashboards(
 		[]string{
 			"grafana/dashboards/cmode",
-			"grafana/dashboards/cmode-details"},
+			"grafana/dashboards/cmode-details",
+			"grafana/dashboards/storagegrid",
+		},
 		func(path string, data []byte) {
 			changeExpr(path, data)
 		},
