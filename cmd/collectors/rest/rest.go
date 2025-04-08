@@ -26,6 +26,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/systemnode"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/volume"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/volumeanalytics"
+	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/vscanpool"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/workload"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
@@ -58,13 +59,13 @@ type Rest struct {
 	*collector.AbstractCollector
 	Client                       *rest.Client
 	Prop                         *prop
-	endpoints                    []*EndPoint
+	Endpoints                    []*EndPoint
 	isIgnoreUnknownFieldsEnabled bool
 	BatchSize                    string
 }
 
 type EndPoint struct {
-	prop        *prop
+	Prop        *prop
 	name        string
 	instanceAdd bool
 }
@@ -104,7 +105,7 @@ func (r *Rest) HarvestModule() plugin.ModuleInfo {
 }
 
 func (r *Rest) query(p *EndPoint) string {
-	return p.prop.Query
+	return p.Prop.Query
 }
 
 func (r *Rest) isValidFormat(prop *prop) bool {
@@ -128,7 +129,7 @@ func (r *Rest) Fields(prop *prop) []string {
 }
 
 func (r *Rest) filter(p *EndPoint) []string {
-	return p.prop.Filter
+	return p.Prop.Filter
 }
 
 func (r *Rest) Init(a *collector.AbstractCollector) error {
@@ -288,8 +289,8 @@ func (r *Rest) InitEndPoints() error {
 					r.ParseRestCounters(line1, &p)
 				}
 			}
-			e.prop = &p
-			r.endpoints = append(r.endpoints, &e)
+			e.Prop = &p
+			r.Endpoints = append(r.Endpoints, &e)
 		}
 	}
 	return nil
@@ -346,11 +347,11 @@ func (r *Rest) updateHref() {
 		IsIgnoreUnknownFieldsEnabled(r.isIgnoreUnknownFieldsEnabled).
 		Build()
 
-	for _, e := range r.endpoints {
-		e.prop.Href = rest.NewHrefBuilder().
+	for _, e := range r.Endpoints {
+		e.Prop.Href = rest.NewHrefBuilder().
 			APIPath(r.query(e)).
-			Fields(r.Fields(e.prop)).
-			HiddenFields(e.prop.HiddenFields).
+			Fields(r.Fields(e.Prop)).
+			HiddenFields(e.Prop.HiddenFields).
 			Filter(r.filter(e)).
 			MaxRecords(r.BatchSize).
 			ReturnTimeout(r.Prop.ReturnTimeOut).
@@ -373,7 +374,7 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 		oldInstances.Add(key)
 	}
 
-	processBatch := func(records []gjson.Result) error {
+	processBatch := func(records []gjson.Result, _ int64) error {
 		if len(records) == 0 {
 			return nil
 		}
@@ -430,7 +431,7 @@ func (r *Rest) pollData(records []gjson.Result, oldInstances *set.Set) (uint64, 
 	startTime := time.Now()
 	mat := r.Matrix[r.Object]
 
-	count, _ = r.HandleResults(mat, records, r.Prop, false, oldInstances)
+	count, _ = r.HandleResults(mat, records, r.Prop, false, oldInstances, time.Now().UnixNano()/util.BILLION)
 	parseD = time.Since(startTime)
 
 	return count, parseD
@@ -438,7 +439,7 @@ func (r *Rest) pollData(records []gjson.Result, oldInstances *set.Set) (uint64, 
 
 func (r *Rest) ProcessEndPoint(e *EndPoint) ([]gjson.Result, time.Duration, error) {
 	now := time.Now()
-	data, err := r.GetRestData(e.prop.Href)
+	data, err := r.GetRestData(e.Prop.Href)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -452,7 +453,7 @@ func (r *Rest) ProcessEndPoints(mat *matrix.Matrix, endpointFunc func(e *EndPoin
 		totalAPID time.Duration
 	)
 
-	for _, endpoint := range r.endpoints {
+	for _, endpoint := range r.Endpoints {
 		var (
 			records []gjson.Result
 			apiD    time.Duration
@@ -462,16 +463,16 @@ func (r *Rest) ProcessEndPoints(mat *matrix.Matrix, endpointFunc func(e *EndPoin
 		totalAPID += apiD
 
 		if err != nil {
-			r.Logger.Error("", slogx.Err(err), slog.String("api", endpoint.prop.Query))
+			r.Logger.Error("", slogx.Err(err), slog.String("api", endpoint.Prop.Query))
 			continue
 		}
 
 		if len(records) == 0 {
-			r.Logger.Debug("no instances on cluster", slog.String("APIPath", endpoint.prop.Query))
+			r.Logger.Debug("no instances on cluster", slog.String("APIPath", endpoint.Prop.Query))
 			continue
 		}
 		isImmutable := !endpoint.instanceAdd
-		count, _ = r.HandleResults(mat, records, endpoint.prop, isImmutable, oldInstances)
+		count, _ = r.HandleResults(mat, records, endpoint.Prop, isImmutable, oldInstances, time.Now().UnixNano()/util.BILLION)
 	}
 
 	return count, totalAPID
@@ -529,6 +530,8 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return systemnode.New(abc)
 	case "Workload":
 		return workload.New(abc)
+	case "VscanPool":
+		return vscanpool.New(abc)
 	default:
 		r.Logger.Warn("no rest plugin found", slog.String("kind", kind))
 	}
@@ -537,7 +540,7 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 
 // HandleResults function is used for handling the rest response for parent as well as endpoints calls,
 // isEndPoint would be true only for the endpoint call, and it can't create/delete instance.
-func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *prop, isImmutable bool, oldInstances *set.Set) (uint64, uint64) {
+func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *prop, isImmutable bool, oldInstances *set.Set, timestamp int64) (uint64, uint64) {
 	var (
 		err         error
 		count       uint64
@@ -643,6 +646,23 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 				}
 			}
 			f := instanceData.Get(metric.Name)
+
+			if metric.Name == "statistics.timestamp" && mat.UUID == "KeyPerf" {
+				sTimestamp := instanceData.Get(metric.Name)
+				if !sTimestamp.Exists() {
+					if err = metr.SetValueInt64(instance, timestamp); err != nil {
+						r.Logger.Error(
+							"Unable to set metric",
+							slogx.Err(err),
+							slog.String("key", metric.Name),
+							slog.String("metric", metric.Label),
+						)
+					}
+					count++
+					continue
+				}
+			}
+
 			if f.Exists() {
 				var floatValue float64
 				switch metric.MetricType {

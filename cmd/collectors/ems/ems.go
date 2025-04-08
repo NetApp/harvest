@@ -660,8 +660,8 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 							}
 							metr.SetExportable(metric.Exportable)
 						}
-						switch {
-						case metric.Name == "events":
+						switch metric.Name {
+						case "events":
 							if err = metr.SetValueFloat64(instance, 1); err != nil {
 								e.Logger.Error("Unable to set float key on metric",
 									slogx.Err(err),
@@ -669,7 +669,7 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 									slog.String("metric", metric.Label),
 								)
 							}
-						case metric.Name == "timestamp":
+						case "timestamp":
 							if err = metr.SetValueFloat64(instance, float64(time.Now().UnixMicro())); err != nil {
 								e.Logger.Error("Unable to set timestamp on metric",
 									slogx.Err(err),
@@ -733,10 +733,11 @@ func (e *Ems) updateMatrix(begin time.Time) {
 		}
 	}
 
-	// remove all ems matrix except parent object
-	mat := e.Matrix[e.Object]
-	e.Matrix = make(map[string]*matrix.Matrix)
-	e.Matrix[e.Object] = mat
+	// We want to ensure that the existing matrix is an empty clone so that it gets updated in the Prometheus cache.
+	// This prevents older instances from appearing in the previous poll.
+	for k, v := range e.Matrix {
+		e.Matrix[k] = v.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: false})
+	}
 
 	for issuingEms, mx := range tempMap {
 		eventMetric, ok := mx.GetMetrics()["events"]
@@ -785,7 +786,9 @@ func (e *Ems) updateMatrix(begin time.Time) {
 			}
 		}
 		if instances := mx.GetInstances(); len(instances) == 0 {
-			delete(e.Matrix, issuingEms)
+			// We want to ensure that the existing matrix is an empty clone so that it gets updated in the Prometheus cache.
+			// This prevents older instances from appearing in the previous poll.
+			e.Matrix[issuingEms] = mx.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: false})
 			continue
 		}
 		e.Matrix[issuingEms] = mx

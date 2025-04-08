@@ -39,7 +39,6 @@ import (
 
 const (
 	latencyIoReqd          = 10
-	BILLION                = 1_000_000_000
 	arrayKeyToken          = "#"
 	objWorkloadClass       = "user_defined|system_defined"
 	objWorkloadVolumeClass = "autovolume"
@@ -746,7 +745,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	}
 
 	// filter is applied to api/storage/qos/workloads for workload objects in pollInstance method
-	if !(isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query)) {
+	if !isWorkloadObject(r.Prop.Query) && !isWorkloadDetailObject(r.Prop.Query) {
 		filter = append(filter, r.Prop.Filter...)
 	}
 
@@ -790,7 +789,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 			ReturnTimeout(r.Prop.ReturnTimeOut).
 			Build()
 
-		r.Logger.Info("", slog.String("href", href))
+		r.Logger.Debug("", slog.String("href", href))
 		if href == "" {
 			return nil, errs.New(errs.ErrConfig, "empty url")
 		}
@@ -887,13 +886,13 @@ func (r *RestPerf) processPerfRecords(perfRecords []rest.PerfRecord, curMat *mat
 	startTime := time.Now()
 
 	// init current time
-	ts = float64(startTime.UnixNano()) / BILLION
+	ts = float64(startTime.UnixNano()) / util.BILLION
 	for _, perfRecord := range perfRecords {
 		pr := perfRecord.Records
 		t := perfRecord.Timestamp
 
 		if t != 0 {
-			ts = float64(t) / BILLION
+			ts = float64(t) / util.BILLION
 		} else {
 			r.Logger.Warn("Missing timestamp in response")
 		}
@@ -1572,7 +1571,7 @@ func (r *RestPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 	)
 
 	// The PollInstance method is only needed for `workload` and `workload_detail` objects.
-	if !(isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query)) {
+	if !isWorkloadObject(r.Prop.Query) && !isWorkloadDetailObject(r.Prop.Query) {
 		return nil, nil
 	}
 

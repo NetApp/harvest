@@ -26,6 +26,10 @@ import (
 	"strings"
 )
 
+const (
+	BILLION = 1_000_000_000
+)
+
 var arrayRegex = regexp.MustCompile(`^([a-zA-Z][\w.]*)(\.[0-9#])`)
 
 var IsONTAPCollector = map[string]struct{}{

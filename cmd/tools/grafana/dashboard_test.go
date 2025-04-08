@@ -599,11 +599,12 @@ func unitForExpr(e Expression, overrides []override, defaultUnit string,
 				byNameQuery2 = n
 			}
 		}
-		if o.id == "byName" {
+		switch o.id {
+		case "byName":
 			if o.options == byNameQuery || o.options == byNameQuery2 {
 				return o.unit
 			}
-		} else if o.id == "byFrameRefID" {
+		case "byFrameRefID":
 			if o.options == e.refID || o.options == byNameQuery2 {
 				return o.unit
 			}
@@ -935,7 +936,7 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 				value := optionVal.Get("value").ClonedString()
 
 				// Test if text and value match, except for the special case with "All" and "$__all"
-				if text != value && !(text == "All" && value == "$__all") {
+				if text != value && (text != "All" || value != "$__all") {
 					t.Errorf("In dashboard %s, variable %s uses topk, but text '%s' does not match value '%s'",
 						ShortPath(path), v.name, text, value)
 				}

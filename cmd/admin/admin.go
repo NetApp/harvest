@@ -107,10 +107,10 @@ func (a *Admin) APISD(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	switch {
-	case r.Method == http.MethodPut:
+	switch r.Method {
+	case http.MethodPut:
 		a.apiPublish(w, r)
-	case r.Method == http.MethodGet:
+	case http.MethodGet:
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write(a.makeTargets())
 	default:

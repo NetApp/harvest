@@ -965,9 +965,10 @@ func Union2(hNode *node.Node, poller *conf.Poller) {
 					case "!!seq":
 						// the poller node that is missing is a sequence so add all the children of the sequence
 						for _, seqNode := range valNode.Content {
-							if seqNode.Tag == "!!str" {
+							switch seqNode.Tag {
+							case "!!str":
 								newNode.NewChildS(seqNode.Value, seqNode.Value)
-							} else if seqNode.Tag == "!!map" {
+							case "!!map":
 								for ci := 0; ci < len(seqNode.Content); ci += 2 {
 									newNode.NewChildS(seqNode.Content[ci].Value, seqNode.Content[ci+1].Value)
 								}

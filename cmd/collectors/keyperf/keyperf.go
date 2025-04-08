@@ -168,6 +168,35 @@ func (kp *KeyPerf) buildCounters() {
 		kp.Logger.Error("Failed to load static counter definitions", slogx.Err(err))
 	}
 
+	// Check if the statistics.timestamp metric exists; if not, create it
+	_, exists := kp.Prop.Metrics["statistics.timestamp"]
+	if !exists {
+		kp.Prop.Metrics["statistics.timestamp"] = &rest.Metric{
+			Label:      "timestamp",
+			Name:       "statistics.timestamp",
+			Exportable: true,
+		}
+	}
+
+	// handle statistics.timestamp for endpoints
+	for _, endpoint := range kp.Endpoints {
+		eProp := endpoint.Prop
+		_, exists = eProp.Metrics["statistics.timestamp"]
+		if !exists {
+			eProp.Metrics["statistics.timestamp"] = &rest.Metric{
+				Label:      "timestamp",
+				Name:       "statistics.timestamp",
+				Exportable: true,
+			}
+		}
+
+		for k, v := range eProp.Metrics {
+			if _, exists = kp.Prop.Metrics[k]; !exists {
+				kp.Prop.Metrics[k] = v
+			}
+		}
+	}
+
 	for k, v := range kp.Prop.Metrics {
 		if _, exists := kp.perfProp.counterInfo[k]; !exists {
 			var ctr *counter
@@ -286,13 +315,13 @@ func (kp *KeyPerf) PollData() (map[string]*matrix.Matrix, error) {
 	curMat = prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
 	curMat.Reset()
 
-	processBatch := func(perfRecords []gjson.Result) error {
+	processBatch := func(perfRecords []gjson.Result, timestamp int64) error {
 		if len(perfRecords) == 0 {
 			return nil
 		}
 
 		// Process the current batch of records
-		count, np, batchParseD := kp.processPerfRecords(perfRecords, curMat, oldInstances)
+		count, np, batchParseD := kp.processPerfRecords(perfRecords, curMat, oldInstances, timestamp)
 		numPartials += np
 		metricCount += count
 		parseD += batchParseD
@@ -331,7 +360,7 @@ func (kp *KeyPerf) PollData() (map[string]*matrix.Matrix, error) {
 	return kp.cookCounters(curMat, prevMat)
 }
 
-func (kp *KeyPerf) processPerfRecords(perfRecords []gjson.Result, curMat *matrix.Matrix, oldInstances *set.Set) (uint64, uint64, time.Duration) {
+func (kp *KeyPerf) processPerfRecords(perfRecords []gjson.Result, curMat *matrix.Matrix, oldInstances *set.Set, timestamp int64) (uint64, uint64, time.Duration) {
 	var (
 		count       uint64
 		parseD      time.Duration
@@ -339,7 +368,7 @@ func (kp *KeyPerf) processPerfRecords(perfRecords []gjson.Result, curMat *matrix
 	)
 	startTime := time.Now()
 
-	count, numPartials = kp.HandleResults(curMat, perfRecords, kp.Prop, false, oldInstances)
+	count, numPartials = kp.HandleResults(curMat, perfRecords, kp.Prop, false, oldInstances, timestamp)
 
 	parseD = time.Since(startTime)
 	return count, numPartials, parseD

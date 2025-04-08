@@ -1,5 +1,10 @@
+version: "2"
+output:
+  formats:
+    text:
+      path: stdout
 linters:
-  disable-all: true
+  default: none
   enable:
     - asasalint
     - bidichk
@@ -20,7 +25,6 @@ linters:
     - gochecksumtype
     - gocritic
     - gosec
-    - gosimple
     - govet
     - iface
     - ineffassign
@@ -42,51 +46,51 @@ linters:
     - revive
     - sloglint
     - staticcheck
-    - stylecheck
     - testableexamples
     - testifylint
     - thelper
-    - typecheck
     - unconvert
     - unparam
     - unused
     - usestdlibvars
     - usetesting
     - wastedassign
-
-run:
-  timeout: 10m
-
+  settings:
+    dogsled:
+      max-blank-identifiers: 3
+    gocritic:
+      disabled-checks:
+        - exposedSyncMutex
+        - hugeParam
+        - octalLiteral
+        - paramTypeCombine
+        - rangeValCopy
+        - regexpSimplify
+        - typeDefFirst
+        - unnamedResult
+        - whyNoLint
+      enabled-tags:
+        - diagnostic
+        - performance
+        - style
+    sloglint:
+      attr-only: true
+    thelper:
+      test:
+        begin: false
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - std-error-handling
+    paths:
+      - third_party/.*
 issues:
   max-issues-per-linter: 0
   max-same-issues: 0
-  include:
-    - EXC0009
-
-output:
-  formats:
-  - format: colored-line-number
-
-linters-settings:
-  thelper:
-    test:
-      begin: false
-  gocritic:
-    enabled-tags:
-      - diagnostic
-      - performance
-      - style
-    disabled-checks:
-      - exposedSyncMutex
-      - hugeParam
-      - octalLiteral
-      - paramTypeCombine
-      - rangeValCopy
-      - regexpSimplify
-      - typeDefFirst
-      - unnamedResult
-      - whyNoLint
-  dogsled:
-    max-blank-identifiers: 3
-  sloglint:
-    attr-only: true
+formatters:
+  exclusions:
+    generated: lax
+    paths:
+      - third_party/.*

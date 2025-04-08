@@ -684,7 +684,7 @@ func generateDescription(dPath string, data []byte, counters map[string]Counter)
 		if description == "" {
 			if len(targetsSlice) == 1 {
 				expr := targetsSlice[0].Get("expr").ClonedString()
-				if !(strings.Contains(expr, "/") || strings.Contains(expr, "+") || strings.Contains(expr, "-") || strings.Contains(expr, "on")) {
+				if !strings.Contains(expr, "/") && !strings.Contains(expr, "+") && !strings.Contains(expr, "-") && !strings.Contains(expr, "on") {
 					allMatches := metricRe.FindAllStringSubmatch(expr, -1)
 					for _, match := range allMatches {
 						m := match[1]

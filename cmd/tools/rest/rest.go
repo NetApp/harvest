@@ -463,7 +463,7 @@ func FetchRestPerfDataStream(client *Client, href string, processBatch func([]Pe
 	return nil
 }
 
-func FetchAllStream(client *Client, href string, processBatch func([]gjson.Result) error, headers ...map[string]string) error {
+func FetchAllStream(client *Client, href string, processBatch func([]gjson.Result, int64) error, headers ...map[string]string) error {
 	var prevLink string
 	nextLink := href
 	recordsFound := false
@@ -484,7 +484,7 @@ func FetchAllStream(client *Client, href string, processBatch func([]gjson.Resul
 			if numRecords.Int() > 0 {
 				recordsFound = true
 				// Process the current batch of records
-				if err := processBatch(data.Array()); err != nil {
+				if err := processBatch(data.Array(), time.Now().UnixNano()/util.BILLION); err != nil {
 					return err
 				}
 			}
@@ -507,7 +507,7 @@ func FetchAllStream(client *Client, href string, processBatch func([]gjson.Resul
 			if len(records) > 0 {
 				recordsFound = true
 				// Process the current batch of records
-				if err := processBatch(records); err != nil {
+				if err := processBatch(records, time.Now().UnixNano()/util.BILLION); err != nil {
 					return err
 				}
 			}

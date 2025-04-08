@@ -211,16 +211,16 @@ func UpdateProtectedFields(instance *matrix.Instance) {
 	// Update derived_relationship_type field based on the policyType
 	relationshipType := instance.GetLabel("relationship_type")
 	if policyType := instance.GetLabel("policy_type"); policyType != "" {
-		switch {
-		case policyType == "strict_sync_mirror":
+		switch policyType {
+		case "strict_sync_mirror":
 			instance.SetLabel("derived_relationship_type", "sync_mirror_strict")
-		case policyType == "sync_mirror":
+		case "sync_mirror":
 			instance.SetLabel("derived_relationship_type", "sync_mirror")
-		case policyType == "mirror_vault":
+		case "mirror_vault":
 			instance.SetLabel("derived_relationship_type", "mirror_vault")
-		case policyType == "automated_failover":
+		case "automated_failover":
 			instance.SetLabel("derived_relationship_type", "automated_failover")
-		case policyType == "automated_failover_duplex":
+		case "automated_failover_duplex":
 			instance.SetLabel("derived_relationship_type", "automated_failover_duplex")
 		default:
 			instance.SetLabel("derived_relationship_type", relationshipType)

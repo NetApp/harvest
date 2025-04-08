@@ -37,7 +37,7 @@ func TestMain(m *testing.M) {
 func BenchmarkRestPerf_PollData(b *testing.B) {
 	now := time.Now().Truncate(time.Second)
 
-	for range b.N {
+	for b.Loop() {
 		now = now.Add(time.Minute * 15)
 		_, _ = benchRest.pollData(fullPollData, set.New())
 	}
@@ -86,7 +86,7 @@ func Test_pollDataVolume(t *testing.T) {
 }
 
 func volumeEndpoints(e *EndPoint) ([]gjson.Result, time.Duration, error) {
-	path := "testdata/" + strings.ReplaceAll(e.prop.Query, "/", "-") + ".json.gz"
+	path := "testdata/" + strings.ReplaceAll(e.Prop.Query, "/", "-") + ".json.gz"
 	gson := collectors.JSONToGson(path, true)
 	return gson, 0, nil
 }

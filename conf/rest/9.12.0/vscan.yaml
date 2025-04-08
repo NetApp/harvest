@@ -1,0 +1,17 @@
+name:                     Vscan
+query:                    api/protocols/vscan
+object:                   vscan
+
+counters:
+  - ^^svm.name                          => svm
+  - ^scanner_pools                      => scanner_pools
+
+plugins:
+  - VscanPool
+
+export_options:
+  instance_keys:
+    - svm
+  instance_labels:
+    - scanner_pools
+

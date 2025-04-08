@@ -21,6 +21,7 @@ nav:
   - System Requirements: 'system-requirements.md'
   - Prepare Monitored Clusters:
       - 'ONTAP cDOT': 'prepare-cdot-clusters.md'
+      - 'ASA r2': 'asar2.md'
       - 'Amazon FSx for ONTAP': 'prepare-fsx-clusters.md'
       - 'ONTAP 7mode': 'prepare-7mode-clusters.md'
       - 'StorageGRID': 'prepare-storagegrid-clusters.md'

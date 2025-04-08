@@ -21,7 +21,7 @@ const (
 	commonName    = "Harvest2"
 	harvestUser   = "harvest"
 	ontapRole     = "harvest"
-	ontapRestRole = "harvest-rest"
+	ontapRestRole = "harvest-rest-role"
 )
 
 var (
@@ -145,6 +145,9 @@ func curlServer() {
 	}
 
 	for range 60 {
+		// Introduce a delay to prevent errors that may occur immediately after creating new certificates.
+		sleep("5s")
+
 		//nolint:gosec
 		command := exec.Command("curl", "--insecure", "--cert", local(".crt"), "--key", local(".key"),
 			fmt.Sprintf("https://%s/api/cluster?fields=version", ip))

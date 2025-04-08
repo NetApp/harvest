@@ -241,10 +241,7 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, exporter.Stats, error)
 
 	// user-defined preferences for export
 	var labelsToInclude, keysToInclude []string
-	includeAll := false
-	if data.GetExportOptions().GetChildContentS("include_all_labels") == "true" {
-		includeAll = true
-	}
+	includeAll := data.GetExportOptions().GetChildContentS("include_all_labels") == "true"
 	if x := data.GetExportOptions().GetChildS("instance_keys"); x != nil {
 		keysToInclude = x.GetAllChildContentS()
 	}

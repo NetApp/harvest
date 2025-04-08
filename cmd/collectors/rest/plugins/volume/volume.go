@@ -171,6 +171,7 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]vo
 			return
 		}
 	}
+
 	for vKey, volume := range data.GetInstances() {
 		// update volumeTagMap used to update tag details
 		svm := volume.GetLabel("svm")
