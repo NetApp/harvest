@@ -4,10 +4,16 @@ import (
 	"errors"
 	"fmt"
 	"github.com/Netapp/harvest-automation/test/utils"
+	"github.com/netapp/harvest/v2/pkg/util"
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
+	"log/slog"
+	"os"
 	"os/exec"
 	"strings"
 	"testing"
 )
+
+var PromToolLocation = utils.GetHarvestRootDir() + "/integration/test/" + "promtool"
 
 func TestPrometheusMetrics(t *testing.T) {
 	utils.SkipIfMissing(t, utils.CheckMetrics)
@@ -47,6 +53,47 @@ func checkMetrics(t *testing.T, port int) {
 
 		if strings.Contains(line, "error while linting: ") {
 			t.Errorf("promtool: %s", line)
+		}
+	}
+}
+
+func TestFormatQueries(t *testing.T) {
+	utils.SkipIfMissing(t, utils.CheckFormat)
+
+	jsonDir := utils.GetHarvestRootDir() + "/grafana/dashboards"
+	slog.Info("Dashboard directory path", slog.String("jsonDir", jsonDir))
+	fileSet = GetAllJsons(jsonDir)
+	if len(fileSet) == 0 {
+		t.Fatalf("No json file found @ %s", jsonDir)
+	}
+	slog.Info("Json files", slog.Int("fileSet", len(fileSet)))
+
+	if len(fileSet) == 0 {
+		TestDashboardsLoad(t)
+	}
+
+	for _, filePath := range fileSet {
+		dashPath := shortPath(filePath)
+		if shouldSkipDashboard(filePath) {
+			slog.Info("Skip", slog.String("path", dashPath))
+			continue
+		}
+		byteValue, _ := os.ReadFile(filePath)
+		var allExpr []string
+		value := gjson.Get(string(byteValue), "panels")
+		for _, record := range value.Array() {
+			allExpr = append(allExpr, getAllExpr(record)...)
+			for _, targets := range record.Map()["targets"].Array() {
+				allExpr = append(allExpr, targets.Map()["expr"].Str)
+			}
+		}
+		allExpr = utils.RemoveDuplicateStr(allExpr)
+
+		for _, expression := range allExpr {
+			updatedExpr := util.Format(expression, PromToolLocation)
+			if updatedExpr != expression {
+				t.Errorf("query %s not formatted in dashboard %s, it should be %s", expression, dashPath, updatedExpr)
+			}
 		}
 	}
 }

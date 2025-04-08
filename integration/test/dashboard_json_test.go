@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/Netapp/harvest-automation/test/dashboard"
 	"github.com/Netapp/harvest-automation/test/utils"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -24,7 +23,6 @@ const (
 )
 
 var isStringAlphabetic = regexp.MustCompile(`^[a-zA-Z0-9_]*$`).MatchString
-var PromToolLocation = utils.GetHarvestRootDir() + "/integration/test/" + "promtool"
 var fileSet []string
 
 // zapiCounterMap are additional counters, above and beyond the ones from counterMap, which should be excluded from Zapi
@@ -201,10 +199,6 @@ func TestJsonExpression(t *testing.T) {
 		allExpr = utils.RemoveDuplicateStr(allExpr)
 
 		for _, expression := range allExpr {
-			updatedExpr := util.Format(expression, PromToolLocation)
-			if updatedExpr != expression {
-				t.Errorf("query %s not formatted in dashboard %s, it should be %s", expression, dashPath, updatedExpr)
-			}
 			counters := getAllCounters(expression)
 
 			exprFlaky := false

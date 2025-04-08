@@ -177,4 +177,5 @@ else
 	VERSION=${VERSION} REGRESSION=1 ./integration/test/test.sh
 	VERSION=${VERSION} ANALYZE_DOCKER_LOGS=1 ./integration/test/test.sh
 	VERSION=${VERSION} CHECK_METRICS=1 ./integration/test/test.sh
+	VERSION=${VERSION} CHECK_FORMAT=1 ./integration/test/test.sh
 endif
