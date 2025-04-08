@@ -1222,7 +1222,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "vscan_server_disconnected{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
+              "expr": "vscan_server_disconnected{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}",
               "format": "table",
               "hide": false,
               "instant": true,

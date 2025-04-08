@@ -26,8 +26,7 @@ import (
 	"time"
 )
 
-// todotask This is temp local location, need to decide the proper place of promtool binary
-var PromToolLocation = "./promtool"
+var PromToolLocation = "./integration/test/promtool"
 
 type PollerInfo struct {
 	ServiceName   string
