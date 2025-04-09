@@ -1189,7 +1189,8 @@
                 "location",
                 "model",
                 "vendor",
-                "version"
+                "version",
+                "node"
               ]
             }
           }
@@ -1203,27 +1204,31 @@
               "cluster 4": true,
               "datacenter 2": true,
               "datacenter 3": true,
-              "datacenter 4": true
+              "datacenter 4": true,
+              "node 2": true,
+              "node 3": true,
+              "node 4": true
             },
             "indexByName": {
-              "Value #A": 2,
-              "Value #B": 3,
-              "Value #C": 4,
-              "bmc_firmware_version": 10,
+              "Value #A": 3,
+              "Value #B": 4,
+              "Value #C": 5,
+              "bmc_firmware_version": 11,
               "cluster": 1,
-              "cluster 2": 12,
-              "cluster 3": 14,
-              "cluster 4": 16,
-              "cpu_firmware_release": 9,
+              "cluster 2": 13,
+              "cluster 3": 15,
+              "cluster 4": 17,
+              "cpu_firmware_release": 10,
               "datacenter": 0,
-              "datacenter 2": 13,
-              "datacenter 3": 15,
-              "datacenter 4": 17,
-              "healthy": 5,
-              "location": 7,
-              "model": 6,
-              "vendor": 11,
-              "version": 8
+              "datacenter 2": 14,
+              "datacenter 3": 16,
+              "datacenter 4": 18,
+              "healthy": 6,
+              "location": 8,
+              "model": 7,
+              "node": 2,
+              "vendor": 12,
+              "version": 9
             },
             "renameByName": {
               "Value #A": "Uptime",
@@ -1234,6 +1239,7 @@
               "healthy": "Healthy",
               "location": "Location",
               "model": "Model",
+              "node": "Node",
               "vendor": "Vendor",
               "version": "Version"
             }
