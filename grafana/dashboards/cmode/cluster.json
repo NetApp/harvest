@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1722598083639,
+  "iteration": 1744119002662,
   "links": [
     {
       "asDropdown": true,
@@ -338,7 +338,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Average latency in microseconds for the WAFL filesystem to process read request to the volume; not including request processing or network communication time. node_volume_read_latency is [volume_read_latency](#volume_read_latency) aggregated by `node`.",
+      "description": "Latency for all read operations in the system.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -446,7 +446,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "topk($TopResources, sum(node_volume_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node))",
+          "expr": "topk($TopResources, sum(node_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node))",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -482,7 +482,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Average latency in microseconds for the WAFL filesystem to process write request to the volume; not including request processing or network communication time. node_volume_write_latency is [volume_write_latency](#volume_write_latency) aggregated by `node`.",
+      "description": "Latency for all write operations in the system.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -590,7 +590,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "topk($TopResources, sum(node_volume_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node))",
+          "expr": "topk($TopResources, sum(node_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node))",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -710,7 +710,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "sum by (node) (\n    (\n        node_volume_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"} \n        +\n        node_volume_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}\n    )\n    and\n    topk(\n        5,\n        (\n            avg_over_time(node_volume_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h] @ end())\n            +\n            avg_over_time(node_volume_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h] @ end())\n        )\n    )\n)",
+          "expr": "sum by (node) (\n    (\n        node_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"} \n    )\n    and\n    topk(\n        5,\n        (\n            avg_over_time(node_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h] @ end())\n        )\n    )\n)",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -746,7 +746,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Number of operations per second serviced by the volume. node_volume_total_ops is [volume_total_ops](#volume_total_ops) aggregated by `node`.",
+      "description": "Total operations.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -774,7 +774,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Avg"
+              "options": "Ops"
             },
             "properties": [
               {
@@ -830,7 +830,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "sum(node_volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node)\nand\ntopk(\n  $TopResources,\n  sum by (node) (\n    avg_over_time(node_volume_total_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h])\n  )\n)",
+          "expr": "sum(node_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node)\nand\ntopk(\n  $TopResources,\n  sum by (node) (\n    avg_over_time(node_total_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h])\n  )\n)",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -846,7 +846,7 @@
             "excludeByName": {},
             "indexByName": {},
             "renameByName": {
-              "Value": "Avg"
+              "Value": "Ops"
             }
           }
         },
@@ -855,8 +855,8 @@
           "options": {
             "include": {
               "names": [
-                "Avg",
-                "node"
+                "node",
+                "Ops"
               ]
             }
           }
@@ -1154,7 +1154,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time. node_volume_avg_latency is [volume_avg_latency](#volume_avg_latency) aggregated by `node`.",
+      "description": "Latency for all operations in the system.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1235,7 +1235,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "sum(node_volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node)\nand\ntopk(\n  $TopResources,\n  sum by (node) (\n    avg_over_time(node_volume_avg_latency{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h])\n  )\n)",
+          "expr": "sum(node_total_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node)\nand\ntopk(\n  $TopResources,\n  sum by (node) (\n    avg_over_time(node_total_latency{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h])\n  )\n)",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -1327,7 +1327,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "sum by (node) (\n    (\n        node_volume_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"} \n        +\n        node_volume_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}\n    )\n    and\n    topk(\n        5,\n        (\n            avg_over_time(node_volume_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h] @ end())\n            +\n            avg_over_time(node_volume_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h] @ end())\n        )\n    )\n)",
+          "expr": "sum by (node) (\n    (\n        node_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"} \n    )\n    and\n    topk(\n        5,\n        (\n            avg_over_time(node_total_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h] @ end())\n        )\n    )\n)",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -1338,7 +1338,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Number of operations per second serviced by the volume. node_volume_total_ops is [volume_total_ops](#volume_total_ops) aggregated by `node`.",
+      "description": "Total operations.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1420,7 +1420,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "sum(node_volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node)\nand\ntopk(\n  $TopResources,\n  sum by (node) (\n    avg_over_time(node_volume_total_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h])\n  )\n)",
+          "expr": "sum(node_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (node)\nand\ntopk(\n  $TopResources,\n  sum by (node) (\n    avg_over_time(node_total_ops{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", node!=\"\"}[3h])\n  )\n)",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -2784,7 +2784,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time.",
+          "description": "Maximum node latency across the cluster.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2842,7 +2842,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 39
+            "y": 36
           },
           "id": 106,
           "options": {
@@ -2863,7 +2863,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "max(volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by(cluster)",
+              "expr": "max(node_total_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by(cluster)",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -2871,12 +2871,12 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Latency",
+          "title": "Max Latency",
           "type": "timeseries"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Volume total throughput.",
+          "description": "Cluster total throughput.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2934,7 +2934,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 39
+            "y": 36
           },
           "id": 107,
           "options": {
@@ -2954,7 +2954,8 @@
           "pluginVersion": "7.5.4",
           "targets": [
             {
-              "expr": "sum(volume_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster)",
+              "exemplar": false,
+              "expr": "sum(node_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster)",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -3026,7 +3027,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 39
+            "y": 36
           },
           "id": 108,
           "options": {
@@ -3046,7 +3047,8 @@
           "pluginVersion": "7.5.4",
           "targets": [
             {
-              "expr": "sum(volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster)",
+              "exemplar": false,
+              "expr": "sum(node_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) by (cluster)",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -3119,7 +3121,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 47
+            "y": 44
           },
           "id": 136,
           "options": {
@@ -3213,7 +3215,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 47
+            "y": 44
           },
           "id": 180,
           "options": {
@@ -3307,7 +3309,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 47
+            "y": 44
           },
           "id": 2,
           "options": {
@@ -3401,7 +3403,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 56
+            "y": 53
           },
           "id": 241,
           "options": {
@@ -5159,6 +5161,8 @@
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_tags{system_type!=\"7mode\", datacenter=~\"$Datacenter\"},tag)",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": true,
         "label": null,
