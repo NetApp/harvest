@@ -77,7 +77,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1743756929358,
+  "iteration": 1744117699632,
   "links": [
     {
       "asDropdown": true,
@@ -257,7 +257,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Average latency for all operations in the system.",
+      "description": "Average Latency for all operations in the system.",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -378,7 +378,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Total number of operations per second.",
+      "description": "Number of operations per second.",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -490,7 +490,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Average latency for all operations in the system.",
+      "description": "Latency for all operations in the system.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -575,7 +575,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Average Latency",
+      "title": "Latency",
       "transformations": [],
       "type": "timeseries"
     },
@@ -672,7 +672,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Total number of operations per second.",
+      "description": "Number of operations per second.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2158,7 +2158,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Average latency for all operations in the system in microseconds by node.",
+          "description": "This panel displays detail of Average latency for the WAFL filesystem to process read/write/other request to the volume and aggregated to node level.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2231,21 +2231,35 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "node_total_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}",
+              "expr": "avg(node_read_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
               "interval": "",
-              "legendFormat": "{{node}}",
+              "legendFormat": "Read",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "avg(node_write_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "interval": "",
+              "legendFormat": "Write",
+              "refId": "B"
+            },
+            {
+              "exemplar": false,
+              "expr": "avg(node_other_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "interval": "",
+              "legendFormat": "Other",
               "refId": "C"
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Latency",
+          "title": "Average Latency",
           "transformations": [],
           "type": "timeseries"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Total throughput by node.",
+          "description": "This panel displays detail of bytes read/written per second and aggregated at node level.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2322,11 +2336,19 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (node)(node_total_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "sum(node_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
               "interval": "",
               "intervalFactor": 1,
-              "legendFormat": "{{node}}",
+              "legendFormat": "Read",
               "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum(node_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "Write",
+              "refId": "B"
             }
           ],
           "timeFrom": null,
@@ -2337,7 +2359,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Total number of operations per second at node level.",
+          "description": "This panel displays detail of Number of read/write/other operations per second from the volume and aggregated at node level.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2415,9 +2437,23 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (node)(node_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "expr": "sum(node_read_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
               "interval": "",
-              "legendFormat": "{{node}}",
+              "legendFormat": "Read",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum(node_write_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "interval": "",
+              "legendFormat": "Write",
+              "refId": "B"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum(node_other_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"})",
+              "interval": "",
+              "legendFormat": "Other",
               "refId": "C"
             }
           ],
@@ -3947,7 +3983,7 @@
             "h": 5,
             "w": 3,
             "x": 0,
-            "y": 38
+            "y": 36
           },
           "id": 84,
           "options": {
@@ -4004,7 +4040,7 @@
             "h": 5,
             "w": 3,
             "x": 3,
-            "y": 38
+            "y": 36
           },
           "id": 69,
           "options": {
@@ -4095,7 +4131,7 @@
             "h": 9,
             "w": 6,
             "x": 6,
-            "y": 38
+            "y": 36
           },
           "id": 72,
           "options": {
@@ -4187,7 +4223,7 @@
             "h": 9,
             "w": 6,
             "x": 12,
-            "y": 38
+            "y": 36
           },
           "id": 73,
           "options": {
@@ -4280,7 +4316,7 @@
             "h": 9,
             "w": 6,
             "x": 18,
-            "y": 38
+            "y": 36
           },
           "id": 74,
           "options": {
