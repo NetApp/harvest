@@ -70,8 +70,6 @@ test: ## Run tests
 	@# The ldflags force the old Apple linker to suppress ld warning messages on MacOS
 	@# See https://github.com/golang/go/issues/61229#issuecomment-1988965927
 	@go test -ldflags=-extldflags=-Wl,-ld_classic -race -shuffle=on ./...
-	@echo "Validating dashboard queries"
-	VERSION=${VERSION} CHECK_FORMAT=1 ./integration/test/test.sh
 
 fmt: ## Format the go source files
 	@echo "Formatting"
@@ -140,12 +138,18 @@ dev: build lint govulncheck
 	@echo "Deleting AutoSupport binary"
 	@rm -rf autosupport/asup
 
+promtool:
+	@echo "Validating dashboard queries"
+	VERSION=${VERSION} CHECK_FORMAT=1 ./integration/test/test.sh
+
 fetch-asup:
 ifneq (${FETCH_ASUP_EXISTS}, )
 	@./.github/fetch-asup ${ASUP_BIN} ${ASUP_BIN_VERSION} ${BIN_PLATFORM} 2>/dev/null   #Suppress Error in case of internet connectivity
 endif
 
 docs: mkdocs ## Serve docs for local dev
+
+test-local: test promtool
 
 license-check:
 	@echo "Licence checking"

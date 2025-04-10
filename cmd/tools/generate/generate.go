@@ -9,7 +9,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/color"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"github.com/netapp/harvest/v2/third_party/tidwall/sjson"
 	"github.com/spf13/cobra"
@@ -25,8 +24,6 @@ import (
 	"text/template"
 	"time"
 )
-
-var PromToolLocation = "./integration/test/promtool"
 
 type PollerInfo struct {
 	ServiceName   string
@@ -123,13 +120,6 @@ var descCmd = &cobra.Command{
 	Run:    doDescription,
 }
 
-var formatCmd = &cobra.Command{
-	Use:    "format",
-	Short:  "formating the promQL queries of panels",
-	Hidden: true,
-	Run:    doFormat,
-}
-
 func doDockerFull(cmd *cobra.Command, _ []string) {
 	addRootOptions(cmd)
 	generateDocker(full)
@@ -159,38 +149,6 @@ func doDescription(cmd *cobra.Command, _ []string) {
 		func(path string, data []byte) {
 			generateDescription(path, data, counters)
 		})
-}
-
-func doFormat(_ *cobra.Command, _ []string) {
-	grafana.VisitDashboards(
-		[]string{
-			"grafana/dashboards/cmode",
-			"grafana/dashboards/cmode-details",
-			"grafana/dashboards/storagegrid",
-		},
-		func(path string, data []byte) {
-			changeExpr(path, data)
-		},
-	)
-
-}
-
-func changeExpr(path string, data []byte) {
-	// Change all panel expressions
-	grafana.VisitAllPanels(data, func(path string, _, value gjson.Result) {
-		// Rewrite expressions
-		value.Get("targets").ForEach(func(targetKey, target gjson.Result) bool {
-			expr := target.Get("expr")
-			if expr.Exists() && expr.String() != "" {
-				updatedExpr := util.Format(expr.ClonedString(), PromToolLocation)
-				data, _ = sjson.SetBytes(data, path+".targets."+targetKey.ClonedString()+".expr", []byte(updatedExpr))
-			}
-			return true
-		})
-	})
-	if err := os.WriteFile(path, data, grafana.GPerm); err != nil {
-		log.Fatalf("failed to update dashboard=%s err=%v\n", path, err)
-	}
 }
 
 func addRootOptions(cmd *cobra.Command) {
@@ -732,7 +690,6 @@ func init() {
 	Cmd.AddCommand(systemdCmd)
 	Cmd.AddCommand(metricCmd)
 	Cmd.AddCommand(descCmd)
-	Cmd.AddCommand(formatCmd)
 	Cmd.AddCommand(dockerCmd)
 	dockerCmd.AddCommand(fullCmd)
 
