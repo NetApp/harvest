@@ -27,11 +27,20 @@ counters:
   - nvmf_data_recv
   - nvmf_data_sent
   - nvmf_ops
+  - other_data
+  - other_latency
+  - other_ops
+  - read_data
+  - read_latency
+  - read_ops
   - ssd_data_read
   - ssd_data_written
   - total_data
   - total_latency
   - total_ops
+  - write_data
+  - write_latency
+  - write_ops
 
 export_options:
   instance_keys:

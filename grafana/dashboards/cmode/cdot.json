@@ -59,7 +59,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1732182155791,
+  "iteration": 1743756496809,
   "links": [
     {
       "asDropdown": true,
@@ -169,7 +169,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (node_cifs_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    sum by (cluster) (\n      avg_over_time(node_cifs_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+              "expr": "sum by (cluster) (node_cifs_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})\nand\ntopk($TopResources, sum by (cluster) (avg_over_time(node_cifs_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end())))",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -260,7 +260,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (node_nfs_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    sum by (cluster) (\n      avg_over_time(node_nfs_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+              "expr": "sum by (cluster) (node_nfs_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})\nand\ntopk($TopResources, sum by (cluster) (avg_over_time(node_nfs_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end())))",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -272,7 +272,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Number of operations per second serviced by the volume.",
+          "description": "Total number of operations per second serviced by the node.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -351,7 +351,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (volume_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    sum by (cluster) (\n      avg_over_time(volume_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+              "expr": "sum by (cluster) (node_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})\nand\ntopk($TopResources, sum by (cluster) (avg_over_time(node_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end())))",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -445,7 +445,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (cluster) (node_avg_processor_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    avg by (cluster) (\n      avg_over_time(node_avg_processor_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+              "expr": "avg by (cluster) (node_avg_processor_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})\nand\ntopk($TopResources, avg by (cluster) (avg_over_time(node_avg_processor_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end())))",
               "format": "time_series",
               "instant": false,
               "interval": "",
@@ -540,7 +540,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (cluster) (node_cpu_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    avg by (cluster) (\n      avg_over_time(node_cpu_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+              "expr": "avg by (cluster) (node_cpu_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})\nand\ntopk($TopResources, avg by (cluster) (avg_over_time(node_cpu_busy{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end())))",
               "format": "time_series",
               "instant": false,
               "interval": "",
@@ -553,7 +553,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time. node_volume_avg_latency is [volume_avg_latency](#volume_avg_latency) aggregated by `node`.",
+          "description": "Maximum node latency across the cluster.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -633,13 +633,13 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (cluster) (node_volume_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    avg by (cluster) (\n      avg_over_time(node_volume_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+              "expr": "max by (cluster) (node_total_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})\nand\ntopk($TopResources, max by (cluster) (avg_over_time(node_total_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h] @ end())))",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
             }
           ],
-          "title": "Top $TopResources Clusters by Average Latency",
+          "title": "Top $TopResources Clusters by Max Node Latency",
           "type": "timeseries"
         }
       ],
@@ -787,7 +787,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(\n        100\n      *\n        sum by (datacenter, cluster, svm) (\n          volume_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n        )\n    / on (datacenter, cluster, svm)\n      sum by (datacenter, cluster, svm) (\n        volume_size_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n      )\n  )\nand on (datacenter, cluster, svm)\n  topk(\n    $TopResources,\n      (\n            100\n          *\n            sum by (datacenter, cluster, svm) (\n              avg_over_time(\n                volume_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h] @ end()\n              )\n            )\n        / on (datacenter, cluster, svm)\n          sum by (datacenter, cluster, svm) (\n            avg_over_time(\n              volume_size_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h] @ end()\n            )\n          )\n      )\n    * on (datacenter, cluster, svm) group_left ()\n      svm_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",root_svm=~\"No|$IncludeRoot\",svm=~\"$SVM\"}\n  )",
+              "expr": "(\n  100 * sum by (datacenter,cluster, svm) (\n    volume_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}\n  )\n  / on(datacenter, cluster, svm)\n  sum by (datacenter,cluster, svm) (\n    volume_size_total{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}\n  )\n)\nand on(datacenter,cluster, svm)\ntopk(\n  $TopResources,\n  (\n    100 * sum by (datacenter,cluster, svm) (\n      avg_over_time(volume_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}[3h] @ end())\n    )\n    / on(datacenter,cluster, svm)\n    sum by (datacenter,cluster, svm) (\n      avg_over_time(volume_size_total{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}[3h] @ end())\n    )\n  )\n  * on(datacenter,cluster, svm) group_left\n  svm_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", root_svm=~\"No|$IncludeRoot\"}\n)",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -952,7 +952,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(\n      100 * volume_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n    / on (datacenter, cluster, svm, aggr, node, volume, style)\n      volume_size_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  )\nand on (datacenter, cluster, svm, aggr, node, volume, style)\n  topk(\n    $TopResources,\n      (\n          (\n              100\n            *\n              avg_over_time(\n                volume_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n              )\n          )\n        / on (datacenter, cluster, svm, aggr, node, volume, style)\n          avg_over_time(\n            volume_size_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n          )\n      )\n    * on (datacenter, cluster, svm, aggr, node, volume, style) group_left ()\n      volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",root_volume=~\"No|$IncludeRoot\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  )",
+              "expr": "(\n 100 * volume_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\"} \n / on(datacenter,cluster,svm,aggr,node,volume,style) \n volume_size_total{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\"}\n)\nand on(datacenter,cluster, svm,aggr,node, volume,style)\ntopk(\n $TopResources,\n (\n (100 * avg_over_time(volume_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end())) \n / on(datacenter,cluster,svm,aggr,node,volume,style) \n avg_over_time(volume_size_total{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end())\n )\n * on(datacenter,cluster, svm, aggr,node,volume,style) group_left\n volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\",root_volume=~\"No|$IncludeRoot\"}\n)",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1117,7 +1117,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(\n      100 * aggr_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n    / on (datacenter, cluster, aggr)\n      aggr_space_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n  )\nand on (datacenter, cluster, aggr)\n  topk(\n    $TopResources,\n    (\n        (100 * avg_over_time(aggr_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end()))\n      / on (datacenter, cluster, aggr)\n        avg_over_time(aggr_space_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+              "expr": "(\n    100 * aggr_space_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"} \n    / on(datacenter,cluster,aggr) \n    aggr_space_total{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}\n)\nand on(datacenter,cluster, aggr)\ntopk(\n  $TopResources,\n  (\n    (100 * avg_over_time(aggr_space_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}[3h] @ end())) \n    / on(datacenter,cluster,aggr) \n    avg_over_time(aggr_space_total{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}[3h] @ end())\n  )\n)",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1244,7 +1244,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(\n        100\n      *\n        sum by (datacenter, cluster, svm) (\n          volume_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n        )\n    / on (datacenter, cluster, svm)\n      sum by (datacenter, cluster, svm) (\n        volume_size_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n      )\n  )\nand on (datacenter, cluster, svm)\n  topk(\n    $TopResources,\n      (\n            100\n          *\n            sum by (datacenter, cluster, svm) (\n              avg_over_time(\n                volume_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h] @ end()\n              )\n            )\n        / on (datacenter, cluster, svm)\n          sum by (datacenter, cluster, svm) (\n            avg_over_time(\n              volume_size_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h] @ end()\n            )\n          )\n      )\n    * on (datacenter, cluster, svm) group_left ()\n      svm_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",root_svm=~\"No|$IncludeRoot\",svm=~\"$SVM\"}\n  )",
+              "expr": "(\n  100 * sum by (datacenter,cluster, svm) (\n    volume_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}\n  )\n  / on(datacenter, cluster, svm)\n  sum by (datacenter,cluster, svm) (\n    volume_size_total{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}\n  )\n)\nand on(datacenter,cluster, svm)\ntopk(\n  $TopResources,\n  (\n    100 * sum by (datacenter,cluster, svm) (\n      avg_over_time(volume_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}[3h] @ end())\n    )\n    / on(datacenter,cluster, svm)\n    sum by (datacenter,cluster, svm) (\n      avg_over_time(volume_size_total{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}[3h] @ end())\n    )\n  )\n  * on(datacenter,cluster, svm) group_left\n  svm_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", root_svm=~\"No|$IncludeRoot\"}\n)",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}}",
               "refId": "A"
@@ -1336,7 +1336,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(\n      100 * volume_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n    / on (datacenter, cluster, svm, aggr, node, volume, style)\n      volume_size_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  )\nand on (datacenter, cluster, svm, aggr, node, volume, style)\n  topk(\n    $TopResources,\n      (\n          (\n              100\n            *\n              avg_over_time(\n                volume_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n              )\n          )\n        / on (datacenter, cluster, svm, aggr, node, volume, style)\n          avg_over_time(\n            volume_size_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n          )\n      )\n    * on (datacenter, cluster, svm, aggr, node, volume, style) group_left ()\n      volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",root_volume=~\"No|$IncludeRoot\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  )",
+              "expr": "(\n 100 * volume_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\"} \n / on(datacenter,cluster,svm,aggr,node,volume,style) \n volume_size_total{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\"}\n)\nand on(datacenter,cluster, svm,aggr,node, volume,style)\ntopk(\n $TopResources,\n (\n (100 * avg_over_time(volume_size_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end())) \n / on(datacenter,cluster,svm,aggr,node,volume,style) \n avg_over_time(volume_size_total{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end())\n )\n * on(datacenter,cluster, svm, aggr,node,volume,style) group_left\n volume_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", volume=~\"$Volume\",root_volume=~\"No|$IncludeRoot\"}\n)",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}} - {{volume}}",
               "refId": "A"
@@ -1428,7 +1428,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(\n      100 * aggr_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n    / on (datacenter, cluster, aggr)\n      aggr_space_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n  )\nand on (datacenter, cluster, aggr)\n  topk(\n    $TopResources,\n    (\n        (100 * avg_over_time(aggr_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end()))\n      / on (datacenter, cluster, aggr)\n        avg_over_time(aggr_space_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+              "expr": "(\n    100 * aggr_space_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"} \n    / on(datacenter,cluster,aggr) \n    aggr_space_total{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}\n)\nand on(datacenter,cluster, aggr)\ntopk(\n  $TopResources,\n  (\n    (100 * avg_over_time(aggr_space_used{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}[3h] @ end())) \n    / on(datacenter,cluster,aggr) \n    avg_over_time(aggr_space_total{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\"}[3h] @ end())\n  )\n)",
               "interval": "",
               "legendFormat": "{{cluster}} - {{aggr}}",
               "refId": "A"
@@ -1532,7 +1532,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "svm_vol_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      svm_vol_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h] @ end()\n    )\n  )",
+              "expr": "svm_vol_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(svm_vol_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}}",
               "refId": "A"
@@ -1621,7 +1621,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(\n      svm_vol_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n    +\n      svm_vol_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n  )\nand on (datacenter, cluster, svm)\n  topk(\n    $TopResources,\n      (\n          avg_over_time(svm_vol_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h])\n        +\n          avg_over_time(svm_vol_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h])\n      )\n    * on (datacenter, cluster, svm) group_left ()\n      svm_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",root_svm=~\"No|$IncludeRoot\"}\n  )",
+              "expr": "(\n    svm_vol_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",svm=~\"$SVM\"} \n    +\n    svm_vol_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",svm=~\"$SVM\"}\n)\nand on(datacenter,cluster, svm)\ntopk(\n  $TopResources,\n  (\n    avg_over_time(svm_vol_read_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h])\n    + avg_over_time(svm_vol_write_data{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h])\n  )\n  * on(datacenter,cluster, svm) group_left\n  svm_labels{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", root_svm=~\"No|$IncludeRoot\"}\n)",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}}",
               "refId": "A"
@@ -1711,7 +1711,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "svm_vol_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      svm_vol_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h] @ end()\n    )\n  )",
+              "expr": "svm_vol_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}\nand\ntopk($TopResources, avg_over_time(svm_vol_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}}",
               "refId": "A"
@@ -1816,7 +1816,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "volume_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand on (datacenter, cluster, svm, volume)\n  topk(\n    $TopResources,\n    avg_over_time(\n      volume_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n    )\n  )",
+              "expr": "volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand on(datacenter,cluster,svm,volume)\ntopk($TopResources, avg_over_time(volume_avg_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}} - {{volume}}",
               "refId": "A"
@@ -1907,7 +1907,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "(\n      volume_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n    +\n      volume_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  )\nand on (datacenter, cluster, svm, volume)\n  topk(\n    $TopResources,\n    (\n        avg_over_time(\n          volume_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n        )\n      +\n        avg_over_time(\n          volume_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n        )\n    )\n  )",
+              "expr": "(\n    volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"} \n    +\n    volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}\n)\nand on(datacenter,cluster,svm,volume)\ntopk(\n    $TopResources,\n    (\n        avg_over_time(volume_read_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end())\n        + avg_over_time(volume_write_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end())\n    )\n)",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}} - {{volume}}",
               "refId": "A"
@@ -1999,7 +1999,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "volume_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand on (datacenter, cluster, svm, volume)\n  topk(\n    $TopResources,\n    avg_over_time(\n      volume_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n    )\n  )",
+              "expr": "volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand on(datacenter,cluster,svm,volume)\ntopk($TopResources, avg_over_time(volume_total_ops{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()))",
               "interval": "",
               "legendFormat": "{{cluster}} - {{svm}} - {{volume}}",
               "refId": "A"
