@@ -16,8 +16,6 @@ import (
 	"testing"
 )
 
-var PromToolLocation = utils.GetHarvestRootDir() + "/integration/test/" + "promtool"
-
 func TestPrometheusMetrics(t *testing.T) {
 	utils.SkipIfMissing(t, utils.CheckMetrics)
 
@@ -91,7 +89,7 @@ func changeExpr(t *testing.T, path string, data []byte) {
 		value.Get("targets").ForEach(func(targetKey, target gjson.Result) bool {
 			expr := target.Get("expr")
 			if expr.Exists() && expr.ClonedString() != "" {
-				updatedExpr := util.Format(expr.ClonedString(), PromToolLocation)
+				updatedExpr := util.Format(expr.ClonedString())
 				if updatedExpr != expr.ClonedString() {
 					notFormatted = true
 					updatedData, err = sjson.SetBytes(updatedData, path+".targets."+targetKey.ClonedString()+".expr", []byte(updatedExpr))

@@ -483,14 +483,18 @@ func SafeConvertToInt32(in int) (int32, error) {
 	return int32(in), nil // #nosec G115
 }
 
-func Format(query string, promToolLocation string) string {
+func Format(query string) string {
 	replacedQuery := strings.ReplaceAll(query, "$TopResources", TopresourceConstant)
 	replacedQuery = strings.ReplaceAll(replacedQuery, "$__range", RangeConstant)
 	replacedQuery = strings.ReplaceAll(replacedQuery, "$__interval", IntervalConstant)
 	replacedQuery = strings.ReplaceAll(replacedQuery, "${Interval}", IntervalDurationConstant)
 
-	cli := fmt.Sprintf(`%s %s '%s'`, promToolLocation, "--experimental promql format", replacedQuery)
-	command := exec.Command("bash", "-c", cli)
+	path, err := exec.LookPath("promtool")
+	if err != nil {
+		fmt.Printf("ERR failed to find promtool")
+		return query
+	}
+	command := exec.Command(path, "--experimental", "promql", "format", replacedQuery)
 	output, err := command.CombinedOutput()
 	updatedQuery := strings.TrimSuffix(string(output), "\n")
 	if strings.HasPrefix(updatedQuery, "  ") {
@@ -498,7 +502,7 @@ func Format(query string, promToolLocation string) string {
 	}
 	if err != nil {
 		// An exit code can't be used since we need to ignore metrics that are not formatted but can't change
-		fmt.Printf("ERR formating metrics cli=%s err=%v output=%s", cli, err, string(output))
+		fmt.Printf("ERR formating metrics query=%s err=%v output=%s", query, err, string(output))
 		return query
 	}
 
