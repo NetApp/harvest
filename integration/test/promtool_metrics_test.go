@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 )
@@ -81,7 +82,7 @@ func changeExpr(t *testing.T, path string, data []byte) {
 		err          error
 	)
 
-	copy(updatedData, data)
+	updatedData = slices.Clone(data)
 	dashPath := grafana.ShortPath(path)
 	// Change all panel expressions
 	grafana.VisitAllPanels(updatedData, func(path string, _, value gjson.Result) {
