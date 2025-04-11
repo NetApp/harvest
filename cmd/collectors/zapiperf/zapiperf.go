@@ -1209,6 +1209,15 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		}
 	}
 
+	// identify missing counters which do not exist in counter-schema
+	for k := range wanted {
+		_, ok := counters[k]
+		if !ok {
+			z.Logger.Warn("Metric not found in counterSchema", slog.String("key", k))
+		}
+
+	}
+
 	// second loop for replaced counters
 	if replaced.Size() > 0 {
 		z.Logger.Debug("attempting to retrieve metadata of replaced counters", slog.Int("size", replaced.Size()))
