@@ -78,11 +78,13 @@ func changeExpr(t *testing.T, path string, data []byte) {
 		updatedData  []byte
 		notFormatted bool
 		errorStr     []string
+		err          error
 	)
 
+	copy(updatedData, data)
 	dashPath := grafana.ShortPath(path)
 	// Change all panel expressions
-	grafana.VisitAllPanels(data, func(path string, _, value gjson.Result) {
+	grafana.VisitAllPanels(updatedData, func(path string, _, value gjson.Result) {
 		title := value.Get("title").ClonedString()
 		// Rewrite expressions
 		value.Get("targets").ForEach(func(targetKey, target gjson.Result) bool {
@@ -91,7 +93,10 @@ func changeExpr(t *testing.T, path string, data []byte) {
 				updatedExpr := util.Format(expr.ClonedString(), PromToolLocation)
 				if updatedExpr != expr.ClonedString() {
 					notFormatted = true
-					updatedData, _ = sjson.SetBytes(data, path+".targets."+targetKey.ClonedString()+".expr", []byte(updatedExpr))
+					updatedData, err = sjson.SetBytes(updatedData, path+".targets."+targetKey.ClonedString()+".expr", []byte(updatedExpr))
+					if err != nil {
+						fmt.Printf("Error while updating the panel query format: %v\n", err)
+					}
 					errorStr = append(errorStr, fmt.Sprintf("query not formatted in dashboard %s panel `%s`, it should be \n %s\n", dashPath, title, updatedExpr))
 				}
 			}

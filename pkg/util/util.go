@@ -27,7 +27,12 @@ import (
 )
 
 const (
-	BILLION = 1_000_000_000
+	BILLION                  = 1_000_000_000
+	TopresourceConstant      = "999999"
+	RangeConstant            = "888888"
+	RangeReverseConstant     = "10d6h54m48s"
+	IntervalConstant         = "777777"
+	IntervalDurationConstant = "666666"
 )
 
 var arrayRegex = regexp.MustCompile(`^([a-zA-Z][\w.]*)(\.[0-9#])`)
@@ -479,12 +484,12 @@ func SafeConvertToInt32(in int) (int32, error) {
 }
 
 func Format(query string, promToolLocation string) string {
-	query = strings.ReplaceAll(query, "$TopResources", "999999")
-	query = strings.ReplaceAll(query, "$__range", "888888")
-	query = strings.ReplaceAll(query, "$__interval", "777777")
-	query = strings.ReplaceAll(query, "${Interval}", "666666")
+	replacedQuery := strings.ReplaceAll(query, "$TopResources", TopresourceConstant)
+	replacedQuery = strings.ReplaceAll(replacedQuery, "$__range", RangeConstant)
+	replacedQuery = strings.ReplaceAll(replacedQuery, "$__interval", IntervalConstant)
+	replacedQuery = strings.ReplaceAll(replacedQuery, "${Interval}", IntervalDurationConstant)
 
-	cli := fmt.Sprintf(`%s %s '%s'`, promToolLocation, "--experimental promql format", query)
+	cli := fmt.Sprintf(`%s %s '%s'`, promToolLocation, "--experimental promql format", replacedQuery)
 	command := exec.Command("bash", "-c", cli)
 	output, err := command.CombinedOutput()
 	updatedQuery := strings.TrimSuffix(string(output), "\n")
@@ -494,18 +499,16 @@ func Format(query string, promToolLocation string) string {
 	if err != nil {
 		// An exit code can't be used since we need to ignore metrics that are not formatted but can't change
 		fmt.Printf("ERR formating metrics cli=%s err=%v output=%s", cli, err, string(output))
-		updatedQuery = query
-		updatedQuery = strings.ReplaceAll(updatedQuery, "888888", "$__range")
+		return query
 	}
 
 	if len(output) == 0 {
-		updatedQuery = query
-		updatedQuery = strings.ReplaceAll(updatedQuery, "888888", "$__range")
+		return query
 	}
 
-	updatedQuery = strings.ReplaceAll(updatedQuery, "999999", "$TopResources")
-	updatedQuery = strings.ReplaceAll(updatedQuery, "10d6h54m48s", "$__range")
-	updatedQuery = strings.ReplaceAll(updatedQuery, "777777", "$__interval")
-	updatedQuery = strings.ReplaceAll(updatedQuery, "666666", "${Interval}")
+	updatedQuery = strings.ReplaceAll(updatedQuery, TopresourceConstant, "$TopResources")
+	updatedQuery = strings.ReplaceAll(updatedQuery, RangeReverseConstant, "$__range")
+	updatedQuery = strings.ReplaceAll(updatedQuery, IntervalConstant, "$__interval")
+	updatedQuery = strings.ReplaceAll(updatedQuery, IntervalDurationConstant, "${Interval}")
 	return updatedQuery
 }
