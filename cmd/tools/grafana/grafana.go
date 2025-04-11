@@ -35,6 +35,12 @@ const (
 	GPerm             os.FileMode = 0644
 )
 
+var Dashboards = []string{
+	"../../../grafana/dashboards/cmode",
+	"../../../grafana/dashboards/cmode-details",
+	"../../../grafana/dashboards/storagegrid",
+}
+
 var (
 	grafanaMinVers = "7.1.0" // lowest grafana version we require
 	homePath       string

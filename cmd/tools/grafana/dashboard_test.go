@@ -15,12 +15,6 @@ import (
 	"testing"
 )
 
-var dashboards = []string{
-	"../../../grafana/dashboards/cmode",
-	"../../../grafana/dashboards/cmode-details",
-	"../../../grafana/dashboards/storagegrid",
-}
-
 var cDotDashboards = []string{
 	"../../../grafana/dashboards/cmode",
 	"../../../grafana/dashboards/cmode-details",
@@ -30,7 +24,7 @@ var throughputPattern = regexp.MustCompile(`(throughput|read_data|write_data|tot
 var aggregationThroughputPattern = regexp.MustCompile(`(?i)(\w+)\(`)
 
 func TestThroughput(t *testing.T) {
-	VisitDashboards(dashboards, func(path string, data []byte) {
+	VisitDashboards(Dashboards, func(path string, data []byte) {
 		checkThroughput(t, path, data)
 	})
 }
@@ -59,7 +53,7 @@ func checkThroughput(t *testing.T, path string, data []byte) {
 }
 
 func TestThreshold(t *testing.T) {
-	VisitDashboards(dashboards, func(path string, data []byte) {
+	VisitDashboards(Dashboards, func(path string, data []byte) {
 		checkThreshold(t, path, data)
 	})
 }
@@ -155,7 +149,7 @@ func checkThreshold(t *testing.T, path string, data []byte) {
 }
 
 func TestDatasource(t *testing.T) {
-	VisitDashboards(dashboards, func(path string, data []byte) {
+	VisitDashboards(Dashboards, func(path string, data []byte) {
 		checkDashboardForDatasource(t, path, data)
 	})
 }
@@ -263,7 +257,7 @@ func TestUnitsAndExprMatch(t *testing.T) {
 	reg := regexp.MustCompile(pattern)
 	mt := newMetricsTable()
 	expectedMt := parseUnits()
-	VisitDashboards(dashboards,
+	VisitDashboards(Dashboards,
 		func(path string, data []byte) {
 			checkUnits(t, path, mt, data)
 		})
@@ -342,7 +336,7 @@ func TestUnitsAndExprMatch(t *testing.T) {
 			}
 
 			for _, l := range location {
-				match := reg.MatchString(l.expr)
+				match := reg.MatchString(strings.ReplaceAll(strings.ReplaceAll(l.expr, "\n", ""), " ", ""))
 				if match {
 					if expectedGrafanaUnit == unit {
 						t.Errorf(`%s should not have unit=%s because there is a division by a number %s path=%s title="%s"`,
@@ -386,12 +380,7 @@ type override struct {
 	unit    string
 	path    string
 }
-type expression struct {
-	metric string
-	refID  string
-	kind   string
-	expr   string
-}
+
 type units struct {
 	units map[string][]*metricLoc
 }
@@ -466,7 +455,7 @@ func doPanel(t *testing.T, pathPrefix string, key gjson.Result, value gjson.Resu
 
 	propertiesMap := make(map[string]map[string]string)
 	overrides := make([]override, 0, len(overridesSlice))
-	expressions := make([]expression, 0)
+	expressions := make([]Expression, 0)
 	valueToName := make(map[string]string) // only used with panels[*].transformations[*].options.renameByName
 
 	for oi, overrideN := range overridesSlice {
@@ -520,6 +509,7 @@ func doPanel(t *testing.T, pathPrefix string, key gjson.Result, value gjson.Resu
 
 	for _, targetN := range targetsSlice {
 		expr := targetN.Get("expr").ClonedString()
+		expr = strings.ReplaceAll(strings.ReplaceAll(expr, "\n", ""), " ", "")
 		matches := metricName.FindStringSubmatch(expr)
 		if len(matches) != 2 {
 			continue
@@ -528,6 +518,12 @@ func doPanel(t *testing.T, pathPrefix string, key gjson.Result, value gjson.Resu
 		if strings.Contains(expr, "count(") {
 			continue
 		}
+
+		// If the expression includes count by ignore since it is unit-less
+		if strings.Contains(expr, "countby") {
+			continue
+		}
+
 		// Filter percentages since they are unit-less
 		if strings.Contains(expr, "/") {
 			match := metricDivideMetric1.FindStringSubmatch(expr)
@@ -549,8 +545,8 @@ func doPanel(t *testing.T, pathPrefix string, key gjson.Result, value gjson.Resu
 		}
 
 		exprRefID := targetN.Get("refId").ClonedString()
-		expressions = append(expressions, expression{
-			metric: metric,
+		expressions = append(expressions, Expression{
+			Metric: metric,
 			refID:  exprRefID,
 			expr:   expr,
 		})
@@ -567,15 +563,15 @@ func doPanel(t *testing.T, pathPrefix string, key gjson.Result, value gjson.Resu
 	numExpressions := len(expressions)
 	for _, e := range expressions {
 		// Ignore labels and _status
-		if strings.HasSuffix(e.metric, "_labels") || strings.HasSuffix(e.metric, "_status") || strings.HasSuffix(e.metric, "_events") || strings.HasSuffix(e.metric, "_alerts") {
+		if strings.HasSuffix(e.Metric, "_labels") || strings.HasSuffix(e.Metric, "_status") || strings.HasSuffix(e.Metric, "_events") || strings.HasSuffix(e.Metric, "_alerts") {
 			continue
 		}
 		unit := unitForExpr(e, overrides, defaultUnit, valueToName, numExpressions)
-		mt.addMetric(e.metric, unit, path, sPath, title, e.expr)
+		mt.addMetric(e.Metric, unit, path, sPath, title, e.expr)
 	}
 }
 
-func unitForExpr(e expression, overrides []override, defaultUnit string,
+func unitForExpr(e Expression, overrides []override, defaultUnit string,
 	valueToName map[string]string, numExpressions int) string {
 
 	if len(overrides) == 0 {
@@ -612,7 +608,7 @@ func unitForExpr(e expression, overrides []override, defaultUnit string,
 }
 
 func TestVariablesRefresh(t *testing.T) {
-	VisitDashboards(dashboards,
+	VisitDashboards(Dashboards,
 		func(path string, data []byte) {
 			checkVariablesRefresh(t, path, data)
 		})
@@ -644,7 +640,7 @@ func checkVariablesRefresh(t *testing.T, path string, data []byte) {
 }
 
 func TestVariablesAreSorted(t *testing.T) {
-	VisitDashboards(dashboards,
+	VisitDashboards(Dashboards,
 		func(path string, data []byte) {
 			checkVariablesAreSorted(t, path, data)
 		})
@@ -676,7 +672,7 @@ func checkVariablesAreSorted(t *testing.T, path string, data []byte) {
 }
 
 func TestVariablesIncludeAllOption(t *testing.T) {
-	VisitDashboards(dashboards,
+	VisitDashboards(Dashboards,
 		func(path string, data []byte) {
 			checkVariablesHaveAll(t, path, data)
 		})
@@ -746,7 +742,7 @@ func checkVariablesHaveAll(t *testing.T, path string, data []byte) {
 
 func TestNoUnusedVariables(t *testing.T) {
 	VisitDashboards(
-		dashboards,
+		Dashboards,
 		func(path string, data []byte) {
 			checkUnusedVariables(t, path, data)
 		})
@@ -775,13 +771,13 @@ func checkUnusedVariables(t *testing.T, path string, data []byte) {
 		}
 	})
 
-	expressions := allExpressions(data)
+	expressions := AllExpressions(data)
 
 	// check that each variable is used in at least one expression
 varLoop:
 	for _, variable := range vars {
 		for _, expr := range expressions {
-			if strings.Contains(expr.metric, variable) {
+			if strings.Contains(expr.Metric, variable) {
 				continue varLoop
 			}
 		}
@@ -801,46 +797,9 @@ varLoop:
 	}
 }
 
-func allExpressions(data []byte) []expression {
-	exprs := make([]expression, 0)
-
-	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
-		doExpr("", key, value, func(expr expression) {
-			exprs = append(exprs, expr)
-		})
-		value.Get("panels").ForEach(func(key2, value2 gjson.Result) bool {
-			pathPrefix := fmt.Sprintf("panels[%d].", key.Int())
-			doExpr(pathPrefix, key2, value2, func(expr expression) {
-				exprs = append(exprs, expr)
-			})
-			return true
-		})
-		return true
-	})
-	return exprs
-}
-
-func doExpr(pathPrefix string, key gjson.Result, value gjson.Result, exprFunc func(exp expression)) {
-	kind := value.Get("type").ClonedString()
-	if kind == "row" {
-		return
-	}
-	path := fmt.Sprintf("%spanels[%d]", pathPrefix, key.Int())
-	targetsSlice := value.Get("targets").Array()
-	for i, targetN := range targetsSlice {
-		expr := targetN.Get("expr").ClonedString()
-		pathWithTarget := path + ".targets[" + strconv.Itoa(i) + "]"
-		exprFunc(expression{
-			refID:  pathWithTarget,
-			metric: expr,
-			kind:   kind,
-		})
-	}
-}
-
 func TestIDIsBlank(t *testing.T) {
 	VisitDashboards(
-		dashboards,
+		Dashboards,
 		func(path string, data []byte) {
 			checkUIDNotEmpty(t, path, data)
 			checkIDIsNull(t, path, data)
@@ -849,7 +808,7 @@ func TestIDIsBlank(t *testing.T) {
 
 func TestExemplarIsFalse(t *testing.T) {
 	VisitDashboards(
-		dashboards,
+		Dashboards,
 		func(path string, data []byte) {
 			checkExemplarIsFalse(t, path, data)
 		})
@@ -878,7 +837,7 @@ func checkIDIsNull(t *testing.T, path string, data []byte) {
 
 func TestUniquePanelIDs(t *testing.T) {
 	VisitDashboards(
-		dashboards,
+		Dashboards,
 		func(path string, data []byte) {
 			checkUniquePanelIDs(t, path, data)
 		})
@@ -909,7 +868,7 @@ func checkUniquePanelIDs(t *testing.T, path string, data []byte) {
 
 func TestTopKRange(t *testing.T) {
 	VisitDashboards(
-		dashboards,
+		Dashboards,
 		func(path string, data []byte) {
 			checkTopKRange(t, path, data)
 		})
@@ -1059,7 +1018,7 @@ func TestOnlyHighlightsExpanded(t *testing.T) {
 	}
 	// count the number of expanded sections in the dashboard and ensure num expanded = 1
 	VisitDashboards(
-		dashboards,
+		Dashboards,
 		func(path string, data []byte) {
 			checkExpansion(t, exceptions, path, data)
 		})
@@ -1097,7 +1056,7 @@ func checkExpansion(t *testing.T, exceptions map[string]int, path string, data [
 
 func TestLegends(t *testing.T) {
 	VisitDashboards(
-		dashboards,
+		Dashboards,
 		func(path string, data []byte) {
 			checkLegends(t, path, data)
 		})
@@ -1166,7 +1125,7 @@ func checkLegendCalculations(t *testing.T, gotLegendCalculations []string, dashP
 
 func TestConnectNullValues(t *testing.T) {
 	VisitDashboards(
-		dashboards,
+		Dashboards,
 		func(path string, data []byte) {
 			checkConnectNullValues(t, path, data)
 		})
@@ -1189,7 +1148,7 @@ func checkConnectNullValues(t *testing.T, path string, data []byte) {
 
 func TestPanelChildPanels(t *testing.T) {
 	VisitDashboards(
-		dashboards,
+		Dashboards,
 		func(path string, data []byte) {
 			checkPanelChildPanels(t, ShortPath(path), data)
 		})
@@ -1207,7 +1166,7 @@ func checkPanelChildPanels(t *testing.T, path string, data []byte) {
 
 func TestRatesAreNot1m(t *testing.T) {
 	VisitDashboards(
-		dashboards,
+		Dashboards,
 		func(path string, data []byte) {
 			checkRate1m(t, ShortPath(path), data)
 		},
@@ -1215,17 +1174,17 @@ func TestRatesAreNot1m(t *testing.T) {
 }
 
 func checkRate1m(t *testing.T, path string, data []byte) {
-	expressions := allExpressions(data)
+	expressions := AllExpressions(data)
 	for _, expr := range expressions {
-		if strings.Contains(expr.metric, "[1m]") {
-			t.Errorf("dashboard=%s, expr should not use rate of [1m] expr=%s", path, expr.metric)
+		if strings.Contains(expr.Metric, "[1m]") {
+			t.Errorf("dashboard=%s, expr should not use rate of [1m] expr=%s", path, expr.Metric)
 		}
 	}
 }
 
 func TestTableFilter(t *testing.T) {
 	VisitDashboards(
-		dashboards,
+		Dashboards,
 		func(path string, data []byte) {
 			checkTableFilter(t, path, data)
 		})
@@ -1247,7 +1206,7 @@ func checkTableFilter(t *testing.T, path string, data []byte) {
 
 func TestJoinExpressions(t *testing.T) {
 	VisitDashboards(
-		dashboards,
+		Dashboards,
 		func(path string, data []byte) {
 			checkJoinExpressions(t, path, data)
 		})
@@ -1293,7 +1252,7 @@ func checkJoinExpressions(t *testing.T, path string, data []byte) {
 
 func TestTitlesOfTopN(t *testing.T) {
 	VisitDashboards(
-		dashboards,
+		Dashboards,
 		func(path string, data []byte) {
 			checkTitlesOfTopN(t, ShortPath(path), data)
 		},
@@ -1301,9 +1260,9 @@ func TestTitlesOfTopN(t *testing.T) {
 }
 
 func checkTitlesOfTopN(t *testing.T, path string, data []byte) {
-	expressions := allExpressions(data)
+	expressions := AllExpressions(data)
 	for _, expr := range expressions {
-		if !strings.Contains(expr.metric, "topk") || expr.kind == "stat" {
+		if !strings.Contains(expr.Metric, "topk") || expr.Kind == "stat" {
 			continue
 		}
 		titleRef := asTitle(expr.refID)
@@ -1331,7 +1290,7 @@ func asTitle(id string) string {
 
 func TestIOPS(t *testing.T) {
 	VisitDashboards(
-		dashboards,
+		Dashboards,
 		func(path string, data []byte) {
 			checkIOPSDecimal(t, path, data)
 		})
@@ -1360,7 +1319,7 @@ func checkIOPSDecimal(t *testing.T, path string, data []byte) {
 
 func TestPercentHasMinMax(t *testing.T) {
 	VisitDashboards(
-		dashboards,
+		Dashboards,
 		func(path string, data []byte) {
 			checkPercentHasMinMax(t, path, data)
 		})
@@ -1408,7 +1367,7 @@ func checkPercentHasMinMax(t *testing.T, path string, data []byte) {
 
 func TestRefreshIsOff(t *testing.T) {
 	VisitDashboards(
-		dashboards,
+		Dashboards,
 		func(path string, data []byte) {
 			checkDashboardRefresh(t, ShortPath(path), data)
 		},
@@ -1426,7 +1385,7 @@ func checkDashboardRefresh(t *testing.T, path string, data []byte) {
 
 func TestHeatmapSettings(t *testing.T) {
 	VisitDashboards(
-		dashboards,
+		Dashboards,
 		func(path string, data []byte) {
 			checkHeatmapSettings(t, ShortPath(path), data)
 		},
@@ -1459,7 +1418,7 @@ func checkHeatmapSettings(t *testing.T, path string, data []byte) {
 
 func TestBytePanelsHave2Decimals(t *testing.T) {
 	VisitDashboards(
-		dashboards,
+		Dashboards,
 		func(path string, data []byte) {
 			checkBytePanelsHave2Decimals(t, path, data)
 		})
@@ -1503,7 +1462,7 @@ func checkBytePanelsHave2Decimals(t *testing.T, path string, data []byte) {
 
 func TestDashboardKeysAreSorted(t *testing.T) {
 	VisitDashboards(
-		dashboards,
+		Dashboards,
 		func(path string, data []byte) {
 			path = ShortPath(path)
 			sorted := gjson.GetBytes(data, `@pretty:{"sortKeys":true, "indent":"  ", "width":0}`).ClonedString()
@@ -1547,7 +1506,7 @@ func writeSorted(t *testing.T, path string, sorted string) string {
 }
 
 func TestDashboardTime(t *testing.T) {
-	VisitDashboards(dashboards, func(path string, data []byte) {
+	VisitDashboards(Dashboards, func(path string, data []byte) {
 		checkDashboardTime(t, path, data)
 	})
 }
@@ -1579,7 +1538,7 @@ func checkDashboardTime(t *testing.T, path string, data []byte) {
 }
 
 func TestNoDrillDownRows(t *testing.T) {
-	VisitDashboards(dashboards, func(path string, data []byte) {
+	VisitDashboards(Dashboards, func(path string, data []byte) {
 		checkRowNames(t, path, data)
 	})
 }
@@ -1759,7 +1718,7 @@ func TestLinks(t *testing.T) {
 	hasLinks := map[string][]string{}
 	uids := map[string]string{}
 
-	VisitDashboards(dashboards, func(path string, data []byte) {
+	VisitDashboards(Dashboards, func(path string, data []byte) {
 		checkLinks(t, path, data, hasLinks, uids)
 	})
 
@@ -1859,7 +1818,7 @@ func checkPanelLinks(t *testing.T, value gjson.Result, path string, hasLinks map
 }
 
 func TestTags(t *testing.T) {
-	VisitDashboards(dashboards,
+	VisitDashboards(Dashboards,
 		func(path string, data []byte) {
 			checkTags(t, path, data)
 		})

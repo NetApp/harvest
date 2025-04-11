@@ -19,6 +19,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"os/exec"
 	"regexp"
 	"slices"
 	"strconv"
@@ -26,7 +27,12 @@ import (
 )
 
 const (
-	BILLION = 1_000_000_000
+	BILLION                  = 1_000_000_000
+	TopresourceConstant      = "999999"
+	RangeConstant            = "888888"
+	RangeReverseConstant     = "10d6h54m48s"
+	IntervalConstant         = "777777"
+	IntervalDurationConstant = "666666"
 )
 
 var arrayRegex = regexp.MustCompile(`^([a-zA-Z][\w.]*)(\.[0-9#])`)
@@ -475,4 +481,38 @@ func SafeConvertToInt32(in int) (int32, error) {
 		return 0, fmt.Errorf("input %d is too large to convert to int32", in)
 	}
 	return int32(in), nil // #nosec G115
+}
+
+func Format(query string) string {
+	replacedQuery := strings.ReplaceAll(query, "$TopResources", TopresourceConstant)
+	replacedQuery = strings.ReplaceAll(replacedQuery, "$__range", RangeConstant)
+	replacedQuery = strings.ReplaceAll(replacedQuery, "$__interval", IntervalConstant)
+	replacedQuery = strings.ReplaceAll(replacedQuery, "${Interval}", IntervalDurationConstant)
+
+	path, err := exec.LookPath("promtool")
+	if err != nil {
+		fmt.Printf("ERR failed to find promtool")
+		return query
+	}
+	command := exec.Command(path, "--experimental", "promql", "format", replacedQuery)
+	output, err := command.CombinedOutput()
+	updatedQuery := strings.TrimSuffix(string(output), "\n")
+	if strings.HasPrefix(updatedQuery, "  ") {
+		updatedQuery = strings.TrimLeft(updatedQuery, " ")
+	}
+	if err != nil {
+		// An exit code can't be used since we need to ignore metrics that are not formatted but can't change
+		fmt.Printf("ERR formating metrics query=%s err=%v output=%s", query, err, string(output))
+		return query
+	}
+
+	if len(output) == 0 {
+		return query
+	}
+
+	updatedQuery = strings.ReplaceAll(updatedQuery, TopresourceConstant, "$TopResources")
+	updatedQuery = strings.ReplaceAll(updatedQuery, RangeReverseConstant, "$__range")
+	updatedQuery = strings.ReplaceAll(updatedQuery, IntervalConstant, "$__interval")
+	updatedQuery = strings.ReplaceAll(updatedQuery, IntervalDurationConstant, "${Interval}")
+	return updatedQuery
 }

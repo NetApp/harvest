@@ -165,7 +165,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "svm_vscan_connections_active{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
+          "expr": "svm_vscan_connections_active{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}",
           "interval": "",
           "legendFormat": "{{svm}}",
           "refId": "A"
@@ -254,7 +254,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "avg by (cluster, svm) (\n    svm_vscan_scan_latency{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}\n)\nand\ntopk(\n    $TopResources,\n    avg by (cluster, svm) (\n        avg_over_time(\n            svm_vscan_scan_latency{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}[3h]\n        )\n    )\n)",
+          "expr": "avg by (cluster, svm) (\n    svm_vscan_scan_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (cluster, svm) (\n      avg_over_time(svm_vscan_scan_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h])\n    )\n  )",
           "interval": "",
           "legendFormat": "{{svm}}",
           "refId": "A"
@@ -343,7 +343,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "avg by (cluster, svm) (\n    svm_vscan_dispatch_latency{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}\n)\nand\ntopk(\n    $TopResources,\n    avg by (cluster, svm) (\n        avg_over_time(\n            svm_vscan_dispatch_latency{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}[3h]\n        )\n    )\n)",
+          "expr": "avg by (cluster, svm) (\n    svm_vscan_dispatch_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (cluster, svm) (\n      avg_over_time(\n        svm_vscan_dispatch_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h]\n      )\n    )\n  )",
           "interval": "",
           "legendFormat": "{{svm}}",
           "refId": "A"
@@ -457,7 +457,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "sum by (cluster, svm) (\n    rate(svm_vscan_scan_request_dispatched_rate{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}[4m])\n)\nand\ntopk(\n    $TopResources,\n    avg by (cluster, svm) (\n        avg_over_time(\n            svm_vscan_scan_request_dispatched_rate{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}[3h]\n        )\n    )\n)",
+          "expr": "sum by (cluster, svm) (\n    rate(\n      svm_vscan_scan_request_dispatched_rate{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[4m]\n    )\n  )\nand\n  topk(\n    $TopResources,\n    avg by (cluster, svm) (\n      avg_over_time(\n        svm_vscan_scan_request_dispatched_rate{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h]\n      )\n    )\n  )",
           "interval": "",
           "legendFormat": "{{svm}}",
           "refId": "A"
@@ -571,7 +571,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "sum by (cluster, svm) (\n    rate(svm_vscan_scan_noti_received_rate{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}[4m])\n)\nand\ntopk(\n    $TopResources,\n    avg by (cluster, svm) (\n        avg_over_time(\n            svm_vscan_scan_noti_received_rate{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"}[3h]\n        )\n    )\n)",
+          "expr": "sum by (cluster, svm) (\n    rate(\n      svm_vscan_scan_noti_received_rate{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[4m]\n    )\n  )\nand\n  topk(\n    $TopResources,\n    avg by (cluster, svm) (\n      avg_over_time(\n        svm_vscan_scan_noti_received_rate{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h]\n      )\n    )\n  )",
           "interval": "",
           "legendFormat": "{{svm}}",
           "refId": "A"
@@ -671,7 +671,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "avg by (cluster, svm, scanner) (\n    vscan_scan_latency{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", scanner=~\"$Scanner\"}\n)\nand\ntopk(\n    $TopResources,\n    avg by (cluster, svm, scanner) (\n        avg_over_time(\n            vscan_scan_latency{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\", scanner=~\"$Scanner\"}[3h]\n        )\n    )\n)",
+              "expr": "avg by (cluster, svm, scanner) (\n    vscan_scan_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",scanner=~\"$Scanner\",svm=~\"$SVM\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (cluster, svm, scanner) (\n      avg_over_time(\n        vscan_scan_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",scanner=~\"$Scanner\",svm=~\"$SVM\"}[3h]\n      )\n    )\n  )",
               "interval": "",
               "legendFormat": "{{scanner}}",
               "refId": "A"
@@ -785,7 +785,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "sum by (cluster, scanner, svm) (\n    rate(vscan_scan_request_dispatched_rate{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", scanner=~\"$Scanner\"}[4m])\n)\nand\ntopk(\n    $TopResources,\n    avg by (cluster, scanner, svm) (\n        avg_over_time(\n            vscan_scan_request_dispatched_rate{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", scanner=~\"$Scanner\"}[3h]\n        )\n    )\n)",
+              "expr": "sum by (cluster, scanner, svm) (\n    rate(\n      vscan_scan_request_dispatched_rate{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",scanner=~\"$Scanner\"}[4m]\n    )\n  )\nand\n  topk(\n    $TopResources,\n    avg by (cluster, scanner, svm) (\n      avg_over_time(\n        vscan_scan_request_dispatched_rate{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",scanner=~\"$Scanner\"}[3h]\n      )\n    )\n  )",
               "interval": "",
               "legendFormat": "{{scanner}}",
               "refId": "A"
@@ -892,7 +892,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "vscan_scanner_stats_pct_cpu_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",scanner=~\"$Scanner\"}",
+              "expr": "vscan_scanner_stats_pct_cpu_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",scanner=~\"$Scanner\",svm=~\"$SVM\"}",
               "interval": "",
               "legendFormat": "{{scanner}}",
               "refId": "A"
@@ -984,7 +984,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "vscan_scanner_stats_pct_mem_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",scanner=~\"$Scanner\"}",
+              "expr": "vscan_scanner_stats_pct_mem_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",scanner=~\"$Scanner\",svm=~\"$SVM\"}",
               "interval": "",
               "legendFormat": "{{scanner}}",
               "refId": "A"
@@ -1076,7 +1076,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "vscan_scanner_stats_pct_network_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",scanner=~\"$Scanner\"}",
+              "expr": "vscan_scanner_stats_pct_network_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",scanner=~\"$Scanner\",svm=~\"$SVM\"}",
               "interval": "",
               "legendFormat": "{{scanner}}",
               "refId": "A"
@@ -1222,7 +1222,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "vscan_server_disconnected{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
+              "expr": "vscan_server_disconnected{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}",
               "format": "table",
               "hide": false,
               "instant": true,

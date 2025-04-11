@@ -369,7 +369,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "ontaps3_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"} * on (volume,svm,cluster,datacenter) group_left(aggr) volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}",
+          "expr": "ontaps3_labels{bucket=~\"$Bucket\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n* on (volume, svm, cluster, datacenter) group_left (aggr)\n  volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -379,7 +379,7 @@
         },
         {
           "exemplar": false,
-          "expr": "ontaps3_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}",
+          "expr": "ontaps3_size{bucket=~\"$Bucket\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -389,7 +389,7 @@
         },
         {
           "exemplar": false,
-          "expr": "ontaps3_size-ontaps3_logical_used_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}",
+          "expr": "ontaps3_size\n-\n  ontaps3_logical_used_size{bucket=~\"$Bucket\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -399,7 +399,7 @@
         },
         {
           "exemplar": false,
-          "expr": "ontaps3_logical_used_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}",
+          "expr": "ontaps3_logical_used_size{bucket=~\"$Bucket\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -409,7 +409,7 @@
         },
         {
           "exemplar": false,
-          "expr": "ontaps3_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}",
+          "expr": "ontaps3_used_percent{bucket=~\"$Bucket\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -419,7 +419,7 @@
         },
         {
           "exemplar": false,
-          "expr": "ontaps3_object_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}",
+          "expr": "ontaps3_object_count{bucket=~\"$Bucket\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -589,7 +589,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "ontaps3_logical_used_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"} \n  and \ntopk($TopResources, avg_over_time(ontaps3_logical_used_size{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}[3h] @ end()))",
+          "expr": "ontaps3_logical_used_size{bucket=~\"$Bucket\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      ontaps3_logical_used_size{bucket=~\"$Bucket\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h] @ end()\n    )\n  )",
           "hide": false,
           "interval": "",
           "legendFormat": "{{svm}} - {{bucket}}",
@@ -707,7 +707,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "ontaps3_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"} \n  and \ntopk($TopResources, avg_over_time(ontaps3_used_percent{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\"}[3h] @ end()))",
+          "expr": "ontaps3_used_percent{bucket=~\"$Bucket\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      ontaps3_used_percent{bucket=~\"$Bucket\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h] @ end()\n    )\n  )",
           "hide": false,
           "interval": "",
           "legendFormat": "{{svm}} - {{bucket}}",
@@ -856,7 +856,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "ontaps3_policy_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",bucket=~\"$Bucket\",permission_type!=\"\"}",
+          "expr": "ontaps3_policy_labels{bucket=~\"$Bucket\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",permission_type!=\"\",svm=~\"$SVM\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1054,7 +1054,7 @@
             {
               "editorMode": "code",
               "exemplar": false,
-              "expr": "sum by (datacenter, cluster, svm)(ontaps3_svm_requests{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
+              "expr": "sum by (datacenter, cluster, svm) (\n  ontaps3_svm_requests{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n)",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1064,7 +1064,7 @@
             {
               "editorMode": "code",
               "exemplar": false,
-              "expr": "sum by (datacenter, cluster, svm)(ontaps3_svm_connections{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
+              "expr": "sum by (datacenter, cluster, svm) (\n  ontaps3_svm_connections{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1075,7 +1075,7 @@
             {
               "editorMode": "code",
               "exemplar": false,
-              "expr": "sum by (datacenter, cluster, svm)(ontaps3_svm_max_requests_outstanding{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
+              "expr": "sum by (datacenter, cluster, svm) (\n  ontaps3_svm_max_requests_outstanding{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1086,7 +1086,7 @@
             {
               "editorMode": "code",
               "exemplar": false,
-              "expr": "sum by (datacenter, cluster, svm)(ontaps3_svm_max_connected_connections{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
+              "expr": "sum by (datacenter, cluster, svm) (\n  ontaps3_svm_max_connected_connections{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1097,7 +1097,7 @@
             {
               "editorMode": "code",
               "exemplar": false,
-              "expr": "sum by (datacenter, cluster, svm)(ontaps3_svm_max_cmds_per_connection{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"})",
+              "expr": "sum by (datacenter, cluster, svm) (\n  ontaps3_svm_max_cmds_per_connection{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1242,7 +1242,7 @@
             {
               "editorMode": "code",
               "exemplar": false,
-              "expr": "avg by(datacenter,cluster,svm)(ontaps3_svm_get_object_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) and topk($TopResources, avg by(datacenter,cluster,svm) (avg_over_time(ontaps3_svm_get_object_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h])))",
+              "expr": "avg by (datacenter, cluster, svm) (\n    ontaps3_svm_get_object_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (datacenter, cluster, svm) (\n      avg_over_time(\n        ontaps3_svm_get_object_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h]\n      )\n    )\n  )",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - GET",
@@ -1252,7 +1252,7 @@
             {
               "editorMode": "code",
               "exemplar": false,
-              "expr": "avg by(datacenter,cluster,svm)(ontaps3_svm_put_object_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) and topk($TopResources, avg by(datacenter,cluster,svm) (avg_over_time(ontaps3_svm_put_object_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h])))",
+              "expr": "avg by (datacenter, cluster, svm) (\n    ontaps3_svm_put_object_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (datacenter, cluster, svm) (\n      avg_over_time(\n        ontaps3_svm_put_object_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h]\n      )\n    )\n  )",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - PUT",
@@ -1262,7 +1262,7 @@
             {
               "editorMode": "code",
               "exemplar": false,
-              "expr": "avg by(datacenter,cluster,svm)(ontaps3_svm_head_object_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) and topk($TopResources, avg by(datacenter,cluster,svm) (avg_over_time(ontaps3_svm_head_object_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h])))",
+              "expr": "avg by (datacenter, cluster, svm) (\n    ontaps3_svm_head_object_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (datacenter, cluster, svm) (\n      avg_over_time(\n        ontaps3_svm_head_object_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h]\n      )\n    )\n  )",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - HEAD",
@@ -1272,7 +1272,7 @@
             {
               "editorMode": "code",
               "exemplar": false,
-              "expr": "avg by(datacenter,cluster,svm)(ontaps3_svm_delete_object_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) and topk($TopResources, avg by(datacenter,cluster,svm) (avg_over_time(ontaps3_svm_delete_object_total{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h])))",
+              "expr": "avg by (datacenter, cluster, svm) (\n    ontaps3_svm_delete_object_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (datacenter, cluster, svm) (\n      avg_over_time(\n        ontaps3_svm_delete_object_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h]\n      )\n    )\n  )",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - DELETE",
@@ -1370,7 +1370,7 @@
             {
               "editorMode": "code",
               "exemplar": false,
-              "expr": "avg by(datacenter,cluster,svm)(ontaps3_svm_get_object_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) and topk($TopResources, avg by(datacenter,cluster,svm) (avg_over_time(ontaps3_svm_get_object_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h])))",
+              "expr": "avg by (datacenter, cluster, svm) (\n    ontaps3_svm_get_object_rate{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (datacenter, cluster, svm) (\n      avg_over_time(\n        ontaps3_svm_get_object_rate{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h]\n      )\n    )\n  )",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - GET",
@@ -1380,7 +1380,7 @@
             {
               "editorMode": "code",
               "exemplar": false,
-              "expr": "avg by(datacenter,cluster,svm)(ontaps3_svm_put_object_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) and topk($TopResources, avg by(datacenter,cluster,svm) (avg_over_time(ontaps3_svm_put_object_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h])))",
+              "expr": "avg by (datacenter, cluster, svm) (\n    ontaps3_svm_put_object_rate{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (datacenter, cluster, svm) (\n      avg_over_time(\n        ontaps3_svm_put_object_rate{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h]\n      )\n    )\n  )",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - PUT",
@@ -1390,7 +1390,7 @@
             {
               "editorMode": "code",
               "exemplar": false,
-              "expr": "avg by(datacenter,cluster,svm)(ontaps3_svm_head_object_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) and topk($TopResources, avg by(datacenter,cluster,svm) (avg_over_time(ontaps3_svm_head_object_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h])))",
+              "expr": "avg by (datacenter, cluster, svm) (\n    ontaps3_svm_head_object_rate{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (datacenter, cluster, svm) (\n      avg_over_time(\n        ontaps3_svm_head_object_rate{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h]\n      )\n    )\n  )",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - HEAD",
@@ -1400,7 +1400,7 @@
             {
               "editorMode": "code",
               "exemplar": false,
-              "expr": "avg by(datacenter,cluster,svm)(ontaps3_svm_delete_object_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) and topk($TopResources, avg by(datacenter,cluster,svm) (avg_over_time(ontaps3_svm_delete_object_rate{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h])))",
+              "expr": "avg by (datacenter, cluster, svm) (\n    ontaps3_svm_delete_object_rate{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (datacenter, cluster, svm) (\n      avg_over_time(\n        ontaps3_svm_delete_object_rate{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h]\n      )\n    )\n  )",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - DELETE",
@@ -1497,7 +1497,7 @@
             {
               "editorMode": "code",
               "exemplar": false,
-              "expr": "avg by(datacenter,cluster,svm)(ontaps3_svm_get_object_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) and topk($TopResources, avg by(datacenter,cluster,svm) (avg_over_time(ontaps3_svm_get_object_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h])))",
+              "expr": "avg by (datacenter, cluster, svm) (\n    ontaps3_svm_get_object_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (datacenter, cluster, svm) (\n      avg_over_time(\n        ontaps3_svm_get_object_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h]\n      )\n    )\n  )",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - GET",
@@ -1507,7 +1507,7 @@
             {
               "editorMode": "code",
               "exemplar": false,
-              "expr": "avg by(datacenter,cluster,svm)(ontaps3_svm_put_object_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) and topk($TopResources, avg by(datacenter,cluster,svm) (avg_over_time(ontaps3_svm_put_object_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h])))",
+              "expr": "avg by (datacenter, cluster, svm) (\n    ontaps3_svm_put_object_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (datacenter, cluster, svm) (\n      avg_over_time(\n        ontaps3_svm_put_object_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h]\n      )\n    )\n  )",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - PUT",
@@ -1517,7 +1517,7 @@
             {
               "editorMode": "code",
               "exemplar": false,
-              "expr": "avg by(datacenter,cluster,svm)(ontaps3_svm_head_object_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) and topk($TopResources, avg by(datacenter,cluster,svm) (avg_over_time(ontaps3_svm_head_object_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h])))",
+              "expr": "avg by (datacenter, cluster, svm) (\n    ontaps3_svm_head_object_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (datacenter, cluster, svm) (\n      avg_over_time(\n        ontaps3_svm_head_object_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h]\n      )\n    )\n  )",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - HEAD",
@@ -1527,7 +1527,7 @@
             {
               "editorMode": "code",
               "exemplar": false,
-              "expr": "avg by(datacenter,cluster,svm)(ontaps3_svm_delete_object_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) and topk($TopResources, avg by(datacenter,cluster,svm) (avg_over_time(ontaps3_svm_delete_object_latency{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h])))",
+              "expr": "avg by (datacenter, cluster, svm) (\n    ontaps3_svm_delete_object_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (datacenter, cluster, svm) (\n      avg_over_time(\n        ontaps3_svm_delete_object_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h]\n      )\n    )\n  )",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - DELETE",
@@ -1625,7 +1625,7 @@
             {
               "editorMode": "code",
               "exemplar": false,
-              "expr": "avg by(datacenter,cluster,svm)(ontaps3_svm_get_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) and topk($TopResources, avg by(datacenter,cluster,svm) (avg_over_time(ontaps3_svm_get_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h])))",
+              "expr": "avg by (datacenter, cluster, svm) (\n    ontaps3_svm_get_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (datacenter, cluster, svm) (\n      avg_over_time(ontaps3_svm_get_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h])\n    )\n  )",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - GET",
@@ -1635,7 +1635,7 @@
             {
               "editorMode": "code",
               "exemplar": false,
-              "expr": "avg by(datacenter,cluster,svm)(ontaps3_svm_put_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}) and topk($TopResources, avg by(datacenter,cluster,svm) (avg_over_time(ontaps3_svm_put_data{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}[3h])))",
+              "expr": "avg by (datacenter, cluster, svm) (\n    ontaps3_svm_put_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (datacenter, cluster, svm) (\n      avg_over_time(ontaps3_svm_put_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h])\n    )\n  )",
               "hide": false,
               "interval": "",
               "legendFormat": "{{svm}} - PUT",

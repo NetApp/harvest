@@ -177,6 +177,7 @@ pipeline {
                                 mkdir $WORKSPACE/docker
                                 cd $WORKSPACE/docker
                                 cp -rf $WORKSPACE/harvest/integration/test/harvest.yml .
+                                cp /home/harvestfiles/promtool $WORKSPACE/harvest/integration/test/
                                 docker run --rm \
                                   --entrypoint "bin/harvest" \
                                   --volume "$(pwd):/opt/temp" \
@@ -208,6 +209,7 @@ pipeline {
                                         cd $WORKSPACE/docker
                                         ANALYZE_DOCKER_LOGS=1 bash $WORKSPACE/harvest/integration/test/test.sh
                                         CHECK_METRICS=1 bash $WORKSPACE/harvest/integration/test/test.sh
+                                        CHECK_FORMAT=1 bash $WORKSPACE/harvest/integration/test/test.sh
                                         docker ps -q | xargs docker stop | xargs docker rm --force
                                     """
                                     archiveArtifacts artifacts: "docker_logs.zip", fingerprint: true

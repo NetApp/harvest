@@ -174,7 +174,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum by(site_name,cluster,datacenter)(storagegrid_storage_utilization_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "sum by (site_name, cluster, datacenter) (\n  storagegrid_storage_utilization_data_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n)",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -183,7 +183,7 @@
         },
         {
           "exemplar": false,
-          "expr": "sum by(site_name,cluster,datacenter)(storagegrid_storage_utilization_usable_space_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} + storagegrid_storage_utilization_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "sum by (site_name, cluster, datacenter) (\n    storagegrid_storage_utilization_usable_space_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n  +\n    storagegrid_storage_utilization_data_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -193,7 +193,7 @@
         },
         {
           "exemplar": false,
-          "expr": "100*sum by(site_name,cluster,datacenter)(storagegrid_storage_utilization_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/sum by(site_name,cluster,datacenter)(storagegrid_storage_utilization_usable_space_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} + storagegrid_storage_utilization_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "100\n  *\n    sum by (site_name, cluster, datacenter) (\n      storagegrid_storage_utilization_data_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n    )\n/\n  sum by (site_name, cluster, datacenter) (\n      storagegrid_storage_utilization_usable_space_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n    +\n      storagegrid_storage_utilization_data_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n  )",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -339,7 +339,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum by(site_name,cluster,datacenter)(storagegrid_storage_utilization_metadata_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "sum by (site_name, cluster, datacenter) (\n  storagegrid_storage_utilization_metadata_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n)",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -348,7 +348,7 @@
         },
         {
           "exemplar": false,
-          "expr": "sum by(site_name,cluster,datacenter)(storagegrid_storage_utilization_metadata_allowed_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "sum by (site_name, cluster, datacenter) (\n  storagegrid_storage_utilization_metadata_allowed_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -358,7 +358,7 @@
         },
         {
           "exemplar": false,
-          "expr": "100*sum by(site_name,cluster,datacenter)(storagegrid_storage_utilization_metadata_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})/sum by(site_name,cluster,datacenter)(storagegrid_storage_utilization_metadata_allowed_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "100\n  *\n    sum by (site_name, cluster, datacenter) (\n      storagegrid_storage_utilization_metadata_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n    )\n/\n  sum by (site_name, cluster, datacenter) (\n    storagegrid_storage_utilization_metadata_allowed_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n  )",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -491,7 +491,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum by (cluster)(storagegrid_storage_utilization_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+          "expr": "sum by (cluster) (\n  storagegrid_storage_utilization_data_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n)",
           "interval": "",
           "legendFormat": "{{cluster}} - Space used",
           "refId": "A"
@@ -589,14 +589,14 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster)(increase(storagegrid_private_s3_total_requests{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",type=~\"put_.*\"}[2m]))",
+              "expr": "sum by (cluster) (\n  increase(\n    storagegrid_private_s3_total_requests{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",type=~\"put_.*\"}[2m]\n  )\n)",
               "interval": "",
               "legendFormat": "{{cluster}} - PUT",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (increase(storagegrid_private_s3_total_requests{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",type=~\"get_.*\"}[2m]))",
+              "expr": "sum by (cluster) (\n  increase(\n    storagegrid_private_s3_total_requests{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",type=~\"get_.*\"}[2m]\n  )\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{cluster}} - GET",
@@ -604,7 +604,7 @@
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (increase(storagegrid_private_s3_total_requests{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",type=~\"delete_.*\"}[2m]))",
+              "expr": "sum by (cluster) (\n  increase(\n    storagegrid_private_s3_total_requests{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",type=~\"delete_.*\"}[2m]\n  )\n)",
               "hide": false,
               "instant": false,
               "interval": "",
@@ -613,7 +613,7 @@
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (increase(storagegrid_private_s3_total_requests{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",type=~\"head_.*\"}[2m]))",
+              "expr": "sum by (cluster) (\n  increase(\n    storagegrid_private_s3_total_requests{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",type=~\"head_.*\"}[2m]\n  )\n)",
               "hide": false,
               "instant": false,
               "interval": "",
@@ -622,7 +622,7 @@
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (increase(storagegrid_private_s3_total_requests{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",type=~\"post_.*\"}[2m]))",
+              "expr": "sum by (cluster) (\n  increase(\n    storagegrid_private_s3_total_requests{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",type=~\"post_.*\"}[2m]\n  )\n)",
               "hide": false,
               "instant": false,
               "interval": "",
@@ -711,14 +711,14 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster)(rate(storagegrid_network_received_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[5m]))",
+              "expr": "sum by (cluster) (\n  rate(storagegrid_network_received_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[5m])\n)",
               "interval": "",
               "legendFormat": "{{cluster}} - Received",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster)(rate(storagegrid_network_transmitted_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[5m]))",
+              "expr": "sum by (cluster) (\n  rate(storagegrid_network_transmitted_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[5m])\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{cluster}} - Transmitted",
@@ -806,14 +806,14 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster)(storagegrid_s3_operations_successful{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum by (cluster) (\n  storagegrid_s3_operations_successful{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n)",
               "interval": "",
               "legendFormat": "{{cluster}} - Successful",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster)(storagegrid_s3_operations_failed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum by (cluster) (storagegrid_s3_operations_failed{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "hide": false,
               "instant": false,
               "interval": "",
@@ -822,7 +822,7 @@
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster)(storagegrid_s3_operations_unauthorized{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum by (cluster) (\n  storagegrid_s3_operations_unauthorized{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n)",
               "hide": false,
               "instant": false,
               "interval": "",
@@ -912,14 +912,14 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (rate(storagegrid_private_load_balancer_storage_request_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",code=\"400\"}[3m]))",
+              "expr": "sum by (cluster) (\n  rate(\n    storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",code=\"400\",datacenter=~\"$Datacenter\"}[3m]\n  )\n)",
               "interval": "",
               "legendFormat": "{{cluster}} - Bad request (400)",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (rate(storagegrid_private_load_balancer_storage_request_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",code=\"403\"}[3m]))",
+              "expr": "sum by (cluster) (\n  rate(\n    storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",code=\"403\",datacenter=~\"$Datacenter\"}[3m]\n  )\n)",
               "hide": false,
               "instant": false,
               "interval": "",
@@ -928,7 +928,7 @@
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (rate(storagegrid_private_load_balancer_storage_request_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",code=\"404\"}[3m]))",
+              "expr": "sum by (cluster) (\n  rate(\n    storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",code=\"404\",datacenter=~\"$Datacenter\"}[3m]\n  )\n)",
               "hide": false,
               "instant": false,
               "interval": "",
@@ -1017,14 +1017,14 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(sum by (cluster)(rate(storagegrid_private_load_balancer_storage_request_time{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",method=\"DELETE\"}[3m]))) /(sum by (cluster)(rate(storagegrid_private_load_balancer_storage_request_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",method=\"DELETE\"}[3m])))",
+              "expr": "(\n    sum by (cluster) (\n      rate(\n        storagegrid_private_load_balancer_storage_request_time{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",method=\"DELETE\"}[3m]\n      )\n    )\n  )\n/\n  (\n    sum by (cluster) (\n      rate(\n        storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",method=\"DELETE\"}[3m]\n      )\n    )\n  )",
               "interval": "",
               "legendFormat": "{{cluster}} - DELETE",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "(sum by (cluster)(rate(storagegrid_private_load_balancer_storage_request_time{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",method=\"GET\"}[3m]))) /(sum by (cluster)(rate(storagegrid_private_load_balancer_storage_request_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",method=\"GET\"}[3m])))",
+              "expr": "(\n    sum by (cluster) (\n      rate(\n        storagegrid_private_load_balancer_storage_request_time{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",method=\"GET\"}[3m]\n      )\n    )\n  )\n/\n  (\n    sum by (cluster) (\n      rate(\n        storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",method=\"GET\"}[3m]\n      )\n    )\n  )",
               "hide": false,
               "interval": "",
               "legendFormat": "{{cluster}} - GET",
@@ -1032,7 +1032,7 @@
             },
             {
               "exemplar": false,
-              "expr": "(sum by (cluster) (rate(storagegrid_private_load_balancer_storage_request_time{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",method=\"PUT\"}[3m]))) /(sum by (cluster)(rate(storagegrid_private_load_balancer_storage_request_count{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",method=\"PUT\"}[3m])))",
+              "expr": "(\n    sum by (cluster) (\n      rate(\n        storagegrid_private_load_balancer_storage_request_time{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",method=\"PUT\"}[3m]\n      )\n    )\n  )\n/\n  (\n    sum by (cluster) (\n      rate(\n        storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",method=\"PUT\"}[3m]\n      )\n    )\n  )",
               "hide": false,
               "interval": "",
               "legendFormat": "{{cluster}} - PUT",
@@ -1136,7 +1136,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by(cluster,tenant,datacenter)(storagegrid_tenant_usage_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) and topk($TopResources, avg by(cluster,tenant,datacenter) (avg_over_time(storagegrid_tenant_usage_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h])))",
+              "expr": "avg by (cluster, tenant, datacenter) (\n    storagegrid_tenant_usage_data_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (cluster, tenant, datacenter) (\n      avg_over_time(\n        storagegrid_tenant_usage_data_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h]\n      )\n    )\n  )",
               "format": "time_series",
               "hide": false,
               "interval": "",
@@ -1227,7 +1227,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by(cluster,tenant,datacenter)(storagegrid_tenant_usage_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}/storagegrid_tenant_usage_quota_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) and topk($TopResources, avg by(cluster,tenant,datacenter) (avg_over_time(storagegrid_tenant_usage_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h])/avg_over_time(storagegrid_tenant_usage_quota_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h])))",
+              "expr": "avg by (cluster, tenant, datacenter) (\n      storagegrid_tenant_usage_data_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n    /\n      storagegrid_tenant_usage_quota_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (cluster, tenant, datacenter) (\n        avg_over_time(\n          storagegrid_tenant_usage_data_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h]\n        )\n      /\n        avg_over_time(\n          storagegrid_tenant_usage_quota_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h]\n        )\n    )\n  )",
               "format": "time_series",
               "interval": "",
               "legendFormat": "{{cluster}} - {{tenant}}",
@@ -1330,7 +1330,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster)(storagegrid_ilm_awaiting_client_objects{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum by (cluster) (\n  storagegrid_ilm_awaiting_client_objects{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n)",
               "format": "time_series",
               "interval": "",
               "legendFormat": "{{cluster}} - To be scanned",
@@ -1338,7 +1338,7 @@
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster)(storagegrid_private_ilm_awaiting_delete_objects{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"})",
+              "expr": "sum by (cluster) (\n  storagegrid_private_ilm_awaiting_delete_objects{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "{{cluster}} - To be deleted",
@@ -1427,7 +1427,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster)(rate(storagegrid_ilm_objects_processed{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[60m]))",
+              "expr": "sum by (cluster) (\n  rate(storagegrid_ilm_objects_processed{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[1h])\n)",
               "format": "time_series",
               "interval": "",
               "legendFormat": "{{cluster}} - Scans",
@@ -1533,7 +1533,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(storagegrid_storage_utilization_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} / (storagegrid_storage_utilization_usable_space_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} + storagegrid_storage_utilization_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}) * 100) and topk(5, (avg_over_time(storagegrid_storage_utilization_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h]) / (avg_over_time(storagegrid_storage_utilization_usable_space_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h]) + avg_over_time(storagegrid_storage_utilization_data_bytes{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h]))) * 100)",
+              "expr": "(\n        storagegrid_storage_utilization_data_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n      /\n        (\n            storagegrid_storage_utilization_usable_space_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n          +\n            storagegrid_storage_utilization_data_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n        )\n    *\n      100\n  )\nand\n  topk(\n    5,\n      (\n          avg_over_time(\n            storagegrid_storage_utilization_data_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h]\n          )\n        /\n          (\n              avg_over_time(\n                storagegrid_storage_utilization_usable_space_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h]\n              )\n            +\n              avg_over_time(\n                storagegrid_storage_utilization_data_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h]\n              )\n          )\n      )\n    *\n      100\n  )",
               "format": "time_series",
               "hide": false,
               "interval": "",
@@ -1625,7 +1625,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "storagegrid_node_cpu_utilization_percentage{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"} and topk($TopResources, avg_over_time(storagegrid_node_cpu_utilization_percentage{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}[3h]))",
+              "expr": "storagegrid_node_cpu_utilization_percentage{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      storagegrid_node_cpu_utilization_percentage{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h]\n    )\n  )",
               "format": "time_series",
               "interval": "",
               "legendFormat": "{{cluster}} - {{node}}",
@@ -1728,7 +1728,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "8 * (sum by (cluster,policy)(rate(storagegrid_private_load_balancer_storage_rx_bytes{cluster=~\"$Cluster\",policy=~\"$Policy\"}[4m])) and on (cluster, policy) topk($TopResources, sum by (cluster,policy) (avg_over_time(storagegrid_private_load_balancer_storage_rx_bytes{cluster=~\"$Cluster\",policy=~\"$Policy\"}[3h]))))",
+              "expr": "8\n*\n  (\n      sum by (cluster, policy) (\n        rate(storagegrid_private_load_balancer_storage_rx_bytes{cluster=~\"$Cluster\",policy=~\"$Policy\"}[4m])\n      )\n    and on (cluster, policy)\n      topk(\n        $TopResources,\n        sum by (cluster, policy) (\n          avg_over_time(\n            storagegrid_private_load_balancer_storage_rx_bytes{cluster=~\"$Cluster\",policy=~\"$Policy\"}[3h]\n          )\n        )\n      )\n  )",
               "hide": false,
               "instant": false,
               "interval": "3m",
@@ -1738,7 +1738,7 @@
             },
             {
               "exemplar": false,
-              "expr": "8 * (sum by (cluster,policy)(rate(storagegrid_private_load_balancer_storage_tx_bytes{cluster=~\"$Cluster\",policy=~\"$Policy\"}[4m])) and on (cluster, policy) topk($TopResources, sum by (cluster,policy) (avg_over_time(storagegrid_private_load_balancer_storage_tx_bytes{cluster=~\"$Cluster\",policy=~\"$Policy\"}[3h]))))",
+              "expr": "8\n*\n  (\n      sum by (cluster, policy) (\n        rate(storagegrid_private_load_balancer_storage_tx_bytes{cluster=~\"$Cluster\",policy=~\"$Policy\"}[4m])\n      )\n    and on (cluster, policy)\n      topk(\n        $TopResources,\n        sum by (cluster, policy) (\n          avg_over_time(\n            storagegrid_private_load_balancer_storage_tx_bytes{cluster=~\"$Cluster\",policy=~\"$Policy\"}[3h]\n          )\n        )\n      )\n  )",
               "hide": false,
               "interval": "3m",
               "intervalFactor": 1,
@@ -1828,7 +1828,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster,policy)(rate(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",policy=~\"$Policy\"}[4m])) > 0 and on (cluster, policy) topk($TopResources, sum by (cluster,policy) (avg_over_time(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",policy=~\"$Policy\"}[3h])))",
+              "expr": "sum by (cluster, policy) (\n      rate(\n        storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",policy=~\"$Policy\"}[4m]\n      )\n    )\n  \u003e\n    0\nand on (cluster, policy)\n  topk(\n    $TopResources,\n    sum by (cluster, policy) (\n      avg_over_time(\n        storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",policy=~\"$Policy\"}[3h]\n      )\n    )\n  )",
               "hide": false,
               "instant": false,
               "interval": "3m",
@@ -1838,7 +1838,7 @@
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster,policy,method)(rate(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",policy=~\"$Policy\"}[4m])) > 0 and on (cluster, policy, method) topk($TopResources, sum by (cluster,policy,method) (avg_over_time(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",policy=~\"$Policy\"}[3h])))",
+              "expr": "sum by (cluster, policy, method) (\n      rate(\n        storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",policy=~\"$Policy\"}[4m]\n      )\n    )\n  \u003e\n    0\nand on (cluster, policy, method)\n  topk(\n    $TopResources,\n    sum by (cluster, policy, method) (\n      avg_over_time(\n        storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",policy=~\"$Policy\"}[3h]\n      )\n    )\n  )",
               "hide": false,
               "interval": "3m",
               "intervalFactor": 1,
@@ -1928,7 +1928,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster,policy,code)(rate(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",policy=~\"$Policy\",code=~\"[45].*\"}[4m])) > 0 and on (cluster, policy, code) topk($TopResources, sum by (cluster,policy,code) (avg_over_time(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",policy=~\"$Policy\",code=~\"[45].*\"}[3h])))",
+              "expr": "sum by (cluster, policy, code) (\n      rate(\n        storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",code=~\"[45].*\",policy=~\"$Policy\"}[4m]\n      )\n    )\n  \u003e\n    0\nand on (cluster, policy, code)\n  topk(\n    $TopResources,\n    sum by (cluster, policy, code) (\n      avg_over_time(\n        storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",code=~\"[45].*\",policy=~\"$Policy\"}[3h]\n      )\n    )\n  )",
               "hide": false,
               "instant": false,
               "interval": "3m",
@@ -2018,7 +2018,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster,policy,method)(rate(storagegrid_private_load_balancer_storage_request_time{cluster=~\"$Cluster\",policy=~\"$Policy\",code=~\"2.+\"}[4m])) / (sum by (cluster,policy,method)(rate(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",policy=~\"$Policy\",code=~\"2.+\"}[4m]))) > 0 \nand on(cluster, policy, method) topk ($TopResources, sum by (cluster,policy,method)(avg_over_time(storagegrid_private_load_balancer_storage_request_time{cluster=~\"$Cluster\",policy=~\"$Policy\",code=~\"2.+\"}[3h])) / (sum by (cluster,policy,method)(avg_over_time(storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",policy=~\"$Policy\",code=~\"2.+\"}[3h]))))",
+              "expr": "sum by (cluster, policy, method) (\n        rate(\n          storagegrid_private_load_balancer_storage_request_time{cluster=~\"$Cluster\",code=~\"2.+\",policy=~\"$Policy\"}[4m]\n        )\n      )\n    /\n      (\n        sum by (cluster, policy, method) (\n          rate(\n            storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",code=~\"2.+\",policy=~\"$Policy\"}[4m]\n          )\n        )\n      )\n  \u003e\n    0\nand on (cluster, policy, method)\n  topk(\n    $TopResources,\n      sum by (cluster, policy, method) (\n        avg_over_time(\n          storagegrid_private_load_balancer_storage_request_time{cluster=~\"$Cluster\",code=~\"2.+\",policy=~\"$Policy\"}[3h]\n        )\n      )\n    /\n      (\n        sum by (cluster, policy, method) (\n          avg_over_time(\n            storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",code=~\"2.+\",policy=~\"$Policy\"}[3h]\n          )\n        )\n      )\n  )",
               "hide": false,
               "instant": false,
               "interval": "3m",
@@ -2062,7 +2062,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(increase(storagegrid_private_load_balancer_storage_request_body_bytes_bucket{method=~\"PUT|POST\",policy=~\"$Policy\"}[$__interval])) by (cluster,policy,le)",
+              "expr": "sum by (cluster, policy, le) (\n  increase(\n    storagegrid_private_load_balancer_storage_request_body_bytes_bucket{method=~\"PUT|POST\",policy=~\"$Policy\"}[9d2m57s]\n  )\n)",
               "format": "heatmap",
               "hide": false,
               "instant": false,
@@ -2128,7 +2128,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(increase(storagegrid_private_load_balancer_storage_request_body_bytes_bucket{method=~\"GET\",policy=~\"$Policy\"}[$__interval])) by (cluster,policy,le)",
+              "expr": "sum by (cluster, policy, le) (\n  increase(\n    storagegrid_private_load_balancer_storage_request_body_bytes_bucket{method=~\"GET\",policy=~\"$Policy\"}[9d2m57s]\n  )\n)",
               "format": "heatmap",
               "hide": false,
               "instant": false,

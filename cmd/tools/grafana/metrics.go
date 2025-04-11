@@ -23,6 +23,14 @@ var metricsCmd = &cobra.Command{
 	Run:   doMetrics,
 }
 
+type Expression struct {
+	Metric string
+	refID  string
+	Kind   string
+	expr   string
+	Title  string
+}
+
 func doMetrics(_ *cobra.Command, _ []string) {
 	adjustOptions()
 	validateImport()
@@ -211,4 +219,43 @@ func ShortPath(dashPath string) string {
 		return dashPath
 	}
 	return strings.Join(splits[index+1:], string(filepath.Separator))
+}
+
+func AllExpressions(data []byte) []Expression {
+	exprs := make([]Expression, 0)
+
+	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
+		DoExpr("", key, value, func(expr Expression) {
+			exprs = append(exprs, expr)
+		})
+		value.Get("panels").ForEach(func(key2, value2 gjson.Result) bool {
+			pathPrefix := fmt.Sprintf("panels[%d].", key.Int())
+			DoExpr(pathPrefix, key2, value2, func(expr Expression) {
+				exprs = append(exprs, expr)
+			})
+			return true
+		})
+		return true
+	})
+	return exprs
+}
+
+func DoExpr(pathPrefix string, key gjson.Result, value gjson.Result, exprFunc func(exp Expression)) {
+	kind := value.Get("type").ClonedString()
+	if kind == "row" {
+		return
+	}
+	path := fmt.Sprintf("%spanels[%d]", pathPrefix, key.Int())
+	title := value.Get("title").ClonedString()
+	targetsSlice := value.Get("targets").Array()
+	for i, targetN := range targetsSlice {
+		expr := targetN.Get("expr").ClonedString()
+		pathWithTarget := path + ".targets[" + strconv.Itoa(i) + "]"
+		exprFunc(Expression{
+			refID:  pathWithTarget,
+			Metric: expr,
+			Kind:   kind,
+			Title:  title,
+		})
+	}
 }

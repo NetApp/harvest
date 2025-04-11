@@ -138,12 +138,18 @@ dev: build lint govulncheck
 	@echo "Deleting AutoSupport binary"
 	@rm -rf autosupport/asup
 
+promtool:
+	@echo "Validating dashboard queries"
+	VERSION=${VERSION} CHECK_FORMAT=1 ./integration/test/test.sh
+
 fetch-asup:
 ifneq (${FETCH_ASUP_EXISTS}, )
 	@./.github/fetch-asup ${ASUP_BIN} ${ASUP_BIN_VERSION} ${BIN_PLATFORM} 2>/dev/null   #Suppress Error in case of internet connectivity
 endif
 
 docs: mkdocs ## Serve docs for local dev
+
+test-local: test promtool
 
 license-check:
 	@echo "Licence checking"
@@ -177,4 +183,5 @@ else
 	VERSION=${VERSION} REGRESSION=1 ./integration/test/test.sh
 	VERSION=${VERSION} ANALYZE_DOCKER_LOGS=1 ./integration/test/test.sh
 	VERSION=${VERSION} CHECK_METRICS=1 ./integration/test/test.sh
+	VERSION=${VERSION} CHECK_FORMAT=1 ./integration/test/test.sh
 endif

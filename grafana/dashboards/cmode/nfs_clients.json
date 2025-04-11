@@ -154,7 +154,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "count(nfs_clients_idle_duration{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "expr": "count(\n  nfs_clients_idle_duration{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n)",
           "instant": true,
           "interval": "",
           "legendFormat": "",
@@ -249,7 +249,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "count(nfs_clients_idle_duration{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",protocol=\"nfs\"})",
+          "expr": "count(\n  nfs_clients_idle_duration{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",protocol=\"nfs\",svm=~\"$SVM\",volume=~\"$Volume\"}\n)",
           "instant": true,
           "interval": "",
           "legendFormat": "nfs",
@@ -257,7 +257,7 @@
         },
         {
           "exemplar": false,
-          "expr": "count(nfs_clients_idle_duration{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",protocol=\"nfs3\"})",
+          "expr": "count(\n  nfs_clients_idle_duration{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",protocol=\"nfs3\",svm=~\"$SVM\",volume=~\"$Volume\"}\n)",
           "hide": false,
           "instant": true,
           "interval": "",
@@ -266,7 +266,7 @@
         },
         {
           "exemplar": false,
-          "expr": "count(nfs_clients_idle_duration{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",protocol=\"nfs4\"})",
+          "expr": "count(\n  nfs_clients_idle_duration{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",protocol=\"nfs4\",svm=~\"$SVM\",volume=~\"$Volume\"}\n)",
           "hide": false,
           "instant": true,
           "interval": "",
@@ -275,7 +275,7 @@
         },
         {
           "exemplar": false,
-          "expr": "count(nfs_clients_idle_duration{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",protocol=\"nfs4.1\"})",
+          "expr": "count(\n  nfs_clients_idle_duration{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",protocol=\"nfs4.1\",svm=~\"$SVM\",volume=~\"$Volume\"}\n)",
           "hide": false,
           "instant": true,
           "interval": "",
@@ -284,7 +284,7 @@
         },
         {
           "exemplar": false,
-          "expr": "count(nfs_clients_idle_duration{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\",protocol=\"nfs4.2\"})",
+          "expr": "count(\n  nfs_clients_idle_duration{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",protocol=\"nfs4.2\",svm=~\"$SVM\",volume=~\"$Volume\"}\n)",
           "hide": false,
           "instant": true,
           "interval": "",
@@ -473,7 +473,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "nfs_clients_idle_duration{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+          "expr": "nfs_clients_idle_duration{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
           "format": "table",
           "hide": false,
           "instant": true,

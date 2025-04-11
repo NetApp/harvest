@@ -23,7 +23,6 @@ const (
 )
 
 var isStringAlphabetic = regexp.MustCompile(`^[a-zA-Z0-9_]*$`).MatchString
-
 var fileSet []string
 
 // zapiCounterMap are additional counters, above and beyond the ones from counterMap, which should be excluded from Zapi
