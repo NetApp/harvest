@@ -28185,7 +28185,7 @@ These can be generated on demand by running <code>bin/harvest grafana metrics</c
 <p>More information about ONTAP REST performance counters can be found <a href="https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html">here</a>.</p>
 </li>
 </ul>
-<div class="highlight"><pre><span></span><code>Creation Date : 2025-Apr-11
+<div class="highlight"><pre><span></span><code>Creation Date : 2025-Apr-12
 ONTAP Version: 9.15.1
 </code></pre></div>
 <h2 id="understanding-the-structure">Understanding the structure<a class="headerlink" href="#understanding-the-structure" title="Permanent link">&para;</a></h2>
@@ -49209,6 +49209,12 @@ ONTAP Version: 9.15.1
 <td><code>nvme_fc_data_received</code><br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/restperf/9.12.0/system_node.yaml</td>
 </tr>
+<tr>
+<td>ZAPI</td>
+<td><code>perf-object-get-instances system:node</code></td>
+<td><code>nvme_fc_data_recv</code><br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/zapiperf/cdot/9.15.1/system_node.yaml</td>
+</tr>
 </tbody>
 </table>
 <h3 id="node_nvme_fc_data_sent">node_nvme_fc_data_sent<a class="headerlink" href="#node_nvme_fc_data_sent" title="Permanent link">&para;</a></h3>
@@ -49229,6 +49235,12 @@ ONTAP Version: 9.15.1
 <td><code>nvme_fc_data_sent</code><br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/restperf/9.12.0/system_node.yaml</td>
 </tr>
+<tr>
+<td>ZAPI</td>
+<td><code>perf-object-get-instances system:node</code></td>
+<td><code>nvme_fc_data_sent</code><br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/zapiperf/cdot/9.15.1/system_node.yaml</td>
+</tr>
 </tbody>
 </table>
 <h3 id="node_nvme_fc_ops">node_nvme_fc_ops<a class="headerlink" href="#node_nvme_fc_ops" title="Permanent link">&para;</a></h3>
@@ -49248,6 +49260,12 @@ ONTAP Version: 9.15.1
 <td><code>api/cluster/counter/tables/system:node</code></td>
 <td><code>nvme_fc_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/restperf/9.12.0/system_node.yaml</td>
+</tr>
+<tr>
+<td>ZAPI</td>
+<td><code>perf-object-get-instances system:node</code></td>
+<td><code>nvme_fc_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/zapiperf/cdot/9.15.1/system_node.yaml</td>
 </tr>
 </tbody>
 </table>
