@@ -33,6 +33,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors"
+	_ "github.com/netapp/harvest/v2/cmd/collectors/cisco"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/ems"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/keyperf"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/restperf"
@@ -1499,19 +1500,11 @@ func (p *Poller) sendHarvestVersion() error {
 }
 
 func (p *Poller) negotiateONTAPAPI(cols []conf.Collector) {
-	anyONTAP := false
-	for _, c := range cols {
-		if _, ok := util.IsONTAPCollector[c.Name]; ok {
-			anyONTAP = true
-			break
-		}
-	}
-
-	if !anyONTAP {
+	if !p.CollectorHasVersion(cols) {
 		return
 	}
 
-	remote, err := collectors.GatherClusterInfo(opts.Poller, p.auth)
+	remote, err := collectors.GatherClusterInfo(opts.Poller, p.auth, cols)
 	if err != nil {
 		logger.Warn("gather cluster info", slog.Any("remote", remote), slog.Any("remoteErr", err))
 	}
@@ -1521,6 +1514,22 @@ func (p *Poller) negotiateONTAPAPI(cols []conf.Collector) {
 	if remote.Version != "" {
 		slog.Info("Cluster info", slog.Any("remote", remote))
 	}
+}
+
+func (p *Poller) CollectorHasVersion(cols []conf.Collector) bool {
+	hasVersion := false
+	for _, c := range cols {
+		if _, ok := util.IsONTAPCollector[c.Name]; ok {
+			hasVersion = true
+			break
+		}
+		if c.Name == "CiscoRest" {
+			hasVersion = true
+			break
+		}
+	}
+
+	return hasVersion
 }
 
 func startPoller(_ *cobra.Command, _ []string) {

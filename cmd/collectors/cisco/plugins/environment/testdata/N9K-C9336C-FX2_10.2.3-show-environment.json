@@ -1,0 +1,121 @@
+{
+  "fandetails": {
+    "TABLE_faninfo": {
+      "ROW_faninfo": [
+        {
+          "fanname": "Fan1(sys_fan1)",
+          "fanmodel": "NXA-FAN-65CFM-PE",
+          "fanhwver": "--",
+          "fandir": "back-to-front",
+          "fanstatus": "Ok"
+        },
+        {
+          "fanname": "Fan2(sys_fan2)",
+          "fanmodel": "NXA-FAN-65CFM-PE",
+          "fanhwver": "--",
+          "fandir": "back-to-front",
+          "fanstatus": "Ok"
+        },
+        {
+          "fanname": "Fan3(sys_fan3)",
+          "fanmodel": "NXA-FAN-65CFM-PE",
+          "fanhwver": "--",
+          "fandir": "back-to-front",
+          "fanstatus": "Ok"
+        },
+        {
+          "fanname": "Fan_in_PS1",
+          "fanmodel": "--",
+          "fanhwver": "--",
+          "fandir": "back-to-front",
+          "fanstatus": "Ok"
+        },
+        {
+          "fanname": "Fan_in_PS2",
+          "fanmodel": "--",
+          "fanhwver": "--",
+          "fandir": "back-to-front",
+          "fanstatus": "Ok"
+        }
+      ]
+    },
+    "TABLE_fan_zone_speed": {
+      "ROW_fan_zone_speed": {
+        "zone": "1",
+        "zonespeed": "0xb3"
+      }
+    },
+    "fan_filter_status": "NotSupported"
+  },
+  "powersup": {
+    "voltage_level": "12",
+    "TABLE_psinfo": {
+      "ROW_psinfo": [
+        {
+          "psnum": "1",
+          "psmodel": "NXA-PAC-1100W-PE2",
+          "actual_out": "112 W",
+          "actual_input": "128 W",
+          "tot_capa": "1100 W",
+          "ps_status": "Ok"
+        },
+        {
+          "psnum": "2",
+          "psmodel": "NXA-PAC-1100W-PE2",
+          "actual_out": "132 W",
+          "actual_input": "148 W",
+          "tot_capa": "1100 W",
+          "ps_status": "Ok"
+        }
+      ]
+    },
+    "power_summary": {
+      "ps_redun_mode": "PS-Redundant",
+      "ps_oper_mode": "PS-Redundant",
+      "tot_pow_capacity": "1100.00 W",
+      "tot_gridA_capacity": "1100.00 W",
+      "tot_gridB_capacity": "1100.00 W",
+      "cumulative_power": "2200.00 W",
+      "tot_pow_out_actual_draw": "244.00 W",
+      "tot_pow_input_actual_draw": "276.00 W",
+      "tot_pow_alloc_budgeted": "N/A",
+      "available_pow": "N/A"
+    }
+  },
+  "TABLE_tempinfo": {
+    "ROW_tempinfo": [
+      {
+        "tempmod": "1",
+        "sensor": "FRONT",
+        "majthres": "80",
+        "minthres": "70",
+        "curtemp": "29",
+        "alarmstatus": "Ok"
+      },
+      {
+        "tempmod": "1",
+        "sensor": "BACK",
+        "majthres": "70",
+        "minthres": "42",
+        "curtemp": "25",
+        "alarmstatus": "Ok"
+      },
+      {
+        "tempmod": "1",
+        "sensor": "CPU",
+        "majthres": "90",
+        "minthres": "80",
+        "curtemp": "39",
+        "alarmstatus": "Ok"
+      },
+      {
+        "tempmod": "1",
+        "sensor": "Heavenly",
+        "majthres": "110",
+        "minthres": "90",
+        "curtemp": "50",
+        "alarmstatus": "Ok"
+      }
+    ]
+  }
+}

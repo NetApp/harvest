@@ -1,0 +1,9 @@
+collector:          CiscoRest
+
+# Order here matters!
+schedule:
+  - data:      3m
+
+objects:
+  Environment:         environment.yaml
+  Interface:           interface.yaml
