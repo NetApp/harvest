@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Apr-08
+Creation Date : 2025-Apr-14
 ONTAP Version: 9.16.1
 ```
 ## Understanding the structure
@@ -4443,24 +4443,44 @@ Number of read operations
 | ZAPI | `perf-object-get-instances namespace` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml | 
 
 
-### namespace_remote_bytes
+### namespace_remote_read_data
 
 Remote read bytes
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/namespace` | `remote.read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/namespace.yaml | 
-| ZAPI | `perf-object-get-instances namespace` | `remote_bytes`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml | 
+| ZAPI | `perf-object-get-instances namespace` | `remote_read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml |
 
 
-### namespace_remote_ops
+### namespace_remote_read_ops
 
 Number of remote read operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/namespace` | `remote.read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/namespace.yaml | 
-| ZAPI | `perf-object-get-instances namespace` | `remote_ops`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml | 
+| ZAPI | `perf-object-get-instances namespace` | `remote_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml |
+
+
+### namespace_remote_write_data
+
+Remote write bytes
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/namespace` | `remote.write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/namespace.yaml |
+| ZAPI | `perf-object-get-instances namespace` | `remote_write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml |
+
+
+### namespace_remote_write_ops
+
+Number of remote write operations
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/namespace` | `remote.write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/namespace.yaml |
+| ZAPI | `perf-object-get-instances namespace` | `remote_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml |
 
 
 ### namespace_size
