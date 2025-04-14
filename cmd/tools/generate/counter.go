@@ -315,13 +315,13 @@ func downloadSwaggerForPoller(pName string) (string, error) {
 	return swaggerPath, nil
 }
 
-func downloadSwagger(poller *conf.Poller, path string, url string, verbose bool) (int64, error) {
+func downloadSwagger(poller *conf.Poller, path string, urlStr string, verbose bool) (int64, error) {
 	out, err := os.Create(path)
 	if err != nil {
 		return 0, fmt.Errorf("unable to create %s to save swagger.yaml", path)
 	}
 	defer func(out *os.File) { _ = out.Close() }(out)
-	request, err := requests.New("GET", url, nil)
+	request, err := requests.New("GET", urlStr, nil)
 	if err != nil {
 		return 0, err
 	}
@@ -336,7 +336,7 @@ func downloadSwagger(poller *conf.Poller, path string, url string, verbose bool)
 
 	if verbose {
 		requestOut, _ := httputil.DumpRequestOut(request, false)
-		fmt.Printf("REQUEST: %s\n%s\n", url, requestOut)
+		fmt.Printf("REQUEST: %s\n%s\n", urlStr, requestOut)
 	}
 	response, err := httpclient.Do(request)
 	if err != nil {
@@ -354,7 +354,7 @@ func downloadSwagger(poller *conf.Poller, path string, url string, verbose bool)
 	}
 	n, err := io.Copy(out, response.Body)
 	if err != nil {
-		return 0, fmt.Errorf("error while downloading %s err=%w", url, err)
+		return 0, fmt.Errorf("error while downloading %s err=%w", urlStr, err)
 	}
 	return n, nil
 }
