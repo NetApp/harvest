@@ -125,7 +125,7 @@ nextFile:
 				customTemplate, customTemplateErr = tree.ImportYaml(templatePath)
 				if customTemplateErr != nil {
 					c.Logger.Warn("Unable to import template file. File is invalid or empty",
-						slogx.Err(err),
+						slogx.Err(customTemplateErr),
 						slog.String("path", templatePath),
 					)
 					continue
