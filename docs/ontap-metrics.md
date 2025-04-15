@@ -4443,6 +4443,16 @@ Number of read operations
 | ZAPI | `perf-object-get-instances namespace` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml | 
 
 
+### namespace_remote_other_ops
+
+Number of remote other operations
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/namespace` | `remote.other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/namespace.yaml |
+| ZAPI | `perf-object-get-instances namespace` | `remote_other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml |
+
+
 ### namespace_remote_read_data
 
 Remote read bytes

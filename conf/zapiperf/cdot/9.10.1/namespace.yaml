@@ -12,6 +12,7 @@ counters:
   - other_ops
   - read_data
   - read_ops
+  - remote_other_ops
   - remote_read_data
   - remote_read_ops
   - remote_write_data
