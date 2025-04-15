@@ -1732,12 +1732,12 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 				// instance already in cache
 				oldInstances.Remove(key)
 				instance := mat.GetInstance(key)
-				z.updateQosLabels(i, instance, key)
+				z.updateQosLabels(i, instance)
 				continue
 			} else if instance, err := mat.NewInstance(key); err != nil {
 				z.Logger.Error("add instance", slogx.Err(err))
 			} else {
-				z.updateQosLabels(i, instance, key)
+				z.updateQosLabels(i, instance)
 			}
 		}
 		parseD += time.Since(parseT)
@@ -1763,20 +1763,12 @@ func (z *ZapiPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 	return nil, err
 }
 
-func (z *ZapiPerf) updateQosLabels(qos *node.Node, instance *matrix.Instance, key string) {
+func (z *ZapiPerf) updateQosLabels(qos *node.Node, instance *matrix.Instance) {
 	if z.Query == objWorkload || z.Query == objWorkloadDetail || z.Query == objWorkloadVolume || z.Query == objWorkloadDetailVolume {
 		for label, display := range z.qosLabels {
 			if value := qos.GetChildContentS(label); value != "" {
 				instance.SetLabel(display, value)
 			}
-		}
-		if z.Logger.Enabled(context.Background(), slog.LevelDebug) {
-			z.Logger.Debug(
-				"",
-				slog.String("query", z.Query),
-				slog.String("key", key),
-				slog.Any("qos labels", instance.GetLabels()),
-			)
 		}
 	}
 }
