@@ -12,8 +12,11 @@ counters:
   - other_ops
   - read_data
   - read_ops
-  - remote_bytes
-  - remote_ops
+  - remote_other_ops
+  - remote_read_data
+  - remote_read_ops
+  - remote_write_data
+  - remote_write_ops
   - vserver_name          => svm
   - write_data
   - write_ops
