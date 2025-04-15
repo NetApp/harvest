@@ -1770,14 +1770,6 @@ func (z *ZapiPerf) updateQosLabels(qos *node.Node, instance *matrix.Instance, ke
 				instance.SetLabel(display, value)
 			}
 		}
-		if z.Logger.Enabled(context.Background(), slog.LevelDebug) {
-			z.Logger.Debug(
-				"",
-				slog.String("query", z.Query),
-				slog.String("key", key),
-				slog.Any("qos labels", instance.GetLabels()),
-			)
-		}
 	}
 }
 
