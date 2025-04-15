@@ -100,7 +100,7 @@ func (c *CiscoRest) InitMatrix() error {
 	// overwrite from abstract collector
 	mat.Object = c.Prop.Object
 	// Add system (cluster) name
-	mat.SetGlobalLabel("cluster", c.Remote.Name)
+	mat.SetGlobalLabel("switch", c.Remote.Name)
 
 	if c.Params.HasChildS("labels") {
 		for _, l := range c.Params.GetChildS("labels").GetChildren() {

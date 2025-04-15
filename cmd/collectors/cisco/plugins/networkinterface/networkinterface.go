@@ -119,7 +119,17 @@ func (i *Interface) initMatrix(name string) (*matrix.Matrix, error) {
 }
 
 func (i *Interface) parseInterface(output gjson.Result, envMat *matrix.Matrix) {
-	output.Get("TABLE_interface.ROW_interface").ForEach(func(_, value gjson.Result) bool {
+
+	rowQuery := "TABLE_interface.ROW_interface"
+
+	rows := output.Get(rowQuery)
+
+	if !rows.Exists() {
+		i.SLogger.Warn("Unable to parse interfaces because rows are missing", slog.String("query", rowQuery))
+		return
+	}
+
+	rows.ForEach(func(_, value gjson.Result) bool {
 		interfaceName := value.Get("interface").ClonedString()
 		macAddr := value.Get("eth_hw_addr").ClonedString()
 		desc := value.Get("desc").ClonedString()

@@ -105,7 +105,17 @@ func (e *Environment) parseEnvironment(output gjson.Result, envMat *matrix.Matri
 }
 
 func (e *Environment) parseTemperature(output gjson.Result, envMat *matrix.Matrix) {
-	output.Get("TABLE_tempinfo.ROW_tempinfo").ForEach(func(_, value gjson.Result) bool {
+
+	rowQuery := "TABLE_tempinfo.ROW_tempinfo"
+
+	rows := output.Get(rowQuery)
+
+	if !rows.Exists() {
+		e.SLogger.Warn("Unable to parse temperature because rows are missing", slog.String("query", rowQuery))
+		return
+	}
+
+	rows.ForEach(func(_, value gjson.Result) bool {
 		sensorName := value.Get("sensor").ClonedString()
 		sensorName = strings.ReplaceAll(sensorName, " ", "")
 		curTemp := value.Get("curtemp").ClonedString()
@@ -203,7 +213,16 @@ func newPowerModel9K(output gjson.Result, logger *slog.Logger) PowerModel {
 	var powerSupplies []PowerSupply
 	powerModel := PowerModel{}
 
-	output.Get("powersup.TABLE_psinfo.ROW_psinfo").ForEach(func(_, value gjson.Result) bool {
+	rowQuery := "powersup.TABLE_psinfo.ROW_psinfo"
+
+	rows := output.Get(rowQuery)
+
+	if !rows.Exists() {
+		logger.Warn("Unable to parse power because rows are missing", slog.String("query", rowQuery))
+		return powerModel
+	}
+
+	rows.ForEach(func(_, value gjson.Result) bool {
 		psNum := value.Get("psnum").ClonedString()
 		psModel := value.Get("psmodel").ClonedString()
 		psStatus := strings.ToLower(value.Get("ps_status").ClonedString())
@@ -251,7 +270,16 @@ func newPowerModel3K(output gjson.Result, logger *slog.Logger) PowerModel {
 	var powerSupplies []PowerSupply
 	powerModel := PowerModel{}
 
-	output.Get("powersup.TABLE_psinfo.ROW_psinfo").ForEach(func(_, value gjson.Result) bool {
+	rowQuery := "powersup.TABLE_psinfo.ROW_psinfo"
+
+	rows := output.Get(rowQuery)
+
+	if !rows.Exists() {
+		logger.Warn("Unable to parse power because rows are missing", slog.String("query", rowQuery))
+		return powerModel
+	}
+
+	rows.ForEach(func(_, value gjson.Result) bool {
 		psNum := value.Get("psnum").ClonedString()
 		psModel := value.Get("psmodel").ClonedString()
 		psStatus := value.Get("ps_status_3k").ClonedString()
