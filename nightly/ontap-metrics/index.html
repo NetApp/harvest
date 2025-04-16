@@ -5458,18 +5458,45 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#namespace_remote_bytes" class="md-nav__link">
+  <a href="#namespace_remote_other_ops" class="md-nav__link">
     <span class="md-ellipsis">
-      namespace_remote_bytes
+      namespace_remote_other_ops
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#namespace_remote_ops" class="md-nav__link">
+  <a href="#namespace_remote_read_data" class="md-nav__link">
     <span class="md-ellipsis">
-      namespace_remote_ops
+      namespace_remote_read_data
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#namespace_remote_read_ops" class="md-nav__link">
+    <span class="md-ellipsis">
+      namespace_remote_read_ops
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#namespace_remote_write_data" class="md-nav__link">
+    <span class="md-ellipsis">
+      namespace_remote_write_data
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#namespace_remote_write_ops" class="md-nav__link">
+    <span class="md-ellipsis">
+      namespace_remote_write_ops
     </span>
   </a>
   
@@ -18964,18 +18991,45 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#namespace_remote_bytes" class="md-nav__link">
+  <a href="#namespace_remote_other_ops" class="md-nav__link">
     <span class="md-ellipsis">
-      namespace_remote_bytes
+      namespace_remote_other_ops
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#namespace_remote_ops" class="md-nav__link">
+  <a href="#namespace_remote_read_data" class="md-nav__link">
     <span class="md-ellipsis">
-      namespace_remote_ops
+      namespace_remote_read_data
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#namespace_remote_read_ops" class="md-nav__link">
+    <span class="md-ellipsis">
+      namespace_remote_read_ops
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#namespace_remote_write_data" class="md-nav__link">
+    <span class="md-ellipsis">
+      namespace_remote_write_data
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#namespace_remote_write_ops" class="md-nav__link">
+    <span class="md-ellipsis">
+      namespace_remote_write_ops
     </span>
   </a>
   
@@ -28185,7 +28239,7 @@ These can be generated on demand by running <code>bin/harvest grafana metrics</c
 <p>More information about ONTAP REST performance counters can be found <a href="https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html">here</a>.</p>
 </li>
 </ul>
-<div class="highlight"><pre><span></span><code>Creation Date : 2025-Apr-15
+<div class="highlight"><pre><span></span><code>Creation Date : 2025-Apr-16
 ONTAP Version: 9.15.1
 </code></pre></div>
 <h2 id="understanding-the-structure">Understanding the structure<a class="headerlink" href="#understanding-the-structure" title="Permanent link">&para;</a></h2>
@@ -39399,7 +39453,33 @@ ONTAP Version: 9.15.1
 </tr>
 </tbody>
 </table>
-<h3 id="namespace_remote_bytes">namespace_remote_bytes<a class="headerlink" href="#namespace_remote_bytes" title="Permanent link">&para;</a></h3>
+<h3 id="namespace_remote_other_ops">namespace_remote_other_ops<a class="headerlink" href="#namespace_remote_other_ops" title="Permanent link">&para;</a></h3>
+<p>Number of remote other operations</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/namespace</code></td>
+<td><code>remote.other_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.12.0/namespace.yaml</td>
+</tr>
+<tr>
+<td>ZAPI</td>
+<td><code>perf-object-get-instances namespace</code></td>
+<td><code>remote_other_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/zapiperf/cdot/9.10.1/namespace.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="namespace_remote_read_data">namespace_remote_read_data<a class="headerlink" href="#namespace_remote_read_data" title="Permanent link">&para;</a></h3>
 <p>Remote read bytes</p>
 <table>
 <thead>
@@ -39420,12 +39500,12 @@ ONTAP Version: 9.15.1
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances namespace</code></td>
-<td><code>remote_bytes</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>remote_read_data</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.10.1/namespace.yaml</td>
 </tr>
 </tbody>
 </table>
-<h3 id="namespace_remote_ops">namespace_remote_ops<a class="headerlink" href="#namespace_remote_ops" title="Permanent link">&para;</a></h3>
+<h3 id="namespace_remote_read_ops">namespace_remote_read_ops<a class="headerlink" href="#namespace_remote_read_ops" title="Permanent link">&para;</a></h3>
 <p>Number of remote read operations</p>
 <table>
 <thead>
@@ -39446,7 +39526,59 @@ ONTAP Version: 9.15.1
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances namespace</code></td>
-<td><code>remote_ops</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td><code>remote_read_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/zapiperf/cdot/9.10.1/namespace.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="namespace_remote_write_data">namespace_remote_write_data<a class="headerlink" href="#namespace_remote_write_data" title="Permanent link">&para;</a></h3>
+<p>Remote write bytes</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/namespace</code></td>
+<td><code>remote.write_data</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.12.0/namespace.yaml</td>
+</tr>
+<tr>
+<td>ZAPI</td>
+<td><code>perf-object-get-instances namespace</code></td>
+<td><code>remote_write_data</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/zapiperf/cdot/9.10.1/namespace.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="namespace_remote_write_ops">namespace_remote_write_ops<a class="headerlink" href="#namespace_remote_write_ops" title="Permanent link">&para;</a></h3>
+<p>Number of remote write operations</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/namespace</code></td>
+<td><code>remote.write_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.12.0/namespace.yaml</td>
+</tr>
+<tr>
+<td>ZAPI</td>
+<td><code>perf-object-get-instances namespace</code></td>
+<td><code>remote_write_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.10.1/namespace.yaml</td>
 </tr>
 </tbody>
