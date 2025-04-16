@@ -73,6 +73,20 @@
   ],
   "panels": [
     {
+      "collapsed": false,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 121,
+      "panels": [],
+      "title": "Highlights",
+      "type": "row"
+    },
+    {
       "datasource": "${DS_PROMETHEUS}",
       "description": "Only tree quotas are shown by default. To collect user/group quotas, enable them in the qtree.yaml template.",
       "fieldConfig": {
@@ -529,10 +543,10 @@
         ]
       },
       "gridPos": {
-        "h": 21,
+        "h": 16,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 1
       },
       "id": 5,
       "options": {
@@ -840,95 +854,387 @@
       "type": "table"
     },
     {
+      "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
-      "description": "The amount of space used in qtree.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 17
+      },
+      "id": 128,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "The amount of space used in qtree.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "transparent",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "kbytes"
+            },
+            "overrides": []
           },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
+          "gridPos": {
+            "h": 11,
+            "w": 12,
+            "x": 0,
+            "y": 18
+          },
+          "id": 7,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
             },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
+            "tooltip": {
+              "mode": "single"
             }
           },
-          "decimals": 2,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "transparent",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": null
-              }
-            ]
-          },
-          "unit": "kbytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 13,
-        "x": 0,
-        "y": 21
-      },
-      "id": 7,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "quota_disk_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      quota_disk_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h] @ end()\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{volume}} - {{qtree}} - {{type}}",
+              "refId": "A"
+            }
           ],
-          "displayMode": "table",
-          "placement": "bottom"
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Quotas by Space Used",
+          "type": "timeseries"
         },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
         {
-          "exemplar": false,
-          "expr": "quota_disk_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      quota_disk_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h] @ end()\n    )\n  )",
-          "interval": "",
-          "legendFormat": "{{volume}} - {{qtree}} - {{type}}",
-          "refId": "A"
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "The amount of space used % in qtree.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "transparent",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 12,
+            "x": 12,
+            "y": 18
+          },
+          "id": 8,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "quota_disk_used_pct_disk_limit{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      quota_disk_used_pct_disk_limit{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h] @ end()\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{volume}} - {{qtree}} - {{type}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Quotas by Space Used %",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "The number of files used in qtree.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "transparent",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "locale"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 12,
+            "x": 0,
+            "y": 29
+          },
+          "id": 9,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "quota_files_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      quota_files_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h] @ end()\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{volume}} - {{qtree}} - {{type}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Quotas by Files Used",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "The number of files used % in qtree.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "transparent",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 12,
+            "x": 12,
+            "y": 29
+          },
+          "id": 10,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "quota_files_used_pct_file_limit{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      quota_files_used_pct_file_limit{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h] @ end()\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{volume}} - {{qtree}} - {{type}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Quotas by Files Used %",
+          "type": "timeseries"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top $TopResources Quotas by Space Used",
-      "type": "timeseries"
+      "title": "Space Usage",
+      "type": "row"
     }
   ],
   "refresh": "",
