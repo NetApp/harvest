@@ -310,7 +310,11 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 		}
 	}
 
-	prefix = p.globalPrefix + data.Object
+	if data.Object == "" {
+		prefix = strings.TrimSuffix(p.globalPrefix, "_")
+	} else {
+		prefix = p.globalPrefix + data.Object
+	}
 
 	for key, value := range data.GetGlobalLabels() {
 		globalLabels = append(globalLabels, escape(p.replacer, key, value))

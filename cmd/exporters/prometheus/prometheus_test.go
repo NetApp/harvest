@@ -123,22 +123,29 @@ func TestRender(t *testing.T) {
 	type test struct {
 		prefix string
 		want   string
+		object string
 	}
 
 	tests := []test{
-		{"bike", `bike_max_speed{} 3
-bike_max_speed{} 3`},
+		{"netapp", `netapp_bike_max_speed{} 3
+netapp_bike_max_speed{} 3`, "bike"},
+		{"", `bike_max_speed{} 3
+bike_max_speed{} 3`, "bike"},
+		{"netapp_", `netapp_max_speed{} 3
+netapp_max_speed{} 3`, ""},
 		{"", `max_speed{} 3
-max_speed{} 3`},
+max_speed{} 3`, ""},
+		{"net_app_", `net_app_bike_max_speed{} 3
+net_app_bike_max_speed{} 3`, "bike"},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.prefix, func(t *testing.T) {
-			p, err := setUpPrometheusExporter("")
+			p, err := setUpPrometheusExporter(tt.prefix)
 			if err != nil {
 				t.Errorf("expected nil, got %v", err)
 			}
-			m := setUpMatrix(tt.prefix)
+			m := setUpMatrix(tt.object)
 
 			_, err = p.Export(m)
 			if err != nil {
