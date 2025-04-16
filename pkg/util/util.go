@@ -47,15 +47,16 @@ var IsONTAPCollector = map[string]struct{}{
 }
 
 var IsCollector = map[string]struct{}{
-	"ZapiPerf":    {},
-	"Zapi":        {},
+	"CiscoRest":   {},
+	"Ems":         {},
+	"KeyPerf":     {},
 	"Rest":        {},
 	"RestPerf":    {},
-	"KeyPerf":     {},
-	"Ems":         {},
+	"Simple":      {},
 	"StorageGrid": {},
 	"Unix":        {},
-	"Simple":      {},
+	"Zapi":        {},
+	"ZapiPerf":    {},
 }
 
 func GetCollectorSlice() []string {

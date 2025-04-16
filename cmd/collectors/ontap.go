@@ -2,16 +2,24 @@ package collectors
 
 import (
 	"errors"
+	ciscorest "github.com/netapp/harvest/v2/cmd/collectors/cisco/rest"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"net/http"
+	"strings"
 	"time"
 )
 
-func GatherClusterInfo(pollerName string, cred *auth.Credentials) (conf.Remote, error) {
+func GatherClusterInfo(pollerName string, cred *auth.Credentials, cols []conf.Collector) (conf.Remote, error) {
+
+	for _, col := range cols {
+		if strings.HasPrefix(col.Name, "Cisco") {
+			return checkCiscoRest(pollerName, cred)
+		}
+	}
 
 	remoteZapi, errZapi := checkZapi(pollerName, cred)
 	remoteRest, errRest := checkRest(pollerName, cred)
@@ -104,4 +112,30 @@ func checkZapi(pollerName string, cred *auth.Credentials) (conf.Remote, error) {
 	remote.ZAPIsExist = zapisExist
 
 	return remote, nil
+}
+
+func checkCiscoRest(pollerName string, cred *auth.Credentials) (conf.Remote, error) {
+
+	var (
+		poller *conf.Poller
+		client *ciscorest.Client
+		err    error
+	)
+
+	// connect to the switch
+	if poller, err = conf.PollerNamed(pollerName); err != nil {
+		return conf.Remote{}, err
+	}
+
+	timeout, _ := time.ParseDuration(ciscorest.DefaultTimeout)
+	client, err = ciscorest.New(poller, timeout, cred)
+	if err != nil {
+		return conf.Remote{}, err
+	}
+
+	if err := client.Init(5, conf.Remote{}); err != nil {
+		return conf.Remote{}, err
+	}
+
+	return client.Remote(), nil
 }

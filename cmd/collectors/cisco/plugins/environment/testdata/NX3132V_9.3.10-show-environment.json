@@ -1,0 +1,135 @@
+{
+  "powersup": {
+    "voltage_level": "12",
+    "TABLE_psinfo": {
+      "ROW_psinfo": [
+        {
+          "psnum": "1",
+          "psmodel": "N2200-PAC-400W",
+          "input_type": "AC",
+          "watts": "396.00",
+          "amps": "33.00",
+          "ps_status_3k": "ok"
+        },
+        {
+          "psnum": "2",
+          "psmodel": "N2200-PAC-400W",
+          "input_type": "AC",
+          "watts": "396.00",
+          "amps": "33.00",
+          "ps_status_3k": "ok"
+        }
+      ]
+    },
+    "TABLE_mod_pow_info": {
+      "ROW_mod_pow_info": {
+        "modnum": "1",
+        "mod_model": "N3K-C3132Q-V",
+        "watts_requested": "348.00",
+        "amps_requested": "29.00",
+        "watts_alloced": "348.00",
+        "amps_alloced": "29.00",
+        "modstatus_3k": "powered-up"
+      }
+    },
+    "power_summary": {
+      "ps_redun_mode_3k": "Redundant",
+      "ps_redun_op_mode": "Redundant",
+      "tot_pow_capacity": "792.00 W",
+      "reserve_sup": "348.00 W",
+      "pow_used_by_mods": "0.00 W",
+      "available_pow": "444.00 W"
+    }
+  },
+  "fandetails_3k": {
+    "TABLE_faninfo": {
+      "ROW_faninfo": [
+        {
+          "fanname": "Fan1(sys_fan1)",
+          "fanmodel": "NXA-FAN-30CFM-F",
+          "fanhwver": "0.0",
+          "fandir": "front-to-back",
+          "fanstatus": "Ok"
+        },
+        {
+          "fanname": "Fan2(sys_fan2)",
+          "fanmodel": "NXA-FAN-30CFM-F",
+          "fanhwver": "0.0",
+          "fandir": "front-to-back",
+          "fanstatus": "Ok"
+        },
+        {
+          "fanname": "Fan3(sys_fan3)",
+          "fanmodel": "NXA-FAN-30CFM-F",
+          "fanhwver": "0.0",
+          "fandir": "front-to-back",
+          "fanstatus": "Ok"
+        },
+        {
+          "fanname": "Fan4(sys_fan4)",
+          "fanmodel": "NXA-FAN-30CFM-F",
+          "fanhwver": "0.0",
+          "fandir": "front-to-back",
+          "fanstatus": "Ok"
+        },
+        {
+          "fanname": "Fan_in_PS1",
+          "fanmodel": "N2200-PAC-400W",
+          "fanhwver": "--",
+          "fandir": "front-to-back",
+          "fanstatus": "Ok"
+        },
+        {
+          "fanname": "Fan_in_PS2",
+          "fanmodel": "N2200-PAC-400W",
+          "fanhwver": "--",
+          "fandir": "front-to-back",
+          "fanstatus": "Ok"
+        }
+      ]
+    },
+    "TABLE_fan_zone_speed": {
+      "ROW_fan_zone_speed": {
+        "zone": "1",
+        "speed": "0x32"
+      }
+    },
+    "fan_filter_status": "NotSupported"
+  },
+  "TABLE_tempinfo": {
+    "ROW_tempinfo": [
+      {
+        "tempmod": "1",
+        "sensor": "ASIC",
+        "majthres": "101",
+        "minthres": "95",
+        "curtemp": "40",
+        "alarmstatus": "Ok"
+      },
+      {
+        "tempmod": "1",
+        "sensor": "Front-Middle(D1)",
+        "majthres": "70",
+        "minthres": "56",
+        "curtemp": "32",
+        "alarmstatus": "Ok"
+      },
+      {
+        "tempmod": "1",
+        "sensor": "Front-Left  (D2)",
+        "majthres": "70",
+        "minthres": "44",
+        "curtemp": "30",
+        "alarmstatus": "Ok"
+      },
+      {
+        "tempmod": "1",
+        "sensor": "Back        (D3)",
+        "majthres": "70",
+        "minthres": "42",
+        "curtemp": "26",
+        "alarmstatus": "Ok"
+      }
+    ]
+  }
+}

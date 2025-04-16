@@ -1,0 +1,6 @@
+name:               Environment
+query:              "show environment"
+object:             cisco_environment
+
+plugins:
+  - Environment
