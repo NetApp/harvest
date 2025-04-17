@@ -150,6 +150,51 @@ func (c *Client) GetRest(request string, headers ...map[string]string) ([]byte, 
 	return c.GetPlainRest(request, true, headers...)
 }
 
+// PostRest makes a REST POST request using the provided JSON body
+// and returns the JSON response as a []byte.
+func (c *Client) PostRest(endpoint string, body []byte, headers ...map[string]string) ([]byte, error) {
+	endpoint = strings.TrimPrefix(endpoint, "/")
+	u := c.baseURL + endpoint
+
+	var err error
+	c.request, err = requests.New("POST", u, bytes.NewBuffer(body))
+	if err != nil {
+		return nil, err
+	}
+
+	c.request.Header.Set("Content-Type", "application/json")
+	c.request.Header.Set("Accept", "application/json")
+
+	for _, hs := range headers {
+		for k, v := range hs {
+			c.request.Header.Set(k, v)
+		}
+	}
+
+	pollerAuth, err := c.auth.GetPollerAuth()
+	if err != nil {
+		return nil, err
+	}
+	if pollerAuth.AuthToken != "" {
+		c.request.Header.Set("Authorization", "Bearer "+pollerAuth.AuthToken)
+		c.Logger.Debug("Using authToken from credential script for POST")
+	} else if pollerAuth.Username != "" {
+		c.request.SetBasicAuth(pollerAuth.Username, pollerAuth.Password)
+	}
+
+	c.buffer = bytes.NewBuffer(body)
+	c.request.GetBody = func() (io.ReadCloser, error) {
+		r := bytes.NewReader(c.buffer.Bytes())
+		return io.NopCloser(r), nil
+	}
+
+	result, err := c.invokeWithAuthRetry()
+	c.Metadata.BytesRx += uint64(len(result))
+	c.Metadata.NumCalls++
+
+	return result, err
+}
+
 func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 	var (
 		body []byte
@@ -163,20 +208,14 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 			innerErr  error
 		)
 
-		if c.request.Body != nil {
-			//goland:noinspection GoUnhandledErrorResult
-			defer response.Body.Close()
-		}
-		if c.buffer != nil {
-			defer c.buffer.Reset()
-		}
-
+		// "c.buffer" cleanup: call Reset later if non-nil.
 		restReq := c.request.URL.String()
 		api := util.GetURLWithoutHost(c.request)
 
-		// send request to server
-		if response, innerErr = c.client.Do(c.request); innerErr != nil {
-			return nil, fmt.Errorf("connection error %w", innerErr)
+		// Send request to the server.
+		response, innerErr = c.client.Do(c.request)
+		if innerErr != nil {
+			return nil, fmt.Errorf("connection error: %w", innerErr)
 		}
 		//goland:noinspection GoUnhandledErrorResult
 		defer response.Body.Close()
@@ -230,7 +269,13 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 				Build()
 		}
 
+		// Print for logging if enabled.
 		defer c.printRequestAndResponse(restReq, innerBody)
+
+		// Reset the buffer if it exists.
+		if c.buffer != nil {
+			c.buffer.Reset()
+		}
 
 		return innerBody, nil
 	}

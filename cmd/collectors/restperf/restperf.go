@@ -1201,23 +1201,7 @@ func (r *RestPerf) processPerfRecords(perfRecords []rest.PerfRecord, curMat *mat
 //
 // The function returns the current metric and any error encountered during its retrieval or creation.
 func (r *RestPerf) getMetric(curMat *matrix.Matrix, prevMat *matrix.Matrix, key string, display ...string) (*matrix.Metric, error) {
-	var err error
-	curMetric := curMat.GetMetric(key)
-	if curMetric == nil {
-		curMetric, err = curMat.NewMetricFloat64(key, display...)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	prevMetric := prevMat.GetMetric(key)
-	if prevMetric == nil {
-		_, err = prevMat.NewMetricFloat64(key, display...)
-		if err != nil {
-			return nil, err
-		}
-	}
-	return curMetric, nil
+	return collectors.GetMetric(curMat, prevMat, key, display...)
 }
 
 func (r *RestPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (map[string]*matrix.Matrix, error) {

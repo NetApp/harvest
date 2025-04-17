@@ -1,0 +1,11 @@
+collector:          StatPerf
+
+# Order here matters!
+schedule:
+  - counter:  24h
+  - instance: 10m
+  - data:      1m
+
+objects:
+  FlexCache:                flexcache.yaml
+

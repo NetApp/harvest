@@ -463,6 +463,25 @@ func FetchRestPerfDataStream(client *Client, href string, processBatch func([]Pe
 	return nil
 }
 
+func FetchPost(client *Client, endpoint string, body []byte, headers ...map[string]string) ([]gjson.Result, error) {
+	response, err := client.PostRest(endpoint, body, headers...)
+	if err != nil {
+		return nil, fmt.Errorf("error in POST request: %w", err)
+	}
+
+	output := gjson.ParseBytes(response)
+	data := output.Get("output")
+	var results []gjson.Result
+
+	if data.Exists() {
+		results = data.Array()
+	} else {
+		results = []gjson.Result{}
+	}
+
+	return results, nil
+}
+
 func FetchAllStream(client *Client, href string, processBatch func([]gjson.Result, int64) error, headers ...map[string]string) error {
 	var prevLink string
 	nextLink := href
