@@ -23,19 +23,31 @@ type CounterProperty struct {
 	ReplacedBy  string
 }
 
-func filterNonEmpty(input string) []string {
-	scanner := bufio.NewScanner(strings.NewReader(input))
+func filterNonEmpty(input string) ([]string, error) {
+	reader := bufio.NewReader(strings.NewReader(input))
 	var results []string
-	for scanner.Scan() {
-		if trimmed := strings.TrimSpace(scanner.Text()); trimmed != "" {
+
+	for {
+		line, err := reader.ReadString('\n')
+		trimmed := strings.TrimSpace(line)
+		if trimmed != "" {
 			results = append(results, trimmed)
 		}
+		if err != nil {
+			if err.Error() == "EOF" {
+				break
+			}
+			return nil, err
+		}
 	}
-	return results
+	return results, nil
 }
 
 func (s *StatPerf) parseCounters(input string) (map[string]CounterProperty, error) {
-	linesFiltered := filterNonEmpty(input)
+	linesFiltered, err := filterNonEmpty(input)
+	if err != nil {
+		return nil, err
+	}
 
 	// Search for the header row, which is expected to have at least 9 columns when split.
 	var headerIndex = -1
@@ -94,8 +106,11 @@ type InstanceInfo struct {
 	InstanceUUID string
 }
 
-func (s *StatPerf) parseInstances(output string) []InstanceInfo {
-	linesFiltered := filterNonEmpty(output)
+func (s *StatPerf) parseInstances(input string) ([]InstanceInfo, error) {
+	linesFiltered, err := filterNonEmpty(input)
+	if err != nil {
+		return nil, err
+	}
 
 	// Locate the header row: look for a row that, when split, returns at least 6 fields and contains "instance"
 	var headerIndex = -1
@@ -111,20 +126,17 @@ func (s *StatPerf) parseInstances(output string) []InstanceInfo {
 	}
 
 	if headerIndex < 0 {
-		s.Logger.Warn("no valid header found in instance output")
-		return nil
+		return nil, errors.New("no valid header row found")
 	}
 
 	// Expect the table to have at least two header rows.
 	if len(linesFiltered) < headerIndex+2 {
-		s.Logger.Warn("not enough header rows in instance output")
-		return nil
+		return nil, errors.New("not enough header rows in data")
 	}
 
 	dataStart := headerIndex + 2
 	if dataStart >= len(linesFiltered) {
-		s.Logger.Warn("no data rows found in instance output")
-		return nil
+		return nil, errors.New("no data rows found")
 	}
 
 	estimatedRows := len(linesFiltered) - dataStart
@@ -143,7 +155,7 @@ func (s *StatPerf) parseInstances(output string) []InstanceInfo {
 		results = append(results, inst)
 	}
 
-	return results
+	return results, nil
 }
 
 type Row struct {
@@ -152,8 +164,11 @@ type Row struct {
 	Value    string `json:"value"`
 }
 
-func parseRows(output string, logger *slog.Logger) ([]Row, error) {
-	linesFiltered := filterNonEmpty(output)
+func parseRows(input string, logger *slog.Logger) ([]Row, error) {
+	linesFiltered, err := filterNonEmpty(input)
+	if err != nil {
+		return nil, err
+	}
 
 	// Find the header row by scanning for a line that splits into 4+ fields and contains "counter".
 	headerIndex := -1

@@ -856,7 +856,10 @@ func (s *StatPerf) pollInstance(mat *matrix.Matrix, records []gjson.Result, apiD
 	firstRecord := records[0]
 	fr := firstRecord.ClonedString()
 	if fr != "" {
-		instances := s.parseInstances(firstRecord.ClonedString())
+		instances, err := s.parseInstances(firstRecord.ClonedString())
+		if err != nil {
+			return nil, err
+		}
 		for _, instance := range instances {
 			var (
 				instanceKey string

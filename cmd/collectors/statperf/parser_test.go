@@ -92,7 +92,7 @@ func TestParseInstances(t *testing.T) {
 				t.Fatalf("Failed to read from file: %v", err)
 			}
 			sp := &StatPerf{}
-			instances := sp.parseInstances(string(content))
+			instances, _ := sp.parseInstances(string(content))
 
 			if len(instances) != 6 {
 				t.Errorf("Expected 6 instances, got %d", len(instances))
@@ -151,4 +151,78 @@ func TestParseData(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestFilterNonEmpty(t *testing.T) {
+	// Define test cases.
+	tests := []struct {
+		name     string
+		input    string
+		expected []string
+		hasError bool
+	}{
+		{
+			name: "Simple input with empty lines",
+			input: `line one
+
+line two
+    `,
+			expected: []string{"line one", "line two"},
+			hasError: false,
+		},
+		{
+			name: "Input with all empty lines",
+			input: `    
+
+
+			`,
+			expected: []string{},
+			hasError: false,
+		},
+		{
+			name: "Input with no newline at the end",
+			input: `line one
+line two`,
+			expected: []string{"line one", "line two"},
+			hasError: false,
+		},
+		{
+			name: "Normal input",
+			input: `object·instance·counter·value·
+Object·Instance·Counter·Text Value·
+flexcache_per_volume·Test·blocks_requested_from_client·637069129383·`,
+			expected: []string{
+				"object·instance·counter·value·",
+				"Object·Instance·Counter·Text Value·",
+				"flexcache_per_volume·Test·blocks_requested_from_client·637069129383·",
+			},
+			hasError: false,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			result, err := filterNonEmpty(tc.input)
+			if tc.hasError && err == nil {
+				t.Errorf("expected an error, got nil")
+			} else if !tc.hasError && err != nil {
+				t.Errorf("unexpected error: %v", err)
+			}
+			if !slicesEqual(result, tc.expected) {
+				t.Errorf("expected %v, got %v", tc.expected, result)
+			}
+		})
+	}
+}
+
+func slicesEqual(a, b []string) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
 }
