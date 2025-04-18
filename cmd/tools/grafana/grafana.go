@@ -267,7 +267,51 @@ func addLabel(content []byte, label string, labelMap map[string]string) []byte {
 		fmt.Printf("error inserting label=[%s] into dashboard, err: %+v", label, err)
 		return content
 	}
+
+	// Rewrite all panel expressions to include the new label
+
+	forLabel := varNameForLabel(label)
+	VisitAllPanels(newContent, func(path string, _, value gjson.Result) {
+		value.Get("targets").ForEach(func(targetKey, target gjson.Result) bool {
+			expr := target.Get("expr")
+			if expr.Exists() {
+				newExpression := rewriteExprWith(expr.ClonedString(), label, forLabel)
+				loc := path + ".targets." + targetKey.ClonedString() + ".expr"
+				newContent, err = sjson.SetBytes(newContent, loc, []byte(newExpression))
+				if err != nil {
+					fmt.Printf("error rewriting expr at=[%s] for label=[%s], err: %+v", loc, label, err)
+					return false
+				}
+			}
+			return true
+		})
+	})
+
 	return newContent
+}
+
+var labelsRegex = regexp.MustCompile(`\{([^}]+)}`)
+
+func rewriteExprWith(input string, label string, forLabel string) string {
+	result := input
+
+	allMatches := labelsRegex.FindAllStringSubmatch(input, -1)
+
+	for _, match := range allMatches {
+		if len(match) == 0 {
+			continue
+		}
+		// Check if the label is already present in the match
+		if strings.Contains(match[1], label) {
+			continue
+		}
+		// Add the new label to the match
+		// e.g., NATE_UUID=~"$Nate_uuid"
+		newLabel := label + `=~"$` + forLabel + `"`
+		result = strings.ReplaceAll(result, match[0], fmt.Sprintf("{%s,%s}", match[1], newLabel))
+	}
+
+	return result
 }
 
 func addChainedVar(result gjson.Result, label string, labelMap map[string]string) string {
@@ -561,9 +605,8 @@ func importFiles(dir string, folder *Folder) {
 
 		// labelMap is used to ensure we don't modify the query of one of the new labels we're adding
 		labelMap := make(map[string]string)
-		caser := cases.Title(language.Und)
 		for _, label := range opts.labels {
-			labelMap[caser.String(label)] = label
+			labelMap[varNameForLabel(label)] = label
 		}
 		// The label is inserted in the list of variables first
 		// Iterate backwards so the labels keep the same order as cmdline
@@ -628,6 +671,12 @@ func importFiles(dir string, folder *Folder) {
 			fmt.Printf("No dashboards found in [%s] is the directory correct?\n", dir)
 		}
 	}
+}
+
+var caser = cases.Title(language.Und)
+
+func varNameForLabel(label string) string {
+	return caser.String(label)
 }
 
 // setDefaultDropdownValues sets the default values for specified dropdown variables in the dashboard JSON data.
@@ -934,8 +983,8 @@ func handlingPanels(p interface{}, prefix string) {
 // unchanged if no metric names are identified.
 // Note that this function will only work with the Prometheus dashboards of Harvest.
 // It will use a number of patterns in which metrics might be used in queries.
-// (E.g. a single metric, multiple metrics used in addition, etc. -- for examples
-// see the test). If we change queries of our dashboards, we have to review
+// (E.g., a single metric, multiple metrics used in addition, etc. -- See the tests for examples)
+// If we change queries of our dashboards, we have to review
 // this function as well (or come up with a better solution).
 func addPrefixToMetricNames(expr, prefix string) string {
 	var (
@@ -944,7 +993,7 @@ func addPrefixToMetricNames(expr, prefix string) string {
 		isMatch    bool
 		regex      *regexp.Regexp
 		err        error
-		visitedMap map[string]bool // handles if same query exist in multiple times in one expression.
+		visitedMap map[string]bool // handles if the same query exists in multiple times in one expression.
 	)
 
 	// variable queries
