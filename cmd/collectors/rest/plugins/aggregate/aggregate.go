@@ -43,6 +43,7 @@ func (a *Aggregate) Init(remote conf.Remote) error {
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
 	client, err := rest.New(conf.ZapiPoller(a.ParentParams), timeout, a.Auth)
+
 	if err != nil {
 		return fmt.Errorf("failed to create REST client: %w", err)
 	}
@@ -109,8 +110,23 @@ func (a *Aggregate) collectObjectStoreData(aggrSpaceMat, data *matrix.Matrix) {
 		return
 	}
 
+	uuidLookup := make(map[string]string)
+	// Create name-to-UUID map for instance lookup
+	for _, aggrInstance := range data.GetInstances() {
+		if !aggrInstance.IsExportable() {
+			continue
+		}
+		uuid := aggrInstance.GetLabel("uuid")
+		aggr := aggrInstance.GetLabel("aggr")
+		uuidLookup[aggr] = uuid
+	}
+
 	for _, record := range records {
 		aggrName := record.Get("aggregate_name").ClonedString()
+		uuid, has := uuidLookup[aggrName]
+		if !has {
+			continue
+		}
 
 		binNum := record.Get("bin_num").ClonedString()
 		tierName := record.Get("tier_name").ClonedString()
@@ -127,7 +143,11 @@ func (a *Aggregate) collectObjectStoreData(aggrSpaceMat, data *matrix.Matrix) {
 			continue
 		}
 
-		instance.SetLabels(data.GetInstance(aggrName).GetLabels())
+		key := uuid
+		if a.ParentParams.GetChildContentS("query") != "api/storage/aggregates" {
+			key = aggrName
+		}
+		instance.SetLabels(data.GetInstance(key).GetLabels())
 		instance.SetLabel("tier", tierName)
 		instance.SetLabel("bin_num", binNum)
 
