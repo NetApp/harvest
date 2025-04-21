@@ -1084,7 +1084,7 @@ func (r *RestPerf) processPerfRecords(perfRecords []rest.PerfRecord, curMat *mat
 						description := strings.ToLower(r.perfProp.counterInfo[name].description)
 						if len(labels) > 0 && strings.Contains(description, "histogram") {
 							key := name + ".bucket"
-							histogramMetric, err = r.getMetric(curMat, prevMat, key, metric.Label)
+							histogramMetric, err = collectors.GetMetric(curMat, prevMat, key, metric.Label)
 							if err != nil {
 								r.Logger.Error(
 									"unable to create histogram metric",
@@ -1103,7 +1103,7 @@ func (r *RestPerf) processPerfRecords(perfRecords []rest.PerfRecord, curMat *mat
 							k := name + arrayKeyToken + label
 							metr, ok := curMat.GetMetrics()[k]
 							if !ok {
-								if metr, err = r.getMetric(curMat, prevMat, k, metric.Label); err != nil {
+								if metr, err = collectors.GetMetric(curMat, prevMat, k, metric.Label); err != nil {
 									r.Logger.Error(
 										"NewMetricFloat64",
 										slogx.Err(err),
@@ -1143,7 +1143,7 @@ func (r *RestPerf) processPerfRecords(perfRecords []rest.PerfRecord, curMat *mat
 					} else {
 						metr, ok := curMat.GetMetrics()[name]
 						if !ok {
-							if metr, err = r.getMetric(curMat, prevMat, name, metric.Label); err != nil {
+							if metr, err = collectors.GetMetric(curMat, prevMat, name, metric.Label); err != nil {
 								r.Logger.Error(
 									"NewMetricFloat64",
 									slogx.Err(err),
@@ -1184,24 +1184,6 @@ func (r *RestPerf) processPerfRecords(perfRecords []rest.PerfRecord, curMat *mat
 	}
 	parseD = time.Since(startTime)
 	return count, numPartials, parseD
-}
-
-// getMetric retrieves the metric associated with the given key from the current matrix (curMat).
-// If the metric does not exist in curMat, it is created with the provided display settings.
-// The function also ensures that the same metric exists in the previous matrix (prevMat) to
-// allow for subsequent calculations (e.g., prevMetric - curMetric).
-// This is particularly important in cases such as ONTAP upgrades, where curMat may contain
-// additional metrics that are not present in prevMat. If prevMat does not have the metric,
-// it is created to prevent a panic when attempting to perform calculations with non-existent metrics.
-//
-// This metric creation process within RestPerf is necessary during PollData because the information about whether a metric
-// is an array is not available in the RestPerf PollCounter. The determination of whether a metric is an array
-// is made by examining the actual data in RestPerf. Therefore, metric creation in RestPerf is performed during
-// the poll data phase, and special handling is required for such cases.
-//
-// The function returns the current metric and any error encountered during its retrieval or creation.
-func (r *RestPerf) getMetric(curMat *matrix.Matrix, prevMat *matrix.Matrix, key string, display ...string) (*matrix.Metric, error) {
-	return collectors.GetMetric(curMat, prevMat, key, display...)
 }
 
 func (r *RestPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (map[string]*matrix.Matrix, error) {

@@ -208,7 +208,10 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 			innerErr  error
 		)
 
-		// "c.buffer" cleanup: call Reset later if non-nil.
+		// If c.buffer exists, defer its Reset
+		if c.buffer != nil {
+			defer c.buffer.Reset()
+		}
 		restReq := c.request.URL.String()
 		api := util.GetURLWithoutHost(c.request)
 
@@ -271,11 +274,6 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 
 		// Print for logging if enabled.
 		defer c.printRequestAndResponse(restReq, innerBody)
-
-		// Reset the buffer if it exists.
-		if c.buffer != nil {
-			c.buffer.Reset()
-		}
 
 		return innerBody, nil
 	}

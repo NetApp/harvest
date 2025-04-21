@@ -38,6 +38,7 @@ type StatPerf struct {
 	pollDataCalls     int
 	recordsToSave     int      // Number of records to save when using the recorder
 	instanceNames     *set.Set // required for polldata
+	sortedCounters    []string
 }
 
 type counter struct {
@@ -162,7 +163,7 @@ func (s *StatPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		records []gjson.Result
 	)
 
-	cliCommand, err := clirequestbuilder.NewCLIRequestBuilder().
+	cliCommand, err := clirequestbuilder.New().
 		Query("statistics catalog counter show").
 		Object(s.Prop.Query).
 		Fields([]string{"counter", "base-counter", "properties", "type", "is-deprecated", "replaced-by"}).
@@ -171,23 +172,28 @@ func (s *StatPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		return nil, err
 	}
 
-	s.Logger.Debug("", slog.String("href", cliCommand))
-	if cliCommand == "" {
+	s.Logger.Debug("", slog.String("cliCommand", string(cliCommand)))
+	if cliCommand == nil {
 		return nil, errs.New(errs.ErrConfig, "empty cliCommand")
 	}
 
 	apiT := time.Now()
 	s.Client.Metadata.Reset()
 
-	records, err = rest.FetchPost(s.Client, "api/private/cli", []byte(cliCommand))
+	records, err = rest.FetchPost(s.Client, "api/private/cli", cliCommand)
 	if err != nil {
 		return nil, err
 	}
 
-	return s.pollCounter(records, time.Since(apiT))
+	err = s.pollCounter(records, time.Since(apiT))
+	if err != nil {
+		return nil, err
+	}
+	s.sortedCounters = slices.Sorted(maps.Keys(s.Prop.Counters))
+	return nil, nil
 }
 
-func (s *StatPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[string]*matrix.Matrix, error) {
+func (s *StatPerf) pollCounter(records []gjson.Result, apiD time.Duration) error {
 	var (
 		parseT time.Time
 	)
@@ -198,12 +204,12 @@ func (s *StatPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 	firstRecord := records[0]
 	fr := firstRecord.ClonedString()
 	if fr == "" {
-		return nil, errs.New(errs.ErrConfig, "no data found")
+		return errs.New(errs.ErrConfig, "no data found")
 	}
 
 	counters, err := s.parseCounters(fr)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	seenMetrics := make(map[string]bool)
@@ -313,7 +319,7 @@ func (s *StatPerf) pollCounter(records []gjson.Result, apiD time.Duration) (map[
 	_ = s.Metadata.LazySetValueUint64("bytesRx", "counter", s.Client.Metadata.BytesRx)
 	_ = s.Metadata.LazySetValueUint64("numCalls", "counter", s.Client.Metadata.NumCalls)
 
-	return nil, nil
+	return nil
 }
 
 func normalizeCounterValue(input string) string {
@@ -381,8 +387,6 @@ func (s *StatPerf) PollData() (map[string]*matrix.Matrix, error) {
 	startTime = time.Now()
 	s.Client.Metadata.Reset()
 
-	counters := slices.Sorted(maps.Keys(s.Prop.Counters))
-
 	s.pollDataCalls++
 	if s.pollDataCalls >= s.recordsToSave {
 		s.pollDataCalls = 0
@@ -427,23 +431,23 @@ func (s *StatPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 		batchInstances := allInstances[i:end]
 		// Build CLI command with the current batch of instances.
-		cliCommand, err := clirequestbuilder.NewCLIRequestBuilder().
+		cliCommand, err := clirequestbuilder.New().
 			Query("statistics show -raw").
 			Object(s.Prop.Query).
-			Counters(counters).
+			Counters(s.sortedCounters).
 			Instances(batchInstances).
 			Fields([]string{"instance", "counter", "value"}).
 			Build()
 		if err != nil {
 			return nil, err
 		}
-		s.Logger.Debug("", slog.String("cliCommand (batch)", cliCommand))
-		if cliCommand == "" {
+		s.Logger.Debug("", slog.String("cliCommand (batch)", string(cliCommand)))
+		if cliCommand == nil {
 			return nil, errs.New(errs.ErrConfig, "empty cliCommand")
 		}
 
 		// Fetch results (no pagination assumed) for current batch.
-		records, err = rest.FetchPost(s.Client, "api/private/cli", []byte(cliCommand), headers)
+		records, err = rest.FetchPost(s.Client, "api/private/cli", cliCommand, headers)
 		if err != nil {
 			return nil, err
 		}
@@ -479,7 +483,7 @@ func (s *StatPerf) processPerfRecords(records []gjson.Result, curMat *matrix.Mat
 		return 0, 0
 	}
 
-	perfRecords, err := s.parseData(fr, s.Logger)
+	perfRecords, err := s.parseData(fr)
 	if err != nil {
 		s.Logger.Error("failed to parse data", slogx.Err(err))
 		return 0, 0
@@ -527,7 +531,7 @@ func (s *StatPerf) processPerfRecords(records []gjson.Result, curMat *matrix.Mat
 				if metric, ok := s.Prop.Metrics[metricName]; ok {
 					metr, ok := curMat.GetMetrics()[metricName]
 					if !ok {
-						if metr, err = s.getMetric(curMat, prevMat, metricName, metric.Label); err != nil {
+						if metr, err = collectors.GetMetric(curMat, prevMat, metricName, metric.Label); err != nil {
 							s.Logger.Error(
 								"NewMetricFloat64",
 								slogx.Err(err),
@@ -561,24 +565,6 @@ func (s *StatPerf) processPerfRecords(records []gjson.Result, curMat *matrix.Mat
 	})
 	parseD = time.Since(startTime)
 	return count, parseD
-}
-
-// getMetric retrieves the metric associated with the given key from the current matrix (curMat).
-// If the metric does not exist in curMat, it is created with the provided display settings.
-// The function also ensures that the same metric exists in the previous matrix (prevMat) to
-// allow for subsequent calculations (e.g., prevMetric - curMetric).
-// This is particularly important in cases such as ONTAP upgrades, where curMat may contain
-// additional metrics that are not present in prevMat. If prevMat does not have the metric,
-// it is created to prevent a panic when attempting to perform calculations with non-existent metrics.
-//
-// This metric creation process within StatPerf is necessary during PollData because the information about whether a metric
-// is an array is not available in the StatPerf PollCounter. The determination of whether a metric is an array
-// is made by examining the actual data in StatPerf. Therefore, metric creation in StatPerf is performed during
-// the poll data phase, and special handling is required for such cases.
-//
-// The function returns the current metric and any error encountered during its retrieval or creation.
-func (s *StatPerf) getMetric(curMat *matrix.Matrix, prevMat *matrix.Matrix, key string, display ...string) (*matrix.Metric, error) {
-	return collectors.GetMetric(curMat, prevMat, key, display...)
 }
 
 func (s *StatPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (map[string]*matrix.Matrix, error) {
@@ -809,7 +795,7 @@ func (s *StatPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		}
 	}
 
-	cliCommand, err := clirequestbuilder.NewCLIRequestBuilder().
+	cliCommand, err := clirequestbuilder.New().
 		Query("statistics catalog instance show").
 		Object(s.Prop.Query).
 		Fields([]string{"instance", "instanceUUID"}).
@@ -818,14 +804,14 @@ func (s *StatPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		return nil, err
 	}
 
-	s.Logger.Debug("", slog.String("href", cliCommand))
-	if cliCommand == "" {
+	s.Logger.Debug("", slog.String("cliCommand", string(cliCommand)))
+	if cliCommand == nil {
 		return nil, errs.New(errs.ErrConfig, "empty cliCommand")
 	}
 
 	apiT := time.Now()
 	s.Client.Metadata.Reset()
-	records, err = rest.FetchPost(s.Client, endpoint, []byte(cliCommand), headers)
+	records, err = rest.FetchPost(s.Client, endpoint, cliCommand, headers)
 	if err != nil {
 		if errs.IsRestErr(err, errs.EntryNotExist) {
 			return nil, errs.New(errs.ErrNoInstance, "no "+s.Object+" instances on cluster")

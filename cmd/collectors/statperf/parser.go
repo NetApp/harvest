@@ -1,7 +1,6 @@
 package statperf
 
 import (
-	"bufio"
 	"encoding/json"
 	"errors"
 	"github.com/netapp/harvest/v2/pkg/util"
@@ -23,31 +22,21 @@ type CounterProperty struct {
 	ReplacedBy  string
 }
 
-func filterNonEmpty(input string) ([]string, error) {
-	reader := bufio.NewReader(strings.NewReader(input))
+func filterNonEmpty(input string) []string {
 	var results []string
 
-	for {
-		line, err := reader.ReadString('\n')
+	for line := range strings.Lines(input) {
 		trimmed := strings.TrimSpace(line)
 		if trimmed != "" {
 			results = append(results, trimmed)
 		}
-		if err != nil {
-			if err.Error() == "EOF" {
-				break
-			}
-			return nil, err
-		}
 	}
-	return results, nil
+
+	return results
 }
 
 func (s *StatPerf) parseCounters(input string) (map[string]CounterProperty, error) {
-	linesFiltered, err := filterNonEmpty(input)
-	if err != nil {
-		return nil, err
-	}
+	linesFiltered := filterNonEmpty(input)
 
 	// Search for the header row, which is expected to have at least 9 columns when split.
 	var headerIndex = -1
@@ -107,10 +96,7 @@ type InstanceInfo struct {
 }
 
 func (s *StatPerf) parseInstances(input string) ([]InstanceInfo, error) {
-	linesFiltered, err := filterNonEmpty(input)
-	if err != nil {
-		return nil, err
-	}
+	linesFiltered := filterNonEmpty(input)
 
 	// Locate the header row: look for a row that, when split, returns at least 6 fields and contains "instance"
 	var headerIndex = -1
@@ -165,10 +151,7 @@ type Row struct {
 }
 
 func parseRows(input string, logger *slog.Logger) ([]Row, error) {
-	linesFiltered, err := filterNonEmpty(input)
-	if err != nil {
-		return nil, err
-	}
+	linesFiltered := filterNonEmpty(input)
 
 	// Find the header row by scanning for a line that splits into 4+ fields and contains "counter".
 	headerIndex := -1
@@ -217,7 +200,7 @@ func parseRows(input string, logger *slog.Logger) ([]Row, error) {
 }
 
 func removeUnitRegex(s string) string {
-	matches := unitRegex.FindStringSubmatch(strings.TrimSpace(s))
+	matches := unitRegex.FindStringSubmatch(s)
 	if len(matches) == 3 {
 		return matches[1]
 	}
@@ -260,8 +243,8 @@ func groupInstances(rows []Row) ([]map[string]string, error) {
 	return results, nil
 }
 
-func (s *StatPerf) parseData(output string, logger *slog.Logger) (gjson.Result, error) {
-	rows, err := parseRows(output, logger)
+func (s *StatPerf) parseData(output string) (gjson.Result, error) {
+	rows, err := parseRows(output, s.Logger)
 	if err != nil {
 		return gjson.Result{}, err
 	}

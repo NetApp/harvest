@@ -18,7 +18,7 @@ type CLIRequestBuilder struct {
 	instances []string
 }
 
-func NewCLIRequestBuilder() *CLIRequestBuilder {
+func New() *CLIRequestBuilder {
 	baseSetTemplate := `set -showseparator "%s" -showallfields true -rows 0 diagnostic -confirmations off;statistics settings modify -counter-display all;`
 	return &CLIRequestBuilder{
 		baseSet: fmt.Sprintf(baseSetTemplate, util.StatPerfSeparator),
@@ -55,10 +55,10 @@ func (c *CLIRequestBuilder) Instances(instances []string) *CLIRequestBuilder {
 	return c
 }
 
-func (c *CLIRequestBuilder) Build() (string, error) {
+func (c *CLIRequestBuilder) Build() ([]byte, error) {
 	var parts []string
 	if c.query == "" {
-		return "", errors.New("query must be provided")
+		return nil, errors.New("query must be provided")
 	}
 	parts = append(parts, c.query)
 
@@ -79,16 +79,12 @@ func (c *CLIRequestBuilder) Build() (string, error) {
 	}
 
 	queryCmd := strings.Join(parts, " ")
-	fullCommand := fmt.Sprintf("%s %s", c.baseSet, queryCmd)
+	fullCommand := c.baseSet + " " + queryCmd
 	fullCommand = strings.TrimSpace(fullCommand)
 
 	payload := map[string]string{
 		"input": fullCommand,
 	}
 
-	jsonBytes, err := json.Marshal(payload)
-	if err != nil {
-		return "", err
-	}
-	return string(jsonBytes), nil
+	return json.Marshal(payload)
 }

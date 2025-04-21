@@ -1,6 +1,8 @@
 package statperf
 
 import (
+	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
+	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"log/slog"
 	"os"
 	"testing"
@@ -123,24 +125,29 @@ func TestParseData(t *testing.T) {
 			if err != nil {
 				t.Fatalf("Failed to read from file: %v", err)
 			}
-			sp := &StatPerf{}
+			sp := &StatPerf{
+				Rest: &rest2.Rest{
+					AbstractCollector: &collector.AbstractCollector{},
+				},
+			}
+			sp.Logger = slog.Default()
 
-			res, err := sp.parseData(string(content), slog.Default())
+			resp, err := sp.parseData(string(content))
 			if err != nil {
 				t.Fatalf("Unexpected error: %v", err)
 			}
 
-			if !res.IsArray() {
-				t.Fatalf("Expected JSON result to be an array, got: %v", res.Type)
+			if !resp.IsArray() {
+				t.Fatalf("Expected JSON result to be an array, got: %v", resp.Type)
 			}
 
-			groupsCount := len(res.Array())
+			groupsCount := len(resp.Array())
 			if groupsCount < 6 {
 				t.Errorf("Expected 6 groups, got %d", groupsCount)
 			}
 
 			foundInstance := false
-			for _, group := range res.Array() {
+			for _, group := range resp.Array() {
 				if group.Get("instance_name").String() == "hs_1" {
 					foundInstance = true
 					break
@@ -202,12 +209,7 @@ flexcache_per_volume·Test·blocks_requested_from_client·637069129383·`,
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			result, err := filterNonEmpty(tc.input)
-			if tc.hasError && err == nil {
-				t.Errorf("expected an error, got nil")
-			} else if !tc.hasError && err != nil {
-				t.Errorf("unexpected error: %v", err)
-			}
+			result := filterNonEmpty(tc.input)
 			if !slicesEqual(result, tc.expected) {
 				t.Errorf("expected %v, got %v", tc.expected, result)
 			}

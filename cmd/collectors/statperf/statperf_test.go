@@ -82,7 +82,7 @@ func TestRestPerf_pollData(t *testing.T) {
 				t.Fatalf("error: %v", err)
 			}
 
-			_, err = s.pollCounter(counters, 0)
+			err = s.pollCounter(counters, 0)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -165,7 +165,7 @@ func TestPollCounter(t *testing.T) {
 	if err != nil {
 		t.Fatalf("error: %v", err)
 	}
-	_, err = s.pollCounter(counters, 0)
+	err = s.pollCounter(counters, 0)
 	if err != nil {
 		t.Fatalf("Failed to fetch poll counter %v", err)
 	}
