@@ -298,7 +298,7 @@ func rewriteExprWith(input string, label string, forLabel string) string {
 	allMatches := labelsRegex.FindAllStringSubmatch(input, -1)
 
 	for _, match := range allMatches {
-		if len(match) == 0 {
+		if len(match) < 2 {
 			continue
 		}
 		// Check if the label is already present in the match
