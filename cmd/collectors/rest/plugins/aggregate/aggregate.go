@@ -109,23 +109,8 @@ func (a *Aggregate) collectObjectStoreData(aggrSpaceMat, data *matrix.Matrix) {
 		return
 	}
 
-	uuidLookup := make(map[string]string)
-	// Create name-to-UUID map for instance lookup
-	for _, aggrInstance := range data.GetInstances() {
-		if !aggrInstance.IsExportable() {
-			continue
-		}
-		uuid := aggrInstance.GetLabel("uuid")
-		aggr := aggrInstance.GetLabel("aggr")
-		uuidLookup[aggr] = uuid
-	}
-
 	for _, record := range records {
 		aggrName := record.Get("aggregate_name").ClonedString()
-		uuid, has := uuidLookup[aggrName]
-		if !has {
-			continue
-		}
 
 		binNum := record.Get("bin_num").ClonedString()
 		tierName := record.Get("tier_name").ClonedString()
@@ -142,7 +127,7 @@ func (a *Aggregate) collectObjectStoreData(aggrSpaceMat, data *matrix.Matrix) {
 			continue
 		}
 
-		instance.SetLabels(data.GetInstance(uuid).GetLabels())
+		instance.SetLabels(data.GetInstance(aggrName).GetLabels())
 		instance.SetLabel("tier", tierName)
 		instance.SetLabel("bin_num", binNum)
 
