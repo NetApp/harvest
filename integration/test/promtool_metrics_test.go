@@ -59,6 +59,12 @@ func checkMetrics(t *testing.T, port int) {
 }
 
 func TestFormatQueries(t *testing.T) {
+	utils.SkipIfMissing(t, utils.CheckFormat)
+	promtoolPath, exist := util.GetPromtoolPath()
+	if !exist {
+		t.Errorf("ERR failed to find promtool location")
+		return
+	}
 	grafana.VisitDashboards(
 		[]string{
 			"../../grafana/dashboards/cmode",
@@ -66,13 +72,12 @@ func TestFormatQueries(t *testing.T) {
 			"../../grafana/dashboards/storagegrid",
 		},
 		func(path string, data []byte) {
-			changeExpr(t, path, data)
+			changeExpr(t, path, data, promtoolPath)
 		},
 	)
-
 }
 
-func changeExpr(t *testing.T, path string, data []byte) {
+func changeExpr(t *testing.T, path string, data []byte, promtoolPath string) {
 	var (
 		updatedData  []byte
 		notFormatted bool
@@ -82,6 +87,7 @@ func changeExpr(t *testing.T, path string, data []byte) {
 
 	updatedData = slices.Clone(data)
 	dashPath := grafana.ShortPath(path)
+
 	// Change all panel expressions
 	grafana.VisitAllPanels(updatedData, func(path string, _, value gjson.Result) {
 		title := value.Get("title").ClonedString()
@@ -89,7 +95,7 @@ func changeExpr(t *testing.T, path string, data []byte) {
 		value.Get("targets").ForEach(func(targetKey, target gjson.Result) bool {
 			expr := target.Get("expr")
 			if expr.Exists() && expr.ClonedString() != "" {
-				updatedExpr := util.Format(expr.ClonedString())
+				updatedExpr := util.Format(expr.ClonedString(), promtoolPath)
 				if updatedExpr != expr.ClonedString() {
 					notFormatted = true
 					updatedData, err = sjson.SetBytes(updatedData, path+".targets."+targetKey.ClonedString()+".expr", []byte(updatedExpr))
