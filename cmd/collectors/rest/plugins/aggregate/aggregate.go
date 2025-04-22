@@ -43,6 +43,7 @@ func (a *Aggregate) Init(remote conf.Remote) error {
 
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
 	client, err := rest.New(conf.ZapiPoller(a.ParentParams), timeout, a.Auth)
+
 	if err != nil {
 		return fmt.Errorf("failed to create REST client: %w", err)
 	}
@@ -142,7 +143,11 @@ func (a *Aggregate) collectObjectStoreData(aggrSpaceMat, data *matrix.Matrix) {
 			continue
 		}
 
-		instance.SetLabels(data.GetInstance(uuid).GetLabels())
+		key := uuid
+		if a.ParentParams.GetChildContentS("query") != "api/storage/aggregates" {
+			key = aggrName
+		}
+		instance.SetLabels(data.GetInstance(key).GetLabels())
 		instance.SetLabel("tier", tierName)
 		instance.SetLabel("bin_num", binNum)
 
