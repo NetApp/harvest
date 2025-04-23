@@ -60,12 +60,13 @@ func checkMetrics(t *testing.T, port int) {
 
 func TestFormatQueries(t *testing.T) {
 	utils.SkipIfMissing(t, utils.CheckFormat)
-	promtoolPath, exist := util.GetPromtoolPath()
-	fmt.Println(promtoolPath, exist)
-	if !exist {
-		t.Errorf("ERR failed to find promtool location")
-		return
-	}
+	promtoolPath := "promtool"
+	//promtoolPath, exist := util.GetPromtoolPath()
+	//fmt.Println(promtoolPath, exist)
+	//if !exist {
+	//	t.Errorf("ERR failed to find promtool location")
+	//	return
+	//}
 	grafana.VisitDashboards(
 		[]string{
 			"../../grafana/dashboards/cmode",
