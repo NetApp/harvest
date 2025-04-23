@@ -515,8 +515,9 @@ func Format(query string, path string) string {
 }
 
 func GetPromtoolPath() (string, bool) {
-	// either choose path from env var, dev location, ci location, else error out and failed ci
-	path := cmp.Or(os.Getenv("PROMTOOL_PATH"), "../../integration/test/promtool", "/home/harvestfiles/promtool")
+	// either choose path from dev location or ci location, else error out and failed ci
+	path := cmp.Or("../../integration/test/promtool", "promtool")
+	fmt.Println(path)
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		return "", false
 	}

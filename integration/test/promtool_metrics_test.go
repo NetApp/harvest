@@ -65,6 +65,7 @@ func TestFormatQueries(t *testing.T) {
 		t.Errorf("ERR failed to find promtool location")
 		return
 	}
+	fmt.Println(promtoolPath)
 	grafana.VisitDashboards(
 		[]string{
 			"../../grafana/dashboards/cmode",
