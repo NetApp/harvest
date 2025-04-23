@@ -513,15 +513,11 @@ func Format(query string, path string) string {
 	return updatedQuery
 }
 
-func GetPromtoolPath() (string, bool) {
-	// either choose path from dev location or ci location, else error out and failed ci
+func GetPromtoolPath() string {
+	// choose path from dev location or ci location
 	devPath := "../../integration/test/promtool"
-	ciPath := "promtool"
 	if _, err := os.Stat(devPath); os.IsNotExist(err) {
-		if _, err = os.Stat(ciPath); os.IsNotExist(err) {
-			return "", false
-		}
-		return ciPath, true
+		return "promtool"
 	}
-	return devPath, true
+	return devPath
 }
