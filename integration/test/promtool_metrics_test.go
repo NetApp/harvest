@@ -18,7 +18,6 @@ import (
 
 func TestPrometheusMetrics(t *testing.T) {
 	utils.SkipIfMissing(t, utils.CheckMetrics)
-
 	ports := []int{12990, 12992, 12993, 12994}
 	for _, port := range ports {
 		checkMetrics(t, port)
@@ -27,9 +26,10 @@ func TestPrometheusMetrics(t *testing.T) {
 
 func checkMetrics(t *testing.T, port int) {
 	cli := fmt.Sprintf(`curl -s http://localhost:%d/metrics | tee /tmp/metrics:%d.txt | promtool check metrics`, port, port)
+	fmt.Println(cli)
 	command := exec.Command("bash", "-c", cli)
 	output, err := command.CombinedOutput()
-
+	fmt.Println(string(output), err)
 	if err != nil {
 		var ee *exec.ExitError
 		if !errors.As(err, &ee) {
@@ -61,11 +61,11 @@ func checkMetrics(t *testing.T, port int) {
 func TestFormatQueries(t *testing.T) {
 	utils.SkipIfMissing(t, utils.CheckFormat)
 	promtoolPath, exist := util.GetPromtoolPath()
+	fmt.Println(promtoolPath, exist)
 	if !exist {
 		t.Errorf("ERR failed to find promtool location")
 		return
 	}
-	fmt.Println(promtoolPath)
 	grafana.VisitDashboards(
 		[]string{
 			"../../grafana/dashboards/cmode",

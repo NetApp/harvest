@@ -5,7 +5,6 @@
 package util
 
 import (
-	"cmp"
 	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/slogx"
@@ -516,10 +515,13 @@ func Format(query string, path string) string {
 
 func GetPromtoolPath() (string, bool) {
 	// either choose path from dev location or ci location, else error out and failed ci
-	path := cmp.Or("../../integration/test/promtool", "promtool")
-	fmt.Println(path)
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		return "", false
+	devPath := "../../integration/test/promtool"
+	ciPath := "promtool"
+	if _, err := os.Stat(devPath); os.IsNotExist(err) {
+		if _, err = os.Stat(ciPath); os.IsNotExist(err) {
+			return "", false
+		}
+		return ciPath, true
 	}
-	return path, true
+	return devPath, true
 }
