@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/netapp/harvest/v2/cmd/tools/grafana"
@@ -15,6 +16,26 @@ import (
 	"testing"
 )
 
+var allowedList = []string{
+	"aggr_power",
+	"cluster_software_status",
+	"health_lif_alerts",
+	"security_certificate_labels",
+	"shelf_average_ambient_temperature",
+	"shelf_average_fan_speed",
+	"shelf_average_temperature",
+	"shelf_labels",
+	"shelf_max_fan_speed",
+	"shelf_max_temperature",
+	"shelf_min_ambient_temperature",
+	"shelf_min_fan_speed",
+	"shelf_min_temperature",
+	"shelf_power",
+	"snapmirror_labels",
+	"volume_arw_status",
+	"volume_labels",
+}
+
 func TestPrometheusMetrics(t *testing.T) {
 	utils.SkipIfMissing(t, utils.CheckMetrics)
 	ports := []int{12990, 12992, 12993, 12994}
@@ -28,13 +49,12 @@ func checkMetrics(t *testing.T, port int) {
 	command := exec.Command("bash", "-c", cli)
 	output, err := command.CombinedOutput()
 	if err != nil {
-		// var ee *exec.ExitError
-		//if !errors.As(err, &ee) {
-		//	// An exit code can't be used since we need to ignore metrics that are not valid but can't change
-		//	t.Errorf("ERR checking metrics cli=%s err=%v output=%s", cli, err, string(output))
-		//	return
-		//}
-		t.Errorf("ERR checking metrics cli=%s err=%v output=%s", cli, err, string(output))
+		var ee *exec.ExitError
+		if !errors.As(err, &ee) {
+			// An exit code can't be used since we need to ignore metrics that are not valid but can't change
+			t.Errorf("ERR checking metrics cli=%s err=%v output=%s", cli, err, string(output))
+			return
+		}
 	}
 
 	if len(output) == 0 {
@@ -42,7 +62,6 @@ func checkMetrics(t *testing.T, port int) {
 	}
 
 	// Read the output, line by line, and check for errors, non-errors are ignored
-
 	lines := strings.Split(string(output), "\n")
 	for _, line := range lines {
 		line = strings.TrimSpace(line)
@@ -50,6 +69,12 @@ func checkMetrics(t *testing.T, port int) {
 			continue
 		}
 
+		if strings.Contains(line, "label names should be written in 'snake_case' not 'camelCase'") {
+			metricName := strings.Split(line, " ")[0]
+			if !slices.Contains(allowedList, metricName) {
+				t.Errorf("ERR %s", line)
+			}
+		}
 		if strings.Contains(line, "error while linting: ") {
 			t.Errorf("promtool: %s", line)
 		}
@@ -58,7 +83,6 @@ func checkMetrics(t *testing.T, port int) {
 
 func TestFormatQueries(t *testing.T) {
 	utils.SkipIfMissing(t, utils.CheckFormat)
-	promtoolPath := util.GetPromtoolPath()
 	grafana.VisitDashboards(
 		[]string{
 			"../../grafana/dashboards/cmode",
@@ -66,7 +90,7 @@ func TestFormatQueries(t *testing.T) {
 			"../../grafana/dashboards/storagegrid",
 		},
 		func(path string, data []byte) {
-			changeExpr(t, path, data, promtoolPath)
+			changeExpr(t, path, data, "promtool")
 		},
 	)
 }

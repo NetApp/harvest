@@ -512,12 +512,3 @@ func Format(query string, path string) string {
 	updatedQuery = strings.ReplaceAll(updatedQuery, IntervalDurationConstant, "${Interval}")
 	return updatedQuery
 }
-
-func GetPromtoolPath() string {
-	// choose path from dev location or ci location
-	devPath := "../../integration/test/promtool"
-	if _, err := os.Stat(devPath); os.IsNotExist(err) {
-		return "promtool"
-	}
-	return devPath
-}
