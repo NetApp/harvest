@@ -10,7 +10,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
-	"strconv"
 	"time"
 )
 
@@ -44,8 +43,9 @@ var metrics = []string{
 
 type Interface struct {
 	*plugin.AbstractPlugin
-	matrix *matrix.Matrix
-	client *rest.Client
+	matrix         *matrix.Matrix
+	client         *rest.Client
+	templateObject string // object name from the template
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -69,8 +69,9 @@ func (i *Interface) Init(_ conf.Remote) error {
 	}
 
 	i.client = client
+	i.templateObject = i.ParentParams.GetChildContentS("object")
 
-	i.matrix = matrix.New(i.Parent+".Interface", "cisco_interface", "cisco_interface")
+	i.matrix = matrix.New(i.Parent+".Interface", i.templateObject, i.templateObject)
 
 	return nil
 }
@@ -137,12 +138,12 @@ func (i *Interface) parseInterface(output gjson.Result, envMat *matrix.Matrix) {
 		adminState := value.Get("admin_state").ClonedString()
 		state := value.Get("state").ClonedString()
 
-		ethInBytes := toFloat(value.Get("eth_inbytes").String())
-		ethOutBytes := toFloat(value.Get("eth_outbytes").String())
-		ethInErrors := toFloat(value.Get("eth_inerr").String())
-		ethOutErrors := toFloat(value.Get("eth_outerr").String())
-		ethInMcast := toFloat(value.Get("eth_inmcast").String())
-		ethInBcast := toFloat(value.Get("eth_inbcast").String())
+		ethInBytes := value.Get("eth_inbytes").Float()
+		ethOutBytes := value.Get("eth_outbytes").Float()
+		ethInErrors := value.Get("eth_inerr").Float()
+		ethOutErrors := value.Get("eth_outerr").Float()
+		ethInMcast := value.Get("eth_inmcast").Float()
+		ethInBcast := value.Get("eth_inbcast").Float()
 
 		instanceKey := interfaceName + "_" + macAddr
 
@@ -195,15 +196,4 @@ func (i *Interface) setMetricValue(metric string, instance *matrix.Instance, val
 			slog.String("metric", "sensor_temp"),
 		)
 	}
-}
-
-func toFloat(s string) float64 {
-	if s == "" {
-		return 0
-	}
-	f, err := strconv.ParseFloat(s, 64)
-	if err != nil {
-		return 0
-	}
-	return f
 }
