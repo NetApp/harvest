@@ -1078,7 +1078,7 @@
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "expr": "cisco_environment_sensor_temp{switch=\"$Switch\"}",
-              "legendFormat": "{{item}}",
+              "legendFormat": "{{sensor}}",
               "range": true,
               "refId": "A"
             }
