@@ -1,8 +1,9 @@
 package doctor
 
 import (
+	"github.com/goccy/go-yaml"
+	"github.com/google/go-cmp/cmp"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"gopkg.in/yaml.v3"
 	"os"
 	"strings"
 	"testing"
@@ -61,8 +62,9 @@ func TestDoDoctor(t *testing.T) {
 
 		expectedOutput := string(outBytes)
 
-		if output != expectedOutput {
-			t.Errorf("%s unexpected output:\ngot:\n%v\n\nwant:\n%v", tt.outPath, output, expectedOutput)
+		diff := cmp.Diff(output, expectedOutput)
+		if diff != "" {
+			t.Errorf("%s Mismatch (-got +want):\n%s", tt.outPath, diff)
 		}
 	}
 }

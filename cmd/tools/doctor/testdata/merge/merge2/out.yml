@@ -1,28 +1,29 @@
 Exporters:
-    prometheus1:
-        exporter: Prometheus
-        port_range: 12990-14000
+  prometheus1:
+    exporter: Prometheus
+    port_range: 12990-14000
 Defaults:
-    collectors:
-        - Zapi
-        - ZapiPerf
-        - Ems
-    use_insecure_tls: true
-    prefer_zapi: true
+  collectors:
+    - Zapi
+    - ZapiPerf
+    - Ems
+  use_insecure_tls: true
+  prefer_zapi: true
+
 Poller_files:
-    - testdata/merge/merge2/child/*.yml
+  - testdata/merge/merge2/child/*.yml
 Pollers:
-    u2:
-        datacenter: u2
-        addr: -REDACTED-
-        username: -REDACTED-
-        password: -REDACTED-
-        exporters:
-            - prometheus1
-    u3:
-        datacenter: u3
-        addr: -REDACTED-
-        username: -REDACTED-
-        password: -REDACTED-
-        exporters:
-            - prometheus1
+  u2:
+    datacenter: u2
+    addr: -REDACTED-
+    username: -REDACTED-
+    password: -REDACTED-
+    exporters:
+      - prometheus1
+  u3:
+    datacenter: u3
+    addr: -REDACTED-
+    username: -REDACTED-
+    password: -REDACTED-
+    exporters:
+      - prometheus1

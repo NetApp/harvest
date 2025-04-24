@@ -32,6 +32,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/goccy/go-yaml"
+	"github.com/goccy/go-yaml/ast"
+	"github.com/goccy/go-yaml/parser"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/cisco"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/ems"
@@ -62,7 +65,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/util"
 	goversion "github.com/netapp/harvest/v2/third_party/go-version"
 	"github.com/spf13/cobra"
-	"gopkg.in/yaml.v3"
 	"io"
 	"log/slog"
 	"math"
@@ -775,7 +777,10 @@ func (p *Poller) readObjects(c conf.Collector) ([]objectCollector, error) {
 		return nil, fmt.Errorf("no templates loaded for %s", c.Name)
 	}
 	// add the poller's parameters to the collector's parameters
-	Union2(template, p.params)
+	err = Union2(template, p.params)
+	if err != nil {
+		return nil, err
+	}
 	template.NewChildS("poller_name", p.params.Name)
 
 	objects := make([]objectCollector, 0)
@@ -939,53 +944,61 @@ func collectorContains(unique []objectCollector, conflicts []string, search stri
 // unmarshalled into a list of generic yaml node. Each generic yaml node is walked, checking
 // if there is a corresponding node in hNode, when there isn't one, a new hNode is created
 // and populated with the yaml node's content. Finally, the new hNode is added to its parent
-func Union2(hNode *node.Node, poller *conf.Poller) {
-	marshal, err := yaml.Marshal(poller)
+func Union2(hNode *node.Node, poller *conf.Poller) error {
+	marshal2, err := yaml.Marshal(poller)
 	if err != nil {
-		return
+		return fmt.Errorf("failed to marshal poller: %w", err)
 	}
-	root := yaml.Node{}
-	err = yaml.Unmarshal(marshal, &root)
+	file, err := parser.ParseBytes(marshal2, 0)
 	if err != nil {
-		return
+		return fmt.Errorf("failed to parse poller: %w", err)
 	}
-	rootContent := root.Content[0]
-	if rootContent.Kind == yaml.MappingNode {
-		for index, yNode := range rootContent.Content {
-			// since rootContent is a mapping node every other yNode is a key
-			if index%2 == 0 && yNode.Tag == "!!str" {
-				// If the harvest node is missing this key, add it the harvest node
-				if !hNode.HasChildS(yNode.Value) {
-					// create a new harvest node to contain the missing content
-					newNode := node.NewS(yNode.Value)
-					// this is the value that goes along with the key from yNode
-					valNode := rootContent.Content[index+1]
-					switch valNode.Tag {
-					case "!!str", "!!bool":
-						newNode.Content = []byte(valNode.Value)
-					case "!!seq":
-						// the poller node that is missing is a sequence so add all the children of the sequence
-						for _, seqNode := range valNode.Content {
-							switch seqNode.Tag {
-							case "!!str":
-								newNode.NewChildS(seqNode.Value, seqNode.Value)
-							case "!!map":
-								for ci := 0; ci < len(seqNode.Content); ci += 2 {
-									newNode.NewChildS(seqNode.Content[ci].Value, seqNode.Content[ci+1].Value)
-								}
+
+	body := file.Docs[0].Body
+
+	if body.Type() == ast.MappingType {
+		mn := body.(*ast.MappingNode)
+		for _, mvn := range mn.Values {
+			if mvn.Key.Type() == ast.StringType {
+				// check if the key exists in the hNode
+				if hNode.HasChildS(mvn.Key.String()) {
+					// if it does, skip it
+					continue
+				}
+				// if it doesn't, create a new node with the key and value
+				newNode := node.NewS(mvn.Key.String())
+
+				switch mvn.Value.Type() { //nolint:exhaustive
+				case ast.StringType, ast.BoolType:
+					newNode.Content = []byte(mvn.Value.String())
+				case ast.SequenceType:
+					// the poller node that is missing is a sequence so add all the children of the sequence
+					for _, seqNode := range mvn.Value.(*ast.SequenceNode).Values {
+						switch seqNode.Type() { //nolint:exhaustive
+						case ast.StringType:
+							newNode.NewChildS(seqNode.String(), seqNode.String())
+						case ast.MappingType:
+							for _, v := range seqNode.(*ast.MappingNode).Values {
+								newNode.NewChildS(v.Key.String(), v.Value.String())
 							}
-						}
-					case "!!map":
-						// the poller node that is missing is a map, add all the children of the map
-						for ci := 0; ci < len(valNode.Content); ci += 2 {
-							newNode.NewChildS(valNode.Content[ci].Value, valNode.Content[ci+1].Value)
+						default:
+							return fmt.Errorf("unknown sequence type: %s", seqNode.Type().String())
 						}
 					}
-					hNode.AddChild(newNode)
+				case ast.MappingType:
+					// the poller node that is missing is a map, add all the children of the map
+					for _, v := range mvn.Value.(*ast.MappingNode).Values {
+						newNode.NewChildS(v.Key.String(), v.Value.String())
+					}
+				default:
+					return fmt.Errorf("unknown mapping type: %s", mvn.Value.Type().String())
 				}
+				hNode.AddChild(newNode)
 			}
 		}
 	}
+
+	return nil
 }
 
 func (p *Poller) newCollector(class string, object string, template *node.Node) (collector.Collector, error) {

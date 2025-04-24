@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"github.com/goccy/go-yaml/ast"
+	"github.com/goccy/go-yaml/parser"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/aggregator"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/labelagent"
@@ -13,7 +15,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	y3 "gopkg.in/yaml.v3"
 	"os"
 	"regexp"
 	"strings"
@@ -73,21 +74,24 @@ func ReadTemplate(path string) (Model, error) {
 
 func unmarshalModel(data []byte) (Model, error) {
 	tm := Model{}
-	root := &y3.Node{}
-	err := y3.Unmarshal(data, root)
+
+	astFile, err := parser.ParseBytes(data, 0)
 	if err != nil {
-		return tm, fmt.Errorf("failed to unmarshal err: %w", err)
+		return tm, fmt.Errorf("failed to parse template err=%w", err)
 	}
-	if len(root.Content) == 0 {
+	// treat an empty file as an error
+	if len(astFile.Docs) == 0 {
 		return tm, errs.New(errs.ErrConfig, "template file is empty or does not exist")
 	}
-	contentNode := root.Content[0]
+
+	contentNode := astFile.Docs[0].Body
+
 	ignoreNode := searchNode(contentNode, "ignore")
-	if ignoreNode != nil && ignoreNode.Value == "true" {
-		tm.Ignore = ignoreNode.Value
+	if ignoreNode != nil && ignoreNode.String() == "true" {
+		tm.Ignore = ignoreNode.String()
 		nameNode := searchNode(contentNode, "name")
 		if nameNode != nil {
-			tm.Name = nameNode.Value
+			tm.Name = nameNode.String()
 		}
 		return tm, nil
 	}
@@ -109,7 +113,7 @@ func unmarshalModel(data []byte) (Model, error) {
 	return tm, nil
 }
 
-func addOverride(tm *Model, n *y3.Node) {
+func addOverride(tm *Model, n ast.Node) {
 	if n == nil {
 		return
 	}
@@ -117,12 +121,16 @@ func addOverride(tm *Model, n *y3.Node) {
 	if tm.Override == nil {
 		tm.Override = make(map[string]string)
 	}
-
-	if n.Tag == "!!seq" {
-		for _, child := range n.Content {
-			if child.Tag == "!!map" && len(child.Content) >= 2 {
-				key := child.Content[0].Value
-				val := child.Content[1].Value
+	sn, ok := n.(*ast.SequenceNode)
+	if ok {
+		for _, child := range sn.Values {
+			mn, ok := child.(*ast.MappingNode)
+			if ok {
+				if len(mn.Values) == 0 {
+					continue
+				}
+				key := mn.Values[0].Key.String()
+				val := mn.Values[0].Value.String()
 				tm.Override[key] = val
 			}
 		}
@@ -145,18 +153,18 @@ func readPlugins(path string, model *Model) error {
 	return nil
 }
 
-func readNameQueryObject(tm *Model, root *y3.Node) error {
+func readNameQueryObject(tm *Model, root ast.Node) error {
 	nameNode := searchNode(root, "name")
 	if nameNode != nil {
-		tm.Name = nameNode.Value
+		tm.Name = nameNode.String()
 	}
 	queryNode := searchNode(root, "query")
 	if queryNode != nil {
-		tm.Query = queryNode.Value
+		tm.Query = queryNode.String()
 	}
 	objectNode := searchNode(root, "object")
 	if objectNode != nil {
-		tm.Object = objectNode.Value
+		tm.Object = objectNode.String()
 	}
 	if tm.Name == "" {
 		return errors.New("template has no name")
@@ -171,83 +179,103 @@ func readNameQueryObject(tm *Model, root *y3.Node) error {
 	return nil
 }
 
-func addEndpoints(tm *Model, n *y3.Node, parents []string) {
+func addEndpoints(tm *Model, n ast.Node, parents []string) {
 	if n == nil {
 		return
 	}
-	for _, m := range n.Content {
-		query := m.Content[1].Value
-		metrics := make([]Metric, 0)
-		countersNode := m.Content[3]
-		flattenCounters(countersNode, &metrics, parents)
-		ep := &Endpoint{Query: query, Metrics: metrics}
-		tm.Endpoints = append(tm.Endpoints, ep)
+	sn, ok := n.(*ast.SequenceNode)
+	if ok {
+		for _, ikn := range sn.Values {
+			mn, ok := ikn.(*ast.MappingNode)
+			if ok {
+				query := mn.Values[0].Key.String()
+				metrics := make([]Metric, 0)
+				countersNode := searchNode(mn, "counters")
+				flattenCounters(countersNode, &metrics, parents)
+				ep := &Endpoint{Query: query, Metrics: metrics}
+				tm.Endpoints = append(tm.Endpoints, ep)
+			}
+		}
 	}
 }
 
-func searchNode(r *y3.Node, key string) *y3.Node {
-	for i, n := range r.Content {
-		if n.Tag == "!!str" && n.Value == key {
-			return r.Content[i+1]
+func searchNode(r ast.Node, key string) ast.Node {
+	if mn, ok := r.(*ast.MappingNode); ok {
+		for _, child := range mn.Values {
+			if child.Key.String() == key {
+				return child.Value
+			}
 		}
 	}
+
 	return nil
 }
 
-func addExportOptions(tm *Model, n *y3.Node) {
+func addExportOptions(tm *Model, n ast.Node) {
 	if n == nil {
 		return
 	}
 	instanceKeys := searchNode(n, "instance_keys")
 	if instanceKeys != nil {
-		for _, ikn := range instanceKeys.Content {
-			tm.ExportOptions.InstanceKeys = append(tm.ExportOptions.InstanceKeys, ikn.Value)
+		sn, ok := instanceKeys.(*ast.SequenceNode)
+		if ok {
+			for _, ikn := range sn.Values {
+				tm.ExportOptions.InstanceKeys = append(tm.ExportOptions.InstanceKeys, ikn.String())
+			}
 		}
 	}
 	instanceLabels := searchNode(n, "instance_labels")
 	if instanceLabels != nil {
-		for _, il := range instanceLabels.Content {
-			tm.ExportOptions.InstanceLabels = append(tm.ExportOptions.InstanceLabels, il.Value)
+		sn, ok := instanceKeys.(*ast.SequenceNode)
+		if ok {
+			for _, ikn := range sn.Values {
+				tm.ExportOptions.InstanceLabels = append(tm.ExportOptions.InstanceLabels, ikn.String())
+			}
 		}
 	}
 }
 
-func flattenCounters(n *y3.Node, metrics *[]Metric, parents []string) {
-	switch n.Tag {
-	case "!!map":
-		key := n.Content[0].Value
+func flattenCounters(n ast.Node, metrics *[]Metric, parents []string) {
+	switch n.Type() { //nolint:exhaustive
+	case ast.MappingType:
+		mn := n.(*ast.MappingNode)
+		key := mn.Values[0].Key.String()
 		if key == "hidden_fields" || key == "filter" {
 			return
 		}
 		parents = append(parents, key)
-		flattenCounters(n.Content[1], metrics, parents)
-	case "!!seq":
-		for _, c := range n.Content {
+		flattenCounters(mn.Values[0].Value, metrics, parents)
+	case ast.SequenceType:
+		sn := n.(*ast.SequenceNode)
+		for _, c := range sn.Values {
 			flattenCounters(c, metrics, parents)
 		}
-	case "!!str":
+	case ast.StringType:
 		*metrics = append(*metrics, newMetric(n, parents))
+	default:
+		// ignore
 	}
 }
 
 var sigilReplacer = strings.NewReplacer("^", "", "- ", "")
 
-func newMetric(n *y3.Node, parents []string) Metric {
+func newMetric(n ast.Node, parents []string) Metric {
 	// separate left and right and remove all sigils
-	text := n.Value
+	text := n.String()
 	noSigils := sigilReplacer.Replace(text)
 	before, after, found := strings.Cut(noSigils, "=>")
+	column := n.GetToken().Position.Column
 	m := Metric{
 		line:     text,
 		left:     strings.TrimSpace(noSigils),
 		hasSigil: strings.Contains(text, "^"),
-		column:   n.Column,
+		column:   column,
 		parents:  parents,
 	}
 	if found {
 		m.left = strings.TrimSpace(before)
 		m.right = trimComment(after)
-		m.renameColumn = strings.Index(text, "=>") + n.Column
+		m.renameColumn = strings.Index(text, "=>") + column
 	}
 	return m
 }

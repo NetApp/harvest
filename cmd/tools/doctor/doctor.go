@@ -3,6 +3,10 @@ package doctor
 import (
 	"errors"
 	"fmt"
+	"github.com/goccy/go-yaml"
+	"github.com/goccy/go-yaml/ast"
+	"github.com/goccy/go-yaml/parser"
+	"github.com/goccy/go-yaml/token"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/pkg/color"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -10,7 +14,6 @@ import (
 	harvestyaml "github.com/netapp/harvest/v2/pkg/tree/yaml"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/spf13/cobra"
-	"gopkg.in/yaml.v3"
 	"io/fs"
 	"os"
 	"path"
@@ -130,10 +133,11 @@ func doDoctor(aPath string) string {
 
 	// Extract Poller_files field from parentRoot
 	var pollerFiles []string
-	for i, node := range parentRoot.Content[0].Content {
-		if node.Value == "Poller_files" {
-			for _, childNode := range parentRoot.Content[0].Content[i+1].Content {
-				pollerFiles = append(pollerFiles, childNode.Value)
+	for _, kv := range parentRoot.(*ast.MappingNode).Values {
+		if kv.Key.String() == "Poller_files" {
+			seq := kv.Value.(*ast.SequenceNode)
+			for _, value := range seq.Values {
+				pollerFiles = append(pollerFiles, value.String())
 			}
 			break
 		}
@@ -171,40 +175,48 @@ func doDoctor(aPath string) string {
 	return out
 }
 
-func mergeYamlNodes(parent, child *yaml.Node) {
+func mergeYamlNodes(parent ast.Node, child ast.Node) {
 	// Find the Pollers section in the parent node
-	var parentPollers *yaml.Node
-	for i, node := range parent.Content[0].Content {
-		if node.Value == "Pollers" {
-			parentPollers = parent.Content[0].Content[i+1]
+	var parentPollers ast.Node
+
+	pmn := parent.(*ast.MappingNode)
+	cmn := child.(*ast.MappingNode)
+
+	for _, kv := range pmn.Values {
+		if kv.Key.String() == "Pollers" {
+			parentPollers = kv.Value
 			break
 		}
 	}
 
-	// If the parent node doesn't have a Pollers section, create one
+	// If the parent node doesn't have a Pollers section, create one in the parent node
 	if parentPollers == nil {
-		parent.Content[0].Content = append(parent.Content[0].Content, &yaml.Node{
-			Kind:  yaml.ScalarNode,
-			Value: "Pollers",
-		}, &yaml.Node{Kind: yaml.MappingNode})
-		parentPollers = parent.Content[0].Content[len(parent.Content[0].Content)-1]
+		pos := &token.Position{Column: 1, IndentLevel: 0, IndentNum: 0}
+		newPollersNode := ast.Mapping(token.New("", "", pos), false)
+		pmn.Values = append(pmn.Values, ast.MappingValue(
+			nil,
+			ast.String(token.New("Pollers", "", pos)),
+			newPollersNode,
+		))
+		parentPollers = newPollersNode
 	}
 
 	// Create a map of the parent node's pollers
 	parentPollerNames := make(map[string]bool)
-	for _, node := range parentPollers.Content {
-		if node.Kind == yaml.ScalarNode {
-			parentPollerNames[node.Value] = true
-		}
+	for _, kv := range parentPollers.(*ast.MappingNode).Values {
+		parentPollerNames[kv.Key.String()] = true
 	}
 
-	// Find the Pollers section in the child node
-	for i, node := range child.Content[0].Content {
-		if node.Value == "Pollers" {
-			// Append any child pollers that aren't already in the parent node
-			for _, childPoller := range child.Content[0].Content[i+1].Content {
-				if _, exists := parentPollerNames[childPoller.Value]; !exists {
-					parentPollers.Content = append(parentPollers.Content, childPoller)
+	// Find the Pollers section in the child node and append any child pollers that aren't already in the parent node
+	for _, kv := range cmn.Values {
+		if kv.Key.String() == "Pollers" {
+			childPollers := kv.Value
+			if childPollers == nil {
+				continue
+			}
+			for _, kv := range childPollers.(*ast.MappingNode).Values {
+				if _, exists := parentPollerNames[kv.Key.String()]; !exists {
+					parentPollers.(*ast.MappingNode).Values = append(parentPollers.(*ast.MappingNode).Values, kv)
 				}
 			}
 			break
@@ -588,17 +600,17 @@ func checkPollersExportToUniquePromPorts(config conf.HarvestConfig) validation {
 	return valid
 }
 
-func printRedactedConfig(aPath string, contents []byte) (*yaml.Node, error) {
-	root := &yaml.Node{}
-	err := yaml.Unmarshal(contents, root)
+func printRedactedConfig(aPath string, contents []byte) (ast.Node, error) {
+	// do not read comments since they may contain sensitive information
+	astFile, err := parser.ParseBytes(contents, 0)
 	if err != nil {
 		fmt.Printf("error reading config file=[%s] %+v\n", aPath, err)
 		return nil, err
 	}
-	var nodes []*yaml.Node
-	collectNodes(root, &nodes)
-	sanitize(nodes)
-	removeComments(root)
+
+	root := astFile.Docs[0].Body
+
+	sanitize(root)
 	return root, nil
 }
 
@@ -665,40 +677,54 @@ func checkPollerPromPorts(config conf.HarvestConfig) validation {
 	return valid
 }
 
-func sanitize(nodes []*yaml.Node) {
-	// Update this list when there are additional tokens to sanitize
-	sanitizeWords := []string{"username", "password", "grafana_api_token", "token",
-		"host", "addr"}
-	for i, node := range nodes {
-		if node == nil {
-			continue
-		}
-		if node.Kind == yaml.ScalarNode && node.ShortTag() == "!!str" {
-			value := node.Value
-			for _, word := range sanitizeWords {
-				if value == word {
-					if nodes[i-1].Value == "auth_style" {
-						continue
-					}
-					nodes[i+1].SetString("-REDACTED-")
-				}
+// Update this map when there are additional tokens to sanitize
+var sanitizeWords = map[string]bool{
+	"username":          true,
+	"password":          true,
+	"grafana_api_token": true,
+	"token":             true,
+	"host":              true,
+	"addr":              true,
+}
+
+func collectMapNodes(node ast.Node, nodes *[]*ast.MappingValueNode) {
+	if node == nil {
+		return
+	}
+
+	if node.Type() == ast.MappingType {
+		mappingNode := node.(*ast.MappingNode)
+		for _, kv := range mappingNode.Values {
+			if kv.Key.Type() == ast.StringType {
+				*nodes = append(*nodes, kv)
 			}
+			collectMapNodes(kv.Value, nodes)
 		}
-		removeComments(node)
+	} else if node.Type() == ast.SequenceType {
+		sequenceNode := node.(*ast.SequenceNode)
+		for _, value := range sequenceNode.Values {
+			collectMapNodes(value, nodes)
+		}
 	}
 }
 
-func removeComments(node *yaml.Node) {
-	// Strip all comments since they may contain sensitive information
-	node.HeadComment = ""
-	node.LineComment = ""
-	node.FootComment = ""
-}
+func sanitize(root ast.Node) {
 
-func collectNodes(root *yaml.Node, nodes *[]*yaml.Node) {
-	for _, node := range root.Content {
-		*nodes = append(*nodes, node)
-		collectNodes(node, nodes)
+	var nodes []*ast.MappingValueNode
+	collectMapNodes(root, &nodes)
+
+	for _, n := range nodes {
+		node := *n
+		if node.Key.Type() == ast.StringType {
+			keyName := node.Key.String()
+			_, ok := sanitizeWords[keyName]
+			if ok {
+				if node.Value.Type() == ast.StringType {
+					// sanitize the value
+					node.Value.(*ast.StringNode).Value = "-REDACTED-"
+				}
+			}
+		}
 	}
 }
 
