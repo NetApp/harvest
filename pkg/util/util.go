@@ -484,17 +484,12 @@ func SafeConvertToInt32(in int) (int32, error) {
 	return int32(in), nil // #nosec G115
 }
 
-func Format(query string) string {
+func Format(query string, path string) string {
 	replacedQuery := strings.ReplaceAll(query, "$TopResources", TopresourceConstant)
 	replacedQuery = strings.ReplaceAll(replacedQuery, "$__range", RangeConstant)
 	replacedQuery = strings.ReplaceAll(replacedQuery, "$__interval", IntervalConstant)
 	replacedQuery = strings.ReplaceAll(replacedQuery, "${Interval}", IntervalDurationConstant)
 
-	path, err := exec.LookPath("promtool")
-	if err != nil {
-		fmt.Printf("ERR failed to find promtool")
-		return query
-	}
 	command := exec.Command(path, "--experimental", "promql", "format", replacedQuery)
 	output, err := command.CombinedOutput()
 	updatedQuery := strings.TrimSuffix(string(output), "\n")
