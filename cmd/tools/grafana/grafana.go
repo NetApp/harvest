@@ -12,7 +12,6 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/requests"
-	"github.com/netapp/harvest/v2/pkg/util"
 	goversion "github.com/netapp/harvest/v2/third_party/go-version"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"github.com/netapp/harvest/v2/third_party/tidwall/sjson"
@@ -1103,7 +1102,7 @@ func checkToken(opts *options, ignoreConfig bool, tries int) error {
 			}
 			conf.Config.Tools.GrafanaAPIToken = opts.token
 			fmt.Printf("saving config file [%s]\n", configPath)
-			if err := util.SaveConfig(configPath, opts.token); err != nil {
+			if err := conf.SaveConfig(configPath, opts.token); err != nil {
 				return err
 			}
 		}

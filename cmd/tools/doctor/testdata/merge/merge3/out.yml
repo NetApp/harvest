@@ -1,19 +1,20 @@
 Exporters:
-    prometheus1:
-        exporter: Prometheus
-        port_range: 12990-14000
+  prometheus1:
+    exporter: Prometheus
+    port_range: 12990-14000
 Defaults:
-    collectors:
-        - Zapi
-        - ZapiPerf
-        - Ems
-    use_insecure_tls: true
-    prefer_zapi: true
+  collectors:
+    - Zapi
+    - ZapiPerf
+    - Ems
+  use_insecure_tls: true
+  prefer_zapi: true
+
 Pollers:
-    sar:
-        datacenter: dc1
-        addr: -REDACTED-
-        username: -REDACTED-
-        password: -REDACTED-
-        exporters:
-            - prometheus1
+  sar:
+    datacenter: dc1
+    addr: -REDACTED-
+    username: -REDACTED-
+    password: -REDACTED-
+    exporters:
+      - prometheus1

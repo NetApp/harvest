@@ -11,7 +11,6 @@ import (
 	"github.com/netapp/harvest/v2/third_party/go-version"
 	"github.com/shirou/gopsutil/v4/process"
 	"golang.org/x/sys/unix"
-	"gopkg.in/yaml.v3"
 	"log/slog"
 	"maps"
 	"math"
@@ -181,63 +180,6 @@ func CheckCert(certPath string, name string, configPath string, logger *slog.Log
 		)
 		os.Exit(1)
 	}
-}
-
-// SaveConfig adds or updates the Grafana token in the harvest.yml config
-// and saves it to fp. The Yaml marshaller is used so comments are preserved
-func SaveConfig(fp string, token string) error {
-	contents, err := os.ReadFile(fp)
-	if err != nil {
-		return err
-	}
-	root := &yaml.Node{}
-	err = yaml.Unmarshal(contents, root)
-	if err != nil {
-		return err
-	}
-
-	// Three cases to consider:
-	//	1. Tools are missing
-	//  2. Tools are present but empty (nil)
-	//  3. Tools are present - overwrite value
-	tokenSet := false
-	if len(root.Content) > 0 {
-		nodes := root.Content[0].Content
-		for i, n := range nodes {
-			if n.Tag == "!!map" && len(n.Content) > 1 && n.Content[0].Value == "grafana_api_token" {
-				// Case 3
-				n.Content[1].SetString(token)
-				tokenSet = true
-				break
-			}
-			if n.Value == "Tools" {
-				if i+1 < len(nodes) && nodes[i+1].Tag == "!!null" {
-					// Case 2
-					n2 := yaml.Node{}
-					_ = n2.Encode(map[string]string{"grafana_api_token": token})
-					nodes[i+1] = &n2
-					tokenSet = true
-					break
-				}
-			}
-		}
-		if !tokenSet {
-			// Case 1
-			tools := yaml.Node{}
-			tools.SetString("Tools")
-			nodes = append(nodes, &tools)
-
-			nToken := yaml.Node{}
-			_ = nToken.Encode(map[string]string{"grafana_api_token": token})
-			nodes = append(nodes, &nToken)
-			root.Content[0].Content = nodes
-		}
-	}
-	marshal, err := yaml.Marshal(root)
-	if err != nil {
-		return err
-	}
-	return os.WriteFile(fp, marshal, 0o0600)
 }
 
 type Status string

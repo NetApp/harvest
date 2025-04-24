@@ -70,7 +70,10 @@ func TestUnion2(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	Union2(n, p)
+	err = Union2(n, p)
+	if err != nil {
+		panic(err)
+	}
 	labels := n.GetChildS("labels")
 	if labels == nil {
 		t.Fatal("got nil, want labels")
@@ -82,15 +85,16 @@ func TestUnion2(t *testing.T) {
 	wants := []label{
 		{key: "org", val: "abc"},
 		{key: "site", val: "RTP"},
-		{key: "floor", val: "3"},
+		{key: "floor", val: `"3"`},
 	}
 	for i, c := range labels.Children {
 		want := wants[i]
 		if want.key != c.GetNameS() {
 			t.Errorf("got key=%s, want=%s", c.GetNameS(), want.key)
 		}
-		if want.val != c.GetContentS() {
-			t.Errorf("got key=%s, want=%s", c.GetContentS(), want.val)
+		got := c.GetContentS()
+		if want.val != got {
+			t.Errorf("got key=%s, want=%s", got, want.val)
 		}
 	}
 }
