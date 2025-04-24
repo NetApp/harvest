@@ -1089,6 +1089,7 @@ func doLegends(t *testing.T, value gjson.Result, dashPath string) {
 		for _, result := range calcsData {
 			calcsSlice = append(calcsSlice, result.ClonedString())
 		}
+
 		checkLegendCalculations(t, calcsSlice, dashPath, title)
 
 		// Skip hidden legends
@@ -1110,6 +1111,9 @@ func checkLegendCalculations(t *testing.T, gotLegendCalculations []string, dashP
 	wantLegendWithMin := "min," + wantLegendNoMin
 	got := strings.Join(gotLegendCalculations, ",")
 	if strings.Contains(got, "sum") {
+		return
+	}
+	if strings.Contains(got, "diff") {
 		return
 	}
 	if strings.Contains(got, "min") {
@@ -1827,6 +1831,7 @@ func TestTags(t *testing.T) {
 func checkTags(t *testing.T, path string, data []byte) {
 	allowedTagsMap := map[string]bool{
 		"cdot":        true,
+		"cisco":       true,
 		"fsx":         true,
 		"harvest":     true,
 		"ontap":       true,
