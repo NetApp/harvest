@@ -10,7 +10,9 @@ import (
 	"strings"
 )
 
-var unitRegex = regexp.MustCompile(`^([\d.]+)(us|%)$`)
+var unitRegex = regexp.MustCompile(`^([\d.]+)(us|ms|%)$`)
+var aggRegex = regexp.MustCompile(`Number of Constituents:\s*\d+\s+\(([^)]+)\)`)
+var dividedRegex = regexp.MustCompile(`^[-\s]+$`)
 
 type CounterProperty struct {
 	Counter     string
@@ -20,19 +22,6 @@ type CounterProperty struct {
 	Type        string
 	Deprecated  string
 	ReplacedBy  string
-}
-
-func filterNonEmpty(input string) []string {
-	var results []string
-
-	for line := range strings.Lines(input) {
-		trimmed := strings.TrimSpace(line)
-		if trimmed != "" {
-			results = append(results, trimmed)
-		}
-	}
-
-	return results
 }
 
 func (s *StatPerf) parseCounters(input string) (map[string]CounterProperty, error) {
@@ -144,62 +133,10 @@ func (s *StatPerf) parseInstances(input string) ([]InstanceInfo, error) {
 	return results, nil
 }
 
-type Row struct {
-	Instance string `json:"instance"`
-	Counter  string `json:"counter"`
-	Value    string `json:"value"`
-}
-
-func parseRows(input string, logger *slog.Logger) ([]Row, error) {
-	linesFiltered := filterNonEmpty(input)
-
-	// Find the header row by scanning for a line that splits into 4+ fields and contains "counter".
-	headerIndex := -1
-	for i, line := range linesFiltered {
-		fields := strings.Split(line, util.StatPerfSeparator)
-		if len(fields) >= 4 {
-			if strings.Contains(strings.ToLower(line), "counter") {
-				headerIndex = i
-				break
-			}
-		}
+func removeUnitRegex(s string, counter string) string {
+	if counter == "instance_name" || counter == "instance_uuid" {
+		return s
 	}
-
-	if headerIndex < 0 {
-		return nil, errors.New("no valid header row found")
-	}
-
-	// Ensure there is at least one additional header row following the header.
-	if len(linesFiltered) < headerIndex+2 {
-		return nil, errors.New("not enough header rows in data")
-	}
-
-	// Data rows start after headerIndex + 2.
-	dataStart := headerIndex + 2
-	if dataStart >= len(linesFiltered) {
-		return nil, errors.New("no data rows found")
-	}
-
-	estimatedRows := len(linesFiltered) - dataStart
-	rows := make([]Row, 0, estimatedRows)
-
-	for _, line := range linesFiltered[dataStart:] {
-		fields := strings.Split(line, util.StatPerfSeparator)
-		if len(fields) < 4 {
-			logger.Warn("skipping incomplete row", slog.String("row", line))
-			continue
-		}
-		row := Row{
-			Instance: strings.TrimSpace(fields[1]),
-			Counter:  strings.TrimSpace(fields[2]),
-			Value:    removeUnitRegex(strings.TrimSpace(fields[3])),
-		}
-		rows = append(rows, row)
-	}
-	return rows, nil
-}
-
-func removeUnitRegex(s string) string {
 	matches := unitRegex.FindStringSubmatch(s)
 	if len(matches) == 3 {
 		return matches[1]
@@ -207,54 +144,172 @@ func removeUnitRegex(s string) string {
 	return s
 }
 
-// GroupInstances The first counter encountered
-// in the first row of a group is captured. When that counter appears again,
-// it indicates a new instance.
-func groupInstances(rows []Row) ([]map[string]string, error) {
-	var results []map[string]string
-	currentGroup := make(map[string]string)
-	var firstCounterName string
-
-	for _, row := range rows {
-		lowerCounter := strings.ToLower(row.Counter)
-
-		if len(currentGroup) == 0 {
-			firstCounterName = lowerCounter
-		}
-
-		// If the first counter repeats, then finish the current group
-		// and start a new one.
-		if lowerCounter == firstCounterName && len(currentGroup) > 0 {
-			if _, exists := currentGroup[firstCounterName]; exists {
-				results = append(results, currentGroup)
-				currentGroup = make(map[string]string)
-				firstCounterName = lowerCounter
-			}
-		}
-
-		currentGroup[row.Counter] = row.Value
-	}
-	if len(currentGroup) > 0 {
-		results = append(results, currentGroup)
-	}
-	if len(results) == 0 {
-		return nil, errors.New("no valid groups found")
-	}
-	return results, nil
+type Row struct {
+	Instance    string `json:"instance"`
+	Counter     string `json:"counter"`
+	Value       string `json:"value"`
+	Aggregation string `json:"aggregation,omitempty"`
 }
 
-func (s *StatPerf) parseData(output string) (gjson.Result, error) {
-	rows, err := parseRows(output, s.Logger)
+// getIndent returns the count of leading space characters (and tabs treated as spaces) in a string.
+func getIndent(s string) int {
+	return len(s) - len(strings.TrimLeft(s, " \t"))
+}
+
+// filterNonEmpty splits input into lines and returns only nonblank ones.
+func filterNonEmpty(input string) []string {
+	var lines []string
+	for _, l := range strings.Split(input, "\n") {
+		if strings.TrimSpace(l) != "" {
+			lines = append(lines, l)
+		}
+	}
+	return lines
+}
+
+// getDividerWidth returns the number of '-' characters before the first space in the divider line.
+func getDividerWidth(line string) int {
+	trim := strings.TrimLeft(line, " ")
+	index := strings.Index(trim, " ")
+	if index == -1 {
+		return len(trim)
+	}
+	return index
+}
+
+// parseData processes an input string, extracts and groups rows (by instance),
+// and returns a gjson.Result.
+func (s *StatPerf) parseData(input string) (gjson.Result, error) {
+	groups, err := parseRows(input, s.Logger)
 	if err != nil {
 		return gjson.Result{}, err
 	}
-	groups, err := groupInstances(rows)
-	if err != nil {
-		return gjson.Result{}, err
-	}
+
+	// Marshal groups to indented JSON.
 	groupedJSON, err := json.MarshalIndent(groups, "", "  ")
 	if err != nil {
 		return gjson.Result{}, err
 	}
 	return gjson.ParseBytes(groupedJSON), nil
+}
+
+func parseRows(input string, logger *slog.Logger) ([]map[string]string, error) {
+	lines := filterNonEmpty(input)
+	var groups []map[string]string
+
+	var aggregation string
+	currentGroup := make(map[string]string)
+
+	inTable := false
+	var tableLines []string
+	dividerWidth := 0
+
+	flushTable := func() {
+		if len(tableLines) == 0 {
+			return
+		}
+		for i := 0; i < len(tableLines); i++ {
+			line := tableLines[i]
+			curRowLine := strings.TrimSpace(line)
+			if curRowLine == "" || strings.Contains(curRowLine, "entries were displayed") {
+				continue
+			}
+			tokens := strings.Fields(curRowLine)
+			if len(tokens) < 2 {
+				logger.Warn("skipping unexpected line", slog.String("row", curRowLine))
+				continue
+			}
+
+			counter := strings.Join(tokens[:len(tokens)-1], " ")
+			value := tokens[len(tokens)-1]
+
+			// Check for continuation lines.
+			for i+1 < len(tableLines) {
+				nextLineRaw := tableLines[i+1]
+				nextTokens := strings.Fields(nextLineRaw)
+				if len(nextTokens) != 1 {
+					break
+				}
+				indent := getIndent(nextLineRaw)
+				if dividerWidth > 0 && indent < dividerWidth {
+					counter += nextTokens[0]
+				} else {
+					value += nextTokens[0]
+				}
+				i++
+			}
+			currentGroup[strings.TrimSpace(counter)] = removeUnitRegex(strings.TrimSpace(value), counter)
+		}
+		// Save the aggregation and instance info for this group.
+		if aggregation != "" {
+			currentGroup["_aggregation"] = aggregation
+		}
+		groups = append(groups, currentGroup)
+		tableLines = []string{}
+		currentGroup = make(map[string]string)
+	}
+
+	// Process each line of the input.
+	for i := 0; i < len(lines); i++ {
+		trimLine := strings.TrimSpace(lines[i])
+		if trimLine == "" {
+			continue
+		}
+
+		// New Object: flush current tableLines.
+		if strings.HasPrefix(trimLine, "Object:") {
+			flushTable()
+			inTable = false
+			aggregation = ""
+			continue
+		}
+
+		// Skip lines with timing or scope.
+		if strings.HasPrefix(trimLine, "Start-time:") ||
+			strings.HasPrefix(trimLine, "End-time:") ||
+			strings.HasPrefix(trimLine, "Scope:") ||
+			strings.HasPrefix(trimLine, "Instance:") {
+			continue
+		}
+
+		// Capture aggregation information.
+		if strings.HasPrefix(trimLine, "Number of Constituents:") {
+			matches := aggRegex.FindStringSubmatch(trimLine)
+			if len(matches) >= 2 {
+				aggregation = matches[1]
+			} else {
+				aggregation = ""
+			}
+			continue
+		}
+
+		// Identify the beginning of a table block.
+		if strings.HasPrefix(trimLine, "Counter") && strings.Contains(trimLine, "Value") {
+			inTable = true
+			// Next nonempty line is assumed to be the divider.
+			if i+1 < len(lines) && dividedRegex.MatchString(strings.TrimSpace(lines[i+1])) {
+				dividerWidth = getDividerWidth(lines[i+1])
+				i++ // Skip divider line.
+			}
+			continue
+		}
+
+		// If inside a table block, accumulate the raw line.
+		if inTable {
+			// If new metadata (for example, "Object:") begins, flush the current table.
+			if strings.HasPrefix(trimLine, "Object:") {
+				flushTable()
+				inTable = false
+				i-- // reprocess current line as metadata.
+				continue
+			}
+			tableLines = append(tableLines, lines[i])
+		}
+	}
+	flushTable()
+
+	if len(groups) == 0 {
+		return nil, errors.New("no data found")
+	}
+	return groups, nil
 }

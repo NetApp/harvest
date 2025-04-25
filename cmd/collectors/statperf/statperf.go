@@ -1,6 +1,7 @@
 package statperf
 
 import (
+	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
 	"github.com/netapp/harvest/v2/cmd/collectors/statperf/plugins/flexcache"
@@ -157,6 +158,16 @@ func (s *StatPerf) loadParamInt(name string, defaultValue int) int {
 	return defaultValue
 }
 
+func getCounterInstanceBaseSet() string {
+	baseSetTemplate := `set -showseparator "%s" -showallfields true -rows 0 diagnostic -confirmations off;statistics settings modify -counter-display all;`
+	return fmt.Sprintf(baseSetTemplate, util.StatPerfSeparator)
+}
+
+func getDataBaseSet() string {
+	baseSetTemplate := `set -rows 0 diagnostic -showallfields false -confirmations off -units raw;statistics settings modify -counter-display all;`
+	return baseSetTemplate
+}
+
 func (s *StatPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 	var (
 		err     error
@@ -164,6 +175,7 @@ func (s *StatPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 	)
 
 	cliCommand, err := clirequestbuilder.New().
+		BaseSet(getCounterInstanceBaseSet()).
 		Query("statistics catalog counter show").
 		Object(s.Prop.Query).
 		Fields([]string{"counter", "base-counter", "properties", "type", "is-deprecated", "replaced-by"}).
@@ -370,6 +382,7 @@ func (s *StatPerf) PollData() (map[string]*matrix.Matrix, error) {
 		apiD, parseD time.Duration
 		metricCount  uint64
 		startTime    time.Time
+		numPartials  uint64
 		prevMat      *matrix.Matrix
 		curMat       *matrix.Matrix
 		records      []gjson.Result
@@ -416,7 +429,8 @@ func (s *StatPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		// Process the current batch of records
-		count, batchParseD := s.processPerfRecords(perfRecords, curMat, prevMat, float64(time.Now().UnixNano()/util.BILLION))
+		count, np, batchParseD := s.processPerfRecords(perfRecords, curMat, prevMat, float64(time.Now().UnixNano()/util.BILLION))
+		numPartials += np
 		metricCount += count
 		parseD += batchParseD
 		apiD -= batchParseD
@@ -432,11 +446,11 @@ func (s *StatPerf) PollData() (map[string]*matrix.Matrix, error) {
 		batchInstances := allInstances[i:end]
 		// Build CLI command with the current batch of instances.
 		cliCommand, err := clirequestbuilder.New().
+			BaseSet(getDataBaseSet()).
 			Query("statistics show -raw").
 			Object(s.Prop.Query).
 			Counters(s.sortedCounters).
 			Instances(batchInstances).
-			Fields([]string{"instance", "counter", "value"}).
 			Build()
 		if err != nil {
 			return nil, err
@@ -462,17 +476,18 @@ func (s *StatPerf) PollData() (map[string]*matrix.Matrix, error) {
 	_ = s.Metadata.LazySetValueUint64("instances", "data", uint64(len(curMat.GetInstances())))
 	_ = s.Metadata.LazySetValueUint64("bytesRx", "data", s.Client.Metadata.BytesRx)
 	_ = s.Metadata.LazySetValueUint64("numCalls", "data", s.Client.Metadata.NumCalls)
-	_ = s.Metadata.LazySetValueUint64("numPartials", "data", 0)
+	_ = s.Metadata.LazySetValueUint64("numPartials", "data", numPartials)
 	s.AddCollectCount(metricCount)
 
 	return s.cookCounters(curMat, prevMat)
 }
 
-func (s *StatPerf) processPerfRecords(records []gjson.Result, curMat *matrix.Matrix, prevMat *matrix.Matrix, ts float64) (uint64, time.Duration) {
+func (s *StatPerf) processPerfRecords(records []gjson.Result, curMat *matrix.Matrix, prevMat *matrix.Matrix, ts float64) (uint64, uint64, time.Duration) {
 	var (
 		count        uint64
 		parseD       time.Duration
 		instanceKeys []string
+		numPartials  uint64
 		err          error
 	)
 	instanceKeys = s.Prop.InstanceKeys
@@ -480,13 +495,13 @@ func (s *StatPerf) processPerfRecords(records []gjson.Result, curMat *matrix.Mat
 	firstRecord := records[0]
 	fr := firstRecord.ClonedString()
 	if fr == "" {
-		return 0, 0
+		return 0, 0, 0
 	}
 
 	perfRecords, err := s.parseData(fr)
 	if err != nil {
 		s.Logger.Error("failed to parse data", slogx.Err(err))
-		return 0, 0
+		return 0, 0, 0
 	}
 
 	perfRecords.ForEach(func(_, data gjson.Result) bool {
@@ -520,10 +535,22 @@ func (s *StatPerf) processPerfRecords(records []gjson.Result, curMat *matrix.Mat
 			}
 		}
 
+		if data.Get("_aggregation").ClonedString() == "partial_aggregation" {
+			instance.SetPartial(true)
+			instance.SetExportable(false)
+			numPartials++
+		} else {
+			instance.SetPartial(false)
+			instance.SetExportable(true)
+		}
+
 		data.ForEach(func(k, v gjson.Result) bool {
 
 			metricName := k.ClonedString()
 			metricValue := v.ClonedString()
+			if metricName == "_aggregation" {
+				return true
+			}
 			if display, ok := s.Prop.InstanceLabels[metricName]; ok {
 				instance.SetLabel(display, normalizeCounterValue(metricValue))
 				count++
@@ -564,7 +591,7 @@ func (s *StatPerf) processPerfRecords(records []gjson.Result, curMat *matrix.Mat
 		return true
 	})
 	parseD = time.Since(startTime)
-	return count, parseD
+	return count, numPartials, parseD
 }
 
 func (s *StatPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (map[string]*matrix.Matrix, error) {
@@ -796,6 +823,7 @@ func (s *StatPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 	}
 
 	cliCommand, err := clirequestbuilder.New().
+		BaseSet(getCounterInstanceBaseSet()).
 		Query("statistics catalog instance show").
 		Object(s.Prop.Query).
 		Fields([]string{"instance", "instanceUUID"}).

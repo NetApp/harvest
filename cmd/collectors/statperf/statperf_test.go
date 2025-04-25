@@ -21,7 +21,7 @@ const (
 	pollerName = "test"
 )
 
-func TestRestPerf_pollData(t *testing.T) {
+func TestStatPerf_pollData(t *testing.T) {
 	conf.TestLoadHarvestConfig("testdata/config.yml")
 	tests := []struct {
 		name          string
@@ -71,6 +71,18 @@ func TestRestPerf_pollData(t *testing.T) {
 			numMetrics:    108,
 			sum:           30000000,
 			record:        true,
+		},
+		{
+			name:          "blocks_requested_from_client",
+			counter:       "blocks_requested_from_client",
+			pollCounters:  "testdata/counters_2.txt",
+			pollInstance:  "testdata/instances_2.txt",
+			pollDataPath1: "testdata/data.txt",
+			pollDataPath2: "testdata/data-2-partial.txt",
+			numInstances:  0,
+			numMetrics:    108,
+			sum:           30000000,
+			record:        false,
 		},
 	}
 	for _, tt := range tests {
@@ -125,8 +137,15 @@ func TestRestPerf_pollData(t *testing.T) {
 			}
 
 			m := got["flexcache_per_volume"]
-			if len(m.GetInstances()) != tt.numInstances {
-				t.Errorf("pollData() numInstances got=%v, want=%v", len(m.GetInstances()), tt.numInstances)
+			var exportInstances int
+			// collect exported instances
+			for _, instance := range m.GetInstances() {
+				if instance.IsExportable() {
+					exportInstances++
+				}
+			}
+			if exportInstances != tt.numInstances {
+				t.Errorf("pollData() numInstances got=%v, want=%v", exportInstances, tt.numInstances)
 			}
 
 			if metricCount != tt.numMetrics {
@@ -223,7 +242,7 @@ objects:
 func processAndCookCounters(s *StatPerf, pollData []gjson.Result, prevMat *matrix.Matrix, ts float64) (map[string]*matrix.Matrix, uint64, error) {
 	curMat := prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
 	curMat.Reset()
-	metricCount, _ := s.processPerfRecords(pollData, curMat, prevMat, ts)
+	metricCount, _, _ := s.processPerfRecords(pollData, curMat, prevMat, ts)
 	got, err := s.cookCounters(curMat, prevMat)
 	return got, metricCount, err
 }

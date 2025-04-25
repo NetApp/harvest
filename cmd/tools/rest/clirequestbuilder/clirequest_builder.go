@@ -3,8 +3,6 @@ package clirequestbuilder
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"strings"
 )
 
@@ -19,10 +17,12 @@ type CLIRequestBuilder struct {
 }
 
 func New() *CLIRequestBuilder {
-	baseSetTemplate := `set -showseparator "%s" -showallfields true -rows 0 diagnostic -confirmations off;statistics settings modify -counter-display all;`
-	return &CLIRequestBuilder{
-		baseSet: fmt.Sprintf(baseSetTemplate, util.StatPerfSeparator),
-	}
+	return &CLIRequestBuilder{}
+}
+
+func (c *CLIRequestBuilder) BaseSet(baseSet string) *CLIRequestBuilder {
+	c.baseSet = baseSet
+	return c
 }
 
 func (c *CLIRequestBuilder) APIPath(apiPath string) *CLIRequestBuilder {
