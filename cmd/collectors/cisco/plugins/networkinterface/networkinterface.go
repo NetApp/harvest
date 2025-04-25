@@ -193,7 +193,7 @@ func (i *Interface) setMetricValue(metric string, instance *matrix.Instance, val
 		i.SLogger.Error(
 			"Unable to set value on metric",
 			slogx.Err(err),
-			slog.String("metric", "sensor_temp"),
+			slog.String("metric", metric),
 		)
 	}
 }
