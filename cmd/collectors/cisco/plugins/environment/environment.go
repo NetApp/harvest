@@ -25,8 +25,9 @@ var metrics = []string{
 
 type Environment struct {
 	*plugin.AbstractPlugin
-	client *rest.Client
-	matrix *matrix.Matrix
+	client         *rest.Client
+	matrix         *matrix.Matrix
+	templateObject string // object name from the template
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -50,8 +51,9 @@ func (e *Environment) Init(_ conf.Remote) error {
 	}
 
 	e.client = client
+	e.templateObject = e.ParentParams.GetChildContentS("object")
 
-	e.matrix = matrix.New(e.Parent+".Environment", "cisco_environment", "cisco_environment")
+	e.matrix = matrix.New(e.Parent+".Environment", e.templateObject, e.templateObject)
 
 	return nil
 }

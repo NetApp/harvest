@@ -1,6 +1,6 @@
 name:               Interface
 query:              "show interface"
-object:             cisco_environment
+object:             cisco_interface
 
 plugins:
   - Interface

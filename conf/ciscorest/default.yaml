@@ -7,3 +7,4 @@ schedule:
 objects:
   Environment:         environment.yaml
   Interface:           interface.yaml
+  Optic:               optic.yaml
