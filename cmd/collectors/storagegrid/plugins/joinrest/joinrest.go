@@ -1,6 +1,7 @@
 package joinrest
 
 import (
+	"github.com/goccy/go-yaml"
 	"github.com/netapp/harvest/v2/cmd/collectors/storagegrid/rest"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -8,9 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
-	"gopkg.in/yaml.v3"
 	"log/slog"
-	"strings"
 )
 
 type JoinRest struct {
@@ -55,9 +54,8 @@ func (t *JoinRest) Init(remote conf.Remote) error {
 
 	// Read hidden plugin
 	t.translateMap = make(map[string]join)
-	decoder := yaml.NewDecoder(strings.NewReader(joinTemplate))
 	var tm translatePlugin
-	err = decoder.Decode(&tm)
+	err = yaml.Unmarshal([]byte(joinTemplate), &tm)
 	if err != nil {
 		t.SLogger.Error("Failed to decode joinTemplate", slogx.Err(err))
 		return err

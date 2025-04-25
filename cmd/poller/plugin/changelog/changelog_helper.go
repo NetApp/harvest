@@ -1,9 +1,9 @@
 package changelog
 
 import (
+	"github.com/goccy/go-yaml"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"gopkg.in/yaml.v3"
 	"log/slog"
 	"slices"
 	"strconv"

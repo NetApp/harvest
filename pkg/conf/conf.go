@@ -7,11 +7,14 @@ package conf
 import (
 	"errors"
 	"fmt"
+	"github.com/goccy/go-yaml"
+	"github.com/goccy/go-yaml/ast"
+	"github.com/goccy/go-yaml/parser"
+	"github.com/goccy/go-yaml/token"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/mergo"
-	"gopkg.in/yaml.v3"
 	"log"
 	"log/slog"
 	"os"
@@ -433,9 +436,9 @@ type IntRange struct {
 
 var rangeRegex = regexp.MustCompile(`(\d+)\s*-\s*(\d+)`)
 
-func (i *IntRange) UnmarshalYAML(n *yaml.Node) error {
-	if n.Kind == yaml.ScalarNode && n.ShortTag() == "!!str" {
-		matches := rangeRegex.FindStringSubmatch(n.Value)
+func (i *IntRange) UnmarshalYAML(n ast.Node) error {
+	if n.Type() == ast.StringType {
+		matches := rangeRegex.FindStringSubmatch(n.String())
 		if len(matches) == 3 {
 			minVal, err1 := strconv.Atoi(matches[1])
 			maxVal, err2 := strconv.Atoi(matches[2])
@@ -478,6 +481,71 @@ func GetUniqueExporters(exporterNames []string) []string {
 	slices.Sort(resultExporters)
 
 	return resultExporters
+}
+
+// SaveConfig adds or updates the Grafana token in the harvest.yml config
+// and saves it to fp. The Yaml marshaller is used so comments are preserved
+func SaveConfig(fp string, grafanaToken string) error {
+	contents, err := os.ReadFile(fp)
+	if err != nil {
+		return err
+	}
+
+	astFile, err := parser.ParseBytes(contents, parser.ParseComments)
+	if err != nil {
+		return err
+	}
+	root := astFile.Docs[0].Body.(*ast.MappingNode)
+
+	// Three cases to consider:
+	//	1. Tools are missing
+	//  2. Tools are present but empty (null)
+	//  3. Tools are present - overwrite value
+	tokenExists := false
+
+	if len(root.Values) > 0 {
+		for _, n := range root.Values {
+			if n.Key.String() == "Tools" {
+				if n.Value.Type() == ast.MappingType {
+					mn := n.Value.(*ast.MappingNode)
+					if len(mn.Values) > 0 && mn.Values[0].Key.String() == "grafana_api_token" {
+						pos := &token.Position{Column: 4, IndentLevel: 1, IndentNum: 1}
+						mn.Values[0].Value = ast.String(token.New(grafanaToken, "", pos))
+						tokenExists = true
+						break
+					}
+				} else if n.Value.Type() == ast.NullType {
+					// Case 2, Tools section is empty. Add the token
+					pos := &token.Position{Column: 4, IndentLevel: 1, IndentNum: 1}
+					gt := ast.Mapping(token.New("", "", pos), false)
+					gToken := ast.MappingValue(
+						nil,
+						ast.String(token.New("grafana_api_token", "", pos)),
+						ast.String(token.New(grafanaToken, "", pos)),
+					)
+					gt.Values = append(gt.Values, gToken)
+					n.Value = gt
+					tokenExists = true
+					break
+				}
+			}
+		}
+
+		if !tokenExists {
+			// Case 1, Tools section is missing, add it
+			yml := `
+Tools:
+    grafana_api_token: ` + grafanaToken
+			aFile, err := parser.ParseBytes([]byte(yml), 0)
+			if err != nil {
+				return err
+			}
+			root.Values = append(root.Values, aFile.Docs[0].Body.(*ast.MappingNode).Values...)
+		}
+	}
+
+	marshal := []byte(astFile.Docs[0].Body.String())
+	return os.WriteFile(fp, marshal, 0o0600)
 }
 
 type TLS struct {
@@ -532,16 +600,16 @@ type Recorder struct {
 	KeepLast string `yaml:"keep_last,omitempty"` // number of records to keep before overwriting
 }
 
-func (e *ExporterDef) UnmarshalYAML(n *yaml.Node) error {
-	if n.Kind == yaml.MappingNode {
-		var aExporter *Exporter
-		err := n.Decode(&aExporter)
+func (e *ExporterDef) UnmarshalYAML(n ast.Node) error {
+	if n.Type() == ast.MappingType {
+		var aExporter Exporter
+		err := yaml.Unmarshal([]byte(n.String()), &aExporter)
 		if err != nil {
 			return fmt.Errorf("error unmarshalling embedded exporter: %w", err)
 		}
-		e.Exporter = *aExporter
-	} else if n.Kind == yaml.ScalarNode && n.ShortTag() == "!!str" {
-		e.Name = n.Value
+		e.Exporter = aExporter
+	} else if n.Type() == ast.StringType {
+		e.Name = n.String()
 	}
 	return nil
 }
@@ -734,8 +802,8 @@ type Exporter struct {
 	ClientTimeout *string `yaml:"client_timeout,omitempty"`
 	Version       *string `yaml:"version,omitempty"`
 
-	IsTest     bool // true when run from unit tests
-	IsEmbedded bool // true when the exporter is embedded in a poller
+	IsTest     bool `yaml:"-"` // true when run from unit tests
+	IsEmbedded bool `yaml:"-"` // true when the exporter is embedded in a poller
 }
 
 type Pollers struct {
@@ -751,32 +819,34 @@ func NewCollector(name string) Collector {
 	}
 }
 
-func (c *Collector) UnmarshalYAML(n *yaml.Node) error {
-	if n.Kind == yaml.ScalarNode && n.ShortTag() == "!!str" {
-		c.Name = n.Value
+func (c *Collector) UnmarshalYAML(n ast.Node) error {
+	if n.Type() == ast.StringType {
+		c.Name = n.(*ast.StringNode).Value
 		c.Templates = defaultTemplate
-	} else if n.Kind == yaml.MappingNode && len(n.Content) == 2 {
-		c.Name = n.Content[0].Value
-		var subs []string
-		c.Templates = &subs
-		seq := n.Content[1]
-		for _, n2 := range seq.Content {
-			subs = append(subs, n2.Value)
+	} else if n.Type() == ast.MappingType {
+		values := n.(*ast.MappingNode).Values
+		if len(values) > 0 {
+			c.Name = values[0].Key.String()
+			var subs []string
+			c.Templates = &subs
+			for _, n2 := range values[0].Value.(*ast.SequenceNode).Values {
+				subs = append(subs, n2.(*ast.StringNode).Value)
+			}
 		}
+
 	}
 	return nil
 }
 
-func (i *Pollers) UnmarshalYAML(n *yaml.Node) error {
-	if n.Kind == yaml.MappingNode {
+func (i *Pollers) UnmarshalYAML(n ast.Node) error {
+	if n.Type() == ast.MappingType {
 		var namesInOrder []string
-		for _, n := range n.Content {
-			if n.Kind == yaml.ScalarNode && n.ShortTag() == "!!str" {
-				namesInOrder = append(namesInOrder, n.Value)
-			}
+		for _, mn := range n.(*ast.MappingNode).Values {
+			namesInOrder = append(namesInOrder, mn.Key.String())
 		}
 		i.namesInOrder = namesInOrder
 	}
+
 	return nil
 }
 
@@ -791,5 +861,5 @@ type HarvestConfig struct {
 	PollerFiles    []string            `yaml:"Poller_files,omitempty"`
 	Defaults       *Poller             `yaml:"Defaults,omitempty"`
 	Admin          Admin               `yaml:"Admin,omitempty"`
-	PollersOrdered []string            // poller names in same order as yaml config
+	PollersOrdered []string            `yaml:"-"` // poller names in same order as yaml config
 }
