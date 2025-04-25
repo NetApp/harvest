@@ -5,6 +5,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"log/slog"
 	"os"
+	"slices"
 	"testing"
 )
 
@@ -237,21 +238,9 @@ flexcache_per_volume·Test·blocks_requested_from_client·637069129383·`,
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			result := filterNonEmpty(tc.input)
-			if !slicesEqual(result, tc.expected) {
+			if !slices.Equal(result, tc.expected) {
 				t.Errorf("expected %v, got %v", tc.expected, result)
 			}
 		})
 	}
-}
-
-func slicesEqual(a, b []string) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for i := range a {
-		if a[i] != b[i] {
-			return false
-		}
-	}
-	return true
 }

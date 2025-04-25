@@ -187,7 +187,7 @@ func (s *StatPerf) parseData(input string) (gjson.Result, error) {
 	}
 
 	// Marshal groups to indented JSON.
-	groupedJSON, err := json.MarshalIndent(groups, "", "  ")
+	groupedJSON, err := json.Marshal(groups)
 	if err != nil {
 		return gjson.Result{}, err
 	}
