@@ -1,0 +1,6 @@
+name:               Interface
+query:              "show interface transceiver details"
+object:             cisco_optic
+
+plugins:
+  - Optic

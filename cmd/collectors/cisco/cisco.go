@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors/cisco/plugins/environment"
 	"github.com/netapp/harvest/v2/cmd/collectors/cisco/plugins/networkinterface"
+	"github.com/netapp/harvest/v2/cmd/collectors/cisco/plugins/optic"
 	"github.com/netapp/harvest/v2/cmd/collectors/cisco/rest"
 	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
@@ -195,6 +196,8 @@ func (c *CiscoRest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.P
 		return environment.New(abc)
 	case "Interface":
 		return networkinterface.New(abc)
+	case "Optic":
+		return optic.New(abc)
 	default:
 		c.Logger.Warn("no cisco plugin found", slog.String("kind", kind))
 	}

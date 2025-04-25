@@ -1,0 +1,84 @@
+{
+  "TABLE_interface": {
+    "ROW_interface": [
+      {
+        "interface": "Ethernet1/1",
+        "sfp": "present",
+        "type": "QSFP-100G-PCC",
+        "name": "Molex",
+        "partnum": "112-00574",
+        "rev": "B0",
+        "serialnum": "1111111111111",
+        "nom_bitrate": "25500",
+        "len_cu": "2",
+        "ciscoid": "17",
+        "ciscoid_1": "0"
+      },
+      {
+        "interface": "Ethernet1/2",
+        "sfp": "not present"
+      },
+      {
+        "interface": "Ethernet1/15",
+        "sfp": "present",
+        "type": "10Gbase-SR",
+        "name": "AVAGO",
+        "partnum": "FFFF-160SMZ",
+        "rev": "G5.1",
+        "serialnum": "BBBBBBBBBBB",
+        "nom_bitrate": "10300",
+        "len_50": "82",
+        "len_50_OM3": "300",
+        "ciscoid": "3",
+        "ciscoid_1": "4",
+        "TABLE_lane": {
+          "ROW_lane": {
+            "temperature": "42.63",
+            "temp_flag": null,
+            "temp_alrm_hi": "85.00",
+            "temp_alrm_lo": "-5.00",
+            "temp_warn_hi": "80.00",
+            "temp_warn_lo": "0.00",
+            "voltage": "3.28",
+            "volt_flag": null,
+            "volt_alrm_hi": "3.60",
+            "volt_alrm_lo": "3.00",
+            "volt_warn_hi": "3.46",
+            "volt_warn_lo": "3.13",
+            "current": "7.06",
+            "current_flag": null,
+            "current_alrm_hi": "10.50",
+            "current_alrm_lo": "2.50",
+            "current_warn_hi": "10.50",
+            "current_warn_lo": "2.50",
+            "tx_pwr": "-2.38",
+            "tx_pwr_flag": null,
+            "tx_pwr_alrm_hi": "3.01",
+            "tx_pwr_alrm_lo": "-8.99",
+            "tx_pwr_warn_hi": "-1.02",
+            "tx_pwr_warn_lo": "-4.98",
+            "rx_pwr": "-3.72",
+            "rx_pwr_flag": null,
+            "rx_pwr_alrm_hi": "3.01",
+            "rx_pwr_alrm_lo": "-15.08",
+            "rx_pwr_warn_hi": "-1.02",
+            "rx_pwr_warn_lo": "-15.08",
+            "xmit_faults": "0"
+          }
+        }
+      },
+      {
+        "interface": "Ethernet1/36",
+        "sfp": "present",
+        "type": "QSFP-Cazadero",
+        "name": "CISCO-DNI",
+        "partnum": "CCCCCCCC-02",
+        "rev": "03",
+        "serialnum": "DDDDDDDDDDD",
+        "nom_bitrate": "10000",
+        "ciscoid": "13",
+        "ciscoid_1": "155"
+      }
+    ]
+  }
+}
