@@ -159,9 +159,10 @@ func getIndent(s string) int {
 // filterNonEmpty splits input into lines and returns only nonblank ones.
 func filterNonEmpty(input string) []string {
 	var lines []string
-	for _, l := range strings.Split(input, "\n") {
-		if strings.TrimSpace(l) != "" {
-			lines = append(lines, l)
+	for line := range strings.Lines(input) {
+		line = strings.TrimSuffix(line, "\n")
+		if strings.TrimSpace(line) != "" {
+			lines = append(lines, line)
 		}
 	}
 	return lines
