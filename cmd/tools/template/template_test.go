@@ -3,8 +3,9 @@ package template
 import (
 	"bytes"
 	"fmt"
+	"github.com/goccy/go-yaml/ast"
+	"github.com/goccy/go-yaml/parser"
 	"github.com/netapp/harvest/v2/pkg/util"
-	y3 "gopkg.in/yaml.v3"
 	"io/fs"
 	"log"
 	"os"
@@ -109,20 +110,9 @@ func TestTemplateNamesMatchDefault(t *testing.T) {
 				continue
 			}
 			for _, template := range matchingTemplates {
-				open, err := os.Open(template)
-				if err != nil {
-					t.Errorf("failed to read template file=%s from %s/default.yaml", template, shortPath(kindDir))
-				}
-				decoder := y3.NewDecoder(open)
-				root := &y3.Node{}
-				err = decoder.Decode(root)
+				_, err = parser.ParseFile(template, 0)
 				if err != nil {
 					t.Errorf("failed to parse template file=%s from %s/default.yaml", template, shortPath(kindDir))
-				}
-				err = open.Close()
-				if err != nil {
-					t.Errorf("failed to close template file=%s from %s/default.yaml", template, shortPath(kindDir))
-					return
 				}
 			}
 		}
@@ -158,17 +148,12 @@ func readDefaults(dirs []string) (map[string]objectMap, error) {
 			if !strings.HasSuffix(path, "default.yaml") {
 				return nil
 			}
-			open, err := os.Open(path)
+
+			astFile, err := parser.ParseFile(path, 0)
 			if err != nil {
-				return err
+				return fmt.Errorf("failed to parse template err=%w", err)
 			}
-			decoder := y3.NewDecoder(open)
-			root := &y3.Node{}
-			err = decoder.Decode(root)
-			if err != nil {
-				return err
-			}
-			defaults[collectorPath(path)] = newObjectMap(root.Content[0])
+			defaults[collectorPath(path)] = newObjectMap(astFile.Docs[0].Body)
 			return nil
 		})
 		if err != nil {
@@ -178,12 +163,19 @@ func readDefaults(dirs []string) (map[string]objectMap, error) {
 	return defaults, nil
 }
 
-func newObjectMap(n *y3.Node) objectMap {
+func newObjectMap(n ast.Node) objectMap {
 	om := objectMap{}
 	objects := searchNode(n, "objects")
-	for i := 0; i < len(objects.Content); i += 2 {
-		om[objects.Content[i].Value] = objects.Content[i+1].Value
+
+	mn, ok := objects.(*ast.MappingNode)
+	if ok {
+		for _, child := range mn.Values {
+			k := child.Key.String()
+			v := child.Value.String()
+			om[k] = v
+		}
 	}
+
 	return om
 }
 

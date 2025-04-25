@@ -177,7 +177,6 @@ pipeline {
                                 mkdir $WORKSPACE/docker
                                 cd $WORKSPACE/docker
                                 cp -rf $WORKSPACE/harvest/integration/test/harvest.yml .
-                                cp /home/harvestfiles/promtool $WORKSPACE/harvest/integration/test/
                                 docker run --rm \
                                   --entrypoint "bin/harvest" \
                                   --volume "$(pwd):/opt/temp" \

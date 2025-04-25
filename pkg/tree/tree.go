@@ -5,10 +5,11 @@
 package tree
 
 import (
+	"github.com/goccy/go-yaml/ast"
+	"github.com/goccy/go-yaml/parser"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/tree/xml"
-	y3 "gopkg.in/yaml.v3"
 	"os"
 )
 
@@ -23,48 +24,60 @@ func ImportYaml(filepath string) (*node.Node, error) {
 }
 
 func LoadYaml(data []byte) (*node.Node, error) {
-	root := y3.Node{}
-	err := y3.Unmarshal(data, &root)
+	astFile, err := parser.ParseBytes(data, 0)
 	if err != nil {
 		return nil, err
 	}
 	// treat an empty file as an error
-	if len(root.Content) == 0 {
+	if len(astFile.Docs) == 0 {
 		return nil, errs.New(errs.ErrConfig, "template file is empty or does not exist")
 	}
 
 	r := node.New([]byte("Root"))
-	consume(r, "", root.Content[0], false)
+	consume(r, "", astFile.Docs[0].Body, false)
 	return r, nil
 }
 
-func consume(r *node.Node, key string, y *y3.Node, makeNewChild bool) {
-	switch y.Kind {
-	case y3.ScalarNode:
-		r.NewChildS(key, y.Value)
-	case y3.MappingNode:
+func consume(r *node.Node, key string, y ast.Node, makeNewChild bool) {
+	switch y.Type() { //nolint:exhaustive
+	case ast.StringType, ast.IntegerType, ast.FloatType, ast.BoolType, ast.LiteralType, ast.NullType:
+		r.NewChildS(key, y.String())
+	case ast.MappingType:
 		var s = r
 		if key != "" || makeNewChild {
 			s = r.NewChildS(key, "")
 		}
-		for i := 0; i < len(y.Content); i += 2 {
-			k := y.Content[i].Value
+		mn := y.(*ast.MappingNode)
+		for _, child := range mn.Values {
+			k := child.Key.String()
 			// special case to handle incorrectly indented LabelAgent
-			if k == "LabelAgent" && y.Content[i+1].Kind == y3.ScalarNode {
+			if k == "LabelAgent" && isScalar(child.Value) {
 				s = r.NewChildS(k, "")
 				continue
 			}
-			consume(s, k, y.Content[i+1], false)
+			consume(s, k, child.Value, false)
 		}
-	case y3.DocumentNode, y3.SequenceNode, y3.AliasNode:
+	case ast.DocumentType, ast.SequenceType, ast.AliasType:
 		s := r.NewChildS(key, "")
-		for _, child := range y.Content {
+		sn := y.(*ast.SequenceNode)
+		for _, child := range sn.Values {
 			makeNewChild := false
-			if child.Tag == "!!map" {
+			if child.Type() == ast.MappingType {
 				makeNewChild = key == "endpoints" || key == "events" || key == "matches"
 			}
 			consume(s, "", child, makeNewChild)
 		}
+	default:
+		// ignore
+	}
+}
+
+func isScalar(n ast.Node) bool {
+	switch n.Type() { //nolint:exhaustive
+	case ast.StringType, ast.IntegerType, ast.FloatType, ast.BoolType, ast.LiteralType, ast.NullType:
+		return true
+	default:
+		return false
 	}
 }
 

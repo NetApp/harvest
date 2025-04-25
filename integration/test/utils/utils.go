@@ -30,6 +30,7 @@ const (
 
 	AnalyzeDockerLogs = "ANALYZE_DOCKER_LOGS"
 	CheckMetrics      = "CHECK_METRICS"
+	CheckFormat       = "CHECK_FORMAT"
 	CopyDockerLogs    = "COPY_DOCKER_LOGS"
 	InstallDocker     = "INSTALL_DOCKER"
 	InstallNative     = "INSTALL_NATIVE"

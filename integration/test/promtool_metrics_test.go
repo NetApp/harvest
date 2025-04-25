@@ -16,9 +16,28 @@ import (
 	"testing"
 )
 
+var allowedList = []string{
+	"aggr_power",
+	"cluster_software_status",
+	"health_lif_alerts",
+	"security_certificate_labels",
+	"shelf_average_ambient_temperature",
+	"shelf_average_fan_speed",
+	"shelf_average_temperature",
+	"shelf_labels",
+	"shelf_max_fan_speed",
+	"shelf_max_temperature",
+	"shelf_min_ambient_temperature",
+	"shelf_min_fan_speed",
+	"shelf_min_temperature",
+	"shelf_power",
+	"snapmirror_labels",
+	"volume_arw_status",
+	"volume_labels",
+}
+
 func TestPrometheusMetrics(t *testing.T) {
 	utils.SkipIfMissing(t, utils.CheckMetrics)
-
 	ports := []int{12990, 12992, 12993, 12994}
 	for _, port := range ports {
 		checkMetrics(t, port)
@@ -29,7 +48,6 @@ func checkMetrics(t *testing.T, port int) {
 	cli := fmt.Sprintf(`curl -s http://localhost:%d/metrics | tee /tmp/metrics:%d.txt | promtool check metrics`, port, port)
 	command := exec.Command("bash", "-c", cli)
 	output, err := command.CombinedOutput()
-
 	if err != nil {
 		var ee *exec.ExitError
 		if !errors.As(err, &ee) {
@@ -44,7 +62,6 @@ func checkMetrics(t *testing.T, port int) {
 	}
 
 	// Read the output, line by line, and check for errors, non-errors are ignored
-
 	lines := strings.Split(string(output), "\n")
 	for _, line := range lines {
 		line = strings.TrimSpace(line)
@@ -52,6 +69,12 @@ func checkMetrics(t *testing.T, port int) {
 			continue
 		}
 
+		if strings.Contains(line, "label names should be written in 'snake_case' not 'camelCase'") {
+			metricName := strings.Split(line, " ")[0]
+			if !slices.Contains(allowedList, metricName) {
+				t.Errorf("ERR %s", line)
+			}
+		}
 		if strings.Contains(line, "error while linting: ") {
 			t.Errorf("promtool: %s", line)
 		}
@@ -59,6 +82,7 @@ func checkMetrics(t *testing.T, port int) {
 }
 
 func TestFormatQueries(t *testing.T) {
+	utils.SkipIfMissing(t, utils.CheckFormat)
 	grafana.VisitDashboards(
 		[]string{
 			"../../grafana/dashboards/cmode",
@@ -66,13 +90,12 @@ func TestFormatQueries(t *testing.T) {
 			"../../grafana/dashboards/storagegrid",
 		},
 		func(path string, data []byte) {
-			changeExpr(t, path, data)
+			changeExpr(t, path, data, "promtool")
 		},
 	)
-
 }
 
-func changeExpr(t *testing.T, path string, data []byte) {
+func changeExpr(t *testing.T, path string, data []byte, promtoolPath string) {
 	var (
 		updatedData  []byte
 		notFormatted bool
@@ -82,6 +105,7 @@ func changeExpr(t *testing.T, path string, data []byte) {
 
 	updatedData = slices.Clone(data)
 	dashPath := grafana.ShortPath(path)
+
 	// Change all panel expressions
 	grafana.VisitAllPanels(updatedData, func(path string, _, value gjson.Result) {
 		title := value.Get("title").ClonedString()
@@ -89,7 +113,7 @@ func changeExpr(t *testing.T, path string, data []byte) {
 		value.Get("targets").ForEach(func(targetKey, target gjson.Result) bool {
 			expr := target.Get("expr")
 			if expr.Exists() && expr.ClonedString() != "" {
-				updatedExpr := util.Format(expr.ClonedString())
+				updatedExpr := util.Format(expr.ClonedString(), promtoolPath)
 				if updatedExpr != expr.ClonedString() {
 					notFormatted = true
 					updatedData, err = sjson.SetBytes(updatedData, path+".targets."+targetKey.ClonedString()+".expr", []byte(updatedExpr))

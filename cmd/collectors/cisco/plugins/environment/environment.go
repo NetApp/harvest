@@ -252,7 +252,7 @@ func newPowerModel9K(output gjson.Result, logger *slog.Logger) PowerModel {
 }
 
 func wattsToFloat(out string, logger *slog.Logger) float64 {
-	trimmed := strings.ReplaceAll(out, " W", "")
+	trimmed := strings.TrimSpace(strings.ReplaceAll(out, " W", ""))
 	if trimmed != "" {
 		actualPowerFloat, err := strconv.ParseFloat(trimmed, 64)
 		if err != nil {
