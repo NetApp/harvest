@@ -1,7 +1,6 @@
 package restperf
 
 import (
-	"context"
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
@@ -1707,15 +1706,6 @@ func (r *RestPerf) updateQosLabels(qos gjson.Result, instance *matrix.Instance, 
 			if value := qos.Get(label); value.Exists() {
 				instance.SetLabel(display, value.ClonedString())
 			}
-		}
-
-		if r.Logger.Enabled(context.Background(), slog.LevelDebug) {
-			r.Logger.Debug(
-				"",
-				slog.String("query", r.Prop.Query),
-				slog.String("key", key),
-				slog.Any("qos labels", instance.GetLabels()),
-			)
 		}
 	}
 }

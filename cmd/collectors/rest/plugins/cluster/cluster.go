@@ -84,8 +84,6 @@ func (c *Cluster) handleTags(data *matrix.Matrix) {
 				value := 1.0
 				if err = m.SetValueFloat64(tagInstance, value); err != nil {
 					c.SLogger.Error("Failed to parse value", slogx.Err(err), slog.Float64("value", value))
-				} else {
-					c.SLogger.Debug("added value", slog.Float64("value", value))
 				}
 			}
 		}
