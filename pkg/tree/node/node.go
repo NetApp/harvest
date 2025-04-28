@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"encoding/xml"
 	"fmt"
+	"github.com/goccy/go-yaml/ast"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"regexp"
 	"slices"
@@ -376,6 +377,10 @@ func simpleName(s string) string {
 	return wordRegex.FindString(s)
 }
 
+func (n *Node) DebugString() string {
+	return n.Print(0)
+}
+
 func (n *Node) Print(depth int) string {
 	builder := strings.Builder{}
 	n.printN(depth, &builder)
@@ -467,4 +472,13 @@ func DecodeHTML(x string) string {
 	x = strings.ReplaceAll(x, " ", "_") // not escape char, but wanted
 	x = strings.ReplaceAll(x, "-", "_")
 	return x
+}
+
+func ToString(n ast.Node) string {
+	switch v := n.(type) {
+	case *ast.StringNode:
+		return v.Value
+	default:
+		return n.String()
+	}
 }

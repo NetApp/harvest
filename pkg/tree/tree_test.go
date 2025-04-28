@@ -245,3 +245,46 @@ func TestImport2108Yaml(t *testing.T) {
 		}
 	}
 }
+
+func TestPR_3578(t *testing.T) {
+
+	// PR #3578
+	yamlTest := `
+name:   Volume
+key1: words with space
+key2: "value with : colon"
+"key with space" : val3
+"key with colon :" : val4
+'keyWithSingleQuote': val5
+key6: val6 #comment
+`
+
+	n, err := LoadYaml([]byte(yamlTest))
+	if err != nil {
+		t.Fatalf("failed to import yaml: %v", err)
+	}
+
+	tests := []struct {
+		key   string
+		value string
+	}{
+		{key: "name", value: "Volume"},
+		{key: "key1", value: "words with space"},
+		{key: "key2", value: "value with : colon"},
+		{key: "key with space", value: "val3"},
+		{key: "key with colon :", value: "val4"},
+		{key: "keyWithSingleQuote", value: "val5"},
+		{key: "key6", value: "val6"},
+	}
+
+	for _, test := range tests {
+		t.Run(test.key, func(t *testing.T) {
+			got := n.GetChildS(test.key)
+			if got == nil {
+				t.Errorf("got nil for key [%s]", test.key)
+			} else if got.GetContentS() != test.value {
+				t.Errorf("got [%s], want [%s]", got.GetContentS(), test.value)
+			}
+		})
+	}
+}

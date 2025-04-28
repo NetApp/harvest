@@ -87,11 +87,11 @@ func unmarshalModel(data []byte) (Model, error) {
 	contentNode := astFile.Docs[0].Body
 
 	ignoreNode := searchNode(contentNode, "ignore")
-	if ignoreNode != nil && ignoreNode.String() == "true" {
-		tm.Ignore = ignoreNode.String()
+	if ignoreNode != nil && node.ToString(ignoreNode) == "true" {
+		tm.Ignore = node.ToString(ignoreNode)
 		nameNode := searchNode(contentNode, "name")
 		if nameNode != nil {
-			tm.Name = nameNode.String()
+			tm.Name = node.ToString(nameNode)
 		}
 		return tm, nil
 	}
@@ -129,8 +129,8 @@ func addOverride(tm *Model, n ast.Node) {
 				if len(mn.Values) == 0 {
 					continue
 				}
-				key := mn.Values[0].Key.String()
-				val := mn.Values[0].Value.String()
+				key := node.ToString(mn.Values[0].Key)
+				val := node.ToString(mn.Values[0].Value)
 				tm.Override[key] = val
 			}
 		}
@@ -156,15 +156,15 @@ func readPlugins(path string, model *Model) error {
 func readNameQueryObject(tm *Model, root ast.Node) error {
 	nameNode := searchNode(root, "name")
 	if nameNode != nil {
-		tm.Name = nameNode.String()
+		tm.Name = node.ToString(nameNode)
 	}
 	queryNode := searchNode(root, "query")
 	if queryNode != nil {
-		tm.Query = queryNode.String()
+		tm.Query = node.ToString(queryNode)
 	}
 	objectNode := searchNode(root, "object")
 	if objectNode != nil {
-		tm.Object = objectNode.String()
+		tm.Object = node.ToString(objectNode)
 	}
 	if tm.Name == "" {
 		return errors.New("template has no name")
@@ -188,7 +188,7 @@ func addEndpoints(tm *Model, n ast.Node, parents []string) {
 		for _, ikn := range sn.Values {
 			mn, ok := ikn.(*ast.MappingNode)
 			if ok {
-				query := mn.Values[0].Key.String()
+				query := node.ToString(mn.Values[0].Key)
 				metrics := make([]Metric, 0)
 				countersNode := searchNode(mn, "counters")
 				flattenCounters(countersNode, &metrics, parents)
@@ -202,7 +202,7 @@ func addEndpoints(tm *Model, n ast.Node, parents []string) {
 func searchNode(r ast.Node, key string) ast.Node {
 	if mn, ok := r.(*ast.MappingNode); ok {
 		for _, child := range mn.Values {
-			if child.Key.String() == key {
+			if node.ToString(child.Key) == key {
 				return child.Value
 			}
 		}
@@ -220,7 +220,7 @@ func addExportOptions(tm *Model, n ast.Node) {
 		sn, ok := instanceKeys.(*ast.SequenceNode)
 		if ok {
 			for _, ikn := range sn.Values {
-				tm.ExportOptions.InstanceKeys = append(tm.ExportOptions.InstanceKeys, ikn.String())
+				tm.ExportOptions.InstanceKeys = append(tm.ExportOptions.InstanceKeys, node.ToString(ikn))
 			}
 		}
 	}
@@ -229,7 +229,7 @@ func addExportOptions(tm *Model, n ast.Node) {
 		sn, ok := instanceKeys.(*ast.SequenceNode)
 		if ok {
 			for _, ikn := range sn.Values {
-				tm.ExportOptions.InstanceLabels = append(tm.ExportOptions.InstanceLabels, ikn.String())
+				tm.ExportOptions.InstanceLabels = append(tm.ExportOptions.InstanceLabels, node.ToString(ikn))
 			}
 		}
 	}
@@ -239,7 +239,7 @@ func flattenCounters(n ast.Node, metrics *[]Metric, parents []string) {
 	switch n.Type() { //nolint:exhaustive
 	case ast.MappingType:
 		mn := n.(*ast.MappingNode)
-		key := mn.Values[0].Key.String()
+		key := node.ToString(mn.Values[0].Key)
 		if key == "hidden_fields" || key == "filter" {
 			return
 		}
@@ -261,7 +261,7 @@ var sigilReplacer = strings.NewReplacer("^", "", "- ", "")
 
 func newMetric(n ast.Node, parents []string) Metric {
 	// separate left and right and remove all sigils
-	text := n.String()
+	text := node.ToString(n)
 	noSigils := sigilReplacer.Replace(text)
 	before, after, found := strings.Cut(noSigils, "=>")
 	column := n.GetToken().Position.Column

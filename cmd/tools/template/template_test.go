@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/goccy/go-yaml/ast"
 	"github.com/goccy/go-yaml/parser"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"io/fs"
 	"log"
@@ -170,8 +171,8 @@ func newObjectMap(n ast.Node) objectMap {
 	mn, ok := objects.(*ast.MappingNode)
 	if ok {
 		for _, child := range mn.Values {
-			k := child.Key.String()
-			v := child.Value.String()
+			k := node.ToString(child.Key)
+			v := node.ToString(child.Value)
 			om[k] = v
 		}
 	}
