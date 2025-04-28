@@ -27,6 +27,7 @@ import (
 
 const (
 	BILLION                  = 1_000_000_000
+	StatPerfSeparator        = "·"
 	TopresourceConstant      = "999999"
 	RangeConstant            = "888888"
 	RangeReverseConstant     = "10d6h54m48s"
@@ -41,6 +42,7 @@ var IsONTAPCollector = map[string]struct{}{
 	"Zapi":     {},
 	"Rest":     {},
 	"RestPerf": {},
+	"StatPerf": {},
 	"KeyPerf":  {},
 	"Ems":      {},
 }
@@ -52,6 +54,7 @@ var IsCollector = map[string]struct{}{
 	"Rest":        {},
 	"RestPerf":    {},
 	"Simple":      {},
+	"StatPerf":    {},
 	"StorageGrid": {},
 	"Unix":        {},
 	"Zapi":        {},

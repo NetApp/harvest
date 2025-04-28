@@ -1,0 +1,14 @@
+Object: volume
+Instance: trident_pvc_12d750da_fd62_4f3a_a711_70688b3844cb
+Start-time: 4/25/2025 20:46:28
+End-time: 4/25/2025 20:46:28
+Scope: astra_301
+
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    instance_name                     trident_pvc_12d750da_fd62_4f3a_
+                                                    a711_70688b3844cb
+    read_data                                                   104KB
+    wvblk_saved_fsinfo_private_inos_                             1638
+    reserve
+3 entries were displayed.

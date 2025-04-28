@@ -1,0 +1,34 @@
+name:                     FlexCache
+query:                    flexcache_per_volume
+object:                   flexcache
+
+counters:
+  - ^^instance_name                                     => volume
+  - ^^instance_uuid                                     => svm
+  - blocks_requested_from_client
+  - blocks_retrieved_from_origin
+  - evict_rw_cache_skipped_reason_disconnected
+  - evict_skipped_reason_config_noent
+  - evict_skipped_reason_disconnected
+  - evict_skipped_reason_offline
+  - invalidate_skipped_reason_config_noent
+  - invalidate_skipped_reason_disconnected
+  - invalidate_skipped_reason_offline
+  - nix_retry_skipped_reason_initiator_retrieve
+  - nix_skipped_reason_config_noent
+  - nix_skipped_reason_disconnected
+  - nix_skipped_reason_in_progress
+  - nix_skipped_reason_offline
+  - reconciled_data_entries
+  - reconciled_lock_entries
+
+plugins:
+  - FlexCache
+  - MetricAgent:
+      compute_metric:
+        - miss_percent PERCENT blocks_retrieved_from_origin blocks_requested_from_client
+
+export_options:
+  instance_keys:
+    - svm
+    - volume

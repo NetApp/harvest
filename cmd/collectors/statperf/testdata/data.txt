@@ -1,0 +1,208 @@
+
+
+
+Object: flexcache_per_volume
+Instance: RahulTest
+Start-time: 4/22/2025 04:09:23
+End-time: 4/22/2025 04:09:23
+Scope: umeng-aff300-01-02
+Number of Constituents: 8 (complete_aggregation)
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    blocks_requested_from_client                         637069129383
+    blocks_retrieved_from_origin                          54094359467
+    evict_rw_cache_skipped_reason_                                  0
+    disconnected
+    evict_skipped_reason_config_                                    0
+    noent
+    evict_skipped_reason_                                           0
+    disconnected
+    evict_skipped_reason_offline                                    0
+    instance_name                                           RahulTest
+    instance_uuid                                                 osc
+    invalidate_skipped_reason_                                      0
+    config_noent
+    invalidate_skipped_reason_                                      0
+    disconnected
+    invalidate_skipped_reason_                                      0
+    offline
+    nix_retry_skipped_reason_                                       0
+    initiator_retrieve
+    nix_skipped_reason_config_noent                                 0
+    nix_skipped_reason_disconnected                                 0
+    nix_skipped_reason_in_progress                                  0
+    nix_skipped_reason_offline                                      0
+    reconciled_data_entries                                         0
+    reconciled_lock_entries                                         0
+
+Object: flexcache_per_volume
+Instance: hs_1
+Start-time: 4/22/2025 04:09:23
+End-time: 4/22/2025 04:09:23
+Scope: umeng-aff300-03
+Number of Constituents: 4 (complete_aggregation)
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    blocks_requested_from_client                                    0
+    blocks_retrieved_from_origin                                    0
+    evict_rw_cache_skipped_reason_                                  0
+    disconnected
+    evict_skipped_reason_config_                                    0
+    noent
+    evict_skipped_reason_                                           0
+    disconnected
+    evict_skipped_reason_offline                                    0
+    instance_name                                                hs_1
+    instance_uuid                                             harvest
+    invalidate_skipped_reason_                                      0
+    config_noent
+    invalidate_skipped_reason_                                      0
+    disconnected
+    invalidate_skipped_reason_                                      0
+    offline
+    nix_retry_skipped_reason_                                       0
+    initiator_retrieve
+    nix_skipped_reason_config_noent                                 0
+    nix_skipped_reason_disconnected                                 0
+    nix_skipped_reason_in_progress                                  0
+    nix_skipped_reason_offline                                      0
+    reconciled_data_entries                                         0
+    reconciled_lock_entries                                         0
+
+Object: flexcache_per_volume
+Instance: hs_1
+Start-time: 4/22/2025 04:09:23
+End-time: 4/22/2025 04:09:23
+Scope: umeng-aff300-03
+Number of Constituents: 2 (complete_aggregation)
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    blocks_requested_from_client                                    0
+    blocks_retrieved_from_origin                                    0
+    evict_rw_cache_skipped_reason_                                  0
+    disconnected
+    evict_skipped_reason_config_                                    0
+    noent
+    evict_skipped_reason_                                           0
+    disconnected
+    evict_skipped_reason_offline                                    0
+    instance_name                                                hs_1
+    instance_uuid                                                 osc
+    invalidate_skipped_reason_                                      0
+    config_noent
+    invalidate_skipped_reason_                                      0
+    disconnected
+    invalidate_skipped_reason_                                      0
+    offline
+    nix_retry_skipped_reason_                                       0
+    initiator_retrieve
+    nix_skipped_reason_config_noent                                 0
+    nix_skipped_reason_disconnected                                 0
+    nix_skipped_reason_in_progress                                  0
+    nix_skipped_reason_offline                                      0
+    reconciled_data_entries                                         0
+    reconciled_lock_entries                                         0
+
+Object: flexcache_per_volume
+Instance: hs_2
+Start-time: 4/22/2025 04:09:23
+End-time: 4/22/2025 04:09:23
+Scope: umeng-aff300-03
+Number of Constituents: 4 (complete_aggregation)
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    blocks_requested_from_client                                    0
+    blocks_retrieved_from_origin                                    0
+    evict_rw_cache_skipped_reason_                                  0
+    disconnected
+    evict_skipped_reason_config_                                    0
+    noent
+    evict_skipped_reason_                                           0
+    disconnected
+    evict_skipped_reason_offline                                    0
+    instance_name                                                hs_2
+    instance_uuid                                             harvest
+    invalidate_skipped_reason_                                      0
+    config_noent
+    invalidate_skipped_reason_                                      0
+    disconnected
+    invalidate_skipped_reason_                                      0
+    offline
+    nix_retry_skipped_reason_                                       0
+    initiator_retrieve
+    nix_skipped_reason_config_noent                                 0
+    nix_skipped_reason_disconnected                                 0
+    nix_skipped_reason_in_progress                                  0
+    nix_skipped_reason_offline                                      0
+    reconciled_data_entries                                         0
+    reconciled_lock_entries                                         0
+
+Object: flexcache_per_volume
+Instance: osc_vol01
+Start-time: 4/22/2025 04:09:23
+End-time: 4/22/2025 04:09:23
+Scope: umeng-aff300-02
+Number of Constituents: 1 (complete_aggregation)
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    blocks_requested_from_client                                    0
+    blocks_retrieved_from_origin                                    0
+    evict_rw_cache_skipped_reason_                                  0
+    disconnected
+    evict_skipped_reason_config_                                    0
+    noent
+    evict_skipped_reason_                                           0
+    disconnected
+    evict_skipped_reason_offline                                    0
+    instance_name                                           osc_vol01
+    instance_uuid                                                 osc
+    invalidate_skipped_reason_                                      0
+    config_noent
+    invalidate_skipped_reason_                                      0
+    disconnected
+    invalidate_skipped_reason_                                      0
+    offline
+    nix_retry_skipped_reason_                                       0
+    initiator_retrieve
+    nix_skipped_reason_config_noent                                 0
+    nix_skipped_reason_disconnected                                 0
+    nix_skipped_reason_in_progress                                  0
+    nix_skipped_reason_offline                                      0
+    reconciled_data_entries                                         0
+    reconciled_lock_entries                                         0
+
+Object: flexcache_per_volume
+Instance: rh
+Start-time: 4/22/2025 04:09:23
+End-time: 4/22/2025 04:09:23
+Scope: umeng-aff300-02
+Number of Constituents: 1 (complete_aggregation)
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    blocks_requested_from_client                                    0
+    blocks_retrieved_from_origin                                    0
+    evict_rw_cache_skipped_reason_                                  0
+    disconnected
+    evict_skipped_reason_config_                                    0
+    noent
+    evict_skipped_reason_                                           0
+    disconnected
+    evict_skipped_reason_offline                                    0
+    instance_name                                                  rh
+    instance_uuid                                             harvest
+    invalidate_skipped_reason_                                      0
+    config_noent
+    invalidate_skipped_reason_                                      0
+    disconnected
+    invalidate_skipped_reason_                                      0
+    offline
+    nix_retry_skipped_reason_                                       0
+    initiator_retrieve
+    nix_skipped_reason_config_noent                                 0
+    nix_skipped_reason_disconnected                                 0
+    nix_skipped_reason_in_progress                                  0
+    nix_skipped_reason_offline                                      0
+    reconciled_data_entries                                         0
+    reconciled_lock_entries                                         0
+108 entries were displayed.
+
