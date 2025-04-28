@@ -960,42 +960,46 @@ func Union2(hNode *node.Node, poller *conf.Poller) error {
 	if body.Type() == ast.MappingType {
 		mn := body.(*ast.MappingNode)
 		for _, mvn := range mn.Values {
-			if mvn.Key.Type() == ast.StringType {
-				// check if the key exists in the hNode
-				if hNode.HasChildS(mvn.Key.String()) {
-					// if it does, skip it
-					continue
-				}
-				// if it doesn't, create a new node with the key and value
-				newNode := node.NewS(mvn.Key.String())
-
-				switch mvn.Value.Type() { //nolint:exhaustive
-				case ast.StringType, ast.BoolType:
-					newNode.Content = []byte(mvn.Value.String())
-				case ast.SequenceType:
-					// the poller node that is missing is a sequence so add all the children of the sequence
-					for _, seqNode := range mvn.Value.(*ast.SequenceNode).Values {
-						switch seqNode.Type() { //nolint:exhaustive
-						case ast.StringType:
-							newNode.NewChildS(seqNode.String(), seqNode.String())
-						case ast.MappingType:
-							for _, v := range seqNode.(*ast.MappingNode).Values {
-								newNode.NewChildS(v.Key.String(), v.Value.String())
-							}
-						default:
-							return fmt.Errorf("unknown sequence type: %s", seqNode.Type().String())
-						}
-					}
-				case ast.MappingType:
-					// the poller node that is missing is a map, add all the children of the map
-					for _, v := range mvn.Value.(*ast.MappingNode).Values {
-						newNode.NewChildS(v.Key.String(), v.Value.String())
-					}
-				default:
-					return fmt.Errorf("unknown mapping type: %s", mvn.Value.Type().String())
-				}
-				hNode.AddChild(newNode)
+			if mvn.Key.Type() != ast.StringType {
+				continue
 			}
+			
+			// check if the key exists in the hNode
+			key := node.ToString(mvn.Key)
+			if hNode.HasChildS(key) {
+				// if it does, skip it
+				continue
+			}
+			// if it doesn't, create a new node with the key and value
+			newNode := node.NewS(key)
+
+			switch mvn.Value.Type() { //nolint:exhaustive
+			case ast.StringType, ast.BoolType:
+				newNode.Content = []byte(node.ToString(mvn.Value))
+			case ast.SequenceType:
+				// the poller node that is missing is a sequence so add all the children of the sequence
+				for _, seqNode := range mvn.Value.(*ast.SequenceNode).Values {
+					switch seqNode.Type() { //nolint:exhaustive
+					case ast.StringType:
+						seqStr := node.ToString(seqNode)
+						newNode.NewChildS(seqStr, seqStr)
+					case ast.MappingType:
+						for _, v := range seqNode.(*ast.MappingNode).Values {
+							newNode.NewChildS(node.ToString(v.Key), node.ToString(v.Value))
+						}
+					default:
+						return fmt.Errorf("unknown sequence type: %s", seqNode.Type().String())
+					}
+				}
+			case ast.MappingType:
+				// the poller node that is missing is a map, add all the children of the map
+				for _, v := range mvn.Value.(*ast.MappingNode).Values {
+					newNode.NewChildS(node.ToString(v.Key), node.ToString(v.Value))
+				}
+			default:
+				return fmt.Errorf("unknown mapping type: %s", mvn.Value.Type().String())
+			}
+			hNode.AddChild(newNode)
 		}
 	}
 

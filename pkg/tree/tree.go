@@ -40,11 +40,8 @@ func LoadYaml(data []byte) (*node.Node, error) {
 
 func consume(r *node.Node, key string, y ast.Node, makeNewChild bool) {
 	switch y.Type() { //nolint:exhaustive
-	case ast.StringType:
-		sn := y.(*ast.StringNode)
-		r.NewChildS(key, sn.Value)
-	case ast.IntegerType, ast.FloatType, ast.BoolType, ast.LiteralType, ast.NullType:
-		r.NewChildS(key, y.String())
+	case ast.StringType, ast.IntegerType, ast.FloatType, ast.BoolType, ast.LiteralType, ast.NullType:
+		r.NewChildS(key, node.ToString(y))
 	case ast.MappingType:
 		var s = r
 		if key != "" || makeNewChild {
@@ -52,7 +49,7 @@ func consume(r *node.Node, key string, y ast.Node, makeNewChild bool) {
 		}
 		mn := y.(*ast.MappingNode)
 		for _, child := range mn.Values {
-			k := child.Key.String()
+			k := node.ToString(child.Key)
 			// special case to handle incorrectly indented LabelAgent
 			if k == "LabelAgent" && isScalar(child.Value) {
 				s = r.NewChildS(k, "")
