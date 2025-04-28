@@ -25,6 +25,9 @@ func TestNewOpticModels(t *testing.T) {
 		{
 			name: "9336c", want: Model{Name: ""},
 		},
+		{
+			name: "9336c", want: Model{Name: "Ethernet1/22/4", RxPower: 0, TxPower: -2.80},
+		},
 	}
 
 	// Read the file from the testdata directory

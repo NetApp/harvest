@@ -78,6 +78,58 @@
         "nom_bitrate": "10000",
         "ciscoid": "13",
         "ciscoid_1": "155"
+      },
+      {
+        "interface": "Ethernet1/22/4",
+        "sfp": "present",
+        "type": "QSFP-40G-CSR4",
+        "name": "CISCO-FINISAR",
+        "partnum": "DDDDDDDDDD-C1",
+        "rev": "A",
+        "serialnum": "EEEEEEEEEEE",
+        "nom_bitrate": "10300",
+        "len_50": "82",
+        "len_50_OM3": "300",
+        "ciscoid": "13",
+        "ciscoid_1": "16",
+        "cisco_part_number": "10-2837-03",
+        "cisco_product_id": "QSFP-40G-CSR4",
+        "cisco_vendor_id": "V03",
+        "TABLE_lane": {
+          "ROW_lane": {
+            "lane_number": "1",
+            "temperature": "33.55",
+            "temp_flag": null,
+            "temp_alrm_hi": "75.00",
+            "temp_alrm_lo": "-5.00",
+            "temp_warn_hi": "70.00",
+            "temp_warn_lo": "0.00",
+            "voltage": "3.30",
+            "volt_flag": null,
+            "volt_alrm_hi": "3.63",
+            "volt_alrm_lo": "2.97",
+            "volt_warn_hi": "3.46",
+            "volt_warn_lo": "3.10",
+            "current": "7.48",
+            "current_flag": null,
+            "current_alrm_hi": "15.00",
+            "current_alrm_lo": "2.00",
+            "current_warn_hi": "14.00",
+            "current_warn_lo": "3.00",
+            "tx_pwr": "-2.80",
+            "tx_pwr_flag": null,
+            "tx_pwr_alrm_hi": "2.99",
+            "tx_pwr_alrm_lo": "-11.30",
+            "tx_pwr_warn_hi": "0.00",
+            "tx_pwr_warn_lo": "-7.30",
+            "rx_pwr_flag": null,
+            "rx_pwr_alrm_hi": "2.99",
+            "rx_pwr_alrm_lo": "-13.97",
+            "rx_pwr_warn_hi": "0.00",
+            "rx_pwr_warn_lo": "-9.91",
+            "xmit_faults": "0"
+          }
+        }
       }
     ]
   }
