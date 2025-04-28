@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Delete all containers from repository without tags
-        uses: Chizkiyahu/delete-untagged-ghcr-action@c761faeb14560780dc733bb965205b0eb98febbf
+        uses: Chizkiyahu/delete-untagged-ghcr-action@9af8de73949674b3e7507c018e2ee9c32ddb0f89
         with:
           token: ${{ secrets.PAT_TOKEN }}
           package_name: 'harvest'
