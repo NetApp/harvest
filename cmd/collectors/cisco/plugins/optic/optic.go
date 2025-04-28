@@ -160,14 +160,22 @@ func NewOpticModel(output gjson.Result) Model {
 
 	var m Model
 
-	rx := output.Get("TABLE_lane.ROW_lane.rx_pwr")
-	if !rx.Exists() {
+	row := output.Get("TABLE_lane.ROW_lane")
+	if !row.Exists() {
 		return m
 	}
 
-	return Model{
-		Name:    output.Get("interface").ClonedString(),
-		RxPower: rx.Float(),
-		TxPower: output.Get("TABLE_lane.ROW_lane.tx_pwr").Float(),
+	rxVal := row.Get("rx_pwr")
+	if rxVal.Exists() {
+		m.Name = output.Get("interface").ClonedString()
+		m.RxPower = rxVal.Float()
 	}
+
+	txVal := row.Get("tx_pwr")
+	if txVal.Exists() {
+		m.Name = output.Get("interface").ClonedString()
+		m.TxPower = txVal.Float()
+	}
+
+	return m
 }
