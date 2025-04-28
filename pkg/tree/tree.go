@@ -40,7 +40,10 @@ func LoadYaml(data []byte) (*node.Node, error) {
 
 func consume(r *node.Node, key string, y ast.Node, makeNewChild bool) {
 	switch y.Type() { //nolint:exhaustive
-	case ast.StringType, ast.IntegerType, ast.FloatType, ast.BoolType, ast.LiteralType, ast.NullType:
+	case ast.StringType:
+		sn := y.(*ast.StringNode)
+		r.NewChildS(key, sn.Value)
+	case ast.IntegerType, ast.FloatType, ast.BoolType, ast.LiteralType, ast.NullType:
 		r.NewChildS(key, y.String())
 	case ast.MappingType:
 		var s = r
