@@ -41,6 +41,7 @@ import (
 	_ "github.com/netapp/harvest/v2/cmd/collectors/keyperf"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/restperf"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/simple"
+	_ "github.com/netapp/harvest/v2/cmd/collectors/statperf"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/storagegrid"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/unix"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/zapi/collector"

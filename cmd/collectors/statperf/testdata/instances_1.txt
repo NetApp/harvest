@@ -1,0 +1,17 @@
+
+
+This is your first recorded login.
+
+Your privilege has changed since last login.
+
+
+
+object·objectname·instance·outputName·instanceUUID·
+Object·Object·Instance Name·Instance Name·Instance UUID·
+flexcache_per_volume·flexcache_per_volume·RahulTest·RahulTest·osc·
+flexcache_per_volume·flexcache_per_volume·hs_1·hs_1·harvest·
+flexcache_per_volume·flexcache_per_volume·hs_1·hs_1·osc·
+flexcache_per_volume·flexcache_per_volume·hs_2·hs_2·harvest·
+flexcache_per_volume·flexcache_per_volume·osc_vol01·osc_vol01·osc·
+flexcache_per_volume·flexcache_per_volume·rh·rh·harvest·
+
