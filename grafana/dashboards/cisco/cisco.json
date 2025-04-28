@@ -51,24 +51,43 @@
     "list": [
       {
         "builtIn": 1,
-        "datasource": {
-          "type": "grafana",
-          "uid": "-- Grafana --"
-        },
+        "datasource": "-- Grafana --",
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
         "type": "dashboard"
       }
     ]
   },
+  "description": "",
   "editable": true,
   "gnetId": null,
-  "graphTooltip": 0,
+  "graphTooltip": 1,
   "id": null,
-  "iteration": 1745493343242,
-  "links": [],
+  "iteration": 1732181856878,
+  "links": [
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [
+        "cdot"
+      ],
+      "targetBlank": false,
+      "title": "Related Dashboards",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
   "panels": [
     {
       "collapsed": false,
@@ -136,7 +155,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
-          "expr": "cisco_facts_hostname{switch=\"$Switch\"}",
+          "expr": "cisco_facts_hostname{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
           "legendFormat": "{{hostname}}",
           "range": true,
           "refId": "A"
@@ -202,7 +221,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
-          "expr": "cisco_facts_uptime_seconds{switch=\"$Switch\"}",
+          "expr": "cisco_facts_uptime_seconds{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -263,7 +282,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
-          "expr": "cisco_facts_chassis_id{switch=\"$Switch\"}",
+          "expr": "cisco_facts_chassis_id{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
           "legendFormat": "{{chassis_id}}",
           "range": true,
           "refId": "A"
@@ -333,7 +352,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
-          "expr": "cisco_facts_bios_version{switch=\"$Switch\"}",
+          "expr": "cisco_facts_bios_version{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
           "legendFormat": "{{version}}",
           "range": true,
           "refId": "A"
@@ -403,7 +422,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
-          "expr": "cisco_facts_version{switch=\"$Switch\"}",
+          "expr": "cisco_facts_version{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
           "legendFormat": "{{version}}",
           "range": true,
           "refId": "A"
@@ -472,14 +491,14 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
-              "expr": "sum(cisco_environment_power_in{switch=\"$Switch\"})",
+              "expr": "sum(cisco_environment_power_in{datacenter=~\"$Datacenter\",switch=~\"$Switch\"})",
               "hide": false,
               "legendFormat": "__auto",
               "range": true,
               "refId": "B"
             }
           ],
-          "title": "Total power comsume",
+          "title": "Total power consume",
           "type": "stat"
         },
         {
@@ -538,7 +557,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
-              "expr": "cisco_environment_power_out{switch=\"$Switch\"} / cisco_environment_power_capacity{switch=\"$Switch\"}",
+              "expr": "cisco_environment_power_out{datacenter=~\"$Datacenter\",switch=~\"$Switch\"} / cisco_environment_power_capacity{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
               "hide": false,
               "legendFormat": "PSU {{item}}",
               "range": true,
@@ -600,7 +619,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
-              "expr": "cisco_environment_power_mode{switch=\"$Switch\", item=\"operational\"}",
+              "expr": "cisco_environment_power_mode{datacenter=~\"$Datacenter\",switch=~\"$Switch\", item=\"operational\"}",
               "legendFormat": "{{status}}",
               "range": true,
               "refId": "A"
@@ -611,6 +630,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Total aggregate size. If aggregate is restricted or offline, a value of 0 is returned.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -621,7 +641,7 @@
                 "axisPlacement": "auto",
                 "barAlignment": 0,
                 "drawStyle": "line",
-                "fillOpacity": 0,
+                "fillOpacity": 10,
                 "gradientMode": "none",
                 "hideFrom": {
                   "legend": false,
@@ -634,7 +654,7 @@
                 "scaleDistribution": {
                   "type": "linear"
                 },
-                "showPoints": "auto",
+                "showPoints": "never",
                 "spanNulls": true,
                 "stacking": {
                   "group": "A",
@@ -644,17 +664,18 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
+                    "color": "transparent",
                     "value": null
                   },
                   {
                     "color": "red",
-                    "value": 0.0001
+                    "value": null
                   }
                 ]
               },
@@ -678,53 +699,46 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "bottom",
-              "showLegend": true
+              "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single",
-              "sort": "none"
+              "mode": "single"
             }
           },
-          "pluginVersion": "9.5.15",
+          "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "${DS_PROMETHEUS}",
-              "editorMode": "code",
-              "expr": "-cisco_environment_power_in{switch=\"$Switch\"}",
+              "exemplar": false,
+              "expr": "cisco_environment_power_in{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      cisco_environment_power_in{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end()\n    )\n  )",
+              "interval": "",
               "legendFormat": "Power in PSU {{item}}",
-              "range": true,
               "refId": "A"
             },
             {
-              "datasource": "${DS_PROMETHEUS}",
-              "editorMode": "code",
-              "expr": "-sum(cisco_environment_power_in{switch=\"$Switch\"})",
-              "hide": false,
+              "exemplar": false,
+              "expr": "sum(cisco_environment_power_in{datacenter=~\"$Datacenter\",switch=~\"$Switch\"})",
+              "interval": "",
               "legendFormat": "Total power in",
-              "range": true,
               "refId": "B"
             },
             {
-              "datasource": "${DS_PROMETHEUS}",
-              "editorMode": "code",
-              "expr": "cisco_environment_power_out{switch=\"$Switch\"}",
-              "hide": false,
+              "exemplar": false,
+              "expr": "cisco_environment_power_out{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      cisco_environment_power_out{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end()\n    )\n  )",
+              "interval": "",
               "legendFormat": "Power out PSU {{item}}",
-              "range": true,
               "refId": "C"
             },
             {
-              "datasource": "${DS_PROMETHEUS}",
-              "editorMode": "code",
-              "expr": "sum(cisco_environment_power_out{switch=\"$Switch\"})",
-              "hide": false,
+              "exemplar": false,
+              "expr": "sum(cisco_environment_power_out{datacenter=~\"$Datacenter\",switch=~\"$Switch\"})",
+              "interval": "",
               "legendFormat": "Total power out",
-              "range": true,
               "refId": "D"
             }
           ],
-          "title": "Power consumtion",
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Power consumtion",
           "type": "timeseries"
         },
         {
@@ -779,7 +793,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
-              "expr": "cisco_environment_power_mode{switch=\"$Switch\", item=\"configured\"}",
+              "expr": "cisco_environment_power_mode{datacenter=~\"$Datacenter\",switch=~\"$Switch\", item=\"configured\"}",
               "legendFormat": "{{status}}",
               "range": true,
               "refId": "A"
@@ -837,7 +851,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
-              "expr": "cisco_environment_power_capacity{switch=\"$Switch\"}",
+              "expr": "cisco_environment_power_capacity{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
               "hide": false,
               "legendFormat": "PSU {{item}}",
               "range": true,
@@ -913,7 +927,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
-              "expr": "cisco_environment_power_up{switch=\"$Switch\"}",
+              "expr": "cisco_environment_power_up{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
               "legendFormat": "PSU {{item}}",
               "range": true,
               "refId": "A"
@@ -970,7 +984,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
-              "expr": "sum(cisco_environment_power_out{switch=\"$Switch\"}) / sum(cisco_environment_power_in{switch=\"$Switch\"})",
+              "expr": "sum(cisco_environment_power_out{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}) / sum(cisco_environment_power_in{datacenter=~\"$Datacenter\",switch=~\"$Switch\"})",
               "hide": false,
               "legendFormat": "PSU efficiency",
               "range": true,
@@ -997,6 +1011,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Total aggregate size. If aggregate is restricted or offline, a value of 0 is returned.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1007,7 +1022,7 @@
                 "axisPlacement": "auto",
                 "barAlignment": 0,
                 "drawStyle": "line",
-                "fillOpacity": 0,
+                "fillOpacity": 10,
                 "gradientMode": "none",
                 "hideFrom": {
                   "legend": false,
@@ -1020,7 +1035,7 @@
                 "scaleDistribution": {
                   "type": "linear"
                 },
-                "showPoints": "auto",
+                "showPoints": "never",
                 "spanNulls": true,
                 "stacking": {
                   "group": "A",
@@ -1030,18 +1045,18 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
-              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
+                    "color": "transparent",
                     "value": null
                   },
                   {
                     "color": "red",
-                    "value": 80
+                    "value": null
                   }
                 ]
               },
@@ -1065,25 +1080,25 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "bottom",
-              "showLegend": true
+              "placement": "bottom"
             },
             "tooltip": {
-              "mode": "single",
-              "sort": "none"
+              "mode": "single"
             }
           },
+          "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "${DS_PROMETHEUS}",
-              "editorMode": "code",
-              "expr": "cisco_environment_sensor_temp{switch=\"$Switch\"}",
-              "legendFormat": "{{sensor}}",
-              "range": true,
+              "exemplar": false,
+              "expr": "cisco_environment_sensor_temp{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      cisco_environment_sensor_temp{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end()\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{datacenter}} - {{sensor}}",
               "refId": "A"
             }
           ],
-          "title": "Temperature",
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Temperatures",
           "type": "timeseries"
         },
         {
@@ -1152,7 +1167,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
-              "expr": "cisco_environment_fan_up{switch=\"$Switch\"}",
+              "expr": "cisco_environment_fan_up{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
               "legendFormat": "{{item}}",
               "range": true,
               "refId": "A"
@@ -1216,7 +1231,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
-              "expr": "cisco_environment_fan_speed_percent{switch=\"$Switch\"}",
+              "expr": "cisco_environment_fan_speed_percent{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
               "legendFormat": "__auto",
               "range": true,
               "refId": "A"
@@ -1242,6 +1257,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Total aggregate size. If aggregate is restricted or offline, a value of 0 is returned.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1252,7 +1268,7 @@
                 "axisPlacement": "auto",
                 "barAlignment": 0,
                 "drawStyle": "line",
-                "fillOpacity": 0,
+                "fillOpacity": 10,
                 "gradientMode": "none",
                 "hideFrom": {
                   "legend": false,
@@ -1265,7 +1281,7 @@
                 "scaleDistribution": {
                   "type": "linear"
                 },
-                "showPoints": "auto",
+                "showPoints": "never",
                 "spanNulls": true,
                 "stacking": {
                   "group": "A",
@@ -1275,17 +1291,18 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
+                    "color": "transparent",
                     "value": null
                   },
                   {
                     "color": "red",
-                    "value": 80
+                    "value": null
                   }
                 ]
               },
@@ -1308,29 +1325,30 @@
                 "diff"
               ],
               "displayMode": "table",
-              "placement": "bottom",
-              "showLegend": true
+              "placement": "bottom"
             },
             "tooltip": {
-              "mode": "multi",
-              "sort": "none"
+              "mode": "single"
             }
           },
+          "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "${DS_PROMETHEUS}",
-              "editorMode": "code",
-              "expr": "cisco_optics_rx{switch=\"$Switch\"}",
-              "legendFormat": "{{interface}}",
-              "range": true,
+              "exemplar": false,
+              "expr": "cisco_optics_rx{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      cisco_optics_rx{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end()\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{datacenter}} - {{interface}}",
               "refId": "A"
             }
           ],
-          "title": "Transciver power - RX",
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Transciver power - RX",
           "type": "timeseries"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Total aggregate size. If aggregate is restricted or offline, a value of 0 is returned.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1341,7 +1359,7 @@
                 "axisPlacement": "auto",
                 "barAlignment": 0,
                 "drawStyle": "line",
-                "fillOpacity": 0,
+                "fillOpacity": 10,
                 "gradientMode": "none",
                 "hideFrom": {
                   "legend": false,
@@ -1354,7 +1372,7 @@
                 "scaleDistribution": {
                   "type": "linear"
                 },
-                "showPoints": "auto",
+                "showPoints": "never",
                 "spanNulls": true,
                 "stacking": {
                   "group": "A",
@@ -1364,17 +1382,18 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
+                    "color": "transparent",
                     "value": null
                   },
                   {
                     "color": "red",
-                    "value": 80
+                    "value": null
                   }
                 ]
               },
@@ -1397,25 +1416,25 @@
                 "diff"
               ],
               "displayMode": "table",
-              "placement": "bottom",
-              "showLegend": true
+              "placement": "bottom"
             },
             "tooltip": {
-              "mode": "multi",
-              "sort": "none"
+              "mode": "single"
             }
           },
+          "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "${DS_PROMETHEUS}",
-              "editorMode": "code",
-              "expr": "cisco_optics_tx{switch=\"$Switch\"}",
-              "legendFormat": "{{interface}}",
-              "range": true,
+              "exemplar": false,
+              "expr": "cisco_optics_tx{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      cisco_optics_tx{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end()\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{datacenter}} - {{interface}}",
               "refId": "A"
             }
           ],
-          "title": "Transciver power - TX",
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Transciver power - TX",
           "type": "timeseries"
         }
       ],
@@ -1435,6 +1454,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Total aggregate size. If aggregate is restricted or offline, a value of 0 is returned.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1445,7 +1465,7 @@
                 "axisPlacement": "auto",
                 "barAlignment": 0,
                 "drawStyle": "line",
-                "fillOpacity": 0,
+                "fillOpacity": 10,
                 "gradientMode": "none",
                 "hideFrom": {
                   "legend": false,
@@ -1456,10 +1476,9 @@
                 "lineWidth": 1,
                 "pointSize": 5,
                 "scaleDistribution": {
-                  "log": 10,
-                  "type": "log"
+                  "type": "linear"
                 },
-                "showPoints": "auto",
+                "showPoints": "never",
                 "spanNulls": true,
                 "stacking": {
                   "group": "A",
@@ -1475,12 +1494,12 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
+                    "color": "transparent",
                     "value": null
                   },
                   {
                     "color": "red",
-                    "value": 80
+                    "value": null
                   }
                 ]
               },
@@ -1501,31 +1520,30 @@
                 "diff"
               ],
               "displayMode": "table",
-              "placement": "bottom",
-              "showLegend": true,
-              "sortBy": "Difference",
-              "sortDesc": true
+              "placement": "bottom"
             },
             "tooltip": {
-              "mode": "multi",
-              "sort": "none"
+              "mode": "single"
             }
           },
+          "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "${DS_PROMETHEUS}",
-              "editorMode": "code",
-              "expr": "cisco_interface_transmit_bytes{switch=\"$Switch\"} > 0",
+              "exemplar": false,
+              "expr": "(cisco_interface_transmit_bytes{datacenter=~\"$Datacenter\",switch=~\"$Switch\"} > 0)\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      cisco_interface_transmit_bytes{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end()\n    )\n  )",
+              "interval": "",
               "legendFormat": "{{name}} | {{mac}} | {{description}}",
-              "range": true,
               "refId": "A"
             }
           ],
-          "title": "Total traffic per interface - Transmit",
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Total traffic per interface - Transmit",
           "type": "timeseries"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Total aggregate size. If aggregate is restricted or offline, a value of 0 is returned.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1536,7 +1554,7 @@
                 "axisPlacement": "auto",
                 "barAlignment": 0,
                 "drawStyle": "line",
-                "fillOpacity": 0,
+                "fillOpacity": 10,
                 "gradientMode": "none",
                 "hideFrom": {
                   "legend": false,
@@ -1547,10 +1565,9 @@
                 "lineWidth": 1,
                 "pointSize": 5,
                 "scaleDistribution": {
-                  "log": 10,
-                  "type": "log"
+                  "type": "linear"
                 },
-                "showPoints": "auto",
+                "showPoints": "never",
                 "spanNulls": true,
                 "stacking": {
                   "group": "A",
@@ -1566,12 +1583,12 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
+                    "color": "transparent",
                     "value": null
                   },
                   {
                     "color": "red",
-                    "value": 80
+                    "value": null
                   }
                 ]
               },
@@ -1592,31 +1609,30 @@
                 "diff"
               ],
               "displayMode": "table",
-              "placement": "bottom",
-              "showLegend": true,
-              "sortBy": "Difference",
-              "sortDesc": true
+              "placement": "bottom"
             },
             "tooltip": {
-              "mode": "multi",
-              "sort": "none"
+              "mode": "single"
             }
           },
+          "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "${DS_PROMETHEUS}",
-              "editorMode": "code",
-              "expr": "cisco_interface_receive_bytes{switch=\"$Switch\"} > 0",
+              "exemplar": false,
+              "expr": "(cisco_interface_receive_bytes{datacenter=~\"$Datacenter\",switch=~\"$Switch\"} > 0)\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      cisco_interface_receive_bytes{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end()\n    )\n  )",
+              "interval": "",
               "legendFormat": "{{name}} | {{mac}} | {{description}}",
-              "range": true,
               "refId": "A"
             }
           ],
-          "title": "Total traffic per interface - Receive",
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Total traffic per interface - Receive",
           "type": "timeseries"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Total aggregate size. If aggregate is restricted or offline, a value of 0 is returned.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1627,7 +1643,7 @@
                 "axisPlacement": "auto",
                 "barAlignment": 0,
                 "drawStyle": "line",
-                "fillOpacity": 0,
+                "fillOpacity": 10,
                 "gradientMode": "none",
                 "hideFrom": {
                   "legend": false,
@@ -1638,10 +1654,9 @@
                 "lineWidth": 1,
                 "pointSize": 5,
                 "scaleDistribution": {
-                  "log": 10,
-                  "type": "log"
+                  "type": "linear"
                 },
-                "showPoints": "auto",
+                "showPoints": "never",
                 "spanNulls": true,
                 "stacking": {
                   "group": "A",
@@ -1657,12 +1672,12 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
+                    "color": "transparent",
                     "value": null
                   },
                   {
                     "color": "red",
-                    "value": 80
+                    "value": null
                   }
                 ]
               },
@@ -1683,38 +1698,44 @@
                 "diff"
               ],
               "displayMode": "table",
-              "placement": "bottom",
-              "showLegend": true
+              "placement": "bottom"
             },
             "tooltip": {
-              "mode": "multi",
-              "sort": "none"
+              "mode": "single"
             }
           },
+          "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "${DS_PROMETHEUS}",
-              "editorMode": "code",
-              "expr": "cisco_interface_receive_drops{switch=\"$Switch\"}",
-              "legendFormat": "Transmit - {{name}} | {{mac}} | {{description}}",
-              "range": true,
+              "exemplar": false,
+              "expr": "cisco_interface_receive_drops{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      cisco_interface_receive_drops{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end()\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{interface}}",
               "refId": "A"
             },
             {
-              "datasource": "${DS_PROMETHEUS}",
-              "editorMode": "code",
-              "expr": "cisco_interface_transmit_drops{switch=\"$Switch\"}",
-              "hide": false,
+              "exemplar": false,
+              "expr": "cisco_interface_receive_drops{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      cisco_interface_receive_drops{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end()\n    )\n  )",
+              "interval": "",
+              "legendFormat": "Transmit - {{name}} | {{mac}} | {{description}}",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "cisco_interface_transmit_drops{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      cisco_interface_transmit_drops{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end()\n    )\n  )",
+              "interval": "",
               "legendFormat": "Receive - {{name}} | {{mac}} | {{description}}",
-              "range": true,
               "refId": "B"
             }
           ],
-          "title": "Drop traffic per interface",
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Drop traffic per interface",
           "type": "timeseries"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Total aggregate size. If aggregate is restricted or offline, a value of 0 is returned.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1725,7 +1746,7 @@
                 "axisPlacement": "auto",
                 "barAlignment": 0,
                 "drawStyle": "line",
-                "fillOpacity": 0,
+                "fillOpacity": 10,
                 "gradientMode": "none",
                 "hideFrom": {
                   "legend": false,
@@ -1736,10 +1757,9 @@
                 "lineWidth": 1,
                 "pointSize": 5,
                 "scaleDistribution": {
-                  "log": 10,
-                  "type": "log"
+                  "type": "linear"
                 },
-                "showPoints": "auto",
+                "showPoints": "never",
                 "spanNulls": true,
                 "stacking": {
                   "group": "A",
@@ -1755,12 +1775,12 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
+                    "color": "transparent",
                     "value": null
                   },
                   {
                     "color": "red",
-                    "value": 80
+                    "value": null
                   }
                 ]
               },
@@ -1781,34 +1801,32 @@
                 "diff"
               ],
               "displayMode": "table",
-              "placement": "bottom",
-              "showLegend": true
+              "placement": "bottom"
             },
             "tooltip": {
-              "mode": "multi",
-              "sort": "none"
+              "mode": "single"
             }
           },
+          "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "${DS_PROMETHEUS}",
-              "editorMode": "code",
-              "expr": "cisco_interface_transmit_errors{switch=\"$Switch\"}",
+              "exemplar": false,
+              "expr": "cisco_interface_transmit_errors{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      cisco_interface_transmit_errors{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end()\n    )\n  )",
+              "interval": "",
               "legendFormat": "Transmit - {{name}} | {{mac}} | {{description}}",
-              "range": true,
               "refId": "A"
             },
             {
-              "datasource": "${DS_PROMETHEUS}",
-              "editorMode": "code",
-              "expr": "cisco_interface_receive_errors{switch=\"$Switch\"}",
-              "hide": true,
+              "exemplar": false,
+              "expr": "cisco_interface_receive_errors{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      cisco_interface_receive_errors{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end()\n    )\n  )",
+              "interval": "",
               "legendFormat": "Receive - {{name}} | {{mac}} | {{description}}",
-              "range": true,
               "refId": "B"
             }
           ],
-          "title": "Traffic error per interface",
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Traffic error per interface",
           "type": "timeseries"
         }
       ],
@@ -1883,13 +1901,13 @@
               "reverse": false
             }
           },
-          "pluginVersion": "9.5.15",
+          "pluginVersion": "8.1.8",
           "reverseYBuckets": false,
           "targets": [
             {
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
-              "expr": "cisco_interface_admin_up{switch=\"$Switch\", speed!=\"\"}",
+              "expr": "cisco_interface_admin_up{datacenter=~\"$Datacenter\",switch=\"$Switch\", speed!=\"\"}",
               "legendFormat": "{{name}} | {{speed}}",
               "range": true,
               "refId": "A"
@@ -1935,6 +1953,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Total aggregate size. If aggregate is restricted or offline, a value of 0 is returned.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1945,7 +1964,7 @@
                 "axisPlacement": "auto",
                 "barAlignment": 0,
                 "drawStyle": "line",
-                "fillOpacity": 0,
+                "fillOpacity": 10,
                 "gradientMode": "none",
                 "hideFrom": {
                   "legend": false,
@@ -1958,7 +1977,7 @@
                 "scaleDistribution": {
                   "type": "linear"
                 },
-                "showPoints": "auto",
+                "showPoints": "never",
                 "spanNulls": true,
                 "stacking": {
                   "group": "A",
@@ -1968,17 +1987,18 @@
                   "mode": "off"
                 }
               },
+              "decimals": 2,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
+                    "color": "transparent",
                     "value": null
                   },
                   {
                     "color": "red",
-                    "value": 80
+                    "value": null
                   }
                 ]
               },
@@ -2001,25 +2021,25 @@
                 "max"
               ],
               "displayMode": "table",
-              "placement": "bottom",
-              "showLegend": true
+              "placement": "bottom"
             },
             "tooltip": {
-              "mode": "multi",
-              "sort": "none"
+              "mode": "single"
             }
           },
+          "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "${DS_PROMETHEUS}",
-              "editorMode": "code",
-              "expr": "cisco_collect_duration_seconds{switch=\"$Switch\"}",
-              "legendFormat": "{{collector}}",
-              "range": true,
+              "exemplar": false,
+              "expr": "cisco_collect_duration_seconds{datacenter=~\"$Datacenter\",switch=\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      cisco_collect_duration_seconds{datacenter=~\"$Datacenter\",switch=\"$Switch\"}[3h] @ end()\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{datacenter}} - {{collector}}",
               "refId": "A"
             }
           ],
-          "title": "Collect time",
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Collect time",
           "type": "timeseries"
         }
       ],
@@ -2027,6 +2047,7 @@
       "type": "row"
     }
   ],
+  "refresh": "",
   "schemaVersion": 30,
   "style": "dark",
   "tags": [
@@ -2056,31 +2077,147 @@
         "type": "datasource"
       },
       {
-        "allValue": null,
-        "current": {
-          "selected": false,
-          "text": "Switch-A1",
-          "value": "Switch-A1"
-        },
+        "allValue": ".*",
+        "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(switch)",
+        "definition": "label_values(cisco_interface_up{}, datacenter)",
         "description": null,
         "error": null,
         "hide": 0,
-        "includeAll": false,
-        "label": "switch",
-        "multi": false,
-        "name": "Switch",
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "Datacenter",
         "options": [],
         "query": {
-          "query": "label_values(switch)",
+          "query": "label_values(cisco_interface_up{}, datacenter)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
-        "type": "query"
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(cisco_interface_up{datacenter=~\"$Datacenter\"}, switch)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "Switch",
+        "options": [],
+        "query": {
+          "query": "label_values(cisco_interface_up{datacenter=~\"$Datacenter\"}, switch)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": "5",
+          "value": "5"
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "TopResources",
+        "options": [
+          {
+            "selected": false,
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "selected": false,
+            "text": "2",
+            "value": "2"
+          },
+          {
+            "selected": false,
+            "text": "3",
+            "value": "3"
+          },
+          {
+            "selected": false,
+            "text": "4",
+            "value": "4"
+          },
+          {
+            "selected": true,
+            "text": "5",
+            "value": "5"
+          },
+          {
+            "selected": false,
+            "text": "6",
+            "value": "6"
+          },
+          {
+            "selected": false,
+            "text": "8",
+            "value": "8"
+          },
+          {
+            "selected": false,
+            "text": "10",
+            "value": "10"
+          },
+          {
+            "selected": false,
+            "text": "15",
+            "value": "15"
+          },
+          {
+            "selected": false,
+            "text": "25",
+            "value": "25"
+          },
+          {
+            "selected": false,
+            "text": "50",
+            "value": "50"
+          },
+          {
+            "selected": false,
+            "text": "100",
+            "value": "100"
+          },
+          {
+            "selected": false,
+            "text": "250",
+            "value": "250"
+          },
+          {
+            "selected": false,
+            "text": "500",
+            "value": "500"
+          }
+        ],
+        "query": "1,2,3,4,5,6,8,10,15,25,50,100,250,500",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
       }
     ]
   },
@@ -2092,5 +2229,5 @@
   "timezone": "",
   "title": "Cisco switch",
   "uid": "cisco-switch",
-  "version": 1
+  "version": 16
 }
