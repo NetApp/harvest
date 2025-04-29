@@ -265,8 +265,6 @@ func (c *ClusterSoftware) handleValidationDetails(validationDetailsJSON gjson.Re
 		met := c.data[validationMatrix].GetMetric(validationMatrix)
 		if err := met.SetValueFloat64(clusterValidationInstance, value); err != nil {
 			c.SLogger.Error("Failed to parse value", slogx.Err(err), slog.Float64("value", value))
-		} else {
-			c.SLogger.Debug("added value", slog.Float64("value", value))
 		}
 	}
 }

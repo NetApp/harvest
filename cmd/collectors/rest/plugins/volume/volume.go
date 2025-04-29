@@ -289,8 +289,6 @@ func (v *Volume) handleARWProtection(data *matrix.Matrix) {
 	value := 1.0
 	if err = m.SetValueFloat64(arwInstance, value); err != nil {
 		v.SLogger.Error("Failed to parse value", slogx.Err(err), slog.Float64("value", value))
-	} else {
-		v.SLogger.Debug("added value", slog.Float64("value", value))
 	}
 }
 
@@ -419,8 +417,6 @@ func (v *Volume) handleTags(globalLabels map[string]string) {
 				value := 1.0
 				if err = m.SetValueFloat64(tagInstance, value); err != nil {
 					v.SLogger.Error("Failed to parse value", slogx.Err(err), slog.Float64("value", value))
-				} else {
-					v.SLogger.Debug("added value", slog.Float64("value", value))
 				}
 			}
 		}

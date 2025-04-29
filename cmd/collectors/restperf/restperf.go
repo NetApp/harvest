@@ -1,7 +1,6 @@
 package restperf
 
 import (
-	"context"
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
@@ -1663,11 +1662,11 @@ func (r *RestPerf) pollInstance(mat *matrix.Matrix, records iter.Seq[gjson.Resul
 			// instance already in cache
 			oldInstances.Remove(instanceKey)
 			instance := mat.GetInstance(instanceKey)
-			r.updateQosLabels(instanceData, instance, instanceKey)
+			r.updateQosLabels(instanceData, instance)
 		} else if instance, err := mat.NewInstance(instanceKey); err != nil {
 			r.Logger.Error("add instance", slogx.Err(err), slog.String("instanceKey", instanceKey))
 		} else {
-			r.updateQosLabels(instanceData, instance, instanceKey)
+			r.updateQosLabels(instanceData, instance)
 		}
 	}
 
@@ -1700,22 +1699,13 @@ func (r *RestPerf) pollInstance(mat *matrix.Matrix, records iter.Seq[gjson.Resul
 	return nil, err
 }
 
-func (r *RestPerf) updateQosLabels(qos gjson.Result, instance *matrix.Instance, key string) {
+func (r *RestPerf) updateQosLabels(qos gjson.Result, instance *matrix.Instance) {
 	if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
 		for label, display := range r.perfProp.qosLabels {
 			// lun,file,qtree may not always exist for workload
 			if value := qos.Get(label); value.Exists() {
 				instance.SetLabel(display, value.ClonedString())
 			}
-		}
-
-		if r.Logger.Enabled(context.Background(), slog.LevelDebug) {
-			r.Logger.Debug(
-				"",
-				slog.String("query", r.Prop.Query),
-				slog.String("key", key),
-				slog.Any("qos labels", instance.GetLabels()),
-			)
 		}
 	}
 }

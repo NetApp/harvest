@@ -103,11 +103,9 @@ func (m *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 			if err := m.getSVMPeerData(cluster); err != nil {
 				return nil, nil, err
 			}
-			m.SLogger.Debug("updated svm peer map detail")
 			if err := m.getClusterPeerData(); err != nil {
 				return nil, nil, err
 			}
-			m.SLogger.Debug("updated cluster peer map detail")
 		}
 	}
 
