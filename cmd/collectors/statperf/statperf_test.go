@@ -8,13 +8,11 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"os"
 	"sort"
 	"strings"
 	"testing"
-	"time"
 )
 
 const (
@@ -109,20 +107,16 @@ func TestStatPerf_pollData(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			curTime := time.Now().UnixNano() / util.BILLION
-
 			data, err := getDataJSON(tt.pollDataPath1)
 			if err != nil {
 				t.Fatalf("error: %v", err)
 			}
 
 			prevMat := s.Matrix[s.Object]
-			_, _, err = processAndCookCounters(s, data, prevMat, float64(curTime))
+			_, _, err = processAndCookCounters(s, data, prevMat)
 			if err != nil {
 				t.Fatal(err)
 			}
-
-			future := curTime + 60
 
 			data2, err := getDataJSON(tt.pollDataPath2)
 			if err != nil {
@@ -130,7 +124,7 @@ func TestStatPerf_pollData(t *testing.T) {
 			}
 
 			prevMat = s.Matrix[s.Object]
-			got, metricCount, err := processAndCookCounters(s, data2, prevMat, float64(future))
+			got, metricCount, err := processAndCookCounters(s, data2, prevMat)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("pollData() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -239,10 +233,10 @@ objects:
 	return root
 }
 
-func processAndCookCounters(s *StatPerf, pollData []gjson.Result, prevMat *matrix.Matrix, ts float64) (map[string]*matrix.Matrix, uint64, error) {
+func processAndCookCounters(s *StatPerf, pollData []gjson.Result, prevMat *matrix.Matrix) (map[string]*matrix.Matrix, uint64, error) {
 	curMat := prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
 	curMat.Reset()
-	metricCount, _, _ := s.processPerfRecords(pollData, curMat, prevMat, ts)
+	metricCount, _, _ := s.processPerfRecords(pollData, curMat, prevMat)
 	got, err := s.cookCounters(curMat, prevMat)
 	return got, metricCount, err
 }
