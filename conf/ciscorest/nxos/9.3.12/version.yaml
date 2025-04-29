@@ -1,0 +1,6 @@
+name:               Version
+query:              "show version"
+object:             cisco_version
+
+plugins:
+  - Version

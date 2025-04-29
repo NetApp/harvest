@@ -154,7 +154,7 @@
       "targets": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "expr": "metadata_target_status{datacenter=~\"$Datacenter\"}\n* on (instance) group_left (switch)\n  group by (instance, switch) (cisco_interface_up{datacenter=~\"$Datacenter\",switch=~\"$Switch\"})",
+          "expr": "cisco_version_labels{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
           "legendFormat": "{{hostname}}",
           "refId": "A"
         }
@@ -253,7 +253,7 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 7,
+        "w": 8,
         "x": 9,
         "y": 1
       },
@@ -277,8 +277,8 @@
       "targets": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "expr": "cisco_facts_chassis_id{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
-          "legendFormat": "{{chassis_id}}",
+          "expr": "cisco_version_labels{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
+          "legendFormat": "{{chassis}}",
           "refId": "A"
         }
       ],
@@ -322,7 +322,7 @@
       "gridPos": {
         "h": 3,
         "w": 3,
-        "x": 16,
+        "x": 17,
         "y": 1
       },
       "id": 3,
@@ -345,8 +345,8 @@
       "targets": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "expr": "cisco_facts_bios_version{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
-          "legendFormat": "{{version}}",
+          "expr": "cisco_version_labels{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
+          "legendFormat": "{{biosVersion}}",
           "refId": "A"
         }
       ],
@@ -389,8 +389,8 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 5,
-        "x": 19,
+        "w": 4,
+        "x": 20,
         "y": 1
       },
       "id": 1,
@@ -413,8 +413,8 @@
       "targets": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "expr": "cisco_facts_version{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
-          "legendFormat": "{{version}}",
+          "expr": "cisco_version_labels{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
+          "legendFormat": "{{osVersion}}",
           "refId": "A"
         }
       ],
@@ -1937,7 +1937,7 @@
         "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(cisco_interface_up{}, datacenter)",
+        "definition": "label_values(cisco_version_labels{}, datacenter)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -1947,7 +1947,7 @@
         "name": "Datacenter",
         "options": [],
         "query": {
-          "query": "label_values(cisco_interface_up{}, datacenter)",
+          "query": "label_values(cisco_version_labels{}, datacenter)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -1963,7 +1963,7 @@
         "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(cisco_interface_up{datacenter=~\"$Datacenter\"}, switch)",
+        "definition": "label_values(cisco_version_labels{datacenter=~\"$Datacenter\"}, switch)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -1973,7 +1973,7 @@
         "name": "Switch",
         "options": [],
         "query": {
-          "query": "label_values(cisco_interface_up{datacenter=~\"$Datacenter\"}, switch)",
+          "query": "label_values(cisco_version_labels{datacenter=~\"$Datacenter\"}, switch)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
