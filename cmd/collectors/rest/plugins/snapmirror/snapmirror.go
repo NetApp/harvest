@@ -218,7 +218,7 @@ func (m *SnapMirror) updateSMLabels(data *matrix.Matrix) {
 		collectors.UpdateProtectedFields(instance)
 
 		// Update lag time based on checks
-		collectors.UpdateLagTime(instance, lastTransferSizeMetric, lagTimeMetric, m.SLogger)
+		collectors.UpdateLagTime(instance, lastTransferSizeMetric, lagTimeMetric)
 	}
 
 	// handle CG relationships

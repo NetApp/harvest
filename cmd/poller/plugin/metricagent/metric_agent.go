@@ -132,7 +132,7 @@ func (a *MetricAgent) computeMetrics(m *matrix.Matrix) error {
 				}
 			}
 
-			_ = metric.SetValueFloat64(instance, result)
+			metric.SetValueFloat64(instance, result)
 		}
 	}
 	if len(metricNotFound) > 0 {

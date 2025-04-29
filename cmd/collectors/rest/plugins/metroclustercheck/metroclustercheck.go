@@ -135,9 +135,6 @@ func (m *MetroclusterCheck) setValue(metricName string, newDetailInstance *matri
 	}
 
 	met := m.data.GetMetric(metricName)
-	if err := met.SetValueFloat64(newDetailInstance, value); err != nil {
-		m.SLogger.Error("Failed to parse value", slogx.Err(err), slog.Float64("value", value))
-	} else {
-		m.SLogger.Debug("added value", slog.Float64("value", value))
-	}
+	met.SetValueFloat64(newDetailInstance, value)
+	m.SLogger.Debug("added value", slog.Float64("value", value))
 }

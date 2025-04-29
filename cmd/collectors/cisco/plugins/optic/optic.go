@@ -6,7 +6,6 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
@@ -135,18 +134,8 @@ func (o *Optic) parseOptic(output gjson.Result, opticMat *matrix.Matrix) {
 
 		instance.SetLabel("interface", model.Name)
 
-		o.setMetricValue(rx, instance, model.RxPower, opticMat)
-		o.setMetricValue(tx, instance, model.TxPower, opticMat)
-	}
-}
-
-func (o *Optic) setMetricValue(metric string, instance *matrix.Instance, value float64, mat *matrix.Matrix) {
-	if err := mat.GetMetric(metric).SetValueFloat64(instance, value); err != nil {
-		o.SLogger.Error(
-			"Unable to set value on metric",
-			slogx.Err(err),
-			slog.String("metric", metric),
-		)
+		opticMat.GetMetric(rx).SetValueFloat64(instance, model.RxPower)
+		opticMat.GetMetric(tx).SetValueFloat64(instance, model.TxPower)
 	}
 }
 

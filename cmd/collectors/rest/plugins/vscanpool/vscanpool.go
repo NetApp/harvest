@@ -118,9 +118,7 @@ func (v *VscanPool) updateVscanLabels(svmPoolMap map[string][]string, vserverSer
 			}
 			vscanDisconnectedInstance.SetLabel("vscan_server", strings.Join(notConectedServers, ","))
 			vscanDisconnectedInstance.SetLabel("svm", svm)
-			if err = v.vscanServer.GetMetric("disconnected").SetValueFloat64(vscanDisconnectedInstance, 1); err != nil {
-				v.SLogger.Error("Failed to set value", slogx.Err(err), slog.String("instanceKey", instanceKey))
-			}
+			v.vscanServer.GetMetric("disconnected").SetValueFloat64(vscanDisconnectedInstance, 1)
 		}
 	}
 }

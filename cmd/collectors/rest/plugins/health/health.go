@@ -900,13 +900,7 @@ func (h *Health) setAlertMetric(mat *matrix.Matrix, instance *matrix.Instance, v
 			return
 		}
 	}
-	if err = m.SetValueFloat64(instance, value); err != nil {
-		h.SLogger.Error(
-			"Unable to set value on metric",
-			slogx.Err(err),
-			slog.String("metric", "alerts"),
-		)
-	}
+	m.SetValueFloat64(instance, value)
 }
 
 func (h *Health) getAlertMetric(mat *matrix.Matrix, instance *matrix.Instance) (float64, error) {

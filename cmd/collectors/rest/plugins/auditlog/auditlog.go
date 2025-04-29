@@ -251,14 +251,11 @@ func (a *AuditLog) GetVolumeInfo(uuid string) (VolumeInfo, bool) {
 	return volumeInfo, exists
 }
 
-func (a *AuditLog) setLogMetric(mat *matrix.Matrix, instance *matrix.Instance, value float64) error {
+func (a *AuditLog) setLogMetric(mat *matrix.Matrix, instance *matrix.Instance, value float64) {
 	m := mat.GetMetric("log")
 	if m != nil {
-		if err := m.SetValueFloat64(instance, value); err != nil {
-			return err
-		}
+		m.SetValueFloat64(instance, value)
 	}
-	return nil
 }
 
 func (a *AuditLog) RefreshVolumeCache(refreshCache bool) error {

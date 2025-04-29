@@ -1152,14 +1152,7 @@ func (r *RestPerf) processPerfRecords(perfRecords []rest.PerfRecord, curMat *mat
 						}
 						metr.SetExportable(metric.Exportable)
 						if c, err := strconv.ParseFloat(f.value, 64); err == nil {
-							if err = metr.SetValueFloat64(instance, c); err != nil {
-								r.Logger.Error(
-									"Unable to set float key on metric",
-									slogx.Err(err),
-									slog.String("key", metric.Name),
-									slog.String("metric", metric.Label),
-								)
-							}
+							metr.SetValueFloat64(instance, c)
 						} else {
 							r.Logger.Error(
 								"Unable to parse float value",
@@ -1174,9 +1167,7 @@ func (r *RestPerf) processPerfRecords(perfRecords []rest.PerfRecord, curMat *mat
 					r.Logger.Warn("Counter is missing or unable to parse", slog.String("counter", name))
 				}
 			}
-			if err = curMat.GetMetric(timestampMetricName).SetValueFloat64(instance, ts); err != nil {
-				r.Logger.Error("Failed to set timestamp", slogx.Err(err))
-			}
+			curMat.GetMetric(timestampMetricName).SetValueFloat64(instance, ts)
 
 			return true
 		})

@@ -361,10 +361,7 @@ func (c *ChangeLog) createChangeLogInstance(mat *matrix.Matrix, change *Change) 
 			return
 		}
 	}
-	if err = m.SetValueInt64(cInstance, change.time); err != nil {
-		c.SLogger.Error("error while setting value", slog.Any("err", err), slog.Int64("val", change.time))
-		return
-	}
+	m.SetValueInt64(cInstance, change.time)
 }
 
 // updateChangeLogLabels populates change log labels

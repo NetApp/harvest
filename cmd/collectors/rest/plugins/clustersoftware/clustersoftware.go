@@ -176,11 +176,8 @@ func (c *ClusterSoftware) handleUpdateDetails(updateDetailsJSON gjson.Result, gl
 		}
 
 		met := c.data[updateMatrix].GetMetric(updateMatrix)
-		if err := met.SetValueFloat64(clusterUpdateInstance, value); err != nil {
-			c.SLogger.Error("Failed to parse value", slogx.Err(err), slog.Float64("value", value))
-		} else {
-			c.SLogger.Debug("added value", slog.Float64("value", value))
-		}
+		met.SetValueFloat64(clusterUpdateInstance, value)
+		c.SLogger.Debug("added value", slog.Float64("value", value))
 	}
 }
 
@@ -222,11 +219,8 @@ func (c *ClusterSoftware) handleStatusDetails(statusDetailsJSON gjson.Result, gl
 		}
 
 		met := c.data[statusMatrix].GetMetric(statusMatrix)
-		if err := met.SetValueFloat64(clusterStatusInstance, value); err != nil {
-			c.SLogger.Error("Failed to parse value", slogx.Err(err), slog.Float64("value", value))
-		} else {
-			c.SLogger.Debug("added value", slog.Float64("value", value))
-		}
+		met.SetValueFloat64(clusterStatusInstance, value)
+		c.SLogger.Debug("added value", slog.Float64("value", value))
 	}
 }
 
@@ -263,8 +257,6 @@ func (c *ClusterSoftware) handleValidationDetails(validationDetailsJSON gjson.Re
 		// populate numeric data
 		value := 1.0
 		met := c.data[validationMatrix].GetMetric(validationMatrix)
-		if err := met.SetValueFloat64(clusterValidationInstance, value); err != nil {
-			c.SLogger.Error("Failed to parse value", slogx.Err(err), slog.Float64("value", value))
-		}
+		met.SetValueFloat64(clusterValidationInstance, value)
 	}
 }

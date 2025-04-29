@@ -62,23 +62,23 @@ func TestComputeMetricsRule(t *testing.T) {
 
 	// space metric for addition
 	if metricAvail, err = m.NewMetricFloat64("space_available"); err == nil {
-		_ = metricAvail.SetValueFloat64(instanceA, 1010101010)
+		metricAvail.SetValueFloat64(instanceA, 1010101010)
 	} else {
 		t.Error("metric [space_available]  not created for InstanceA")
 	}
 	if metricUsed, err = m.NewMetricFloat64("space_used"); err == nil {
-		_ = metricUsed.SetValueFloat64(instanceA, 5050505050)
+		metricUsed.SetValueFloat64(instanceA, 5050505050)
 	} else {
 		t.Error("metric [space_used]  not created for InstanceA")
 	}
 	// files metric for subtraction
 	if metricFiles, err = m.NewMetricFloat64("files"); err == nil {
-		_ = metricFiles.SetValueFloat64(instanceA, 1024)
+		metricFiles.SetValueFloat64(instanceA, 1024)
 	} else {
 		t.Error("metric [files]  not created for InstanceA")
 	}
 	if metricFilesUsed, err = m.NewMetricFloat64("files_used"); err == nil {
-		_ = metricFilesUsed.SetValueFloat64(instanceA, 216)
+		metricFilesUsed.SetValueFloat64(instanceA, 216)
 	} else {
 		t.Error("metric [files_used]  not created for InstanceA")
 	}
@@ -89,39 +89,39 @@ func TestComputeMetricsRule(t *testing.T) {
 
 	// disk metric for addition
 	if metricDiskP, err = m.NewMetricFloat64("primary.disk_count"); err == nil {
-		_ = metricDiskP.SetValueFloat64(instanceB, 8)
+		metricDiskP.SetValueFloat64(instanceB, 8)
 	} else {
 		t.Error("metric [primary.disk_count]  not created for InstanceB")
 	}
 	if metricDiskS, err = m.NewMetricFloat64("secondary.disk_count"); err == nil {
-		_ = metricDiskS.SetValueFloat64(instanceB, 10)
+		metricDiskS.SetValueFloat64(instanceB, 10)
 	} else {
 		t.Error("metric [secondary.disk_count]  not created for InstanceB")
 	}
 	if metricDiskH, err = m.NewMetricFloat64("hybrid.disk_count"); err == nil {
-		_ = metricDiskH.SetValueFloat64(instanceB, 4)
+		metricDiskH.SetValueFloat64(instanceB, 4)
 	} else {
 		t.Error("metric [hybrid.disk_count]  not created for InstanceB")
 	}
 	// bytes metric for multiplication
 	if metricBytesPSector, err = m.NewMetricFloat64("bytes_per_sector"); err == nil {
-		_ = metricBytesPSector.SetValueFloat64(instanceB, 10000)
+		metricBytesPSector.SetValueFloat64(instanceB, 10000)
 	} else {
 		t.Error("metric [bytes_per_sector]  not created for InstanceB")
 	}
 	if metricSectorCount, err = m.NewMetricFloat64("sector_count"); err == nil {
-		_ = metricSectorCount.SetValueFloat64(instanceB, 12)
+		metricSectorCount.SetValueFloat64(instanceB, 12)
 	} else {
 		t.Error("metric [sector_count]  not created for InstanceB")
 	}
 	// transmission metric for division
 	if metricBytesTransferred, err = m.NewMetricFloat64("transfer.bytes_transferred"); err == nil {
-		_ = metricBytesTransferred.SetValueFloat64(instanceB, 9000000)
+		metricBytesTransferred.SetValueFloat64(instanceB, 9000000)
 	} else {
 		t.Error("metric [transfer.bytes_transferred]  not created for InstanceB")
 	}
 	if metricTotalDuration, err = m.NewMetricFloat64("transfer.total_duration"); err == nil {
-		_ = metricTotalDuration.SetValueFloat64(instanceB, 3600)
+		metricTotalDuration.SetValueFloat64(instanceB, 3600)
 	} else {
 		t.Error("metric [transfer.total_duration]  not created for InstanceB")
 	}

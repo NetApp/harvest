@@ -163,16 +163,16 @@ func (e *Environment) parsePower(output gjson.Result, envMat *matrix.Matrix) {
 
 		powerUpMetric := envMat.GetMetric("power_up")
 		if ps.Status == "ok" {
-			_ = powerUpMetric.SetValueFloat64(instance, 1)
+			powerUpMetric.SetValueFloat64(instance, 1)
 		} else {
-			_ = powerUpMetric.SetValueFloat64(instance, 0)
+			powerUpMetric.SetValueFloat64(instance, 0)
 		}
 
 		// If actualOut is 0, we don't want to export the other metrics
 		if ps.ActualOut > 0 {
-			_ = envMat.GetMetric("power_out").SetValueFloat64(instance, ps.ActualOut)
-			_ = envMat.GetMetric("power_capacity").SetValueFloat64(instance, ps.TotalCapacity)
-			_ = envMat.GetMetric("power_in").SetValueFloat64(instance, ps.ActualIn)
+			envMat.GetMetric("power_out").SetValueFloat64(instance, ps.ActualOut)
+			envMat.GetMetric("power_capacity").SetValueFloat64(instance, ps.TotalCapacity)
+			envMat.GetMetric("power_in").SetValueFloat64(instance, ps.ActualIn)
 		}
 	}
 }

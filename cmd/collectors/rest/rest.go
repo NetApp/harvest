@@ -650,14 +650,7 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 			if metric.Name == "statistics.timestamp" && mat.UUID == "KeyPerf" {
 				sTimestamp := instanceData.Get(metric.Name)
 				if !sTimestamp.Exists() {
-					if err = metr.SetValueInt64(instance, timestamp); err != nil {
-						r.Logger.Error(
-							"Unable to set metric",
-							slogx.Err(err),
-							slog.String("key", metric.Name),
-							slog.String("metric", metric.Label),
-						)
-					}
+					metr.SetValueInt64(instance, timestamp)
 					count++
 					continue
 				}
@@ -676,14 +669,7 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 					r.Logger.Warn("unknown metric type", slog.String("type", metric.MetricType), slog.String("metric", metric.Name))
 				}
 
-				if err = metr.SetValueFloat64(instance, floatValue); err != nil {
-					r.Logger.Error(
-						"Unable to set float key on metric",
-						slogx.Err(err),
-						slog.String("key", metric.Name),
-						slog.String("metric", metric.Label),
-					)
-				}
+				metr.SetValueFloat64(instance, floatValue)
 				count++
 			}
 		}

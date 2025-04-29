@@ -219,27 +219,11 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 						if opsValue, ok = opsMetric.GetValueFloat64(instance); !ok {
 							continue
 						}
-						if err = objMetric.AddValueFloat64(objInstance, opsValue*value); err != nil {
-							a.SLogger.Error(
-								"add value",
-								slogx.Err(err),
-								slog.String("key", key),
-								slog.String("objName", objName),
-							)
-							continue
-						}
+						objMetric.AddValueFloat64(objInstance, opsValue*value)
 						rule.counts[objKey][key] += opsValue
 					}
 				} else {
-					if err = objMetric.AddValueFloat64(objInstance, value); err != nil {
-						a.SLogger.Error(
-							"add value",
-							slogx.Err(err),
-							slog.String("key", key),
-							slog.String("objName", objName),
-						)
-						continue
-					}
+					objMetric.AddValueFloat64(objInstance, value)
 					rule.counts[objKey][key]++
 				}
 			}
@@ -253,7 +237,6 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 				v       float64
 				count   float64
 				ok, avg bool
-				err     error
 			)
 
 			mn := metric.GetName()
@@ -281,17 +264,9 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 
 				// if no ops happened
 				if count == 0 {
-					err = metric.SetValueFloat64(instance, 0)
+					metric.SetValueFloat64(instance, 0)
 				} else {
-					err = metric.SetValueFloat64(instance, v/count)
-				}
-				if err != nil {
-					a.SLogger.Error(
-						"set value",
-						slogx.Err(err),
-						slog.String("mn", mn),
-						slog.String("key", key),
-					)
+					metric.SetValueFloat64(instance, v/count)
 				}
 			}
 		}

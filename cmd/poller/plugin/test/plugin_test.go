@@ -78,13 +78,9 @@ func TestMultipleRule(t *testing.T) {
 	instanceA.SetLabel("state", "online") // "status" should be 1
 	instanceA.SetLabel("node", "nodeA")
 
-	if err = metricA.SetValueUint8(instanceA, 10); err != nil {
-		t.Fatal(err)
-	}
+	metricA.SetValueUint8(instanceA, 10)
 
-	if err = metricB.SetValueUint8(instanceA, 10); err != nil {
-		t.Fatal(err)
-	}
+	metricB.SetValueUint8(instanceA, 10)
 
 	// should not match
 	instanceNo, _ := m.NewInstance("1")

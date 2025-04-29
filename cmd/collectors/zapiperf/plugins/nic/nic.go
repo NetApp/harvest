@@ -166,27 +166,18 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 
 				if rxBytes, rxOk = read.GetValueFloat64(instance); rxOk {
 					rxPercent = rxBytes / float64(speed)
-					err := rx.SetValueFloat64(instance, rxPercent)
-					if err != nil {
-						n.SLogger.Error("error", slogx.Err(err))
-					}
+					rx.SetValueFloat64(instance, rxPercent)
 				}
 
 				if txBytes, txOk = write.GetValueFloat64(instance); txOk {
 					txPercent = txBytes / float64(speed)
-					err := tx.SetValueFloat64(instance, txPercent)
-					if err != nil {
-						n.SLogger.Error("error", slogx.Err(err))
-					}
+					tx.SetValueFloat64(instance, txPercent)
 				}
 
 				portDataMap[nodeName+port] = collectors.PortData{Node: nodeName, Port: port, Read: rxBytes, Write: txBytes}
 
 				if rxOk || txOk {
-					err := utilPercent.SetValueFloat64(instance, math.Max(rxPercent, txPercent))
-					if err != nil {
-						n.SLogger.Error("error", slogx.Err(err))
-					}
+					utilPercent.SetValueFloat64(instance, math.Max(rxPercent, txPercent))
 				}
 			}
 		}

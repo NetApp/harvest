@@ -6,7 +6,6 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
@@ -158,42 +157,31 @@ func (i *Interface) parseInterface(output gjson.Result, envMat *matrix.Matrix) {
 		instance.SetLabel("description", desc)
 		instance.SetLabel("speed", ethSpeed)
 
-		i.setMetricValue(receiveBytes, instance, ethInBytes, envMat)
-		i.setMetricValue(receiveErrors, instance, ethInErrors, envMat)
-		i.setMetricValue(transmitBytes, instance, ethOutBytes, envMat)
-		i.setMetricValue(transmitErrors, instance, ethOutErrors, envMat)
-		i.setMetricValue(receiveMulticast, instance, ethInMcast, envMat)
-		i.setMetricValue(receiveBroadcast, instance, ethInBcast, envMat)
+		envMat.GetMetric(receiveBytes).SetValueFloat64(instance, ethInBytes)
+		envMat.GetMetric(receiveErrors).SetValueFloat64(instance, ethInErrors)
+		envMat.GetMetric(transmitBytes).SetValueFloat64(instance, ethOutBytes)
+		envMat.GetMetric(transmitErrors).SetValueFloat64(instance, ethOutErrors)
+		envMat.GetMetric(receiveMulticast).SetValueFloat64(instance, ethInMcast)
+		envMat.GetMetric(receiveBroadcast).SetValueFloat64(instance, ethInBcast)
 
 		if adminState == "up" {
-			i.setMetricValue(adminUp, instance, 1, envMat)
+			envMat.GetMetric(adminUp).SetValueFloat64(instance, 1)
 		} else {
-			i.setMetricValue(adminUp, instance, 0, envMat)
+			envMat.GetMetric(adminUp).SetValueFloat64(instance, 0)
 		}
 
 		if state == "up" {
-			i.setMetricValue(up, instance, 1, envMat)
+			envMat.GetMetric(up).SetValueFloat64(instance, 1)
 		} else {
-			i.setMetricValue(up, instance, 0, envMat)
+			envMat.GetMetric(up).SetValueFloat64(instance, 0)
 		}
 
 		if adminState != state {
-			i.setMetricValue(errorStatus, instance, 1, envMat)
+			envMat.GetMetric(errorStatus).SetValueFloat64(instance, 1)
 		} else {
-			i.setMetricValue(errorStatus, instance, 0, envMat)
+			envMat.GetMetric(errorStatus).SetValueFloat64(instance, 0)
 		}
 
 		return true
 	})
-
-}
-
-func (i *Interface) setMetricValue(metric string, instance *matrix.Instance, value float64, mat *matrix.Matrix) {
-	if err := mat.GetMetric(metric).SetValueFloat64(instance, value); err != nil {
-		i.SLogger.Error(
-			"Unable to set value on metric",
-			slogx.Err(err),
-			slog.String("metric", metric),
-		)
-	}
 }

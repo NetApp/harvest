@@ -610,9 +610,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 			}
 
 			// add batch timestamp as custom counter
-			if err := timestamp.SetValueFloat64(instance, ts); err != nil {
-				z.Logger.Error("set timestamp value", slogx.Err(err))
-			}
+			timestamp.SetValueFloat64(instance, ts)
 
 			for _, cnt := range counters.GetChildren() {
 

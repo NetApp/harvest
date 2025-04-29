@@ -413,82 +413,52 @@ func (u *Unix) PollData() (map[string]*matrix.Matrix, error) {
 }
 
 func setStartTime(m *matrix.Metric, i *matrix.Instance, p *Process, s *System) {
-	err := m.SetValueFloat64(i, p.startTime+s.bootTime)
-	if err != nil {
-		slog.Default().Error("error", slogx.Err(err))
-	}
+	m.SetValueFloat64(i, p.startTime+s.bootTime)
 }
 
 func setNumThreads(m *matrix.Metric, i *matrix.Instance, p *Process, _ *System) {
-	err := m.SetValueUint64(i, p.numThreads)
-	if err != nil {
-		slog.Default().Error("error", slogx.Err(err))
-	}
+	m.SetValueUint64(i, p.numThreads)
 }
 
 func setNumFds(m *matrix.Metric, i *matrix.Instance, p *Process, _ *System) {
-	err := m.SetValueUint64(i, p.numFds)
-	if err != nil {
-		slog.Default().Error("error", slogx.Err(err))
-	}
+	m.SetValueUint64(i, p.numFds)
 }
 
 func setCPUPercent(m *matrix.Metric, i *matrix.Instance, p *Process, _ *System) {
 	if p.elapsedTime != 0 {
-		err := m.SetValueFloat64(i, p.cpuTotal/p.elapsedTime*100)
-		if err != nil {
-			slog.Default().Error("error", slogx.Err(err))
-		}
+		m.SetValueFloat64(i, p.cpuTotal/p.elapsedTime*100)
 	} else {
-		err := m.SetValueFloat64(i, p.cpuTotal/(float64(time.Now().Unix())-p.startTime)*100)
-		if err != nil {
-			slog.Default().Error("error", slogx.Err(err))
-		}
+		m.SetValueFloat64(i, p.cpuTotal/(float64(time.Now().Unix())-p.startTime)*100)
 	}
 }
 
 func setCPU(m *matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	if value, ok := p.cpu[l]; ok {
-		err := m.SetValueFloat64(i, value)
-		if err != nil {
-			slog.Default().Error("error", slogx.Err(err))
-		}
+		m.SetValueFloat64(i, value)
 	}
 }
 
 func setMemory(m *matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	if value, ok := p.mem[l]; ok {
-		err := m.SetValueUint64(i, value)
-		if err != nil {
-			slog.Default().Error("error", slogx.Err(err))
-		}
+		m.SetValueUint64(i, value)
 	}
 }
 
 func setIo(m *matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	if value, ok := p.io[l]; ok {
-		err := m.SetValueUint64(i, value)
-		if err != nil {
-			slog.Default().Error("error", slogx.Err(err))
-		}
+		m.SetValueUint64(i, value)
 	}
 }
 
 func setNet(m *matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	if value, ok := p.net[l]; ok {
-		err := m.SetValueUint64(i, value)
-		if err != nil {
-			slog.Default().Error("error", slogx.Err(err))
-		}
+		m.SetValueUint64(i, value)
 	}
 }
 
 func setCtx(m *matrix.Metric, l string, i *matrix.Instance, p *Process) {
 	if value, ok := p.ctx[l]; ok {
-		err := m.SetValueUint64(i, value)
-		if err != nil {
-			slog.Default().Error("error", slogx.Err(err))
-		}
+		m.SetValueUint64(i, value)
 	}
 }
 

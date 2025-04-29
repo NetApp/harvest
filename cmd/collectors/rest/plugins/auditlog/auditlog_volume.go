@@ -406,7 +406,7 @@ func (a *AuditLog) parseVolumeRecords(response []gjson.Result) {
 			}
 			instanceKey := application + location + user + svm + volume + uuid + handler.GetOperation() + object
 			if instance := mat.GetInstance(instanceKey); instance != nil {
-				err = a.setLogMetric(mat, instance, float64(auditTimeStamp))
+				a.setLogMetric(mat, instance, float64(auditTimeStamp))
 				if err != nil {
 					a.SLogger.Warn(
 						"Unable to set value on metric",
@@ -431,7 +431,7 @@ func (a *AuditLog) parseVolumeRecords(response []gjson.Result) {
 				instance.SetLabel("object", object)
 				instance.SetLabel("volume", volume)
 				instance.SetLabel("svm", svm)
-				err := a.setLogMetric(mat, instance, float64(auditTimeStamp))
+				a.setLogMetric(mat, instance, float64(auditTimeStamp))
 				if err != nil {
 					a.SLogger.Warn("error while setting metric value", slogx.Err(err))
 					return
