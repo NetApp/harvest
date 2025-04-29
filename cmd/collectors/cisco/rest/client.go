@@ -77,7 +77,7 @@ func (c *Client) callWithAuthRetry(command string) (gjson.Result, error) {
 
 	cmd := API{
 		Version:      "1.0",
-		Type:         "cli_show",
+		Type:         "cli_show_array",
 		Chunk:        "0",
 		Sid:          "sid",
 		Input:        command,
