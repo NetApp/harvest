@@ -3,6 +3,7 @@ package optic
 import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
+	"log/slog"
 	"os"
 	"testing"
 )
@@ -42,7 +43,7 @@ func TestNewOpticModels(t *testing.T) {
 
 	for i, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := NewOpticModel(jsons[i])
+			got := NewOpticModel(jsons[i], slog.Default())
 			diff1 := cmp.Diff(tt.want, got)
 			if diff1 != "" {
 				t.Errorf("Mismatch (-got +want):\n%s", diff1)

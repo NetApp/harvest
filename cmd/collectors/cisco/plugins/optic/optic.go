@@ -115,7 +115,7 @@ func (o *Optic) parseOptic(output gjson.Result, opticMat *matrix.Matrix) {
 	}
 
 	rows.ForEach(func(_, value gjson.Result) bool {
-		opticModel := NewOpticModel(value)
+		opticModel := NewOpticModel(value, o.SLogger)
 		// Skip empty models
 		if opticModel.Name == "" {
 			return true
@@ -156,7 +156,7 @@ type Model struct {
 	TxPower float64
 }
 
-func NewOpticModel(output gjson.Result) Model {
+func NewOpticModel(output gjson.Result, logger *slog.Logger) Model {
 
 	var m Model
 
@@ -176,6 +176,12 @@ func NewOpticModel(output gjson.Result) Model {
 		m.Name = output.Get("interface").ClonedString()
 		m.TxPower = txVal.Float()
 	}
+
+	logger.Debug("power",
+		slog.Float64("tx_pwr", txVal.Float()),
+		slog.Float64("rx_pwr", rxVal.Float()),
+		slog.String("name", m.Name),
+		slog.String("row", row.String()))
 
 	return m
 }
