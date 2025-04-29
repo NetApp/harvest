@@ -7,7 +7,9 @@ import (
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"regexp"
+	"strconv"
 	"strings"
+	"time"
 )
 
 var unitRegex = regexp.MustCompile(`^([\d.]+)(us|ms|%)$`)
@@ -195,6 +197,8 @@ func (s *StatPerf) parseData(input string) (gjson.Result, error) {
 }
 
 func parseRows(input string, logger *slog.Logger) ([]map[string]string, error) {
+	defaultTimestamp := float64(time.Now().UnixNano() / util.BILLION)
+	var timestamp float64
 	lines := filterNonEmpty(input)
 	var groups []map[string]string
 
@@ -245,9 +249,15 @@ func parseRows(input string, logger *slog.Logger) ([]map[string]string, error) {
 		if aggregation != "" {
 			currentGroup["_aggregation"] = aggregation
 		}
+		if timestamp != 0 {
+			currentGroup["timestamp"] = strconv.FormatFloat(timestamp, 'f', -1, 64)
+		} else {
+			currentGroup["timestamp"] = strconv.FormatFloat(defaultTimestamp, 'f', -1, 64)
+		}
 		groups = append(groups, currentGroup)
 		tableLines = []string{}
 		currentGroup = make(map[string]string)
+		timestamp = 0
 	}
 
 	// Process each line of the input.
@@ -265,9 +275,20 @@ func parseRows(input string, logger *slog.Logger) ([]map[string]string, error) {
 			continue
 		}
 
+		if strings.HasPrefix(trimLine, "End-time:") {
+			endTimeStr := strings.TrimPrefix(trimLine, "End-time:")
+			endTimeStr = strings.TrimSpace(endTimeStr)
+			endTime, err := time.Parse("1/2/2006 15:04:05", endTimeStr)
+			if err != nil {
+				logger.Warn("unable to parse end-time", slog.String("end-time", endTimeStr))
+				continue
+			}
+			timestamp = float64(endTime.UnixNano()) / util.BILLION
+			continue
+		}
+
 		// Skip lines with timing or scope.
 		if strings.HasPrefix(trimLine, "Start-time:") ||
-			strings.HasPrefix(trimLine, "End-time:") ||
 			strings.HasPrefix(trimLine, "Scope:") ||
 			strings.HasPrefix(trimLine, "Instance:") {
 			continue
