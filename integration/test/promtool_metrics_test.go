@@ -85,6 +85,7 @@ func TestFormatQueries(t *testing.T) {
 	utils.SkipIfMissing(t, utils.CheckFormat)
 	grafana.VisitDashboards(
 		[]string{
+			"../../grafana/dashboards/cisco",
 			"../../grafana/dashboards/cmode",
 			"../../grafana/dashboards/cmode-details",
 			"../../grafana/dashboards/storagegrid",
