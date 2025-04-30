@@ -155,6 +155,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "expr": "cisco_version_labels{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
+          "instant": true,
           "legendFormat": "{{hostname}}",
           "refId": "A"
         }
@@ -208,7 +209,7 @@
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "",
+          "fields": "/^upTime$/",
           "values": false
         },
         "text": {},
@@ -218,12 +219,19 @@
       "targets": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "expr": "cisco_facts_uptime_seconds{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
-          "legendFormat": "__auto",
+          "expr": "cisco_version_labels{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
+          "instant": true,
+          "legendFormat": "",
           "refId": "A"
         }
       ],
       "title": "Uptime",
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {}
+        }
+      ],
       "type": "stat"
     },
     {
@@ -278,6 +286,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "expr": "cisco_version_labels{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
+          "instant": true,
           "legendFormat": "{{chassis}}",
           "refId": "A"
         }
@@ -346,6 +355,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "expr": "cisco_version_labels{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
+          "instant": true,
           "legendFormat": "{{biosVersion}}",
           "refId": "A"
         }
@@ -414,6 +424,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "expr": "cisco_version_labels{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
+          "instant": true,
           "legendFormat": "{{osVersion}}",
           "refId": "A"
         }

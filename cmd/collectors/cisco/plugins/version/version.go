@@ -10,6 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
+	"strconv"
 	"time"
 )
 
@@ -94,22 +95,30 @@ func (v *Version) initMatrix(name string) (*matrix.Matrix, error) {
 }
 
 func (v *Version) parseVersion(output gjson.Result, versionMat *matrix.Matrix) {
-	biosVersion := output.Get("bios_ver_str")
-	chassis := output.Get("chassis_id")
-	hostname := output.Get("host_name")
-	osVersion := output.Get("nxos_ver_str")
+	biosVersion := output.Get("bios_ver_str").ClonedString()
+	chassis := output.Get("chassis_id").ClonedString()
+	hostname := output.Get("host_name").ClonedString()
+	osVersion := output.Get("nxos_ver_str").ClonedString()
 
-	instanceKey := chassis.String()
+	uptmDays := output.Get("kern_uptm_days").Float()
+	uptmHrs := output.Get("kern_uptm_hrs").Float()
+	uptmMins := output.Get("kern_uptm_mins").Float()
+	uptmSeconds := output.Get("kern_uptm_secs").Float()
+	totalSeconds := (60 * 60 * 24 * uptmDays) + (60 * 60 * uptmHrs) + (60 * uptmMins) + uptmSeconds
+	upTime := strconv.FormatFloat(totalSeconds, 'f', -1, 64)
+
+	instanceKey := chassis
 	instance, err := versionMat.NewInstance(instanceKey)
 	if err != nil {
 		v.SLogger.Warn("Failed to create instance", slog.String("key", instanceKey))
 		return
 	}
 
-	instance.SetLabel("biosVersion", biosVersion.String())
-	instance.SetLabel("chassis", chassis.String())
-	instance.SetLabel("hostname", hostname.String())
-	instance.SetLabel("osVersion", osVersion.String())
+	instance.SetLabel("biosVersion", biosVersion)
+	instance.SetLabel("chassis", chassis)
+	instance.SetLabel("hostname", hostname)
+	instance.SetLabel("osVersion", osVersion)
+	instance.SetLabel("upTime", upTime)
 
 	v.setMetricValue(labels, instance, 1.0, versionMat)
 }
