@@ -73,7 +73,7 @@ func (e *Environment) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 	data.Reset()
 
 	command := e.ParentParams.GetChildContentS("query")
-	output, err := e.client.CallAPI(command)
+	output, err := e.client.CLIShowArray(command)
 
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to fetch data: %w", err)
@@ -102,8 +102,9 @@ func (e *Environment) initMatrix(name string) (*matrix.Matrix, error) {
 }
 
 func (e *Environment) parseEnvironment(output gjson.Result, envMat *matrix.Matrix) {
-	e.parseTemperature(output, envMat)
-	e.parsePower(output, envMat)
+	content := output.Get("output.body")
+	e.parseTemperature(content, envMat)
+	e.parsePower(content, envMat)
 }
 
 func (e *Environment) parseTemperature(output gjson.Result, envMat *matrix.Matrix) {

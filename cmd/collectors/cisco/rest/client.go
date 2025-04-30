@@ -30,28 +30,48 @@ type Client struct {
 	auth     *auth.Credentials
 	Metadata *util.Metadata
 }
+type apiType string
+
+const (
+	cliShowArray apiType = "cli_show_array"
+	cliShow      apiType = "cli_show"
+)
 
 type API struct {
-	Version      string `json:"version"`
-	Type         string `json:"type"`
-	Chunk        string `json:"chunk"`
-	Sid          string `json:"sid"`
-	Input        string `json:"input"`
-	OutputFormat string `json:"output_format"`
+	Version      string  `json:"version"`
+	Type         apiType `json:"type"`
+	Chunk        string  `json:"chunk"`
+	Sid          string  `json:"sid"`
+	Input        string  `json:"input"`
+	OutputFormat string  `json:"output_format"`
 }
 
 type PostCmd struct {
 	InsAPI API `json:"ins_api"`
 }
 
-func (c *Client) CallAPI(command string) (gjson.Result, error) {
+// CLIShow uses the cli_show command type when talking to the switch.
+// This was needed because cli_show_array does not support sending multiple commands
+// (e.g. `show version ; show banner motd`)
+// When sending multiple commands with type=cli_show_array, the response is invalid JSON
+func (c *Client) CLIShow(command string) (gjson.Result, error) {
+	return c.callAPI(command, cliShow)
+}
+
+// CLIShowArray uses the cli_show_array command type when talking to the switch.
+// This was needed because the cli_show output truncated tx_pwr when calling `show interface transceiver details`
+func (c *Client) CLIShowArray(command string) (gjson.Result, error) {
+	return c.callAPI(command, cliShowArray)
+}
+
+func (c *Client) callAPI(command string, callType apiType) (gjson.Result, error) {
 
 	pollerAuth, err := c.auth.GetPollerAuth()
 	if err != nil {
 		return gjson.Result{}, err
 	}
 
-	result, err := c.callWithAuthRetry(command)
+	result, err := c.callWithAuthRetry(command, callType)
 
 	if err != nil {
 		var he errs.HarvestError
@@ -61,7 +81,7 @@ func (c *Client) CallAPI(command string) (gjson.Result, error) {
 			// and try again
 			if errors.Is(he, errs.ErrAuthFailed) && pollerAuth.HasCredentialScript {
 				c.auth.Expire()
-				return c.callWithAuthRetry(command)
+				return c.callWithAuthRetry(command, callType)
 			}
 		}
 	}
@@ -73,11 +93,10 @@ func (c *Client) CallAPI(command string) (gjson.Result, error) {
 	return result, nil
 }
 
-func (c *Client) callWithAuthRetry(command string) (gjson.Result, error) {
-
+func (c *Client) callWithAuthRetry(command string, callType apiType) (gjson.Result, error) {
 	cmd := API{
 		Version:      "1.0",
-		Type:         "cli_show_array",
+		Type:         callType,
 		Chunk:        "0",
 		Sid:          "sid",
 		Input:        command,
@@ -128,7 +147,7 @@ func (c *Client) callWithAuthRetry(command string) (gjson.Result, error) {
 		return gjson.Result{}, fmt.Errorf("failed to read response: %w", err)
 	}
 
-	result := gjson.GetBytes(body, "ins_api.outputs.output.body")
+	result := gjson.GetBytes(body, "ins_api.outputs")
 
 	return result, nil
 }
@@ -141,19 +160,19 @@ func (c *Client) Init(retries int, remote conf.Remote) error {
 	}
 
 	var (
-		err     error
-		content gjson.Result
+		err             error
+		output, content gjson.Result
 	)
 
 	for range retries {
-		content, err = c.CallAPI("show version")
+		output, err = c.CLIShowArray("show version")
 		if err != nil {
 			if errors.Is(err, errs.ErrPermissionDenied) {
 				return err
 			}
 			continue
 		}
-
+		content = output.Get("output.body")
 		header := content.Get("header_str").ClonedString()
 		if strings.Contains(header, "NX-OS") {
 			c.remote.Model = "nxos"
