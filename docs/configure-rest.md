@@ -411,7 +411,7 @@ REST APIs endpoint:
 /api/private/cli/system/fru-check?fields=node,fru_name,fru_status
 ```
 
-Converting the CLI command `system fru-check show` for use with a private CLI REST API can be achieved by adhering to the path rules outlined in the ONTAP [documentation](https://library.netapp.com/ecmdocs/ECMLP2885799/html#Using_the_private_CLI_passthrough_with_the_ONTAP_REST_API). Generally, this involves substituting all spaces within the CLI command with a forward slash (/), and converting the ONTAP CLI verb into the corresponding REST verb.
+Converting the CLI command `system fru-check show` for use with a private CLI REST API can be achieved by adhering to the path rules outlined in the ONTAP [documentation](https://docs.netapp.com/us-en/ontap-restapi/ontap/getting_started_with_the_ontap_rest_api.html#Using_the_private_CLI_passthrough_with_the_ONTAP_REST_API). Generally, this involves substituting all spaces within the CLI command with a forward slash (/), and converting the ONTAP CLI verb into the corresponding REST verb.
 
 The `show` command gets converted to the HTTP method GET call. From the CLI, look at the required field names and pass them as a comma-separated value in `fields=` in the API endpoint.
 
