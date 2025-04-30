@@ -72,7 +72,7 @@ func (o *Optic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 	data.Reset()
 
 	command := o.ParentParams.GetChildContentS("query")
-	output, err := o.client.CallAPI(command)
+	output, err := o.client.CLIShowArray(command)
 
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to fetch data: %w", err)
@@ -104,7 +104,7 @@ func (o *Optic) parseOptic(output gjson.Result, opticMat *matrix.Matrix) {
 
 	var models []Model
 
-	rowQuery := "TABLE_interface.ROW_interface"
+	rowQuery := "output.body.TABLE_interface.ROW_interface"
 
 	rows := output.Get(rowQuery)
 

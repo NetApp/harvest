@@ -1,6 +1,9 @@
 name:               Version
-query:              "show version"
+query:              "show version ; show banner motd"
 object:             cisco_version
+
+schedule:
+  - data:      1h
 
 plugins:
   - Version

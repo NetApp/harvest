@@ -92,7 +92,7 @@ func (i *Interface) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 	data.Reset()
 
 	command := i.ParentParams.GetChildContentS("query")
-	output, err := i.client.CallAPI(command)
+	output, err := i.client.CLIShowArray(command)
 
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to fetch data: %w", err)
@@ -122,7 +122,7 @@ func (i *Interface) initMatrix(name string) (*matrix.Matrix, error) {
 
 func (i *Interface) parseInterface(output gjson.Result, envMat *matrix.Matrix) {
 
-	rowQuery := "TABLE_interface.ROW_interface"
+	rowQuery := "output.body.TABLE_interface.ROW_interface"
 
 	rows := output.Get(rowQuery)
 
