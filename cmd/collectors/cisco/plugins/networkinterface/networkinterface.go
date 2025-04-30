@@ -14,6 +14,7 @@ import (
 
 const (
 	adminUp          = "admin_up"
+	crcErrors        = "crc_errors"
 	errorStatus      = "error_status"
 	receiveBroadcast = "receive_broadcast"
 	receiveBytes     = "receive_bytes"
@@ -28,6 +29,7 @@ const (
 
 var metrics = []string{
 	adminUp,
+	crcErrors,
 	errorStatus,
 	receiveBroadcast,
 	receiveBytes,
@@ -143,6 +145,7 @@ func (i *Interface) parseInterface(output gjson.Result, envMat *matrix.Matrix) {
 		ethOutErrors := value.Get("eth_outerr").Float()
 		ethInMcast := value.Get("eth_inmcast").Float()
 		ethInBcast := value.Get("eth_inbcast").Float()
+		ethCrcErrors := value.Get("eth_crc").Float()
 
 		instanceKey := interfaceName + "_" + macAddr
 
@@ -157,6 +160,7 @@ func (i *Interface) parseInterface(output gjson.Result, envMat *matrix.Matrix) {
 		instance.SetLabel("description", desc)
 		instance.SetLabel("speed", ethSpeed)
 
+		envMat.GetMetric(crcErrors).SetValueFloat64(instance, ethCrcErrors)
 		envMat.GetMetric(receiveBytes).SetValueFloat64(instance, ethInBytes)
 		envMat.GetMetric(receiveErrors).SetValueFloat64(instance, ethInErrors)
 		envMat.GetMetric(transmitBytes).SetValueFloat64(instance, ethOutBytes)
