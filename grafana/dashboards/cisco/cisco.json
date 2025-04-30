@@ -190,7 +190,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "cisco_version_labels{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
+          "expr": "cisco_switch_labels{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -1816,7 +1816,7 @@
             "exponent": 0.5,
             "mode": "spectrum"
           },
-          "dataFormat": "timeseries",
+          "dataFormat": "tsbuckets",
           "datasource": "${DS_PROMETHEUS}",
           "gridPos": {
             "h": 8,
@@ -1866,8 +1866,10 @@
           "targets": [
             {
               "datasource": "${DS_PROMETHEUS}",
+              "exemplar": false,
               "expr": "cisco_interface_admin_up{datacenter=~\"$Datacenter\",speed!=\"\",switch=~\"$Switch\"}",
-              "legendFormat": "{{name}} | {{speed}}",
+              "format": "heatmap",
+              "legendFormat": "{{interface}} | {{speed}}",
               "refId": "A"
             }
           ],
@@ -1932,7 +1934,7 @@
         "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(cisco_version_labels{}, datacenter)",
+        "definition": "label_values(cisco_switch_labels{}, datacenter)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -1942,7 +1944,7 @@
         "name": "Datacenter",
         "options": [],
         "query": {
-          "query": "label_values(cisco_version_labels{}, datacenter)",
+          "query": "label_values(cisco_switch_labels{}, datacenter)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -1958,7 +1960,7 @@
         "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(cisco_version_labels{datacenter=~\"$Datacenter\"}, switch)",
+        "definition": "label_values(cisco_switch_labels{datacenter=~\"$Datacenter\"}, switch)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -1968,7 +1970,7 @@
         "name": "Switch",
         "options": [],
         "query": {
-          "query": "label_values(cisco_version_labels{datacenter=~\"$Datacenter\"}, switch)",
+          "query": "label_values(cisco_switch_labels{datacenter=~\"$Datacenter\"}, switch)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
