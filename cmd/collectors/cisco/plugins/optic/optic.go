@@ -149,22 +149,21 @@ func NewOpticModel(output gjson.Result) Model {
 
 	var m Model
 
-	row := output.Get("TABLE_lane.ROW_lane")
-	if !row.Exists() {
-		return m
-	}
+	output.Get("TABLE_lane.ROW_lane").ForEach(func(_, value gjson.Result) bool {
+		rxVal := value.Get("rx_pwr")
+		if rxVal.Exists() {
+			m.Name = output.Get("interface").ClonedString()
+			m.RxPower = rxVal.Float()
+		}
 
-	rxVal := row.Get("rx_pwr")
-	if rxVal.Exists() {
-		m.Name = output.Get("interface").ClonedString()
-		m.RxPower = rxVal.Float()
-	}
+		txVal := value.Get("tx_pwr")
+		if txVal.Exists() {
+			m.Name = output.Get("interface").ClonedString()
+			m.TxPower = txVal.Float()
+		}
 
-	txVal := row.Get("tx_pwr")
-	if txVal.Exists() {
-		m.Name = output.Get("interface").ClonedString()
-		m.TxPower = txVal.Float()
-	}
+		return false // Stop iterating after the first element
+	})
 
 	return m
 }
