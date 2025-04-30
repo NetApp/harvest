@@ -85,7 +85,7 @@ func TestUnion2(t *testing.T) {
 	wants := []label{
 		{key: "org", val: "abc"},
 		{key: "site", val: "RTP"},
-		{key: "floor", val: `"3"`},
+		{key: "floor", val: "3"},
 	}
 	for i, c := range labels.Children {
 		want := wants[i]

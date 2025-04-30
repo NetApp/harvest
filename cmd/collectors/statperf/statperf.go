@@ -429,7 +429,7 @@ func (s *StatPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		// Process the current batch of records
-		count, np, batchParseD := s.processPerfRecords(perfRecords, curMat, prevMat, float64(time.Now().UnixNano()/util.BILLION))
+		count, np, batchParseD := s.processPerfRecords(perfRecords, curMat, prevMat)
 		numPartials += np
 		metricCount += count
 		parseD += batchParseD
@@ -482,7 +482,7 @@ func (s *StatPerf) PollData() (map[string]*matrix.Matrix, error) {
 	return s.cookCounters(curMat, prevMat)
 }
 
-func (s *StatPerf) processPerfRecords(records []gjson.Result, curMat *matrix.Matrix, prevMat *matrix.Matrix, ts float64) (uint64, uint64, time.Duration) {
+func (s *StatPerf) processPerfRecords(records []gjson.Result, curMat *matrix.Matrix, prevMat *matrix.Matrix) (uint64, uint64, time.Duration) {
 	var (
 		count        uint64
 		parseD       time.Duration
@@ -544,11 +544,13 @@ func (s *StatPerf) processPerfRecords(records []gjson.Result, curMat *matrix.Mat
 			instance.SetExportable(true)
 		}
 
+		ts := data.Get("timestamp").ClonedString()
+
 		data.ForEach(func(k, v gjson.Result) bool {
 
 			metricName := k.ClonedString()
 			metricValue := v.ClonedString()
-			if metricName == "_aggregation" {
+			if metricName == "_aggregation" || metricName == "timestamp" {
 				return true
 			}
 			if display, ok := s.Prop.InstanceLabels[metricName]; ok {
@@ -583,7 +585,7 @@ func (s *StatPerf) processPerfRecords(records []gjson.Result, curMat *matrix.Mat
 
 				}
 			}
-			if err = curMat.GetMetric(timestampMetricName).SetValueFloat64(instance, ts); err != nil {
+			if err = curMat.GetMetric(timestampMetricName).SetValueString(instance, ts); err != nil {
 				s.Logger.Error("Failed to set timestamp", slogx.Err(err))
 			}
 			return true

@@ -106,7 +106,7 @@ func (m *SnapMirror) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 			collectors.UpdateProtectedFields(instance)
 
 			// Update lag time based on checks
-			collectors.UpdateLagTime(instance, lastTransferSizeMetric, lagTimeMetric, m.SLogger)
+			collectors.UpdateLagTime(instance, lastTransferSizeMetric, lagTimeMetric)
 		} else {
 			// 7 Mode
 			// source / destination nodes can be something like:

@@ -4,7 +4,6 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"math"
@@ -77,25 +76,16 @@ func (f *Fcp) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 
 			if rxBytes, rxOk = write.GetValueFloat64(instance); rxOk {
 				rxPercent = rxBytes / float64(speed)
-				err := rx.SetValueFloat64(instance, rxPercent)
-				if err != nil {
-					f.SLogger.Error("error", slogx.Err(err))
-				}
+				rx.SetValueFloat64(instance, rxPercent)
 			}
 
 			if txBytes, txOk = read.GetValueFloat64(instance); txOk {
 				txPercent = txBytes / float64(speed)
-				err := tx.SetValueFloat64(instance, txPercent)
-				if err != nil {
-					f.SLogger.Error("error", slogx.Err(err))
-				}
+				tx.SetValueFloat64(instance, txPercent)
 			}
 
 			if rxOk || txOk {
-				err := utilPercent.SetValueFloat64(instance, math.Max(rxPercent, txPercent))
-				if err != nil {
-					f.SLogger.Error("error", slogx.Err(err))
-				}
+				utilPercent.SetValueFloat64(instance, math.Max(rxPercent, txPercent))
 			}
 		}
 	}

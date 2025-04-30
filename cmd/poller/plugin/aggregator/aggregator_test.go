@@ -205,21 +205,10 @@ func TestComplexRuleRegex(t *testing.T) {
 		t.Fatal("missing [metricA]")
 	}
 
-	if err = metricA.SetValueUint8(A, 2); err != nil {
-		t.Fatal(err)
-	}
-
-	if err = metricA.SetValueUint8(B, 2); err != nil {
-		t.Fatal(err)
-	}
-
-	if err = metricA.SetValueUint8(C, 2); err != nil {
-		t.Fatal(err)
-	}
-
-	if err = metricA.SetValueUint8(D, 2); err != nil {
-		t.Fatal(err)
-	}
+	metricA.SetValueUint8(A, 2)
+	metricA.SetValueUint8(B, 2)
+	metricA.SetValueUint8(C, 2)
+	metricA.SetValueUint8(D, 2)
 
 	// run the plugin
 	dataMap := map[string]*matrix.Matrix{
@@ -348,21 +337,10 @@ func TestRuleSimpleLatencyAggregation(t *testing.T) {
 	}
 	instanceB.SetLabel("node", "nodeA")
 
-	if err = metricA.SetValueUint8(instanceA, 20); err != nil {
-		t.Fatal(err)
-	}
-
-	if err = metricB.SetValueUint8(instanceA, 4); err != nil {
-		t.Fatal(err)
-	}
-
-	if err = metricA.SetValueUint8(instanceB, 30); err != nil {
-		t.Fatal(err)
-	}
-
-	if err = metricB.SetValueUint8(instanceB, 6); err != nil {
-		t.Fatal(err)
-	}
+	metricA.SetValueUint8(instanceA, 20)
+	metricB.SetValueUint8(instanceA, 4)
+	metricA.SetValueUint8(instanceB, 30)
+	metricB.SetValueUint8(instanceB, 6)
 
 	// run the plugin
 	dataMap := map[string]*matrix.Matrix{
@@ -456,21 +434,10 @@ func TestRuleSimpleLatencyZeroAggregation(t *testing.T) {
 	}
 	instanceB.SetLabel("node", "nodeA")
 
-	if err = metricA.SetValueUint8(instanceA, 20); err != nil {
-		t.Fatal(err)
-	}
-
-	if err = metricB.SetValueUint8(instanceA, 0); err != nil {
-		t.Fatal(err)
-	}
-
-	if err = metricA.SetValueUint8(instanceB, 21); err != nil {
-		t.Fatal(err)
-	}
-
-	if err = metricB.SetValueUint8(instanceB, 0); err != nil {
-		t.Fatal(err)
-	}
+	metricA.SetValueUint8(instanceA, 20)
+	metricB.SetValueUint8(instanceA, 0)
+	metricA.SetValueUint8(instanceB, 21)
+	metricB.SetValueUint8(instanceB, 0)
 
 	// run the plugin
 	dataMap := map[string]*matrix.Matrix{
@@ -547,17 +514,9 @@ func newArtificialData() *matrix.Matrix {
 	}
 	instanceB.SetLabel("node", "nodeA")
 
-	if err = metricA.SetValueUint8(instanceA, 10); err != nil {
-		panic(err)
-	}
-
-	if err = metricA.SetValueUint8(instanceB, 10); err != nil {
-		panic(err)
-	}
-
-	if err = metricB.SetValueUint8(instanceA, 10); err != nil {
-		panic(err)
-	}
+	metricA.SetValueUint8(instanceA, 10)
+	metricA.SetValueUint8(instanceB, 10)
+	metricB.SetValueUint8(instanceA, 10)
 
 	return m
 }

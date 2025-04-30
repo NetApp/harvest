@@ -472,9 +472,7 @@ func (t *TopMetrics) setMetric(mat *matrix.Matrix, instance *matrix.Instance, va
 			return
 		}
 	}
-	if err = m.SetValueFloat64(instance, value); err != nil {
-		t.SLogger.Error("error while setting value", slogx.Err(err), slog.String("metric", metricType))
-	}
+	m.SetValueFloat64(instance, value)
 }
 
 func (t *TopMetrics) fetchVolumesWithActivityTrackingEnabled() (*set.Set, error) {

@@ -81,10 +81,7 @@ func (c *Cluster) handleTags(data *matrix.Matrix) {
 
 				m := c.tags.GetMetric("tags")
 				// populate numeric data
-				value := 1.0
-				if err = m.SetValueFloat64(tagInstance, value); err != nil {
-					c.SLogger.Error("Failed to parse value", slogx.Err(err), slog.Float64("value", value))
-				}
+				m.SetValueFloat64(tagInstance, 1.0)
 			}
 		}
 	}

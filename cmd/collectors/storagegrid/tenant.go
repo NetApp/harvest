@@ -63,10 +63,7 @@ func (t *Tenant) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 			if quotaBytes == 0 {
 				percentage = 0
 			}
-			err := usedPercent.SetValueFloat64(instance, percentage)
-			if err != nil {
-				t.SLogger.Error("failed to set percentage", slogx.Err(err), slog.Float64("percentage", percentage))
-			}
+			usedPercent.SetValueFloat64(instance, percentage)
 		}
 
 		id := instance.GetLabel("id")

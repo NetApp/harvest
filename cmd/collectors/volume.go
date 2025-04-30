@@ -63,9 +63,7 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 				flexgroupInstance.SetLabel("uuid", "")
 				flexgroupInstance.SetLabel(style, "flexgroup")
 				flexgroupAggrsMap[key] = set.New()
-				if err := metric.SetValueFloat64(flexgroupInstance, 1); err != nil {
-					logger.Error("set value", slogx.Err(err), slog.String("metric", metricName))
-				}
+				metric.SetValueFloat64(flexgroupInstance, 1)
 			}
 			fgAggrMap[key].Add(i.GetLabel("aggr"))
 			flexgroupAggrsMap[key].Add(i.GetLabel("aggr"))
@@ -81,9 +79,7 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 			}
 			flexvolInstance.SetLabels(maps.Clone(i.GetLabels()))
 			flexvolInstance.SetLabel(style, "flexvol")
-			if err := metric.SetValueFloat64(flexvolInstance, 1); err != nil {
-				logger.Error("Unable to set value on metric", slogx.Err(err), slog.String("metric", metricName))
-			}
+			metric.SetValueFloat64(flexvolInstance, 1)
 		}
 	}
 
@@ -131,10 +127,7 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 				fgv, _ := fgm.GetValueFloat64(fg)
 
 				if !strings.HasSuffix(m.GetName(), "_latency") {
-					err := fgm.SetValueFloat64(fg, fgv+value)
-					if err != nil {
-						logger.Error("error setting value", slogx.Err(err))
-					}
+					fgm.SetValueFloat64(fg, fgv+value)
 					continue
 				}
 
@@ -160,15 +153,9 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 							tempOpsV, _ = tempOps.GetValueFloat64(fg)
 						}
 						if value != 0 {
-							err = tempOps.SetValueFloat64(fg, tempOpsV+opsValue)
-							if err != nil {
-								logger.Error("error setting value", slogx.Err(err))
-							}
+							tempOps.SetValueFloat64(fg, tempOpsV+opsValue)
 						}
-						err = fgm.SetValueFloat64(fg, fgv+prod)
-						if err != nil {
-							logger.Error("error setting value", slogx.Err(err))
-						}
+						fgm.SetValueFloat64(fg, fgv+prod)
 					} else {
 						s, ok := recordFGFalse[key]
 						if !ok {
@@ -209,10 +196,7 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 
 					if ops := cache.GetMetric(opsKeyPrefix + opsKey); ops != nil {
 						if opsValue, ok := ops.GetValueFloat64(i); ok && opsValue != 0 {
-							err := m.SetValueFloat64(i, value/opsValue)
-							if err != nil {
-								logger.Error("error setting value", slogx.Err(err))
-							}
+							m.SetValueFloat64(i, value/opsValue)
 						} else {
 							m.SetValueNAN(i)
 						}

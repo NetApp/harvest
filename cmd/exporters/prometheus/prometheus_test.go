@@ -86,7 +86,7 @@ func setUpChangeMatrix() *matrix.Matrix {
 	// Create a metric with a metric value change
 	log, _ := m.NewMetricUint64("log")
 	instance, _ := m.NewInstance("A")
-	_ = log.SetValueInt64(instance, 3)
+	log.SetValueInt64(instance, 3)
 	instance.SetLabel("category", "metric")
 	instance.SetLabel("cluster", "umeng-aff300-01-02")
 	instance.SetLabel("object", "volume")
@@ -95,7 +95,7 @@ func setUpChangeMatrix() *matrix.Matrix {
 
 	// Create a metric with a label change
 	instance2, _ := m.NewInstance("B")
-	_ = log.SetValueInt64(instance2, 3)
+	log.SetValueInt64(instance2, 3)
 	instance2.SetLabel("category", "label")
 	instance2.SetLabel("cluster", "umeng-aff300-01-02")
 	instance2.SetLabel("new_value", "offline")
@@ -113,7 +113,7 @@ func setUpMatrix(object string) *matrix.Matrix {
 	instanceNames := []string{"A", "B"}
 	for _, instanceName := range instanceNames {
 		instance, _ := m.NewInstance(instanceName)
-		_ = speed.SetValueInt64(instance, 3)
+		speed.SetValueInt64(instance, 3)
 	}
 	return m
 }

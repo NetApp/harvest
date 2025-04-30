@@ -438,7 +438,7 @@ var rangeRegex = regexp.MustCompile(`(\d+)\s*-\s*(\d+)`)
 
 func (i *IntRange) UnmarshalYAML(n ast.Node) error {
 	if n.Type() == ast.StringType {
-		matches := rangeRegex.FindStringSubmatch(n.String())
+		matches := rangeRegex.FindStringSubmatch(node.ToString(n))
 		if len(matches) == 3 {
 			minVal, err1 := strconv.Atoi(matches[1])
 			maxVal, err2 := strconv.Atoi(matches[2])
@@ -505,10 +505,10 @@ func SaveConfig(fp string, grafanaToken string) error {
 
 	if len(root.Values) > 0 {
 		for _, n := range root.Values {
-			if n.Key.String() == "Tools" {
+			if node.ToString(n.Key) == "Tools" {
 				if n.Value.Type() == ast.MappingType {
 					mn := n.Value.(*ast.MappingNode)
-					if len(mn.Values) > 0 && mn.Values[0].Key.String() == "grafana_api_token" {
+					if len(mn.Values) > 0 && node.ToString(mn.Values[0].Key) == "grafana_api_token" {
 						pos := &token.Position{Column: 4, IndentLevel: 1, IndentNum: 1}
 						mn.Values[0].Value = ast.String(token.New(grafanaToken, "", pos))
 						tokenExists = true
@@ -609,7 +609,7 @@ func (e *ExporterDef) UnmarshalYAML(n ast.Node) error {
 		}
 		e.Exporter = aExporter
 	} else if n.Type() == ast.StringType {
-		e.Name = n.String()
+		e.Name = node.ToString(n)
 	}
 	return nil
 }
@@ -826,7 +826,7 @@ func (c *Collector) UnmarshalYAML(n ast.Node) error {
 	} else if n.Type() == ast.MappingType {
 		values := n.(*ast.MappingNode).Values
 		if len(values) > 0 {
-			c.Name = values[0].Key.String()
+			c.Name = node.ToString(values[0].Key)
 			var subs []string
 			c.Templates = &subs
 			for _, n2 := range values[0].Value.(*ast.SequenceNode).Values {
@@ -842,7 +842,7 @@ func (i *Pollers) UnmarshalYAML(n ast.Node) error {
 	if n.Type() == ast.MappingType {
 		var namesInOrder []string
 		for _, mn := range n.(*ast.MappingNode).Values {
-			namesInOrder = append(namesInOrder, mn.Key.String())
+			namesInOrder = append(namesInOrder, node.ToString(mn.Key))
 		}
 		i.namesInOrder = namesInOrder
 	}

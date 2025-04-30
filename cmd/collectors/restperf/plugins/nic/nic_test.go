@@ -53,17 +53,17 @@ func runNicTest(t *testing.T, createRestNic func(params *node.Node) plugin.Plugi
 	transmitBytes, _ := data.NewMetricFloat64("transmit_bytes")
 
 	// Set metric values for the instances
-	_ = receiveBytes.SetValueFloat64(instance1, 2861802356977)
-	_ = transmitBytes.SetValueFloat64(instance1, 5789662182305)
+	receiveBytes.SetValueFloat64(instance1, 2861802356977)
+	transmitBytes.SetValueFloat64(instance1, 5789662182305)
 
-	_ = receiveBytes.SetValueFloat64(instance2, 2861802356977)
-	_ = transmitBytes.SetValueFloat64(instance2, 5789662182305)
+	receiveBytes.SetValueFloat64(instance2, 2861802356977)
+	transmitBytes.SetValueFloat64(instance2, 5789662182305)
 
-	_ = receiveBytes.SetValueFloat64(instance3, 2861802356977)
-	_ = transmitBytes.SetValueFloat64(instance3, 5789662182305)
+	receiveBytes.SetValueFloat64(instance3, 2861802356977)
+	transmitBytes.SetValueFloat64(instance3, 5789662182305)
 
-	_ = receiveBytes.SetValueFloat64(instance4, 2861802356977)
-	_ = transmitBytes.SetValueFloat64(instance4, 5789662182305)
+	receiveBytes.SetValueFloat64(instance4, 2861802356977)
+	transmitBytes.SetValueFloat64(instance4, 5789662182305)
 
 	dataMap := map[string]*matrix.Matrix{
 		"nic": data,

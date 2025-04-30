@@ -11,6 +11,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/color"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/tree"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	harvestyaml "github.com/netapp/harvest/v2/pkg/tree/yaml"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/spf13/cobra"
@@ -134,10 +135,10 @@ func doDoctor(aPath string) string {
 	// Extract Poller_files field from parentRoot
 	var pollerFiles []string
 	for _, kv := range parentRoot.(*ast.MappingNode).Values {
-		if kv.Key.String() == "Poller_files" {
+		if node.ToString(kv.Key) == "Poller_files" {
 			seq := kv.Value.(*ast.SequenceNode)
 			for _, value := range seq.Values {
-				pollerFiles = append(pollerFiles, value.String())
+				pollerFiles = append(pollerFiles, node.ToString(value))
 			}
 			break
 		}
@@ -183,7 +184,7 @@ func mergeYamlNodes(parent ast.Node, child ast.Node) {
 	cmn := child.(*ast.MappingNode)
 
 	for _, kv := range pmn.Values {
-		if kv.Key.String() == "Pollers" {
+		if node.ToString(kv.Key) == "Pollers" {
 			parentPollers = kv.Value
 			break
 		}
@@ -204,18 +205,18 @@ func mergeYamlNodes(parent ast.Node, child ast.Node) {
 	// Create a map of the parent node's pollers
 	parentPollerNames := make(map[string]bool)
 	for _, kv := range parentPollers.(*ast.MappingNode).Values {
-		parentPollerNames[kv.Key.String()] = true
+		parentPollerNames[node.ToString(kv.Key)] = true
 	}
 
 	// Find the Pollers section in the child node and append any child pollers that aren't already in the parent node
 	for _, kv := range cmn.Values {
-		if kv.Key.String() == "Pollers" {
+		if node.ToString(kv.Key) == "Pollers" {
 			childPollers := kv.Value
 			if childPollers == nil {
 				continue
 			}
 			for _, kv := range childPollers.(*ast.MappingNode).Values {
-				if _, exists := parentPollerNames[kv.Key.String()]; !exists {
+				if _, exists := parentPollerNames[node.ToString(kv.Key)]; !exists {
 					parentPollers.(*ast.MappingNode).Values = append(parentPollers.(*ast.MappingNode).Values, kv)
 				}
 			}
@@ -687,21 +688,21 @@ var sanitizeWords = map[string]bool{
 	"addr":              true,
 }
 
-func collectMapNodes(node ast.Node, nodes *[]*ast.MappingValueNode) {
-	if node == nil {
+func collectMapNodes(n ast.Node, nodes *[]*ast.MappingValueNode) {
+	if n == nil {
 		return
 	}
 
-	if node.Type() == ast.MappingType {
-		mappingNode := node.(*ast.MappingNode)
+	if n.Type() == ast.MappingType {
+		mappingNode := n.(*ast.MappingNode)
 		for _, kv := range mappingNode.Values {
 			if kv.Key.Type() == ast.StringType {
 				*nodes = append(*nodes, kv)
 			}
 			collectMapNodes(kv.Value, nodes)
 		}
-	} else if node.Type() == ast.SequenceType {
-		sequenceNode := node.(*ast.SequenceNode)
+	} else if n.Type() == ast.SequenceType {
+		sequenceNode := n.(*ast.SequenceNode)
 		for _, value := range sequenceNode.Values {
 			collectMapNodes(value, nodes)
 		}
@@ -714,14 +715,14 @@ func sanitize(root ast.Node) {
 	collectMapNodes(root, &nodes)
 
 	for _, n := range nodes {
-		node := *n
-		if node.Key.Type() == ast.StringType {
-			keyName := node.Key.String()
+		aNode := *n
+		if aNode.Key.Type() == ast.StringType {
+			keyName := node.ToString(aNode.Key)
 			_, ok := sanitizeWords[keyName]
 			if ok {
-				if node.Value.Type() == ast.StringType {
+				if aNode.Value.Type() == ast.StringType {
 					// sanitize the value
-					node.Value.(*ast.StringNode).Value = "-REDACTED-"
+					aNode.Value.(*ast.StringNode).Value = "-REDACTED-"
 				}
 			}
 		}

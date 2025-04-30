@@ -162,7 +162,7 @@ func (m *Metric) Append() {
 	m.values = append(m.values, 0)
 }
 
-// Remove element at index, shift everything to the left
+// Remove an element at index, shift everything to the left
 func (m *Metric) Remove(index int) {
 	for i := index; i < len(m.values)-1; i++ {
 		m.record[i] = m.record[i+1]
@@ -174,28 +174,24 @@ func (m *Metric) Remove(index int) {
 
 // Write methods
 
-func (m *Metric) SetValueInt64(i *Instance, v int64) error {
+func (m *Metric) SetValueInt64(i *Instance, v int64) {
 	m.record[i.index] = true
 	m.values[i.index] = float64(v)
-	return nil
 }
 
-func (m *Metric) SetValueUint8(i *Instance, v uint8) error {
+func (m *Metric) SetValueUint8(i *Instance, v uint8) {
 	m.record[i.index] = true
 	m.values[i.index] = float64(v)
-	return nil
 }
 
-func (m *Metric) SetValueUint64(i *Instance, v uint64) error {
+func (m *Metric) SetValueUint64(i *Instance, v uint64) {
 	m.record[i.index] = true
 	m.values[i.index] = float64(v)
-	return nil
 }
 
-func (m *Metric) SetValueFloat64(i *Instance, v float64) error {
+func (m *Metric) SetValueFloat64(i *Instance, v float64) {
 	m.record[i.index] = true
 	m.values[i.index] = v
-	return nil
 }
 
 func (m *Metric) SetValueString(i *Instance, v string) error {
@@ -213,24 +209,24 @@ func (m *Metric) SetValueBytes(i *Instance, v []byte) error {
 	return m.SetValueString(i, string(v))
 }
 
-func (m *Metric) AddValueInt64(i *Instance, n int64) error {
+func (m *Metric) AddValueInt64(i *Instance, n int64) {
 	v, _ := m.GetValueInt64(i)
-	return m.SetValueInt64(i, v+n)
+	m.SetValueInt64(i, v+n)
 }
 
-func (m *Metric) AddValueUint8(i *Instance, n uint8) error {
+func (m *Metric) AddValueUint8(i *Instance, n uint8) {
 	v, _ := m.GetValueUint8(i)
-	return m.SetValueUint8(i, v+n)
+	m.SetValueUint8(i, v+n)
 }
 
-func (m *Metric) AddValueUint64(i *Instance, n uint64) error {
+func (m *Metric) AddValueUint64(i *Instance, n uint64) {
 	v, _ := m.GetValueUint64(i)
-	return m.SetValueUint64(i, v+n)
+	m.SetValueUint64(i, v+n)
 }
 
-func (m *Metric) AddValueFloat64(i *Instance, n float64) error {
+func (m *Metric) AddValueFloat64(i *Instance, n float64) {
 	v, _ := m.GetValueFloat64(i)
-	return m.SetValueFloat64(i, v+n)
+	m.SetValueFloat64(i, v+n)
 }
 
 func (m *Metric) AddValueString(i *Instance, v string) error {
@@ -243,9 +239,12 @@ func (m *Metric) AddValueString(i *Instance, v string) error {
 		return err
 	}
 	if n, has = m.GetValueFloat64(i); has {
-		return m.SetValueFloat64(i, x+n)
+		m.SetValueFloat64(i, x+n)
+		return nil
 	}
-	return m.SetValueFloat64(i, x)
+	m.SetValueFloat64(i, x)
+
+	return nil
 }
 
 // Read methods

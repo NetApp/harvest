@@ -362,9 +362,9 @@ func (s *Shelf) handle7Mode(data *matrix.Matrix, result []*node.Node) ([]*matrix
 						// Each child would have different possible values which is an ugly way to write all of them,
 						// so normal value would be mapped to 1 and rest all are mapped to 0.
 						if instance.GetLabel("status") == "normal" {
-							_ = statusMetric.SetValueInt64(instance, 1)
+							statusMetric.SetValueInt64(instance, 1)
 						} else {
-							_ = statusMetric.SetValueInt64(instance, 0)
+							statusMetric.SetValueInt64(instance, 0)
 						}
 
 						// populate numeric data

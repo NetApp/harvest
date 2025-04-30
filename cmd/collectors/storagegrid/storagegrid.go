@@ -248,15 +248,7 @@ func (s *StorageGrid) makePromMetrics(metricName string, result *[]gjson.Result,
 		// copy Prometheus metric value into new metric
 		valueArray := rr.Get("value").Array()
 		if len(valueArray) > 0 {
-			err = metric.SetValueFloat64(instance, valueArray[1].Float())
-			if err != nil {
-				s.Logger.Error(
-					"Unable to set float key on metric",
-					slogx.Err(err),
-					slog.String("metric", metricName),
-				)
-				continue
-			}
+			metric.SetValueFloat64(instance, valueArray[1].Float())
 		}
 	}
 	return mat, nil
@@ -406,14 +398,7 @@ func (s *StorageGrid) handleResults(result []gjson.Result) uint64 {
 					)
 				}
 
-				if err = metr.SetValueFloat64(instance, floatValue); err != nil {
-					s.Logger.Error(
-						"Unable to set float key on metric",
-						slogx.Err(err),
-						slog.String("key", metric.Name),
-						slog.String("metric", metric.Label),
-					)
-				}
+				metr.SetValueFloat64(instance, floatValue)
 				count++
 			}
 		}

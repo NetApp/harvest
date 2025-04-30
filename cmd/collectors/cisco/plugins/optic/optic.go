@@ -6,7 +6,6 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
@@ -135,18 +134,8 @@ func (o *Optic) parseOptic(output gjson.Result, opticMat *matrix.Matrix) {
 
 		instance.SetLabel("interface", model.Name)
 
-		o.setMetricValue(rx, instance, model.RxPower, opticMat)
-		o.setMetricValue(tx, instance, model.TxPower, opticMat)
-	}
-}
-
-func (o *Optic) setMetricValue(metric string, instance *matrix.Instance, value float64, mat *matrix.Matrix) {
-	if err := mat.GetMetric(metric).SetValueFloat64(instance, value); err != nil {
-		o.SLogger.Error(
-			"Unable to set value on metric",
-			slogx.Err(err),
-			slog.String("metric", metric),
-		)
+		opticMat.GetMetric(rx).SetValueFloat64(instance, model.RxPower)
+		opticMat.GetMetric(tx).SetValueFloat64(instance, model.TxPower)
 	}
 }
 
@@ -160,22 +149,21 @@ func NewOpticModel(output gjson.Result) Model {
 
 	var m Model
 
-	row := output.Get("TABLE_lane.ROW_lane")
-	if !row.Exists() {
-		return m
-	}
+	output.Get("TABLE_lane.ROW_lane").ForEach(func(_, value gjson.Result) bool {
+		rxVal := value.Get("rx_pwr")
+		if rxVal.Exists() {
+			m.Name = output.Get("interface").ClonedString()
+			m.RxPower = rxVal.Float()
+		}
 
-	rxVal := row.Get("rx_pwr")
-	if rxVal.Exists() {
-		m.Name = output.Get("interface").ClonedString()
-		m.RxPower = rxVal.Float()
-	}
+		txVal := value.Get("tx_pwr")
+		if txVal.Exists() {
+			m.Name = output.Get("interface").ClonedString()
+			m.TxPower = txVal.Float()
+		}
 
-	txVal := row.Get("tx_pwr")
-	if txVal.Exists() {
-		m.Name = output.Get("interface").ClonedString()
-		m.TxPower = txVal.Float()
-	}
+		return false // Stop iterating after the first element
+	})
 
 	return m
 }

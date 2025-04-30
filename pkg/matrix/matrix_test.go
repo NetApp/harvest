@@ -10,7 +10,7 @@ func setUpMatrix() *Matrix {
 	instanceNames := []string{"A", "B", "C", "D"}
 	for _, instanceName := range instanceNames {
 		instance, _ := m.NewInstance(instanceName)
-		_ = speed.SetValueInt64(instance, 10)
+		speed.SetValueInt64(instance, 10)
 	}
 	return m
 }

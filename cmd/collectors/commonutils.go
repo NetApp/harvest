@@ -254,7 +254,7 @@ func IsTimestampOlderThanDuration(nowish time.Time, timestamp float64, duration 
 	return nowish.Sub(time.UnixMicro(int64(timestamp))) > duration
 }
 
-func UpdateLagTime(instance *matrix.Instance, lastTransferSize *matrix.Metric, lagTime *matrix.Metric, logger *slog.Logger) {
+func UpdateLagTime(instance *matrix.Instance, lastTransferSize *matrix.Metric, lagTime *matrix.Metric) {
 	healthy := instance.GetLabel("healthy")
 	schedule := instance.GetLabel("schedule")
 	lastError := instance.GetLabel("last_transfer_error")
@@ -263,9 +263,7 @@ func UpdateLagTime(instance *matrix.Instance, lastTransferSize *matrix.Metric, l
 	// Otherwise, report the lag_time which ONTAP has originally reported.
 	if lastBytes, ok := lastTransferSize.GetValueFloat64(instance); ok {
 		if healthy == "true" && schedule != "" && lastError == "" && lastBytes == 0 {
-			if err := lagTime.SetValueFloat64(instance, 0); err != nil {
-				logger.Error("Unable to set value on metric", slogx.Err(err), slog.String("metric", lagTime.GetName()))
-			}
+			lagTime.SetValueFloat64(instance, 0)
 		}
 	}
 }
@@ -416,15 +414,9 @@ func AggregatePerScanner(logger *slog.Logger, data *matrix.Matrix, latencyKey st
 							}
 
 							if value != 0 {
-								err = tempOps.SetValueFloat64(ps, tempOpsV+opsValue)
-								if err != nil {
-									logger.Error("error", slogx.Err(err))
-								}
+								tempOps.SetValueFloat64(ps, tempOpsV+opsValue)
 							}
-							err = psm.SetValueFloat64(ps, fv+prod)
-							if err != nil {
-								logger.Error("error", slogx.Err(err))
-							}
+							psm.SetValueFloat64(ps, fv+prod)
 						}
 					}
 
@@ -433,25 +425,14 @@ func AggregatePerScanner(logger *slog.Logger, data *matrix.Matrix, latencyKey st
 
 				// sum for scan_request_dispatched_rate
 				if mKey == rateKey {
-					err := psm.SetValueFloat64(ps, fv+value)
-					if err != nil {
-						logger.Error(
-							"Error setting metric value",
-							slogx.Err(err),
-							slog.String("metric", "scan_request_dispatched_rate"),
-						)
-					}
-
+					psm.SetValueFloat64(ps, fv+value)
 					continue
 				} else if strings.HasSuffix(mKey, "_used") {
 					// these need averaging
 					counts[scanner][mKey]++
 					runningTotal, _ := psm.GetValueFloat64(ps)
 					value, _ := m.GetValueFloat64(ps)
-					err := psm.SetValueFloat64(ps, runningTotal+value)
-					if err != nil {
-						logger.Error("Failed to set value", slogx.Err(err), slog.String("mKey", mKey))
-					}
+					psm.SetValueFloat64(ps, runningTotal+value)
 				}
 			}
 		}
@@ -469,24 +450,14 @@ func AggregatePerScanner(logger *slog.Logger, data *matrix.Matrix, latencyKey st
 				if !ok {
 					continue
 				}
-				if err := m.SetValueFloat64(i, value/float64(count)); err != nil {
-					logger.Error(
-						"Unable to set average",
-						slogx.Err(err),
-						slog.String("mKey", mKey),
-						slog.String("name", m.GetName()),
-					)
-				}
+				m.SetValueFloat64(i, value/float64(count))
 			} else if strings.HasSuffix(m.GetName(), "_latency") {
 				if value, ok := m.GetValueFloat64(i); ok {
 					opsKey := m.GetComment()
 
 					if ops := cache.GetMetric(opsKeyPrefix + opsKey); ops != nil {
 						if opsValue, ok := ops.GetValueFloat64(i); ok && opsValue != 0 {
-							err := m.SetValueFloat64(i, value/opsValue)
-							if err != nil {
-								logger.Error("error", slogx.Err(err))
-							}
+							m.SetValueFloat64(i, value/opsValue)
 						} else {
 							m.SetValueNAN(i)
 						}
@@ -540,15 +511,11 @@ func PopulateIfgroupMetrics(portIfgroupMap map[string]string, portDataMap map[st
 
 		rx := nData.GetMetric("rx_bytes")
 		rxv, _ := rx.GetValueFloat64(ifgroupInstance)
-		if err = rx.SetValueFloat64(ifgroupInstance, readBytes+rxv); err != nil {
-			logger.Debug("Failed to parse value", slog.Any("value", readBytes), slogx.Err(err))
-		}
+		rx.SetValueFloat64(ifgroupInstance, readBytes+rxv)
 
 		tx := nData.GetMetric("tx_bytes")
 		txv, _ := tx.GetValueFloat64(ifgroupInstance)
-		if err = tx.SetValueFloat64(ifgroupInstance, writeBytes+txv); err != nil {
-			logger.Debug("Failed to parse value", slog.Any("value", writeBytes), slogx.Err(err))
-		}
+		tx.SetValueFloat64(ifgroupInstance, writeBytes+txv)
 	}
 	return nil
 }

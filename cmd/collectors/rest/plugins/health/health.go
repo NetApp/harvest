@@ -233,7 +233,7 @@ func (h *Health) collectLicenseAlerts() int {
 		if errs.IsRestErr(err, errs.APINotFound) {
 			h.SLogger.Debug("API not found", slogx.Err(err))
 		} else {
-			h.SLogger.Error("Failed to collect analytic data", slogx.Err(err))
+			h.SLogger.Error("Failed to collect license data", slogx.Err(err))
 		}
 		return 0
 	}
@@ -269,7 +269,7 @@ func (h *Health) collectVolumeMoveAlerts() int {
 		if errs.IsRestErr(err, errs.APINotFound) {
 			h.SLogger.Debug("API not found", slogx.Err(err))
 		} else {
-			h.SLogger.Error("Failed to collect analytic data", slogx.Err(err))
+			h.SLogger.Error("Failed to collect volume move data", slogx.Err(err))
 		}
 		return 0
 	}
@@ -321,7 +321,7 @@ func (h *Health) collectVolumeRansomwareAlerts() int {
 		if errs.IsRestErr(err, errs.APINotFound) {
 			h.SLogger.Debug("API not found", slogx.Err(err))
 		} else {
-			h.SLogger.Error("Failed to collect analytic data", slogx.Err(err))
+			h.SLogger.Error("Failed to collect ransomware data", slogx.Err(err))
 		}
 		return 0
 	}
@@ -356,7 +356,7 @@ func (h *Health) collectNetworkInterfacesAlerts() int {
 		if errs.IsRestErr(err, errs.APINotFound) {
 			h.SLogger.Debug("API not found", slogx.Err(err))
 		} else {
-			h.SLogger.Error("Failed to collect analytic data", slogx.Err(err))
+			h.SLogger.Error("Failed to collect network interfaces data", slogx.Err(err))
 		}
 		return 0
 	}
@@ -392,7 +392,7 @@ func (h *Health) collectNetworkFCPortAlerts() int {
 		if errs.IsRestErr(err, errs.APINotFound) {
 			h.SLogger.Debug("API not found", slogx.Err(err))
 		} else {
-			h.SLogger.Error("Failed to collect analytic data", slogx.Err(err))
+			h.SLogger.Error("Failed to collect fc port data", slogx.Err(err))
 		}
 		return 0
 	}
@@ -428,7 +428,7 @@ func (h *Health) collectNetworkEthernetPortAlerts() int {
 		if errs.IsRestErr(err, errs.APINotFound) {
 			h.SLogger.Debug("API not found", slogx.Err(err))
 		} else {
-			h.SLogger.Error("Failed to collect analytic data", slogx.Err(err))
+			h.SLogger.Error("Failed to collect ethernet port data", slogx.Err(err))
 		}
 		return 0
 	}
@@ -466,7 +466,7 @@ func (h *Health) collectNodeAlerts() int {
 		if errs.IsRestErr(err, errs.APINotFound) {
 			h.SLogger.Debug("API not found", slogx.Err(err))
 		} else {
-			h.SLogger.Error("Failed to collect analytic data", slogx.Err(err))
+			h.SLogger.Error("Failed to collect node data", slogx.Err(err))
 		}
 		return 0
 	}
@@ -499,7 +499,7 @@ func (h *Health) collectHAAlerts() int {
 		if errs.IsRestErr(err, errs.APINotFound) {
 			h.SLogger.Debug("API not found", slogx.Err(err))
 		} else {
-			h.SLogger.Error("Failed to collect analytic data", slogx.Err(err))
+			h.SLogger.Error("Failed to collect HA data", slogx.Err(err))
 		}
 		return 0
 	}
@@ -542,7 +542,7 @@ func (h *Health) collectShelfAlerts() int {
 		if errs.IsRestErr(err, errs.APINotFound) {
 			h.SLogger.Debug("API not found", slogx.Err(err))
 		} else {
-			h.SLogger.Error("Failed to collect analytic data", slogx.Err(err))
+			h.SLogger.Error("Failed to collect shelf data", slogx.Err(err))
 		}
 		return 0
 	}
@@ -595,7 +595,7 @@ func (h *Health) collectSupportAlerts() int {
 		if errs.IsRestErr(err, errs.APINotFound) {
 			h.SLogger.Debug("API not found", slogx.Err(err))
 		} else {
-			h.SLogger.Error("Failed to collect analytic data", slogx.Err(err))
+			h.SLogger.Error("Failed to collect support data", slogx.Err(err))
 		}
 		return 0
 	}
@@ -638,7 +638,7 @@ func (h *Health) collectDiskAlerts() int {
 		if errs.IsRestErr(err, errs.APINotFound) {
 			h.SLogger.Debug("API not found", slogx.Err(err))
 		} else {
-			h.SLogger.Error("Failed to collect analytic data", slogx.Err(err))
+			h.SLogger.Error("Failed to collect disk data", slogx.Err(err))
 		}
 		return 0
 	}
@@ -900,13 +900,7 @@ func (h *Health) setAlertMetric(mat *matrix.Matrix, instance *matrix.Instance, v
 			return
 		}
 	}
-	if err = m.SetValueFloat64(instance, value); err != nil {
-		h.SLogger.Error(
-			"Unable to set value on metric",
-			slogx.Err(err),
-			slog.String("metric", "alerts"),
-		)
-	}
+	m.SetValueFloat64(instance, value)
 }
 
 func (h *Health) getAlertMetric(mat *matrix.Matrix, instance *matrix.Instance) (float64, error) {

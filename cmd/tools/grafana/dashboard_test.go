@@ -266,6 +266,8 @@ func TestUnitsAndExprMatch(t *testing.T) {
 	allowedSuffix := map[string][]string{
 		"_count":                     {"none", "short", "locale"},
 		"_lag_time":                  {"", "s", "short"},
+		"aggr_total_physical_used":   {"bytes", "binBps"}, // Growth rate uses bytes/sec unit
+		"aggr_total_logical_used":    {"bytes", "binBps"}, // Growth rate uses bytes/sec unit
 		"volume_space_physical_used": {"bytes", "binBps"}, // Growth rate uses bytes/sec unit
 		"volume_space_logical_used":  {"bytes", "binBps"}, // Growth rate uses bytes/sec unit
 		"qos_ops":                    {"iops", "percent"},

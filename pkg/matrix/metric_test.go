@@ -49,7 +49,7 @@ func setupMatrix(previousRaw float64, currentRaw float64, mop matrixOp) (*Matrix
 	names := instanceNames[mop]
 	for _, instanceName := range names.prev {
 		instance, _ := m.NewInstance(instanceName)
-		_ = speed.SetValueFloat64(instance, previousRaw)
+		speed.SetValueFloat64(instance, previousRaw)
 	}
 
 	m1 := New("Test", "test", "test")
@@ -57,7 +57,7 @@ func setupMatrix(previousRaw float64, currentRaw float64, mop matrixOp) (*Matrix
 
 	for _, instanceName := range names.cur {
 		instance, _ := m1.NewInstance(instanceName)
-		_ = speed1.SetValueFloat64(instance, currentRaw)
+		speed1.SetValueFloat64(instance, currentRaw)
 	}
 	return m, m1
 }
@@ -70,9 +70,9 @@ func setupMatrixAdv(latency string, previousRaw []rawData, currentRaw []rawData,
 	names := instanceNames[mop]
 	for i, instanceName := range names.prev {
 		instance, _ := prevMat.NewInstance(instanceName)
-		_ = averageLatency.SetValueFloat64(instance, previousRaw[i].latency)
-		_ = totalOps.SetValueFloat64(instance, previousRaw[i].ops)
-		_ = timestamp.SetValueFloat64(instance, previousRaw[i].timestamp)
+		averageLatency.SetValueFloat64(instance, previousRaw[i].latency)
+		totalOps.SetValueFloat64(instance, previousRaw[i].ops)
+		timestamp.SetValueFloat64(instance, previousRaw[i].timestamp)
 	}
 
 	currentMat := New("Test", "test", "test")
@@ -81,9 +81,9 @@ func setupMatrixAdv(latency string, previousRaw []rawData, currentRaw []rawData,
 	timestamp1, _ := currentMat.NewMetricFloat64("timestamp")
 	for i, instanceName := range names.cur {
 		instance, _ := currentMat.NewInstance(instanceName)
-		_ = averageLatency1.SetValueFloat64(instance, currentRaw[i].latency)
-		_ = totalOps1.SetValueFloat64(instance, currentRaw[i].ops)
-		_ = timestamp1.SetValueFloat64(instance, currentRaw[i].timestamp)
+		averageLatency1.SetValueFloat64(instance, currentRaw[i].latency)
+		totalOps1.SetValueFloat64(instance, currentRaw[i].ops)
+		timestamp1.SetValueFloat64(instance, currentRaw[i].timestamp)
 	}
 	return prevMat, currentMat
 }
@@ -188,7 +188,7 @@ func setupMatrixForPartialAggregation(prevRaw, curRaw float64, prevPartial, curr
 	prevMatrix := New("Test", "test", "test")
 	prevSpeed, _ := prevMatrix.NewMetricFloat64("speed")
 	prevInstance, _ := prevMatrix.NewInstance("A")
-	_ = prevSpeed.SetValueFloat64(prevInstance, prevRaw)
+	prevSpeed.SetValueFloat64(prevInstance, prevRaw)
 	if prevPartial {
 		prevInstance.SetPartial(true)
 	}
@@ -197,7 +197,7 @@ func setupMatrixForPartialAggregation(prevRaw, curRaw float64, prevPartial, curr
 	currMatrix := New("Test", "test", "test")
 	currSpeed, _ := currMatrix.NewMetricFloat64("speed")
 	currInstance, _ := currMatrix.NewInstance("A")
-	_ = currSpeed.SetValueFloat64(currInstance, curRaw)
+	currSpeed.SetValueFloat64(currInstance, curRaw)
 	if currPartial {
 		currInstance.SetPartial(true)
 	}

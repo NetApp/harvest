@@ -2,7 +2,6 @@ package collectors
 
 import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
 	"maps"
 	"regexp"
@@ -85,10 +84,7 @@ func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object str
 
 				// non-latency metrics: simple sum
 				if !strings.HasPrefix(mkey, "cloud_bin_op_latency_average") {
-					err := fgm.SetValueFloat64(fg, fgv+value)
-					if err != nil {
-						l.Error("error", slogx.Err(err))
-					}
+					fgm.SetValueFloat64(fg, fgv+value)
 					continue
 				}
 
@@ -112,15 +108,9 @@ func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object str
 							tempOpsV, _ = tempOps.GetValueFloat64(fg)
 						}
 						if value != 0 {
-							err = tempOps.SetValueFloat64(fg, tempOpsV+opsValue)
-							if err != nil {
-								l.Error("error", slogx.Err(err))
-							}
+							tempOps.SetValueFloat64(fg, tempOpsV+opsValue)
 						}
-						err = fgm.SetValueFloat64(fg, fgv+prod)
-						if err != nil {
-							l.Error("error", slogx.Err(err))
-						}
+						fgm.SetValueFloat64(fg, fgv+prod)
 					}
 				}
 			}
@@ -141,10 +131,7 @@ func GetFlexGroupFabricPoolMetrics(dataMap map[string]*matrix.Matrix, object str
 					// fetch from temp metrics
 					if ops := cache.GetMetric(opsKeyPrefix + opsKey); ops != nil {
 						if opsValue, ok := ops.GetValueFloat64(i); ok && opsValue != 0 {
-							err := m.SetValueFloat64(i, value/opsValue)
-							if err != nil {
-								l.Error("error", slogx.Err(err))
-							}
+							m.SetValueFloat64(i, value/opsValue)
 						} else {
 							m.SetValueNAN(i)
 						}

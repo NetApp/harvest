@@ -532,14 +532,7 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 					// get all active instances by issuingems-bookendkey
 					if instances := mx.GetInstancesBySuffix(issuingEms + bookendKey); len(instances) != 0 {
 						for _, instance := range instances {
-							if err = metr.SetValueFloat64(instance, 0); err != nil {
-								e.Logger.Error(
-									"Unable to set float key on metric",
-									slogx.Err(err),
-									slog.String("key", "events"),
-								)
-								continue
-							}
+							metr.SetValueFloat64(instance, 0)
 							instance.SetExportable(true)
 						}
 						emsResolved = true
@@ -662,21 +655,9 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 						}
 						switch metric.Name {
 						case "events":
-							if err = metr.SetValueFloat64(instance, 1); err != nil {
-								e.Logger.Error("Unable to set float key on metric",
-									slogx.Err(err),
-									slog.String("key", metric.Name),
-									slog.String("metric", metric.Label),
-								)
-							}
+							metr.SetValueFloat64(instance, 1)
 						case "timestamp":
-							if err = metr.SetValueFloat64(instance, float64(time.Now().UnixMicro())); err != nil {
-								e.Logger.Error("Unable to set timestamp on metric",
-									slogx.Err(err),
-									slog.String("key", metric.Name),
-									slog.String("metric", metric.Label),
-								)
-							}
+							metr.SetValueFloat64(instance, float64(time.Now().UnixMicro()))
 						default:
 							e.Logger.Warn("Unable to find metric",
 								slog.String("key", metric.Name),
@@ -772,14 +753,7 @@ func (e *Ems) updateMatrix(begin time.Time) {
 			if metricTimestamp, ok := timestampMetric.GetValueFloat64(instance); ok {
 				if collectors.IsTimestampOlderThanDuration(begin, metricTimestamp, e.resolveAfter[issuingEms]) {
 					// Set events metric value as 0 and export instance to true with label autoresolved as true.
-					if err := eventMetric.SetValueFloat64(instance, 0); err != nil {
-						e.Logger.Error(
-							"Unable to set float key on metric",
-							slogx.Err(err),
-							slog.String("key", "events"),
-						)
-						continue
-					}
+					eventMetric.SetValueFloat64(instance, 0)
 					instance.SetExportable(true)
 					instance.SetLabel(AutoResolved, "true")
 				}

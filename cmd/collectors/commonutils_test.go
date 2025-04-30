@@ -3,7 +3,6 @@ package collectors
 import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"log/slog"
 	"testing"
 	"time"
 )
@@ -307,7 +306,7 @@ func TestLagTimeBasedOnLastTransferSize(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			instance := populateInstance(data, tt.instance, tt.healthy, tt.schedule, tt.lastTransferError, tt.relationshipID, lastTransferSizeMetric, tt.lastBytesValue, lagTimeMetric, tt.lagTimeValue)
-			UpdateLagTime(instance, lastTransferSizeMetric, lagTimeMetric, slog.Default())
+			UpdateLagTime(instance, lastTransferSizeMetric, lagTimeMetric)
 			actualValue, _ := lagTimeMetric.GetValueFloat64(instance)
 			if actualValue != tt.want {
 				t.Errorf("expected %f got %f", tt.want, actualValue)
@@ -326,12 +325,8 @@ func populateInstance(data *matrix.Matrix, instanceName, healthy, schedule, last
 	instance.SetLabel("last_transfer_error", lastError)
 	instance.SetLabel("relationship_id", relationshipID)
 
-	if err = lastTransferSizeMetric.SetValueFloat64(instance, bytesData); err != nil {
-		panic(err)
-	}
-	if err = lagTimeMetric.SetValueFloat64(instance, lagTime); err != nil {
-		panic(err)
-	}
+	lastTransferSizeMetric.SetValueFloat64(instance, bytesData)
+	lagTimeMetric.SetValueFloat64(instance, lagTime)
 	return instance
 }
 

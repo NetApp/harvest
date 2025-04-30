@@ -112,9 +112,7 @@ func TestExportDebug(t *testing.T) {
 
 	// add numeric data
 
-	if err := m.SetValueInt64(i, 42); err != nil {
-		t.Fatal(err)
-	}
+	m.SetValueInt64(i, 42)
 
 	// render data
 	if _, err := influx.Export(data); err != nil {
