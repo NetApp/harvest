@@ -173,7 +173,7 @@
         "x": 0,
         "y": 1
       },
-      "id": 23763571993,
+      "id": 5,
       "interval": "",
       "options": {
         "footer": {
@@ -438,7 +438,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Total aggregate size. If aggregate is restricted or offline, a value of 0 is returned.",
+          "description": "Displays power consumption detail.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -546,7 +546,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Power consumtion",
+          "title": "Top $TopResources Power consumption",
           "type": "timeseries"
         },
         {
@@ -667,7 +667,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Displays power status of the PSU",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -893,7 +893,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Total aggregate size. If aggregate is restricted or offline, a value of 0 is returned.",
+          "description": "Displays detail of the temperature.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1135,7 +1135,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Total aggregate size. If aggregate is restricted or offline, a value of 0 is returned.",
+          "description": "Displays power of Transciver RX.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1226,7 +1226,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Total aggregate size. If aggregate is restricted or offline, a value of 0 is returned.",
+          "description": "Displays power of Transciver TX.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1332,7 +1332,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Total aggregate size. If aggregate is restricted or offline, a value of 0 is returned.",
+          "description": "Displays total transmit traffic per interface.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1421,7 +1421,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Total aggregate size. If aggregate is restricted or offline, a value of 0 is returned.",
+          "description": "Displays total receive traffic per interface.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1510,7 +1510,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Total aggregate size. If aggregate is restricted or offline, a value of 0 is returned.",
+          "description": "Displays drop traffic per interface.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1606,7 +1606,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Total aggregate size. If aggregate is restricted or offline, a value of 0 is returned.",
+          "description": "Displays traffic data per interface.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1698,6 +1698,95 @@
           "timeFrom": null,
           "timeShift": null,
           "title": "Top $TopResources Traffic error per interface",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Displays CRC error per interface.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "transparent",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 24
+          },
+          "id": 34,
+          "options": {
+            "legend": {
+              "calcs": [
+                "diff"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "cisco_interface_crc_errors{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(cisco_interface_crc_errors{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end())\n  )",
+              "interval": "",
+              "legendFormat": "{{interface}} | {{mac}} | {{description}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources CRC error per interface",
           "type": "timeseries"
         }
       ],
@@ -1992,5 +2081,5 @@
   "timezone": "",
   "title": "Cisco switch",
   "uid": "cisco-switch",
-  "version": 16
+  "version": 1
 }
