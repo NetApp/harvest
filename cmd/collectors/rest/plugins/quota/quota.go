@@ -116,14 +116,7 @@ func (q *Quota) handlingQuotaMetrics(instanceMap map[string]*matrix.Instance, me
 					quotaInstance.SetLabel("unit", "kibibytes")
 					if metricName == "space.soft_limit" {
 						t := data.GetMetric("threshold")
-						if err := t.SetValueFloat64(quotaInstance, value); err != nil {
-							q.SLogger.Error(
-								"Failed to parse value",
-								slogx.Err(err),
-								slog.String("metricName", metricName),
-								slog.Float64("value", value),
-							)
-						}
+						t.SetValueFloat64(quotaInstance, value)
 					}
 				} else {
 					value = v
@@ -132,14 +125,7 @@ func (q *Quota) handlingQuotaMetrics(instanceMap map[string]*matrix.Instance, me
 
 			// populate numeric data
 			t := data.GetMetric(metricName)
-			if err = t.SetValueFloat64(quotaInstance, value); err != nil {
-				q.SLogger.Error(
-					"Failed to parse value",
-					slogx.Err(err),
-					slog.String("metricName", metricName),
-					slog.Float64("value", value),
-				)
-			}
+			t.SetValueFloat64(quotaInstance, value)
 		}
 	}
 	return nil

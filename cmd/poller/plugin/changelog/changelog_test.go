@@ -122,7 +122,7 @@ func TestChangeLogModifiedWithMetrics(t *testing.T) {
 
 	// Add a metric to the instance
 	metric, _ := m.NewMetricFloat64("cpu_usage")
-	_ = metric.SetValueFloat64(instance, 10.0)
+	metric.SetValueFloat64(instance, 10.0)
 
 	_, _, _ = p.Run(data)
 
@@ -137,7 +137,7 @@ func TestChangeLogModifiedWithMetrics(t *testing.T) {
 
 	// Modify the metric value
 	metric1, _ := m1.NewMetricFloat64("cpu_usage")
-	_ = metric1.SetValueFloat64(instance1, 20.0)
+	metric1.SetValueFloat64(instance1, 20.0)
 
 	o, _, _ := p.Run(data1)
 

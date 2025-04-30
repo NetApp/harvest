@@ -53,20 +53,20 @@ func setupMockDataMatrix() *matrix.Matrix {
 	instance2.SetLabel("svm", "osc")
 
 	readOpsMetric, _ := data.NewMetricFloat64("total_read_ops", "read_ops")
-	_ = readOpsMetric.SetValueFloat64(instance1, 1)
-	_ = readOpsMetric.SetValueFloat64(instance2, 241)
+	readOpsMetric.SetValueFloat64(instance1, 1)
+	readOpsMetric.SetValueFloat64(instance2, 241)
 
 	writeOpsMetric, _ := data.NewMetricFloat64("total_write_ops", "write_ops")
-	_ = writeOpsMetric.SetValueFloat64(instance1, 100)
-	_ = writeOpsMetric.SetValueFloat64(instance2, 341)
+	writeOpsMetric.SetValueFloat64(instance1, 100)
+	writeOpsMetric.SetValueFloat64(instance2, 341)
 
 	readDataMetric, _ := data.NewMetricFloat64("bytes_read", "read_data")
-	_ = readDataMetric.SetValueFloat64(instance1, 100000)
-	_ = readDataMetric.SetValueFloat64(instance2, 341000)
+	readDataMetric.SetValueFloat64(instance1, 100000)
+	readDataMetric.SetValueFloat64(instance2, 341000)
 
 	writeDataMetric, _ := data.NewMetricFloat64("bytes_written", "write_data")
-	_ = writeDataMetric.SetValueFloat64(instance1, 100000)
-	_ = writeDataMetric.SetValueFloat64(instance2, 341000)
+	writeDataMetric.SetValueFloat64(instance1, 100000)
+	writeDataMetric.SetValueFloat64(instance2, 341000)
 	return data
 }
 

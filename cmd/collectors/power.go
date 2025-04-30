@@ -318,100 +318,37 @@ func calculateEnvironmentMetrics(data *matrix.Matrix, logger *slog.Logger, value
 					numNode = 1
 				}
 				sumPower /= float64(numNode)
-				err2 = m.SetValueFloat64(instance, sumPower)
-				if err2 != nil {
-					logger.Error(
-						"unable to set power",
-						slog.Any("err", err2),
-						slog.Float64("power", sumPower),
-					)
-				}
+				m.SetValueFloat64(instance, sumPower)
 			case "average_ambient_temperature":
 				if len(v.ambientTemperature) > 0 {
 					aaT := util.Avg(v.ambientTemperature)
-					err2 = m.SetValueFloat64(instance, aaT)
-					if err2 != nil {
-						logger.Error(
-							"unable to set average_ambient_temperature",
-							slog.Any("err", err2),
-							slog.Float64("average_ambient_temperature", aaT),
-						)
-					}
+					m.SetValueFloat64(instance, aaT)
 				}
 			case "min_ambient_temperature":
 				maT := util.Min(v.ambientTemperature)
-				err2 = m.SetValueFloat64(instance, maT)
-				if err2 != nil {
-					logger.Error(
-						"unable to set min_ambient_temperature",
-						slog.Any("err", err2),
-						slog.Float64("min_ambient_temperature", maT),
-					)
-				}
+				m.SetValueFloat64(instance, maT)
 			case "max_temperature":
 				mT := util.Max(v.nonAmbientTemperature)
-				err2 = m.SetValueFloat64(instance, mT)
-				if err2 != nil {
-					logger.Error(
-						"unable to set max_temperature",
-						slog.Any("err", err2),
-						slog.Float64("max_temperature", mT),
-					)
-				}
+				m.SetValueFloat64(instance, mT)
 			case "average_temperature":
 				if len(v.nonAmbientTemperature) > 0 {
 					nat := util.Avg(v.nonAmbientTemperature)
-					err2 = m.SetValueFloat64(instance, nat)
-					if err2 != nil {
-						logger.Error(
-							"unable to set average_temperature",
-							slog.Any("err", err2),
-							slog.Float64("average_temperature", nat),
-						)
-					}
+					m.SetValueFloat64(instance, nat)
 				}
 			case "min_temperature":
 				mT := util.Min(v.nonAmbientTemperature)
-				err2 = m.SetValueFloat64(instance, mT)
-				if err2 != nil {
-					logger.Error(
-						"unable to set min_temperature",
-						slog.Any("err", err2),
-						slog.Float64("min_temperature", mT),
-					)
-				}
+				m.SetValueFloat64(instance, mT)
 			case "average_fan_speed":
 				if len(v.fanSpeed) > 0 {
 					afs := util.Avg(v.fanSpeed)
-					err2 = m.SetValueFloat64(instance, afs)
-					if err2 != nil {
-						logger.Error(
-							"unable to set average_fan_speed",
-							slog.Any("err", err2),
-							slog.Float64("average_fan_speed", afs),
-						)
-					}
+					m.SetValueFloat64(instance, afs)
 				}
 			case "max_fan_speed":
 				mfs := util.Max(v.fanSpeed)
-				err2 = m.SetValueFloat64(instance, mfs)
-				if err2 != nil {
-					logger.Error(
-						"unable to set max_fan_speed",
-						slog.Any("err", err2),
-						slog.Float64("max_fan_speed", mfs),
-					)
-				}
+				m.SetValueFloat64(instance, mfs)
 			case "min_fan_speed":
 				mfs := util.Min(v.fanSpeed)
-				err2 = m.SetValueFloat64(instance, mfs)
-				if err2 != nil {
-					logger.Error(
-						"unable to set min_fan_speed",
-						slog.Any("err", err2),
-						slog.Float64("min_fan_speed", mfs),
-					)
-				}
+				m.SetValueFloat64(instance, mfs)
 			}
 		}
 	}

@@ -66,14 +66,14 @@ func runVolumeTest(t *testing.T, createVolume func(params *node.Node) plugin.Plu
 	opsMetric.SetProperty("rate")
 
 	// Set metric values for the instances
-	_ = latencyMetric.SetValueFloat64(instance1, 20)
-	_ = opsMetric.SetValueFloat64(instance1, 4)
+	latencyMetric.SetValueFloat64(instance1, 20)
+	opsMetric.SetValueFloat64(instance1, 4)
 
-	_ = latencyMetric.SetValueFloat64(instance2, 30)
-	_ = opsMetric.SetValueFloat64(instance2, 6)
+	latencyMetric.SetValueFloat64(instance2, 30)
+	opsMetric.SetValueFloat64(instance2, 6)
 
-	_ = latencyMetric.SetValueFloat64(instance3, 40)
-	_ = opsMetric.SetValueFloat64(instance3, 10)
+	latencyMetric.SetValueFloat64(instance3, 40)
+	opsMetric.SetValueFloat64(instance3, 10)
 
 	// Optionally set one metric value to NaN
 	if setMetricNaN {
@@ -82,8 +82,8 @@ func runVolumeTest(t *testing.T, createVolume func(params *node.Node) plugin.Plu
 	}
 
 	// Set metric values for the simple volume instance
-	_ = latencyMetric.SetValueFloat64(simpleInstance, 50)
-	_ = opsMetric.SetValueFloat64(simpleInstance, 5)
+	latencyMetric.SetValueFloat64(simpleInstance, 50)
+	opsMetric.SetValueFloat64(simpleInstance, 5)
 
 	// Run the plugin
 	boolValue, _ := strconv.ParseBool(includeConstituents)

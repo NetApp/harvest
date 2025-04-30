@@ -215,7 +215,7 @@ func (a *LabelAgent) excludeRegex(aMatrix *matrix.Matrix) error {
 	return nil
 }
 
-// if label is not equal to value, set instance as non-exportable
+// if the label is not equal to value, set instance as non-exportable
 func (a *LabelAgent) includeEquals(aMatrix *matrix.Matrix) error {
 	for _, instance := range aMatrix.GetInstances() {
 		if instance.IsExportable() {
@@ -288,9 +288,9 @@ func (a *LabelAgent) mapValueToNum(m *matrix.Matrix) error {
 
 		for _, instance := range m.GetInstances() {
 			if v, ok := r.mapping[instance.GetLabel(r.label)]; ok {
-				_ = metric.SetValueUint8(instance, v)
+				metric.SetValueUint8(instance, v)
 			} else if r.hasDefault {
-				_ = metric.SetValueUint8(instance, r.defaultValue)
+				metric.SetValueUint8(instance, r.defaultValue)
 			}
 		}
 	}
@@ -317,9 +317,9 @@ func (a *LabelAgent) mapValueToNumRegex(m *matrix.Matrix) error {
 		for _, instance := range m.GetInstances() {
 			value := instance.GetLabel(r.label)
 			if r.reg[0].MatchString(value) || r.reg[1].MatchString(value) {
-				_ = metric.SetValueUint8(instance, uint8(1))
+				metric.SetValueUint8(instance, uint8(1))
 			} else if r.hasDefault {
-				_ = metric.SetValueUint8(instance, r.defaultValue)
+				metric.SetValueUint8(instance, r.defaultValue)
 			}
 		}
 	}

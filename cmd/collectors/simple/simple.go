@@ -130,11 +130,11 @@ func (n *NodeMon) PollData() (map[string]*matrix.Matrix, error) {
 				runtime.ReadMemStats(&m)
 				switch key2 {
 				case "alloc":
-					_ = metric.SetValueUint64(instance, m.Alloc)
+					metric.SetValueUint64(instance, m.Alloc)
 				case "num_gc":
-					_ = metric.SetValueUint64(instance, uint64(m.NumGC))
+					metric.SetValueUint64(instance, uint64(m.NumGC))
 				case "num_cpu":
-					_ = metric.SetValueInt64(instance, int64(runtime.NumCPU()))
+					metric.SetValueInt64(instance, int64(runtime.NumCPU()))
 				}
 			}
 		}

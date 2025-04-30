@@ -9,7 +9,7 @@ func (m *Matrix) InstanceWiseAdditionUint64(toInstance, fromInstance *Instance, 
 		if toMetric := m.GetMetric(key); toMetric != nil {
 			fromValue, _ := fromMetric.GetValueUint64(fromInstance)
 			toValue, _ := toMetric.GetValueUint64(toInstance)
-			_ = toMetric.SetValueUint64(toInstance, fromValue+toValue)
+			toMetric.SetValueUint64(toInstance, fromValue+toValue)
 		}
 	}
 }

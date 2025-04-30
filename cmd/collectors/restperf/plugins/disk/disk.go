@@ -331,9 +331,9 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 								// Each child would have different possible values which is an ugly way to write all of them,
 								// so normal value would be mapped to 1, and the rest all are mapped to 0.
 								if shelfChildInstance.GetLabel("status") == "normal" {
-									_ = statusMetric.SetValueInt64(shelfChildInstance, 1)
+									statusMetric.SetValueInt64(shelfChildInstance, 1)
 								} else {
-									_ = statusMetric.SetValueInt64(shelfChildInstance, 0)
+									statusMetric.SetValueInt64(shelfChildInstance, 0)
 								}
 
 								for metricKey, m := range data1.GetMetrics() {
@@ -495,11 +495,7 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 		instance.SetLabel("node", v.node)
 
 		m := aggrData.GetMetric("power")
-		err = m.SetValueFloat64(instance, v.power)
-		if err != nil {
-			d.SLogger.Error("Failed to set value", slogx.Err(err), slog.String("key", instanceKey))
-			continue
-		}
+		m.SetValueFloat64(instance, v.power)
 	}
 
 	output = append(output, aggrData)
@@ -750,7 +746,6 @@ func (d *Disk) initMaps() {
 }
 
 func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
-	var err error
 	shelfEnvironmentMetricMap := make(map[string]*shelfEnvironmentMetric)
 	for _, o := range d.shelfData {
 		for k, instance := range o.GetInstances() {
@@ -832,99 +827,39 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 					}
 				}
 
-				err = m.SetValueFloat64(instance, sumPower)
-				if err != nil {
-					d.SLogger.Error("Unable to set power", slogx.Err(err), slog.Float64("power", sumPower))
-				} else {
-					d.ShelfMap[instance.GetLabel("shelfUID")] = &shelf{power: sumPower}
-				}
+				m.SetValueFloat64(instance, sumPower)
+				d.ShelfMap[instance.GetLabel("shelfUID")] = &shelf{power: sumPower}
 
 			case "average_ambient_temperature":
 				if len(v.ambientTemperature) > 0 {
 					aaT := util.Avg(v.ambientTemperature)
-					err = m.SetValueFloat64(instance, aaT)
-					if err != nil {
-						d.SLogger.Error(
-							"Unable to set average_ambient_temperature",
-							slogx.Err(err),
-							slog.Float64("average_ambient_temperature", aaT),
-						)
-					}
+					m.SetValueFloat64(instance, aaT)
 				}
 			case "min_ambient_temperature":
 				maT := util.Min(v.ambientTemperature)
-				err = m.SetValueFloat64(instance, maT)
-				if err != nil {
-					d.SLogger.Error(
-						"Unable to set min_ambient_temperature",
-						slogx.Err(err),
-						slog.Float64("min_ambient_temperature", maT),
-					)
-				}
+				m.SetValueFloat64(instance, maT)
 			case "max_temperature":
 				mT := util.Max(v.nonAmbientTemperature)
-				err = m.SetValueFloat64(instance, mT)
-				if err != nil {
-					d.SLogger.Error(
-						"Unable to set max_temperature",
-						slogx.Err(err),
-						slog.Float64("max_temperature", mT),
-					)
-				}
+				m.SetValueFloat64(instance, mT)
 			case "average_temperature":
 				if len(v.nonAmbientTemperature) > 0 {
 					nat := util.Avg(v.nonAmbientTemperature)
-					err = m.SetValueFloat64(instance, nat)
-					if err != nil {
-						d.SLogger.Error(
-							"Unable to set average_temperature",
-							slogx.Err(err),
-							slog.Float64("average_temperature", nat),
-						)
-					}
+					m.SetValueFloat64(instance, nat)
 				}
 			case "min_temperature":
 				mT := util.Min(v.nonAmbientTemperature)
-				err = m.SetValueFloat64(instance, mT)
-				if err != nil {
-					d.SLogger.Error(
-						"Unable to set min_temperature",
-						slogx.Err(err),
-						slog.Float64("min_temperature", mT),
-					)
-				}
+				m.SetValueFloat64(instance, mT)
 			case "average_fan_speed":
 				if len(v.fanSpeed) > 0 {
 					afs := util.Avg(v.fanSpeed)
-					err = m.SetValueFloat64(instance, afs)
-					if err != nil {
-						d.SLogger.Error(
-							"Unable to set average_fan_speed",
-							slogx.Err(err),
-							slog.Float64("average_fan_speed", afs),
-						)
-					}
+					m.SetValueFloat64(instance, afs)
 				}
 			case "max_fan_speed":
 				mfs := util.Max(v.fanSpeed)
-				err = m.SetValueFloat64(instance, mfs)
-				if err != nil {
-					d.SLogger.Error(
-						"Unable to set max_fan_speed",
-						slogx.Err(err),
-						slog.Float64("max_fan_speed", mfs),
-					)
-				}
+				m.SetValueFloat64(instance, mfs)
 			case "min_fan_speed":
 				mfs := util.Min(v.fanSpeed)
-				err = m.SetValueFloat64(instance, mfs)
-				if err != nil {
-					d.SLogger.Error(
-						"Unable to set min_fan_speed",
-						slogx.Err(err),
-						slog.Float64("min_fan_speed", mfs),
-					)
-				}
+				m.SetValueFloat64(instance, mfs)
 			}
 		}
 	}

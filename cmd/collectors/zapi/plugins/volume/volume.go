@@ -167,14 +167,7 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[stri
 				continue
 			}
 			splitEstimateBytes = splitEstimateBytes * 4 * 1024
-			if err = splitEstimate.SetValueFloat64(volume, splitEstimateBytes); err != nil {
-				v.SLogger.Error(
-					"Failed to set clone_split_estimate",
-					slogx.Err(err),
-					slog.String("clone_split_estimate", vc.splitEstimate),
-				)
-				continue
-			}
+			splitEstimate.SetValueFloat64(volume, splitEstimateBytes)
 		}
 
 		// Handling volume footprint metrics
@@ -194,10 +187,7 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[stri
 						v.SLogger.Error("parse", slogx.Err(err), slog.String(vfKey, vfVal))
 						continue
 					}
-					if err = vfMetric.SetValueFloat64(volume, vfMetricVal); err != nil {
-						v.SLogger.Error("set", slogx.Err(err), slog.String(vfKey, vfVal))
-						continue
-					}
+					vfMetric.SetValueFloat64(volume, vfMetricVal)
 				}
 			}
 		}

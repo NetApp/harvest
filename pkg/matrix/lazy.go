@@ -13,7 +13,8 @@ import "github.com/netapp/harvest/v2/pkg/errs"
 func (m *Matrix) LazySetValueInt64(mkey, ikey string, v int64) error {
 	if instance := m.GetInstance(ikey); instance != nil {
 		if metric := m.GetMetric(mkey); metric != nil {
-			return metric.SetValueInt64(instance, v)
+			metric.SetValueInt64(instance, v)
+			return nil
 		}
 		return errs.New(ErrInvalidMetricKey, mkey)
 	}
@@ -37,7 +38,8 @@ func (m *Matrix) LazyValueInt64(key, i string) int64 {
 func (m *Matrix) LazyAddValueInt64(key, i string, v int64) error {
 	if metric := m.GetMetric(key); metric != nil {
 		if instance := m.GetInstance(i); instance != nil {
-			return metric.AddValueInt64(instance, v)
+			metric.AddValueInt64(instance, v)
+			return nil
 		}
 		return errs.New(ErrInvalidInstanceKey, i)
 	}
@@ -47,7 +49,8 @@ func (m *Matrix) LazyAddValueInt64(key, i string, v int64) error {
 func (m *Matrix) LazySetValueUint8(mkey, ikey string, v uint8) error {
 	if instance := m.GetInstance(ikey); instance != nil {
 		if metric := m.GetMetric(mkey); metric != nil {
-			return metric.SetValueUint8(instance, v)
+			metric.SetValueUint8(instance, v)
+			return nil
 		}
 		return errs.New(ErrInvalidMetricKey, mkey)
 	}
@@ -57,7 +60,8 @@ func (m *Matrix) LazySetValueUint8(mkey, ikey string, v uint8) error {
 func (m *Matrix) LazySetValueUint64(mkey, ikey string, v uint64) error {
 	if instance := m.GetInstance(ikey); instance != nil {
 		if metric := m.GetMetric(mkey); metric != nil {
-			return metric.SetValueUint64(instance, v)
+			metric.SetValueUint64(instance, v)
+			return nil
 		}
 		return errs.New(ErrInvalidMetricKey, mkey)
 	}
@@ -67,7 +71,8 @@ func (m *Matrix) LazySetValueUint64(mkey, ikey string, v uint64) error {
 func (m *Matrix) LazyAddValueUint64(key, i string, v uint64) error {
 	if metric := m.GetMetric(key); metric != nil {
 		if instance := m.GetInstance(i); instance != nil {
-			return metric.AddValueUint64(instance, v)
+			metric.AddValueUint64(instance, v)
+			return nil
 		}
 		return errs.New(ErrInvalidInstanceKey, i)
 	}
@@ -77,7 +82,8 @@ func (m *Matrix) LazyAddValueUint64(key, i string, v uint64) error {
 func (m *Matrix) LazySetValueFloat64(mkey, ikey string, v float64) error {
 	if instance := m.GetInstance(ikey); instance != nil {
 		if metric := m.GetMetric(mkey); metric != nil {
-			return metric.SetValueFloat64(instance, v)
+			metric.SetValueFloat64(instance, v)
+			return nil
 		}
 		return errs.New(ErrInvalidMetricKey, mkey)
 	}

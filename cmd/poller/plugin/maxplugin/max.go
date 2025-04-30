@@ -205,25 +205,17 @@ func (m *Max) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 				v, _ := objMetric.GetValueFloat64(objInstance)
 
 				if value > v {
-					if err = objMetric.SetValueFloat64(objInstance, value); err != nil {
-						m.SLogger.Error(
-							"add value",
-							slogx.Err(err),
-							slog.String("key", key),
-							slog.String("objName", objName),
-						)
-					} else {
-						switch {
-						case rule.allLabels:
-							objInstance.SetLabels(instance.GetLabels())
-						case len(rule.includeLabels) != 0:
-							for _, k := range rule.includeLabels {
-								objInstance.SetLabel(k, instance.GetLabel(k))
-							}
-							objInstance.SetLabel(rule.label, objName)
-						default:
-							objInstance.SetLabel(rule.label, objName)
+					objMetric.SetValueFloat64(objInstance, value)
+					switch {
+					case rule.allLabels:
+						objInstance.SetLabels(instance.GetLabels())
+					case len(rule.includeLabels) != 0:
+						for _, k := range rule.includeLabels {
+							objInstance.SetLabel(k, instance.GetLabel(k))
 						}
+						objInstance.SetLabel(rule.label, objName)
+					default:
+						objInstance.SetLabel(rule.label, objName)
 					}
 				}
 

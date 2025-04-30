@@ -91,10 +91,7 @@ func (a *Aggregate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 						a.SLogger.Error("parse", slogx.Err(err), slog.String(afKey, afVal))
 						continue
 					}
-					if err = vfMetric.SetValueFloat64(aggr, vfMetricVal); err != nil {
-						a.SLogger.Error("set", slogx.Err(err), slog.String(afKey, afVal))
-						continue
-					}
+					vfMetric.SetValueFloat64(aggr, vfMetricVal)
 				}
 			}
 		}

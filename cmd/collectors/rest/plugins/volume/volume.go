@@ -202,13 +202,7 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]vo
 
 			if volume.GetLabel("is_flexclone") == "true" {
 				volume.SetLabel("clone_parent_snapshot", vInfo.cloneSnapshotName)
-				if err = cloneSplitEstimateMetric.SetValueFloat64(volume, vInfo.cloneSplitEstimateMetric); err != nil {
-					v.SLogger.Error(
-						"error while setting value on metric",
-						slogx.Err(err),
-						slog.String("metric", "clone_split_estimate"),
-					)
-				}
+				cloneSplitEstimateMetric.SetValueFloat64(volume, vInfo.cloneSplitEstimateMetric)
 			}
 		} else {
 			// The public API does not include node root and temp volumes, while the private CLI does include them. Harvest will exclude them the same as the public API by not exporting them.
@@ -286,10 +280,7 @@ func (v *Volume) handleARWProtection(data *matrix.Matrix) {
 	arwInstance.SetLabel("ArwStatus", arwStatusValue)
 	m := v.arw.GetMetric("status")
 	// populate numeric data
-	value := 1.0
-	if err = m.SetValueFloat64(arwInstance, value); err != nil {
-		v.SLogger.Error("Failed to parse value", slogx.Err(err), slog.Float64("value", value))
-	}
+	m.SetValueFloat64(arwInstance, 1.0)
 }
 
 func (v *Volume) getEncryptedDisks() ([]gjson.Result, error) {
@@ -414,10 +405,7 @@ func (v *Volume) handleTags(globalLabels map[string]string) {
 
 				m := v.tags.GetMetric("tags")
 				// populate numeric data
-				value := 1.0
-				if err = m.SetValueFloat64(tagInstance, value); err != nil {
-					v.SLogger.Error("Failed to parse value", slogx.Err(err), slog.Float64("value", value))
-				}
+				m.SetValueFloat64(tagInstance, 1.0)
 			}
 		}
 	}
