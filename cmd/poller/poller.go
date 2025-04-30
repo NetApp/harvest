@@ -903,10 +903,11 @@ func nonOverlappingCollectors(objectCollectors []objectCollector) []objectCollec
 	unique := make([]objectCollector, 0)
 	conflicts := map[string][]string{
 		"Zapi":     {"Rest"},
-		"ZapiPerf": {"RestPerf", "KeyPerf"},
+		"ZapiPerf": {"RestPerf", "KeyPerf", "StatPerf"},
 		"Rest":     {"Zapi"},
-		"RestPerf": {"ZapiPerf", "KeyPerf"},
-		"KeyPerf":  {"ZapiPerf", "RestPerf"},
+		"RestPerf": {"ZapiPerf", "KeyPerf", "StatPerf"},
+		"KeyPerf":  {"ZapiPerf", "RestPerf", "StatPerf"},
+		"StatPerf": {"ZapiPerf", "RestPerf", "KeyPerf"},
 	}
 
 	for _, c := range objectCollectors {
@@ -963,7 +964,7 @@ func Union2(hNode *node.Node, poller *conf.Poller) error {
 			if mvn.Key.Type() != ast.StringType {
 				continue
 			}
-			
+
 			// check if the key exists in the hNode
 			key := node.ToString(mvn.Key)
 			if hNode.HasChildS(key) {

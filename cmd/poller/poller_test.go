@@ -203,6 +203,11 @@ func Test_nonOverlappingCollectors(t *testing.T) {
 		{name: "no overlap", args: ocs("Rest", "KeyPerf"), want: ocs("Rest", "KeyPerf")},
 		{name: "overlap", args: ocs("RestPerf", "KeyPerf"), want: ocs("RestPerf")},
 		{name: "overlap", args: ocs("KeyPerf", "KeyPerf"), want: ocs("KeyPerf")},
+		{name: "w overlap StatPerf1", args: ocs("StatPerf", "ZapiPerf"), want: ocs("StatPerf")},
+		{name: "w overlap StatPerf2", args: ocs("RestPerf", "StatPerf"), want: ocs("RestPerf")},
+		{name: "w overlap StatPerf3", args: ocs("KeyPerf", "StatPerf"), want: ocs("KeyPerf")},
+		{name: "no overlap StatPerf", args: ocs("Rest", "StatPerf"), want: ocs("Rest", "StatPerf")},
+		{name: "overlap statperf", args: ocs("StatPerf", "StatPerf"), want: ocs("StatPerf")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -243,6 +248,10 @@ func Test_uniquifyObjectCollectors(t *testing.T) {
 			want: []objectCollector{{class: "KeyPerf", object: "Volume"}}},
 		{name: "multi-keyperf", args: objectCollectorMap("Volume: RestPerf", "Aggregate: KeyPerf"),
 			want: []objectCollector{{class: "RestPerf", object: "Volume"}, {class: "KeyPerf", object: "Aggregate"}}},
+		{name: "volume-statperf", args: objectCollectorMap("Volume: StatPerf, ZapiPerf"),
+			want: []objectCollector{{class: "StatPerf", object: "Volume"}}},
+		{name: "multi-statperf", args: objectCollectorMap("Volume: StatPerf", "Aggregate: RestPerf"),
+			want: []objectCollector{{class: "StatPerf", object: "Volume"}, {class: "RestPerf", object: "Aggregate"}}},
 	}
 
 	for _, tt := range tests {
