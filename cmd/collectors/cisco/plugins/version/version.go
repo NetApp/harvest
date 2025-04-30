@@ -6,7 +6,6 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
@@ -120,15 +119,5 @@ func (v *Version) parseVersion(output gjson.Result, versionMat *matrix.Matrix) {
 	instance.SetLabel("osVersion", osVersion)
 	instance.SetLabel("upTime", upTime)
 
-	v.setMetricValue(labels, instance, 1.0, versionMat)
-}
-
-func (v *Version) setMetricValue(metric string, instance *matrix.Instance, value float64, mat *matrix.Matrix) {
-	if err := mat.GetMetric(metric).SetValueFloat64(instance, value); err != nil {
-		v.SLogger.Error(
-			"Unable to set value on metric",
-			slogx.Err(err),
-			slog.String("metric", metric),
-		)
-	}
+	versionMat.GetMetric(labels).SetValueFloat64(instance, 1.0)
 }

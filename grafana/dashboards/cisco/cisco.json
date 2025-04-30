@@ -105,332 +105,145 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "Displays detail of the Switches.",
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "thresholds"
+          "custom": {
+            "align": "left",
+            "displayMode": "auto",
+            "filterable": true
           },
+          "decimals": 0,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "rgba(217, 91, 91, 0.74)",
                 "value": null
               },
               {
-                "color": "red",
-                "value": 80
+                "color": "rgb(101, 201, 87)",
+                "value": 1
               }
             ]
           },
           "unit": "short"
         },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 5,
-        "x": 0,
-        "y": 1
-      },
-      "id": 4,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "name"
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "expr": "cisco_version_labels{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
-          "instant": true,
-          "legendFormat": "{{hostname}}",
-          "refId": "A"
-        }
-      ],
-      "title": "Hostname",
-      "transformations": [
-        {
-          "id": "renameByRegex",
-          "options": {
-            "regex": "",
-            "renamePattern": ""
-          }
-        }
-      ],
-      "type": "stat"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "datacenter"
+            },
+            "properties": [
               {
-                "color": "green",
-                "value": null
+                "id": "displayName",
+                "value": "Datacenter"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                  }
+                ]
               }
             ]
           },
-          "unit": "s"
-        },
-        "overrides": []
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Up Time"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "s"
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
-        "h": 3,
-        "w": 4,
-        "x": 5,
+        "h": 7,
+        "w": 24,
+        "x": 0,
         "y": 1
       },
-      "id": 5,
+      "id": 23763571993,
+      "interval": "",
       "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
           ],
-          "fields": "/^upTime$/",
-          "values": false
+          "show": false
         },
-        "text": {},
-        "textMode": "value"
+        "showHeader": true,
+        "sortBy": []
       },
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": "${DS_PROMETHEUS}",
+          "exemplar": false,
           "expr": "cisco_version_labels{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
+          "format": "table",
           "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
           "legendFormat": "",
           "refId": "A"
         }
       ],
-      "title": "Uptime",
+      "title": "Switch details",
       "transformations": [
         {
-          "id": "labelsToFields",
-          "options": {}
-        }
-      ],
-      "type": "stat"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 8,
-        "x": 9,
-        "y": 1
-      },
-      "id": 2,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "name"
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "expr": "cisco_version_labels{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
-          "instant": true,
-          "legendFormat": "{{chassis}}",
-          "refId": "A"
-        }
-      ],
-      "title": "Chassis",
-      "transformations": [
-        {
-          "id": "renameByRegex",
+          "id": "filterFieldsByName",
           "options": {
-            "regex": "",
-            "renamePattern": ""
+            "include": {
+              "names": [
+                "datacenter",
+                "biosVersion",
+                "chassis",
+                "hostname",
+                "osVersion",
+                "switch",
+                "upTime"
+              ]
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {
+              "biosVersion": 5,
+              "chassis": 4,
+              "datacenter": 0,
+              "hostname": 2,
+              "osVersion": 6,
+              "switch": 1,
+              "upTime": 3
+            },
+            "renameByName": {
+              "biosVersion": "BIOS Version",
+              "chassis": "Chassis",
+              "hostname": "HostName",
+              "osVersion": "OS Version",
+              "status": "Status",
+              "switch": "Switch",
+              "upTime": "Up Time",
+              "update_check": "Pre-update Check"
+            }
           }
         }
       ],
-      "type": "stat"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 3,
-        "x": 17,
-        "y": 1
-      },
-      "id": 3,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "name"
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "expr": "cisco_version_labels{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
-          "instant": true,
-          "legendFormat": "{{biosVersion}}",
-          "refId": "A"
-        }
-      ],
-      "title": "BIOS version",
-      "transformations": [
-        {
-          "id": "renameByRegex",
-          "options": {
-            "regex": "",
-            "renamePattern": ""
-          }
-        }
-      ],
-      "type": "stat"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 4,
-        "x": 20,
-        "y": 1
-      },
-      "id": 1,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "name"
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "expr": "cisco_version_labels{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
-          "instant": true,
-          "legendFormat": "{{osVersion}}",
-          "refId": "A"
-        }
-      ],
-      "title": "OS Version",
-      "type": "stat"
+      "type": "table"
     },
     {
       "collapsed": true,
@@ -439,7 +252,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 4
+        "y": 8
       },
       "id": 7,
       "panels": [
@@ -854,42 +667,83 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "",
           "fieldConfig": {
             "defaults": {
-              "color": {
-                "mode": "thresholds"
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
               },
-              "mappings": [
-                {
-                  "options": {
-                    "0": {
-                      "index": 0,
-                      "text": "Good"
-                    },
-                    "1": {
-                      "index": 1,
-                      "text": "Not good"
-                    }
-                  },
-                  "type": "value"
-                }
-              ],
+              "decimals": 0,
+              "mappings": [],
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
+                    "color": "rgba(217, 91, 91, 0.74)",
                     "value": null
                   },
                   {
-                    "color": "dark-red",
+                    "color": "rgb(101, 201, 87)",
                     "value": 1
                   }
                 ]
               },
               "unit": "short"
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "PSU"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 105
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Status"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "ok": {
+                            "color": "semi-dark-green",
+                            "index": 0,
+                            "text": "Good"
+                          }
+                        },
+                        "type": "value"
+                      },
+                      {
+                        "options": {
+                          "match": "null+nan",
+                          "result": {
+                            "color": "light-orange",
+                            "index": 1,
+                            "text": "Not Good"
+                          }
+                        },
+                        "type": "special"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background"
+                  }
+                ]
+              }
+            ]
           },
           "gridPos": {
             "h": 4,
@@ -898,31 +752,72 @@
             "y": 11
           },
           "id": 16,
+          "interval": "",
           "options": {
-            "colorMode": "value",
-            "graphMode": "none",
-            "justifyMode": "auto",
-            "orientation": "auto",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
+            "footer": {
               "fields": "",
-              "values": false
+              "reducer": [
+                "sum"
+              ],
+              "show": false
             },
-            "text": {},
-            "textMode": "auto"
+            "showHeader": true,
+            "sortBy": []
           },
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "${DS_PROMETHEUS}",
+              "exemplar": false,
               "expr": "cisco_environment_power_up{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
-              "legendFormat": "PSU {{item}}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
               "refId": "A"
             }
           ],
-          "type": "stat"
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "ps",
+                    "status",
+                    "switch"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "biosVersion": 5,
+                  "chassis": 4,
+                  "datacenter": 0,
+                  "hostname": 2,
+                  "osVersion": 6,
+                  "switch": 1,
+                  "upTime": 3
+                },
+                "renameByName": {
+                  "biosVersion": "BIOS Version",
+                  "chassis": "Chassis",
+                  "hostname": "HostName",
+                  "osVersion": "OS Version",
+                  "ps": "PSU",
+                  "status": "Status",
+                  "switch": "Switch",
+                  "upTime": "Up Time",
+                  "update_check": "Pre-update Check"
+                }
+              }
+            }
+          ],
+          "type": "table"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
@@ -992,7 +887,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 5
+        "y": 9
       },
       "id": 11,
       "panels": [
@@ -1234,7 +1129,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 6
+        "y": 10
       },
       "id": 22,
       "panels": [
@@ -1431,7 +1326,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 7
+        "y": 11
       },
       "id": 30,
       "panels": [
@@ -1816,7 +1711,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 8
+        "y": 12
       },
       "id": 25,
       "panels": [
@@ -1882,7 +1777,7 @@
           "targets": [
             {
               "datasource": "${DS_PROMETHEUS}",
-              "expr": "cisco_interface_admin_up{datacenter=~\"$Datacenter\",speed!=\"\",switch=\"$Switch\"}",
+              "expr": "cisco_interface_admin_up{datacenter=~\"$Datacenter\",speed!=\"\",switch=~\"$Switch\"}",
               "legendFormat": "{{name}} | {{speed}}",
               "refId": "A"
             }
