@@ -2,8 +2,5 @@ name:               Version
 query:              "show version ; show banner motd"
 object:             cisco_switch
 
-schedule:
-  - data:      1h
-
 plugins:
   - Version

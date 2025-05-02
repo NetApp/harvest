@@ -164,6 +164,42 @@
                 "value": "s"
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "RCF Filename"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 240
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Chassis"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 210
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "RCF Version"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 120
+              }
+            ]
           }
         ]
       },
@@ -206,13 +242,15 @@
           "options": {
             "include": {
               "names": [
-                "datacenter",
                 "biosVersion",
                 "chassis",
+                "datacenter",
                 "hostname",
                 "osVersion",
                 "switch",
-                "upTime"
+                "upTime",
+                "rcf_version",
+                "rcf_filename"
               ]
             }
           }
@@ -235,10 +273,11 @@
               "chassis": "Chassis",
               "hostname": "HostName",
               "osVersion": "OS Version",
+              "rcf_filename": "RCF Filename",
+              "rcf_version": "RCF Version",
               "status": "Status",
               "switch": "Switch",
-              "upTime": "Up Time",
-              "update_check": "Pre-update Check"
+              "upTime": "Up Time"
             }
           }
         }
