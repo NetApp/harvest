@@ -248,10 +248,15 @@ func (v *Volume) getVolumeFootprint() (map[string]map[string]string, error) {
 	footprintInfo := node.NewXMLS("footprint-info")
 	footprintInfo.NewChildS("volume", "")
 	footprintInfo.NewChildS("vserver", "")
+	footprintInfo.NewChildS("delayed-free-footprint", "")
+	footprintInfo.NewChildS("flexvol-metadata-footprint", "")
+	footprintInfo.NewChildS("total-footprint", "")
+	footprintInfo.NewChildS("total-metadata-footprint", "")
 	footprintInfo.NewChildS("volume-blocks-footprint-bin0", "")
 	footprintInfo.NewChildS("volume-blocks-footprint-bin0-percent", "")
 	footprintInfo.NewChildS("volume-blocks-footprint-bin1", "")
 	footprintInfo.NewChildS("volume-blocks-footprint-bin1-percent", "")
+	footprintInfo.NewChildS("volume-guarantee-footprint", "")
 	desired.AddChild(footprintInfo)
 	request.AddChild(desired)
 
@@ -271,10 +276,22 @@ func (v *Volume) getVolumeFootprint() (map[string]map[string]string, error) {
 		performanceTierFootprintPerc := footprint.GetChildContentS("volume-blocks-footprint-bin0-percent")
 		capacityTierFootprint := footprint.GetChildContentS("volume-blocks-footprint-bin1")
 		capacityTierFootprintPerc := footprint.GetChildContentS("volume-blocks-footprint-bin1-percent")
+		delayedFreeFootprint := footprint.GetChildContentS("delayed-free-footprint")
+		flexvolMetadataFootprint := footprint.GetChildContentS("flexvol-metadata-footprint")
+		totalFootprint := footprint.GetChildContentS("total-footprint")
+		totalMetadataFootprint := footprint.GetChildContentS("total-metadata-footprint")
+		volumeBlocksFootprint := footprint.GetChildContentS("volume-guarantee-footprint")
+
 		footprintMetrics["performance_tier_footprint"] = performanceTierFootprint
 		footprintMetrics["performance_tier_footprint_percent"] = performanceTierFootprintPerc
 		footprintMetrics["capacity_tier_footprint"] = capacityTierFootprint
 		footprintMetrics["capacity_tier_footprint_percent"] = capacityTierFootprintPerc
+		footprintMetrics["delayed_free_footprint"] = delayedFreeFootprint
+		footprintMetrics["flexvol_metadata_footprint"] = flexvolMetadataFootprint
+		footprintMetrics["total_footprint"] = totalFootprint
+		footprintMetrics["total_metadata_footprint"] = totalMetadataFootprint
+		footprintMetrics["guarantee_footprint"] = volumeBlocksFootprint
+
 		volumeFootprintMap[volume+svm] = footprintMetrics
 	}
 

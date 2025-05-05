@@ -75,10 +75,16 @@ endpoints:
     counters:
       - ^^volume
       - ^^vserver                                 => svm
+      - delayed_free_footprint
+      - effective_total_footprint
+      - flexvol_metadata_footprint
+      - total_footprint
+      - total_metadata_footprint
       - volume_blocks_footprint_bin0              => performance_tier_footprint
       - volume_blocks_footprint_bin0_percent      => performance_tier_footprint_percent
       - volume_blocks_footprint_bin1              => capacity_tier_footprint
       - volume_blocks_footprint_bin1_percent      => capacity_tier_footprint_percent
+      - volume_guarantee_footprint                => guarantee_footprint
 
   - query: api/private/cli/volume/snapshot/autodelete
     counters:
