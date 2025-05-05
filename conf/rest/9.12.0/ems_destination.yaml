@@ -8,7 +8,7 @@ counters:
   - ^^name             => name
   - ^^type             => type
   - ^certificate.ca    => certificate
-  - ^filter            => filter
+  - ^filters.#.name    => filter
   - ^syslog            => syslog
   - ^system_defined    => system_defined
   - filter:
