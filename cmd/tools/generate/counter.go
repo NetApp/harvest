@@ -174,6 +174,7 @@ var (
 		"netstat_",
 		"flexcache_",
 		"quota_disk_used_pct_threshold",
+		"ems_events",
 	}
 
 	// Exclude extra metrics for REST
