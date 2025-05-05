@@ -6,7 +6,7 @@ require (
 	github.com/goccy/go-yaml v1.17.1
 	github.com/google/go-cmp v0.7.0
 	github.com/rivo/uniseg v0.4.7
-	github.com/shirou/gopsutil/v4 v4.25.3
+	github.com/shirou/gopsutil/v4 v4.25.4
 	github.com/spf13/cobra v1.9.1
 	github.com/zekroTJA/timedmap/v2 v2.0.0
 	golang.org/x/sys v0.32.0
