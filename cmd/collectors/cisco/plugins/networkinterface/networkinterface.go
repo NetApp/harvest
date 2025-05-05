@@ -92,7 +92,7 @@ func (i *Interface) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 	data.Reset()
 
 	command := i.ParentParams.GetChildContentS("query")
-	output, err := i.client.CLIShowArray(command)
+	output, err := i.client.CLIShowArray(command, "")
 
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to fetch data: %w", err)
@@ -122,7 +122,7 @@ func (i *Interface) initMatrix(name string) (*matrix.Matrix, error) {
 
 func (i *Interface) parseInterface(output gjson.Result, envMat *matrix.Matrix) {
 
-	rowQuery := "output.body.TABLE_interface.ROW_interface"
+	rowQuery := "TABLE_interface.ROW_interface"
 
 	rows := output.Get(rowQuery)
 
@@ -146,6 +146,8 @@ func (i *Interface) parseInterface(output gjson.Result, envMat *matrix.Matrix) {
 		ethInMcast := value.Get("eth_inmcast").Float()
 		ethInBcast := value.Get("eth_inbcast").Float()
 		ethCrcErrors := value.Get("eth_crc").Float()
+		ethInDrops := value.Get("eth_in_ifdown_drops").Float()
+		ethOutDrops := value.Get("eth_out_drops").Float()
 
 		instanceKey := interfaceName + "_" + macAddr
 
@@ -167,6 +169,8 @@ func (i *Interface) parseInterface(output gjson.Result, envMat *matrix.Matrix) {
 		envMat.GetMetric(transmitErrors).SetValueFloat64(instance, ethOutErrors)
 		envMat.GetMetric(receiveMulticast).SetValueFloat64(instance, ethInMcast)
 		envMat.GetMetric(receiveBroadcast).SetValueFloat64(instance, ethInBcast)
+		envMat.GetMetric(receiveDrops).SetValueFloat64(instance, ethInDrops)
+		envMat.GetMetric(transmitDrops).SetValueFloat64(instance, ethOutDrops)
 
 		if adminState == "up" {
 			envMat.GetMetric(adminUp).SetValueFloat64(instance, 1)

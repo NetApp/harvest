@@ -233,24 +233,49 @@
           "intervalFactor": 1,
           "legendFormat": "",
           "refId": "A"
+        },
+        {
+          "exemplar": false,
+          "expr": "cisco_environment_power_mode{datacenter=~\"$Datacenter\",item=\"operational\",switch=~\"$Switch\"}",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "B"
+        },
+        {
+          "exemplar": false,
+          "expr": "cisco_environment_power_mode{datacenter=~\"$Datacenter\",item=\"configured\",switch=~\"$Switch\"}",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "C"
         }
       ],
       "title": "Switch details",
       "transformations": [
         {
+          "id": "seriesToColumns",
+          "options": {
+            "byField": "switch"
+          }
+        },
+        {
           "id": "filterFieldsByName",
           "options": {
             "include": {
               "names": [
+                "switch",
                 "biosVersion",
                 "chassis",
-                "datacenter",
                 "hostname",
                 "osVersion",
-                "switch",
-                "upTime",
+                "rcf_filename",
                 "rcf_version",
-                "rcf_filename"
+                "upTime",
+                "value 1",
+                "value 2"
               ]
             }
           }
@@ -271,13 +296,18 @@
             "renameByName": {
               "biosVersion": "BIOS Version",
               "chassis": "Chassis",
+              "datacenter 3": "",
               "hostname": "HostName",
+              "item 1": "",
+              "item 2": "",
               "osVersion": "OS Version",
               "rcf_filename": "RCF Filename",
               "rcf_version": "RCF Version",
               "status": "Status",
               "switch": "Switch",
-              "upTime": "Up Time"
+              "upTime": "Up Time",
+              "value 1": "Operational Mode",
+              "value 2": "Configured Mode"
             }
           }
         }
@@ -297,6 +327,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel displays total power of all switches.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -318,10 +349,10 @@
             "overrides": []
           },
           "gridPos": {
-            "h": 6,
-            "w": 5,
+            "h": 10,
+            "w": 7,
             "x": 0,
-            "y": 5
+            "y": 9
           },
           "id": 33,
           "options": {
@@ -343,9 +374,13 @@
           "targets": [
             {
               "datasource": "${DS_PROMETHEUS}",
+              "exemplar": false,
               "expr": "sum(cisco_environment_power_in{datacenter=~\"$Datacenter\",switch=~\"$Switch\"})",
+              "format": "time_series",
               "hide": false,
-              "legendFormat": "__auto",
+              "instant": false,
+              "interval": "",
+              "legendFormat": "",
               "refId": "B"
             }
           ],
@@ -354,13 +389,13 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel displays PSU efficiency.",
           "fieldConfig": {
             "defaults": {
               "color": {
                 "mode": "thresholds"
               },
               "mappings": [],
-              "max": 1,
               "min": 0,
               "thresholds": {
                 "mode": "absolute",
@@ -368,14 +403,6 @@
                   {
                     "color": "green",
                     "value": null
-                  },
-                  {
-                    "color": "#EAB839",
-                    "value": 0.5
-                  },
-                  {
-                    "color": "dark-red",
-                    "value": 0.8
                   }
                 ]
               },
@@ -384,73 +411,15 @@
             "overrides": []
           },
           "gridPos": {
-            "h": 6,
-            "w": 6,
-            "x": 5,
-            "y": 5
+            "h": 10,
+            "w": 7,
+            "x": 7,
+            "y": 9
           },
-          "id": 13,
-          "options": {
-            "orientation": "auto",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "showThresholdLabels": false,
-            "showThresholdMarkers": true,
-            "text": {}
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "datasource": "${DS_PROMETHEUS}",
-              "expr": "cisco_environment_power_out{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\n/\n  cisco_environment_power_capacity{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
-              "hide": false,
-              "legendFormat": "PSU {{item}}",
-              "refId": "B"
-            }
-          ],
-          "title": "PSU usage",
-          "type": "gauge"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "short"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 5,
-            "x": 11,
-            "y": 5
-          },
-          "id": 15,
+          "id": 9,
           "options": {
             "colorMode": "value",
-            "graphMode": "none",
+            "graphMode": "area",
             "justifyMode": "auto",
             "orientation": "auto",
             "reduceOptions": {
@@ -461,18 +430,19 @@
               "values": false
             },
             "text": {},
-            "textMode": "name"
+            "textMode": "auto"
           },
           "pluginVersion": "8.1.8",
           "targets": [
             {
               "datasource": "${DS_PROMETHEUS}",
-              "expr": "cisco_environment_power_mode{datacenter=~\"$Datacenter\",item=\"operational\",switch=~\"$Switch\"}",
-              "legendFormat": "{{status}}",
-              "refId": "A"
+              "expr": "sum(cisco_environment_power_out{datacenter=~\"$Datacenter\",switch=~\"$Switch\"})\n/\n  sum(cisco_environment_power_in{datacenter=~\"$Datacenter\",switch=~\"$Switch\"})",
+              "hide": false,
+              "legendFormat": "PSU efficiency",
+              "refId": "B"
             }
           ],
-          "title": "Operational redundancy mode",
+          "title": "PSU efficiency",
           "type": "stat"
         },
         {
@@ -532,9 +502,9 @@
           },
           "gridPos": {
             "h": 10,
-            "w": 8,
-            "x": 16,
-            "y": 5
+            "w": 10,
+            "x": 14,
+            "y": 9
           },
           "id": 8,
           "options": {
@@ -558,28 +528,28 @@
               "exemplar": false,
               "expr": "cisco_environment_power_in{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(cisco_environment_power_in{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end())\n  )",
               "interval": "",
-              "legendFormat": "Power in PSU {{item}}",
+              "legendFormat": "Power in PSU {{ps}} {{switch}}",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "sum(cisco_environment_power_in{datacenter=~\"$Datacenter\",switch=~\"$Switch\"})",
+              "expr": "sum by (switch) (cisco_environment_power_in{datacenter=~\"$Datacenter\",switch=~\"$Switch\"})",
               "interval": "",
-              "legendFormat": "Total power in",
+              "legendFormat": "Total power in {{switch}}",
               "refId": "B"
             },
             {
               "exemplar": false,
               "expr": "cisco_environment_power_out{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(cisco_environment_power_out{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end())\n  )",
               "interval": "",
-              "legendFormat": "Power out PSU {{item}}",
+              "legendFormat": "Power out PSU {{ps}} {{switch}}",
               "refId": "C"
             },
             {
               "exemplar": false,
-              "expr": "sum(cisco_environment_power_out{datacenter=~\"$Datacenter\",switch=~\"$Switch\"})",
+              "expr": "sum by (switch) (cisco_environment_power_out{datacenter=~\"$Datacenter\",switch=~\"$Switch\"})",
               "interval": "",
-              "legendFormat": "Total power out",
+              "legendFormat": "Total power out {{switch}}",
               "refId": "D"
             }
           ],
@@ -590,123 +560,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "short"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 5,
-            "x": 11,
-            "y": 8
-          },
-          "id": 14,
-          "options": {
-            "colorMode": "value",
-            "graphMode": "none",
-            "justifyMode": "auto",
-            "orientation": "auto",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "text": {},
-            "textMode": "name"
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "datasource": "${DS_PROMETHEUS}",
-              "expr": "cisco_environment_power_mode{datacenter=~\"$Datacenter\",item=\"configured\",switch=~\"$Switch\"}",
-              "legendFormat": "{{status}}",
-              "refId": "A"
-            }
-          ],
-          "title": "Configured redundancy mode",
-          "type": "stat"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "mappings": [],
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "watt"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 4,
-            "w": 5,
-            "x": 0,
-            "y": 11
-          },
-          "id": 12,
-          "options": {
-            "colorMode": "value",
-            "graphMode": "none",
-            "justifyMode": "auto",
-            "orientation": "auto",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "text": {},
-            "textMode": "auto"
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "datasource": "${DS_PROMETHEUS}",
-              "expr": "cisco_environment_power_capacity{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
-              "hide": false,
-              "legendFormat": "PSU {{item}}",
-              "refId": "B"
-            }
-          ],
-          "title": "Capacity",
-          "type": "stat"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "Displays power status of the PSU",
+          "description": "Displays detail of the PSUs.",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -714,7 +568,7 @@
                 "displayMode": "auto",
                 "filterable": true
               },
-              "decimals": 0,
+              "decimals": 2,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -735,12 +589,38 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "PSU"
+                  "options": "datacenter"
                 },
                 "properties": [
                   {
-                    "id": "custom.width",
-                    "value": 105
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Usage"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "percentunit"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 1
                   }
                 ]
               },
@@ -767,9 +647,9 @@
                         "options": {
                           "match": "null+nan",
                           "result": {
-                            "color": "light-orange",
+                            "color": "semi-dark-orange",
                             "index": 1,
-                            "text": "Not Good"
+                            "text": "Not good"
                           }
                         },
                         "type": "special"
@@ -781,16 +661,28 @@
                     "value": "color-background"
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Capacity"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "watt"
+                  }
+                ]
               }
             ]
           },
           "gridPos": {
-            "h": 4,
-            "w": 6,
-            "x": 5,
-            "y": 11
+            "h": 7,
+            "w": 24,
+            "x": 0,
+            "y": 19
           },
-          "id": 16,
+          "id": 35,
           "interval": "",
           "options": {
             "footer": {
@@ -807,113 +699,88 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "cisco_environment_power_up{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
+              "expr": "cisco_environment_power_capacity{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
               "format": "table",
               "instant": true,
               "interval": "",
               "intervalFactor": 1,
               "legendFormat": "",
               "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "cisco_environment_power_out{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\n/\n  cisco_environment_power_capacity{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "B"
+            },
+            {
+              "exemplar": false,
+              "expr": "cisco_environment_power_up{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "C"
             }
           ],
+          "title": "PSU details",
           "transformations": [
             {
               "id": "filterFieldsByName",
               "options": {
                 "include": {
                   "names": [
+                    "datacenter",
                     "ps",
                     "status",
-                    "switch"
+                    "switch",
+                    "Value #A",
+                    "Value #B"
                   ]
                 }
               }
+            },
+            {
+              "id": "merge",
+              "options": {}
             },
             {
               "id": "organize",
               "options": {
                 "excludeByName": {},
                 "indexByName": {
-                  "biosVersion": 5,
-                  "chassis": 4,
+                  "Value #A": 3,
+                  "Value #B": 4,
+                  "Value #C": 6,
                   "datacenter": 0,
-                  "hostname": 2,
-                  "osVersion": 6,
-                  "switch": 1,
-                  "upTime": 3
+                  "ps": 2,
+                  "status": 5,
+                  "switch": 1
                 },
                 "renameByName": {
+                  "Value #A": "Capacity",
+                  "Value #B": "Usage",
                   "biosVersion": "BIOS Version",
                   "chassis": "Chassis",
+                  "datacenter": "",
                   "hostname": "HostName",
                   "osVersion": "OS Version",
-                  "ps": "PSU",
+                  "ps": "Name",
+                  "rcf_filename": "RCF Filename",
+                  "rcf_version": "RCF Version",
                   "status": "Status",
                   "switch": "Switch",
-                  "upTime": "Up Time",
-                  "update_check": "Pre-update Check"
+                  "upTime": "Up Time"
                 }
               }
             }
           ],
           "type": "table"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "mappings": [],
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "percentunit"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 4,
-            "w": 5,
-            "x": 11,
-            "y": 11
-          },
-          "id": 9,
-          "options": {
-            "colorMode": "value",
-            "graphMode": "area",
-            "justifyMode": "auto",
-            "orientation": "auto",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "text": {},
-            "textMode": "auto"
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "datasource": "${DS_PROMETHEUS}",
-              "expr": "sum(cisco_environment_power_out{datacenter=~\"$Datacenter\",switch=~\"$Switch\"})\n/\n  sum(cisco_environment_power_in{datacenter=~\"$Datacenter\",switch=~\"$Switch\"})",
-              "hide": false,
-              "legendFormat": "PSU efficiency",
-              "refId": "B"
-            }
-          ],
-          "title": "PSU efficiency",
-          "type": "stat"
         }
       ],
       "title": "Power",
@@ -1013,7 +880,7 @@
               "exemplar": false,
               "expr": "cisco_environment_sensor_temp{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      cisco_environment_sensor_temp{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end()\n    )\n  )",
               "interval": "",
-              "legendFormat": "{{datacenter}} - {{sensor}}",
+              "legendFormat": "{{datacenter}} - {{switch}} - {{sensor}}",
               "refId": "A"
             }
           ],
@@ -1237,9 +1104,9 @@
           "options": {
             "legend": {
               "calcs": [
-                "max",
-                "min",
-                "diff"
+                "mean",
+                "lastNotNull",
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom"
@@ -1252,9 +1119,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "cisco_optics_rx{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(cisco_optics_rx{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end())\n  )",
+              "expr": "cisco_optic_rx{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk($TopResources, avg_over_time(cisco_optic_rx{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end()))",
               "interval": "",
-              "legendFormat": "{{datacenter}} - {{interface}}",
+              "legendFormat": "{{datacenter}} - {{switch}} - {{interface}}",
               "refId": "A"
             }
           ],
@@ -1328,9 +1195,9 @@
           "options": {
             "legend": {
               "calcs": [
-                "max",
-                "min",
-                "diff"
+                "mean",
+                "lastNotNull",
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom"
@@ -1343,9 +1210,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "cisco_optics_tx{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(cisco_optics_tx{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end())\n  )",
+              "expr": "cisco_optic_tx{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk($TopResources, avg_over_time(cisco_optic_tx{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end()))",
               "interval": "",
-              "legendFormat": "{{datacenter}} - {{interface}}",
+              "legendFormat": "{{datacenter}} - {{switch}} - {{interface}}",
               "refId": "A"
             }
           ],
@@ -1434,6 +1301,9 @@
           "options": {
             "legend": {
               "calcs": [
+                "mean",
+                "lastNotNull",
+                "max",
                 "diff"
               ],
               "displayMode": "table",
@@ -1449,7 +1319,7 @@
               "exemplar": false,
               "expr": "(cisco_interface_transmit_bytes{datacenter=~\"$Datacenter\",switch=~\"$Switch\"} > 0)\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      cisco_interface_transmit_bytes{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end()\n    )\n  )",
               "interval": "",
-              "legendFormat": "{{name}} | {{mac}} | {{description}}",
+              "legendFormat": "{{switch}} | {{interface}} | {{mac}} | {{description}}",
               "refId": "A"
             }
           ],
@@ -1523,6 +1393,9 @@
           "options": {
             "legend": {
               "calcs": [
+                "mean",
+                "lastNotNull",
+                "max",
                 "diff"
               ],
               "displayMode": "table",
@@ -1538,7 +1411,7 @@
               "exemplar": false,
               "expr": "(cisco_interface_receive_bytes{datacenter=~\"$Datacenter\",switch=~\"$Switch\"} > 0)\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      cisco_interface_receive_bytes{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end()\n    )\n  )",
               "interval": "",
-              "legendFormat": "{{name}} | {{mac}} | {{description}}",
+              "legendFormat": "{{switch}} | {{interface}} | {{mac}} | {{description}}",
               "refId": "A"
             }
           ],
@@ -1612,6 +1485,9 @@
           "options": {
             "legend": {
               "calcs": [
+                "mean",
+                "lastNotNull",
+                "max",
                 "diff"
               ],
               "displayMode": "table",
@@ -1627,14 +1503,14 @@
               "exemplar": false,
               "expr": "cisco_interface_receive_drops{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      cisco_interface_receive_drops{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end()\n    )\n  )",
               "interval": "",
-              "legendFormat": "Transmit - {{name}} | {{mac}} | {{description}}",
+              "legendFormat": "Transmit - {{switch}} | {{interface}} | {{mac}} | {{description}}",
               "refId": "A"
             },
             {
               "exemplar": false,
               "expr": "cisco_interface_transmit_drops{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      cisco_interface_transmit_drops{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end()\n    )\n  )",
               "interval": "",
-              "legendFormat": "Receive - {{name}} | {{mac}} | {{description}}",
+              "legendFormat": "Receive - {{switch}} | {{interface}} | {{mac}} | {{description}}",
               "refId": "B"
             }
           ],
@@ -1708,6 +1584,9 @@
           "options": {
             "legend": {
               "calcs": [
+                "mean",
+                "lastNotNull",
+                "max",
                 "diff"
               ],
               "displayMode": "table",
@@ -1723,14 +1602,14 @@
               "exemplar": false,
               "expr": "cisco_interface_transmit_errors{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      cisco_interface_transmit_errors{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end()\n    )\n  )",
               "interval": "",
-              "legendFormat": "Transmit - {{name}} | {{mac}} | {{description}}",
+              "legendFormat": "Transmit - {{switch}} | {{interface}} | {{mac}} | {{description}}",
               "refId": "A"
             },
             {
               "exemplar": false,
               "expr": "cisco_interface_receive_errors{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      cisco_interface_receive_errors{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end()\n    )\n  )",
               "interval": "",
-              "legendFormat": "Receive - {{name}} | {{mac}} | {{description}}",
+              "legendFormat": "Receive - {{switch}} | {{interface}} | {{mac}} | {{description}}",
               "refId": "B"
             }
           ],
@@ -1804,6 +1683,9 @@
           "options": {
             "legend": {
               "calcs": [
+                "mean",
+                "lastNotNull",
+                "max",
                 "diff"
               ],
               "displayMode": "table",
@@ -1819,7 +1701,7 @@
               "exemplar": false,
               "expr": "cisco_interface_crc_errors{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(cisco_interface_crc_errors{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end())\n  )",
               "interval": "",
-              "legendFormat": "{{interface}} | {{mac}} | {{description}}",
+              "legendFormat": "{{switch}} | {{interface}} | {{mac}} | {{description}}",
               "refId": "A"
             }
           ],
@@ -1906,9 +1788,9 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "cisco_interface_admin_up{datacenter=~\"$Datacenter\",speed!=\"\",switch=~\"$Switch\"}",
+              "expr": "cisco_interface_admin_up{datacenter=~\"$Datacenter\",speed!=\"\",speed!=\"auto-speed\",switch=~\"$Switch\"}",
               "format": "heatmap",
-              "legendFormat": "{{interface}} | {{speed}}",
+              "legendFormat": "{{switch}} - {{interface}} | {{speed}}",
               "refId": "A"
             }
           ],
@@ -1931,7 +1813,7 @@
             "show": true,
             "splitFactor": null
           },
-          "yBucketBound": "auto",
+          "yBucketBound": "middle",
           "yBucketNumber": null,
           "yBucketSize": null
         }

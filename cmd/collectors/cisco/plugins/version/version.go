@@ -68,7 +68,7 @@ func (v *Version) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *uti
 	data.Reset()
 
 	command := v.ParentParams.GetChildContentS("query")
-	output, err := v.client.CLIShow(command)
+	output, err := v.client.CLIShow(command, "")
 
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to fetch data: %w", err)

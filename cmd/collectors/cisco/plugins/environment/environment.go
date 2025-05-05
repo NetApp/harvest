@@ -18,6 +18,7 @@ import (
 var metrics = []string{
 	"power_capacity",
 	"power_in",
+	"power_mode",
 	"power_out",
 	"power_up",
 	"sensor_temp",
@@ -73,7 +74,7 @@ func (e *Environment) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 	data.Reset()
 
 	command := e.ParentParams.GetChildContentS("query")
-	output, err := e.client.CLIShowArray(command)
+	output, err := e.client.CLIShowArray(command, "")
 
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to fetch data: %w", err)
@@ -102,9 +103,8 @@ func (e *Environment) initMatrix(name string) (*matrix.Matrix, error) {
 }
 
 func (e *Environment) parseEnvironment(output gjson.Result, envMat *matrix.Matrix) {
-	content := output.Get("output.body")
-	e.parseTemperature(content, envMat)
-	e.parsePower(content, envMat)
+	e.parseTemperature(output, envMat)
+	e.parsePower(output, envMat)
 }
 
 func (e *Environment) parseTemperature(output gjson.Result, envMat *matrix.Matrix) {
@@ -176,6 +176,21 @@ func (e *Environment) parsePower(output gjson.Result, envMat *matrix.Matrix) {
 			envMat.GetMetric("power_in").SetValueFloat64(instance, ps.ActualIn)
 		}
 	}
+
+	e.setReduncancyMode("configured", model.RedunMode, envMat)
+	e.setReduncancyMode("operational", model.OperationMode, envMat)
+}
+
+func (e *Environment) setReduncancyMode(key string, mode string, envMat *matrix.Matrix) {
+	instanceKey := key
+	instance, err := envMat.NewInstance(instanceKey)
+	if err != nil {
+		e.SLogger.Warn("Failed to create instance", slog.String("key", instanceKey))
+		return
+	}
+	instance.SetLabel("item", key)
+	instance.SetLabel("value", mode)
+	envMat.GetMetric("power_mode").SetValueFloat64(instance, 1.0)
 }
 
 // PowerModel represents the power metrics of the device and is needed
@@ -186,6 +201,8 @@ func (e *Environment) parsePower(output gjson.Result, envMat *matrix.Matrix) {
 type PowerModel struct {
 	PowerSupplies  []PowerSupply
 	TotalPowerDraw float64
+	RedunMode      string
+	OperationMode  string
 }
 
 type PowerSupply struct {
@@ -249,6 +266,11 @@ func newPowerModel9K(output gjson.Result, logger *slog.Logger) PowerModel {
 	wattsRequested := output.Get("powersup.power_summary.tot_pow_out_actual_draw").String()
 	powerModel.TotalPowerDraw = wattsToFloat(wattsRequested, logger)
 
+	redunMode := output.Get("powersup.power_summary.ps_redun_mode").String()
+	powerModel.RedunMode = redunMode
+	operationMode := output.Get("powersup.power_summary.ps_oper_mode").String()
+	powerModel.OperationMode = operationMode
+
 	powerModel.PowerSupplies = powerSupplies
 
 	return powerModel
@@ -301,6 +323,11 @@ func newPowerModel3K(output gjson.Result, logger *slog.Logger) PowerModel {
 
 	wattsRequested := output.Get("powersup.TABLE_mod_pow_info.ROW_mod_pow_info.watts_requested").String()
 	powerModel.TotalPowerDraw = wattsToFloat(wattsRequested, logger)
+
+	redunMode := output.Get("powersup.power_summary.ps_redun_mode_3k").String()
+	powerModel.RedunMode = redunMode
+	operationMode := output.Get("powersup.power_summary.ps_redun_op_mode").String()
+	powerModel.OperationMode = operationMode
 
 	powerModel.PowerSupplies = powerSupplies
 

@@ -13,6 +13,7 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 )
@@ -54,17 +55,24 @@ type PostCmd struct {
 // This was needed because cli_show_array does not support sending multiple commands
 // (e.g. `show version ; show banner motd`)
 // When sending multiple commands with type=cli_show_array, the response is invalid JSON
-func (c *Client) CLIShow(command string) (gjson.Result, error) {
-	return c.callAPI(command, cliShow)
+func (c *Client) CLIShow(command string, testFile string) (gjson.Result, error) {
+	return c.callAPI(command, testFile, cliShow)
 }
 
 // CLIShowArray uses the cli_show_array command type when talking to the switch.
 // This was needed because the cli_show output truncated tx_pwr when calling `show interface transceiver details`
-func (c *Client) CLIShowArray(command string) (gjson.Result, error) {
-	return c.callAPI(command, cliShowArray)
+func (c *Client) CLIShowArray(command string, testFile string) (gjson.Result, error) {
+	return c.callAPI(command, testFile, cliShowArray)
 }
 
-func (c *Client) callAPI(command string, callType apiType) (gjson.Result, error) {
+func (c *Client) callAPI(command string, testFile string, callType apiType) (gjson.Result, error) {
+	if testFile != "" {
+		data, err := os.ReadFile(testFile)
+		if err != nil {
+			return gjson.Result{}, fmt.Errorf("failed to read %s file: %w", testFile, err)
+		}
+		return gjson.ParseBytes(data), nil
+	}
 
 	pollerAuth, err := c.auth.GetPollerAuth()
 	if err != nil {
@@ -90,7 +98,7 @@ func (c *Client) callAPI(command string, callType apiType) (gjson.Result, error)
 		return gjson.Result{}, err
 	}
 
-	return result, nil
+	return result.Get("output.body"), nil
 }
 
 func (c *Client) callWithAuthRetry(command string, callType apiType) (gjson.Result, error) {
@@ -160,23 +168,22 @@ func (c *Client) Init(retries int, remote conf.Remote) error {
 	}
 
 	var (
-		err             error
-		output, content gjson.Result
+		err    error
+		output gjson.Result
 	)
 
 	for range retries {
-		output, err = c.CLIShowArray("show version")
+		output, err = c.CLIShowArray("show version", "")
 		if err != nil {
 			if errors.Is(err, errs.ErrPermissionDenied) {
 				return err
 			}
 			continue
 		}
-		content = output.Get("output.body")
-		header := content.Get("header_str").ClonedString()
+		header := output.Get("header_str").ClonedString()
 		if strings.Contains(header, "NX-OS") {
 			c.remote.Model = "nxos"
-			version := content.Get("nxos_ver_str").String()
+			version := output.Get("nxos_ver_str").String()
 			version = strings.Replace(version, "(", ".", 1)
 			version = strings.Replace(version, ")", "", 1)
 			c.remote.Version = version
@@ -189,8 +196,8 @@ func (c *Client) Init(retries int, remote conf.Remote) error {
 
 		}
 
-		c.remote.Name = content.Get("host_name").ClonedString()
-		c.remote.Serial = content.Get("chassis_id").ClonedString()
+		c.remote.Name = output.Get("host_name").ClonedString()
+		c.remote.Serial = output.Get("chassis_id").ClonedString()
 
 		return nil
 	}
