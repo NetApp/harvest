@@ -96,8 +96,8 @@ func (v *Version) initMatrix(name string) (*matrix.Matrix, error) {
 
 func (v *Version) parseVersionAndBanner(output gjson.Result, versionMat *matrix.Matrix) {
 
-	versionOutput := output.Get("output.0.body")
-	bannerOutput := output.Get("output.1.body")
+	versionOutput := output.Get("0.body")
+	bannerOutput := output.Get("1.body")
 
 	biosVersion := versionOutput.Get("bios_ver_str").ClonedString()
 	chassis := versionOutput.Get("chassis_id").ClonedString()

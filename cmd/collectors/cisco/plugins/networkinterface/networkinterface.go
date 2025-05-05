@@ -122,7 +122,7 @@ func (i *Interface) initMatrix(name string) (*matrix.Matrix, error) {
 
 func (i *Interface) parseInterface(output gjson.Result, envMat *matrix.Matrix) {
 
-	rowQuery := "TABLE_interface.ROW_interface"
+	rowQuery := "body.TABLE_interface.ROW_interface"
 
 	rows := output.Get(rowQuery)
 

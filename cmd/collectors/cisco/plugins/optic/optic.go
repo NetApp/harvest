@@ -104,7 +104,7 @@ func (o *Optic) parseOptic(output gjson.Result, opticMat *matrix.Matrix) {
 
 	var models []Model
 
-	rowQuery := "TABLE_interface.ROW_interface"
+	rowQuery := "body.TABLE_interface.ROW_interface"
 
 	rows := output.Get(rowQuery)
 

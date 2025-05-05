@@ -98,7 +98,7 @@ func (c *Client) callAPI(command string, testFile string, callType apiType) (gjs
 		return gjson.Result{}, err
 	}
 
-	return result.Get("output.body"), nil
+	return result.Get("output"), nil
 }
 
 func (c *Client) callWithAuthRetry(command string, callType apiType) (gjson.Result, error) {
@@ -180,6 +180,7 @@ func (c *Client) Init(retries int, remote conf.Remote) error {
 			}
 			continue
 		}
+		output = output.Get("body")
 		header := output.Get("header_str").ClonedString()
 		if strings.Contains(header, "NX-OS") {
 			c.remote.Model = "nxos"

@@ -103,6 +103,7 @@ func (e *Environment) initMatrix(name string) (*matrix.Matrix, error) {
 }
 
 func (e *Environment) parseEnvironment(output gjson.Result, envMat *matrix.Matrix) {
+	output = output.Get("body")
 	e.parseTemperature(output, envMat)
 	e.parsePower(output, envMat)
 }

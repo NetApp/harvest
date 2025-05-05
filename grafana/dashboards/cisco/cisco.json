@@ -1317,9 +1317,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(cisco_interface_transmit_bytes{datacenter=~\"$Datacenter\",switch=~\"$Switch\"} > 0)\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      cisco_interface_transmit_bytes{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end()\n    )\n  )",
+              "expr": "sum by (switch, interface, mac) (\n    rate(cisco_interface_transmit_bytes{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[4m])\n  )\nand on (switch, interface, mac)\n  topk(\n    $TopResources,\n    sum by (switch, interface, mac) (\n      avg_over_time(cisco_interface_transmit_bytes{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h])\n    )\n  )",
               "interval": "",
-              "legendFormat": "{{switch}} | {{interface}} | {{mac}} | {{description}}",
+              "legendFormat": "{{switch}} | {{interface}} | {{mac}}",
               "refId": "A"
             }
           ],
@@ -1409,9 +1409,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(cisco_interface_receive_bytes{datacenter=~\"$Datacenter\",switch=~\"$Switch\"} > 0)\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      cisco_interface_receive_bytes{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end()\n    )\n  )",
+              "expr": "sum by (switch, interface, mac) (\n    rate(cisco_interface_receive_bytes{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[4m])\n  )\nand on (switch, interface, mac)\n  topk(\n    $TopResources,\n    sum by (switch, interface, mac) (\n      avg_over_time(cisco_interface_receive_bytes{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h])\n    )\n  )",
               "interval": "",
-              "legendFormat": "{{switch}} | {{interface}} | {{mac}} | {{description}}",
+              "legendFormat": "{{switch}} | {{interface}} | {{mac}}",
               "refId": "A"
             }
           ],
