@@ -7,8 +7,8 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Apr-14
-ONTAP Version: 9.16.1
+Creation Date : 2025-May-05
+ONTAP Version: 9.15.1
 ```
 ## Understanding the structure
 
@@ -3689,7 +3689,7 @@ Number of RDMA read I/Os issued.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/iwarp` | `read_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/iwarp.yaml | 
-| ZAPI | `perf-object-get-instances iwarp` | `iw_read_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iwarp.yaml |
+| ZAPI | `perf-object-get-instances iwarp` | `iw_read_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iwarp.yaml | 
 
 
 ### iw_write_ops
@@ -3699,7 +3699,7 @@ Number of RDMA write I/Os issued.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/iwarp` | `write_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/iwarp.yaml | 
-| ZAPI | `perf-object-get-instances iwarp` | `iw_write_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iwarp.yaml |
+| ZAPI | `perf-object-get-instances iwarp` | `iw_write_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iwarp.yaml | 
 
 
 ### lif_labels
@@ -4449,8 +4449,8 @@ Number of remote other operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/namespace` | `remote.other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/namespace.yaml |
-| ZAPI | `perf-object-get-instances namespace` | `remote_other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml |
+| REST | `api/cluster/counter/tables/namespace` | `remote.other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/namespace.yaml | 
+| ZAPI | `perf-object-get-instances namespace` | `remote_other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml | 
 
 
 ### namespace_remote_read_data
@@ -4460,7 +4460,7 @@ Remote read bytes
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/namespace` | `remote.read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/namespace.yaml | 
-| ZAPI | `perf-object-get-instances namespace` | `remote_read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml |
+| ZAPI | `perf-object-get-instances namespace` | `remote_read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml | 
 
 
 ### namespace_remote_read_ops
@@ -4470,7 +4470,7 @@ Number of remote read operations
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/namespace` | `remote.read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/namespace.yaml | 
-| ZAPI | `perf-object-get-instances namespace` | `remote_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml |
+| ZAPI | `perf-object-get-instances namespace` | `remote_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml | 
 
 
 ### namespace_remote_write_data
@@ -4479,8 +4479,8 @@ Remote write bytes
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/namespace` | `remote.write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/namespace.yaml |
-| ZAPI | `perf-object-get-instances namespace` | `remote_write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml |
+| REST | `api/cluster/counter/tables/namespace` | `remote.write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/namespace.yaml | 
+| ZAPI | `perf-object-get-instances namespace` | `remote_write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml | 
 
 
 ### namespace_remote_write_ops
@@ -4489,8 +4489,8 @@ Number of remote write operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/namespace` | `remote.write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/namespace.yaml |
-| ZAPI | `perf-object-get-instances namespace` | `remote_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml |
+| REST | `api/cluster/counter/tables/namespace` | `remote.write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/namespace.yaml | 
+| ZAPI | `perf-object-get-instances namespace` | `remote_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml | 
 
 
 ### namespace_size
@@ -7710,6 +7710,7 @@ NVMe/FC kilobytes (KB) received per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `nvme_fc_data_received`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml | 
+| ZAPI | `perf-object-get-instances system:node` | `nvme_fc_data_recv`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.15.1/system_node.yaml | 
 
 
 ### node_nvme_fc_data_sent
@@ -7719,6 +7720,7 @@ NVMe/FC kilobytes (KB) sent per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `nvme_fc_data_sent`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml | 
+| ZAPI | `perf-object-get-instances system:node` | `nvme_fc_data_sent`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.15.1/system_node.yaml | 
 
 
 ### node_nvme_fc_ops
@@ -7728,6 +7730,7 @@ NVMe/FC operations per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `nvme_fc_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml | 
+| ZAPI | `perf-object-get-instances system:node` | `nvme_fc_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.15.1/system_node.yaml | 
 
 
 ### node_nvmf_data_recv
@@ -11168,42 +11171,38 @@ Number of disk write operations initiated each second for storing data or metada
 
 ### rw_ctx_cifs_giveups
 
-Array of number of give-ups of CIFS ops because they rewind more than a certain threshold, categorized by their rewind reasons.
+Array of number of given-ups of cifs ops because they rewind more than a certain threshold, categorized by their rewind reasons.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/rewind_context` | `cifs_give_ups`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.16.0/rwctx.yaml |
-| ZAPI | `perf-object-get-instances rw_ctx` | `cifs_giveups`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml |
+| ZAPI | `perf-object-get-instances rw_ctx` | `cifs_giveups`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml | 
 
 
 ### rw_ctx_cifs_rewinds
 
-Array of number of rewinds for CIFS ops based on their reasons.
+Array of number of rewinds for cifs ops based on their reasons.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/rewind_context` | `cifs_rewinds`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.16.0/rwctx.yaml |
-| ZAPI | `perf-object-get-instances rw_ctx` | `cifs_rewinds`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml |
+| ZAPI | `perf-object-get-instances rw_ctx` | `cifs_rewinds`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml | 
 
 
 ### rw_ctx_nfs_giveups
 
-Array of number of give-ups of NFS ops because they rewind more than a certain threshold, categorized by their rewind reasons.
+Array of number of given-ups of nfs ops because they rewind more than a certain threshold, categorized by their rewind reasons.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/rewind_context` | `nfs_give_ups`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.16.0/rwctx.yaml |
-| ZAPI | `perf-object-get-instances rw_ctx` | `nfs_giveups`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml |
+| ZAPI | `perf-object-get-instances rw_ctx` | `nfs_giveups`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml | 
 
 
 ### rw_ctx_nfs_rewinds
 
-Array of number of rewinds for NFS ops based on their reasons.
+Array of number of rewinds for nfs ops based on their reasons.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/rewind_context` | `nfs_rewinds`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.16.0/rwctx.yaml |
-| ZAPI | `perf-object-get-instances rw_ctx` | `nfs_rewinds`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml |
+| ZAPI | `perf-object-get-instances rw_ctx` | `nfs_rewinds`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml | 
 
 
 ### rw_ctx_qos_flowcontrol
@@ -14468,6 +14467,16 @@ Display an estimate of additional storage required in the underlying aggregate t
 | ZAPI | `volume-clone-get-iter` | `split-estimate` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
+### volume_delayed_free_footprint
+
+This field represents the delayed free blocks footprint in bytes. This system is used to improve delete performance by batching delete requests.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/volume/footprint` | `delayed_free_footprint` | conf/rest/9.14.0/volume.yaml |
+| ZAPI | `volume-footprint-get-iter` | `delayed-free-footprint` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+
 ### volume_filesystem_size
 
 Filesystem size (in bytes) of the volume.  This is the total usable size of the volume, not including WAFL reserve.  This value is the same as Size except for certain SnapMirror destination volumes.  It is possible for destination volumes to have a different filesystem-size because the filesystem-size is sent across from the source volume.  This field is valid only when the volume is online.
@@ -14476,6 +14485,26 @@ Filesystem size (in bytes) of the volume.  This is the total usable size of the 
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume` | `filesystem_size` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.filesystem-size` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+
+### volume_flexvol_metadata_footprint
+
+This field represents flexible volume metadata in bytes.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/volume/footprint` | `flexvol_metadata_footprint` | conf/rest/9.14.0/volume.yaml |
+| ZAPI | `volume-footprint-get-iter` | `flexvol-metadata-footprint` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+
+### volume_guarantee_footprint
+
+This field represents the volume guarantee footprint in bytes. Alternatively, it is the space reserved for future writes in the volume.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/volume/footprint` | `volume_guarantee_footprint` | conf/rest/9.14.0/volume.yaml |
+| ZAPI | `volume-footprint-get-iter` | `volume-guarantee-footprint` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
 ### volume_inode_files_total
@@ -15218,6 +15247,26 @@ This metric represents the total amount of data that has been read from and writ
 | REST | `api/cluster/counter/tables/volume` | `bytes_read, bytes_written`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml | 
 | KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.total`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml | 
 | ZAPI | `volume` | `read_data, write_data`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml | 
+
+
+### volume_total_footprint
+
+This field represents the total footprint in bytes.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/volume/footprint` | `total_footprint` | conf/rest/9.14.0/volume.yaml |
+| ZAPI | `volume-footprint-get-iter` | `total-footprint` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+
+### volume_total_metadata_footprint
+
+This field represents the total metadata footprint in bytes.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/volume/footprint` | `total_metadata_footprint` | conf/rest/9.14.0/volume.yaml |
+| ZAPI | `volume-footprint-get-iter` | `volume_total_metadata_footprint` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
 ### volume_total_ops

@@ -78,7 +78,6 @@ endpoints:
       - ^^volume
       - ^^vserver                                 => svm
       - delayed_free_footprint
-      - effective_total_footprint
       - flexvol_metadata_footprint
       - total_footprint
       - total_metadata_footprint
