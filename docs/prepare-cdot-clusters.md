@@ -175,6 +175,7 @@ security login rest-role create -role harvest2-rest-role -access readonly -api /
     security login rest-role create -role harvest-rest-role -access readonly -api /api/name-services/ldap
     security login rest-role create -role harvest-rest-role -access readonly -api /api/name-services/nis
     security login rest-role create -role harvest-rest-role -access readonly -api /api/network/ethernet/ports
+    security login rest-role create -role harvest-rest-role -access readonly -api /api/network/ethernet/switch/ports
     security login rest-role create -role harvest-rest-role -access readonly -api /api/network/fc/ports
     security login rest-role create -role harvest-rest-role -access readonly -api /api/network/ip/interfaces
     security login rest-role create -role harvest-rest-role -access readonly -api /api/network/ip/ports
