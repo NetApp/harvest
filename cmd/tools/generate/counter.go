@@ -225,7 +225,7 @@ func (m MetricDef) TableRow() string {
 		unitTypeBase := `<br><span class="key">Unit:</span> ` + m.Unit +
 			`<br><span class="key">Type:</span> ` + m.Type +
 			`<br><span class="key">Base:</span> ` + m.BaseCounter
-		return fmt.Sprintf("| %s | `%s` | `%s`%s | %s | ",
+		return fmt.Sprintf("| %s | `%s` | `%s`%s | %s |",
 			m.API, m.Endpoint, m.ONTAPCounter, unitTypeBase, m.Template)
 	} else if m.Unit != "" {
 		unit := `<br><span class="key">Unit:</span> ` + m.Unit
