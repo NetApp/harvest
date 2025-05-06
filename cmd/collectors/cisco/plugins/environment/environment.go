@@ -16,6 +16,8 @@ import (
 )
 
 var metrics = []string{
+	"fan_up",
+	"fan_speed",
 	"power_capacity",
 	"power_in",
 	"power_mode",
@@ -106,6 +108,7 @@ func (e *Environment) parseEnvironment(output gjson.Result, envMat *matrix.Matri
 	content := output.Get("output.body")
 	e.parseTemperature(content, envMat)
 	e.parsePower(content, envMat)
+	e.parseFan(content, envMat)
 }
 
 func (e *Environment) parseTemperature(output gjson.Result, envMat *matrix.Matrix) {
@@ -144,6 +147,37 @@ func (e *Environment) parseTemperature(output gjson.Result, envMat *matrix.Matri
 
 		return true
 	})
+}
+
+func (e *Environment) parseFan(output gjson.Result, envMat *matrix.Matrix) {
+	model := NewFanModel(output, e.SLogger)
+
+	for _, f := range model.fans {
+		instanceKey := f.name
+		instance, err := envMat.NewInstance(instanceKey)
+		if err != nil {
+			e.SLogger.Warn("Failed to create instance", slog.String("key", instanceKey))
+			continue
+		}
+
+		instance.SetLabel("status", f.status)
+		instance.SetLabel("name", f.name)
+
+		fanUpMetric := envMat.GetMetric("fan_up")
+		if f.status == "Ok" {
+			fanUpMetric.SetValueFloat64(instance, 1)
+		} else {
+			fanUpMetric.SetValueFloat64(instance, 0)
+		}
+	}
+
+	instanceKey := ""
+	instance, err := envMat.NewInstance(instanceKey)
+	if err != nil {
+		e.SLogger.Warn("Failed to create instance", slog.String("key", instanceKey))
+		return
+	}
+	envMat.GetMetric("fan_speed").SetValueFloat64(instance, float64(model.speed))
 }
 
 func (e *Environment) parsePower(output gjson.Result, envMat *matrix.Matrix) {
@@ -204,6 +238,16 @@ type PowerModel struct {
 	TotalPowerDraw float64
 	RedunMode      string
 	OperationMode  string
+}
+
+type FanModel struct {
+	fans  []FanData
+	speed int64
+}
+
+type FanData struct {
+	name   string
+	status string
 }
 
 type PowerSupply struct {
@@ -333,4 +377,82 @@ func newPowerModel3K(output gjson.Result, logger *slog.Logger) PowerModel {
 	powerModel.PowerSupplies = powerSupplies
 
 	return powerModel
+}
+
+func NewFanModel(output gjson.Result, logger *slog.Logger) FanModel {
+	var fanModel FanModel
+	// Check if the output is from a 3000 or 9000 switch
+	is3K := output.Get("fandetails_3k").Exists()
+	if is3K {
+		fanModel = newFanModel3K(output, logger)
+	} else {
+		fanModel = newFanModel9K(output, logger)
+	}
+	return fanModel
+}
+
+func newFanModel9K(output gjson.Result, logger *slog.Logger) FanModel {
+	var fans []FanData
+	var err error
+	fanModel := FanModel{}
+	rowQuery := "fandetails.TABLE_faninfo.ROW_faninfo"
+	rows := output.Get(rowQuery)
+
+	if !rows.Exists() {
+		logger.Warn("Unable to parse power because rows are missing", slog.String("query", rowQuery))
+		return fanModel
+	}
+
+	rows.ForEach(func(_, value gjson.Result) bool {
+		fanName := value.Get("fanname").ClonedString()
+		fanStatus := value.Get("fanstatus").ClonedString()
+		f := FanData{
+			name:   fanName,
+			status: fanStatus,
+		}
+		fans = append(fans, f)
+		return true
+	})
+
+	fanModel.fans = fans
+	fanSpeed := output.Get("fandetails.TABLE_fan_zone_speed.ROW_fan_zone_speed.zonespeed").String()
+	speed := strings.ReplaceAll(strings.ReplaceAll(fanSpeed, "0x", ""), "0X", "")
+	fanModel.speed, err = strconv.ParseInt(speed, 16, 64)
+	if err != nil {
+		logger.Warn("error parsing version", slog.Any("err", err))
+	}
+
+	return fanModel
+}
+
+func newFanModel3K(output gjson.Result, logger *slog.Logger) FanModel {
+	var fans []FanData
+	var err error
+	fanModel := FanModel{}
+	rowQuery := "fandetails_3k.TABLE_faninfo.ROW_faninfo"
+	rows := output.Get(rowQuery)
+
+	if !rows.Exists() {
+		logger.Warn("Unable to parse fan because rows are missing", slog.String("query", rowQuery))
+		return fanModel
+	}
+
+	rows.ForEach(func(_, value gjson.Result) bool {
+		fanName := value.Get("fanname").ClonedString()
+		fanStatus := value.Get("fanstatus").ClonedString()
+		f := FanData{
+			name:   fanName,
+			status: fanStatus,
+		}
+		fans = append(fans, f)
+		return true
+	})
+	fanModel.fans = fans
+	fanSpeed := output.Get("fandetails_3k.TABLE_fan_zone_speed.ROW_fan_zone_speed.0.speed").String()
+	speed := strings.ReplaceAll(strings.ReplaceAll(fanSpeed, "0x", ""), "0X", "")
+	fanModel.speed, err = strconv.ParseInt(speed, 16, 64)
+	if err != nil {
+		logger.Warn("error parsing version", slog.Any("err", err))
+	}
+	return fanModel
 }
