@@ -1,0 +1,24 @@
+
+name:               EthernetSwitchPort
+query:              api/network/ethernet/switch/ports
+object:             ethernet_switch_port
+
+counters:
+  - ^^identity.name                       => interface
+  - ^^switch.name                         => switch
+  - statistics.receive_raw.discards       => receive_discards
+  - statistics.receive_raw.errors         => receive_errors
+  - statistics.receive_raw.packets        => receive_packets
+  - statistics.timestamp(timestamp)       => timestamp
+  - statistics.transmit_raw.discards      => transmit_discards
+  - statistics.transmit_raw.errors        => transmit_errors
+  - statistics.transmit_raw.packets       => transmit_packets
+  - filter:
+      - statistics.timestamp=!"-"
+  - hidden_fields:
+      - statistics
+
+export_options:
+  instance_keys:
+    - interface
+    - switch
