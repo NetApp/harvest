@@ -220,7 +220,12 @@
           "show": false
         },
         "showHeader": true,
-        "sortBy": []
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Uptime"
+          }
+        ]
       },
       "pluginVersion": "8.1.8",
       "targets": [
@@ -297,7 +302,7 @@
               "biosVersion": "BIOS Version",
               "chassis": "Chassis",
               "datacenter 3": "",
-              "hostname": "HostName",
+              "hostname": "Host Name",
               "item 1": "",
               "item 2": "",
               "osVersion": "OS Version",
@@ -305,7 +310,7 @@
               "rcf_version": "RCF Version",
               "status": "Status",
               "switch": "Switch",
-              "upTime": "Up Time",
+              "upTime": "Uptime",
               "value 1": "Operational Mode",
               "value 2": "Configured Mode"
             }
@@ -384,7 +389,7 @@
               "refId": "B"
             }
           ],
-          "title": "Total power consume",
+          "title": "Total power",
           "type": "stat"
         },
         {
@@ -886,7 +891,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Temperatures",
+          "title": "Top $TopResources Sensor Temperatures",
           "type": "timeseries"
         },
         {
@@ -1041,7 +1046,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Displays power of Transciver RX.",
+          "description": "Displays power of Transceiver RX.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1127,12 +1132,12 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Transciver power - RX",
+          "title": "Top $TopResources Transceiver RX Power",
           "type": "timeseries"
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Displays power of Transciver TX.",
+          "description": "Displays power of Transceiver TX.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1218,7 +1223,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Transciver power - TX",
+          "title": "Top $TopResources Transceiver TX Power",
           "type": "timeseries"
         }
       ],
@@ -1325,7 +1330,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Total traffic per interface - Transmit",
+          "title": "Top $TopResources Interface Transmit Traffic",
           "type": "timeseries"
         },
         {
@@ -1417,7 +1422,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Total traffic per interface - Receive",
+          "title": "Top $TopResources Interface Receive Traffic",
           "type": "timeseries"
         },
         {
@@ -1501,22 +1506,22 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "cisco_interface_receive_drops{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      cisco_interface_receive_drops{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end()\n    )\n  )",
+              "expr": "sum by (switch, interface, mac) (\n    rate(cisco_interface_receive_drops{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[4m])\n  )\nand on (switch, interface, mac)\n  topk(\n    $TopResources,\n    sum by (switch, interface, mac) (\n      avg_over_time(cisco_interface_receive_drops{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h])\n    )\n  )",
               "interval": "",
-              "legendFormat": "Transmit - {{switch}} | {{interface}} | {{mac}} | {{description}}",
+              "legendFormat": "Transmit - {{switch}} | {{interface}} | {{mac}}",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "cisco_interface_transmit_drops{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      cisco_interface_transmit_drops{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end()\n    )\n  )",
+              "expr": "sum by (switch, interface, mac) (\n    rate(cisco_interface_transmit_drops{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[4m])\n  )\nand on (switch, interface, mac)\n  topk(\n    $TopResources,\n    sum by (switch, interface, mac) (\n      avg_over_time(cisco_interface_transmit_drops{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h])\n    )\n  )",
               "interval": "",
-              "legendFormat": "Receive - {{switch}} | {{interface}} | {{mac}} | {{description}}",
+              "legendFormat": "Receive - {{switch}} | {{interface}} | {{mac}}",
               "refId": "B"
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Drop traffic per interface",
+          "title": "Top $TopResources Interface Receive Drops",
           "type": "timeseries"
         },
         {
@@ -1600,22 +1605,22 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "cisco_interface_transmit_errors{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      cisco_interface_transmit_errors{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end()\n    )\n  )",
+              "expr": "sum by (switch, interface, mac) (\n    rate(cisco_interface_transmit_errors{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[4m])\n  )\nand on (switch, interface, mac)\n  topk(\n    $TopResources,\n    sum by (switch, interface, mac) (\n      avg_over_time(cisco_interface_transmit_errors{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h])\n    )\n  )",
               "interval": "",
-              "legendFormat": "Transmit - {{switch}} | {{interface}} | {{mac}} | {{description}}",
+              "legendFormat": "Transmit - {{switch}} | {{interface}} | {{mac}}",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "cisco_interface_receive_errors{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      cisco_interface_receive_errors{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end()\n    )\n  )",
+              "expr": "sum by (switch, interface, mac) (\n    rate(cisco_interface_receive_errors{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[4m])\n  )\nand on (switch, interface, mac)\n  topk(\n    $TopResources,\n    sum by (switch, interface, mac) (\n      avg_over_time(cisco_interface_receive_errors{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h])\n    )\n  )",
               "interval": "",
-              "legendFormat": "Receive - {{switch}} | {{interface}} | {{mac}} | {{description}}",
+              "legendFormat": "Receive - {{switch}} | {{interface}} | {{mac}}",
               "refId": "B"
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Traffic error per interface",
+          "title": "Top $TopResources Interface Transmit Errors",
           "type": "timeseries"
         },
         {
@@ -1699,9 +1704,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "cisco_interface_crc_errors{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(cisco_interface_crc_errors{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end())\n  )",
+              "expr": "sum by (switch, interface, mac) (\n    rate(cisco_interface_crc_errors{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[4m])\n  )\nand on (switch, interface, mac)\n  topk(\n    $TopResources,\n    sum by (switch, interface, mac) (\n      avg_over_time(cisco_interface_crc_errors{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h])\n    )\n  )",
               "interval": "",
-              "legendFormat": "{{switch}} | {{interface}} | {{mac}} | {{description}}",
+              "legendFormat": "{{switch}} | {{interface}} | {{mac}}",
               "refId": "A"
             }
           ],
