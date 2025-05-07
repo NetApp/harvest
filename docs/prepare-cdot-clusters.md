@@ -296,6 +296,18 @@ vserver services web access create -vserver $ADMIN_VSERVER -name rest -role harv
 vserver services web access create -vserver $ADMIN_VSERVER -name docs-api -role harvest2-rest-role
 ```
 
+#### StatPerf Collector Permissions
+
+To use the `StatPerf` collector, the `harvest` user requires additional permissions. Execute the following commands to configure the necessary roles and logins:
+
+```bash
+security login role create -role harvest2-role -access all -cmddirname "set"
+security login role create -role harvest2-role -access readonly -cmddirname "statistics"
+security login rest-role create -role harvest2-rest-role -access read_create -api /api/private/cli
+security login create -user-or-group-name harvest -application ssh -authentication-method password -role harvest2-role
+security login create -user-or-group-name harvest -application http -authentication-method password -role harvest2-rest-role
+```
+
 #### 7-Mode CLI
 
 Login to the CLI of your 7-Mode ONTAP system (e.g. using SSH). First, we create a user role. If you want to give the
