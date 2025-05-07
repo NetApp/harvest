@@ -1746,14 +1746,6 @@ counters:
         ONTAPCounter: volume-blocks-footprint-bin1
         Template: conf/zapi/cdot/9.8.0/volume.yaml
 
-  - Name: volume_capacity_tier_footprint
-    Description: This field represents the footprint of blocks written to the volume in bytes for bin 1.
-    APIs:
-      - API: ZAPI
-        Endpoint: volume-footprint-get-iter
-        ONTAPCounter: volume-blocks-footprint-bin1
-        Template: conf/zapi/cdot/9.8.0/volume.yaml
-
   - Name: volume_capacity_tier_footprint_percent
     Description: This field represents the footprint of blocks written to the volume in bin 1 as a percentage of aggregate size.
     APIs:
@@ -1776,6 +1768,46 @@ counters:
       - API: ZAPI
         Endpoint: volume-footprint-get-iter
         ONTAPCounter: volume-blocks-footprint-bin0-percent
+        Template: conf/zapi/cdot/9.8.0/volume.yaml
+
+  - Name: volume_delayed_free_footprint
+    Description: This field represents the delayed free blocks footprint in bytes. This system is used to improve delete performance by batching delete requests.
+    APIs:
+      - API: ZAPI
+        Endpoint: volume-footprint-get-iter
+        ONTAPCounter: delayed-free-footprint
+        Template: conf/zapi/cdot/9.8.0/volume.yaml
+
+  - Name: volume_flexvol_metadata_footprint
+    Description: This field represents flexible volume metadata in bytes.
+    APIs:
+      - API: ZAPI
+        Endpoint: volume-footprint-get-iter
+        ONTAPCounter: flexvol-metadata-footprint
+        Template: conf/zapi/cdot/9.8.0/volume.yaml
+
+  - Name: volume_guarantee_footprint
+    Description: This field represents the volume guarantee footprint in bytes. Alternatively, it is the space reserved for future writes in the volume.
+    APIs:
+      - API: ZAPI
+        Endpoint: volume-footprint-get-iter
+        ONTAPCounter: volume-guarantee-footprint
+        Template: conf/zapi/cdot/9.8.0/volume.yaml
+
+  - Name: volume_total_footprint
+    Description: This field represents the total footprint in bytes.
+    APIs:
+      - API: ZAPI
+        Endpoint: volume-footprint-get-iter
+        ONTAPCounter: total-footprint
+        Template: conf/zapi/cdot/9.8.0/volume.yaml
+
+  - Name: volume_total_metadata_footprint
+    Description: This field represents the total metadata footprint in bytes.
+    APIs:
+      - API: ZAPI
+        Endpoint: volume-footprint-get-iter
+        ONTAPCounter: volume_total_metadata_footprint
         Template: conf/zapi/cdot/9.8.0/volume.yaml
 
   - Name: aggr_space_performance_tier_used
@@ -2095,3 +2127,53 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
+
+  # Remove from here to DONE_REMOVE once sar is upgraded to 9.16.1
+  - Name: rw_ctx_cifs_giveups
+    Description: Array of number of give-ups of CIFS ops because they rewind more than a certain threshold, categorized by their rewind reasons.
+    APIs:
+      - API: REST
+        Endpoint: api/cluster/counter/tables/rewind_context
+        ONTAPCounter: cifs_give_ups
+        Template: conf/restperf/9.16.0/rwctx.yaml
+      - API: ZAPI
+        Endpoint: perf-object-get-instances rw_ctx
+        ONTAPCounter: cifs_giveups
+        Template: conf/zapiperf/cdot/9.8.0/rwctx.yaml
+
+  - Name: rw_ctx_cifs_rewinds
+    Description: Array of number of rewinds for CIFS ops based on their reasons.
+    APIs:
+      - API: REST
+        Endpoint: api/cluster/counter/tables/rewind_context
+        ONTAPCounter: cifs_rewinds
+        Template: conf/restperf/9.16.0/rwctx.yaml
+      - API: ZAPI
+        Endpoint: perf-object-get-instances rw_ctx
+        ONTAPCounter: cifs_rewinds
+        Template: conf/zapiperf/cdot/9.8.0/rwctx.yaml
+
+  - Name: rw_ctx_nfs_giveups
+    Description: Array of number of give-ups of NFS ops because they rewind more than a certain threshold, categorized by their rewind reasons.
+    APIs:
+      - API: REST
+        Endpoint: api/cluster/counter/tables/rewind_context
+        ONTAPCounter: nfs_give_ups
+        Template: conf/restperf/9.16.0/rwctx.yaml
+      - API: ZAPI
+        Endpoint: perf-object-get-instances rw_ctx
+        ONTAPCounter: nfs_giveups
+        Template: conf/zapiperf/cdot/9.8.0/rwctx.yaml
+
+  - Name: rw_ctx_nfs_rewinds
+    Description: Array of number of rewinds for NFS ops based on their reasons.
+    APIs:
+      - API: REST
+        Endpoint: api/cluster/counter/tables/rewind_context
+        ONTAPCounter: nfs_rewinds
+        Template: conf/restperf/9.16.0/rwctx.yaml
+      - API: ZAPI
+        Endpoint: perf-object-get-instances rw_ctx
+        ONTAPCounter: nfs_rewinds
+        Template: conf/zapiperf/cdot/9.8.0/rwctx.yaml
+# DONE_REMOVE

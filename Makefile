@@ -184,4 +184,5 @@ else
 	VERSION=${VERSION} ANALYZE_DOCKER_LOGS=1 ./integration/test/test.sh
 	VERSION=${VERSION} CHECK_METRICS=1 ./integration/test/test.sh
 	VERSION=${VERSION} CHECK_FORMAT=1 ./integration/test/test.sh
+	bin/harvest generate metrics --poller dc1 --prom-url http://localhost:9090
 endif
