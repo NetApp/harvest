@@ -1835,7 +1835,7 @@
               "refId": "A"
             }
           ],
-          "title": "Interfaces are down(Last 24 Hours)",
+          "title": "Down (Last 24h)",
           "transformations": [],
           "type": "stat"
         },
@@ -1918,7 +1918,7 @@
               "refId": "A"
             }
           ],
-          "title": "Interfaces are down (Last 24 Hours)",
+          "title": "Down (Last 24 Hours)",
           "transformations": [
             {
               "id": "organize",
@@ -2046,7 +2046,7 @@
               "refId": "A"
             }
           ],
-          "title": "Interfaces are down (Last 24 Hours)",
+          "title": "Down (Last 24 Hours)",
           "transformations": [
             {
               "disabled": true,
@@ -2173,6 +2173,32 @@
         "useTags": false
       },
       {
+        "allValue": ".*",
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(cisco_interface_admin_up{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}, interface)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "Interface",
+        "options": [],
+        "query": {
+          "query": "label_values(cisco_interface_admin_up{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}, interface)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
         "allValue": null,
         "current": {
           "selected": true,
@@ -2262,32 +2288,6 @@
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"
-      },
-      {
-        "allValue": ".*",
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(cisco_interface_admin_up{datacenter=~\"$Datacenter\"}, interface)",
-        "description": null,
-        "error": null,
-        "hide": 0,
-        "includeAll": true,
-        "label": null,
-        "multi": true,
-        "name": "Interface",
-        "options": [],
-        "query": {
-          "query": "label_values(cisco_interface_admin_up{datacenter=~\"$Datacenter\"}, interface)",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 2,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
       }
     ]
   },
