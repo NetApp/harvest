@@ -9,25 +9,25 @@
       
       
       
-        <link rel="prev" href="../../quickstart/">
+        <link rel="prev" href="../configure-keyperf/">
       
       
-        <link rel="next" href="../package-managers/">
+        <link rel="next" href="../configure-ems/">
       
       
-      <link rel="icon" href="../../assets/harvest.svg">
+      <link rel="icon" href="../assets/harvest.svg">
       <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.6">
     
     
       
-        <title>Overview - Harvest</title>
+        <title>StatPerf - Harvest</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.50c56a3b.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.50c56a3b.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -46,9 +46,9 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/extra.css">
+      <link rel="stylesheet" href="../assets/extra.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#nabox" class="md-skip">
+        <a href="#statperf-collector" class="md-skip">
           Skip to content
         </a>
       
@@ -94,9 +94,9 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Harvest" class="md-header__button md-logo" aria-label="Harvest" data-md-component="logo">
+    <a href=".." title="Harvest" class="md-header__button md-logo" aria-label="Harvest" data-md-component="logo">
       
-  <img src="../../assets/harvest.svg" alt="logo">
+  <img src="../assets/harvest.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -113,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Overview
+              StatPerf
             
           </span>
         </div>
@@ -236,9 +236,9 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="Harvest" class="md-nav__button md-logo" aria-label="Harvest" data-md-component="logo">
+    <a href=".." title="Harvest" class="md-nav__button md-logo" aria-label="Harvest" data-md-component="logo">
       
-  <img src="../../assets/harvest.svg" alt="logo">
+  <img src="../assets/harvest.svg" alt="logo">
 
     </a>
     Harvest
@@ -265,7 +265,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href=".." class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -285,7 +285,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../concepts/" class="md-nav__link">
+      <a href="../concepts/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -305,7 +305,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../quickstart/" class="md-nav__link">
+      <a href="../quickstart/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -322,21 +322,19 @@
       
   
   
-    
   
   
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
         
           
           <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
@@ -350,7 +348,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             Installation
@@ -361,28 +359,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    Overview
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../install/overview/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -391,42 +371,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#nabox" class="md-nav__link">
-    <span class="md-ellipsis">
-      Nabox
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#source" class="md-nav__link">
-    <span class="md-ellipsis">
-      Source
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -439,7 +383,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../package-managers/" class="md-nav__link">
+      <a href="../install/package-managers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -497,7 +441,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../containers/" class="md-nav__link">
+      <a href="../install/containers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -518,7 +462,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../k8/" class="md-nav__link">
+      <a href="../install/k8/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -539,7 +483,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../podman/" class="md-nav__link">
+      <a href="../install/podman/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -560,7 +504,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../quadlet/" class="md-nav__link">
+      <a href="../install/quadlet/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -581,7 +525,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../containerd/" class="md-nav__link">
+      <a href="../install/containerd/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -610,7 +554,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../native/" class="md-nav__link">
+      <a href="../install/native/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -638,7 +582,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../system-requirements/" class="md-nav__link">
+      <a href="../system-requirements/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -695,7 +639,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../prepare-cdot-clusters/" class="md-nav__link">
+      <a href="../prepare-cdot-clusters/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -716,7 +660,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../asar2/" class="md-nav__link">
+      <a href="../asar2/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -737,7 +681,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../prepare-fsx-clusters/" class="md-nav__link">
+      <a href="../prepare-fsx-clusters/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -758,7 +702,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../prepare-7mode-clusters/" class="md-nav__link">
+      <a href="../prepare-7mode-clusters/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -779,7 +723,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../prepare-storagegrid-clusters/" class="md-nav__link">
+      <a href="../prepare-storagegrid-clusters/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -807,7 +751,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-harvest-basic/" class="md-nav__link">
+      <a href="../configure-harvest-basic/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -864,7 +808,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../prometheus-exporter/" class="md-nav__link">
+      <a href="../prometheus-exporter/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -885,7 +829,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../influxdb-exporter/" class="md-nav__link">
+      <a href="../influxdb-exporter/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -913,7 +857,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-grafana/" class="md-nav__link">
+      <a href="../configure-grafana/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -930,19 +874,21 @@
       
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" checked>
         
           
           <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
@@ -956,7 +902,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_10">
             <span class="md-nav__icon md-icon"></span>
             Configure Collectors
@@ -970,7 +916,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-zapi/" class="md-nav__link">
+      <a href="../configure-zapi/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -991,7 +937,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-rest/" class="md-nav__link">
+      <a href="../configure-rest/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1012,7 +958,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-keyperf/" class="md-nav__link">
+      <a href="../configure-keyperf/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1030,10 +976,30 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../configure-statperf/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    StatPerf
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -1042,6 +1008,77 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metrics
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameters
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#statperf-configuration-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      StatPerf Configuration File
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#object-configuration-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Object Configuration File
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Object Configuration File">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#template-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Template Example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1054,7 +1091,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-ems/" class="md-nav__link">
+      <a href="../configure-ems/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1075,7 +1112,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-storagegrid/" class="md-nav__link">
+      <a href="../configure-storagegrid/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1096,7 +1133,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-unix/" class="md-nav__link">
+      <a href="../configure-unix/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1124,7 +1161,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-templates/" class="md-nav__link">
+      <a href="../configure-templates/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1144,7 +1181,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../dashboards/" class="md-nav__link">
+      <a href="../dashboards/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1164,7 +1201,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../manage-harvest/" class="md-nav__link">
+      <a href="../manage-harvest/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1184,7 +1221,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configure-harvest-advanced/" class="md-nav__link">
+      <a href="../configure-harvest-advanced/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1204,7 +1241,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../monitor-harvest/" class="md-nav__link">
+      <a href="../monitor-harvest/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1261,7 +1298,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../help/troubleshooting/" class="md-nav__link">
+      <a href="../help/troubleshooting/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1282,7 +1319,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../help/faq/" class="md-nav__link">
+      <a href="../help/faq/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1303,7 +1340,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../help/log-collection/" class="md-nav__link">
+      <a href="../help/log-collection/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1324,7 +1361,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../help/config-collection/" class="md-nav__link">
+      <a href="../help/config-collection/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1389,7 +1426,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../resources/ems-alert-runbook/" class="md-nav__link">
+      <a href="../resources/ems-alert-runbook/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1410,7 +1447,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../resources/matrix/" class="md-nav__link">
+      <a href="../resources/matrix/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1431,7 +1468,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ontap-metrics/" class="md-nav__link">
+      <a href="../ontap-metrics/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1452,7 +1489,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../resources/power-algorithm/" class="md-nav__link">
+      <a href="../resources/power-algorithm/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1473,7 +1510,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../plugins/" class="md-nav__link">
+      <a href="../plugins/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1494,7 +1531,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../resources/rest-perf-metrics/" class="md-nav__link">
+      <a href="../resources/rest-perf-metrics/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1515,7 +1552,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/rest-strategy/" class="md-nav__link">
+      <a href="../architecture/rest-strategy/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1536,7 +1573,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../resources/templates-and-metrics/" class="md-nav__link">
+      <a href="../resources/templates-and-metrics/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1557,7 +1594,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../resources/zapi-and-rest-gap/" class="md-nav__link">
+      <a href="../resources/zapi-and-rest-gap/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1622,7 +1659,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../license/" class="md-nav__link">
+      <a href="../license/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1643,7 +1680,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../release-notes/" class="md-nav__link">
+      <a href="../release-notes/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1681,6 +1718,8 @@
   
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -1689,20 +1728,53 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#nabox" class="md-nav__link">
+  <a href="#metrics" class="md-nav__link">
     <span class="md-ellipsis">
-      Nabox
+      Metrics
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#source" class="md-nav__link">
+  <a href="#parameters" class="md-nav__link">
     <span class="md-ellipsis">
-      Source
+      Parameters
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#statperf-configuration-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      StatPerf Configuration File
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#object-configuration-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Object Configuration File
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Object Configuration File">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#template-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Template Example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1721,30 +1793,136 @@
                   
 
 
-  <h1>Overview</h1>
-
-<p>Get up and running with Harvest on your preferred platform.
-We provide pre-compiled binaries for Linux, RPMs, Debs, as well 
-as prebuilt container images for both <a href="https://github.com/NetApp/harvest/releases/tag/nightly">nightly</a> 
-and stable <a href="https://github.com/NetApp/harvest/releases">releases</a>.</p>
+<h1 id="statperf-collector">StatPerf Collector<a class="headerlink" href="#statperf-collector" title="Permanent link">&para;</a></h1>
+<p>StatPerf collects performance metrics from ONTAP by invoking the ONTAP CLI statistics command via the private Rest CLI. The full ONTAP CLI command used is:</p>
+<div class="highlight"><pre><span></span><code>statistics<span class="w"> </span>show<span class="w"> </span>-raw<span class="w"> </span>-object<span class="w"> </span><span class="nv">$object</span>
+</code></pre></div>
+<p>This collector is designed for performance metrics collection in environments where the ZapiPerf/RestPerf/KeyPerf collectors can not be used.</p>
+<p><strong>Note:</strong> The StatPerf collector requires additional ONTAP permissions. Please refer to the <a href="../prepare-cdot-clusters/#statperf-collector-permissions">StatPerf Collector Permissions</a> section for details.</p>
+<h2 id="metrics">Metrics<a class="headerlink" href="#metrics" title="Permanent link">&para;</a></h2>
+<p>StatPerf metrics are calculated similar to those in ZapiPerf. For details on how performance metrics are processed and calculated,
+please refer to the <a href="../configure-zapi/#metrics_1">ZapiPerf Metrics Documentation</a>.</p>
+<h2 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h2>
+<p>The parameters for the StatPerf collector are distributed across three files:</p>
 <ul>
-<li><a href="../native/">Binaries for Linux</a></li>
-<li><a href="../package-managers/">RPM and Debs</a></li>
-<li><a href="../containers/">Containers</a></li>
+<li><a href="../configure-harvest-basic/#pollers">Harvest configuration file</a> (default: <code>harvest.yml</code>)</li>
+<li>StatPerf configuration file (default: <code>conf/statperf/default.yaml</code>)</li>
+<li>Object configuration file (located in <code>conf/statperf/$version/</code>)</li>
 </ul>
-<h2 id="nabox">Nabox<a class="headerlink" href="#nabox" title="Permanent link">&para;</a></h2>
-<p>Instructions on how to install Harvest via <a href="https://nabox.org/documentation/installation/">NAbox</a>.</p>
-<h2 id="source">Source<a class="headerlink" href="#source" title="Permanent link">&para;</a></h2>
-<p>To build Harvest from source code follow these steps.</p>
-<ol>
-<li><code>git clone https://github.com/NetApp/harvest.git</code></li>
-<li>cd <code>harvest</code></li>
-<li>check the version of go required in the <code>go.mod</code> file</li>
-<li>ensure you have a working Go environment at that version or newer. Go installs found <a href="https://golang.org/doc/install">here</a>. </li>
-<li><code>make build</code> (if you want to run Harvest from a Mac use <code>GOOS=darwin make build</code>) </li>
-<li><code>bin/harvest version</code></li>
-</ol>
-<p>Checkout the <code>Makefile</code> for other targets of interest.</p>
+<p>Except for <code>addr</code>, <code>datacenter</code> and <code>auth_style</code>, all other parameters of the StatPerf collector can be defined in either the Harvest configuration, the main StatPerf configuration file, or the object configuration files. Lower-level file definitions override higher-level ones. This enables configuring objects on an individual basis or applying common settings across all objects.</p>
+<hr />
+<h2 id="statperf-configuration-file">StatPerf Configuration File<a class="headerlink" href="#statperf-configuration-file" title="Permanent link">&para;</a></h2>
+<p>The StatPerf configuration file (also known as the "template") includes a list of objects to collect and their corresponding configuration file names. Additionally, it defines parameters applied as defaults to all objects. As with RestPerf, parameters defined in lower-level files (object or Harvest configuration files) will override the ones provided here.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+<th style="text-align: right;">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>use_insecure_tls</code></td>
+<td>bool, optional</td>
+<td>Skip verifying the TLS certificate of the target system.</td>
+<td style="text-align: right;">false</td>
+</tr>
+<tr>
+<td><code>client_timeout</code></td>
+<td>duration (Go-syntax)</td>
+<td>Maximum time to wait for server responses.</td>
+<td style="text-align: right;">30s</td>
+</tr>
+<tr>
+<td><code>latency_io_reqd</code></td>
+<td>int, optional</td>
+<td>Threshold of IOPs for calculating latency metrics; latencies based on very few IOPs are unreliable.</td>
+<td style="text-align: right;">10</td>
+</tr>
+<tr>
+<td><code>jitter</code></td>
+<td>duration (Go-syntax), optional</td>
+<td>Randomly delay collector startup by up to the specified duration to prevent simultaneous REST queries during startup. For example, a jitter value of <code>1m</code> will delay startup by a random duration between 0 seconds and 60 seconds. For more details, see <a href="https://github.com/NetApp/harvest/discussions/2856">this discussion</a>.</td>
+<td style="text-align: right;"></td>
+</tr>
+<tr>
+<td><code>schedule</code></td>
+<td>list, required</td>
+<td>Specifies the polling frequencies, which must include exactly these three elements in the exact specified order:</td>
+<td style="text-align: right;"></td>
+</tr>
+<tr>
+<td>- <code>counter</code></td>
+<td>duration (Go-syntax)</td>
+<td>Poll frequency for updating the counter metadata cache.</td>
+<td style="text-align: right;">24 hours</td>
+</tr>
+<tr>
+<td>- <code>instance</code></td>
+<td>duration (Go-syntax)</td>
+<td>Poll frequency for updating the instance cache.</td>
+<td style="text-align: right;">10 minutes</td>
+</tr>
+<tr>
+<td>- <code>data</code></td>
+<td>duration (Go-syntax)</td>
+<td>Poll frequency for updating the data cache. Note that while Harvest allows sub-second poll intervals (e.g. <code>1ms</code>), factors such as API response times and system load should be considered. In short intervals, performance counters may not be aggregated accurately, potentially leading to a failed state in the collector if the poll interval is less than <code>client_timeout</code>. Additionally, very short intervals may cause heavier loads on the ONTAP system and lead to less meaningful metric values (e.g. for latencies).</td>
+<td style="text-align: right;">1 minute</td>
+</tr>
+</tbody>
+</table>
+<p>The template should list objects in the <code>objects</code> section. For example:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">objects</span><span class="p">:</span>
+<span class="w">   </span><span class="nt">Flexcache</span><span class="p">:</span><span class="w">   </span><span class="l l-Scalar l-Scalar-Plain">flexcache.yaml</span>
+</code></pre></div>
+<p>Each object is defined by the filename of its configuration file. The file is located in the subdirectory corresponding to the ONTAP version (e.g., <code>conf/statperf/$version/</code>). At runtime, StatPerf selects the object configuration file that best matches the ONTAP system version. In case of mismatches, StatPerf will still fetch and validate counter metadata from the system.</p>
+<hr />
+<h2 id="object-configuration-file">Object Configuration File<a class="headerlink" href="#object-configuration-file" title="Permanent link">&para;</a></h2>
+<p>The object configuration file allows users to specify object-level parameters for StatPerf. It follows the same concept as other collectors and includes details such as instances, counters, and export options.</p>
+<p>For further details, please refer to the guiding documentation below:</p>
+<ul>
+<li><a href="../configure-rest/#restperf-configuration-file">Object Configuration File</a></li>
+<li><a href="../configure-rest/#counters_1">Counters</a></li>
+<li><a href="../configure-rest/#export_options">Export Options</a></li>
+</ul>
+<h4 id="template-example">Template Example<a class="headerlink" href="#template-example" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w">                     </span><span class="l l-Scalar l-Scalar-Plain">FlexCache</span>
+<span class="nt">query</span><span class="p">:</span><span class="w">                    </span><span class="l l-Scalar l-Scalar-Plain">flexcache_per_volume</span>
+<span class="nt">object</span><span class="p">:</span><span class="w">                   </span><span class="l l-Scalar l-Scalar-Plain">flexcache</span>
+
+<span class="nt">counters</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^instance_name                                     =&gt; volume</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^instance_uuid                                     =&gt; svm</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">blocks_requested_from_client</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">blocks_retrieved_from_origin</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">evict_rw_cache_skipped_reason_disconnected</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">evict_skipped_reason_config_noent</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">evict_skipped_reason_disconnected</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">evict_skipped_reason_offline</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">invalidate_skipped_reason_config_noent</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">invalidate_skipped_reason_disconnected</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">invalidate_skipped_reason_offline</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nix_retry_skipped_reason_initiator_retrieve</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nix_skipped_reason_config_noent</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nix_skipped_reason_disconnected</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nix_skipped_reason_in_progress</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nix_skipped_reason_offline</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reconciled_data_entries</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reconciled_lock_entries</span>
+
+<span class="nt">plugins</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FlexCache</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">MetricAgent</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">compute_metric</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">miss_percent PERCENT blocks_retrieved_from_origin blocks_requested_from_client</span>
+
+<span class="nt">export_options</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">instance_keys</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">svm</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">volume</span>
+</code></pre></div>
 
 
 
@@ -1821,10 +1999,10 @@ and stable <a href="https://github.com/NetApp/harvest/releases">releases</a>.</p
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.e1c3ead8.min.js"></script>
+      <script src="../assets/javascripts/bundle.e1c3ead8.min.js"></script>
       
     
   </body>
