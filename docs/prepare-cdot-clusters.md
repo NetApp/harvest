@@ -300,8 +300,8 @@ vserver services web access create -vserver $ADMIN_VSERVER -name docs-api -role 
 To use the `StatPerf` collector, the `harvest` user requires additional permissions. Execute the following commands to configure the necessary roles and logins:
 
 ```bash
-security login role create  -role harvest2-role -access all -cmddirname "set"
-security login role create  -role harvest2-role -access readonly -cmddirname "statistics"
+security login role create -role harvest2-role -access all -cmddirname "set"
+security login role create -role harvest2-role -access readonly -cmddirname "statistics"
 security login rest-role create -role harvest2-rest-role -access read_create -api /api/private/cli
 security login create -user-or-group-name harvest -application ssh -authentication-method password -role harvest2-role
 security login create -user-or-group-name harvest -application http -authentication-method password -role harvest2-rest-role

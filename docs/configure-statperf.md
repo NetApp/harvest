@@ -1,9 +1,9 @@
 # StatPerf Collector
 
-StatPerf collects performance metrics from ONTAP by invoking the ONTAP CLI command via the private Rest CLI. In this case, the ONTAP CLI command used is:
+StatPerf collects performance metrics from ONTAP by invoking the ONTAP CLI statistics command via the private Rest CLI. The full ONTAP CLI command used is:
 
 ```bash
-statistics show -raw
+statistics show -raw -object $object
 ```
 
 This collector is designed for performance metrics collection in environments where the ZapiPerf/RestPerf/KeyPerf collectors can not be used.

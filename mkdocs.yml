@@ -34,6 +34,7 @@ nav:
       - 'ZAPI': 'configure-zapi.md'
       - 'REST': 'configure-rest.md'
       - 'KeyPerf': 'configure-keyperf.md'
+      - 'StatPerf': 'configure-statperf.md'
       - 'EMS': 'configure-ems.md'
       - 'StorageGRID': 'configure-storagegrid.md'
       - 'Unix': 'configure-unix.md'
