@@ -9,6 +9,7 @@ objects:
   Aggregate:                   aggr.yaml
   CIFSvserver:                 cifs_vserver.yaml
   Cluster:                     cluster.yaml
+#  EthernetSwitchPort:          ethernet_switch_port.yaml
   FlexCache:                   flexcache.yaml
   LIF:                         lif.yaml
   Lun:                         lun.yaml

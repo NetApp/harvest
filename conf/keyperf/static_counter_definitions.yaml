@@ -12,3 +12,17 @@ objects:
         type: delta
       - name: statistics.flexcache_raw.cache_miss_blocks
         type: delta
+  ethernet_switch_port:
+    counter_definitions:
+      - name: statistics.receive_raw.errors
+        type: delta
+      - name: statistics.receive_raw.discards
+        type: delta
+      - name: statistics.receive_raw.packets
+        type: delta
+      - name: statistics.transmit_raw.errors
+        type: delta
+      - name: statistics.transmit_raw.discards
+        type: delta
+      - name: statistics.transmit_raw.packets
+        type: delta
