@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-May-06
+Creation Date : 2025-May-07
 ONTAP Version: 9.15.1
 ```
 ## Understanding the structure
@@ -1784,6 +1784,60 @@ Provides the sensor reading.
 |--------|----------|--------|---------|
 | REST | `api/cluster/sensors` | `value` | conf/rest/9.12.0/sensor.yaml |
 | ZAPI | `environment-sensors-get-iter` | `environment-sensors-info.threshold-sensor-value` | conf/zapi/cdot/9.8.0/sensor.yaml |
+
+
+### ethernet_switch_port_receive_discards
+
+Total number of discarded packets.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/network/ethernet/switch/ports` | `receive_raw.discards`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/ethernet_switch_port.yaml |
+
+
+### ethernet_switch_port_receive_errors
+
+Number of packet errors.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/network/ethernet/switch/ports` | `receive_raw.errors`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/ethernet_switch_port.yaml |
+
+
+### ethernet_switch_port_receive_packets
+
+Total packet count.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/network/ethernet/switch/ports` | `receive_raw.packets`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/ethernet_switch_port.yaml |
+
+
+### ethernet_switch_port_transmit_discards
+
+Total number of discarded packets.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/network/ethernet/switch/ports` | `transmit_raw.discards`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/ethernet_switch_port.yaml |
+
+
+### ethernet_switch_port_transmit_errors
+
+Number of packet errors.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/network/ethernet/switch/ports` | `transmit_raw.errors`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/ethernet_switch_port.yaml |
+
+
+### ethernet_switch_port_transmit_packets
+
+Total packet count.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/network/ethernet/switch/ports` | `transmit_raw.packets`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/ethernet_switch_port.yaml |
 
 
 ### export_rule_labels

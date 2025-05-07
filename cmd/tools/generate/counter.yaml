@@ -2177,3 +2177,46 @@ counters:
         ONTAPCounter: nfs_rewinds
         Template: conf/zapiperf/cdot/9.8.0/rwctx.yaml
 # DONE_REMOVE
+
+  - Name: ethernet_switch_port_receive_discards
+    Description: Total number of discarded packets.
+    APIs:
+      - API: KeyPerf
+        Endpoint: api/network/ethernet/switch/ports
+        ONTAPCounter: receive_raw.discards
+        Template: conf/keyperf/9.15.0/ethernet_switch_port.yaml
+  - Name: ethernet_switch_port_receive_errors
+    Description: Number of packet errors.
+    APIs:
+      - API: KeyPerf
+        Endpoint: api/network/ethernet/switch/ports
+        ONTAPCounter: receive_raw.errors
+        Template: conf/keyperf/9.15.0/ethernet_switch_port.yaml
+  - Name: ethernet_switch_port_receive_packets
+    Description: Total packet count.
+    APIs:
+      - API: KeyPerf
+        Endpoint: api/network/ethernet/switch/ports
+        ONTAPCounter: receive_raw.packets
+        Template: conf/keyperf/9.15.0/ethernet_switch_port.yaml
+  - Name: ethernet_switch_port_transmit_discards
+    Description: Total number of discarded packets.
+    APIs:
+      - API: KeyPerf
+        Endpoint: api/network/ethernet/switch/ports
+        ONTAPCounter: transmit_raw.discards
+        Template: conf/keyperf/9.15.0/ethernet_switch_port.yaml
+  - Name: ethernet_switch_port_transmit_errors
+    Description: Number of packet errors.
+    APIs:
+      - API: KeyPerf
+        Endpoint: api/network/ethernet/switch/ports
+        ONTAPCounter: transmit_raw.errors
+        Template: conf/keyperf/9.15.0/ethernet_switch_port.yaml
+  - Name: ethernet_switch_port_transmit_packets
+    Description: Total packet count.
+    APIs:
+      - API: KeyPerf
+        Endpoint: api/network/ethernet/switch/ports
+        ONTAPCounter: transmit_raw.packets
+        Template: conf/keyperf/9.15.0/ethernet_switch_port.yaml
