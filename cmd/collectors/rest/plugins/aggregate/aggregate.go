@@ -150,6 +150,7 @@ func (a *Aggregate) collectObjectStoreData(aggrSpaceMat, data *matrix.Matrix) {
 
 		aggrInstance := data.GetInstance(key)
 		if aggrInstance == nil {
+			a.SLogger.Warn("Unable to find aggregate instance", slog.String("key", key))
 			continue
 		}
 		instance.SetLabels(aggrInstance.GetLabels())
