@@ -601,6 +601,20 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 				}
 			}
 
+			// Before writing out the histogram, check that every bucket value is non-empty.
+			// Some bucket values may be empty if certain bucket metrics were skipped in the collector while others were not.
+			allBucketsHaveValues := true
+			for _, value := range h.values {
+				if strings.TrimSpace(value) == "" {
+					allBucketsHaveValues = false
+					break
+				}
+			}
+			if !allBucketsHaveValues {
+				// Skip rendering this histogram entirely.
+				continue
+			}
+
 			prefixedName := prefix + "_" + metric.GetName()
 			if tagged != nil && !tagged.Has(prefixedName) {
 				tagged.Add(prefix + "_" + metric.GetName())
@@ -638,6 +652,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 			}
 		}
 	}
+
 	stats := exporter.Stats{
 		InstancesExported: instancesExported,
 		MetricsExported:   uint64(len(rendered)),
