@@ -605,7 +605,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 			// Some bucket values may be empty if certain bucket metrics were skipped in the collector while others were not.
 			allBucketsHaveValues := true
 			for _, value := range h.values {
-				if strings.TrimSpace(value) == "" {
+				if value == "" {
 					allBucketsHaveValues = false
 					break
 				}
