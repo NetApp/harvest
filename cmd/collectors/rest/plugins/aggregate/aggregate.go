@@ -147,7 +147,13 @@ func (a *Aggregate) collectObjectStoreData(aggrSpaceMat, data *matrix.Matrix) {
 		if a.ParentParams.GetChildContentS("query") != "api/storage/aggregates" {
 			key = aggrName
 		}
-		instance.SetLabels(data.GetInstance(key).GetLabels())
+
+		aggrInstance := data.GetInstance(key)
+		if aggrInstance == nil {
+			a.SLogger.Warn("Unable to find aggregate instance", slog.String("key", key))
+			continue
+		}
+		instance.SetLabels(aggrInstance.GetLabels())
 		instance.SetLabel("tier", tierName)
 		instance.SetLabel("bin_num", binNum)
 
