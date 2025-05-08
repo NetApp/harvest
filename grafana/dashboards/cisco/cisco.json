@@ -267,7 +267,7 @@
           "refId": "D"
         }
       ],
-      "title": "Switch details",
+      "title": "Switch Details",
       "transformations": [
         {
           "id": "seriesToColumns",
@@ -401,7 +401,7 @@
               "refId": "B"
             }
           ],
-          "title": "Total power",
+          "title": "Total Power",
           "type": "stat"
         },
         {
@@ -459,7 +459,7 @@
               "refId": "B"
             }
           ],
-          "title": "PSU efficiency",
+          "title": "PSU Efficiency",
           "type": "stat"
         },
         {
@@ -572,7 +572,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Power consumption",
+          "title": "Top $TopResources Power Consumption",
           "type": "timeseries"
         },
         {
@@ -750,7 +750,7 @@
               "refId": "C"
             }
           ],
-          "title": "PSU details",
+          "title": "PSU Details",
           "transformations": [
             {
               "id": "filterFieldsByName",
@@ -895,7 +895,7 @@
               "exemplar": false,
               "expr": "cisco_environment_sensor_temp{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      cisco_environment_sensor_temp{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end()\n    )\n  )",
               "interval": "",
-              "legendFormat": "{{datacenter}} - {{switch}} - {{sensor}}",
+              "legendFormat": "{{switch}} - {{sensor}}",
               "refId": "A"
             }
           ],
@@ -1026,7 +1026,7 @@
               "refId": "A"
             }
           ],
-          "title": "Fan details",
+          "title": "Fan Details",
           "transformations": [
             {
               "id": "filterFieldsByName",
@@ -1063,7 +1063,7 @@
           "type": "table"
         }
       ],
-      "title": "Temperature and fan",
+      "title": "Temperature and Fan",
       "type": "row"
     },
     {
@@ -1159,7 +1159,7 @@
               "exemplar": false,
               "expr": "cisco_optic_rx{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      cisco_optic_rx{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h] @ end()\n    )\n  )",
               "interval": "",
-              "legendFormat": "{{datacenter}} - {{switch}} - {{interface}}",
+              "legendFormat": "{{switch}} - {{interface}}",
               "refId": "A"
             }
           ],
@@ -1250,7 +1250,7 @@
               "exemplar": false,
               "expr": "cisco_optic_tx{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      cisco_optic_tx{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h] @ end()\n    )\n  )",
               "interval": "",
-              "legendFormat": "{{datacenter}} - {{switch}} - {{interface}}",
+              "legendFormat": "{{switch}} - {{interface}}",
               "refId": "A"
             }
           ],
@@ -1357,7 +1357,7 @@
               "exemplar": false,
               "expr": "sum by (switch, interface, mac) (\n    rate(\n      cisco_interface_transmit_bytes{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[4m]\n    )\n  )\nand on (switch, interface, mac)\n  topk(\n    $TopResources,\n    sum by (switch, interface, mac) (\n      avg_over_time(\n        cisco_interface_transmit_bytes{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
               "interval": "",
-              "legendFormat": "{{switch}} | {{interface}} | {{mac}}",
+              "legendFormat": "{{switch}} - {{interface}}",
               "refId": "A"
             }
           ],
@@ -1449,7 +1449,7 @@
               "exemplar": false,
               "expr": "sum by (switch, interface, mac) (\n    rate(\n      cisco_interface_receive_bytes{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[4m]\n    )\n  )\nand on (switch, interface, mac)\n  topk(\n    $TopResources,\n    sum by (switch, interface, mac) (\n      avg_over_time(\n        cisco_interface_receive_bytes{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
               "interval": "",
-              "legendFormat": "{{switch}} | {{interface}} | {{mac}}",
+              "legendFormat": "{{switch}} - {{interface}}",
               "refId": "A"
             }
           ],
@@ -1541,14 +1541,14 @@
               "exemplar": false,
               "expr": "sum by (switch, interface, mac) (\n    rate(\n      cisco_interface_receive_drops{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[4m]\n    )\n  )\nand on (switch, interface, mac)\n  topk(\n    $TopResources,\n    sum by (switch, interface, mac) (\n      avg_over_time(\n        cisco_interface_receive_drops{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
               "interval": "",
-              "legendFormat": "Transmit - {{switch}} | {{interface}} | {{mac}}",
+              "legendFormat": "Transmit - {{switch}} - {{interface}}",
               "refId": "A"
             },
             {
               "exemplar": false,
               "expr": "sum by (switch, interface, mac) (\n    rate(\n      cisco_interface_transmit_drops{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[4m]\n    )\n  )\nand on (switch, interface, mac)\n  topk(\n    $TopResources,\n    sum by (switch, interface, mac) (\n      avg_over_time(\n        cisco_interface_transmit_drops{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
               "interval": "",
-              "legendFormat": "Receive - {{switch}} | {{interface}} | {{mac}}",
+              "legendFormat": "Receive - {{switch}} - {{interface}}",
               "refId": "B"
             }
           ],
@@ -1640,14 +1640,14 @@
               "exemplar": false,
               "expr": "sum by (switch, interface, mac) (\n    rate(\n      cisco_interface_transmit_errors{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[4m]\n    )\n  )\nand on (switch, interface, mac)\n  topk(\n    $TopResources,\n    sum by (switch, interface, mac) (\n      avg_over_time(\n        cisco_interface_transmit_errors{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
               "interval": "",
-              "legendFormat": "Transmit - {{switch}} | {{interface}} | {{mac}}",
+              "legendFormat": "Transmit - {{switch}} - {{interface}}",
               "refId": "A"
             },
             {
               "exemplar": false,
               "expr": "sum by (switch, interface, mac) (\n    rate(\n      cisco_interface_receive_errors{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[4m]\n    )\n  )\nand on (switch, interface, mac)\n  topk(\n    $TopResources,\n    sum by (switch, interface, mac) (\n      avg_over_time(\n        cisco_interface_receive_errors{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
               "interval": "",
-              "legendFormat": "Receive - {{switch}} | {{interface}} | {{mac}}",
+              "legendFormat": "Receive - {{switch}} - {{interface}}",
               "refId": "B"
             }
           ],
@@ -1739,13 +1739,13 @@
               "exemplar": false,
               "expr": "sum by (switch, interface, mac) (\n    rate(\n      cisco_interface_crc_errors{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[4m]\n    )\n  )\nand on (switch, interface, mac)\n  topk(\n    $TopResources,\n    sum by (switch, interface, mac) (\n      avg_over_time(\n        cisco_interface_crc_errors{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
               "interval": "",
-              "legendFormat": "{{switch}} | {{interface}} | {{mac}}",
+              "legendFormat": "{{switch}} - {{interface}}",
               "refId": "A"
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources CRC error per interface",
+          "title": "Top $TopResources CRC error per Interface",
           "type": "timeseries"
         }
       ],
@@ -1918,7 +1918,7 @@
               "refId": "A"
             }
           ],
-          "title": "Down (Last 24 Hours)",
+          "title": "Down (Last 24h)",
           "transformations": [
             {
               "id": "organize",
@@ -2042,11 +2042,11 @@
               "format": "time_series",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{switch}} - {{interface}} - {{mac}} - {{speed}}",
+              "legendFormat": "{{switch}} - {{interface}} - {{speed}}",
               "refId": "A"
             }
           ],
-          "title": "Down (Last 24 Hours)",
+          "title": "Down (Last 24h)",
           "transformations": [
             {
               "disabled": true,
@@ -2297,7 +2297,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Cisco switch",
+  "title": "Cisco: Switch",
   "uid": "cisco-switch",
   "version": 1
 }
