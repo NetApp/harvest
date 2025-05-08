@@ -1,0 +1,6 @@
+name:               Version
+query:              "show version ; show banner motd"
+object:             cisco_switch
+
+plugins:
+  - Version

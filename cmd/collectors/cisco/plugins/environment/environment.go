@@ -16,8 +16,11 @@ import (
 )
 
 var metrics = []string{
+	"fan_up",
+	"fan_speed",
 	"power_capacity",
 	"power_in",
+	"power_mode",
 	"power_out",
 	"power_up",
 	"sensor_temp",
@@ -73,7 +76,7 @@ func (e *Environment) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 	data.Reset()
 
 	command := e.ParentParams.GetChildContentS("query")
-	output, err := e.client.CallAPI(command)
+	output, err := e.client.CLIShowArray(command)
 
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to fetch data: %w", err)
@@ -102,8 +105,10 @@ func (e *Environment) initMatrix(name string) (*matrix.Matrix, error) {
 }
 
 func (e *Environment) parseEnvironment(output gjson.Result, envMat *matrix.Matrix) {
-	e.parseTemperature(output, envMat)
-	e.parsePower(output, envMat)
+	content := output.Get("output.body")
+	e.parseTemperature(content, envMat)
+	e.parsePower(content, envMat)
+	e.parseFan(content, envMat)
 }
 
 func (e *Environment) parseTemperature(output gjson.Result, envMat *matrix.Matrix) {
@@ -144,6 +149,37 @@ func (e *Environment) parseTemperature(output gjson.Result, envMat *matrix.Matri
 	})
 }
 
+func (e *Environment) parseFan(output gjson.Result, envMat *matrix.Matrix) {
+	model := NewFanModel(output, e.SLogger)
+
+	for _, f := range model.fans {
+		instanceKey := f.name
+		instance, err := envMat.NewInstance(instanceKey)
+		if err != nil {
+			e.SLogger.Warn("Failed to create instance", slog.String("key", instanceKey))
+			continue
+		}
+
+		instance.SetLabel("status", f.status)
+		instance.SetLabel("name", f.name)
+
+		fanUpMetric := envMat.GetMetric("fan_up")
+		if f.status == "Ok" {
+			fanUpMetric.SetValueFloat64(instance, 1)
+		} else {
+			fanUpMetric.SetValueFloat64(instance, 0)
+		}
+	}
+
+	instanceKey := ""
+	instance, err := envMat.NewInstance(instanceKey)
+	if err != nil {
+		e.SLogger.Warn("Failed to create instance", slog.String("key", instanceKey))
+		return
+	}
+	envMat.GetMetric("fan_speed").SetValueFloat64(instance, float64(model.speed))
+}
+
 func (e *Environment) parsePower(output gjson.Result, envMat *matrix.Matrix) {
 	model := NewPowerModel(output, e.SLogger)
 
@@ -175,6 +211,21 @@ func (e *Environment) parsePower(output gjson.Result, envMat *matrix.Matrix) {
 			envMat.GetMetric("power_in").SetValueFloat64(instance, ps.ActualIn)
 		}
 	}
+
+	e.setReduncancyMode("configured", model.RedunMode, envMat)
+	e.setReduncancyMode("operational", model.OperationMode, envMat)
+}
+
+func (e *Environment) setReduncancyMode(key string, mode string, envMat *matrix.Matrix) {
+	instanceKey := key
+	instance, err := envMat.NewInstance(instanceKey)
+	if err != nil {
+		e.SLogger.Warn("Failed to create instance", slog.String("key", instanceKey))
+		return
+	}
+	instance.SetLabel("item", key)
+	instance.SetLabel("value", mode)
+	envMat.GetMetric("power_mode").SetValueFloat64(instance, 1.0)
 }
 
 // PowerModel represents the power metrics of the device and is needed
@@ -185,6 +236,18 @@ func (e *Environment) parsePower(output gjson.Result, envMat *matrix.Matrix) {
 type PowerModel struct {
 	PowerSupplies  []PowerSupply
 	TotalPowerDraw float64
+	RedunMode      string
+	OperationMode  string
+}
+
+type FanModel struct {
+	fans  []FanData
+	speed int64
+}
+
+type FanData struct {
+	name   string
+	status string
 }
 
 type PowerSupply struct {
@@ -248,6 +311,11 @@ func newPowerModel9K(output gjson.Result, logger *slog.Logger) PowerModel {
 	wattsRequested := output.Get("powersup.power_summary.tot_pow_out_actual_draw").String()
 	powerModel.TotalPowerDraw = wattsToFloat(wattsRequested, logger)
 
+	redunMode := output.Get("powersup.power_summary.ps_redun_mode").String()
+	powerModel.RedunMode = redunMode
+	operationMode := output.Get("powersup.power_summary.ps_oper_mode").String()
+	powerModel.OperationMode = operationMode
+
 	powerModel.PowerSupplies = powerSupplies
 
 	return powerModel
@@ -301,7 +369,90 @@ func newPowerModel3K(output gjson.Result, logger *slog.Logger) PowerModel {
 	wattsRequested := output.Get("powersup.TABLE_mod_pow_info.ROW_mod_pow_info.watts_requested").String()
 	powerModel.TotalPowerDraw = wattsToFloat(wattsRequested, logger)
 
+	redunMode := output.Get("powersup.power_summary.ps_redun_mode_3k").String()
+	powerModel.RedunMode = redunMode
+	operationMode := output.Get("powersup.power_summary.ps_redun_op_mode").String()
+	powerModel.OperationMode = operationMode
+
 	powerModel.PowerSupplies = powerSupplies
 
 	return powerModel
+}
+
+func NewFanModel(output gjson.Result, logger *slog.Logger) FanModel {
+	var fanModel FanModel
+	// Check if the output is from a 3000 or 9000 switch
+	is3K := output.Get("fandetails_3k").Exists()
+	if is3K {
+		fanModel = newFanModel3K(output, logger)
+	} else {
+		fanModel = newFanModel9K(output, logger)
+	}
+	return fanModel
+}
+
+func newFanModel9K(output gjson.Result, logger *slog.Logger) FanModel {
+	var fans []FanData
+	var err error
+	fanModel := FanModel{}
+	rowQuery := "fandetails.TABLE_faninfo.ROW_faninfo"
+	rows := output.Get(rowQuery)
+
+	if !rows.Exists() {
+		logger.Warn("Unable to parse power because rows are missing", slog.String("query", rowQuery))
+		return fanModel
+	}
+
+	rows.ForEach(func(_, value gjson.Result) bool {
+		fanName := value.Get("fanname").ClonedString()
+		fanStatus := value.Get("fanstatus").ClonedString()
+		f := FanData{
+			name:   fanName,
+			status: fanStatus,
+		}
+		fans = append(fans, f)
+		return true
+	})
+
+	fanModel.fans = fans
+	fanSpeed := output.Get("fandetails.TABLE_fan_zone_speed.ROW_fan_zone_speed.zonespeed").String()
+	speed := strings.ReplaceAll(strings.ReplaceAll(fanSpeed, "0x", ""), "0X", "")
+	fanModel.speed, err = strconv.ParseInt(speed, 16, 64)
+	if err != nil {
+		logger.Warn("error parsing version", slog.Any("err", err))
+	}
+
+	return fanModel
+}
+
+func newFanModel3K(output gjson.Result, logger *slog.Logger) FanModel {
+	var fans []FanData
+	var err error
+	fanModel := FanModel{}
+	rowQuery := "fandetails_3k.TABLE_faninfo.ROW_faninfo"
+	rows := output.Get(rowQuery)
+
+	if !rows.Exists() {
+		logger.Warn("Unable to parse fan because rows are missing", slog.String("query", rowQuery))
+		return fanModel
+	}
+
+	rows.ForEach(func(_, value gjson.Result) bool {
+		fanName := value.Get("fanname").ClonedString()
+		fanStatus := value.Get("fanstatus").ClonedString()
+		f := FanData{
+			name:   fanName,
+			status: fanStatus,
+		}
+		fans = append(fans, f)
+		return true
+	})
+	fanModel.fans = fans
+	fanSpeed := output.Get("fandetails_3k.TABLE_fan_zone_speed.ROW_fan_zone_speed.0.speed").String()
+	speed := strings.ReplaceAll(strings.ReplaceAll(fanSpeed, "0x", ""), "0X", "")
+	fanModel.speed, err = strconv.ParseInt(speed, 16, 64)
+	if err != nil {
+		logger.Warn("error parsing version", slog.Any("err", err))
+	}
+	return fanModel
 }

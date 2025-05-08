@@ -23,6 +23,8 @@ func TestNewPowerModel(t *testing.T) {
 					{Num: "2", Model: "N2200-PAC-400W", Status: "ok", ActualIn: 396},
 				},
 				TotalPowerDraw: 348,
+				RedunMode:      "Redundant",
+				OperationMode:  "Redundant",
 			},
 		}, {
 			name:  "9000 series",
@@ -33,6 +35,8 @@ func TestNewPowerModel(t *testing.T) {
 					{Num: "2", Model: "NXA-PAC-1100W-PE2", Status: "ok", ActualIn: 148, ActualOut: 132, TotalCapacity: 1100},
 				},
 				TotalPowerDraw: 244,
+				RedunMode:      "PS-Redundant",
+				OperationMode:  "PS-Redundant",
 			},
 		},
 	}

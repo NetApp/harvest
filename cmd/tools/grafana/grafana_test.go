@@ -77,7 +77,7 @@ func TestAddPrefixToMetricNames(t *testing.T) {
 
 	prefix := "xx_"
 	VisitDashboards(
-		[]string{"../../../grafana/dashboards/cmode", "../../../grafana/dashboards/storagegrid"},
+		[]string{"../../../grafana/dashboards/cisco", "../../../grafana/dashboards/cmode", "../../../grafana/dashboards/cmode-details", "../../../grafana/dashboards/storagegrid"},
 		func(path string, data []byte) {
 			oldExpressions = readExprs(data)
 			if err = json.Unmarshal(data, &dashboard); err != nil {
