@@ -232,3 +232,69 @@ func setUpPrometheusExporter(prefix string) (exporter.Exporter, error) {
 	err := p.Init()
 	return p, err
 }
+
+func setUpHistogramMatrix() *matrix.Matrix {
+	m := matrix.New("lun", "lun", "lun")
+
+	inst, _ := m.NewInstance("A")
+	inst.SetLabel("inst", "A")
+	inst2, _ := m.NewInstance("B")
+	inst2.SetLabel("inst", "B")
+
+	writeHisto0, _ := m.NewMetricUint64("write_align_histo.0", "write_align_histo")
+	writeHisto0.SetHistogram(true)
+	writeHisto0.SetLabel("bucket", "write_align_histo.bucket")
+	writeHisto0.SetLabel("comment", "0")
+	writeHisto0.SetValueInt64(inst, 100)
+	writeHisto0.SetValueInt64(inst2, 10)
+
+	writeHisto1, _ := m.NewMetricUint64("write_align_histo.1", "write_align_histo")
+	writeHisto1.SetHistogram(true)
+	writeHisto1.SetLabel("bucket", "write_align_histo.bucket")
+	writeHisto1.SetLabel("comment", "1")
+	writeHisto1.SetValueInt64(inst, 50)
+	// don't set inst2 value to simulate skipped value
+
+	bucket, _ := m.NewMetricUint64("write_align_histo.bucket", "write_align_histo")
+	bucket.SetExportable(false)
+	bucket.SetBuckets(&[]string{"0", "1"})
+
+	return m
+}
+
+func TestRenderHistogramExample(t *testing.T) {
+	p, err := setUpPrometheusExporter("")
+	if err != nil {
+		t.Fatalf("Error setting up Prometheus exporter: %v", err)
+	}
+
+	m := setUpHistogramMatrix()
+
+	_, err = p.Export(m)
+	if err != nil {
+		t.Fatalf("Export failed: %v", err)
+	}
+
+	prom := p.(*Prometheus)
+	var lines []string
+	for _, metrics := range prom.cache.Get() {
+		for _, metricLine := range metrics {
+			sline := string(metricLine)
+			if !strings.HasPrefix(sline, "#") {
+				lines = append(lines, sline)
+			}
+		}
+	}
+	slices.Sort(lines)
+
+	expectedLines := []string{
+		`lun_write_align_histo{inst="A",metric="0"} 100`,
+		`lun_write_align_histo{inst="A",metric="1"} 50`,
+	}
+	expected := strings.Join(expectedLines, "\n")
+	result := strings.Join(lines, "\n")
+
+	if diff := cmp.Diff(expected, result); diff != "" {
+		t.Errorf("Histogram render mismatch (-want +got):\n%s", diff)
+	}
+}
