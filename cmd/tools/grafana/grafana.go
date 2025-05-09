@@ -474,7 +474,7 @@ func initImportVars() {
 	case opts.dir == "grafana/dashboards" && opts.serverfolder.name == "":
 		m[filepath.Join(opts.dir, "cmode")] = &Folder{name: "Harvest-main-cDOT"}
 		m[filepath.Join(opts.dir, "cmode-details")] = &Folder{name: "Harvest-main-cDOT Details"}
-		m[filepath.Join(opts.dir, "cisco")] = &Folder{name: "Harvest-main-cisco"}
+		m[filepath.Join(opts.dir, "cisco")] = &Folder{name: "Harvest-main-Cisco"}
 		m[filepath.Join(opts.dir, "7mode")] = &Folder{name: "Harvest-main-7mode"}
 		m[filepath.Join(opts.dir, "storagegrid")] = &Folder{name: "Harvest-main-StorageGrid"}
 	case opts.dir != "" && opts.serverfolder.name != "":
