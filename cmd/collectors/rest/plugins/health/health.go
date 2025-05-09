@@ -264,7 +264,7 @@ func (h *Health) collectVolumeMoveAlerts() int {
 		instance *matrix.Instance
 	)
 	// The volume move command is not available for these systems.
-	if h.isCustomSystem() || h.isASAr2() {
+	if h.client.Remote().IsCustomSystem() || h.client.Remote().IsASAr2() {
 		return 0
 	}
 	volumeMoveAlertCount := 0
@@ -493,21 +493,13 @@ func (h *Health) collectNodeAlerts() int {
 	return nodeAlertCount
 }
 
-func (h *Health) isCustomSystem() bool {
-	return h.client.Remote().IsDisaggregated && !h.client.Remote().IsSanOptimized
-}
-
-func (h *Health) isASAr2() bool {
-	return h.client.Remote().IsDisaggregated && h.client.Remote().IsSanOptimized
-}
-
 func (h *Health) collectHAAlerts() int {
 	var (
 		instance *matrix.Instance
 	)
 	HAAlertCount := 0
 	possible := "possible"
-	if h.isCustomSystem() {
+	if h.client.Remote().IsCustomSystem() {
 		possible = "takeover_of_possible"
 	}
 	records, err := h.getHADown(possible)
