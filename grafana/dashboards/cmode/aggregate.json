@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1745830029289,
+  "iteration": 1746780120478,
   "links": [
     {
       "asDropdown": true,
@@ -6751,6 +6751,528 @@
           "title": "Top $TopResources Aggregates Per Growth Rate of Logical Used",
           "transformations": [],
           "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel tracks changes in the physical usage space of the top $TopResources aggregates by physical space. It includes the following delta columns:\n\n- **1-Day Delta:** This column shows the change in physical usage space over the past 24 hours. \n  \n- **7-Day Delta:** This column displays the change in physical usage space over the past 7 days.\n  \n- **Time Range Delta:** This column reflects the change in physical usage space over the selected time range in the Grafana dashboard.\n",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "aggr"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Aggregate"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-aggregate/ontap-aggregate?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Aggregate=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #A"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "1-Day Delta"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #B"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "7-Day Delta"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #C"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Time Range Delta"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 91
+          },
+          "id": 833,
+          "options": {
+            "showHeader": true
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "label_join(\n    delta(\n      aggr_total_physical_used{aggr=~\"$Aggregate\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[1d]\n    ),\n    \"unique_id\",\n    \"-\",\n    \"datacenter\",\n    \"cluster\",\n    \"aggr\"\n  )\nand on (datacenter, cluster, aggr)\n  topk(\n    $TopResources,\n    (\n      avg_over_time(\n        aggr_total_physical_used{aggr=~\"$Aggregate\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[3h]\n      )\n    )\n  )",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "label_join(\n    delta(\n      aggr_total_physical_used{aggr=~\"$Aggregate\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[1w]\n    ),\n    \"unique_id\",\n    \"-\",\n    \"datacenter\",\n    \"cluster\",\n    \"aggr\"\n  )\nand on (datacenter, cluster, aggr)\n  topk(\n    $TopResources,\n    (\n      avg_over_time(\n        aggr_total_physical_used{aggr=~\"$Aggregate\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[3h]\n      )\n    )\n  )",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "B"
+            },
+            {
+              "exemplar": false,
+              "expr": "label_join(\n    delta(\n      aggr_total_physical_used{aggr=~\"$Aggregate\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[$__range]\n    ),\n    \"unique_id\",\n    \"-\",\n    \"datacenter\",\n    \"cluster\",\n    \"aggr\"\n  )\nand on (datacenter, cluster, aggr)\n  topk(\n    $TopResources,\n    (\n      avg_over_time(\n        aggr_total_physical_used{aggr=~\"$Aggregate\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[3h]\n      )\n    )\n  )",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "C"
+            }
+          ],
+          "title": "Top $TopResources Aggregates by Physical Usage: Delta Report",
+          "transformations": [
+            {
+              "id": "seriesToColumns",
+              "options": {
+                "byField": "unique_id"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "(.*) 1$",
+                "renamePattern": "$1"
+              }
+            },
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "aggr",
+                    "cluster",
+                    "datacenter",
+                    "Value #A",
+                    "Value #B",
+                    "Value #C"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "aggr 2": true,
+                  "aggr 3": true,
+                  "cluster 2": true,
+                  "cluster 3": true,
+                  "datacenter 2": true,
+                  "datacenter 3": true,
+                  "node 2": true,
+                  "style 2": true,
+                  "style 3": true,
+                  "svm 2": true,
+                  "svm 3": true,
+                  "volume 2": true,
+                  "volume 3": true
+                },
+                "indexByName": {
+                  "Value #A": 3,
+                  "Value #B": 4,
+                  "Value #C": 5,
+                  "aggr": 2,
+                  "aggr 2": 10,
+                  "aggr 3": 11,
+                  "cluster": 1,
+                  "cluster 2": 6,
+                  "cluster 3": 8,
+                  "datacenter": 0,
+                  "datacenter 2": 7,
+                  "datacenter 3": 9
+                },
+                "renameByName": {
+                  "Value #B": "",
+                  "aggr": "",
+                  "style": "Style",
+                  "volume": ""
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel tracks changes in the logical usage space of the top $TopResources aggregates by physical space. It includes the following delta columns:\n\n- **1-Day Delta:** This column shows the change in logical usage space over the past 24 hours. \n  \n- **7-Day Delta:** This column displays the change in logical usage space over the past 7 days.\n  \n- **Time Range Delta:** This column reflects the change in logical usage space over the selected time range in the Grafana dashboard.\n",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "aggr"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Aggregate"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-aggregate/ontap-aggregate?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Aggregate=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #A"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "1-Day Delta"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #B"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "7-Day Delta"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #C"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Time Range Delta"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 99
+          },
+          "id": 834,
+          "options": {
+            "showHeader": true
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "label_join(\n    delta(\n      aggr_total_logical_used{aggr=~\"$Aggregate\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[1d]\n    ),\n    \"unique_id\",\n    \"-\",\n    \"datacenter\",\n    \"cluster\",\n    \"aggr\"\n  )\nand on (datacenter, cluster, aggr)\n  topk(\n    $TopResources,\n    (\n      avg_over_time(\n        aggr_total_logical_used{aggr=~\"$Aggregate\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[3h]\n      )\n    )\n  )",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "label_join(\n    delta(\n      aggr_total_logical_used{aggr=~\"$Aggregate\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[1w]\n    ),\n    \"unique_id\",\n    \"-\",\n    \"datacenter\",\n    \"cluster\",\n    \"aggr\"\n  )\nand on (datacenter, cluster, aggr)\n  topk(\n    $TopResources,\n    (\n      avg_over_time(\n        aggr_total_logical_used{aggr=~\"$Aggregate\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[3h]\n      )\n    )\n  )",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "B"
+            },
+            {
+              "exemplar": false,
+              "expr": "label_join(\n    delta(\n      aggr_total_logical_used{aggr=~\"$Aggregate\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[$__range]\n    ),\n    \"unique_id\",\n    \"-\",\n    \"datacenter\",\n    \"cluster\",\n    \"aggr\"\n  )\nand on (datacenter, cluster, aggr)\n  topk(\n    $TopResources,\n    (\n      avg_over_time(\n        aggr_total_logical_used{aggr=~\"$Aggregate\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[3h]\n      )\n    )\n  )",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "C"
+            }
+          ],
+          "title": "Top $TopResources Aggregates by Logical Usage: Delta Report",
+          "transformations": [
+            {
+              "id": "seriesToColumns",
+              "options": {
+                "byField": "unique_id"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "(.*) 1$",
+                "renamePattern": "$1"
+              }
+            },
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "aggr",
+                    "cluster",
+                    "datacenter",
+                    "Value #A",
+                    "Value #B",
+                    "Value #C"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "aggr 2": true,
+                  "aggr 3": true,
+                  "cluster 2": true,
+                  "cluster 3": true,
+                  "datacenter 2": true,
+                  "datacenter 3": true,
+                  "node 2": true,
+                  "style 2": true,
+                  "style 3": true,
+                  "svm 2": true,
+                  "svm 3": true,
+                  "volume 2": true,
+                  "volume 3": true
+                },
+                "indexByName": {
+                  "Value #A": 3,
+                  "Value #B": 4,
+                  "Value #C": 5,
+                  "aggr": 2,
+                  "aggr 2": 10,
+                  "aggr 3": 11,
+                  "cluster": 1,
+                  "cluster 2": 6,
+                  "cluster 3": 8,
+                  "datacenter": 0,
+                  "datacenter 2": 7,
+                  "datacenter 3": 9
+                },
+                "renameByName": {
+                  "Value #B": "",
+                  "aggr": "",
+                  "style": "Style",
+                  "volume": ""
+                }
+              }
+            }
+          ],
+          "type": "table"
         }
       ],
       "title": "Growth Rate",
@@ -6992,5 +7514,5 @@
   "timezone": "",
   "title": "ONTAP: Aggregate",
   "uid": "cdot-aggregate",
-  "version": 17
+  "version": 18
 }
