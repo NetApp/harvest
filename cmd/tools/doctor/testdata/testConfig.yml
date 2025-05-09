@@ -120,6 +120,7 @@ Pollers:
   infinity2:
     datacenter: DC-01
     addr: 10.0.0.2
+    prom_port: 2000
     collectors: [ Zapi ]
     labels:
       - org: abc
