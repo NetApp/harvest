@@ -1,4 +1,4 @@
-# This template is in beta, It would be updated later.
+# This template is in beta, it will be updated later.
 name:               EthernetSwitchPort
 query:              api/network/ethernet/switch/ports
 object:             ethernet_switch_port
