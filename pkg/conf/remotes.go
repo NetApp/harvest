@@ -21,3 +21,11 @@ func (r Remote) IsZero() bool {
 func (r Remote) IsKeyPerf() bool {
 	return r.IsDisaggregated
 }
+
+func (r Remote) IsCustomSystem() bool {
+	return r.IsDisaggregated && !r.IsSanOptimized
+}
+
+func (r Remote) IsASAr2() bool {
+	return r.IsDisaggregated && r.IsSanOptimized
+}
