@@ -263,6 +263,10 @@ func (h *Health) collectVolumeMoveAlerts() int {
 	var (
 		instance *matrix.Instance
 	)
+	// The volume move command is not available for these systems.
+	if h.isCustomSystem() || h.isASAr2() {
+		return 0
+	}
 	volumeMoveAlertCount := 0
 	records, err := h.getMoveFailedVolumes()
 	if err != nil {
@@ -489,12 +493,24 @@ func (h *Health) collectNodeAlerts() int {
 	return nodeAlertCount
 }
 
+func (h *Health) isCustomSystem() bool {
+	return h.client.Remote().IsDisaggregated && !h.client.Remote().IsSanOptimized
+}
+
+func (h *Health) isASAr2() bool {
+	return h.client.Remote().IsDisaggregated && h.client.Remote().IsSanOptimized
+}
+
 func (h *Health) collectHAAlerts() int {
 	var (
 		instance *matrix.Instance
 	)
 	HAAlertCount := 0
-	records, err := h.getHADown()
+	possible := "possible"
+	if h.isCustomSystem() {
+		possible = "takeover_of_possible"
+	}
+	records, err := h.getHADown(possible)
 	if err != nil {
 		if errs.IsRestErr(err, errs.APINotFound) {
 			h.SLogger.Debug("API not found", slogx.Err(err))
@@ -506,7 +522,7 @@ func (h *Health) collectHAAlerts() int {
 	mat := h.data[haHealthMatrix]
 	for _, record := range records {
 		nodeName := record.Get("node").ClonedString()
-		takeoverPossible := record.Get("possible").ClonedString()
+		takeoverPossible := record.Get(possible).ClonedString()
 		partnerName := record.Get("partner_name").ClonedString()
 		stateDescription := record.Get("state_description").ClonedString()
 		partnerState := record.Get("partner_state").ClonedString()
@@ -749,14 +765,14 @@ func (h *Health) getNodes() ([]gjson.Result, error) {
 	return collectors.InvokeRestCall(h.client, href)
 }
 
-func (h *Health) getHADown() ([]gjson.Result, error) {
-	fields := []string{"possible,partner_name,state_description,partner_state"}
+func (h *Health) getHADown(possible string) ([]gjson.Result, error) {
+	fields := []string{possible, "partner_name,state_description,partner_state"}
 	query := "api/private/cli/storage/failover"
 	href := rest.NewHrefBuilder().
 		APIPath(query).
 		Fields(fields).
 		MaxRecords(collectors.DefaultBatchSize).
-		Filter([]string{"possible=!true"}).
+		Filter([]string{possible + "=!true"}).
 		Build()
 
 	return collectors.InvokeRestCall(h.client, href)
