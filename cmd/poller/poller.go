@@ -975,7 +975,7 @@ func Union2(hNode *node.Node, poller *conf.Poller) error {
 			newNode := node.NewS(key)
 
 			switch mvn.Value.Type() { //nolint:exhaustive
-			case ast.StringType, ast.BoolType:
+			case ast.StringType, ast.BoolType, ast.IntegerType:
 				newNode.Content = []byte(node.ToString(mvn.Value))
 			case ast.SequenceType:
 				// the poller node that is missing is a sequence so add all the children of the sequence

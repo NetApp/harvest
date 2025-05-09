@@ -97,6 +97,11 @@ func TestUnion2(t *testing.T) {
 			t.Errorf("got key=%s, want=%s", got, want.val)
 		}
 	}
+
+	pp := n.GetChildContentS("prom_port")
+	if pp != "2000" {
+		t.Errorf("got prom_port=%s, want=2000", pp)
+	}
 }
 
 func TestPublishUrl(t *testing.T) {
