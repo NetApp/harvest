@@ -1276,7 +1276,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Displays total transmit traffic per interface.",
+          "description": "Displays total transmit traffic per interface per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1325,7 +1325,7 @@
                   }
                 ]
               },
-              "unit": "bytes"
+              "unit": "Bps"
             },
             "overrides": []
           },
@@ -1368,7 +1368,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Displays total receive traffic per interface.",
+          "description": "Displays total receive traffic per interface per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1417,7 +1417,7 @@
                   }
                 ]
               },
-              "unit": "bytes"
+              "unit": "Bps"
             },
             "overrides": []
           },
@@ -1460,7 +1460,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Displays drop traffic per interface.",
+          "description": "Displays drop packets per interface per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1509,7 +1509,7 @@
                   }
                 ]
               },
-              "unit": "bytes"
+              "unit": "pps"
             },
             "overrides": []
           },
@@ -1559,7 +1559,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Displays traffic data per interface.",
+          "description": "Displays errors per interface per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1593,7 +1593,7 @@
                   "mode": "off"
                 }
               },
-              "decimals": 2,
+              "decimals": 0,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -1608,7 +1608,7 @@
                   }
                 ]
               },
-              "unit": "bytes"
+              "unit": "errors/s"
             },
             "overrides": []
           },
@@ -1653,7 +1653,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Interface Transmit Errors",
+          "title": "Top $TopResources Interface Errors",
           "type": "timeseries"
         },
         {
@@ -1692,7 +1692,7 @@
                   "mode": "off"
                 }
               },
-              "decimals": 2,
+              "decimals": 0,
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -1707,7 +1707,7 @@
                   }
                 ]
               },
-              "unit": "bytes"
+              "unit": "errors/s"
             },
             "overrides": []
           },
@@ -1745,7 +1745,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources CRC error per Interface",
+          "title": "Top $TopResources Interface CRC error",
           "type": "timeseries"
         }
       ],
