@@ -283,7 +283,6 @@
                 "switch",
                 "biosVersion",
                 "chassis",
-                "hostname",
                 "osVersion",
                 "rcf_filename",
                 "rcf_version",
@@ -301,20 +300,18 @@
           "options": {
             "excludeByName": {},
             "indexByName": {
-              "biosVersion": 5,
-              "chassis": 4,
+              "biosVersion": 4,
+              "chassis": 3,
               "datacenter 1": 0,
-              "hostname": 2,
-              "osVersion": 6,
+              "osVersion": 5,
               "switch": 1,
-              "upTime": 3
+              "upTime": 2
             },
             "renameByName": {
               "Value #D": "Fan Speed",
               "biosVersion": "BIOS Version",
               "chassis": "Chassis",
               "datacenter 3": "",
-              "hostname": "Host Name",
               "item 1": "",
               "item 2": "",
               "osVersion": "OS Version",
