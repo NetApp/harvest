@@ -8767,8 +8767,7 @@
                 "renameByName": {
                   "Value #B": "",
                   "style": "Style",
-                  "volume": "",
-                  "{aggr=\"test1,umeng_aff300_aggr2\", cluster=\"umeng-aff300-01-02\", datacenter=\"nane\", instance=\"localhost:13002\", job=\"prometheus\", node=\"umeng-aff300-02,umeng-aff300-03\", style=\"flexgroup\", svm=\"osc\", volume=\"RahulTest\"}": ""
+                  "volume": ""
                 }
               }
             }
@@ -8966,7 +8965,7 @@
             },
             {
               "exemplar": false,
-              "expr": "label_join(\n    delta(\n      volume_space_physical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}[1w]\n    ),\n    \"unique_id\",\n    \"-\",\n    \"datacenter\",\n    \"cluster\",\n    \"svm\",\n    \"volume\"\n  )\nand on (datacenter, cluster, svm, volume)\n  topk(\n    $TopResources,\n    (\n        avg_over_time(\n          volume_space_physical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h]\n        )\n      * on (datacenter, cluster, svm, volume) group_left (node)\n        (\n          max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n          )\n        )\n    )\n  )",
+              "expr": "label_join(\n    delta(\n      volume_space_logical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}[1w]\n    ),\n    \"unique_id\",\n    \"-\",\n    \"datacenter\",\n    \"cluster\",\n    \"svm\",\n    \"volume\"\n  )\nand on (datacenter, cluster, svm, volume)\n  topk(\n    $TopResources,\n    (\n        avg_over_time(\n          volume_space_logical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h]\n        )\n      * on (datacenter, cluster, svm, volume) group_left (node)\n        (\n          max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n          )\n        )\n    )\n  )",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -8976,7 +8975,7 @@
             },
             {
               "exemplar": false,
-              "expr": "label_join(\n    delta(\n      volume_space_physical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}[$__range]\n    ),\n    \"unique_id\",\n    \"-\",\n    \"datacenter\",\n    \"cluster\",\n    \"svm\",\n    \"volume\"\n  )\nand on (datacenter, cluster, svm, volume)\n  topk(\n    $TopResources,\n    (\n        avg_over_time(\n          volume_space_physical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h]\n        )\n      * on (datacenter, cluster, svm, volume) group_left (node)\n        (\n          max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n          )\n        )\n    )\n  )",
+              "expr": "label_join(\n    delta(\n      volume_space_logical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}[$__range]\n    ),\n    \"unique_id\",\n    \"-\",\n    \"datacenter\",\n    \"cluster\",\n    \"svm\",\n    \"volume\"\n  )\nand on (datacenter, cluster, svm, volume)\n  topk(\n    $TopResources,\n    (\n        avg_over_time(\n          volume_space_logical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h]\n        )\n      * on (datacenter, cluster, svm, volume) group_left (node)\n        (\n          max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n          )\n        )\n    )\n  )",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -9057,8 +9056,7 @@
                 "renameByName": {
                   "Value #B": "",
                   "style": "Style",
-                  "volume": "",
-                  "{aggr=\"test1,umeng_aff300_aggr2\", cluster=\"umeng-aff300-01-02\", datacenter=\"nane\", instance=\"localhost:13002\", job=\"prometheus\", node=\"umeng-aff300-02,umeng-aff300-03\", style=\"flexgroup\", svm=\"osc\", volume=\"RahulTest\"}": ""
+                  "volume": ""
                 }
               }
             }

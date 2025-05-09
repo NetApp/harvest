@@ -7006,8 +7006,7 @@
                   "Value #B": "",
                   "aggr": "",
                   "style": "Style",
-                  "volume": "",
-                  "{aggr=\"test1,umeng_aff300_aggr2\", cluster=\"umeng-aff300-01-02\", datacenter=\"nane\", instance=\"localhost:13002\", job=\"prometheus\", node=\"umeng-aff300-02,umeng-aff300-03\", style=\"flexgroup\", svm=\"osc\", volume=\"RahulTest\"}": ""
+                  "volume": ""
                 }
               }
             }
@@ -7268,8 +7267,7 @@
                   "Value #B": "",
                   "aggr": "",
                   "style": "Style",
-                  "volume": "",
-                  "{aggr=\"test1,umeng_aff300_aggr2\", cluster=\"umeng-aff300-01-02\", datacenter=\"nane\", instance=\"localhost:13002\", job=\"prometheus\", node=\"umeng-aff300-02,umeng-aff300-03\", style=\"flexgroup\", svm=\"osc\", volume=\"RahulTest\"}": ""
+                  "volume": ""
                 }
               }
             }
