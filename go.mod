@@ -27,4 +27,4 @@ require (
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
 )
 
-replace github.com/ebitengine/purego => github.com/ebitengine/purego v0.0.0-20250507171810-1638563e3615
+replace github.com/ebitengine/purego => github.com/ebitengine/purego v0.8.3

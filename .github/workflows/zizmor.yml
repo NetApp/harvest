@@ -22,7 +22,7 @@ jobs:
           persist-credentials: false
 
       - name: Install the latest version of uv
-        uses: astral-sh/setup-uv@b6f9e9c734eaef252216c74d204178ad0ce70fd1
+        uses: astral-sh/setup-uv@9864bc9c96305e727bfcd4d4c1f8aadc2d03032f
 
       - name: Run zizmor 🌈
         run: uvx zizmor --format sarif . > results.sarif

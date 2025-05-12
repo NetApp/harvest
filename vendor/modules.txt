@@ -1,4 +1,4 @@
-# github.com/ebitengine/purego v0.8.2 => github.com/ebitengine/purego v0.0.0-20250507171810-1638563e3615
+# github.com/ebitengine/purego v0.8.2 => github.com/ebitengine/purego v0.8.3
 ## explicit; go 1.18
 github.com/ebitengine/purego
 github.com/ebitengine/purego/internal/cgo
@@ -87,4 +87,4 @@ golang.org/x/text/unicode/norm
 # gopkg.in/natefinch/lumberjack.v2 v2.2.1
 ## explicit; go 1.13
 gopkg.in/natefinch/lumberjack.v2
-# github.com/ebitengine/purego => github.com/ebitengine/purego v0.0.0-20250507171810-1638563e3615
+# github.com/ebitengine/purego => github.com/ebitengine/purego v0.8.3
