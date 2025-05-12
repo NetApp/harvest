@@ -19,12 +19,13 @@ nav:
           - 'Containerd': 'install/containerd.md'
       - 'Native': 'install/native.md'
   - System Requirements: 'system-requirements.md'
-  - Prepare Monitored Clusters:
+  - Prepare Monitored Systems:
       - 'ONTAP cDOT': 'prepare-cdot-clusters.md'
       - 'ASA r2': 'asar2.md'
       - 'Amazon FSx for ONTAP': 'prepare-fsx-clusters.md'
       - 'ONTAP 7mode': 'prepare-7mode-clusters.md'
       - 'StorageGRID': 'prepare-storagegrid-clusters.md'
+      - 'Cisco Switches': 'prepare-cisco-switch.md'
   - Configure Harvest (basic): 'configure-harvest-basic.md'
   - Configure Exporters:
       - 'Prometheus': 'prometheus-exporter.md'
@@ -38,6 +39,7 @@ nav:
       - 'EMS': 'configure-ems.md'
       - 'StorageGRID': 'configure-storagegrid.md'
       - 'Unix': 'configure-unix.md'
+      - 'CiscoRest': 'configure-cisco-rest.md'
   - Templates: 'configure-templates.md'
   - Dashboards: 'dashboards.md'
   - Manage Harvest Pollers: 'manage-harvest.md'
