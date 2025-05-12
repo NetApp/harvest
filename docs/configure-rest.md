@@ -383,8 +383,8 @@ You can include these fields under the `filter` parameter. For example, to filte
 counters:
 ...
   - filter:
-    - name: *NS*|*Test*
-    - svm.name: vs1
+    - name=*NS*|*Test*
+    - svm.name=vs1
 ```
 
 ## ONTAP Private CLI
