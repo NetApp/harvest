@@ -8,12 +8,12 @@ replace github.com/netapp/harvest/v2 => ../
 
 require (
 	github.com/carlmjohnson/requests v0.24.3
-	github.com/netapp/harvest/v2 v2.0.0-20250507152230-a4f293707d4f
+	github.com/netapp/harvest/v2 v2.0.0-20250509140426-b7cfd3aabda0
 	golang.org/x/text v0.25.0
 )
 
 require (
-	github.com/ebitengine/purego v0.8.2 // indirect
+	github.com/ebitengine/purego v0.8.3 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
 	github.com/goccy/go-yaml v1.17.1 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
