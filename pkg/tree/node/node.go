@@ -478,6 +478,8 @@ func ToString(n ast.Node) string {
 	switch v := n.(type) {
 	case *ast.StringNode:
 		return v.Value
+	case *ast.NullNode:
+		return ""
 	default:
 		return n.String()
 	}
