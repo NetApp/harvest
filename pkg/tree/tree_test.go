@@ -257,6 +257,7 @@ key2: "value with : colon"
 "key with colon :" : val4
 'keyWithSingleQuote': val5
 key6: val6 #comment
+emptyKey: # This key has an empty value
 `
 
 	n, err := LoadYaml([]byte(yamlTest))
@@ -275,6 +276,7 @@ key6: val6 #comment
 		{key: "key with colon :", value: "val4"},
 		{key: "keyWithSingleQuote", value: "val5"},
 		{key: "key6", value: "val6"},
+		{key: "emptyKey", value: ""},
 	}
 
 	for _, test := range tests {
