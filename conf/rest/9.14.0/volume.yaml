@@ -78,7 +78,7 @@ endpoints:
       - ^^volume
       - ^^vserver                                 => svm
       - delayed_free_footprint
-      - flexvol_metadata_footprint
+      - flexvol_metadata_footprint                => metadata_footprint
       - total_footprint
       - total_metadata_footprint
       - volume_blocks_footprint_bin0              => performance_tier_footprint

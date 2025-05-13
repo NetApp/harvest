@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1746433866614,
+  "iteration": 1747041991384,
   "links": [
     {
       "asDropdown": true,
@@ -910,7 +910,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 25
+            "y": 14
           },
           "id": 18,
           "interval": "1m",
@@ -1244,7 +1244,7 @@
             "h": 7,
             "w": 8,
             "x": 0,
-            "y": 34
+            "y": 23
           },
           "id": 39,
           "options": {
@@ -1400,7 +1400,7 @@
             "h": 7,
             "w": 8,
             "x": 8,
-            "y": 34
+            "y": 23
           },
           "id": 41,
           "options": {
@@ -1557,7 +1557,7 @@
             "h": 7,
             "w": 8,
             "x": 16,
-            "y": 34
+            "y": 23
           },
           "id": 43,
           "options": {
@@ -1744,7 +1744,7 @@
             "h": 7,
             "w": 8,
             "x": 0,
-            "y": 41
+            "y": 30
           },
           "id": 40,
           "options": {
@@ -1900,7 +1900,7 @@
             "h": 7,
             "w": 8,
             "x": 8,
-            "y": 41
+            "y": 30
           },
           "id": 42,
           "options": {
@@ -2057,7 +2057,7 @@
             "h": 7,
             "w": 8,
             "x": 16,
-            "y": 41
+            "y": 30
           },
           "id": 44,
           "options": {
@@ -6865,7 +6865,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 25
+            "y": 57
           },
           "id": 93,
           "options": {
@@ -6958,7 +6958,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 25
+            "y": 57
           },
           "id": 94,
           "options": {
@@ -7051,7 +7051,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 37
+            "y": 69
           },
           "id": 95,
           "options": {
@@ -7144,7 +7144,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 37
+            "y": 69
           },
           "id": 96,
           "options": {
@@ -7233,7 +7233,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 49
+            "y": 81
           },
           "id": 90,
           "options": {
@@ -7303,6 +7303,368 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
+          "description": "Display a list of volumes and metadata footprints in their associated aggregate.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #A"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #B"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #C"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #D"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #E"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #F"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #G"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "cluster"
+                },
+                "properties": [
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "volume"
+                },
+                "properties": [
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-volume/ontap-volume?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${SVM:queryparam}&${__url_time_range}&var-Volume=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "svm"
+                },
+                "properties": [
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-svm/ontap-svm?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-SVM=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "aggr"
+                },
+                "properties": [
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-aggregate/ontap-aggregate?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Aggregate=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 14
+          },
+          "id": 185,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "Volume"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "volume_delayed_free_footprint{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "volume_metadata_footprint{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "B"
+            },
+            {
+              "exemplar": false,
+              "expr": "volume_total_footprint{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "C"
+            },
+            {
+              "exemplar": false,
+              "expr": "volume_total_metadata_footprint{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "D"
+            },
+            {
+              "exemplar": false,
+              "expr": "volume_guarantee_footprint{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "E"
+            },
+            {
+              "exemplar": false,
+              "expr": "volume_performance_tier_footprint{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "F"
+            },
+            {
+              "exemplar": false,
+              "expr": "volume_capacity_tier_footprint{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "G"
+            }
+          ],
+          "title": "Volumes Footprint",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "aggr",
+                    "cluster",
+                    "datacenter",
+                    "style",
+                    "svm",
+                    "volume",
+                    "Value #A",
+                    "Value #B",
+                    "Value #C",
+                    "Value #D",
+                    "Value #E",
+                    "Value #F",
+                    "Value #G"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "merge",
+              "options": {}
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "Value #A": 7,
+                  "Value #B": 8,
+                  "Value #C": 9,
+                  "Value #D": 10,
+                  "Value #E": 11,
+                  "Value #F": 12,
+                  "Value #G": 13,
+                  "aggr": 5,
+                  "cluster": 1,
+                  "datacenter": 0,
+                  "node": 4,
+                  "style": 6,
+                  "svm": 2,
+                  "volume": 3
+                },
+                "renameByName": {
+                  "Value #A": "Delayed Free",
+                  "Value #B": "Metadata",
+                  "Value #C": "Total",
+                  "Value #D": "Total Metadata",
+                  "Value #E": "Guarantee",
+                  "Value #F": "Performance Tier",
+                  "Value #G": "Capacity Tier",
+                  "aggr": "Aggregate",
+                  "cluster": "Cluster",
+                  "datacenter": "Datacenter",
+                  "node": "Node",
+                  "style": "Style",
+                  "svm": "SVM",
+                  "volume": "Volume"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Footprint of blocks written to the volume in bytes for the performance tier (bin 0).",
           "fieldConfig": {
             "defaults": {
@@ -7360,7 +7722,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 26
+            "y": 23
           },
           "id": 119,
           "options": {
@@ -7456,7 +7818,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 26
+            "y": 23
           },
           "id": 120,
           "options": {
@@ -7550,7 +7912,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 38
+            "y": 35
           },
           "id": 121,
           "options": {
@@ -7646,7 +8008,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 38
+            "y": 35
           },
           "id": 122,
           "options": {
@@ -7678,6 +8040,476 @@
             }
           ],
           "title": "Top $TopResources Volumes by Capacity Tier Footprint %",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This field represents the delayed free blocks footprint. This is used to improve delete performance by batching delete requests.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 0,
+            "y": 47
+          },
+          "id": 179,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "sortBy": "Last *",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "volume_delayed_free_footprint{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand on (datacenter, cluster, svm, volume)\n  topk(\n    $TopResources,\n    (\n        avg_over_time(\n          volume_delayed_free_footprint{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n        )\n      * on (datacenter, cluster, svm, volume) group_left (node)\n        (\n          max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n          )\n        )\n    )\n  )",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{svm}} - {{volume}} ",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Volumes by Delayed Free Footprint",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This represents flexible metadata for a volume.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 12,
+            "y": 47
+          },
+          "id": 181,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "sortBy": "Last *",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "volume_metadata_footprint{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand on (datacenter, cluster, svm, volume)\n  topk(\n    $TopResources,\n    (\n        avg_over_time(\n          volume_metadata_footprint{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n        )\n      * on (datacenter, cluster, svm, volume) group_left (node)\n        (\n          max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n          )\n        )\n    )\n  )",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{svm}} - {{volume}} ",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Volumes by Metadata Footprint",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Volume total footprint.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 0,
+            "y": 59
+          },
+          "id": 180,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "sortBy": "Last *",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "volume_total_footprint{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand on (datacenter, cluster, svm, volume)\n  topk(\n    $TopResources,\n    (\n        avg_over_time(\n          volume_total_footprint{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n        )\n      * on (datacenter, cluster, svm, volume) group_left (node)\n        (\n          max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n          )\n        )\n    )\n  )",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{svm}} - {{volume}} ",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Volumes by Total Footprint",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Total metadata footprint for a volume.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 12,
+            "y": 59
+          },
+          "id": 183,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "sortBy": "Last *",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "volume_total_metadata_footprint{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand on (datacenter, cluster, svm, volume)\n  topk(\n    $TopResources,\n    (\n        avg_over_time(\n          volume_total_metadata_footprint{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n        )\n      * on (datacenter, cluster, svm, volume) group_left (node)\n        (\n          max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n          )\n        )\n    )\n  )",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{svm}} - {{volume}} ",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Volumes by Total Metadata Footprint",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This field represents the volume guarantee footprint. Alternatively, it is the space reserved for future writes in the volume.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 0,
+            "y": 71
+          },
+          "id": 182,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom",
+              "sortBy": "Last *",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "volume_guarantee_footprint{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand on (datacenter, cluster, svm, volume)\n  topk(\n    $TopResources,\n    (\n        avg_over_time(\n          volume_guarantee_footprint{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n        )\n      * on (datacenter, cluster, svm, volume) group_left (node)\n        (\n          max by (datacenter, cluster, svm, volume, node) (\n            volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n          )\n        )\n    )\n  )",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{svm}} - {{volume}} ",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Volumes by Capacity Tier Footprint",
           "transformations": [],
           "type": "timeseries"
         }
@@ -9737,5 +10569,5 @@
   "timezone": "",
   "title": "ONTAP: Volume",
   "uid": "cdot-volume",
-  "version": 34
+  "version": 35
 }

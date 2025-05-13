@@ -238,6 +238,53 @@ func TestRunForAllImplementations(t *testing.T) {
 	}
 }
 
+func TestProcessFlexGroupFootPrint(t *testing.T) {
+	logger := slog.Default()
+	data := matrix.New("volume", "volume", "volume")
+
+	// Create test data
+	instance1, _ := data.NewInstance("RahulTest__0001")
+	instance1.SetLabel("volume", "RahulTest__0001")
+	instance1.SetLabel("svm", "svm1")
+	instance1.SetLabel("style", "flexgroup_constituent")
+	instance1.SetLabel("aggr", "aggr1")
+
+	instance2, _ := data.NewInstance("RahulTest__0002")
+	instance2.SetLabel("volume", "RahulTest__0002")
+	instance2.SetLabel("svm", "svm1")
+	instance2.SetLabel("style", "flexgroup_constituent")
+	instance2.SetLabel("aggr", "aggr2")
+
+	instance3, _ := data.NewInstance("RahulTest__0003")
+	instance3.SetLabel("volume", "RahulTest__0003")
+	instance3.SetLabel("svm", "svm1")
+	instance3.SetLabel("style", "flexgroup_constituent")
+	instance3.SetLabel("aggr", "aggr3")
+
+	footprintMetric, _ := data.NewMetricFloat64("volume_blocks_footprint_bin0")
+	footprintMetric.SetValueFloat64(instance1, 20)
+	footprintMetric.SetValueFloat64(instance2, 50)
+	// Intentionally leave instance2 without a footprint value to test missing data handling
+
+	cache := collectors.ProcessFlexGroupFootPrint(data, logger)
+
+	flexgroupInstance := cache.GetInstance("svm1.RahulTest")
+	if flexgroupInstance == nil {
+		t.Fatalf("expected flexgroup instance 'svm1.RahulTest' to be created")
+	}
+
+	aggr := flexgroupInstance.GetLabel("aggr")
+	if aggr != "aggr1,aggr2,aggr3" {
+		t.Fatalf("expected flexgroup instance 'aggr1,aggr2,aggr3' to be created got '%s'", aggr)
+	}
+
+	if value, ok := cache.GetMetric("volume_blocks_footprint_bin0").GetValueFloat64(flexgroupInstance); !ok {
+		t.Error("Value [volume_blocks_footprint_bin0] missing")
+	} else if value != 70 {
+		t.Errorf("Value [volume_blocks_footprint_bin0] = (%f) incorrect, expected 70", value)
+	}
+}
+
 func createRestVolume(params *node.Node) plugin.Plugin {
 	opts := options.New(options.WithConfPath("testdata/conf"))
 	opts.IsTest = true
