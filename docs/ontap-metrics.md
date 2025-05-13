@@ -14597,7 +14597,7 @@ This metric provides information about Volume
 
 ### volume_metadata_footprint
 
-This field represents flexible metadata in bytes.
+This field represents flexible volume or flexgroup metadata in bytes.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|

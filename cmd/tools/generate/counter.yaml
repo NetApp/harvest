@@ -1779,7 +1779,7 @@ counters:
         Template: conf/zapi/cdot/9.8.0/volume.yaml
 
   - Name: volume_metadata_footprint
-    Description: This field represents flexible metadata in bytes.
+    Description: This field represents flexible volume or flexgroup metadata in bytes.
     APIs:
       - API: ZAPI
         Endpoint: volume-footprint-get-iter

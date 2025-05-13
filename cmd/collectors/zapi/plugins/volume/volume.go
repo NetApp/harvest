@@ -133,12 +133,11 @@ func (v *Volume) processVolumeFootPrint(data *matrix.Matrix, volumeFootprintMap 
 				}
 
 				if vfVal != "" {
-					vfMetricVal, err := strconv.ParseFloat(vfVal, 64)
+					err := vfMetric.SetValueString(volume, vfVal)
 					if err != nil {
 						v.SLogger.Error("parse", slogx.Err(err), slog.String(vfKey, vfVal))
 						continue
 					}
-					vfMetric.SetValueFloat64(volume, vfMetricVal)
 				}
 			}
 		}
