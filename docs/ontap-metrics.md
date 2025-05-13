@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-May-07
+Creation Date : 2025-May-13
 ONTAP Version: 9.15.1
 ```
 ## Understanding the structure
@@ -14545,16 +14545,6 @@ Filesystem size (in bytes) of the volume.  This is the total usable size of the 
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.filesystem-size` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
-### volume_flexvol_metadata_footprint
-
-This field represents flexible volume metadata in bytes.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/private/cli/volume/footprint` | `flexvol_metadata_footprint` | conf/rest/9.14.0/volume.yaml |
-| ZAPI | `volume-footprint-get-iter` | `flexvol-metadata-footprint` | conf/zapi/cdot/9.8.0/volume.yaml |
-
-
 ### volume_guarantee_footprint
 
 This field represents the volume guarantee footprint in bytes. Alternatively, it is the space reserved for future writes in the volume.
@@ -14603,6 +14593,16 @@ This metric provides information about Volume
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume` | `Harvest generated` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+
+### volume_metadata_footprint
+
+This field represents flexible metadata in bytes.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/volume/footprint` | `flexvol_metadata_footprint` | conf/rest/9.14.0/volume.yaml |
+| ZAPI | `volume-footprint-get-iter` | `flexvol-metadata-footprint` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
 ### volume_new_status

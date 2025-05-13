@@ -1778,8 +1778,8 @@ counters:
         ONTAPCounter: delayed-free-footprint
         Template: conf/zapi/cdot/9.8.0/volume.yaml
 
-  - Name: volume_flexvol_metadata_footprint
-    Description: This field represents flexible volume metadata in bytes.
+  - Name: volume_metadata_footprint
+    Description: This field represents flexible metadata in bytes.
     APIs:
       - API: ZAPI
         Endpoint: volume-footprint-get-iter

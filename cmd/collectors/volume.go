@@ -14,6 +14,21 @@ import (
 
 var flexgroupRegex = regexp.MustCompile(`^(.*)__(\d{4})$`)
 
+var footprintMetrics = map[string]struct{}{
+	"delayed_free_footprint":       {}, // Rest, Zapi
+	"flexvol_metadata_footprint":   {}, // Rest
+	"total_footprint":              {}, // Rest, Zapi
+	"total_metadata_footprint":     {}, // Rest, Zapi
+	"volume_blocks_footprint_bin0": {}, // Rest
+	"volume_blocks_footprint_bin1": {}, // Rest
+	"volume_guarantee_footprint":   {}, // Rest
+	"metadata_footprint":           {}, // Zapi
+	"guarantee_footprint":          {}, // Zapi
+	"capacity_tier_footprint":      {}, // Zapi
+	"performance_tier_footprint":   {}, // Zapi
+
+}
+
 func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string, includeConstituents bool, opsKeyPrefix string, volumesMap map[string]string, enableVolumeAggrMatrix bool) ([]*matrix.Matrix, *util.Metadata, error) {
 	var err error
 
@@ -210,4 +225,88 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 		return []*matrix.Matrix{cache, volumeAggrMatrix}, nil, nil
 	}
 	return []*matrix.Matrix{cache}, nil, nil
+}
+
+func ProcessFlexGroupFootPrint(data *matrix.Matrix, logger *slog.Logger) *matrix.Matrix {
+	fgAggrMap := make(map[string]*set.Set)
+
+	cache := data.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: true})
+	cache.UUID += ".VolumeFootPrint.Flexgroup"
+	// remove instance_labels from this matrix otherwise it will emit volume_labels
+	cache.GetExportOptions().PopChildS("instance_labels")
+
+	for _, i := range data.GetInstances() {
+		volName := i.GetLabel("volume")
+		svmName := i.GetLabel("svm")
+		style := i.GetLabel("style")
+		if style != "flexgroup_constituent" {
+			continue
+		}
+		match := flexgroupRegex.FindStringSubmatch(volName)
+		if len(match) < 2 {
+			logger.Error("regex match failed or capture group missing", slog.String("volume", volName))
+			continue
+		}
+		key := svmName + "." + match[1]
+		if cache.GetInstance(key) == nil {
+			fg, _ := cache.NewInstance(key)
+			fg.SetLabels(maps.Clone(i.GetLabels()))
+			fg.SetLabel("volume", match[1])
+			fg.SetLabel("node", "")
+			fg.SetLabel("uuid", "")
+			fg.SetLabel("style", "flexgroup")
+			fgAggrMap[key] = set.New()
+		}
+		fgAggrMap[key].Add(i.GetLabel("aggr"))
+	}
+
+	for _, i := range data.GetInstances() {
+		volName := i.GetLabel("volume")
+		svmName := i.GetLabel("svm")
+		style := i.GetLabel("style")
+
+		if style != "flexgroup_constituent" {
+			continue
+		}
+		match := flexgroupRegex.FindStringSubmatch(volName)
+		if len(match) < 2 {
+			logger.Error("regex match failed or capture group missing", slog.String("volume", volName))
+			continue
+		}
+		key := svmName + "." + match[1]
+
+		fg := cache.GetInstance(key)
+		if fg == nil {
+			logger.Error("instance not in local cache", slog.String("key", key))
+			continue
+		}
+
+		aggrs := fgAggrMap[key].Values()
+		sort.Strings(aggrs)
+		fg.SetLabel("aggr", strings.Join(aggrs, ","))
+
+		for mkey, m := range data.GetMetrics() {
+			if !m.IsExportable() && m.GetType() != "float64" {
+				continue
+			}
+
+			_, ok := footprintMetrics[mkey]
+			if !ok {
+				continue
+			}
+
+			fgm := cache.GetMetric(mkey)
+			if fgm == nil {
+				logger.Error("metric not in local cache", slog.String("key", mkey))
+				continue
+			}
+
+			if value, ok := m.GetValueFloat64(i); ok {
+				fgv, _ := fgm.GetValueFloat64(fg)
+				fgm.SetValueFloat64(fg, fgv+value)
+			}
+		}
+	}
+
+	return cache
 }

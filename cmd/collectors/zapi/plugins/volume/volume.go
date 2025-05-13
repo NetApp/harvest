@@ -108,13 +108,45 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 	}
 
 	// update volume instance labels
-	v.updateVolumeLabels(data, volumeCloneMap, volumeFootprintMap)
+	v.updateVolumeLabels(data, volumeCloneMap)
+	flexgroupFootPrintMatrix := v.processVolumeFootPrint(data, volumeFootprintMap)
 
 	v.currentVal++
-	return nil, v.client.Metadata, nil
+	return []*matrix.Matrix{flexgroupFootPrintMatrix}, v.client.Metadata, nil
 }
 
-func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[string]volumeClone, volumeFootprintMap map[string]map[string]string) {
+func (v *Volume) processVolumeFootPrint(data *matrix.Matrix, volumeFootprintMap map[string]map[string]string) *matrix.Matrix {
+	var err error
+	// Handling volume footprint metrics
+	for _, volume := range data.GetInstances() {
+		name := volume.GetLabel("volume")
+		svm := volume.GetLabel("svm")
+		key := name + svm
+		if vf, ok := volumeFootprintMap[key]; ok {
+			for vfKey, vfVal := range vf {
+				vfMetric := data.GetMetric(vfKey)
+				if vfMetric == nil {
+					if vfMetric, err = data.NewMetricFloat64(vfKey); err != nil {
+						v.SLogger.Error("add metric", slogx.Err(err), slog.String("metric", vfKey))
+						continue
+					}
+				}
+
+				if vfVal != "" {
+					vfMetricVal, err := strconv.ParseFloat(vfVal, 64)
+					if err != nil {
+						v.SLogger.Error("parse", slogx.Err(err), slog.String(vfKey, vfVal))
+						continue
+					}
+					vfMetric.SetValueFloat64(volume, vfMetricVal)
+				}
+			}
+		}
+	}
+	return collectors.ProcessFlexGroupFootPrint(data, v.SLogger)
+}
+
+func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[string]volumeClone) {
 	var err error
 	for _, volume := range data.GetInstances() {
 		if !volume.IsExportable() {
@@ -168,28 +200,6 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[stri
 			}
 			splitEstimateBytes = splitEstimateBytes * 4 * 1024
 			splitEstimate.SetValueFloat64(volume, splitEstimateBytes)
-		}
-
-		// Handling volume footprint metrics
-		if vf, ok := volumeFootprintMap[key]; ok {
-			for vfKey, vfVal := range vf {
-				vfMetric := data.GetMetric(vfKey)
-				if vfMetric == nil {
-					if vfMetric, err = data.NewMetricFloat64(vfKey); err != nil {
-						v.SLogger.Error("add metric", slogx.Err(err), slog.String("metric", vfKey))
-						continue
-					}
-				}
-
-				if vfVal != "" {
-					vfMetricVal, err := strconv.ParseFloat(vfVal, 64)
-					if err != nil {
-						v.SLogger.Error("parse", slogx.Err(err), slog.String(vfKey, vfVal))
-						continue
-					}
-					vfMetric.SetValueFloat64(volume, vfMetricVal)
-				}
-			}
 		}
 	}
 }
@@ -277,7 +287,7 @@ func (v *Volume) getVolumeFootprint() (map[string]map[string]string, error) {
 		capacityTierFootprint := footprint.GetChildContentS("volume-blocks-footprint-bin1")
 		capacityTierFootprintPerc := footprint.GetChildContentS("volume-blocks-footprint-bin1-percent")
 		delayedFreeFootprint := footprint.GetChildContentS("delayed-free-footprint")
-		flexvolMetadataFootprint := footprint.GetChildContentS("flexvol-metadata-footprint")
+		metadataFootprint := footprint.GetChildContentS("flexvol-metadata-footprint")
 		totalFootprint := footprint.GetChildContentS("total-footprint")
 		totalMetadataFootprint := footprint.GetChildContentS("total-metadata-footprint")
 		volumeBlocksFootprint := footprint.GetChildContentS("volume-guarantee-footprint")
@@ -287,7 +297,7 @@ func (v *Volume) getVolumeFootprint() (map[string]map[string]string, error) {
 		footprintMetrics["capacity_tier_footprint"] = capacityTierFootprint
 		footprintMetrics["capacity_tier_footprint_percent"] = capacityTierFootprintPerc
 		footprintMetrics["delayed_free_footprint"] = delayedFreeFootprint
-		footprintMetrics["flexvol_metadata_footprint"] = flexvolMetadataFootprint
+		footprintMetrics["metadata_footprint"] = metadataFootprint
 		footprintMetrics["total_footprint"] = totalFootprint
 		footprintMetrics["total_metadata_footprint"] = totalMetadataFootprint
 		footprintMetrics["guarantee_footprint"] = volumeBlocksFootprint
