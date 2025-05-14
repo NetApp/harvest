@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/requests"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	goversion "github.com/netapp/harvest/v2/third_party/go-version"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"github.com/netapp/harvest/v2/third_party/tidwall/sjson"
@@ -19,6 +20,7 @@ import (
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 	"io"
+	"log/slog"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -72,6 +74,7 @@ type options struct {
 	customCluster       string
 	varDefaults         string
 	defaultDropdownMap  map[string][]string
+	isDebug             bool
 }
 
 type Folder struct {
@@ -433,6 +436,7 @@ func doImport(_ *cobra.Command, _ []string) {
 		printErrorAndExit(err)
 	}
 
+	setupSlog()
 	adjustOptions()
 	validateImport()
 	askForToken()
@@ -440,6 +444,20 @@ func doImport(_ *cobra.Command, _ []string) {
 
 	fmt.Printf("preparing to import dashboards...\n")
 	importDashboards(opts)
+}
+
+func setupSlog() {
+	logger := slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{
+		AddSource: true,
+		ReplaceAttr: func(_ []string, a slog.Attr) slog.Attr {
+			if a.Key == slog.SourceKey {
+				source := a.Value.Any().(*slog.Source)
+				source.File = filepath.Base(source.File)
+			}
+			return a
+		},
+	}))
+	slog.SetDefault(logger)
 }
 
 func printErrorAndExit(err error) {
@@ -463,6 +481,13 @@ func validateImport() {
 	if len(files) == 0 {
 		fmt.Printf("No dashboards found in [%s] is the directory correct?\n", opts.dir)
 		os.Exit(1)
+	}
+
+	if opts.isDebug {
+		token := opts.token
+		opts.token = "****"
+		slog.Default().Info("validateImport", slog.Any("opts", opts))
+		opts.token = token
 	}
 }
 
@@ -1309,7 +1334,7 @@ func sendRequest(opts *options, method, url string, query map[string]any) (map[s
 	}
 
 	if err = json.Unmarshal(data, &result); err != nil {
-		fmt.Printf("raw response (%d - %s):\n", code, status)
+		fmt.Printf("raw response sr (%d - %s):\n", code, status)
 		fmt.Println(string(data))
 	}
 	return result, status, code, err
@@ -1325,7 +1350,7 @@ func sendRequestArray(opts *options, method, url string, query map[string]any) (
 	}
 
 	if err = json.Unmarshal(data, &result); err != nil {
-		fmt.Printf("raw response (%d - %s):\n", code, status)
+		fmt.Printf("raw response sra (%d - %s):\n", code, status)
 		fmt.Println(string(data))
 	}
 	return result, status, code, err
@@ -1382,6 +1407,16 @@ func doRequest(opts *options, method, url string, query map[string]any) ([]byte,
 	request.Header = opts.headers
 
 	if response, err = opts.client.Do(request); err != nil {
+		if opts.isDebug {
+			slog.Default().Info(
+				"doRequest",
+				slog.String("method", method),
+				slog.String("url", url),
+				slog.String("status", status),
+				slog.Int("code", code),
+				slogx.Err(err),
+			)
+		}
 		return nil, status, code, err
 	}
 
@@ -1391,6 +1426,15 @@ func doRequest(opts *options, method, url string, query map[string]any) ([]byte,
 	//goland:noinspection GoUnhandledErrorResult
 	defer response.Body.Close()
 	data, err = io.ReadAll(response.Body)
+	if opts.isDebug {
+		slog.Default().Info(
+			"doRequest",
+			slog.String("method", method),
+			slog.String("url", url),
+			slog.String("status", status),
+			slog.String("data", string(data)),
+		)
+	}
 	return data, status, code, err
 }
 
@@ -1506,6 +1550,7 @@ func addCommonFlags(commands ...*cobra.Command) {
 		cmd.PersistentFlags().StringVarP(&opts.datasource, "datasource", "s", DefaultDataSource, "Name of your Prometheus datasource used by the imported dashboards")
 		cmd.PersistentFlags().BoolVarP(&opts.variable, "variable", "v", false, "Use datasource as variable, overrides: --datasource")
 		cmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d", "", "When importing, import dashboards from this local directory.\nWhen exporting, local directory to write dashboards to")
+		cmd.PersistentFlags().BoolVar(&opts.isDebug, "debug", false, "Enable debug logging")
 
 		_ = cmd.PersistentFlags().MarkHidden("svm-variable-regex")
 		_ = cmd.MarkPersistentFlagRequired("directory")
