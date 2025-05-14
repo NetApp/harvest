@@ -1101,7 +1101,10 @@ func checkToken(opts *options, ignoreConfig bool, tries int) error {
 	opts.headers.Add("Content-Type", "application/json")
 	opts.headers.Add("Authorization", "Bearer "+opts.token)
 
-	opts.client = &http.Client{Timeout: time.Duration(clientTimeout) * time.Second}
+	opts.client = &http.Client{
+		Timeout:       time.Duration(clientTimeout) * time.Second,
+		CheckRedirect: refuseRedirect,
+	}
 	if strings.HasPrefix(opts.addr, "https://") {
 		tlsConfig := &tls.Config{InsecureSkipVerify: opts.useInsecureTLS} //nolint:gosec
 		opts.client.Transport = &http.Transport{TLSClientConfig: tlsConfig}
@@ -1172,6 +1175,18 @@ func checkToken(opts *options, ignoreConfig bool, tries int) error {
 	}
 
 	return nil
+}
+
+func refuseRedirect(req *http.Request, _ []*http.Request) error {
+	// Refuse to follow redirects, see https://github.com/NetApp/harvest/issues/3617
+	if req.Response != nil {
+		loc := req.Response.Header.Get("Location")
+		if loc != "" {
+			return fmt.Errorf("redirect not allowed. location=[%s] Check that addr is using the correct URL", loc)
+		}
+	}
+
+	return errors.New("redirect not allowed. Check that addr is using the correct URL")
 }
 
 func isValidDatasource(result map[string]any) bool {
