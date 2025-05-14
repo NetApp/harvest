@@ -212,6 +212,17 @@ pipeline {
             }
         }
 
+        stage('Checksum artifacts') {
+           steps {
+               sh '''
+               export PATH=$PATH:/usr/local/go/bin
+               targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
+               cd integration
+               go run checksum/main.go -dir $targetLocation -out $targetLocation
+                '''
+            }
+        }
+
          stage('Publish builds locally'){
           steps {
               script {
