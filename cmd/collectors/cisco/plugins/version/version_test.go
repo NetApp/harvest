@@ -35,6 +35,11 @@ func Test_parseRCF(t *testing.T) {
 * Date      : Generator: v1.6b_2023-07-18_001, file creation: 2024-02-15, 10:28:44`,
 			want: rcf{Version: "v1.6b", Filename: "NX3132Q-V_v2.00_Switch-A1.txt"},
 		},
+		{
+			name: "Generator with version", banner: `* Filename  : NX3232_v1.90-X1_Switch-B2.txt
+* Date      : Generator version: v1.4a_2022-mm-dd_001, file creation: 2024-02-15, 10:28:44`,
+			want: rcf{Version: "v1.4a", Filename: "NX3232_v1.90-X1_Switch-B2.txt"},
+		},
 	}
 
 	for _, tt := range tests {
