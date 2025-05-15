@@ -39,9 +39,7 @@ func (q *Quota) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 		}
 	}
 
-	if err := q.handlingQuotaMetrics(data); err != nil {
-		return nil, nil, err
-	}
+	q.handlingQuotaMetrics(data)
 
 	if q.qtreeMetrics {
 		// metrics with qtree prefix and quota prefix are available to support backward compatibility
@@ -54,7 +52,7 @@ func (q *Quota) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 	return nil, nil, nil
 }
 
-func (q *Quota) handlingQuotaMetrics(data *matrix.Matrix) error {
+func (q *Quota) handlingQuotaMetrics(data *matrix.Matrix) {
 	for _, quota := range data.GetInstances() {
 		if !quota.IsExportable() {
 			continue
@@ -102,5 +100,4 @@ func (q *Quota) handlingQuotaMetrics(data *matrix.Matrix) error {
 			t.SetValueFloat64(quota, value)
 		}
 	}
-	return nil
 }
