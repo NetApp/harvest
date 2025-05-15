@@ -1,5 +1,7 @@
 # StatPerf Collector
 
+**Note: This collector is in beta.**
+
 StatPerf collects performance metrics from ONTAP by invoking the ONTAP CLI statistics command via the private Rest CLI. The full ONTAP CLI command used is:
 
 ```bash
