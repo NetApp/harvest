@@ -6,7 +6,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"log/slog"
 )
 
 type Quota struct {
@@ -40,20 +39,7 @@ func (q *Quota) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 		}
 	}
 
-	// Purge and reset data
-	instanceMap := data.GetInstances()
-	metricsMap := data.GetMetrics()
-	data.PurgeInstances()
-	data.PurgeMetrics()
-
-	for metricName, m := range metricsMap {
-		_, err := data.NewMetricFloat64(metricName, m.GetName())
-		if err != nil {
-			q.SLogger.Error("add metric", slogx.Err(err))
-		}
-	}
-
-	if err := q.handlingQuotaMetrics(instanceMap, metricsMap, data); err != nil {
+	if err := q.handlingQuotaMetrics(data); err != nil {
 		return nil, nil, err
 	}
 
@@ -68,13 +54,11 @@ func (q *Quota) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.
 	return nil, nil, nil
 }
 
-func (q *Quota) handlingQuotaMetrics(instanceMap map[string]*matrix.Instance, metricMap map[string]*matrix.Metric, data *matrix.Matrix) error {
-	for _, quota := range instanceMap {
+func (q *Quota) handlingQuotaMetrics(data *matrix.Matrix) error {
+	for _, quota := range data.GetInstances() {
 		if !quota.IsExportable() {
 			continue
 		}
-		index := quota.GetLabel("index")
-		volumeUUID := quota.GetLabel("volume_uuid")
 		uName := quota.GetLabel("userName")
 		uid := quota.GetLabel("userId")
 		group := quota.GetLabel("groupName")
@@ -95,28 +79,18 @@ func (q *Quota) handlingQuotaMetrics(instanceMap map[string]*matrix.Instance, me
 			}
 		}
 
-		for metricName, m := range metricMap {
+		for metricName, m := range data.GetMetrics() {
 			// set -1 for unlimited
 			value := -1.0
-			quotaInstanceKey := index + volumeUUID + metricName
-			quotaInstance, err := data.NewInstance(quotaInstanceKey)
-			if err != nil {
-				q.SLogger.Debug("add instance", slog.String("metricName", metricName), slogx.Err(err))
-				return err
-			}
-			// set labels
-			for k, v := range quota.GetLabels() {
-				quotaInstance.SetLabel(k, v)
-			}
 
 			if v, ok := m.GetValueFloat64(quota); ok {
 				// space limits are in bytes, converted to kibibytes to match ZAPI
 				if metricName == "space.hard_limit" || metricName == "space.soft_limit" || metricName == "space.used.total" {
 					value = v / 1024
-					quotaInstance.SetLabel("unit", "kibibytes")
+					quota.SetLabel("unit", "kibibytes")
 					if metricName == "space.soft_limit" {
 						t := data.GetMetric("threshold")
-						t.SetValueFloat64(quotaInstance, value)
+						t.SetValueFloat64(quota, value)
 					}
 				} else {
 					value = v
@@ -125,7 +99,7 @@ func (q *Quota) handlingQuotaMetrics(instanceMap map[string]*matrix.Instance, me
 
 			// populate numeric data
 			t := data.GetMetric(metricName)
-			t.SetValueFloat64(quotaInstance, value)
+			t.SetValueFloat64(quota, value)
 		}
 	}
 	return nil
