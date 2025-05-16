@@ -1762,7 +1762,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Displays Link Layer Discovery Protocol (LLDP) neighbors.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1804,7 +1804,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "cisco_lldp_neighbor_labels",
+              "expr": "cisco_lldp_neighbor_labels{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1862,7 +1862,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "",
+          "description": "Displays Cisco Discovery Protocol (CDP) neighbors.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1904,7 +1904,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "cisco_cdp_neighbor_labels",
+              "expr": "cisco_cdp_neighbor_labels{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
               "format": "table",
               "instant": true,
               "interval": "",

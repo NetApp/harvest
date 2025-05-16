@@ -57,13 +57,13 @@ func (l *LLDP) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 	data := dataMap[l.Object]
 	l.client.Metadata.Reset()
 
-	versionMat, err := l.initMatrix(l.templateObject)
+	lldpMat, err := l.initMatrix(l.templateObject)
 	if err != nil {
 		return nil, nil, fmt.Errorf("error while initializing matrix: %w", err)
 	}
 
 	// Set all global labels if they don't already exist
-	versionMat.SetGlobalLabels(data.GetGlobalLabels())
+	lldpMat.SetGlobalLabels(data.GetGlobalLabels())
 
 	data.Reset()
 
@@ -74,13 +74,13 @@ func (l *LLDP) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.M
 		return nil, nil, fmt.Errorf("failed to fetch data: %w", err)
 	}
 
-	l.parseLLDP(output, versionMat)
+	l.parseLLDP(output, lldpMat)
 
 	l.client.Metadata.NumCalls = 1
 	l.client.Metadata.BytesRx = uint64(len(output.Raw))
-	l.client.Metadata.PluginInstances = uint64(len(versionMat.GetInstances()))
+	l.client.Metadata.PluginInstances = uint64(len(lldpMat.GetInstances()))
 
-	return []*matrix.Matrix{versionMat}, l.client.Metadata, nil
+	return []*matrix.Matrix{lldpMat}, l.client.Metadata, nil
 }
 
 func (l *LLDP) initMatrix(name string) (*matrix.Matrix, error) {
@@ -108,12 +108,12 @@ func (l *LLDP) parseLLDP(output gjson.Result, mat *matrix.Matrix) {
 	}
 
 	rows.ForEach(func(_, value gjson.Result) bool {
-		opticModel := NewLLDPModel(value)
+		lldpModel := NewLLDPModel(value)
 		// Skip empty models
-		if opticModel.DeviceID == "" {
+		if lldpModel.DeviceID == "" {
 			return true
 		}
-		models = append(models, opticModel)
+		models = append(models, lldpModel)
 		return true
 	})
 

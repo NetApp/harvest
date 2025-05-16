@@ -57,13 +57,13 @@ func (c *CDP) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 	data := dataMap[c.Object]
 	c.client.Metadata.Reset()
 
-	versionMat, err := c.initMatrix(c.templateObject)
+	cdpMat, err := c.initMatrix(c.templateObject)
 	if err != nil {
 		return nil, nil, fmt.Errorf("error while initializing matrix: %w", err)
 	}
 
 	// Set all global labels if they don't already exist
-	versionMat.SetGlobalLabels(data.GetGlobalLabels())
+	cdpMat.SetGlobalLabels(data.GetGlobalLabels())
 
 	data.Reset()
 
@@ -74,13 +74,13 @@ func (c *CDP) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 		return nil, nil, fmt.Errorf("failed to fetch data: %w", err)
 	}
 
-	c.parseCDP(output, versionMat)
+	c.parseCDP(output, cdpMat)
 
 	c.client.Metadata.NumCalls = 1
 	c.client.Metadata.BytesRx = uint64(len(output.Raw))
-	c.client.Metadata.PluginInstances = uint64(len(versionMat.GetInstances()))
+	c.client.Metadata.PluginInstances = uint64(len(cdpMat.GetInstances()))
 
-	return []*matrix.Matrix{versionMat}, c.client.Metadata, nil
+	return []*matrix.Matrix{cdpMat}, c.client.Metadata, nil
 }
 
 func (c *CDP) initMatrix(name string) (*matrix.Matrix, error) {
@@ -108,12 +108,12 @@ func (c *CDP) parseCDP(output gjson.Result, mat *matrix.Matrix) {
 	}
 
 	rows.ForEach(func(_, value gjson.Result) bool {
-		opticModel := NewCDPModel(value)
+		cdpModel := NewCDPModel(value)
 		// Skip empty models
-		if opticModel.DeviceID == "" {
+		if cdpModel.DeviceID == "" {
 			return true
 		}
-		models = append(models, opticModel)
+		models = append(models, cdpModel)
 		return true
 	})
 
