@@ -131,7 +131,7 @@ func (v *VscanPool) getVScanServerInfo() (map[string]map[string]string, error) {
 
 	serverMap := make(map[string][]ServerData)
 	vserverServerStateMap := make(map[string]map[string]string)
-	fields := []string{"node.name", "svm.name", "ip", "update_time", "state", "interface.name"}
+	fields := []string{"svm.name", "ip", "update_time", "state"}
 	query := "api/protocols/vscan/server-status"
 	href := rest.NewHrefBuilder().
 		APIPath(query).
@@ -145,7 +145,11 @@ func (v *VscanPool) getVScanServerInfo() (map[string]map[string]string, error) {
 
 	for _, vscanServer := range result {
 		svmName := vscanServer.Get("svm.name").ClonedString()
-		serverMap[svmName] = append(serverMap[svmName], ServerData{ip: vscanServer.Get("ip").ClonedString(), state: vscanServer.Get("state").ClonedString(), updateTime: collectors.HandleTimestamp(vscanServer.Get("update_time").ClonedString())})
+		serverMap[svmName] = append(serverMap[svmName], ServerData{
+			ip:         vscanServer.Get("ip").ClonedString(),
+			state:      vscanServer.Get("state").ClonedString(),
+			updateTime: collectors.HandleTimestamp(vscanServer.Get("update_time").ClonedString()),
+		})
 	}
 
 	for svm, serverData := range serverMap {
