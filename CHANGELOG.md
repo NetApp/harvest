@@ -120,6 +120,8 @@ pushpin: Highlights of this major release include:
 - Document ethernet switch port counters ([#3604](https://github.com/NetApp/harvest/pull/3604))
 - Document CiscoRest collector ([#3619](https://github.com/NetApp/harvest/pull/3619))
 - Fix restperf filter doc ([#3622](https://github.com/NetApp/harvest/pull/3622))
+- Update metric doc ([#3634](https://github.com/NetApp/harvest/pull/3634))
+- Add beta to StatPerf docs ([#3635](https://github.com/NetApp/harvest/pull/3635))
 
 
 ### Refactoring
@@ -138,6 +140,7 @@ pushpin: Highlights of this major release include:
 - Handle histogram skips in exporter ([#3608](https://github.com/NetApp/harvest/pull/3608))
 - Capitalize the Grafana Cisco folder ([#3612](https://github.com/NetApp/harvest/pull/3612))
 - Improve Grafana import logging (#3620) ([#3630](https://github.com/NetApp/harvest/pull/3630))
+- Update instance generation in quota plugin ([#3637](https://github.com/NetApp/harvest/pull/3637))
 
 
 ### Miscellaneous
