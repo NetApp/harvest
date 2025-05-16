@@ -6,16 +6,11 @@ pushpin: Highlights of this major release include:
 ## :star: New Features
 
 - Cisco Switch collector:
-  - Harvest supports 3K and 9K cisco switches.
-  - Harvest monitors Ethernet, Optics, Interfaces and Version related details.
-  - Harvest includes new Cisco Switch dashboard.
-  - Thanks @BrendonA667 for reporting.
-
-- StatPerf collector: Harvest collects ONTAP REST performance counters via private CLI perf collector
+  - Harvest collects metrics from all supported MetroCluster Cisco switches.
+  - Harvest collects environmental, ethernet, optics, interface, and version related details.
+  - Harvest includes a new Cisco switch dashboard. Thanks to @BrendonA667, Mamoep, and Eric Brüning for reporting and providing valuable feedback on this feature.
 
 - Harvest support Audit log for Volume object. Thanks @mvilam79 for reporting.
-
-- Harvest supports EMS Events parameters label. Thanks @gaur-piyush for reporting.
 
 - Supports filter for RestPerf Collector.
 
@@ -25,7 +20,7 @@ pushpin: Highlights of this major release include:
 
 - Harvest collects volume footprint metrics.
 
-- Harvest include checksums with release artifacts
+- Harvest includes a beta template to collect ethernet switch ports. Thanks to @Robert Watson for reporting!
 
 - :star: Several of the existing dashboards include new panels in this release:
   - The `Disk` dashboard updates CP panels `Disk Utilization` panel.
