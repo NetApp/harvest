@@ -85,10 +85,11 @@ func (q *Quota) handlingQuotaMetrics(data *matrix.Matrix) {
 				// space limits are in bytes, converted to kibibytes to match ZAPI
 				if metricName == "space.hard_limit" || metricName == "space.soft_limit" || metricName == "space.used.total" {
 					value = v / 1024
-					quota.SetLabel("unit", "kibibytes")
+					m.SetLabel("unit", "kibibytes")
 					if metricName == "space.soft_limit" {
 						t := data.GetMetric("threshold")
 						t.SetValueFloat64(quota, value)
+						t.SetLabel("unit", "kibibytes")
 					}
 				} else {
 					value = v
