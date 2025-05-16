@@ -37,6 +37,5 @@ export_options:
     - qtree
     - svm
     - type
-    - unit
     - user
     - volume
