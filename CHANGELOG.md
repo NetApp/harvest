@@ -7,7 +7,7 @@ pushpin: Highlights of this major release include:
 
 - Cisco Switch collector:
   - Harvest collects metrics from all supported MetroCluster Cisco switches.
-  - Harvest collects environmental, ethernet, optics, interface, and version related details.
+  - Harvest collects environmental, ethernet, optics, interface, link layer discovery protocol (LLDP), Cisco discovery protocol (CDP), and version related details.
   - Harvest includes a new Cisco switch dashboard. Thanks to @BrendonA667, Mamoep, and Eric Brüning for reporting and providing valuable feedback on this feature.
 
 - Harvest support Audit log for Volume object. Thanks @mvilam79 for reporting.
@@ -107,7 +107,7 @@ pushpin: Highlights of this major release include:
 - Improve Cisco RCF parsing ([#3629](https://github.com/NetApp/harvest/pull/3629))
 - Grafana import should refuse to redirect ([#3632](https://github.com/NetApp/harvest/pull/3632))
 - Handle empty values in template ([#3627](https://github.com/NetApp/harvest/pull/3627))
-
+- Vscanpool plugin should only ask for fields it uses ([#3639](https://github.com/NetApp/harvest/pull/3639))
 
 ### :closed_book: Documentation
 - Add changelog discussion link ([#3495](https://github.com/NetApp/harvest/pull/3495))
