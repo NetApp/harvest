@@ -1,0 +1,6 @@
+name:               CDP
+query:              "show cdp neighbors detail"
+object:             cisco_cdp_neighbor
+
+plugins:
+  - CDP

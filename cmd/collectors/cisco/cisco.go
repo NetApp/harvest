@@ -2,7 +2,9 @@ package cisco
 
 import (
 	"fmt"
+	"github.com/netapp/harvest/v2/cmd/collectors/cisco/plugins/cdp"
 	"github.com/netapp/harvest/v2/cmd/collectors/cisco/plugins/environment"
+	"github.com/netapp/harvest/v2/cmd/collectors/cisco/plugins/lldp"
 	"github.com/netapp/harvest/v2/cmd/collectors/cisco/plugins/networkinterface"
 	"github.com/netapp/harvest/v2/cmd/collectors/cisco/plugins/optic"
 	"github.com/netapp/harvest/v2/cmd/collectors/cisco/plugins/version"
@@ -193,10 +195,14 @@ func (c *CiscoRest) getClient(a *collector.AbstractCollector) (*rest.Client, err
 
 func (c *CiscoRest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin {
 	switch kind {
+	case "CDP":
+		return cdp.New(abc)
 	case "Environment":
 		return environment.New(abc)
 	case "Interface":
 		return networkinterface.New(abc)
+	case "LLDP":
+		return lldp.New(abc)
 	case "Optic":
 		return optic.New(abc)
 	case "Version":

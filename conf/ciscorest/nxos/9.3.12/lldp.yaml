@@ -1,0 +1,6 @@
+name:               LLDP
+query:              "show lldp neighbors detail"
+object:             cisco_lldp_neighbor
+
+plugins:
+  - LLDP
