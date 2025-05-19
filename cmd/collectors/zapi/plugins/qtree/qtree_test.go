@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func NewQtree(historicalLabels bool) plugin.Plugin {
+func NewQtree(historicalLabels bool, testFileName string) plugin.Plugin {
 	params := node.NewS("Qtree")
 	pp := node.NewS("QtreeParent")
 	pp.NewChildS("poller_name", "test")
@@ -22,7 +22,7 @@ func NewQtree(historicalLabels bool) plugin.Plugin {
 	q.historicalLabels = historicalLabels
 	q.data = matrix.New(q.Parent+".Qtree", "quota", "quota")
 	q.client = client.NewTestClient()
-	q.testFilePath = "testdata/quotas.xml"
+	q.testFilePath = testFileName
 	exportOptions := node.NewS("export_options")
 	instanceKeys := exportOptions.NewChildS("instance_keys", "")
 	// apply all instance keys, instance labels from qtree.yaml to all quota metrics
@@ -37,9 +37,10 @@ func NewQtree(historicalLabels bool) plugin.Plugin {
 }
 
 func TestRunForAllImplementations(t *testing.T) {
+	testFileName := "testdata/quotas.xml"
 	testCases := []struct {
 		name                 string
-		createQtree          func(historicalLabels bool) plugin.Plugin
+		createQtree          func(historicalLabels bool, testFileName string) plugin.Plugin
 		historicalLabels     bool
 		expectedQuotaCount   int
 		expectedQtreeCount   int
@@ -99,14 +100,14 @@ func TestRunForAllImplementations(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			runQtreeTest(t, tc.createQtree, tc.historicalLabels, tc.expectedQuotaCount, tc.expectedQtreeCount, tc.quotaInstanceKey, tc.expectedQuotaLabels, tc.withNonExportedQtree)
+			runQtreeTest(t, tc.createQtree, tc.historicalLabels, tc.expectedQuotaCount, tc.expectedQtreeCount, tc.quotaInstanceKey, tc.expectedQuotaLabels, tc.withNonExportedQtree, testFileName)
 		})
 	}
 }
 
 // Common test logic for Qtree plugin
-func runQtreeTest(t *testing.T, createQtree func(historicalLabels bool) plugin.Plugin, historicalLabels bool, expectedQuotaCount int, expectedQtreeCount int, quotaInstanceKey string, expectedQuotaLabels int, withNonExportedQtree bool) {
-	q := createQtree(historicalLabels)
+func runQtreeTest(t *testing.T, createQtree func(historicalLabels bool, testFileName string) plugin.Plugin, historicalLabels bool, expectedQuotaCount int, expectedQtreeCount int, quotaInstanceKey string, expectedQuotaLabels int, withNonExportedQtree bool, testFileName string) {
+	q := createQtree(historicalLabels, testFileName)
 
 	// Initialize the plugin
 	if err := q.Init(conf.Remote{}); err != nil {
@@ -179,5 +180,52 @@ func verifyLabelCount(t *testing.T, quotaOutput *matrix.Matrix, quotaInstanceKey
 
 	if quotaLabels != expectedQuotaLabels {
 		t.Errorf("labels = %d; want %d", quotaLabels, expectedQuotaLabels)
+	}
+}
+
+func TestUserIdentifierHandling(t *testing.T) {
+	testFileName := "testdata/quotas2.xml"
+	testCases := []struct {
+		name                string
+		expectedInstanceKey []string
+	}{
+		{
+			name: "User identified by user ID",
+			expectedInstanceKey: []string{
+				"abcde.vol0..0.disk-limit.user",
+				"abcde.vol0..0.disk-used.user",
+				"abcde.vol0..1.disk-used.user",
+				"abcde.vol0..1.disk-limit.user"},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			q := NewQtree(false, testFileName)
+
+			if err := q.Init(conf.Remote{}); err != nil {
+				t.Fatalf("failed to initialize plugin: %v", err)
+			}
+
+			qtreeData := matrix.New("qtree", "qtree", "qtree")
+			qtreeInstance, _ := qtreeData.NewInstance("svm1.volume1.qtree1")
+			addLabels(qtreeInstance)
+
+			dataMap := map[string]*matrix.Matrix{
+				"qtree": qtreeData,
+			}
+
+			output, _, err := q.Run(dataMap)
+			if err != nil {
+				t.Fatalf("Run method failed: %v", err)
+			}
+
+			quotaOutput := output[0]
+			for _, iKey := range tc.expectedInstanceKey {
+				if quotaInstance := quotaOutput.GetInstance(iKey); quotaInstance == nil {
+					t.Errorf("expected instance key %s not found", tc.expectedInstanceKey)
+				}
+			}
+		})
 	}
 }
