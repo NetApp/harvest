@@ -122,7 +122,7 @@ func (l *LLDP) parseLLDP(output gjson.Result, mat *matrix.Matrix) {
 		instance, err := mat.NewInstance(instanceKey)
 		if err != nil {
 			l.SLogger.Warn("Failed to create lldp instance", slog.String("key", instanceKey))
-			return
+			continue
 		}
 
 		instance.SetLabel("device_id", model.DeviceID)
@@ -198,6 +198,8 @@ func lldpCapabilities(capStr string) []string {
 			code = "Station"
 		case "O":
 			code = "Other"
+		default:
+			code = fmt.Sprintf("Unknown (%s)", letter)
 		}
 
 		if code != "" {

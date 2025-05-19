@@ -122,7 +122,7 @@ func (c *CDP) parseCDP(output gjson.Result, mat *matrix.Matrix) {
 		instance, err := mat.NewInstance(instanceKey)
 		if err != nil {
 			c.SLogger.Warn("Failed to create cdp instance", slog.String("key", instanceKey))
-			return
+			continue
 		}
 
 		instance.SetLabel("capabilities", strings.Join(model.Capabilities, ","))
