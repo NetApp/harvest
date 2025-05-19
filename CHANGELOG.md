@@ -78,7 +78,7 @@ pushpin: Highlights of this major release include:
 - Update Cisco dashboard units and comment ([#3613](https://github.com/NetApp/harvest/pull/3613))
 - Add Volume footprint metrics to Volume Dashboard ([#3624](https://github.com/NetApp/harvest/pull/3624))
 - Include checksums with release artifacts ([#3628](https://github.com/NetApp/harvest/pull/3628))
-
+- Cisco collector should collect CDP and LLDP metrics ([#3638](https://github.com/NetApp/harvest/pull/3638))
 
 ### :bug: Bug Fixes
 - Handled empty node name in clustersoftware plugin ([#3460](https://github.com/NetApp/harvest/pull/3460))
@@ -110,6 +110,7 @@ pushpin: Highlights of this major release include:
 - Grafana import should refuse to redirect ([#3632](https://github.com/NetApp/harvest/pull/3632))
 - Handle empty values in template ([#3627](https://github.com/NetApp/harvest/pull/3627))
 - Vscanpool plugin should only ask for fields it uses ([#3639](https://github.com/NetApp/harvest/pull/3639))
+- Handle uname in qtree zapi plugin ([#3641](https://github.com/NetApp/harvest/pull/3641))
 
 ### :closed_book: Documentation
 - Add changelog discussion link ([#3495](https://github.com/NetApp/harvest/pull/3495))
@@ -124,7 +125,7 @@ pushpin: Highlights of this major release include:
 - Fix restperf filter doc ([#3622](https://github.com/NetApp/harvest/pull/3622))
 - Update metric doc ([#3634](https://github.com/NetApp/harvest/pull/3634))
 - Add beta to StatPerf docs ([#3635](https://github.com/NetApp/harvest/pull/3635))
-
+- Fix default schedule values for collector ([#3642](https://github.com/NetApp/harvest/pull/3642))
 
 ### Refactoring
 - Remove tidwall match and pretty dependencies ([#3503](https://github.com/NetApp/harvest/pull/3503))
@@ -143,7 +144,7 @@ pushpin: Highlights of this major release include:
 - Capitalize the Grafana Cisco folder ([#3612](https://github.com/NetApp/harvest/pull/3612))
 - Improve Grafana import logging (#3620) ([#3630](https://github.com/NetApp/harvest/pull/3630))
 - Update instance generation in quota plugin ([#3637](https://github.com/NetApp/harvest/pull/3637))
-
+- Remove unused errors ([#3640](https://github.com/NetApp/harvest/pull/3640))
 
 ### Miscellaneous
 - Merge release/25.02.0 into main ([#3474](https://github.com/NetApp/harvest/pull/3474))
