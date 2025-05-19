@@ -37,7 +37,7 @@ Parameters in the poller section should define the following required parameters
 | Poller name (header)   | string, **required** | Poller name, user-defined value                                                |         |
 | `addr`                 | string, **required** | IPv4, IPv6 or FQDN of the target system                                        |         |
 | `datacenter`           | string, **required** | Datacenter name, user-defined value                                            |         |
-| `username`, `password` | string, **required** | Cisco swicj username and password with at least `network-operator` permissions |         |
+| `username`, `password` | string, **required** | Cisco switch username and password with at least `network-operator` permissions|         |
 | `collectors`           | list, **required**   | Name of collector to run for this poller, use `CiscoRest` for this collector   |         |
 
 ### CiscoRest configuration file
