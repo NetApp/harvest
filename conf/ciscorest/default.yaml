@@ -5,7 +5,9 @@ schedule:
   - data:      3m
 
 objects:
+  CDP:                 cdp.yaml
   Environment:         environment.yaml
   Interface:           interface.yaml
+  LLDP:                lldp.yaml
   Optic:               optic.yaml
   Version:             version.yaml

@@ -415,7 +415,16 @@ func newFanModel9K(output gjson.Result, logger *slog.Logger) FanModel {
 	})
 
 	fanModel.fans = fans
-	fanSpeed := output.Get("fandetails.TABLE_fan_zone_speed.ROW_fan_zone_speed.zonespeed").String()
+
+	fanSpeedQuery := "fandetails.TABLE_fan_zone_speed.ROW_fan_zone_speed.zonespeed"
+	fanSpeeds := output.Get(fanSpeedQuery)
+
+	if !fanSpeeds.Exists() {
+		logger.Warn("Unable to parse fan speed because rows are missing", slog.String("query", fanSpeedQuery))
+		return fanModel
+	}
+
+	fanSpeed := fanSpeeds.String()
 	speed := strings.ReplaceAll(strings.ReplaceAll(fanSpeed, "0x", ""), "0X", "")
 	fanModel.speed, err = strconv.ParseInt(speed, 16, 64)
 	if err != nil {

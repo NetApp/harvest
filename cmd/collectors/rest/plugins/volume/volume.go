@@ -140,6 +140,8 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 		}
 	}
 
+	flexgroupFootPrintMatrix := collectors.ProcessFlexGroupFootPrint(data, v.SLogger)
+
 	volumeMap, err := v.getVolumeInfo()
 	if err != nil {
 		v.SLogger.Error("Failed to collect volume info data", slogx.Err(err))
@@ -155,7 +157,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 	v.handleTags(data.GetGlobalLabels())
 
 	v.currentVal++
-	return []*matrix.Matrix{v.arw, v.tags}, v.client.Metadata, nil
+	return []*matrix.Matrix{v.arw, v.tags, flexgroupFootPrintMatrix}, v.client.Metadata, nil
 }
 
 func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]volumeInfo) {

@@ -141,7 +141,10 @@ func (v *Version) parseVersionAndBanner(output gjson.Result, versionMat *matrix.
 
 var filenameRegex = regexp.MustCompile(`(?m)Filename\s+:\s+(.*?)$`)
 var generatorRegex = regexp.MustCompile(`Generator:\s+([^\s_]+)`)
-var versionRegex = regexp.MustCompile(`Version\s+:\s+(.*?)$`)
+var versionRegexes = []*regexp.Regexp{
+	regexp.MustCompile(`Version\s+:\s+(.*?)$`),
+	regexp.MustCompile(`Generator version:\s+([^\s_]+)`),
+}
 
 type rcf struct {
 	Filename string
@@ -159,20 +162,26 @@ func parseRCF(banner string) rcf {
 
 	anRCF.Filename = matches[1]
 
-	// There are two different kinds of banners.
+	// There are several different kinds of banners.
 	// One form looks like this:
 	// * Date      : Generator: v1.6c 2023-12-05_001, file creation: 2024-07-29, 11:19:36
-	// The other form looks like this:
+	// Another form looks like this:
 	// * Version  : v1.10
+	// Another form looks like this:
+	// * Date      : Generator version: v1.4a_2022-mm-dd_001
 	// The first form should extract version=v1.6c, the second form should extract v1.10
+	// The third form should extract v1.4a
 
 	matches = generatorRegex.FindStringSubmatch(banner)
 	if len(matches) == 2 {
 		anRCF.Version = matches[1]
 	} else {
-		matches = versionRegex.FindStringSubmatch(banner)
-		if len(matches) == 2 {
-			anRCF.Version = matches[1]
+		for _, regex := range versionRegexes {
+			matches = regex.FindStringSubmatch(banner)
+			if len(matches) == 2 {
+				anRCF.Version = matches[1]
+				break
+			}
 		}
 	}
 

@@ -1,0 +1,45 @@
+<results status="passed">
+    <attributes-list>
+        <quota>
+            <disk-limit>-</disk-limit>
+            <disk-used>0</disk-used>
+            <file-limit>-</file-limit>
+            <files-used>6</files-used>
+            <quota-target />
+            <quota-type>user</quota-type>
+            <quota-users>
+                <quota-user>
+                    <quota-user-id>0</quota-user-id>
+                    <quota-user-type>uid</quota-user-type>
+                </quota-user>
+            </quota-users>
+            <soft-disk-limit>20</soft-disk-limit>
+            <soft-file-limit>30</soft-file-limit>
+            <threshold>10</threshold>
+            <tree />
+            <volume>vol0</volume>
+            <vserver>abcde</vserver>
+        </quota>
+        <quota>
+            <disk-limit>-</disk-limit>
+            <disk-used>0</disk-used>
+            <file-limit>-</file-limit>
+            <files-used>6</files-used>
+            <quota-target />
+            <quota-type>user</quota-type>
+            <quota-users>
+                <quota-user>
+                    <quota-user-id>1</quota-user-id>
+                    <quota-user-type>uid</quota-user-type>
+                </quota-user>
+            </quota-users>
+            <soft-disk-limit>20</soft-disk-limit>
+            <soft-file-limit>30</soft-file-limit>
+            <threshold>10</threshold>
+            <tree />
+            <volume>vol0</volume>
+            <vserver>abcde</vserver>
+        </quota>
+    </attributes-list>
+    <num-records>2</num-records>
+</results>
