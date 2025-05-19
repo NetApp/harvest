@@ -6,15 +6,15 @@ pushpin: Highlights of this major release include:
 ## :star: New Features
 
 - Cisco Switch collector:
-  - Harvest collects metrics from all supported MetroCluster Cisco switches. More details [here](https://netapp.github.io/harvest/25.05/configure-cisco-rest).
+  - Harvest collects metrics from all supported MetroCluster Cisco switches. More details [here](https://netapp.github.io/harvest/latest/configure-cisco-rest).
   - Harvest collects environmental, ethernet, optics, interface, link layer discovery protocol (LLDP), Cisco discovery protocol (CDP), and version related details.
   - Harvest includes a new Cisco switch dashboard. Thanks to @BrendonA667, Mamoep, and Eric Brüning for reporting and providing valuable feedback on this feature.
 
-- Harvest supports KeyPerf collector, which is designed to gather performance counters from ONTAP objects that include a `statistics` field in their REST responses. More details [here](https://netapp.github.io/harvest/latest/configure-keyperf).
+- Harvest includes a new performance collector named KeyPerf, designed to gather performance counters from ONTAP objects that include a `statistics` field in their REST responses. More details [here](https://netapp.github.io/harvest/latest/configure-keyperf).
 
-- Harvest supports auditing volume operations such as create and delete via ONTAP CLI or REST commands, tracked through the `ONTAP: AuditLog` dashboard. Thanks @mvilam79 for reporting. More details [here](https://github.com/NetApp/harvest/discussions/3478).
+- Harvest supports auditing volume operations such as create,delete and modify via ONTAP CLI or REST commands, tracked through the `ONTAP: AuditLog` dashboard. Thanks @mvilam79 for reporting. More details [here](https://github.com/NetApp/harvest/discussions/3478).
 
-- Harvest supports filter for the RestPerf collector. See [Filter](https://netapp.github.io/harvest/latest/configure-rest/#filter) for more detail.
+- Harvest supports filtering for the RestPerf collector. See [Filter](https://netapp.github.io/harvest/latest/configure-rest/#filter) for more detail.
 
 - Harvest collects vscan server pool active connection. Thanks @BrendonA667 for reporting.
 
