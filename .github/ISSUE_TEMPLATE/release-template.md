@@ -84,7 +84,7 @@ bin/harvest generate metrics --poller POLLERNAME
 - [ ] Open the `CHANGELOG.md` file, copy the single $RELEASE section at the top, and paste into the release notes text area. 
 - [ ] Ensure the `Set as the latest release` checkbox is selected
 - [ ] Ensure the `Create a discussion for this release ` checkbox is selected
-- [ ] Upload the artifacts from the Jenkins build above and attach to the release
+- [ ] Upload the artifacts from the Jenkins build above, including `sha256sums.txt` and attach to the release
 - [ ] Click `Publish release` button
 - [ ] Announce on Discord 
 - [ ] Publish latest docs to netapp.github.io
