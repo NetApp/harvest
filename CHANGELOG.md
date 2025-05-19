@@ -1,6 +1,187 @@
 # Change Log
 ## [Releases](https://github.com/NetApp/harvest/releases)
 
+## 25.05.0 / 2025-05-19 Release
+pushpin: Highlights of this major release include:
+## :star: New Features
+
+- Cisco Switch collector:
+  - Harvest collects metrics from all supported MetroCluster Cisco switches. More details [here](https://netapp.github.io/harvest/latest/configure-cisco-rest).
+  - Harvest collects environmental, ethernet, optics, interface, link layer discovery protocol (LLDP), Cisco discovery protocol (CDP), and version related details.
+  - Harvest includes a new Cisco switch dashboard. Thanks to @BrendonA667, Mamoep, and Eric Brüning for reporting and providing valuable feedback on this feature.
+
+- Harvest includes a new performance collector named KeyPerf, designed to gather performance counters from ONTAP objects that include a `statistics` field in their REST responses. More details [here](https://netapp.github.io/harvest/latest/configure-keyperf).
+
+- Harvest supports auditing volume operations such as create,delete and modify via ONTAP CLI or REST commands, tracked through the `ONTAP: AuditLog` dashboard. Thanks @mvilam79 for reporting. More details [here](https://github.com/NetApp/harvest/discussions/3478).
+
+- Harvest supports filtering for the RestPerf collector. See [Filter](https://netapp.github.io/harvest/latest/configure-rest/#filter) for more detail.
+
+- Harvest collects vscan server pool active connection. Thanks @BrendonA667 for reporting.
+
+- Harvest collects uptime in lif perf templates and shows them in the SVM dashboard. Thanks to @Pengng88 for reporting.
+
+- Harvest collects volume footprint metrics and displays them through the Volume dashboard. Thanks to @Robert Brown for reporting.
+
+- Harvest includes a beta template to collect ethernet switch ports. Thanks to @Robert Watson for reporting!
+
+- :star: Several of the existing dashboards include new panels in this release:
+  - The `Disk` dashboard updates CP panels `Disk Utilization` panel.
+  - The `Node` dashboard include the Node column in the `Node Detail` panel.
+  - The `Quota` dashboard includes `Space Used` panel. Thanks @razaahmed for reporting.
+  - The `Aggregate` dashboard includes `Growth Rate` panel. Thanks @Preston Nguyen for reporting.
+  - The `Volume` dashboard includes `Growth Rate` panel. Thanks @Preston Nguyen for reporting.
+  - The `Volume` dashboard includes volume footprint metrics in `FabricPool` panel. Thanks @RBrown for reporting.
+
+## Announcements
+
+:bangbang: **IMPORTANT** If using Docker Compose and you want to keep your historical Prometheus data, please read [how to migrate your Prometheus volume](https://github.com/NetApp/harvest/blob/main/docs/MigratePrometheusDocker.md)
+
+:bulb: **IMPORTANT** After upgrade, don't forget to re-import your dashboards, so you get all the new enhancements and fixes. You can import them via the 'bin/harvest grafana import' CLI, from the Grafana UI, or from the 'Maintenance > Reset Harvest Dashboards' button in NAbox3. For NAbox4, this step is not needed.
+
+## Known Issues
+
+:bulb: **IMPORTANT** FSx ZapiPerf workload collector fails to collect metrics, please use RestPerf instead.
+
+## Thanks to all the awesome contributors
+
+:metal: Thanks to all the people who've opened issues, asked questions on Discord, and contributed code or dashboards this release:
+
+@WayneShen2, @mvilam79, @RobbW, @Robert Watson, @roller, @Pengng88, @gaur-piyush, @Chris Gautcher, @BrendonA667, @razaahmed, @nicolai-hornung-bl, @Preston Nguyen, @Robert Brown, @jay-law
+
+:seedling: This release includes 28 features, 28 bug fixes, 13 documentation, 17 refactoring, 16 miscellaneous, and 11 ci pull requests.
+
+### :rocket: Features
+- Disable qtree perf metrics for KeyPerf collector ([#3488](https://github.com/NetApp/harvest/pull/3488))
+- Volume Audit log ([#3479](https://github.com/NetApp/harvest/pull/3479))
+- Handled duplicate instance issue in clustersoftware plugin ([#3486](https://github.com/NetApp/harvest/pull/3486))
+- Split cp panels in disk dashboard ([#3496](https://github.com/NetApp/harvest/pull/3496))
+- Adding uptime in lif perf templates ([#3507](https://github.com/NetApp/harvest/pull/3507))
+- Harvest EMS Events label plugin ([#3511](https://github.com/NetApp/harvest/pull/3511))
+- Filter support for RestPerf Collector ([#3514](https://github.com/NetApp/harvest/pull/3514))
+- Adding vscan server pool rest template and plugin changes ([#3519](https://github.com/NetApp/harvest/pull/3519))
+- Synthesize a timestamp when it is missing from KeyPerf responses ([#3544](https://github.com/NetApp/harvest/pull/3544))
+- Node dashboard should include the Node column in the Node detai… ([#3553](https://github.com/NetApp/harvest/pull/3553))
+- Adding format for promql in cluster dashboard ([#3538](https://github.com/NetApp/harvest/pull/3538))
+- Harvest should monitor Cisco 3K and 9K switches ([#3559](https://github.com/NetApp/harvest/pull/3559))
+- Adding space used time series panel in quota dashboard ([#3561](https://github.com/NetApp/harvest/pull/3561))
+- Cisco collector should collect optics metrics ([#3575](https://github.com/NetApp/harvest/pull/3575))
+- Private CLI perf collector StatPerf ([#3566](https://github.com/NetApp/harvest/pull/3566))
+- Cisco collector should collect optics metrics for transceivers … ([#3580](https://github.com/NetApp/harvest/pull/3580))
+- Add growth rate panel for Aggregate ([#3582](https://github.com/NetApp/harvest/pull/3582))
+- Use timestamp provided by CLI in statperf ([#3585](https://github.com/NetApp/harvest/pull/3585))
+- Add crc error for switch interface ([#3590](https://github.com/NetApp/harvest/pull/3590))
+- Dedup statperf against other perf collectors ([#3592](https://github.com/NetApp/harvest/pull/3592))
+- Harvest should collect volume footprint metrics ([#3598](https://github.com/NetApp/harvest/pull/3598))
+- Harvest should collect ethernet switch ports ([#3601](https://github.com/NetApp/harvest/pull/3601))
+- Adding cisco switch dashboard ([#3574](https://github.com/NetApp/harvest/pull/3574))
+- Add growth rate for volume and aggregate ([#3610](https://github.com/NetApp/harvest/pull/3610))
+- Update Cisco dashboard units and comment ([#3613](https://github.com/NetApp/harvest/pull/3613))
+- Add Volume footprint metrics to Volume Dashboard ([#3624](https://github.com/NetApp/harvest/pull/3624))
+- Include checksums with release artifacts ([#3628](https://github.com/NetApp/harvest/pull/3628))
+- Cisco collector should collect CDP and LLDP metrics ([#3638](https://github.com/NetApp/harvest/pull/3638))
+
+### :bug: Bug Fixes
+- Handled empty node name in clustersoftware plugin ([#3460](https://github.com/NetApp/harvest/pull/3460))
+- Duplicate timeseries in volume dashboard ([#3483](https://github.com/NetApp/harvest/pull/3483))
+- Update title of number of snapmirror transfers ([#3485](https://github.com/NetApp/harvest/pull/3485))
+- Network dashboard link speed units should be Megabits per second ([#3491](https://github.com/NetApp/harvest/pull/3491))
+- Workload and workload_volume templates should invoke the instance task before the data task ([#3498](https://github.com/NetApp/harvest/pull/3498))
+- Handled empty scanner and export false case for vscan ([#3502](https://github.com/NetApp/harvest/pull/3502))
+- KeyPerf Collector Volume stats are incorrect for flexgroup ([#3520](https://github.com/NetApp/harvest/pull/3520))
+- EMS cache handling ([#3524](https://github.com/NetApp/harvest/pull/3524))
+- IWARP read and write IOPS for ZAPI should be expressed as rate ([#3550](https://github.com/NetApp/harvest/pull/3550))
+- Aligning Harvest Dashboard node metrics with ONTAP CLI Data ([#3549](https://github.com/NetApp/harvest/pull/3549))
+- Handle system:node deprecate metrics in ZapiPerf ([#3554](https://github.com/NetApp/harvest/pull/3554))
+- Update namespace counters ([#3558](https://github.com/NetApp/harvest/pull/3558))
+- StorageGrid Collector handles global_prefix inconsistently ([#3565](https://github.com/NetApp/harvest/pull/3565))
+- `grafana import` should add labels to all panel expressions when… ([#3567](https://github.com/NetApp/harvest/pull/3567))
+- Cisco environment plugin should trim watts ([#3572](https://github.com/NetApp/harvest/pull/3572))
+- Handle string parsing for switch templates ([#3578](https://github.com/NetApp/harvest/pull/3578))
+- yaml parsing should handle key/values with spaces, colons, quotes ([#3581](https://github.com/NetApp/harvest/pull/3581))
+- Handle array element for optic metrics ([#3589](https://github.com/NetApp/harvest/pull/3589))
+- Filter label for ems destination is missing ([#3596](https://github.com/NetApp/harvest/pull/3596))
+- Harvest should collect ethernet switch ports when timestamp is m… ([#3603](https://github.com/NetApp/harvest/pull/3603))
+- Handle histogram skips in exporter ([#3606](https://github.com/NetApp/harvest/pull/3606))
+- Handled nil aggr instance in aggr plugin ([#3607](https://github.com/NetApp/harvest/pull/3607))
+- Handle HA and volume move alerts ([#3611](https://github.com/NetApp/harvest/pull/3611))
+- Poller Union2 should handle prom_port ([#3614](https://github.com/NetApp/harvest/pull/3614))
+- Handle empty values in template ([#3626](https://github.com/NetApp/harvest/pull/3626))
+- Improve Cisco RCF parsing ([#3629](https://github.com/NetApp/harvest/pull/3629))
+- Grafana import should refuse to redirect ([#3632](https://github.com/NetApp/harvest/pull/3632))
+- Handle empty values in template ([#3627](https://github.com/NetApp/harvest/pull/3627))
+- Vscanpool plugin should only ask for fields it uses ([#3639](https://github.com/NetApp/harvest/pull/3639))
+- Handle uname in qtree zapi plugin ([#3641](https://github.com/NetApp/harvest/pull/3641))
+
+### :closed_book: Documentation
+- Add changelog discussion link ([#3495](https://github.com/NetApp/harvest/pull/3495))
+- Handled plugin custom prefix name for metrics ([#3493](https://github.com/NetApp/harvest/pull/3493))
+- Asar2 support ([#3535](https://github.com/NetApp/harvest/pull/3535))
+- Add labels metric doc ([#3532](https://github.com/NetApp/harvest/pull/3532))
+- Update private cli ONTAP link ([#3591](https://github.com/NetApp/harvest/pull/3591))
+- Harvest should document volume footprint metrics ([#3599](https://github.com/NetApp/harvest/pull/3599))
+- StatPerf collector documentation ([#3600](https://github.com/NetApp/harvest/pull/3600))
+- Document ethernet switch port counters ([#3604](https://github.com/NetApp/harvest/pull/3604))
+- Document CiscoRest collector ([#3619](https://github.com/NetApp/harvest/pull/3619))
+- Fix restperf filter doc ([#3622](https://github.com/NetApp/harvest/pull/3622))
+- Update metric doc ([#3634](https://github.com/NetApp/harvest/pull/3634))
+- Add beta to StatPerf docs ([#3635](https://github.com/NetApp/harvest/pull/3635))
+- Fix default schedule values for collector ([#3642](https://github.com/NetApp/harvest/pull/3642))
+
+### Refactoring
+- Remove tidwall match and pretty dependencies ([#3503](https://github.com/NetApp/harvest/pull/3503))
+- Update log message ([#3526](https://github.com/NetApp/harvest/pull/3526))
+- Debug build logs ([#3536](https://github.com/NetApp/harvest/pull/3536))
+- Revert debug build logs ([#3537](https://github.com/NetApp/harvest/pull/3537))
+- Replace benchmark.N with benchmark.Loop() ([#3547](https://github.com/NetApp/harvest/pull/3547))
+- Remove zapiperf debug log for qos ([#3560](https://github.com/NetApp/harvest/pull/3560))
+- Support root aggrs in rest template ([#3569](https://github.com/NetApp/harvest/pull/3569))
+- Replace `gopkg.in/yaml` with `github.com/goccy/go-yaml` ([#3573](https://github.com/NetApp/harvest/pull/3573))
+- Remove unnecessary debug logs ([#3579](https://github.com/NetApp/harvest/pull/3579))
+- Correct error messages for health ([#3583](https://github.com/NetApp/harvest/pull/3583))
+- Workaround Cisco truncation issue by using cli_show_array ([#3586](https://github.com/NetApp/harvest/pull/3586))
+- Eliminate superfluous error ([#3588](https://github.com/NetApp/harvest/pull/3588))
+- Handle histogram skips in exporter ([#3608](https://github.com/NetApp/harvest/pull/3608))
+- Capitalize the Grafana Cisco folder ([#3612](https://github.com/NetApp/harvest/pull/3612))
+- Improve Grafana import logging (#3620) ([#3630](https://github.com/NetApp/harvest/pull/3630))
+- Update instance generation in quota plugin ([#3637](https://github.com/NetApp/harvest/pull/3637))
+- Remove unused errors ([#3640](https://github.com/NetApp/harvest/pull/3640))
+
+### Miscellaneous
+- Merge release/25.02.0 into main ([#3474](https://github.com/NetApp/harvest/pull/3474))
+- Bump go.mod ([#3476](https://github.com/NetApp/harvest/pull/3476))
+- Update all dependencies ([#3477](https://github.com/NetApp/harvest/pull/3477))
+- Update all dependencies ([#3487](https://github.com/NetApp/harvest/pull/3487))
+- Update all dependencies ([#3499](https://github.com/NetApp/harvest/pull/3499))
+- Update all dependencies ([#3508](https://github.com/NetApp/harvest/pull/3508))
+- Update astral-sh/setup-uv digest to a4fd982 ([#3521](https://github.com/NetApp/harvest/pull/3521))
+- Update astral-sh/setup-uv digest to 2269511 ([#3525](https://github.com/NetApp/harvest/pull/3525))
+- Update all dependencies ([#3539](https://github.com/NetApp/harvest/pull/3539))
+- Update all dependencies ([#3548](https://github.com/NetApp/harvest/pull/3548))
+- Fix formatting ([#3552](https://github.com/NetApp/harvest/pull/3552))
+- Update astral-sh/setup-uv digest to 594f292 ([#3556](https://github.com/NetApp/harvest/pull/3556))
+- Update astral-sh/setup-uv digest to fb3a0a9 ([#3568](https://github.com/NetApp/harvest/pull/3568))
+- Update all dependencies ([#3576](https://github.com/NetApp/harvest/pull/3576))
+- Update all dependencies ([#3595](https://github.com/NetApp/harvest/pull/3595))
+- Update all dependencies ([#3615](https://github.com/NetApp/harvest/pull/3615))
+
+
+### :hammer: CI
+- The issue burn-down list should ignore status/done issues ([#3459](https://github.com/NetApp/harvest/pull/3459))
+- Bump go ([#3504](https://github.com/NetApp/harvest/pull/3504))
+- style: format match gjson file ([#3506](https://github.com/NetApp/harvest/pull/3506))
+- Bump dependencies ([#3517](https://github.com/NetApp/harvest/pull/3517))
+- Update config path ([#3523](https://github.com/NetApp/harvest/pull/3523))
+- Update rest role in cert ([#3527](https://github.com/NetApp/harvest/pull/3527))
+- Upgrade golangci-lint to v2.0.1 ([#3529](https://github.com/NetApp/harvest/pull/3529))
+- Bump go ([#3543](https://github.com/NetApp/harvest/pull/3543))
+- Fix lint warnings ([#3557](https://github.com/NetApp/harvest/pull/3557))
+- Update promtool path ([#3571](https://github.com/NetApp/harvest/pull/3571))
+- Handle ems_events error for ZAPI datacenter ([#3597](https://github.com/NetApp/harvest/pull/3597))
+- Bump go ([#3602](https://github.com/NetApp/harvest/pull/3602))
+- Handle duplicated definition of symbol dlopen error ([#3605](https://github.com/NetApp/harvest/pull/3605))
+
+---
+
 ## 25.02.0 / 2025-02-11 Release
 :pushpin: Highlights of this major release include:
 ## :star: New Features
