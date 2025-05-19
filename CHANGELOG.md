@@ -48,7 +48,7 @@ pushpin: Highlights of this major release include:
 
 @WayneShen2, @mvilam79, @RobbW, @Robert Watson, @roller, @Pengng88, @gaur-piyush, @Chris Gautcher, @BrendonA667, @razaahmed, @nicolai-hornung-bl, @Preston Nguyen, @Robert Brown, @jay-law
 
-:seedling: This release includes 27 features, 26 bug fixes, 10 documentation, 15 refactoring, 16 miscellaneous, and 11 ci pull requests.
+:seedling: This release includes 28 features, 28 bug fixes, 13 documentation, 17 refactoring, 16 miscellaneous, and 11 ci pull requests.
 
 ### :rocket: Features
 - Disable qtree perf metrics for KeyPerf collector ([#3488](https://github.com/NetApp/harvest/pull/3488))
