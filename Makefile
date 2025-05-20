@@ -173,12 +173,11 @@ else
 	-@docker stop $$(docker ps -a --format '{{.ID}} {{.Names}}' | grep -E 'grafana|prometheus|poller') 2>/dev/null || true
 	-@docker rm $$(docker ps -a --format '{{.ID}} {{.Names}}' | grep -E 'grafana|prometheus|poller') 2>/dev/null || true
 	-@docker volume rm harvest_grafana_data harvest_prometheus_data 2>/dev/null || true
-	@if [ "$(ci)" != "harvest.yml" ]; then cp $(ci) harvest.yml; else echo "Source and destination harvest.yml are the same, skipping copy"; fi
-	@if [ "$(admin)" != "harvest_admin.yml" ]; then cp $(admin) integration/test/harvest_admin.yml; else echo "Source and destination harvest_admin.yml are the same, skipping copy"; fi
-	@./bin/harvest generate docker full --port --output harvest-compose.yml
+	@cp "${admin}" integration/test/harvest_admin.yml
+	@cp "${ci}" integration/test/harvest.yml
+	@./bin/harvest generate docker full --config "${ci}" --port --output harvest-compose.yml
 	@docker build -f container/onePollerPerContainer/Dockerfile -t ghcr.io/netapp/harvest:latest . --no-cache --build-arg GO_VERSION=${GO_VERSION} --build-arg VERSION=${VERSION}
 	@docker compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
-	@cp harvest.yml integration/test/
 	VERSION=${VERSION} INSTALL_DOCKER=1 ./integration/test/test.sh
 	VERSION=${VERSION} REGRESSION=1 ./integration/test/test.sh
 	VERSION=${VERSION} ANALYZE_DOCKER_LOGS=1 ./integration/test/test.sh
