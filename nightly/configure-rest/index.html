@@ -618,7 +618,7 @@
             
   
   <span class="md-ellipsis">
-    Prepare Monitored Clusters
+    Prepare Monitored Systems
   </span>
   
 
@@ -628,7 +628,7 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
-            Prepare Monitored Clusters
+            Prepare Monitored Systems
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -728,6 +728,27 @@
   
   <span class="md-ellipsis">
     StorageGRID
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-cisco-switch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cisco Switches
   </span>
   
 
@@ -1389,6 +1410,27 @@
   
   <span class="md-ellipsis">
     Unix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-cisco-rest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CiscoRest
   </span>
   
 
@@ -2384,6 +2426,12 @@ of these parameters can be defined in the Harvest or object configuration files 
 <td></td>
 </tr>
 <tr>
+<td>- <code>counter</code></td>
+<td>duration (Go-syntax)</td>
+<td>poll frequency of updating the counter metadata cache</td>
+<td>24 hours</td>
+</tr>
+<tr>
 <td>- <code>data</code></td>
 <td>duration (Go-syntax)</td>
 <td>how frequently this collector/object should retrieve metrics from ONTAP</td>
@@ -2656,13 +2704,7 @@ of these parameters can be defined in the Harvest or object configuration files 
 <td>- <code>counter</code></td>
 <td>duration (Go-syntax)</td>
 <td>poll frequency of updating the counter metadata cache</td>
-<td style="text-align: right;">20 minutes</td>
-</tr>
-<tr>
-<td>- <code>instance</code></td>
-<td>duration (Go-syntax)</td>
-<td>poll frequency of updating the instance cache</td>
-<td style="text-align: right;">10 minutes</td>
+<td style="text-align: right;">24 hours</td>
 </tr>
 <tr>
 <td>- <code>data</code></td>
@@ -2719,8 +2761,8 @@ the missing data won't be exported.</p>
 <div class="highlight"><pre><span></span><code><span class="nt">counters</span><span class="p">:</span>
 <span class="nn">...</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">filter</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="nv">*NS</span><span class="err">*</span><span class="p p-Indicator">|</span><span class="err">*Test*</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">svm.name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vs1</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">name=*NS*|*Test*</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">svm.name=vs1</span>
 </code></pre></div>
 <h2 id="ontap-private-cli">ONTAP Private CLI<a class="headerlink" href="#ontap-private-cli" title="Permanent link">&para;</a></h2>
 <p>The ONTAP private CLI allows for more granular control and access to non-public counters. It can be used to fill gaps in the REST API, especially in cases where certain data is not yet available through the REST API. Harvest's REST collector can make full use of ONTAP's private CLI. This means when ONTAP's public REST API is missing counters, Harvest can still collect them as long as those counters are available via ONTAP's CLI.</p>

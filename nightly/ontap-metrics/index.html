@@ -618,7 +618,7 @@
             
   
   <span class="md-ellipsis">
-    Prepare Monitored Clusters
+    Prepare Monitored Systems
   </span>
   
 
@@ -628,7 +628,7 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
-            Prepare Monitored Clusters
+            Prepare Monitored Systems
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -728,6 +728,27 @@
   
   <span class="md-ellipsis">
     StorageGRID
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prepare-cisco-switch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cisco Switches
   </span>
   
 
@@ -1045,6 +1066,27 @@
   
   <span class="md-ellipsis">
     Unix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configure-cisco-rest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CiscoRest
   </span>
   
 
@@ -13813,15 +13855,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#volume_flexvol_metadata_footprint" class="md-nav__link">
-    <span class="md-ellipsis">
-      volume_flexvol_metadata_footprint
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#volume_guarantee_footprint" class="md-nav__link">
     <span class="md-ellipsis">
       volume_guarantee_footprint
@@ -13861,6 +13894,15 @@
   <a href="#volume_labels" class="md-nav__link">
     <span class="md-ellipsis">
       volume_labels
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#volume_metadata_footprint" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_metadata_footprint
     </span>
   </a>
   
@@ -27445,15 +27487,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#volume_flexvol_metadata_footprint" class="md-nav__link">
-    <span class="md-ellipsis">
-      volume_flexvol_metadata_footprint
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#volume_guarantee_footprint" class="md-nav__link">
     <span class="md-ellipsis">
       volume_guarantee_footprint
@@ -27493,6 +27526,15 @@
   <a href="#volume_labels" class="md-nav__link">
     <span class="md-ellipsis">
       volume_labels
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#volume_metadata_footprint" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_metadata_footprint
     </span>
   </a>
   
@@ -28458,7 +28500,7 @@ These can be generated on demand by running <code>bin/harvest grafana metrics</c
 <p>More information about ONTAP REST performance counters can be found <a href="https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html">here</a>.</p>
 </li>
 </ul>
-<div class="highlight"><pre><span></span><code>Creation Date : 2025-May-19
+<div class="highlight"><pre><span></span><code>Creation Date : 2025-May-20
 ONTAP Version: 9.15.1
 </code></pre></div>
 <h2 id="understanding-the-structure">Understanding the structure<a class="headerlink" href="#understanding-the-structure" title="Permanent link">&para;</a></h2>
@@ -68798,32 +68840,6 @@ ONTAP Version: 9.15.1
 </tr>
 </tbody>
 </table>
-<h3 id="volume_flexvol_metadata_footprint">volume_flexvol_metadata_footprint<a class="headerlink" href="#volume_flexvol_metadata_footprint" title="Permanent link">&para;</a></h3>
-<p>This field represents flexible volume metadata in bytes.</p>
-<table>
-<thead>
-<tr>
-<th>API</th>
-<th>Endpoint</th>
-<th>Metric</th>
-<th>Template</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>REST</td>
-<td><code>api/private/cli/volume/footprint</code></td>
-<td><code>flexvol_metadata_footprint</code></td>
-<td>conf/rest/9.14.0/volume.yaml</td>
-</tr>
-<tr>
-<td>ZAPI</td>
-<td><code>volume-footprint-get-iter</code></td>
-<td><code>flexvol-metadata-footprint</code></td>
-<td>conf/zapi/cdot/9.8.0/volume.yaml</td>
-</tr>
-</tbody>
-</table>
 <h3 id="volume_guarantee_footprint">volume_guarantee_footprint<a class="headerlink" href="#volume_guarantee_footprint" title="Permanent link">&para;</a></h3>
 <p>This field represents the volume guarantee footprint in bytes. Alternatively, it is the space reserved for future writes in the volume.</p>
 <table>
@@ -68950,6 +68966,32 @@ ONTAP Version: 9.15.1
 <td>ZAPI</td>
 <td><code>volume-get-iter</code></td>
 <td><code>Harvest generated</code></td>
+<td>conf/zapi/cdot/9.8.0/volume.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="volume_metadata_footprint">volume_metadata_footprint<a class="headerlink" href="#volume_metadata_footprint" title="Permanent link">&para;</a></h3>
+<p>This field represents flexible volume or flexgroup metadata in bytes.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/private/cli/volume/footprint</code></td>
+<td><code>flexvol_metadata_footprint</code></td>
+<td>conf/rest/9.14.0/volume.yaml</td>
+</tr>
+<tr>
+<td>ZAPI</td>
+<td><code>volume-footprint-get-iter</code></td>
+<td><code>flexvol-metadata-footprint</code></td>
 <td>conf/zapi/cdot/9.8.0/volume.yaml</td>
 </tr>
 </tbody>
