@@ -17,7 +17,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
-	"maps"
 	"slices"
 	"strconv"
 	"strings"
@@ -201,7 +200,19 @@ func (s *StatPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 	if err != nil {
 		return nil, err
 	}
-	s.sortedCounters = slices.Sorted(maps.Keys(s.Prop.Counters))
+	keySet := set.New()
+	for key := range s.Prop.Counters {
+		keySet.Add(key)
+	}
+
+	// Add any missing base counters that are not present in the template
+	// but are required for calculating values. These metrics need to be requested.
+	for key := range s.Prop.Metrics {
+		keySet.Add(key)
+	}
+
+	s.sortedCounters = keySet.Values()
+	slices.Sort(s.sortedCounters)
 	return nil, nil
 }
 
