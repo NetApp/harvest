@@ -28500,8 +28500,8 @@ These can be generated on demand by running <code>bin/harvest grafana metrics</c
 <p>More information about ONTAP REST performance counters can be found <a href="https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html">here</a>.</p>
 </li>
 </ul>
-<div class="highlight"><pre><span></span><code>Creation Date : 2025-May-20
-ONTAP Version: 9.15.1
+<div class="highlight"><pre><span></span><code>Creation Date : 2025-May-21
+ONTAP Version: 9.16.0
 </code></pre></div>
 <h2 id="understanding-the-structure">Understanding the structure<a class="headerlink" href="#understanding-the-structure" title="Permanent link">&para;</a></h2>
 <p>Below is an <span class="key">annotated</span> example of how to interpret the structure of each of the <a href="#metrics">metrics</a>.</p>
@@ -58714,16 +58714,16 @@ ONTAP Version: 9.15.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/rewind_context</code></td>
+<td><code>cifs_give_ups</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.16.0/rwctx.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances rw_ctx</code></td>
 <td><code>cifs_giveups</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/rwctx.yaml</td>
-</tr>
-<tr>
-<td>REST</td>
-<td><code>api/cluster/counter/tables/rewind_context</code></td>
-<td><code>cifs_give_ups</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
-<td>conf/restperf/9.16.0/rwctx.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -58740,16 +58740,16 @@ ONTAP Version: 9.15.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/rewind_context</code></td>
+<td><code>cifs_rewinds</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.16.0/rwctx.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances rw_ctx</code></td>
 <td><code>cifs_rewinds</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/rwctx.yaml</td>
-</tr>
-<tr>
-<td>REST</td>
-<td><code>api/cluster/counter/tables/rewind_context</code></td>
-<td><code>cifs_rewinds</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
-<td>conf/restperf/9.16.0/rwctx.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -58766,16 +58766,16 @@ ONTAP Version: 9.15.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/rewind_context</code></td>
+<td><code>nfs_give_ups</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.16.0/rwctx.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances rw_ctx</code></td>
 <td><code>nfs_giveups</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/rwctx.yaml</td>
-</tr>
-<tr>
-<td>REST</td>
-<td><code>api/cluster/counter/tables/rewind_context</code></td>
-<td><code>nfs_give_ups</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
-<td>conf/restperf/9.16.0/rwctx.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -58792,16 +58792,16 @@ ONTAP Version: 9.15.1
 </thead>
 <tbody>
 <tr>
+<td>REST</td>
+<td><code>api/cluster/counter/tables/rewind_context</code></td>
+<td><code>nfs_rewinds</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
+<td>conf/restperf/9.16.0/rwctx.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances rw_ctx</code></td>
 <td><code>nfs_rewinds</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
 <td>conf/zapiperf/cdot/9.8.0/rwctx.yaml</td>
-</tr>
-<tr>
-<td>REST</td>
-<td><code>api/cluster/counter/tables/rewind_context</code></td>
-<td><code>nfs_rewinds</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
-<td>conf/restperf/9.16.0/rwctx.yaml</td>
 </tr>
 </tbody>
 </table>
