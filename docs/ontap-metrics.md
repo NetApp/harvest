@@ -7,8 +7,8 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-May-15
-ONTAP Version: 9.15.1
+Creation Date : 2025-May-21
+ONTAP Version: 9.16.1
 ```
 ## Understanding the structure
 
@@ -455,7 +455,7 @@ Number of user-visible files used in the referenced file system. If the referenc
 
 ### aggr_inode_inodefile_private_capacity
 
-Number of files that can currently be stored on disk for system metadata files. This number will dynamically increase as more system files are created.This is an advanced property; there is an added computationl cost to retrieving its value. The field is not populated for either a collection GET or an instance GET unless it is explicitly requested using the <i>fields</i> query parameter containing either footprint or **.
+Number of files that can currently be stored on disk for system metadata files. This number will dynamically increase as more system files are created.This is an advanced property; there is an added computational cost to retrieving its value. The field is not populated for either a collection GET or an instance GET unless it is explicitly requested using the <i>fields</i> query parameter containing either footprint or **.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -696,7 +696,7 @@ Performance metric for read I/O operations.
 
 ### aggr_snapshot_files_total
 
-Total files allowed in Snapshot copies
+Total files allowed in snapshots
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -706,7 +706,7 @@ Total files allowed in Snapshot copies
 
 ### aggr_snapshot_files_used
 
-Total files created in Snapshot copies
+Total files created in snapshots
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -725,7 +725,7 @@ The percentage of disk space currently in use based on user-visible file (inode)
 
 ### aggr_snapshot_maxfiles_available
 
-Maximum files available for Snapshot copies
+Maximum files available for snapshots
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -745,7 +745,7 @@ The largest value to which the maxfiles-available parameter can be increased by 
 
 ### aggr_snapshot_maxfiles_used
 
-Files in use by Snapshot copies
+Files in use by snapshots
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -755,7 +755,7 @@ Files in use by Snapshot copies
 
 ### aggr_snapshot_reserve_percent
 
-Percentage of space reserved for Snapshot copies
+Percentage of space reserved for snapshots
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -765,7 +765,7 @@ Percentage of space reserved for Snapshot copies
 
 ### aggr_snapshot_size_available
 
-Available space for Snapshot copies in bytes
+Available space for snapshots in bytes
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -775,7 +775,7 @@ Available space for Snapshot copies in bytes
 
 ### aggr_snapshot_size_total
 
-Total space for Snapshot copies in bytes
+Total space for snapshots in bytes
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -785,7 +785,7 @@ Total space for Snapshot copies in bytes
 
 ### aggr_snapshot_size_used
 
-Space used by Snapshot copies in bytes
+Space used by snapshots in bytes
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -795,7 +795,7 @@ Space used by Snapshot copies in bytes
 
 ### aggr_snapshot_used_percent
 
-Percentage of disk space used by Snapshot copies
+Percentage of disk space used by snapshots
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -954,7 +954,7 @@ Amount of shared bytes counted by storage efficiency.
 
 ### aggr_space_total
 
-Total usable space in bytes, not including WAFL reserve and aggregate Snapshot copy reserve.
+Total usable space in bytes, not including WAFL reserve and aggregate snapshot reserve.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -1041,7 +1041,7 @@ The aggregate's volume count, which includes both FlexVols and FlexGroup constit
 
 ### aggr_write_data
 
-Peformance metric for write I/O operations.
+Performance metric for write I/O operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -1050,7 +1050,7 @@ Peformance metric for write I/O operations.
 
 ### aggr_write_latency
 
-Peformance metric for write I/O operations.
+Performance metric for write I/O operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -1059,7 +1059,7 @@ Peformance metric for write I/O operations.
 
 ### aggr_write_ops
 
-Peformance metric for write I/O operations.
+Performance metric for write I/O operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -1304,7 +1304,7 @@ Performance metric aggregated over all types of I/O operations.
 
 ### cluster_write_data
 
-Peformance metric for write I/O operations.
+Performance metric for write I/O operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -1313,7 +1313,7 @@ Peformance metric for write I/O operations.
 
 ### cluster_write_latency
 
-Peformance metric for write I/O operations.
+Performance metric for write I/O operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -1322,7 +1322,7 @@ Peformance metric for write I/O operations.
 
 ### cluster_write_ops
 
-Peformance metric for write I/O operations.
+Performance metric for write I/O operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -4020,7 +4020,7 @@ Number of operations received by a storage system that does not own the LUN targ
 
 ### lun_size
 
-The total provisioned size of the LUN. The LUN size can be increased but not be made smaller using the REST interface.<br/>The maximum and minimum sizes listed here are the absolute maximum and absolute minimum sizes in bytes. The actual minimum and maxiumum sizes vary depending on the ONTAP version, ONTAP platform and the available space in the containing volume and aggregate.<br/>For more information, see _Size properties_ in the _docs_ section of the ONTAP REST API documentation.
+The total provisioned size of the LUN. The LUN size can be increased but not decreased using the REST interface.<br/>The maximum and minimum sizes listed here are the absolute maximum and absolute minimum sizes, in bytes. The actual minimum and maximum sizes vary depending on the ONTAP version, ONTAP platform and the available space in the containing volume and aggregate.<br/>For more information, see _Size properties_ in the _docs_ section of the ONTAP REST API documentation.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -4446,7 +4446,7 @@ Average write latency in microseconds for all operations on the Namespace
 
 ### namespace_block_size
 
-The size of blocks in the namespace in bytes.<br/>Valid in POST when creating an NVMe namespace that is not a clone of another. Disallowed in POST when creating a namespace clone. Valid in POST.
+The size of blocks in the namespace in bytes. The default for namespaces with an `os_type` of _vmware_ is _512_. All other namespaces default to _4096_.<br/>Valid in POST when creating an NVMe namespace that is not a clone of another. Disallowed in POST when creating a namespace clone. Valid in POST.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -10918,7 +10918,7 @@ Summation of NFS ops, CIFS ops, CSS ops and internal ops
 
 ### qtree_write_data
 
-Peformance metric for write I/O operations.
+Performance metric for write I/O operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -10927,7 +10927,7 @@ Peformance metric for write I/O operations.
 
 ### qtree_write_ops
 
-Peformance metric for write I/O operations.
+Performance metric for write I/O operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11229,8 +11229,8 @@ Array of number of give-ups of CIFS ops because they rewind more than a certain 
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/rewind_context` | `cifs_give_ups`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.16.0/rwctx.yaml |
 | ZAPI | `perf-object-get-instances rw_ctx` | `cifs_giveups`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml |
-| REST | `api/cluster/counter/tables/rewind_context` | `cifs_give_ups`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.16.0/rwctx.yaml |
 
 
 ### rw_ctx_cifs_rewinds
@@ -11239,8 +11239,8 @@ Array of number of rewinds for CIFS ops based on their reasons.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/rewind_context` | `cifs_rewinds`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.16.0/rwctx.yaml |
 | ZAPI | `perf-object-get-instances rw_ctx` | `cifs_rewinds`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml |
-| REST | `api/cluster/counter/tables/rewind_context` | `cifs_rewinds`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.16.0/rwctx.yaml |
 
 
 ### rw_ctx_nfs_giveups
@@ -11249,8 +11249,8 @@ Array of number of give-ups of NFS ops because they rewind more than a certain t
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/rewind_context` | `nfs_give_ups`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.16.0/rwctx.yaml |
 | ZAPI | `perf-object-get-instances rw_ctx` | `nfs_giveups`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml |
-| REST | `api/cluster/counter/tables/rewind_context` | `nfs_give_ups`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.16.0/rwctx.yaml |
 
 
 ### rw_ctx_nfs_rewinds
@@ -11259,8 +11259,8 @@ Array of number of rewinds for NFS ops based on their reasons.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/rewind_context` | `nfs_rewinds`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.16.0/rwctx.yaml |
 | ZAPI | `perf-object-get-instances rw_ctx` | `nfs_rewinds`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml |
-| REST | `api/cluster/counter/tables/rewind_context` | `nfs_rewinds`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.16.0/rwctx.yaml |
 
 
 ### rw_ctx_qos_flowcontrol
@@ -12215,7 +12215,7 @@ Performance metric aggregated over all types of I/O operations.
 
 ### svm_cifs_write_data
 
-Peformance metric for write I/O operations.
+Performance metric for write I/O operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -15029,7 +15029,7 @@ percentage of utilized storage space in a volume relative to its total capacity
 
 ### volume_snapshot_count
 
-Number of Snapshot copies in the volume.
+Number of snapshots in the volume.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
