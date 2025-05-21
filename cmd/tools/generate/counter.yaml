@@ -2128,56 +2128,6 @@ counters:
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
 
-  # Remove from here to DONE_REMOVE once sar is upgraded to 9.16.1
-  - Name: rw_ctx_cifs_giveups
-    Description: Array of number of give-ups of CIFS ops because they rewind more than a certain threshold, categorized by their rewind reasons.
-    APIs:
-      - API: REST
-        Endpoint: api/cluster/counter/tables/rewind_context
-        ONTAPCounter: cifs_give_ups
-        Template: conf/restperf/9.16.0/rwctx.yaml
-      - API: ZAPI
-        Endpoint: perf-object-get-instances rw_ctx
-        ONTAPCounter: cifs_giveups
-        Template: conf/zapiperf/cdot/9.8.0/rwctx.yaml
-
-  - Name: rw_ctx_cifs_rewinds
-    Description: Array of number of rewinds for CIFS ops based on their reasons.
-    APIs:
-      - API: REST
-        Endpoint: api/cluster/counter/tables/rewind_context
-        ONTAPCounter: cifs_rewinds
-        Template: conf/restperf/9.16.0/rwctx.yaml
-      - API: ZAPI
-        Endpoint: perf-object-get-instances rw_ctx
-        ONTAPCounter: cifs_rewinds
-        Template: conf/zapiperf/cdot/9.8.0/rwctx.yaml
-
-  - Name: rw_ctx_nfs_giveups
-    Description: Array of number of give-ups of NFS ops because they rewind more than a certain threshold, categorized by their rewind reasons.
-    APIs:
-      - API: REST
-        Endpoint: api/cluster/counter/tables/rewind_context
-        ONTAPCounter: nfs_give_ups
-        Template: conf/restperf/9.16.0/rwctx.yaml
-      - API: ZAPI
-        Endpoint: perf-object-get-instances rw_ctx
-        ONTAPCounter: nfs_giveups
-        Template: conf/zapiperf/cdot/9.8.0/rwctx.yaml
-
-  - Name: rw_ctx_nfs_rewinds
-    Description: Array of number of rewinds for NFS ops based on their reasons.
-    APIs:
-      - API: REST
-        Endpoint: api/cluster/counter/tables/rewind_context
-        ONTAPCounter: nfs_rewinds
-        Template: conf/restperf/9.16.0/rwctx.yaml
-      - API: ZAPI
-        Endpoint: perf-object-get-instances rw_ctx
-        ONTAPCounter: nfs_rewinds
-        Template: conf/zapiperf/cdot/9.8.0/rwctx.yaml
-# DONE_REMOVE
-
   - Name: ethernet_switch_port_receive_discards
     Description: Total number of discarded packets.
     APIs:
