@@ -57,7 +57,7 @@ func TestRunForAllImplementations(t *testing.T) {
 			withNonExportedQtree: false,
 			expectedQuotaCount:   6, // Only 3 quotas each with 2 metrics
 			expectedQtreeCount:   3, // All 3 qtrees
-			quotaInstanceKey:     "astra_300.trident_qtree_pool_trident_TIXRBILLKA.trident_pvc_2a6d71d9_1c78_4e9a_84a2_59d316adfae9..disk-limit.tree",
+			quotaInstanceKey:     "astra_300.trident_qtree_pool_trident_TIXRBILLKA.trident_pvc_2a6d71d9_1c78_4e9a_84a2_59d316adfae9...disk-limit.tree",
 			expectedQuotaLabels:  5,
 		},
 		{
@@ -69,8 +69,8 @@ func TestRunForAllImplementations(t *testing.T) {
 			withNonExportedQtree: true,
 			expectedQuotaCount:   6, // Only 3 quotas each with 2 metrics
 			expectedQtreeCount:   1, // Only 1 qtrees, because 2 qtree is not exported
-			quotaInstanceKey:     "abcde.abcd_root..root.disk-used.user",
-			expectedQuotaLabels:  6,
+			quotaInstanceKey:     "abcde.abcd_root..root.0.disk-used.user",
+			expectedQuotaLabels:  7,
 		},
 		{
 			// Case 3: with historicalLabels = true, all qtrees were exported, total 4 quotas: 2 user/group quota, 1 empty qtree tree quota and 1 non-empty tree quota,
@@ -81,7 +81,7 @@ func TestRunForAllImplementations(t *testing.T) {
 			withNonExportedQtree: false,
 			expectedQuotaCount:   8, // All 4 quotas each with 2 metrics
 			expectedQtreeCount:   3, // All 3 qtrees
-			quotaInstanceKey:     "svm1.volume1...disk-used.tree",
+			quotaInstanceKey:     "svm1.volume1....disk-used.tree",
 			expectedQuotaLabels:  9,
 		},
 		{
@@ -93,7 +93,7 @@ func TestRunForAllImplementations(t *testing.T) {
 			withNonExportedQtree: true,
 			expectedQuotaCount:   2, // Only 1 quotas each with 2 metrics
 			expectedQtreeCount:   1, // Only 1 qtrees, because 2 qtree is not exported
-			quotaInstanceKey:     "svm1.volume1...disk-used.tree",
+			quotaInstanceKey:     "svm1.volume1....disk-used.tree",
 			expectedQuotaLabels:  0,
 		},
 	}
@@ -192,10 +192,10 @@ func TestUserIdentifierHandling(t *testing.T) {
 		{
 			name: "User identified by user ID",
 			expectedInstanceKey: []string{
-				"abcde.vol0..0.disk-limit.user",
-				"abcde.vol0..0.disk-used.user",
-				"abcde.vol0..1.disk-used.user",
-				"abcde.vol0..1.disk-limit.user"},
+				"abcde.vol0...0.disk-limit.user",
+				"abcde.vol0...0.disk-used.user",
+				"abcde.vol0...1.disk-used.user",
+				"abcde.vol0...1.disk-limit.user"},
 		},
 	}
 
