@@ -65,10 +65,10 @@ func (q *Quota) handlingQuotaMetrics(data *matrix.Matrix) {
 		switch quotaType {
 		case "user":
 			quota.SetLabel("user", uName)
-			quota.SetLabel("userId", uid)
+			quota.SetLabel("user_id", uid)
 		case "group":
 			quota.SetLabel("group", group)
-			quota.SetLabel("groupId", uid)
+			quota.SetLabel("group_id", uid)
 		}
 
 		for metricName, m := range data.GetMetrics() {

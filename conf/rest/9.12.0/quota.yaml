@@ -34,10 +34,10 @@ plugins:
 export_options:
   instance_keys:
     - group
-    - groupId
+    - group_id
     - qtree
     - svm
     - type
     - user
-    - userId
+    - user_id
     - volume

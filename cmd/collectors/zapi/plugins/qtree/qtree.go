@@ -98,9 +98,9 @@ func (q *Qtree) Init(remote conf.Remote) error {
 		instanceKeys.NewChildS("", "type")
 		instanceKeys.NewChildS("", "unit")
 		instanceKeys.NewChildS("", "user")
-		instanceKeys.NewChildS("", "userId")
+		instanceKeys.NewChildS("", "user_id")
 		instanceKeys.NewChildS("", "group")
-		instanceKeys.NewChildS("", "groupId")
+		instanceKeys.NewChildS("", "group_id")
 
 		q.data.SetExportOptions(exportOptions)
 		q.historicalLabels = true
@@ -344,10 +344,10 @@ func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, data *matrix.Matrix, q
 				switch quotaType {
 				case "user":
 					quotaInstance.SetLabel("user", uName)
-					quotaInstance.SetLabel("userId", uid)
+					quotaInstance.SetLabel("user_id", uid)
 				case "group":
 					quotaInstance.SetLabel("group", uName)
-					quotaInstance.SetLabel("groupId", uid)
+					quotaInstance.SetLabel("group_id", uid)
 				}
 
 				// populate numeric data
