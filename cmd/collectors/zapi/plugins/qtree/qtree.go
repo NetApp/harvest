@@ -98,7 +98,9 @@ func (q *Qtree) Init(remote conf.Remote) error {
 		instanceKeys.NewChildS("", "type")
 		instanceKeys.NewChildS("", "unit")
 		instanceKeys.NewChildS("", "user")
+		instanceKeys.NewChildS("", "userId")
 		instanceKeys.NewChildS("", "group")
+		instanceKeys.NewChildS("", "groupId")
 
 		q.data.SetExportOptions(exportOptions)
 		q.historicalLabels = true
@@ -306,15 +308,11 @@ func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, data *matrix.Matrix, q
 			}
 
 			if attrValue := quota.GetChildContentS(attribute); attrValue != "" {
-				userIdentifier := uName
-				if userIdentifier == "" {
-					userIdentifier = uid
-				}
 				// Ex. InstanceKey: SVMA.vol1Abc.qtree1.5.disk-limit
 				if q.client.IsClustered() {
-					quotaInstanceKey = vserver + "." + volume + "." + tree + "." + userIdentifier + "." + attribute + "." + quotaType
+					quotaInstanceKey = vserver + "." + volume + "." + tree + "." + uName + "." + uid + "." + attribute + "." + quotaType
 				} else {
-					quotaInstanceKey = volume + "." + tree + "." + userIdentifier + "." + attribute
+					quotaInstanceKey = volume + "." + tree + "." + uName + "." + uid + "." + attribute
 				}
 				quotaInstance, err := q.data.NewInstance(quotaInstanceKey)
 				if err != nil {
@@ -345,13 +343,11 @@ func (q *Qtree) handlingQuotaMetrics(quotas []*node.Node, data *matrix.Matrix, q
 
 				switch quotaType {
 				case "user":
-					quotaInstance.SetLabel("user", userIdentifier)
+					quotaInstance.SetLabel("user", uName)
+					quotaInstance.SetLabel("userId", uid)
 				case "group":
-					if uName != "" {
-						quotaInstance.SetLabel("group", uName)
-					} else if uid != "" {
-						quotaInstance.SetLabel("group", uid)
-					}
+					quotaInstance.SetLabel("group", uName)
+					quotaInstance.SetLabel("groupId", uid)
 				}
 
 				// populate numeric data
