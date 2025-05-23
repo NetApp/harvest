@@ -5,12 +5,10 @@
 package util
 
 import (
-	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/third_party/go-version"
-	"github.com/shirou/gopsutil/v4/process"
-	"golang.org/x/sys/unix"
+	"github.com/netapp/harvest/v2/third_party/tklauser/ps"
 	"log/slog"
 	"maps"
 	"math"
@@ -101,31 +99,19 @@ var profRegex = regexp.MustCompile(`--profiling (\d+)`)
 var promRegex = regexp.MustCompile(`--promPort (\d+)`)
 
 func GetPollerStatuses() ([]PollerStatus, error) {
+
 	result := make([]PollerStatus, 0)
-	processes, err := process.Processes()
+
+	processes, err := ps.Processes()
 	if err != nil {
 		return nil, err
 	}
+
 	for _, p := range processes {
-		line, err := p.Cmdline()
-		if err != nil {
-			if !errors.Is(err, unix.EINVAL) && !errors.Is(err, unix.ENOENT) {
-				fmt.Printf("Unable to read process cmdline pid=%d err=%v\n", p.Pid, err)
-			}
+		if !strings.HasSuffix(p.Command(), "poller") {
 			continue
 		}
-		if !strings.Contains(line, "poller --poller ") {
-			continue
-		}
-
-		args, err := p.CmdlineSlice()
-
-		if err != nil {
-			if !errors.Is(err, unix.EINVAL) && !errors.Is(err, unix.ENOENT) {
-				fmt.Printf("Unable to read process cmdline pid=%d err=%v\n", p.Pid, err)
-			}
-			continue
-		}
+		args := p.ExecutableArgs()
 
 		name := ""
 		for i, arg := range args {
@@ -138,11 +124,15 @@ func GetPollerStatuses() ([]PollerStatus, error) {
 		if name == "" {
 			continue
 		}
+
 		s := PollerStatus{
 			Name:   name,
-			Pid:    p.Pid,
+			Pid:    p.PID(),
 			Status: "running",
 		}
+
+		line := strings.Join(args, " ")
+
 		promMatches := promRegex.FindStringSubmatch(line)
 		if len(promMatches) > 0 {
 			s.PromPort = promMatches[1]
@@ -153,6 +143,7 @@ func GetPollerStatuses() ([]PollerStatus, error) {
 		}
 		result = append(result, s)
 	}
+
 	return result, nil
 }
 
@@ -200,7 +191,7 @@ const (
 type PollerStatus struct {
 	Name          string
 	Status        Status
-	Pid           int32
+	Pid           int
 	ProfilingPort string
 	PromPort      string
 }
