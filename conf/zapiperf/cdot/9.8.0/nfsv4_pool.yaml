@@ -1,4 +1,4 @@
-name:                     NFSv4_pool
+name:                     NFSv4Pool
 query:                    nfsv4_diag
 object:                   nfs_diag
 
