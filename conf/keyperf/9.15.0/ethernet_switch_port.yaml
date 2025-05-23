@@ -14,9 +14,11 @@ counters:
   - statistics.transmit_raw.discards      => transmit_discards
   - statistics.transmit_raw.errors        => transmit_errors
   - statistics.transmit_raw.packets       => transmit_packets
-
   - hidden_fields:
       - statistics
+
+plugins:
+  - CiscoSwitch
 
 export_options:
   instance_keys:
