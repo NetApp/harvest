@@ -3,6 +3,7 @@ package statperf
 import (
 	"encoding/json"
 	"errors"
+	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
@@ -213,6 +214,9 @@ func parseRows(input string, logger *slog.Logger) ([]map[string]string, error) {
 		if len(tableLines) == 0 {
 			return
 		}
+
+		seenCounters := set.New()
+
 		for i := 0; i < len(tableLines); i++ {
 			line := tableLines[i]
 			curRowLine := strings.TrimSpace(line)
@@ -224,7 +228,6 @@ func parseRows(input string, logger *slog.Logger) ([]map[string]string, error) {
 				logger.Warn("skipping unexpected line", slog.String("row", curRowLine))
 				continue
 			}
-
 			counter := strings.Join(tokens[:len(tokens)-1], " ")
 			value := tokens[len(tokens)-1]
 
@@ -243,8 +246,22 @@ func parseRows(input string, logger *slog.Logger) ([]map[string]string, error) {
 				}
 				i++
 			}
-			currentGroup[strings.TrimSpace(counter)] = removeUnitRegex(strings.TrimSpace(value), counter)
+
+			// Check for duplicate counters
+			// The object `object_store_server` has a different table format where multiple node
+			// counters are present in the same table, leading to duplicate counters.
+			// StatPerf does not handle this situation and prints warning messages.
+			// So far, we have observed this issue only with this object.
+			trimmedCounter := strings.TrimSpace(counter)
+			if seenCounters.Has(trimmedCounter) {
+				logger.Warn("duplicate counter detected", slog.String("counter", trimmedCounter), slog.String("value", value))
+			} else {
+				seenCounters.Add(trimmedCounter)
+			}
+
+			currentGroup[trimmedCounter] = removeUnitRegex(strings.TrimSpace(value), counter)
 		}
+
 		// Save the aggregation and instance info for this group.
 		if aggregation != "" {
 			currentGroup["_aggregation"] = aggregation
