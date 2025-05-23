@@ -16,6 +16,7 @@ plugins:
       value_to_num:
         # [ dormant, down, lower_layer_down, not_present, testing, unknown, up ]
         - new_status state up up `0`
+  - CiscoSwitch
 
 export_options:
   include_all_labels: true

@@ -436,6 +436,11 @@ func toPluginPath(path string, pluginName string) string {
 		return before + "cmd/collectors/power.go"
 	}
 
+	// Both REST and KetPerf ethernet_switch_port.yaml templates uses a single plugin defined in cisco_switch.go
+	if strings.Contains(path, "ethernet_switch_port.yaml") {
+		return before + "cmd/collectors/cisco_switch.go"
+	}
+
 	// Both Zapi and REST lif.yaml templates uses a single plugin defined in lif.go
 	if strings.Contains(path, "lif.yaml") {
 		return before + "cmd/collectors/lif.go"

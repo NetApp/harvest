@@ -484,6 +484,8 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return aggregate.New(abc)
 	case "AuditLog":
 		return auditlog.New(abc)
+	case "CiscoSwitch":
+		return collectors.NewCiscoSwitch(abc)
 	case "Cluster":
 		return cluster.New(abc)
 	case "ClusterSchedule":
