@@ -290,7 +290,7 @@ func stopGhostPollers(skipPoller []string) {
 		}
 		// if poller doesn't exist in harvest config
 		if !skip {
-			proc, err := os.FindProcess(int(p.Pid))
+			proc, err := os.FindProcess(p.Pid)
 			if err != nil {
 				fmt.Printf("process not found for pid %d %v \n", p.Pid, err)
 				continue
@@ -312,7 +312,7 @@ func killPoller(ps *util.PollerStatus) {
 	}
 
 	// send kill signal
-	proc, _ := os.FindProcess(int(ps.Pid))
+	proc, _ := os.FindProcess(ps.Pid)
 	if err := proc.Kill(); err != nil {
 		if strings.HasSuffix(err.Error(), "process already finished") {
 			ps.Status = util.StatusAlreadyExited
@@ -332,7 +332,7 @@ func stopPoller(ps *util.PollerStatus) {
 		return
 	}
 
-	proc, _ := os.FindProcess(int(ps.Pid))
+	proc, _ := os.FindProcess(ps.Pid)
 
 	// send terminate signal
 	if err := proc.Signal(syscall.SIGTERM); err != nil {
@@ -484,7 +484,7 @@ func printStatus(table *tw.Table, long bool, dc, pn string, ps *util.PollerStatu
 		row = []string{dct, pnt, "", ps.PromPort, string(ps.Status)}
 	}
 	if ps.Pid != 0 {
-		row[2] = strconv.Itoa(int(ps.Pid))
+		row[2] = strconv.Itoa(ps.Pid)
 	}
 	table.Append(row)
 }

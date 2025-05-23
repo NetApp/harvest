@@ -3,8 +3,8 @@ package collector
 import (
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"github.com/shirou/gopsutil/v4/mem"
-	"github.com/shirou/gopsutil/v4/process"
+	"github.com/netapp/harvest/v2/third_party/shirou/gopsutil/v4/mem"
+	"github.com/netapp/harvest/v2/third_party/shirou/gopsutil/v4/process"
 	"log/slog"
 	"os"
 	"runtime/metrics"

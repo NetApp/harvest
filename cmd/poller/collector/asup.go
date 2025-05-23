@@ -14,15 +14,13 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
-	"github.com/shirou/gopsutil/v4/cpu"
-	"github.com/shirou/gopsutil/v4/host"
-	"github.com/shirou/gopsutil/v4/mem"
-	"github.com/shirou/gopsutil/v4/process"
+	"github.com/netapp/harvest/v2/third_party/shirou/gopsutil/v4/mem"
+	"github.com/netapp/harvest/v2/third_party/shirou/gopsutil/v4/process"
 	"log/slog"
 	"os"
 	"os/exec"
 	"path"
-	"regexp"
+	"runtime"
 	"slices"
 	"time"
 )
@@ -81,7 +79,7 @@ type platformInfo struct {
 		AvailableKb uint64
 		UsedKb      uint64
 	}
-	CPUs         uint8
+	CPUs         int
 	NumProcesses uint64
 	Processes    []Process
 }
@@ -126,7 +124,6 @@ type AsupCollector struct {
 
 const (
 	workingDir = "asup"
-	HundredMB  = 104_857_600
 )
 
 func (p *Payload) AddCollectorAsup(a AsupCollector) {
@@ -206,7 +203,7 @@ func BuildAndWriteAutoSupport(collectors []Collector, status *matrix.Matrix, pol
 	var (
 		msg          *Payload
 		arch         string
-		cpus         uint8
+		cpus         int
 		numPortRange uint64
 		rssBytes     uint64
 	)
@@ -320,8 +317,6 @@ func writeAutoSupport(msg *Payload, pollerName string) (string, error) {
 	return payloadPath, nil
 }
 
-var psAllowListRe = regexp.MustCompile(`harvest|poller|grafana|prometheus|influxdb|netapp`)
-
 func attachMemory(msg *Payload) {
 	virtualMemory, err := mem.VirtualMemory()
 	if err != nil {
@@ -330,112 +325,14 @@ func attachMemory(msg *Payload) {
 	msg.Platform.Memory.TotalKb = virtualMemory.Total / 1024
 	msg.Platform.Memory.AvailableKb = virtualMemory.Available / 1024
 	msg.Platform.Memory.UsedKb = virtualMemory.Used / 1024
-
-	// Include basic ps information for processes that pass the allow list
-	// This is similar to ps -ww -eo user,pid,ppid,stime,nlwp,rss,cmd
-	processes, err := process.Processes()
-	if err != nil {
-		return
-	}
-
-	msg.Platform.NumProcesses = uint64(len(processes))
-	msg.Platform.Processes = make([]Process, 0)
-
-	for _, p := range processes {
-		name, err := p.Name()
-		if err != nil {
-			continue
-		}
-		pp := Process{
-			Pid: p.Pid,
-		}
-		memInfo, err := p.MemoryInfo()
-		if err == nil {
-			pp.RssBytes = memInfo.RSS
-		}
-
-		// Ignore processes that:
-		//   - don't pass the allowList, unless the process is using more that 100MB of memory
-		//   - have no cmdline (these are not interesting)
-		if !psAllowListRe.MatchString(name) {
-			if pp.RssBytes < HundredMB {
-				continue
-			}
-		}
-
-		cmdline, err := p.Cmdline()
-		if err != nil {
-			continue
-		}
-		pp.Cmdline = cmdline
-		if cmdline == "" {
-			continue
-		}
-
-		username, err := p.Username()
-		if err == nil {
-			pp.User = username
-		}
-		ppid, err := p.Ppid()
-		if err == nil {
-			pp.Ppid = ppid
-		}
-		ctime, err := p.CreateTime()
-		if err == nil {
-			pp.Ctime = ctime
-		}
-		threads, err := p.NumThreads()
-		if err == nil {
-			pp.Threads = threads
-		}
-		msg.Platform.Processes = append(msg.Platform.Processes, pp)
-	}
-
-	// keep at most 100, ordered by size descending
-	if len(msg.Platform.Processes) > 100 {
-		slices.SortStableFunc(msg.Platform.Processes, func(a, b Process) int {
-			return cmp.Compare(b.RssBytes, a.RssBytes)
-		})
-		msg.Platform.Processes = msg.Platform.Processes[:100]
-	}
-
-	// sort processes by pid
-	slices.SortStableFunc(msg.Platform.Processes, func(a, b Process) int {
-		return cmp.Compare(a.Pid, b.Pid)
-	})
 }
 
-func getCPUInfo() (string, uint8) {
-
-	var (
-		arch     string
-		cpuCount int
-		cpuInfo  []cpu.InfoStat
-		hostInfo *host.InfoStat
-		err      error
-	)
-
-	if cpuInfo, err = cpu.Info(); err == nil {
-		if cpuInfo != nil {
-			cpuCount = len(cpuInfo)
-		}
-	}
-
-	if hostInfo, err = host.Info(); err == nil {
-		if hostInfo != nil {
-			arch = hostInfo.Platform
-		}
-	}
-
-	return arch, uint8(cpuCount) // #nosec G115
+func getCPUInfo() (string, int) {
+	return runtime.GOARCH, runtime.NumCPU()
 }
 
 func GetOSName() string {
-	info, err := host.Info()
-	if err != nil {
-		return ""
-	}
-	return info.OS
+	return runtime.GOOS
 }
 
 // Gives asup payload json file path based on input.
