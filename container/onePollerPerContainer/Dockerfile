@@ -6,8 +6,7 @@ SHELL ["/bin/bash", "-c"]
 
 ARG INSTALL_DIR=/opt/harvest
 ARG BUILD_DIR=/opt/home
-# NOTE - Update version when building new release
-ARG VERSION=v25-2.0
+ARG VERSION=2.0
 ARG RELEASE=prod
 
 # Set the Current Working Directory inside the container
