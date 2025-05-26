@@ -18,10 +18,12 @@ const (
 	errorStatus      = "error_status"
 	receiveBroadcast = "receive_broadcast"
 	receiveBytes     = "receive_bytes"
+	receivePkts      = "receive_packets"
 	receiveErrors    = "receive_errors"
 	receiveMulticast = "receive_multicast"
 	receiveDrops     = "receive_drops"
 	transmitBytes    = "transmit_bytes"
+	transmitPkts     = "transmit_packets"
 	transmitErrors   = "transmit_errors"
 	transmitDrops    = "transmit_drops"
 	up               = "up"
@@ -35,10 +37,12 @@ var metrics = []string{
 	receiveBytes,
 	receiveErrors,
 	receiveDrops,
+	receivePkts,
 	receiveMulticast,
 	transmitBytes,
 	transmitErrors,
 	transmitDrops,
+	transmitPkts,
 	up,
 }
 
@@ -141,6 +145,8 @@ func (i *Interface) parseInterface(output gjson.Result, envMat *matrix.Matrix) {
 
 		ethInBytes := value.Get("eth_inbytes").Float()
 		ethOutBytes := value.Get("eth_outbytes").Float()
+		ethInPkts := value.Get("eth_inpkts").Float()
+		ethOutPkts := value.Get("eth_outpkts").Float()
 		ethInErrors := value.Get("eth_inerr").Float()
 		ethOutErrors := value.Get("eth_outerr").Float()
 		ethInMcast := value.Get("eth_inmcast").Float()
@@ -165,8 +171,10 @@ func (i *Interface) parseInterface(output gjson.Result, envMat *matrix.Matrix) {
 		envMat.GetMetric(crcErrors).SetValueFloat64(instance, ethCrcErrors)
 		envMat.GetMetric(receiveBytes).SetValueFloat64(instance, ethInBytes)
 		envMat.GetMetric(receiveErrors).SetValueFloat64(instance, ethInErrors)
+		envMat.GetMetric(receivePkts).SetValueFloat64(instance, ethInPkts)
 		envMat.GetMetric(transmitBytes).SetValueFloat64(instance, ethOutBytes)
 		envMat.GetMetric(transmitErrors).SetValueFloat64(instance, ethOutErrors)
+		envMat.GetMetric(transmitPkts).SetValueFloat64(instance, ethOutPkts)
 		envMat.GetMetric(receiveMulticast).SetValueFloat64(instance, ethInMcast)
 		envMat.GetMetric(receiveBroadcast).SetValueFloat64(instance, ethInBcast)
 		envMat.GetMetric(receiveDrops).SetValueFloat64(instance, ethInDrops)

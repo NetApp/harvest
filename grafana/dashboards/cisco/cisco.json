@@ -1273,7 +1273,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Displays total transmit traffic per interface per second.",
+          "description": "Displays total transmit packets per interface per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1322,7 +1322,7 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "pps"
             },
             "overrides": []
           },
@@ -1352,7 +1352,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (switch, interface, mac) (\n    rate(\n      cisco_interface_transmit_bytes{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[4m]\n    )\n  )\nand on (switch, interface, mac)\n  topk(\n    $TopResources,\n    sum by (switch, interface, mac) (\n      avg_over_time(\n        cisco_interface_transmit_bytes{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
+              "expr": "sum by (switch, interface, mac) (\n    rate(\n      cisco_interface_transmit_packets{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[4m]\n    )\n  )\nand on (switch, interface, mac)\n  topk(\n    $TopResources,\n    sum by (switch, interface, mac) (\n      avg_over_time(\n        cisco_interface_transmit_packets{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
               "interval": "",
               "legendFormat": "{{switch}} - {{interface}}",
               "refId": "A"
@@ -1365,7 +1365,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Displays total receive traffic per interface per second.",
+          "description": "Displays total receive packets per interface per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1414,7 +1414,7 @@
                   }
                 ]
               },
-              "unit": "Bps"
+              "unit": "pps"
             },
             "overrides": []
           },
@@ -1444,7 +1444,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (switch, interface, mac) (\n    rate(\n      cisco_interface_receive_bytes{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[4m]\n    )\n  )\nand on (switch, interface, mac)\n  topk(\n    $TopResources,\n    sum by (switch, interface, mac) (\n      avg_over_time(\n        cisco_interface_receive_bytes{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
+              "expr": "sum by (switch, interface, mac) (\n    rate(\n      cisco_interface_receive_packets{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[4m]\n    )\n  )\nand on (switch, interface, mac)\n  topk(\n    $TopResources,\n    sum by (switch, interface, mac) (\n      avg_over_time(\n        cisco_interface_receive_packets{datacenter=~\"$Datacenter\",interface=~\"$Interface\",switch=~\"$Switch\"}[3h]\n      )\n    )\n  )",
               "interval": "",
               "legendFormat": "{{switch}} - {{interface}}",
               "refId": "A"
@@ -2144,8 +2144,13 @@
                   "description": true,
                   "instance": true,
                   "interface": false,
+                  "is_isl": true,
                   "job": true,
-                  "mac": true
+                  "mac": true,
+                  "mac_address": true,
+                  "osVersion": true,
+                  "state": true,
+                  "type": true
                 },
                 "indexByName": {
                   "Time": 0,
@@ -2162,8 +2167,6 @@
                 "renameByName": {
                   "Value": "Count",
                   "interface": "Interface",
-                  "mac": "",
-                  "message": "EMS",
                   "speed": "Speed",
                   "switch": "Switch"
                 }
@@ -2514,5 +2517,5 @@
   "timezone": "",
   "title": "Cisco: Switch",
   "uid": "cisco-switch",
-  "version": 2
+  "version": 3
 }
