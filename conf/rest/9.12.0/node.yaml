@@ -14,6 +14,11 @@ counters:
   - ^model
   - ^serial_number                                    => serial
   - ^service_processor.firmware_version               => bmc_firmware_version
+  - ^service_processor.ipv4_interface.address         => bmc_ip_address
+  - ^service_processor.state                          => bmc_state
+  - ^service_processor.mac_address                    => bmc_mac_address
+  - ^service_processor.autoupdate_enabled             => bmc_autoupdate_enabled
+  - ^service_processor.is_ip_configured               => bmc_is_ip_configured
   - ^state
   - ^uuid
   - ^version.full                                     => version
@@ -48,6 +53,10 @@ export_options:
     - serial
   instance_labels:
     - bmc_firmware_version
+    - bmc_ip_address
+    - bmc_mac_address
+    - bmc_autoupdate_enabled
+    - bmc_is_ip_configured
     - cpu_firmware_release
     - healthy
     - location
