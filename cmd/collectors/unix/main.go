@@ -287,7 +287,7 @@ func (u *Unix) PollInstance() (map[string]*matrix.Matrix, error) {
 		pid := -1
 		for _, pollerStatus := range statuses {
 			if pollerStatus.Name == name {
-				pid = int(pollerStatus.Pid)
+				pid = pollerStatus.Pid
 				break
 			}
 		}
