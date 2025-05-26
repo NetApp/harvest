@@ -392,6 +392,7 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 					continue
 				}
 			}
+			instance.SetExportable(true)
 			oldInstances.Remove(key)
 			// clear all instance labels as there are some fields which may be missing between polls
 			instance.ClearLabels()

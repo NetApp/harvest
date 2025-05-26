@@ -589,6 +589,8 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 			}
 		}
 
+		instance.SetExportable(true)
+
 		if currentInstances.Has(instanceKey) {
 			r.Logger.Warn("This instance is already processed. instKey is not unique", slog.String("instKey", instanceKey))
 		} else {
