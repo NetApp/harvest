@@ -8,6 +8,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
+	"regexp"
 	"strings"
 	"time"
 )
@@ -17,6 +18,8 @@ const (
 	labels  = "labels"
 )
 
+var versionRegex = regexp.MustCompile(`\d+(\.\d+)+\(([0-9]+?)\)`)
+
 func NewCiscoSwitch(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &CiscoSwitch{AbstractPlugin: p}
 }
@@ -24,6 +27,7 @@ func NewCiscoSwitch(p *plugin.AbstractPlugin) plugin.Plugin {
 type SwitchData struct {
 	isCiscoSwitch bool
 	adminState    bool
+	osVersion     string
 }
 
 type CiscoSwitch struct {
@@ -50,11 +54,15 @@ func (c *CiscoSwitch) Init(_ conf.Remote) error {
 
 func (c *CiscoSwitch) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
 	data := dataMap[c.Object]
+	datacenter := data.GetGlobalLabels()["datacenter"]
 	// metrics with cisco_interface prefix are available to handle cisco switch dashboard
 	ciscoFormatedData := data.Clone(matrix.With{Data: true, Metrics: true, Instances: true, ExportInstances: true})
 	ciscoFormatedData.UUID = c.Parent + ".Cisco_interface"
 	ciscoFormatedData.Object = "cisco_interface"
 	ciscoFormatedData.Identifier = "cisco_interface"
+	globalLabels := ciscoFormatedData.GetGlobalLabels()
+	clear(globalLabels)
+	ciscoFormatedData.SetGlobalLabel("datacenter", datacenter)
 
 	if _, err := ciscoFormatedData.NewMetricFloat64(adminUp); err != nil {
 		return nil, nil, err
@@ -82,6 +90,7 @@ func (c *CiscoSwitch) collectSwitches() map[string]SwitchData {
 	switchMap := make(map[string]SwitchData)
 	var adminState bool
 	var isCiscoSwitch bool
+	var osVersion string
 	fields := []string{"name", "version", "monitoring.enabled"}
 	query := "api/network/ethernet/switches"
 	href := rest.NewHrefBuilder().
@@ -99,6 +108,7 @@ func (c *CiscoSwitch) collectSwitches() map[string]SwitchData {
 	for _, r := range result {
 		adminState = false
 		isCiscoSwitch = false
+		osVersion = ""
 		switchName := r.Get("name").String()
 		version := r.Get("version")
 		if state := r.Get("monitoring.enabled"); state.Exists() {
@@ -106,39 +116,49 @@ func (c *CiscoSwitch) collectSwitches() map[string]SwitchData {
 		}
 		if version.Exists() && strings.Contains(version.String(), "NX-OS") {
 			isCiscoSwitch = true
+			allMatches := versionRegex.FindAllStringSubmatch(version.String(), -1)
+			for _, match := range allMatches {
+				m := match[0]
+				if m == "" {
+					continue
+				}
+				osVersion = m
+			}
 		}
-		switchMap[switchName] = SwitchData{isCiscoSwitch: isCiscoSwitch, adminState: adminState}
+		switchMap[switchName] = SwitchData{isCiscoSwitch: isCiscoSwitch, adminState: adminState, osVersion: osVersion}
 	}
 	return switchMap
 }
 
 func (c *CiscoSwitch) GenerateCiscoMetrics(ciscoFormatedData *matrix.Matrix, data *matrix.Matrix, switchMap map[string]SwitchData) {
-	c.SLogger.Info("Generating Cisco metrics", slog.Any("map", switchMap))
 	for key, ciscoData := range ciscoFormatedData.GetInstances() {
 		switchName := ciscoData.GetLabel("switch")
-		c.SLogger.Info("a", slog.Any("switchName", switchName))
 		switchData := switchMap[switchName]
 		if switchData.isCiscoSwitch {
 			c.SLogger.Info("Cisco Switches have been found")
 			data.RemoveInstance(key)
 
-			// Add cisco_interface_admin_up metric
-			adminUpMetric := ciscoFormatedData.GetMetric(adminUp)
-			if switchData.adminState {
-				adminUpMetric.SetValueFloat64(ciscoData, 1)
-			} else {
-				adminUpMetric.SetValueFloat64(ciscoData, 0)
-			}
+			// Only Rest template plugin can add below 2 metrics not KeyPerf
+			if data.UUID == "Rest" {
+				// Add cisco_interface_admin_up metric
+				adminUpMetric := ciscoFormatedData.GetMetric(adminUp)
+				if switchData.adminState {
+					adminUpMetric.SetValueFloat64(ciscoData, 1)
+				} else {
+					adminUpMetric.SetValueFloat64(ciscoData, 0)
+				}
 
-			// Add cisco_switch_labels metric
-			labelsMetric := c.data.GetMetric(labels)
-			labelsInstance, err := c.data.NewInstance(switchName)
-			if err != nil {
-				c.SLogger.Error("", slogx.Err(err), slog.String("instanceKey", switchName))
-				continue
+				// Add cisco_switch_labels metric
+				labelsMetric := c.data.GetMetric(labels)
+				labelsInstance, err := c.data.NewInstance(switchName)
+				if err != nil {
+					c.SLogger.Error("", slogx.Err(err), slog.String("instanceKey", switchName))
+					continue
+				}
+				labelsInstance.SetLabel("switch", ciscoData.GetLabel("switch"))
+				labelsMetric.SetLabel("osVersion", switchData.osVersion)
+				labelsMetric.SetValueFloat64(labelsInstance, 1)
 			}
-			labelsInstance.SetLabels(ciscoData.GetLabels())
-			labelsMetric.SetValueFloat64(labelsInstance, 1)
 		} else {
 			c.SLogger.Info("Cisco Switches have not been found")
 			ciscoFormatedData.RemoveInstance(key)
