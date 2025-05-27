@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/Netapp/harvest-automation/test/installer"
+	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	rest2 "github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/auth"
@@ -47,7 +48,7 @@ func TestCounters(t *testing.T) {
 		err    error
 	)
 
-	//utils.SkipIfMissing(t, utils.Regression)
+	utils.SkipIfMissing(t, utils.Regression)
 	validateRolePermissions()
 	conf.TestLoadHarvestConfig(installer.HarvestConfigFile)
 
