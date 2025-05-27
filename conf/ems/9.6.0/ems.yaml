@@ -1,5 +1,5 @@
-name:   EMS
-query:  api/support/ems/events
+name: EMS
+query: api/support/ems/events
 object: ems
 
 # default list of exports attached to all EMS event
@@ -13,48 +13,48 @@ exports:
 events:
   - name: LUN.vol.no.space
     exports:
-      - parameters.lun_path    => lun_path
-      - parameters.volume_name => volume
-      - parameters.volume_dsid => volume_ds_id
+      - parameters.lun_path                                => lun_path
+      - parameters.volume_name                             => volume
+      - parameters.volume_dsid                             => volume_ds_id
 
   - name: Nblade.nfsV4PoolExhaust
     exports:
-      - parameters.poolname    => poolname
-      - parameters.object_type => object_type
-      - parameters.object_uuid => object_uuid
+      - parameters.poolname                                => poolname
+      - parameters.object_type                             => object_type
+      - parameters.object_uuid                             => object_uuid
 
   - name: cf.disk.inventory.mismatch
     exports:
-      - parameters.diskName => disk
-      - parameters.uid      => object_uid
-      - parameters.hostname => host
+      - parameters.diskName                             => disk
+      - parameters.uid                                  => object_uid
+      - parameters.hostname                             => host
     resolve_when_ems:
       - name: cf.disk.inventory.mismatchOK
-        resolve_after: 672h 
+        resolve_after: 672h
 
   - name: cf.fm.takeoverFailed
     exports:
-      - parameters.reson             => reason
-      - parameters.token             => token
-      - parameters.partner_node_uuid => partner_node_uuid
+      - parameters.reson                                         => reason
+      - parameters.token                                         => token
+      - parameters.partner_node_uuid                             => partner_node_uuid
 
   - name: cf.fm.versionMismatch
     exports:
-      - parameters.subsystem      => subsystem
-      - parameters.myVersion      => version
-      - parameters.partnerVersion => partner_version
+      - parameters.subsystem                                  => subsystem
+      - parameters.myVersion                                  => version
+      - parameters.partnerVersion                             => partner_version
 
   - name: cf.fsm.takeover.noHeartbeat
 
   - name: cf.fsm.takeoverByPartnerDisabled
     exports:
-      - parameters.local   => local
-      - parameters.partner => partner
-      - parameters.reason  => reason
+      - parameters.local                               => local
+      - parameters.partner                             => partner
+      - parameters.reason                              => reason
 
   - name: cf.fsm.takeoverHung
     exports:
-      - parameters.moduleName   => moduleName
+      - parameters.moduleName                               => moduleName
 
   - name: cf.hwassist.notifyCfgFailed
     exports:
@@ -83,7 +83,7 @@ events:
       - parameters.element   => element
       - parameters.bay       => bay
       - parameters.reason    => reason
-      
+
   - name: fcp.io.status
 
   - name: license.check.warn.expiring
@@ -101,7 +101,7 @@ events:
       - parameters.dstpath => dstpath
       - parameters.error   => error
       - parameters.jobID   => jobID
-  
+
   - name: mgmtgwd.certificate.expired
     exports:
       - parameters.common_name           => common_name
@@ -109,7 +109,7 @@ events:
       - parameters.certificate_authority => certificate_authority
       - parameters.type                  => type
       - parameters.vserver               => vserver
-      
+
   - name: mgmtgwd.certificate.expiring
     exports:
       - parameters.common_name           => common_name
@@ -118,7 +118,7 @@ events:
       - parameters.type                  => type
       - parameters.vserver               => vserver
       - parameters.days                  => days
-      
+
   - name: mgmtgwd.sign.cert.expired
     exports:
       - parameters.common_name           => common_name
@@ -165,7 +165,6 @@ events:
       - parameters.ethaddr => ethernet_address
 
   - name: nvram.excessive.cecc.errs
-    exports: []
 
   - name: pvif.lacp.outofsync
     exports:
@@ -202,6 +201,11 @@ events:
     exports:
       - parameters.portname => port_name
       - parameters.nodename => node_name
+
+  - name: vifmgr.cluscheck.crcerrors
+    exports: 
+      -parameters.portname => port_name 
+      -parameters.nodename => node_name
 
   - name: vifmgr.cluscheck.hwerrors
     exports:
@@ -276,3 +280,446 @@ events:
   - name: monitor.globalStatus.critical
     exports:
       - parameters.problem => problem_description
+
+# EMS data for ocum Alerts
+
+  - name: callhome.aggr.offline
+
+  - name: ha.giveback.aggrOnlineFailed
+    exports:
+      - parameters.aggrName          => aggrName
+      - parameters.error             => error
+
+  - name: raid.uninitialized.parity.vol
+    exports:
+      - parameters.vol_type       => vol_type
+      - parameters.owner          => owner
+      - parameters.vol            => vol
+
+  - name: monitor.raidtec.dblDegraded
+    exports:
+      - parameters.type       => type
+      - parameters.rgname     => rgname
+
+  - name: callhome.aggr.restricted
+
+  - name: callhome.wafl.inconsistent
+
+  - name: callhome.fcp.adapter.failed
+
+  - name: vifmgr.startup.failover.err
+
+  - name: vifmgr.cluscheck.lifdown
+    exports:
+      - parameters.lif_name       => lif_name
+
+  - name: mlm.array.lun.PathFO
+    exports:
+      - parameters.adapterName       => adapterName
+      - parameters.deviceName        => deviceName
+      - parameters.arrayName         => arrayName
+
+  - name: mlm.array.lun.OnePath
+    exports:
+      - parameters.diskName       => diskName
+
+  - name: callhome.mlm.array.portOneController
+
+  - name: callhome.mlm.array.portOneController
+
+  - name: token.vol.max.count.reached
+    exports:
+      - parameters.volume_name       => volume_name
+
+  - name: cf.fm.notkoverClusterDisable
+    exports:
+      - parameters.reason       => reason
+
+  - name: cf.takeover.disabled
+    exports:
+      - parameters.reason       => reason
+
+  - name: monitor.chassisPowerSupply.degraded
+    exports:
+      - parameters.ps_number        => ps_number
+      - parameters.reasonText       => reasonText
+
+  - name: cf.fsm.takeoverByPartnerDisabled
+    exports:
+      - parameters.local         => local
+      - parameters.partner       => partner
+      - parameters.reason        => reason
+
+  - name: cf.fsm.takeoverOfPartnerDisabled
+    exports:
+      - parameters.partner       => partner
+      - parameters.reason        => reason
+
+  - name: monitor.power.degraded
+
+  - name: callhome.fans.failed
+
+  - name: callhome.partner.down
+
+  - name: callhome.sfo.takeover
+
+  - name: callhome.hainterconnect.down
+    exports:
+      - parameters.subject        => subject
+      - parameters.reason         => reason
+
+  - name: sfo.PartialGiveback
+
+  - name: cf.rsrc.takeoverOpFail
+    exports:
+      - parameters.op        => op
+
+  - name: vserver.rootVolume.full
+    exports:
+      - parameters.vserver_name        => vserver_name
+
+  - name: vifmgr.portdown
+    exports:
+      - parameters.nodename        => nodename
+      - parameters.portname        => portname
+
+  - name: callhome.sp.hbt.stopped
+
+  - name: sp.notConfigured
+    exports:
+      - parameters.object_type        => object_type
+      - parameters.object_uuid        => object_uuid
+
+  - name: monitor.fan.failed
+    exports:
+      - parameters.report              => report
+      - parameters.object_uuid        => object_uuid
+      - parameters.object_uuid        => object_uuid
+
+  - name: callhome.shlf.fault
+
+  - name: ses.status.currentError
+    exports:
+      - parameters.prodChannel          => prodChannel
+      - parameters.typeText              => typeText
+      - parameters.psNumber              => psNumber
+      - parameters.errorMsg              => errorMsg
+      - parameters.errorText            => errorText
+      - parameters.locationText         => locationText
+
+  - name: ses.status.currentWarning
+    exports:
+      - parameters.prodChannel          => prodChannel
+      - parameters.typeText              => typeText
+      - parameters.psNumber              => psNumber
+      - parameters.errorMsg              => errorMsg
+      - parameters.errorText            => errorText
+      - parameters.locationText         => locationText
+
+  - name: ses.multipath.ReqError
+
+  - name: telnet.enabled
+
+  - name: spm.httpd.process.exit
+    exports:
+      - parameters.id                 => id
+      - parameters.cause            => cause
+
+  - name: sis.changelog.full
+    exports:
+      - parameters.host              => host
+      - parameters.vol              => vol
+      - parameters.volident          => volident
+
+  - name: snapmirror.migrate.dstErr
+    exports:
+      - parameters.srcfiler            => srcfiler
+      - parameters.srcpath            => srcpath
+      - parameters.dstfiler            => dstfiler
+      - parameters.dstpath            => dstpath
+      - parameters.error              => error
+
+  - name: snapmirror.migrate.srcErr
+    exports:
+      - parameters.srcfiler            => srcfiler
+      - parameters.srcpath            => srcpath
+      - parameters.dstfiler            => dstfiler
+      - parameters.dstpath            => dstpath
+      - parameters.error              => error
+
+  - name: snapvault.dst.opNotComplete
+    exports:
+      - parameters.dst_path            => dst_path
+
+  - name: replication.dst.resync.failed
+    exports:
+      - parameters.rtype              => rtype
+      - parameters.dstpath            => dstpath
+      - parameters.srcfiler            => srcfiler
+      - parameters.srcpath            => srcpath
+      - parameters.error              => error
+
+  - name: mgmt.snapmir.init.fail
+    exports:
+      - parameters.dstpath            => dstpath
+      - parameters.srcpath            => srcpath
+      - parameters.error              => error
+
+  - name: snapmirror.status.updateStatusErr
+
+  - name: mgmt.snapmir.resync.fail
+    exports:
+      - parameters.dstpath            => dstpath
+      - parameters.srcpath            => srcpath
+      - parameters.error              => error
+
+  - name: snapvault.tgt.failure
+    exports:
+      - parameters.snapname            => snapname
+      - parameters.volume              => volume
+      - parameters.reason              => reason
+
+  - name: raid.config.spare.disk.missing
+    exports:
+      - parameters.disk_info            => disk_info
+      - parameters.shelf                  => shelf
+      - parameters.bay                  => bay
+      - parameters.model                 => model
+      - parameters.serialno              => serialno
+      - parameters.failure_reason       => failure_reason
+      - parameters.site                   => site
+
+  - name: disk.init.err.unsupported
+
+# EMS data for CI
+
+  - name: wafl.vol.inode.space.usage
+    exports:
+      - parameters.type                                => type
+      - parameters.vol                                   => vol
+      - parameters.current_inofile_used                => current_inofile_used
+      - parameters.threshold_ems_inofile_used_pct     => threshold_ems_inofile_used_pct
+
+  - name: disk.outOfService
+    exports:
+      - parameters.diskName          => diskName
+      - parameters.serialno          => serialno
+      - parameters.reason            => reason
+
+  - name: gb.netra.ca.check.failed
+    exports:
+      - parameters.aggr_uuid          => aggr_uuid
+      - parameters.reason            => reason
+
+  - name: callhome.hainterconnect.down
+    exports:
+      - parameters.subject          => subject
+      - parameters.reason          => reason
+
+  - name: clam.node.ooq
+    exports:
+      - parameters.hostname        => hostname
+      - parameters.nodeid          => nodeid
+      - parameters.reason          => reason
+
+  - name: sk.panic
+
+  - name: mgmtgwd.rootvolrec.low.space
+    exports:
+      - parameters.node                    => node
+      - parameters.threshold_in_mb          => threshold_in_mb
+
+  - name: callhome.reboot.takeover
+
+  - name: Nblade.cifsNoPrivShare
+    exports:
+      - parameters.vserverId            => vserverId
+      - parameters.userName            => userName
+      - parameters.clientIp            => clientIp
+      - parameters.object_type          => object_type
+      - parameters.object_uuid          => object_uuid
+
+  - name: objstore.host.unresolvable
+    exports:
+      - parameters.hostname          => hostname
+      - parameters.nodeUuid          => nodeUuid
+
+  - name: objstore.interclusterlifDown
+    exports:
+      - parameters.sysVserverID         => sysVserverID
+      - parameters.nodeUuid             => nodeUuid
+
+  - name: osc.signatureMismatch
+    exports:
+      - parameters.operation             => operation
+      - parameters.serverHostname       => serverHostname
+      - parameters.bucket               => bucket
+      - parameters.nodeUuid             => nodeUuid
+
+  - name: qos.monitor.memory.maxed
+    exports:
+      - parameters.subject             => subject
+      - parameters.object_type         => object_type
+      - parameters.object_uuid         => object_uuid
+
+  - name: wafl.readdir.expired
+    exports:
+      - parameters.volume             => volume
+      - parameters.snapid               => snapid
+      - parameters.directory_inum     => directory_inum
+      - parameters.object_uuid        => object_uuid
+
+  - name: arl.netra.ca.check.failed
+    exports:
+      - parameters.vol             => vol
+      - parameters.aggr_uuid      => aggr_uuid
+      - parameters.reason           => reason
+
+  - name: cifs.shadowcopy.failure
+    exports:
+      - parameters.errMsg           => errMsg
+      - parameters.operation        => operation
+      - parameters.shareName         => shareName
+      - parameters.object_type      => object_type
+      - parameters.object_uuid       => object_uuid
+
+  - name: vserver.stop.failed
+    exports:
+      - parameters.vserver_name         => vserver_name
+
+  - name: Nblade.cifsManyAuths
+    exports:
+      - parameters.vsId                 => vsId
+      - parameters.remoteIpAddress       => remoteIpAddress
+      - parameters.object_type           => object_type
+      - parameters.object_uuid           => object_uuid
+
+  - name: Nblade.vscanBadUserPrivAccess
+    exports:
+      - parameters.vserverName       => vserverName
+      - parameters.scannerIp         => scannerIp
+      - parameters.userName         => userName
+      - parameters.object_type       => object_type
+      - parameters.object_uuid       => object_uuid
+
+  - name: Nblade.vscanVirusDetected
+    exports:
+      - parameters.vserverName       => vserverName
+      - parameters.vscanServerIp     => vscanServerIp
+      - parameters.filePath         => filePath
+      - parameters.clientIp         => clientIp
+      - parameters.SID               => SID
+      - parameters.object_type       => object_type
+      - parameters.object_uuid       => object_uuid
+
+  - name: secd.rpc.server.request.dropped
+    exports:
+      - parameters.rpcName         => rpcName
+      - parameters.callerName     => callerName
+
+  - name: vifmgr.cluscheck.badping
+    exports:
+      - parameters.cmd_line       => cmd_line
+      - parameters.exit_status     => exit_status
+      - parameters.cmd_output     => cmd_output
+
+  - name: cluster.switch.reboot
+    exports:
+      - parameters.switch_name       => switch_name
+      - parameters.time             => time
+
+  - name: monitor.raid.brokenDisk
+    exports:
+      - parameters.type       => type
+      - parameters.rgname     => rgname
+
+  - name: shm.threshold.highIOLatency
+    exports:
+      - parameters.disk_name       => disk_name
+
+  - name: ic.HAInterconnectLinkDown
+    exports:
+      - parameters.link_type         => link_type
+      - parameters.link_num         => link_num
+      - parameters.link_downtime    => link_downtime
+
+  - name: wafl.vol.outOfInodes
+    exports:
+      - parameters.owner    => owner
+      - parameters.vol       => vol
+
+  - name: vifmgr.lifdown.noports
+    exports:
+      - parameters.vifname       => vifname
+      - parameters.vifip         => vifip
+      - parameters.tonode       => tonode
+      - parameters.toport       => toport
+
+  - name: LUN.nvfail.vol.proc.complete
+    exports:
+      - parameters.volume_name       => volume_name
+
+  - name: LUN.offline
+    exports:
+      - parameters.lun_path         => lun_path
+      - parameters.volume_dsid       => volume_dsid
+
+  - name: netif.linkErrors
+    exports:
+      - parameters.lun_path         => lun_path
+      - parameters.volume_dsid       => volume_dsid
+
+  - name: unowned.disk.reminder
+    exports:
+      - parameters.count       => count
+
+  - name: netif.fatal.err
+    exports:
+      - parameters.slot       => slot
+      - parameters.info       => info
+
+  - name: vifmgr.cluscheck.hwerrors
+    exports:
+      - parameters.portname       => portname
+      - parameters.nodename       => nodename
+      - parameters.threshold       => threshold
+
+  - name: callhome.nvdimm.cecc
+
+  - name: monitor.nvramLowBattery.notice
+    exports:
+      - parameters.timeout1       => timeout1
+      - parameters.timeout2       => timeout2
+      - parameters.timeout3       => timeout3
+
+  - name: monitor.nvmembattery.warninglow
+
+  - name: wafl.vol.invalidate.fh
+    exports:
+      - parameters.type     => type
+      - parameters.vol       => vol
+
+  - name: upgrademgr.update.pausedErr
+    exports:
+      - parameters.pausedSummary     => pausedSummary
+
+  - name: vifmgr.lifs.overcapacity
+    exports:
+      - parameters.overamount     => overamount
+
+  - name: netif.tcp.conn.bad.checksum
+    exports:
+      - parameters.local_port              => local_port
+      - parameters.source_address         => source_address
+      - parameters.destination_address    => destination_address
+
+  - name: wafl.vol.setting.in.nvfailed.state
+    exports:
+      - parameters.vol        => vol
+      - parameters.err         => err
+
+  - name: wafl.dir.size.warning
+    exports:
+      - parameters.fileid      => fileid
+      - parameters.vol         => vol
+      - parameters.volident   => volident
