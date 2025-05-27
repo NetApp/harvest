@@ -25,10 +25,12 @@ type CounterProperty struct {
 	Type        string
 	Deprecated  string
 	ReplacedBy  string
+	Unit        string
+	Description string
 }
 
 func (s *StatPerf) parseCounters(input string) (map[string]CounterProperty, error) {
-	linesFiltered := filterNonEmpty(input)
+	linesFiltered := FilterNonEmpty(input)
 
 	// Search for the header row, which is expected to have at least 9 columns when split.
 	var headerIndex = -1
@@ -88,7 +90,7 @@ type InstanceInfo struct {
 }
 
 func (s *StatPerf) parseInstances(input string) ([]InstanceInfo, error) {
-	linesFiltered := filterNonEmpty(input)
+	linesFiltered := FilterNonEmpty(input)
 
 	// Locate the header row: look for a row that, when split, returns at least 6 fields and contains "instance"
 	var headerIndex = -1
@@ -159,8 +161,8 @@ func getIndent(s string) int {
 	return len(s) - len(strings.TrimLeft(s, " \t"))
 }
 
-// filterNonEmpty splits input into lines and returns only nonblank ones.
-func filterNonEmpty(input string) []string {
+// FilterNonEmpty splits input into lines and returns only nonblank ones.
+func FilterNonEmpty(input string) []string {
 	var lines []string
 	for line := range strings.Lines(input) {
 		line = strings.TrimSuffix(line, "\n")
@@ -200,7 +202,7 @@ func (s *StatPerf) parseData(input string) (gjson.Result, error) {
 func parseRows(input string, logger *slog.Logger) ([]map[string]string, error) {
 	defaultTimestamp := float64(time.Now().UnixNano() / util.BILLION)
 	var timestamp float64
-	lines := filterNonEmpty(input)
+	lines := FilterNonEmpty(input)
 	var groups []map[string]string
 
 	var aggregation string
