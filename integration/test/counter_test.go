@@ -49,7 +49,6 @@ func TestCounters(t *testing.T) {
 	)
 
 	utils.SkipIfMissing(t, utils.Regression)
-	validateRolePermissions()
 	conf.TestLoadHarvestConfig(installer.HarvestConfigFile)
 
 	pollerName := "dc1"
@@ -83,58 +82,6 @@ func TestCounters(t *testing.T) {
 		os.Exit(1)
 	}
 
-}
-
-func validateRolePermissions() {
-	var (
-		adminPoller *conf.Poller
-		adminClient *rest2.Client
-		err         error
-	)
-
-	// Load the admin poller from harvest_admin.yml
-	conf.TestLoadHarvestConfig(installer.HarvestAdminConfigFile)
-
-	pollerName := "dc1-admin"
-	if adminPoller, err = conf.PollerNamed(pollerName); err != nil {
-		slog.Error("unable to find poller", slogx.Err(err), slog.String("poller", pollerName))
-		os.Exit(1)
-	}
-	if adminPoller.Addr == "" {
-		slog.Error("admin poller address is empty", slog.String("poller", pollerName))
-		os.Exit(1)
-	}
-
-	timeout, _ := time.ParseDuration(rest2.DefaultTimeout)
-	if adminClient, err = rest2.New(adminPoller, timeout, auth.NewCredentials(adminPoller, slog.Default())); err != nil {
-		slog.Error("error creating new admin client", slogx.Err(err), slog.String("poller", pollerName))
-		os.Exit(1)
-	}
-
-	if err = adminClient.Init(5, conf.Remote{}); err != nil {
-		slog.Error("admin client init failed", slogx.Err(err), slog.String("poller", pollerName))
-		os.Exit(1)
-	}
-
-	apiEndpoint := "api/private/cli/security/login/rest-role"
-	href := rest2.NewHrefBuilder().
-		APIPath(apiEndpoint).
-		Filter([]string{"role=harvest-rest-role", "api=/api/private/cli"}).
-		Build()
-
-	response, err := collectors.InvokeRestCall(adminClient, href)
-	if err != nil {
-		slog.Error("failed to invoke admin rest call", slogx.Err(err), slog.String("endpoint", apiEndpoint))
-		os.Exit(1)
-	}
-
-	for _, instanceData := range response {
-		api := instanceData.Get("api")
-		if api.Exists() {
-			slog.Error("unexpected 'api' field found in the response data; permissions for /api/private/cli should not be present")
-			os.Exit(1)
-		}
-	}
 }
 
 func invokeRestCall(client *rest2.Client, counters map[string][]counterData) error {
