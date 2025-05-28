@@ -174,11 +174,6 @@
                 "value": [
                   {
                     "options": {
-                      "down": {
-                        "color": "semi-dark-orange",
-                        "index": 1,
-                        "text": "Down"
-                      },
                       "up": {
                         "color": "semi-dark-green",
                         "index": 0,
@@ -186,12 +181,34 @@
                       }
                     },
                     "type": "value"
+                  },
+                  {
+                    "options": {
+                      "match": "null+nan",
+                      "result": {
+                        "color": "semi-dark-orange",
+                        "index": 1
+                      }
+                    },
+                    "type": "special"
                   }
                 ]
               },
               {
                 "id": "custom.displayMode",
                 "value": "color-background-solid"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Switch"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 400
               }
             ]
           }
@@ -374,7 +391,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Interface Transmit Traffic",
+          "title": "Top $TopResources Interface Transmit Packets",
           "type": "timeseries"
         },
         {
@@ -466,7 +483,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Interface Receive Traffic",
+          "title": "Top $TopResources Interface Receive Packets",
           "type": "timeseries"
         },
         {
