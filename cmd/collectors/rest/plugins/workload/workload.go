@@ -3,10 +3,10 @@ package workload
 import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 )
 
@@ -41,7 +41,7 @@ func (w *Workload) createMetrics(data *matrix.Matrix) error {
 	return nil
 }
 
-func (w *Workload) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (w *Workload) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[w.Object]
 
 	// create metrics

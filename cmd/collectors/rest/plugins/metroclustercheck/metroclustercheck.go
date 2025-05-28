@@ -2,11 +2,11 @@ package metroclustercheck
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 )
@@ -45,7 +45,7 @@ func (m *MetroclusterCheck) Init(conf.Remote) error {
 	return nil
 }
 
-func (m *MetroclusterCheck) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (m *MetroclusterCheck) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	// Purge and reset data
 	m.data.PurgeInstances()
 	m.data.Reset()

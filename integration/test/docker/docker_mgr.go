@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/Netapp/harvest-automation/test/utils"
+	"github.com/Netapp/harvest-automation/test/cmds"
 	"log/slog"
 	"os/exec"
 	"strings"
@@ -69,7 +69,7 @@ func StopContainers(commandSubString string) error {
 }
 
 func CopyFile(containerID string, src string, dest string) {
-	_, _ = utils.Run("docker", "cp", src, containerID+":"+dest)
+	_, _ = cmds.Run("docker", "cp", src, containerID+":"+dest)
 }
 
 func Containers(cmdPattern string) ([]Container, error) {

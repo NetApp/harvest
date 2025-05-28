@@ -2,7 +2,7 @@ package installer
 
 import (
 	"bufio"
-	"github.com/Netapp/harvest-automation/test/utils"
+	"github.com/Netapp/harvest-automation/test/cmds"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
 	"os"
@@ -22,11 +22,11 @@ type Installer interface {
 
 func GetPerfFileWithQosCounters(source string, target string) string {
 	// Create a file for writing
-	modifiedFilePath := utils.GetHarvestRootDir() + "/" + target
-	utils.RemoveSafely(modifiedFilePath)
+	modifiedFilePath := cmds.GetHarvestRootDir() + "/" + target
+	cmds.RemoveSafely(modifiedFilePath)
 	writeFile, _ := os.Create(modifiedFilePath)
 	writeBuffer := bufio.NewWriter(writeFile)
-	file, err := os.Open(utils.GetHarvestRootDir() + "/" + source)
+	file, err := os.Open(cmds.GetHarvestRootDir() + "/" + source)
 	if err != nil {
 		slog.Error("", slogx.Err(err))
 	}

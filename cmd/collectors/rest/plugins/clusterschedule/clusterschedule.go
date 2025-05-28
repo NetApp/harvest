@@ -2,8 +2,8 @@ package clusterschedule
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"strings"
 )
@@ -16,7 +16,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &ClusterScheule{AbstractPlugin: p}
 }
 
-func (c *ClusterScheule) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (c *ClusterScheule) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	for _, instance := range dataMap[c.Object].GetInstances() {
 		if cron := instance.GetLabel("cron"); cron != "" {
 			updateDetailsJSON := gjson.Result{Type: gjson.JSON, Raw: cron}

@@ -18,12 +18,13 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
+	"github.com/netapp/harvest/v2/pkg/template"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"math"
 	"strconv"
@@ -72,7 +73,7 @@ func (n *Nic) Init(remote conf.Remote) error {
 	n.data.SetExportOptions(exportOptions)
 
 	for _, obj := range ifgrpMetrics {
-		metricName, display, _, _ := util.ParseMetric(obj)
+		metricName, display, _, _ := template.ParseMetric(obj)
 		_, err := n.data.NewMetricFloat64(metricName, display)
 		if err != nil {
 			n.SLogger.Error("add metric", slogx.Err(err))
@@ -84,7 +85,7 @@ func (n *Nic) Init(remote conf.Remote) error {
 }
 
 // Run speed label is reported in bits-per-second and rx/tx is reported as bytes-per-second
-func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 
 	var read, write, rx, tx, utilPercent *matrix.Metric
 	var err error

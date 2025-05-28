@@ -6,11 +6,11 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
-	"github.com/netapp/harvest/v2/pkg/util"
 	goversion "github.com/netapp/harvest/v2/third_party/go-version"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
@@ -124,7 +124,7 @@ func (h *Health) initMatrix(name string, prefix string, inputMat map[string]*mat
 	return nil
 }
 
-func (h *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (h *Health) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[h.Object]
 	h.client.Metadata.Reset()
 	clusterVersion := h.client.Remote().Version

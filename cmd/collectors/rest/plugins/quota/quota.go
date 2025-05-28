@@ -2,10 +2,10 @@ package quota
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
-	"github.com/netapp/harvest/v2/pkg/util"
 )
 
 type Quota struct {
@@ -28,7 +28,7 @@ func (q *Quota) Init(conf.Remote) error {
 	return nil
 }
 
-func (q *Quota) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (q *Quota) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[q.Object]
 
 	// The threshold metric does not exist in REST quota template, we are adding it to maintain parity with exported ZAPI metrics

@@ -2,8 +2,8 @@ package installer
 
 import (
 	"fmt"
+	"github.com/Netapp/harvest-automation/test/cmds"
 	"github.com/Netapp/harvest-automation/test/core"
-	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
 	"strings"
@@ -17,7 +17,7 @@ type Harvest struct {
 }
 
 func (h *Harvest) Start() {
-	status, err := utils.Exec(HarvestHome, HarvestBin, nil, "start")
+	status, err := cmds.Exec(HarvestHome, HarvestBin, nil, "start")
 	if err != nil {
 		slog.Error("", slogx.Err(err))
 		panic(err)
@@ -28,7 +28,7 @@ func (h *Harvest) Start() {
 }
 
 func (h *Harvest) Stop() {
-	status, err := utils.Exec(HarvestHome, HarvestBin, nil, "stop")
+	status, err := cmds.Exec(HarvestHome, HarvestBin, nil, "stop")
 	if err != nil {
 		slog.Error("", slogx.Err(err))
 		panic(err)
@@ -54,7 +54,7 @@ outer:
 
 func (h *Harvest) GetPollerInfo() []core.Poller {
 	slog.Info("Getting all pollers details")
-	harvestStatus, err := utils.Exec(HarvestHome, HarvestBin, nil, "status")
+	harvestStatus, err := cmds.Exec(HarvestHome, HarvestBin, nil, "status")
 	if err != nil {
 		slog.Error("", slogx.Err(err))
 		panic(err)
@@ -86,7 +86,7 @@ func (h *Harvest) GetPollerInfo() []core.Poller {
 }
 
 func (h *Harvest) IsValidAsup(asupExecPath string) bool {
-	out, err := utils.Exec("", asupExecPath, nil, "--version")
+	out, err := cmds.Exec("", asupExecPath, nil, "--version")
 	if err != nil {
 		fmt.Printf("error %s\n", err)
 		return false

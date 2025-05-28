@@ -6,11 +6,11 @@ package maxplugin
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"regexp"
 	"strconv"
@@ -116,7 +116,7 @@ func (m *Max) parseRules() error {
 	return nil
 }
 
-func (m *Max) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (m *Max) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 
 	data := dataMap[m.Object]
 	matrices := make(map[string]*matrix.Matrix)
@@ -156,7 +156,7 @@ func (m *Max) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 		err             error
 	)
 
-	metadata := &util.Metadata{}
+	metadata := &collector.Metadata{}
 	for _, instance := range data.GetInstances() {
 
 		if !instance.IsExportable() {

@@ -7,7 +7,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/Netapp/harvest-automation/certer/models"
-	"github.com/Netapp/harvest-automation/test/utils"
+	"github.com/Netapp/harvest-automation/test/cmds"
 	"github.com/carlmjohnson/requests"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
@@ -35,7 +35,7 @@ var (
 )
 
 func main() {
-	utils.SetupLogging()
+	cmds.SetupLogging()
 	parseCLI()
 	begin()
 }

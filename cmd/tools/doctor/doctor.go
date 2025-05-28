@@ -13,7 +13,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	harvestyaml "github.com/netapp/harvest/v2/pkg/tree/yaml"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/spf13/cobra"
 	"io/fs"
 	"os"
@@ -267,7 +266,7 @@ func checkCollectorName(config conf.HarvestConfig) validation {
 		for _, c := range defaultCollectors {
 			isDefaultCollectorExist = true
 			// Check if the collector name is valid
-			_, ok := util.IsCollector[c.Name]
+			_, ok := conf.IsCollector[c.Name]
 			if !ok {
 				fmt.Printf("Default Section uses an invalid collector %s \n", color.Colorize(c.Name, color.Red))
 				valid.isValid = false
@@ -281,7 +280,7 @@ func checkCollectorName(config conf.HarvestConfig) validation {
 		for _, c := range v.Collectors {
 			isPollerCollectorExist = true
 			// Check if the collector name is valid
-			_, ok := util.IsCollector[c.Name]
+			_, ok := conf.IsCollector[c.Name]
 			if !ok {
 				fmt.Printf("Poller [%s] uses an invalid collector [%s] \n", color.Colorize(k, color.Yellow), color.Colorize(c.Name, color.Red))
 				valid.isValid = false
@@ -297,7 +296,7 @@ func checkCollectorName(config conf.HarvestConfig) validation {
 
 	// Print the valid collector names if there are invalid collector names
 	if !valid.isValid {
-		fmt.Printf("Valid collector names %v \n", color.Colorize(util.GetCollectorSlice(), color.Green))
+		fmt.Printf("Valid collector names %v \n", color.Colorize(conf.GetCollectorSlice(), color.Green))
 	}
 
 	return valid

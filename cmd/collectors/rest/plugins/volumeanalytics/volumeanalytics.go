@@ -3,11 +3,13 @@ package volumeanalytics
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/num"
 	"github.com/netapp/harvest/v2/pkg/slogx"
-	"github.com/netapp/harvest/v2/pkg/util"
+	"github.com/netapp/harvest/v2/pkg/template"
 	goversion "github.com/netapp/harvest/v2/third_party/go-version"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
@@ -94,7 +96,7 @@ func (v *VolumeAnalytics) initMatrix() error {
 	return nil
 }
 
-func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[v.Object]
 	v.client.Metadata.Reset()
 
@@ -148,13 +150,13 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 				fileCount := record.Get("analytics.file_count").ClonedString()
 				bytesUsed := record.Get("analytics.bytes_used").ClonedString()
 				subDirCount := record.Get("analytics.subdir_count").ClonedString()
-				mtBytesUsedValues := strings.Split(util.ArrayMetricToString(record.Get("analytics.by_modified_time.bytes_used.values").ClonedString()), ",")
-				mtBytesUsedPercentages := strings.Split(util.ArrayMetricToString(record.Get("analytics.by_modified_time.bytes_used.percentages").ClonedString()), ",")
-				mtBytesUsedLabels := strings.Split(util.ArrayMetricToString(analytics.Get("by_modified_time.bytes_used.labels").ClonedString()), ",")
+				mtBytesUsedValues := strings.Split(template.ArrayMetricToString(record.Get("analytics.by_modified_time.bytes_used.values").ClonedString()), ",")
+				mtBytesUsedPercentages := strings.Split(template.ArrayMetricToString(record.Get("analytics.by_modified_time.bytes_used.percentages").ClonedString()), ",")
+				mtBytesUsedLabels := strings.Split(template.ArrayMetricToString(analytics.Get("by_modified_time.bytes_used.labels").ClonedString()), ",")
 
-				atBytesUsedValues := strings.Split(util.ArrayMetricToString(record.Get("analytics.by_accessed_time.bytes_used.values").ClonedString()), ",")
-				atBytesUsedPercentages := strings.Split(util.ArrayMetricToString(record.Get("analytics.by_accessed_time.bytes_used.percentages").ClonedString()), ",")
-				atBytesUsedLabels := strings.Split(util.ArrayMetricToString(analytics.Get("by_accessed_time.bytes_used.labels").ClonedString()), ",")
+				atBytesUsedValues := strings.Split(template.ArrayMetricToString(record.Get("analytics.by_accessed_time.bytes_used.values").ClonedString()), ",")
+				atBytesUsedPercentages := strings.Split(template.ArrayMetricToString(record.Get("analytics.by_accessed_time.bytes_used.percentages").ClonedString()), ",")
+				atBytesUsedLabels := strings.Split(template.ArrayMetricToString(analytics.Get("by_accessed_time.bytes_used.labels").ClonedString()), ",")
 
 				instance, err := explorerMatrix.NewInstance(instanceID + name)
 				if err != nil {
@@ -179,7 +181,7 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 				}
 				if subDirCount != "" {
 					if name == "." {
-						if err = explorerMatrix.GetMetric("dir_subdir_count").SetValueString(instance, util.AddIntString(subDirCount, 1)); err != nil {
+						if err = explorerMatrix.GetMetric("dir_subdir_count").SetValueString(instance, num.AddIntString(subDirCount, 1)); err != nil {
 							v.SLogger.Error("set metric", slogx.Err(err), slog.String("value", subDirCount))
 						}
 					} else {

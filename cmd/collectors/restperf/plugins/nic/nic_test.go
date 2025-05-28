@@ -4,10 +4,10 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"testing"
 )
@@ -128,7 +128,7 @@ func createRestNic(params *node.Node) plugin.Plugin {
 	o := options.Options{IsTest: true}
 	n := &Nic{AbstractPlugin: plugin.New("nic", &o, params, nil, "nic", nil)}
 	n.SLogger = slog.Default()
-	n.client = &rest.Client{Metadata: &util.Metadata{}}
+	n.client = &rest.Client{Metadata: &collector.Metadata{}}
 	n.testFilePath = "../../testdata/port-test.json"
 	return n
 }

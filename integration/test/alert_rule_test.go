@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/Netapp/harvest-automation/test/utils"
+	"github.com/Netapp/harvest-automation/test/cmds"
 	"github.com/netapp/harvest/v2/cmd/tools/generate"
+	"github.com/netapp/harvest/v2/pkg/template"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"path/filepath"
 	"regexp"
 	"slices"
@@ -30,7 +30,7 @@ var exceptionMetrics = []string{
 }
 
 func TestAlertRules(t *testing.T) {
-	utils.SkipIfMissing(t, utils.Regression)
+	cmds.SkipIfMissing(t, cmds.Regression)
 	metrics, _ := generate.BuildMetrics("../..", "integration/test/harvest.yml", "dc1")
 	for pluginMetric, pluginLabels := range pluginGeneratedMetric {
 		metrics[pluginMetric] = generate.Counter{Name: pluginMetric, Labels: pluginLabels}
@@ -59,7 +59,7 @@ func TestAlertRules(t *testing.T) {
 }
 
 func TestEmsAlertRules(t *testing.T) {
-	utils.SkipIfMissing(t, utils.Regression)
+	cmds.SkipIfMissing(t, cmds.Regression)
 	templateEmsLabels := getEmsLabels("../../conf/ems/9.6.0/ems.yaml")
 	emsAlertRules := GetAllAlertRules("../../container/prometheus/", "ems_alert_rules.yml", true)
 	for _, alertRule := range emsAlertRules {
@@ -185,7 +185,7 @@ func parseEmsLabels(exports *node.Node) string {
 	var labels []string
 	if exports != nil {
 		for _, export := range exports.GetAllChildContentS() {
-			name, display, _, _ := util.ParseMetric(export)
+			name, display, _, _ := template.ParseMetric(export)
 			if strings.HasPrefix(name, "parameters") {
 				labels = append(labels, display)
 			}

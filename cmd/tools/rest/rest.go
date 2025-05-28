@@ -7,9 +7,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/auth"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
-	"github.com/netapp/harvest/v2/pkg/util"
+	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"github.com/netapp/harvest/v2/third_party/tidwall/sjson"
 	"github.com/spf13/cobra"
@@ -396,7 +397,7 @@ func FetchAnalytics(client *Client, href string) ([]gjson.Result, gjson.Result, 
 	downloadAll := true
 	maxRecords := 0
 	if strings.Contains(href, "max_records") {
-		mr, err := util.GetQueryParam(href, "max_records")
+		mr, err := requests.GetQueryParam(href, "max_records")
 		if err != nil {
 			return []gjson.Result{}, gjson.Result{}, err
 		}
@@ -503,7 +504,7 @@ func FetchAllStream(client *Client, href string, processBatch func([]gjson.Resul
 			if numRecords.Int() > 0 {
 				recordsFound = true
 				// Process the current batch of records
-				if err := processBatch(data.Array(), time.Now().UnixNano()/util.BILLION); err != nil {
+				if err := processBatch(data.Array(), time.Now().UnixNano()/collector.BILLION); err != nil {
 					return err
 				}
 			}
@@ -526,7 +527,7 @@ func FetchAllStream(client *Client, href string, processBatch func([]gjson.Resul
 			if len(records) > 0 {
 				recordsFound = true
 				// Process the current batch of records
-				if err := processBatch(records, time.Now().UnixNano()/util.BILLION); err != nil {
+				if err := processBatch(records, time.Now().UnixNano()/collector.BILLION); err != nil {
 					return err
 				}
 			}

@@ -7,8 +7,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/slogx"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/spf13/cobra"
 	"github.com/zekroTJA/timedmap/v2"
 	"log/slog"
@@ -259,11 +259,11 @@ func newAdmin(configPath string) Admin {
 		os.Exit(1)
 	}
 	if a.httpSD.TLS != (conf.TLS{}) {
-		util.CheckCert(a.httpSD.TLS.CertFile, "ssl_cert", configPath, a.logger)
-		util.CheckCert(a.httpSD.TLS.KeyFile, "ssl_key", configPath, a.logger)
+		requests.CheckCert(a.httpSD.TLS.CertFile, "ssl_cert", configPath, a.logger)
+		requests.CheckCert(a.httpSD.TLS.KeyFile, "ssl_key", configPath, a.logger)
 	}
 
-	a.localIP, _ = util.FindLocalIP()
+	a.localIP, _ = requests.FindLocalIP()
 	a.expireAfter = a.setDuration(a.httpSD.ExpireAfter, 1*time.Minute, "expire_after")
 	a.pollerToPromAddr = timedmap.New[string, pollerDetails](a.expireAfter)
 	a.logger.Debug(

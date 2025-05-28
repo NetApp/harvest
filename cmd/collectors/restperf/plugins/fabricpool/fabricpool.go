@@ -3,9 +3,9 @@ package fabricpool
 import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"strconv"
 	"strings"
 )
@@ -33,7 +33,7 @@ func (f *FabricPool) Init(conf.Remote) error {
 }
 
 // Run converts Rest lowercase metric names to uppercase to match ZapiPerf
-func (f *FabricPool) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (f *FabricPool) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[f.Object]
 	for _, metric := range data.GetMetrics() {
 		if !metric.IsArray() {

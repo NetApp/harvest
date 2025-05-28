@@ -1,4 +1,4 @@
-package util
+package collector
 
 type Metadata struct {
 	BytesRx         uint64

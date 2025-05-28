@@ -2,21 +2,21 @@ package main
 
 import (
 	"fmt"
+	"github.com/Netapp/harvest-automation/test/cmds"
 	"github.com/Netapp/harvest-automation/test/docker"
 	"github.com/Netapp/harvest-automation/test/installer"
-	"github.com/Netapp/harvest-automation/test/utils"
 	"strings"
 	"testing"
 )
 
 func TestDockerInstall(t *testing.T) {
-	utils.SkipIfMissing(t, utils.InstallDocker)
+	cmds.SkipIfMissing(t, cmds.InstallDocker)
 	// it will create a grafana token and configure it for dashboard export
-	isReachable := utils.WaitForGrafana()
+	isReachable := cmds.WaitForGrafana()
 	if !isReachable {
 		t.Fatalf("Grafana is not reachable.")
 	}
-	utils.WriteToken(utils.CreateGrafanaToken())
+	cmds.WriteToken(cmds.CreateGrafanaToken())
 	containerIDs, err := docker.Containers("poller")
 	if err != nil {
 		panic(err)
@@ -45,7 +45,7 @@ func TestDockerInstall(t *testing.T) {
 }
 
 func isValidAsup(containerName string) bool {
-	out, err := utils.Exec("", "docker", nil, "container", "exec", containerName, "autosupport/asup", "--version")
+	out, err := cmds.Exec("", "docker", nil, "container", "exec", containerName, "autosupport/asup", "--version")
 	if err != nil {
 		fmt.Printf("error %s\n", err)
 		return false

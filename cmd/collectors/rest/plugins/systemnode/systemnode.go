@@ -2,8 +2,8 @@ package systemnode
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/util"
 )
 
 type SystemNode struct {
@@ -14,7 +14,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &SystemNode{AbstractPlugin: p}
 }
 
-func (s *SystemNode) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (s *SystemNode) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[s.Object]
 	nodeStateMap := make(map[string]string)
 

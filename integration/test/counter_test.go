@@ -2,16 +2,16 @@ package main
 
 import (
 	"fmt"
+	"github.com/Netapp/harvest-automation/test/cmds"
 	"github.com/Netapp/harvest-automation/test/installer"
-	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	rest2 "github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/slogx"
+	"github.com/netapp/harvest/v2/pkg/template"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/go-version"
 	"log/slog"
 	"os"
@@ -48,7 +48,7 @@ func TestCounters(t *testing.T) {
 		err    error
 	)
 
-	utils.SkipIfMissing(t, utils.Regression)
+	cmds.SkipIfMissing(t, cmds.Regression)
 	validateRolePermissions()
 	conf.TestLoadHarvestConfig(installer.HarvestConfigFile)
 
@@ -267,8 +267,8 @@ func readCounters(t *node.Node, path, kind string, countersData map[string][]cou
 				if strings.HasPrefix(c, "^") && kind == "perf" {
 					continue
 				}
-				name, _, _, _ := util.ParseMetric(c)
-				counters = append(counters, util.HandleArrayFormat(replacer.Replace(name)))
+				name, _, _, _ := template.ParseMetric(c)
+				counters = append(counters, template.HandleArrayFormat(replacer.Replace(name)))
 			}
 		}
 		if kind == "rest" {

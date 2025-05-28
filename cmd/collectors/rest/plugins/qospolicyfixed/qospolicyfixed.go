@@ -3,9 +3,9 @@ package qospolicyfixed
 import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"strings"
 )
@@ -25,7 +25,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &QosPolicyFixed{AbstractPlugin: p}
 }
 
-func (q *QosPolicyFixed) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (q *QosPolicyFixed) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[q.Object]
 
 	// create metrics

@@ -2,8 +2,8 @@ package collectors
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/util"
 )
 
 func NewLif(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -14,7 +14,7 @@ type Lif struct {
 	*plugin.AbstractPlugin
 }
 
-func (l *Lif) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (l *Lif) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[l.Object]
 	clusterName := data.GetGlobalLabels()["cluster"]
 

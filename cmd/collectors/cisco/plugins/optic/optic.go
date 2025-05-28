@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors/cisco/rest"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"time"
@@ -57,7 +57,7 @@ func (o *Optic) Init(_ conf.Remote) error {
 	return nil
 }
 
-func (o *Optic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (o *Optic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[o.Object]
 	o.client.Metadata.Reset()
 

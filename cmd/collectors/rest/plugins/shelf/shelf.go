@@ -4,9 +4,9 @@ package shelf
 import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/util"
 )
 
 type Shelf struct {
@@ -21,7 +21,7 @@ func (my *Shelf) Init(conf.Remote) error {
 	return my.InitAbc()
 }
 
-func (my *Shelf) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (my *Shelf) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 
 	data := dataMap[my.Object]
 	for _, instance := range data.GetInstances() {

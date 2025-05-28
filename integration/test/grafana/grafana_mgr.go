@@ -2,9 +2,9 @@ package grafana
 
 import (
 	"errors"
+	"github.com/Netapp/harvest-automation/test/cmds"
 	"github.com/Netapp/harvest-automation/test/docker"
 	"github.com/Netapp/harvest-automation/test/installer"
-	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
 	"regexp"
@@ -21,10 +21,10 @@ func (g *Mgr) Import() (bool, string) {
 	)
 	slog.Info("Verify Grafana and Prometheus are configured")
 	var re = regexp.MustCompile(`404|not-found|error`)
-	if !utils.IsURLReachable(utils.GetGrafanaHTTPURL()) {
+	if !cmds.IsURLReachable(cmds.GetGrafanaHTTPURL()) {
 		panic(errors.New("grafana is not reachable"))
 	}
-	if !utils.IsURLReachable(utils.GetPrometheusURL()) {
+	if !cmds.IsURLReachable(cmds.GetPrometheusURL()) {
 		panic(errors.New("prometheus is not reachable"))
 	}
 	slog.Info("Import dashboard from grafana/dashboards")
@@ -32,7 +32,7 @@ func (g *Mgr) Import() (bool, string) {
 	if err != nil {
 		panic(err)
 	}
-	grafanaURL := utils.GetGrafanaURL()
+	grafanaURL := cmds.GetGrafanaURL()
 	if docker.IsDockerBasedPoller() {
 		grafanaURL = "grafana:3000"
 	}
@@ -40,10 +40,10 @@ func (g *Mgr) Import() (bool, string) {
 	if docker.IsDockerBasedPoller() {
 		params := []string{"exec", containerIDs[0].ID, "bin/harvest"}
 		params = append(params, importCmds...)
-		importOutput, err = utils.Run("docker", params...)
+		importOutput, err = cmds.Run("docker", params...)
 	} else {
 		slog.Info("It is non docker based harvest")
-		importOutput, err = utils.Exec(installer.HarvestHome, "bin/harvest", nil, importCmds...)
+		importOutput, err = cmds.Exec(installer.HarvestHome, "bin/harvest", nil, importCmds...)
 	}
 	if err != nil {
 		slog.Error("error", slogx.Err(err))
