@@ -119,6 +119,7 @@ func validateRolePermissions() {
 	apiEndpoint := "api/private/cli/security/login/rest-role"
 	href := rest2.NewHrefBuilder().
 		APIPath(apiEndpoint).
+		Fields([]string{"access"}).
 		Filter([]string{"role=harvest-rest-role", "api=/api/private/cli"}).
 		Build()
 
@@ -128,10 +129,16 @@ func validateRolePermissions() {
 		os.Exit(1)
 	}
 
+	// Check if the response is empty
+	if len(response) == 0 {
+		slog.Error("Expected 'read_create' access permission for /api/private/cli, but no permissions were found")
+		os.Exit(1)
+	}
+
 	for _, instanceData := range response {
-		api := instanceData.Get("api")
-		if api.Exists() {
-			slog.Error("unexpected 'api' field found in the response data; permissions for /api/private/cli should not be present")
+		access := instanceData.Get("access").ClonedString()
+		if access != "read_create" {
+			slog.Error("Incorrect permissions for /api/private/cli. Expected 'read_create'", slog.String("current_access", access))
 			os.Exit(1)
 		}
 	}
