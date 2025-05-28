@@ -304,8 +304,8 @@ To use the `StatPerf` collector, the `harvest` user requires additional permissi
 security login role create -role harvest2-role -access all -cmddirname "set"
 security login role create -role harvest2-role -access readonly -cmddirname "statistics"
 security login rest-role create -role harvest2-rest-role -access read_create -api /api/private/cli
-security login create -user-or-group-name harvest -application ssh -authentication-method password -role harvest2-role
-security login create -user-or-group-name harvest -application http -authentication-method password -role harvest2-rest-role
+security login create -user-or-group-name harvest2 -application ssh -authentication-method password -role harvest2-role
+security login create -user-or-group-name harvest2 -application http -authentication-method password -role harvest2-rest-role
 ```
 
 #### 7-Mode CLI
