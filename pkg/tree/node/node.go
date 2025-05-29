@@ -9,7 +9,6 @@ import (
 	"encoding/xml"
 	"fmt"
 	"github.com/goccy/go-yaml/ast"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"regexp"
 	"slices"
 	"strings"
@@ -424,7 +423,7 @@ func (n *Node) SearchContent(prefix []string, paths [][]string) ([]string, bool)
 				break
 			}
 		}
-		if len(newPath) < util.MaxLen(paths) {
+		if len(newPath) < MaxLen(paths) {
 			for _, child := range node.GetChildren() {
 				search(child, newPath)
 			}
@@ -483,4 +482,36 @@ func ToString(n ast.Node) string {
 	default:
 		return n.String()
 	}
+}
+
+func MinLen(elements [][]string) int {
+	var smallest, i int
+	smallest = len(elements[0])
+	for i = 1; i < len(elements); i++ {
+		if len(elements[i]) < smallest {
+			smallest = len(elements[i])
+		}
+	}
+	return smallest
+}
+
+func MaxLen(elements [][]string) int {
+	var largest, i int
+	largest = len(elements[0])
+	for i = 1; i < len(elements); i++ {
+		if len(elements[i]) > largest {
+			largest = len(elements[i])
+		}
+	}
+	return largest
+}
+
+func AllSame(elements [][]string, k int) bool {
+	var i int
+	for i = 1; i < len(elements); i++ {
+		if elements[i][k] != elements[0][k] {
+			return false
+		}
+	}
+	return true
 }

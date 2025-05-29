@@ -40,13 +40,13 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/vscan"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	collector2 "github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"maps"
 	"slices"
@@ -547,7 +547,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		// timestamp for batch instances
 		// ignore timestamp from ZAPI which is always integer
 		// we want float, since our poll interval can be a float
-		ts := float64(time.Now().UnixNano()) / util.BILLION
+		ts := float64(time.Now().UnixNano()) / collector2.BILLION
 
 		for instIndex, i := range instances.GetChildren() {
 

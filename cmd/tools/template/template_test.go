@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/goccy/go-yaml/ast"
 	"github.com/goccy/go-yaml/parser"
+	template2 "github.com/netapp/harvest/v2/pkg/template"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"io/fs"
 	"log"
 	"os"
@@ -269,7 +269,7 @@ func TestExportLabelsExist(t *testing.T) {
 				if isZapi {
 					zapiPaths := m.parents
 					zapiPaths = append(zapiPaths, m.left)
-					display := util.ParseZAPIDisplay(model.Object, zapiPaths)
+					display := template2.ParseZAPIDisplay(model.Object, zapiPaths)
 					allLabelNames[display] = true
 				} else {
 					allLabelNames[m.left] = true

@@ -2,11 +2,11 @@ package changelog
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/tree/yaml"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"maps"
 	"strconv"
@@ -115,7 +115,7 @@ func (c *ChangeLog) initMatrix() (map[string]*matrix.Matrix, error) {
 }
 
 // Run processes the data and generates ChangeLog instances
-func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[c.Object]
 	changeLogMap, err := c.initMatrix()
 	if err != nil {
@@ -268,7 +268,7 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *u
 	var matricesArray []*matrix.Matrix
 	matricesArray = append(matricesArray, changeMat)
 
-	metadata := &util.Metadata{}
+	metadata := &collector.Metadata{}
 	metadata.PluginInstances = uint64(len(changeMat.GetInstances()))
 
 	c.copyPreviousData(data)

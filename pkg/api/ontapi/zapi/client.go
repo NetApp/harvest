@@ -9,12 +9,12 @@ import (
 	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/auth"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"io"
 	"log/slog"
 	"net/http"
@@ -37,7 +37,7 @@ type Client struct {
 	Logger     *slog.Logger
 	logZapi    bool // used to log ZAPI request/response
 	auth       *auth.Credentials
-	Metadata   *util.Metadata
+	Metadata   *collector.Metadata
 	remote     conf.Remote
 }
 
@@ -61,7 +61,7 @@ func New(poller *conf.Poller, c *auth.Credentials) (*Client, error) {
 
 	client = Client{
 		auth:     c,
-		Metadata: &util.Metadata{},
+		Metadata: &collector.Metadata{},
 	}
 	client.Logger = slog.Default().With(slog.String("Zapi", "Client"))
 
@@ -595,6 +595,6 @@ func NewTestClient() *Client {
 	return &Client{
 		remote:   conf.Remote{Name: "testCluster", IsClustered: true},
 		request:  &http.Request{},
-		Metadata: &util.Metadata{},
+		Metadata: &collector.Metadata{},
 	}
 }

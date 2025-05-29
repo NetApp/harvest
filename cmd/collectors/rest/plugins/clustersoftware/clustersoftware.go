@@ -2,11 +2,11 @@ package clustersoftware
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 )
@@ -46,7 +46,7 @@ func (c *ClusterSoftware) Init(conf.Remote) error {
 	return nil
 }
 
-func (c *ClusterSoftware) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (c *ClusterSoftware) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	globalLabels := dataMap[c.Object].GetGlobalLabels()
 
 	for _, instance := range dataMap[c.Object].GetInstances() {

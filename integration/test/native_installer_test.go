@@ -1,15 +1,15 @@
 package main
 
 import (
+	"github.com/Netapp/harvest-automation/test/cmds"
 	"github.com/Netapp/harvest-automation/test/installer"
-	"github.com/Netapp/harvest-automation/test/utils"
 	"log"
 	"os"
 	"testing"
 )
 
 func TestNativeInstall(t *testing.T) {
-	utils.SkipIfMissing(t, utils.InstallNative)
+	cmds.SkipIfMissing(t, cmds.InstallNative)
 	var path = os.Getenv("BUILD_PATH")
 	if path == "" {
 		panic("BUILD_PATH variable is not set.")
@@ -22,8 +22,8 @@ func TestNativeInstall(t *testing.T) {
 	if !installObject.Install() {
 		panic(installer.GRAFANA + " installation is failed.")
 	}
-	token := utils.CreateGrafanaToken()
-	utils.WriteToken(token)
+	token := cmds.CreateGrafanaToken()
+	cmds.WriteToken(token)
 
 	installObject, err2 := installer.GetInstaller(installer.NATIVE, path)
 	if err2 != nil {
@@ -50,12 +50,12 @@ func TestNativeInstall(t *testing.T) {
 	if !installObject.Install() {
 		panic(installer.PROMETHEUS + " installation is failed.")
 	}
-	utils.AddPrometheusToGrafana()
+	cmds.AddPrometheusToGrafana()
 
 }
 
 func TestNativeStop(t *testing.T) {
-	utils.SkipIfMissing(t, utils.STOP)
+	cmds.SkipIfMissing(t, cmds.STOP)
 	var path = os.Getenv("BUILD_PATH")
 	installObject, err2 := installer.GetInstaller(installer.NATIVE, path)
 	if err2 != nil {

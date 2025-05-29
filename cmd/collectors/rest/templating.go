@@ -3,8 +3,9 @@ package rest
 import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/pkg/errs"
+	"github.com/netapp/harvest/v2/pkg/requests"
+	"github.com/netapp/harvest/v2/pkg/template"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"maps"
 	"slices"
@@ -15,12 +16,12 @@ import (
 func (r *Rest) LoadTemplate() (string, error) {
 
 	jitter := r.Params.GetChildContentS("jitter")
-	template, path, err := r.ImportSubTemplate("", TemplateFn(r.Params, r.Object), jitter, r.Remote.Version)
+	subTemplate, path, err := r.ImportSubTemplate("", TemplateFn(r.Params, r.Object), jitter, r.Remote.Version)
 	if err != nil {
 		return "", err
 	}
 
-	r.Params.Union(template)
+	r.Params.Union(subTemplate)
 	return path, nil
 }
 
@@ -76,7 +77,7 @@ func (r *Rest) InitCache() error {
 	query := r.Params.GetChildS("query")
 	r.Prop.IsPublic = true
 	if query != nil {
-		r.Prop.IsPublic = util.IsPublicAPI(query.GetContentS())
+		r.Prop.IsPublic = requests.IsPublicAPI(query.GetContentS())
 	}
 
 	r.ParseRestCounters(counters, r.Prop)
@@ -100,7 +101,7 @@ func (r *Rest) ParseRestCounters(counter *node.Node, prop *prop) {
 
 	for _, c := range counter.GetAllChildContentS() {
 		if c != "" {
-			name, display, kind, metricType = util.ParseMetric(c)
+			name, display, kind, metricType = template.ParseMetric(c)
 			prop.Counters[name] = display
 			switch kind {
 			case "key":

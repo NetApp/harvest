@@ -7,10 +7,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/auth"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/requests"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"io"
 	"log/slog"
@@ -39,7 +39,7 @@ type Client struct {
 	Timeout  time.Duration
 	logRest  bool // used to log Rest request/response
 	auth     *auth.Credentials
-	Metadata *util.Metadata
+	Metadata *collector.Metadata
 }
 
 func New(poller *conf.Poller, timeout time.Duration, credentials *auth.Credentials) (*Client, error) {
@@ -54,7 +54,7 @@ func New(poller *conf.Poller, timeout time.Duration, credentials *auth.Credentia
 
 	client = Client{
 		auth:     credentials,
-		Metadata: &util.Metadata{},
+		Metadata: &collector.Metadata{},
 	}
 	client.Logger = slog.Default().With(slog.String("REST", "Client"))
 
@@ -102,7 +102,7 @@ func (c *Client) GetPlainRest(request string, encodeURL bool, headers ...map[str
 		request = request[1:]
 	}
 	if encodeURL {
-		request, err = util.EncodeURL(request)
+		request, err = requests.EncodeURL(request)
 		if err != nil {
 			return nil, err
 		}
@@ -213,7 +213,7 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 			defer c.buffer.Reset()
 		}
 		restReq := c.request.URL.String()
-		api := util.GetURLWithoutHost(c.request)
+		api := requests.GetURLWithoutHost(c.request)
 
 		// Send request to the server.
 		response, innerErr = c.client.Do(c.request)

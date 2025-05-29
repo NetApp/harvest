@@ -4,8 +4,8 @@ package externalserviceoperation
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/util"
 )
 
 const Hyphen = "-"
@@ -18,7 +18,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &ExternalServiceOperation{AbstractPlugin: p}
 }
 
-func (e *ExternalServiceOperation) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (e *ExternalServiceOperation) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[e.Object]
 	datacenterClusterKey := data.GetGlobalLabels()["datacenter"] + Hyphen + data.GetGlobalLabels()["cluster"] + Hyphen
 	for _, instance := range data.GetInstances() {

@@ -11,10 +11,10 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/ps"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"os"
 	"os/exec"
@@ -278,7 +278,7 @@ func (u *Unix) PollInstance() (map[string]*matrix.Matrix, error) {
 		return nil, err
 	}
 
-	statuses, err := util.GetPollerStatuses()
+	statuses, err := ps.GetPollerStatuses()
 	if err != nil {
 		return nil, err
 	}

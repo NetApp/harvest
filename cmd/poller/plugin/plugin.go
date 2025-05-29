@@ -29,11 +29,11 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/auth"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"sync"
 	"time"
@@ -46,7 +46,7 @@ const DefaultPollInterval = 3 * time.Minute
 type Plugin interface {
 	GetName() string
 	Init(conf.Remote) error
-	Run(map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error)
+	Run(map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error)
 }
 
 var (
@@ -150,7 +150,7 @@ func (p *AbstractPlugin) InitAbc() error {
 
 // Run should run the plugin and return collected data as an array of matrices
 // (Since most plugins don't collect data, they will always return nil instead)
-func (p *AbstractPlugin) Run(map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (p *AbstractPlugin) Run(map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	panic(p.Name + " has not implemented Run()")
 }
 

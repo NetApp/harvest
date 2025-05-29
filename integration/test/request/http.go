@@ -1,19 +1,20 @@
-package utils
+package request
 
 import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/Netapp/harvest-automation/test/errs"
 	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"io"
 	"log/slog"
-	"net/http"
+	http2 "net/http"
 	"os"
 )
 
 func GetResponse(url string) (string, error) {
-	resp, err := http.Get(url) //nolint:gosec
+	resp, err := http2.Get(url) //nolint:gosec
 	if err != nil {
 		return "", err
 	}
@@ -27,7 +28,7 @@ func GetResponse(url string) (string, error) {
 }
 
 func GetResponseBody(url string) ([]byte, error) {
-	resp, err := http.Get(url) //nolint:gosec
+	resp, err := http2.Get(url) //nolint:gosec
 	if err != nil {
 		slog.Error("", slogx.Err(err))
 		os.Exit(1)
@@ -44,7 +45,7 @@ func GetResponseBody(url string) ([]byte, error) {
 
 func SendReqAndGetRes(url string, method string,
 	buf []byte) map[string]interface{} {
-	client := &http.Client{}
+	client := &http2.Client{}
 	req, err := requests.New(method, url, bytes.NewBuffer(buf))
 	if err != nil {
 		fmt.Println(err)
@@ -52,14 +53,14 @@ func SendReqAndGetRes(url string, method string,
 	}
 	req.Header.Add("Content-Type", "application/json")
 	res, err := client.Do(req)
-	PanicIfNotNil(err)
+	errs.PanicIfNotNil(err)
 	//goland:noinspection GoUnhandledErrorResult
 	defer res.Body.Close()
 	body, err := io.ReadAll(res.Body)
-	PanicIfNotNil(err)
+	errs.PanicIfNotNil(err)
 	slog.Info(string(body))
 	var data map[string]interface{}
 	err = json.Unmarshal(body, &data)
-	PanicIfNotNil(err)
+	errs.PanicIfNotNil(err)
 	return data
 }

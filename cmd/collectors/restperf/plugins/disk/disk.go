@@ -5,12 +5,14 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/num"
 	"github.com/netapp/harvest/v2/pkg/slogx"
+	"github.com/netapp/harvest/v2/pkg/template"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"maps"
@@ -186,7 +188,7 @@ func (d *Disk) initMetrics(attribute, objectName string, obj *node.Node) error {
 	_, _ = d.shelfData[attribute].NewMetricUint8("status")
 
 	for _, c := range obj.GetAllChildContentS() {
-		metricName, display, kind, _ := util.ParseMetric(c)
+		metricName, display, kind, _ := template.ParseMetric(c)
 
 		switch kind {
 		case "key":
@@ -214,7 +216,7 @@ func (d *Disk) initMetrics(attribute, objectName string, obj *node.Node) error {
 	return nil
 }
 
-func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 
 	data := dataMap[d.Object]
 	d.client.Metadata.Reset()
@@ -832,33 +834,33 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 
 			case "average_ambient_temperature":
 				if len(v.ambientTemperature) > 0 {
-					aaT := util.Avg(v.ambientTemperature)
+					aaT := num.Avg(v.ambientTemperature)
 					m.SetValueFloat64(instance, aaT)
 				}
 			case "min_ambient_temperature":
-				maT := util.Min(v.ambientTemperature)
+				maT := num.Min(v.ambientTemperature)
 				m.SetValueFloat64(instance, maT)
 			case "max_temperature":
-				mT := util.Max(v.nonAmbientTemperature)
+				mT := num.Max(v.nonAmbientTemperature)
 				m.SetValueFloat64(instance, mT)
 			case "average_temperature":
 				if len(v.nonAmbientTemperature) > 0 {
-					nat := util.Avg(v.nonAmbientTemperature)
+					nat := num.Avg(v.nonAmbientTemperature)
 					m.SetValueFloat64(instance, nat)
 				}
 			case "min_temperature":
-				mT := util.Min(v.nonAmbientTemperature)
+				mT := num.Min(v.nonAmbientTemperature)
 				m.SetValueFloat64(instance, mT)
 			case "average_fan_speed":
 				if len(v.fanSpeed) > 0 {
-					afs := util.Avg(v.fanSpeed)
+					afs := num.Avg(v.fanSpeed)
 					m.SetValueFloat64(instance, afs)
 				}
 			case "max_fan_speed":
-				mfs := util.Max(v.fanSpeed)
+				mfs := num.Max(v.fanSpeed)
 				m.SetValueFloat64(instance, mfs)
 			case "min_fan_speed":
-				mfs := util.Min(v.fanSpeed)
+				mfs := num.Min(v.fanSpeed)
 				m.SetValueFloat64(instance, mfs)
 			}
 		}

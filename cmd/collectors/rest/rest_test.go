@@ -7,7 +7,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/set"
-	"github.com/netapp/harvest/v2/pkg/util"
+	"github.com/netapp/harvest/v2/pkg/slice"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"os"
 	"strings"
@@ -318,7 +318,7 @@ func TestQuotas(t *testing.T) {
 		}
 	}
 
-	if util.HasDuplicates(instanceKeys) {
+	if slice.HasDuplicates(instanceKeys) {
 		t.Errorf("Duplicate instanceKeys found for quota rest api")
 	}
 }

@@ -4,10 +4,10 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"testing"
 )
@@ -17,7 +17,7 @@ func createRestVscanServer(params *node.Node, testFile string) plugin.Plugin {
 	v := &VscanPool{AbstractPlugin: plugin.New("vscan_server", &o, params, nil, "vscan_server", nil)}
 	v.SLogger = slog.Default()
 	v.testFile = "../../testdata/" + testFile
-	v.client = &rest.Client{Metadata: &util.Metadata{}}
+	v.client = &rest.Client{Metadata: &collector.Metadata{}}
 	return v
 }
 

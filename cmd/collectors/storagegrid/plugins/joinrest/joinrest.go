@@ -4,10 +4,10 @@ import (
 	"github.com/goccy/go-yaml"
 	"github.com/netapp/harvest/v2/cmd/collectors/storagegrid/rest"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 )
@@ -77,7 +77,7 @@ func (t *JoinRest) Init(remote conf.Remote) error {
 	return nil
 }
 
-func (t *JoinRest) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (t *JoinRest) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	t.client.Metadata.Reset()
 
 	if t.timesCalled >= t.PluginInvocationRate {

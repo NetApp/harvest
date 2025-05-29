@@ -6,9 +6,9 @@ package fcp
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"math"
 	"strconv"
@@ -23,7 +23,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &Fcp{AbstractPlugin: p}
 }
 
-func (f *Fcp) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (f *Fcp) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 
 	var rx, tx, utilPercent, read, write *matrix.Metric
 	var err error

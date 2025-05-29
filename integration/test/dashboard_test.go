@@ -3,9 +3,12 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"github.com/Netapp/harvest-automation/test/cmds"
+	"github.com/Netapp/harvest-automation/test/errs"
 	"github.com/Netapp/harvest-automation/test/grafana"
-	"github.com/Netapp/harvest-automation/test/utils"
+	"github.com/Netapp/harvest-automation/test/request"
 	"log/slog"
+	"slices"
 	"testing"
 	"time"
 )
@@ -27,12 +30,12 @@ type Dashboard struct {
 var cDotFolder, sevenModeFolder string
 
 func TestGrafanaAndPrometheusAreConfigured(t *testing.T) {
-	utils.SkipIfMissing(t, utils.Regression)
+	cmds.SkipIfMissing(t, cmds.Regression)
 	slog.Info("Verify Grafana and Prometheus are configured")
-	if !utils.IsURLReachable(utils.GetGrafanaHTTPURL()) {
+	if !cmds.IsURLReachable(cmds.GetGrafanaHTTPURL()) {
 		panic(errors.New("grafana is not reachable"))
 	}
-	if !utils.IsURLReachable(utils.GetPrometheusURL()) {
+	if !cmds.IsURLReachable(cmds.GetPrometheusURL()) {
 		panic(errors.New("prometheus is not reachable"))
 	}
 	cDotFolder = "Harvest-main-cDOT"
@@ -46,13 +49,13 @@ func TestGrafanaAndPrometheusAreConfigured(t *testing.T) {
 }
 
 func TestImport(t *testing.T) {
-	utils.SkipIfMissing(t, utils.Regression)
+	cmds.SkipIfMissing(t, cmds.Regression)
 	slog.Info("Verify harvest folder")
-	data, err := utils.GetResponseBody(utils.GetGrafanaHTTPURL() + "/api/folders?limit=10")
-	utils.PanicIfNotNil(err)
+	data, err := request.GetResponseBody(cmds.GetGrafanaHTTPURL() + "/api/folders?limit=10")
+	errs.PanicIfNotNil(err)
 	var dataFolder []Folder
 	err = json.Unmarshal(data, &dataFolder)
-	utils.PanicIfNotNil(err)
+	errs.PanicIfNotNil(err)
 	for _, values := range dataFolder {
 		if values.Title == cDotFolder {
 			return
@@ -63,7 +66,7 @@ func TestImport(t *testing.T) {
 }
 
 func TestCModeDashboardCount(t *testing.T) {
-	utils.SkipIfMissing(t, utils.Regression)
+	cmds.SkipIfMissing(t, cmds.Regression)
 	folderID := getFolderID(t, cDotFolder)
 	expectedName := []string{
 		"Harvest Metadata",
@@ -90,7 +93,7 @@ func TestCModeDashboardCount(t *testing.T) {
 }
 
 func TestSevenModeDashboardCount(t *testing.T) {
-	utils.SkipIfMissing(t, utils.Regression)
+	cmds.SkipIfMissing(t, cmds.Regression)
 	folderID := getFolderID(t, sevenModeFolder)
 	expectedName := []string{
 		"ONTAP: Aggregate 7 mode",
@@ -107,12 +110,12 @@ func TestSevenModeDashboardCount(t *testing.T) {
 
 func getFolderID(t *testing.T, folderName string) int64 {
 	slog.Info("Find " + folderName + " folder id")
-	data, err := utils.GetResponseBody(utils.GetGrafanaHTTPURL() + "/api/folders?limit=100")
-	utils.PanicIfNotNil(err)
+	data, err := request.GetResponseBody(cmds.GetGrafanaHTTPURL() + "/api/folders?limit=100")
+	errs.PanicIfNotNil(err)
 	var dataFolder []Folder
 	var folderID int64
 	err = json.Unmarshal(data, &dataFolder)
-	utils.PanicIfNotNil(err)
+	errs.PanicIfNotNil(err)
 	for _, values := range dataFolder {
 		if values.Title == folderName {
 			folderID = values.ID
@@ -127,13 +130,13 @@ func getFolderID(t *testing.T, folderName string) int64 {
 
 func verifyDashboards(t *testing.T, folderID int64, expectedName []string) {
 	slog.Info("Find list of dashboard for folder", slog.Int64("folderID", folderID))
-	url := utils.GetGrafanaHTTPURL() + "/api/search?type=dash-db"
+	url := cmds.GetGrafanaHTTPURL() + "/api/search?type=dash-db"
 	slog.Info(url)
-	data, err := utils.GetResponseBody(url)
-	utils.PanicIfNotNil(err)
+	data, err := request.GetResponseBody(url)
+	errs.PanicIfNotNil(err)
 	var dataDashboard []Dashboard
 	err = json.Unmarshal(data, &dataDashboard)
-	utils.PanicIfNotNil(err)
+	errs.PanicIfNotNil(err)
 	actualNames := make([]string, 0, len(dataDashboard))
 	var notFoundList []string
 	slog.Info("Folder details", slog.Int64("folderID", folderID))
@@ -141,7 +144,7 @@ func verifyDashboards(t *testing.T, folderID int64, expectedName []string) {
 		actualNames = append(actualNames, values.Title)
 	}
 	for _, title := range expectedName {
-		if !(utils.Contains(actualNames, title)) {
+		if !(slices.Contains(actualNames, title)) {
 			notFoundList = append(notFoundList, title)
 		}
 	}

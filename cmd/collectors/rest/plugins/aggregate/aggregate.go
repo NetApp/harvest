@@ -2,6 +2,7 @@ package aggregate
 
 import (
 	"fmt"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
 	"time"
@@ -13,7 +14,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 )
 
@@ -82,7 +82,7 @@ func (a *Aggregate) initMatrix(name string, data *matrix.Matrix) (*matrix.Matrix
 	return mat, nil
 }
 
-func (a *Aggregate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (a *Aggregate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[a.Object]
 	a.client.Metadata.Reset()
 

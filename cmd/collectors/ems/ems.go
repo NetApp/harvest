@@ -11,9 +11,9 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
+	"github.com/netapp/harvest/v2/pkg/slice"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"strconv"
@@ -332,8 +332,8 @@ func (e *Ems) PollInstance() (map[string]*matrix.Matrix, error) {
 
 	// Filter out names which exist on the cluster.
 	// ONTAP rest ems throws error for a message.name filter if that event is not supported by that cluster
-	filteredNames, _ := util.Intersection(names, emsEventCatalogue)
-	_, missingNames := util.Intersection(filteredNames, names)
+	filteredNames, _ := slice.Intersection(names, emsEventCatalogue)
+	_, missingNames := slice.Intersection(filteredNames, names)
 	e.Logger.Debug("filtered ems events", slog.Any("skipped events", missingNames))
 	e.eventNames = filteredNames
 

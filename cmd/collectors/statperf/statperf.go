@@ -9,12 +9,12 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/cmd/tools/rest/clirequestbuilder"
+	collector2 "github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/slogx"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"slices"
@@ -159,7 +159,7 @@ func (s *StatPerf) loadParamInt(name string, defaultValue int) int {
 
 func getCounterInstanceBaseSet() string {
 	baseSetTemplate := `set -showseparator "%s" -showallfields true -rows 0 diagnostic -confirmations off;statistics settings modify -counter-display all;`
-	return fmt.Sprintf(baseSetTemplate, util.StatPerfSeparator)
+	return fmt.Sprintf(baseSetTemplate, collector2.StatPerfSeparator)
 }
 
 func getDataBaseSet() string {

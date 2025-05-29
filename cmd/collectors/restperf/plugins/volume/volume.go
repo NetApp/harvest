@@ -4,9 +4,9 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"time"
 )
@@ -45,7 +45,7 @@ func (v *Volume) Init(remote conf.Remote) error {
 	v.includeConstituents = collectors.ReadPluginKey(v.Params, "include_constituents")
 
 	if v.Options.IsTest {
-		v.client = &rest.Client{Metadata: &util.Metadata{}}
+		v.client = &rest.Client{Metadata: &collector.Metadata{}}
 		return nil
 	}
 
@@ -58,7 +58,7 @@ func (v *Volume) Init(remote conf.Remote) error {
 	return v.client.Init(5, remote)
 }
 
-func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[v.Object]
 	style := v.styleType
 	opsKeyPrefix := "temp_"

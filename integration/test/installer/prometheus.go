@@ -2,8 +2,9 @@ package installer
 
 import (
 	"errors"
+	"github.com/Netapp/harvest-automation/test/cmds"
 	"github.com/Netapp/harvest-automation/test/docker"
-	"github.com/Netapp/harvest-automation/test/utils"
+	"github.com/Netapp/harvest-automation/test/errs"
 	"log/slog"
 	"os"
 	"os/exec"
@@ -23,22 +24,22 @@ func (p *Prometheus) Install() bool {
 	slog.Info("Prometheus image : " + p.image)
 	imageName := "prometheus"
 	err := docker.StopContainers(imageName)
-	utils.PanicIfNotNil(err)
+	errs.PanicIfNotNil(err)
 	path, _ := os.Getwd()
-	ipAddress := utils.GetOutboundIP()
-	cmd := exec.Command("docker", "run", "-d", "-p", utils.PrometheusPort+":"+utils.PrometheusPort, //nolint:gosec
+	ipAddress := cmds.GetOutboundIP()
+	cmd := exec.Command("docker", "run", "-d", "-p", cmds.PrometheusPort+":"+cmds.PrometheusPort, //nolint:gosec
 		"--add-host=localhost:"+ipAddress,
 		"-v", path+"/../../container/prometheus/:/etc/prometheus/",
 		p.image)
 	cmd.Stdout = os.Stdout
 	err = cmd.Start()
-	utils.PanicIfNotNil(err)
+	errs.PanicIfNotNil(err)
 	waitCount := 0
 	maxWaitCount := 5
 	for waitCount < maxWaitCount {
 		waitCount++
 		time.Sleep(60 * time.Second)
-		if utils.IsURLReachable("http://localhost:" + utils.PrometheusPort) {
+		if cmds.IsURLReachable("http://localhost:" + cmds.PrometheusPort) {
 			return true
 		}
 	}
@@ -47,11 +48,11 @@ func (p *Prometheus) Install() bool {
 }
 
 func (p *Prometheus) Upgrade() bool {
-	utils.PanicIfNotNil(errors.New("not supported"))
+	errs.PanicIfNotNil(errors.New("not supported"))
 	return false
 }
 
 func (p *Prometheus) Stop() bool {
-	utils.PanicIfNotNil(errors.New("not supported"))
+	errs.PanicIfNotNil(errors.New("not supported"))
 	return false
 }
