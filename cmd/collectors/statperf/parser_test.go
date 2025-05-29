@@ -237,7 +237,7 @@ flexcache_per_volume·Test·blocks_requested_from_client·637069129383·`,
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			result := filterNonEmpty(tc.input)
+			result := FilterNonEmpty(tc.input)
 			if !slices.Equal(result, tc.expected) {
 				t.Errorf("expected %v, got %v", tc.expected, result)
 			}
