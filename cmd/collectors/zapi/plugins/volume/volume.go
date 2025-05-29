@@ -13,6 +13,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"strconv"
+	"strings"
 )
 
 type Volume struct {
@@ -119,6 +120,7 @@ func (v *Volume) processAndUpdateVolume(data *matrix.Matrix, volumeFootprintMap 
 	for _, volume := range data.GetInstances() {
 		name := volume.GetLabel("volume")
 		svm := volume.GetLabel("svm")
+		volState := volume.GetLabel("state")
 		key := name + svm
 
 		// Process volume footprint metrics
@@ -151,6 +153,10 @@ func (v *Volume) processAndUpdateVolume(data *matrix.Matrix, volumeFootprintMap 
 		if volume.GetLabel("node_root") == "true" || volume.GetLabel("type") == "tmp" {
 			volume.SetExportable(false)
 			continue
+		}
+
+		if volState == "offline" && strings.HasSuffix(svm, "-mc") {
+			volume.SetExportable(false)
 		}
 
 		if volume.GetLabel("style") == "flexgroup_constituent" {
