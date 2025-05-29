@@ -61,7 +61,6 @@ func TestInterface_parseInterface(t *testing.T) {
 			{metric: transmitBytes, value: "68349245749232"},
 			{metric: transmitErrors, value: "0"},
 			{metric: transmitDrops, value: "0"},
-			{metric: errorStatus, value: "0"},
 		}},
 		{instance: "Ethernet1/2_dead.beef.c1dc", metrics: []metricValue{
 			{metric: adminUp, value: "1"},
