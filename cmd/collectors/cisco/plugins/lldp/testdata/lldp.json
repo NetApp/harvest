@@ -1,0 +1,62 @@
+{
+    "neigh_hdr": "neigh_hdr",
+    "TABLE_nbor_detail": {
+        "ROW_nbor_detail": [
+            {
+                "chassis_type": "Mac Address",
+                "chassis_id": "dead.beef.7fef",
+                "port_type": "Interface Name",
+                "port_id": "e0M",
+                "l_port_id": "mgmt0",
+                "port_desc": "null",
+                "sys_name": "na2a-mc1-nbg3",
+                "sys_desc": "AFF-A800, NetApp Release 9.13.1P9: Fri Apr 19 13:13:02 EDT 2024",
+                "ttl": "114",
+                "system_capability": "S",
+                "enabled_capability": "S",
+                "mgmt_addr_type": "Address not advertised",
+                "mgmt_addr": "not advertised",
+                "mgmt_addr_ipv6_type": "Address not advertised",
+                "mgmt_addr_ipv6": "not advertised",
+                "vlan_id": "not advertised"
+            },
+            {
+                "chassis_type": "Mac Address",
+                "chassis_id": "dead.beef.7fef",
+                "port_type": "Interface Name",
+                "port_id": "e1b",
+                "l_port_id": "Eth1/9",
+                "port_desc": "null",
+                "sys_name": "na2a-mc1-nbg3",
+                "sys_desc": "AFF-A800, NetApp Release 9.13.1P9: Fri Apr 19 13:13:02 EDT 2024",
+                "ttl": "114",
+                "system_capability": "S",
+                "enabled_capability": "S",
+                "mgmt_addr_type": "Address not advertised",
+                "mgmt_addr": "not advertised",
+                "mgmt_addr_ipv6_type": "Address not advertised",
+                "mgmt_addr_ipv6": "not advertised",
+                "vlan_id": "not advertised"
+            },
+            {
+                "chassis_type": "Mac Address",
+                "chassis_id": "d039.eaba.f280",
+                "port_type": "Interface Name",
+                "port_id": "e1b",
+                "l_port_id": "Eth1/10",
+                "port_desc": "null",
+                "sys_name": "na2b-mc1-nbg3",
+                "sys_desc": "AFF-A800, NetApp Release 9.13.1P9: Fri Apr 19 13:13:02 EDT 2024",
+                "ttl": "99",
+                "system_capability": "S",
+                "enabled_capability": "S",
+                "mgmt_addr_type": "Address not advertised",
+                "mgmt_addr": "not advertised",
+                "mgmt_addr_ipv6_type": "Address not advertised",
+                "mgmt_addr_ipv6": "not advertised",
+                "vlan_id": "not advertised"
+            }
+        ]
+    },
+    "neigh_count": "3"
+}
