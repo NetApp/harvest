@@ -13,6 +13,7 @@ import (
 	template2 "github.com/netapp/harvest/v2/cmd/tools/template"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/auth"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/requests"
@@ -1400,7 +1401,7 @@ func processStatPerfCounters(path string, client *rest.Client) map[string]Counte
 	}
 	for _, c := range templateCounters.GetAllChildContentS() {
 		if c != "" {
-			name, display, m, _ := util.ParseMetric(c)
+			name, display, m, _ := template3.ParseMetric(c)
 			if m == "float" {
 				counterMap[name] = model.Object + "_" + display
 				counterMapNoPrefix[name] = display
@@ -1821,7 +1822,7 @@ func parseCounters(input string) (map[string]statperf.CounterProperty, error) {
 	// Search for the header row, which is expected to have at least 9 columns when split.
 	var headerIndex = -1
 	for i, line := range linesFiltered {
-		fields := strings.Split(line, util.StatPerfSeparator)
+		fields := strings.Split(line, collector.StatPerfSeparator)
 		if len(fields) >= 12 {
 			// Check if this header row contains a known header word like "counter"
 			lower := strings.ToLower(line)
@@ -1850,7 +1851,7 @@ func parseCounters(input string) (map[string]statperf.CounterProperty, error) {
 	counters := make(map[string]statperf.CounterProperty)
 
 	for _, row := range linesFiltered[dataStart:] {
-		fields := strings.Split(row, util.StatPerfSeparator)
+		fields := strings.Split(row, collector.StatPerfSeparator)
 		if len(fields) < 12 {
 			fmt.Printf("skipping incomplete row %s\n", row)
 			continue
