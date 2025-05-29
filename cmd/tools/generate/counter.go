@@ -1426,13 +1426,13 @@ func processStatPerfCounters(path string, client *rest.Client) map[string]Counte
 	firstRecord := records[0]
 	fr := firstRecord.ClonedString()
 	if fr == "" {
-		fmt.Printf("no data found")
+		fmt.Printf("no data found for query %s template %s", model.Query, path)
 		return nil
 	}
 
 	pCounters, err := parseCounters(fr)
 	if err != nil {
-		fmt.Printf("error while parsing records %+v\n", err)
+		fmt.Printf("error while parsing records for query %s template %s: %+v\n", model.Query, path, err)
 		return nil
 	}
 
@@ -1461,7 +1461,7 @@ func processStatPerfCounters(path string, client *rest.Client) map[string]Counte
 						Template:     path,
 						ONTAPCounter: ontapCounterName,
 						Unit:         statperf.NormalizeCounterValue(p.Unit),
-						Type:         ty,
+						Type:         statperf.NormalizeCounterValue(ty),
 						BaseCounter:  statperf.NormalizeCounterValue(p.BaseCounter),
 					},
 				},
