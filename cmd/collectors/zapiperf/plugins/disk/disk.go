@@ -5,12 +5,14 @@ import (
 	"context"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/num"
 	"github.com/netapp/harvest/v2/pkg/slogx"
+	"github.com/netapp/harvest/v2/pkg/template"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"maps"
 	"slices"
@@ -167,7 +169,7 @@ func (d *Disk) Init(remote conf.Remote) error {
 
 			for _, c := range x.GetAllChildContentS() {
 
-				metricName, display, kind, _ := util.ParseMetric(c)
+				metricName, display, kind, _ := template.ParseMetric(c)
 
 				switch kind {
 				case "key":
@@ -242,7 +244,7 @@ func (d *Disk) initMaps() {
 	d.aggrMap = make(map[string]*aggregate)
 }
 
-func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 
 	var (
 		err    error
@@ -733,33 +735,33 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 
 			case "average_ambient_temperature":
 				if len(v.ambientTemperature) > 0 {
-					aaT := util.Avg(v.ambientTemperature)
+					aaT := num.Avg(v.ambientTemperature)
 					m.SetValueFloat64(instance, aaT)
 				}
 			case "min_ambient_temperature":
-				maT := util.Min(v.ambientTemperature)
+				maT := num.Min(v.ambientTemperature)
 				m.SetValueFloat64(instance, maT)
 			case "max_temperature":
-				mT := util.Max(v.nonAmbientTemperature)
+				mT := num.Max(v.nonAmbientTemperature)
 				m.SetValueFloat64(instance, mT)
 			case "average_temperature":
 				if len(v.nonAmbientTemperature) > 0 {
-					nat := util.Avg(v.nonAmbientTemperature)
+					nat := num.Avg(v.nonAmbientTemperature)
 					m.SetValueFloat64(instance, nat)
 				}
 			case "min_temperature":
-				mT := util.Min(v.nonAmbientTemperature)
+				mT := num.Min(v.nonAmbientTemperature)
 				m.SetValueFloat64(instance, mT)
 			case "average_fan_speed":
 				if len(v.fanSpeed) > 0 {
-					afs := util.Avg(v.fanSpeed)
+					afs := num.Avg(v.fanSpeed)
 					m.SetValueFloat64(instance, afs)
 				}
 			case "max_fan_speed":
-				mfs := util.Max(v.fanSpeed)
+				mfs := num.Max(v.fanSpeed)
 				m.SetValueFloat64(instance, mfs)
 			case "min_fan_speed":
-				mfs := util.Min(v.fanSpeed)
+				mfs := num.Min(v.fanSpeed)
 				m.SetValueFloat64(instance, mfs)
 			}
 		}
@@ -819,8 +821,8 @@ func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 						if value := obj.GetChildContentS(label); value != "" {
 							// This is to parity with rest for modules, Convert A -> 0, B -> 1 in zapi
 							if attribute == "shelf-modules" && len(value) == 1 {
-								num := int(value[0] - 'A')
-								value = strconv.Itoa(num)
+								n := int(value[0] - 'A')
+								value = strconv.Itoa(n)
 							}
 							instance.SetLabel(labelDisplay, value)
 						}

@@ -10,12 +10,12 @@ import (
 	"errors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"strconv"
 	"time"
@@ -64,7 +64,7 @@ func (c *Certificate) Init(remote conf.Remote) error {
 	return nil
 }
 
-func (c *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (c *Certificate) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 
 	var (
 		adminVserver       string

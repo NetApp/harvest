@@ -3,8 +3,8 @@ package statperf
 import (
 	"encoding/json"
 	"errors"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/set"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"regexp"
@@ -35,7 +35,7 @@ func (s *StatPerf) parseCounters(input string) (map[string]CounterProperty, erro
 	// Search for the header row, which is expected to have at least 9 columns when split.
 	var headerIndex = -1
 	for i, line := range linesFiltered {
-		fields := strings.Split(line, util.StatPerfSeparator)
+		fields := strings.Split(line, collector.StatPerfSeparator)
 		if len(fields) >= 9 {
 			// Check if this header row contains a known header word like "counter"
 			lower := strings.ToLower(line)
@@ -64,7 +64,7 @@ func (s *StatPerf) parseCounters(input string) (map[string]CounterProperty, erro
 	counters := make(map[string]CounterProperty)
 
 	for _, row := range linesFiltered[dataStart:] {
-		fields := strings.Split(row, util.StatPerfSeparator)
+		fields := strings.Split(row, collector.StatPerfSeparator)
 		if len(fields) < 9 {
 			s.Logger.Warn("skipping incomplete row", slog.String("row", row))
 			continue
@@ -95,7 +95,7 @@ func (s *StatPerf) parseInstances(input string) ([]InstanceInfo, error) {
 	// Locate the header row: look for a row that, when split, returns at least 6 fields and contains "instance"
 	var headerIndex = -1
 	for i, line := range linesFiltered {
-		fields := strings.Split(line, util.StatPerfSeparator)
+		fields := strings.Split(line, collector.StatPerfSeparator)
 		if len(fields) >= 6 {
 			lower := strings.ToLower(line)
 			if strings.Contains(lower, "instance") {
@@ -123,7 +123,7 @@ func (s *StatPerf) parseInstances(input string) ([]InstanceInfo, error) {
 	results := make([]InstanceInfo, 0, estimatedRows)
 	// Process data rows.
 	for _, row := range linesFiltered[dataStart:] {
-		fields := strings.Split(row, util.StatPerfSeparator)
+		fields := strings.Split(row, collector.StatPerfSeparator)
 		if len(fields) < 6 {
 			s.Logger.Warn("skipping incomplete row", slog.String("row", row))
 			continue
@@ -200,7 +200,7 @@ func (s *StatPerf) parseData(input string) (gjson.Result, error) {
 }
 
 func parseRows(input string, logger *slog.Logger) ([]map[string]string, error) {
-	defaultTimestamp := float64(time.Now().UnixNano() / util.BILLION)
+	defaultTimestamp := float64(time.Now().UnixNano() / collector.BILLION)
 	var timestamp float64
 	lines := FilterNonEmpty(input)
 	var groups []map[string]string
@@ -302,7 +302,7 @@ func parseRows(input string, logger *slog.Logger) ([]map[string]string, error) {
 				logger.Warn("unable to parse end-time", slog.String("end-time", endTimeStr))
 				continue
 			}
-			timestamp = float64(endTime.UnixNano()) / util.BILLION
+			timestamp = float64(endTime.UnixNano()) / collector.BILLION
 			continue
 		}
 

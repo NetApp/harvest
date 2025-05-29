@@ -5,12 +5,13 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
+	"github.com/netapp/harvest/v2/pkg/template"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"strings"
 )
@@ -105,7 +106,7 @@ func (s *Shelf) Init(remote conf.Remote) error {
 
 			for _, c := range x.GetAllChildContentS() {
 
-				metricName, display, kind, _ := util.ParseMetric(c)
+				metricName, display, kind, _ := template.ParseMetric(c)
 
 				switch kind {
 				case "key":
@@ -160,7 +161,7 @@ func (s *Shelf) Init(remote conf.Remote) error {
 	return nil
 }
 
-func (s *Shelf) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (s *Shelf) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 
 	var (
 		err    error
@@ -421,7 +422,7 @@ func (s *Shelf) parse7ModeTemplate(shelfInfo *node.Node, shelfInstanceKeys, shel
 		if len(shelfProp.GetChildren()) > 0 {
 			s.parse7ModeTemplate(shelfInfo.GetChildS(shelfProp.GetNameS()), shelfInstanceKeys, shelfInstanceLabels, shelfProp.GetNameS())
 		} else {
-			metricName, display, kind, _ := util.ParseMetric(shelfProp.GetContentS())
+			metricName, display, kind, _ := template.ParseMetric(shelfProp.GetContentS())
 			switch kind {
 			case "key":
 				s.shelfInstanceKeys = append(s.shelfInstanceKeys, metricName)

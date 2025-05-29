@@ -12,8 +12,8 @@ import (
 	"github.com/goccy/go-yaml/parser"
 	"github.com/goccy/go-yaml/token"
 	"github.com/netapp/harvest/v2/pkg/errs"
+	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/mergo"
 	"log"
 	"log/slog"
@@ -411,7 +411,7 @@ func PortMapFromRange(address string, portRange *IntRange, validatePortInUse boo
 		}
 	}
 	if !validatePortInUse {
-		portMap.freePorts = util.CheckFreePorts(address, portMap.portSet)
+		portMap.freePorts = requests.CheckFreePorts(address, portMap.portSet)
 	}
 	return portMap
 }

@@ -27,9 +27,9 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
+	"github.com/netapp/harvest/v2/pkg/slice"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"slices"
 	"sort"
@@ -313,7 +313,7 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		for _, child := range node.GetChildren() {
-			if util.HasDuplicates(child.GetAllChildNamesS()) {
+			if slice.HasDuplicates(child.GetAllChildNamesS()) {
 				fetch(instance, child, newPath, true)
 			} else {
 				fetch(instance, child, newPath, isAppend)
@@ -392,6 +392,7 @@ func (z *Zapi) PollData() (map[string]*matrix.Matrix, error) {
 					continue
 				}
 			}
+			instance.SetExportable(true)
 			oldInstances.Remove(key)
 			// clear all instance labels as there are some fields which may be missing between polls
 			instance.ClearLabels()

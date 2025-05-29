@@ -6,8 +6,8 @@ package snapshotpolicy
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"slices"
 	"strconv"
 	"strings"
@@ -21,7 +21,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &SnapshotPolicy{AbstractPlugin: p}
 }
 
-func (m *SnapshotPolicy) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (m *SnapshotPolicy) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	// Purge and reset data
 	data := dataMap[m.Object]
 

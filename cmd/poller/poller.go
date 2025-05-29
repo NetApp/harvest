@@ -63,7 +63,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	goversion "github.com/netapp/harvest/v2/third_party/go-version"
 	"github.com/spf13/cobra"
 	"io"
@@ -248,7 +247,7 @@ func (p *Poller) Init() error {
 	go p.handleSignals(signalChannel)
 
 	if conf.Config.Admin.Httpsd.TLS.CertFile != "" {
-		util.CheckCert(conf.Config.Admin.Httpsd.TLS.CertFile, "ssl_cert", p.options.Config, slog.Default())
+		requests.CheckCert(conf.Config.Admin.Httpsd.TLS.CertFile, "ssl_cert", p.options.Config, slog.Default())
 		cert, err := os.ReadFile(conf.Config.Admin.Httpsd.TLS.CertFile)
 		if err != nil {
 			slog.Error(
@@ -311,9 +310,9 @@ func (p *Poller) Init() error {
 
 	objectsToCollectors := make(map[string][]objectCollector)
 	for _, c := range filteredCollectors {
-		_, ok := util.IsCollector[c.Name]
+		_, ok := conf.IsCollector[c.Name]
 		if !ok {
-			valid := strings.Join(util.GetCollectorSlice(), ", ")
+			valid := strings.Join(conf.GetCollectorSlice(), ", ")
 			slog.Error("Valid collectors are: "+valid, slog.String("Detected invalid collector", c.Name))
 			continue
 		}
@@ -1172,7 +1171,7 @@ var pollerCmd = &cobra.Command{
 // Returns true if at least one collector is one of the builtin collectors.
 func (p *Poller) collectorIsBuiltin() bool {
 	for _, c := range p.collectors {
-		_, ok := util.IsCollector[c.GetName()]
+		_, ok := conf.IsCollector[c.GetName()]
 		if ok {
 			return true
 		}
@@ -1183,7 +1182,7 @@ func (p *Poller) collectorIsBuiltin() bool {
 // Returns true if at least one collector is known to collect from an Ontap system.
 func (p *Poller) targetIsOntap() bool {
 	for _, c := range p.collectors {
-		_, ok := util.IsONTAPCollector[c.GetName()]
+		_, ok := conf.IsONTAPCollector[c.GetName()]
 		if ok {
 			return true
 		}
@@ -1198,7 +1197,7 @@ type pollerDetails struct {
 }
 
 func (p *Poller) publishDetails() {
-	localIP, err := util.FindLocalIP()
+	localIP, err := requests.FindLocalIP()
 	if err != nil {
 		logger.Error("Unable to find local IP", slogx.Err(err))
 		return
@@ -1364,7 +1363,7 @@ func (p *Poller) upgradeCollector(c conf.Collector, remote conf.Remote) conf.Col
 	// If KeyPerf is desired, negotiate the API
 	// EMS and StorageGRID are ignored
 
-	if _, ok := util.IsONTAPCollector[c.Name]; !ok {
+	if _, ok := conf.IsONTAPCollector[c.Name]; !ok {
 		return c
 	}
 
@@ -1538,7 +1537,7 @@ func (p *Poller) negotiateONTAPAPI(cols []conf.Collector) {
 func (p *Poller) CollectorHasVersion(cols []conf.Collector) bool {
 	hasVersion := false
 	for _, c := range cols {
-		if _, ok := util.IsONTAPCollector[c.Name]; ok {
+		if _, ok := conf.IsONTAPCollector[c.Name]; ok {
 			hasVersion = true
 			break
 		}

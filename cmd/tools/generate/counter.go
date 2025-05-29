@@ -17,9 +17,9 @@ import (
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/set"
+	template3 "github.com/netapp/harvest/v2/pkg/template"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	tw "github.com/netapp/harvest/v2/third_party/olekukonko/tablewriter"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"io"
@@ -494,7 +494,7 @@ func handleZapiCounter(path []string, content string, object string) (string, st
 	fullPath = append(fullPath, name)
 	key = strings.Join(fullPath, ".")
 	if display == "" {
-		display = util.ParseZAPIDisplay(object, fullPath)
+		display = template3.ParseZAPIDisplay(object, fullPath)
 	}
 
 	if content[0] != '^' {
@@ -619,7 +619,7 @@ func processCounters(counterContents []string, model *template2.Model, path, que
 			continue
 		}
 		var co Counter
-		name, display, m, _ := util.ParseMetric(c)
+		name, display, m, _ := template3.ParseMetric(c)
 		if _, ok := excludeCounters[name]; ok {
 			continue
 		}
@@ -796,7 +796,7 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 	}
 	for _, c := range templateCounters.GetAllChildContentS() {
 		if c != "" {
-			name, display, m, _ := util.ParseMetric(c)
+			name, display, m, _ := template3.ParseMetric(c)
 			if strings.HasPrefix(display, model.Object) {
 				display = strings.TrimPrefix(display, model.Object)
 				display = strings.TrimPrefix(display, "_")
@@ -1255,7 +1255,7 @@ func processRestPerfCounters(path string, client *rest.Client) map[string]Counte
 	}
 	for _, c := range templateCounters.GetAllChildContentS() {
 		if c != "" {
-			name, display, m, _ := util.ParseMetric(c)
+			name, display, m, _ := template3.ParseMetric(c)
 			if m == "float" {
 				counterMap[name] = model.Object + "_" + display
 				counterMapNoPrefix[name] = display
@@ -1796,7 +1796,7 @@ func getAllExportedLabels(t *node.Node, counterContents []string) ([]string, []s
 					if c == "" {
 						continue
 					}
-					if _, display, m, _ := util.ParseMetric(c); m == "key" || m == "label" {
+					if _, display, m, _ := template3.ParseMetric(c); m == "key" || m == "label" {
 						metricLabels = append(metricLabels, display)
 					}
 				}

@@ -3,10 +3,11 @@ package metrictransformer
 import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
-	"github.com/netapp/harvest/v2/pkg/util"
+	"github.com/netapp/harvest/v2/pkg/template"
 	"sort"
 	"strings"
 )
@@ -29,7 +30,7 @@ func (m *MetricTransformer) Init(conf.Remote) error {
 	if exportOption := m.ParentParams.GetChildS("exports"); exportOption != nil {
 		for _, c := range exportOption.GetAllChildContentS() {
 			if c != "" {
-				_, display, _, _ := util.ParseMetric(c)
+				_, display, _, _ := template.ParseMetric(c)
 				m.excludeKeys.Add(display)
 			}
 		}
@@ -37,7 +38,7 @@ func (m *MetricTransformer) Init(conf.Remote) error {
 	return nil
 }
 
-func (m *MetricTransformer) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (m *MetricTransformer) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	for _, data := range dataMap {
 		for _, instance := range data.GetInstances() {
 			if !instance.IsExportable() {

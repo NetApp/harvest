@@ -2,8 +2,8 @@ package ems
 
 import (
 	"github.com/netapp/harvest/v2/pkg/set"
+	"github.com/netapp/harvest/v2/pkg/template"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"maps"
 	"slices"
@@ -62,7 +62,7 @@ func (e *Ems) ParseDefaults(prop *emsProp) {
 	// process default labels
 	for _, c := range e.DefaultLabels {
 		if c != "" {
-			name, display, _, _ = util.ParseMetric(c)
+			name, display, _, _ = template.ParseMetric(c)
 
 			// EMS only supports labels
 			prop.InstanceLabels[name] = display
@@ -85,7 +85,7 @@ func (e *Ems) ParseExports(counter *node.Node, prop *emsProp) {
 
 	for _, c := range counter.GetAllChildContentS() {
 		if c != "" {
-			name, display, key, _ = util.ParseMetric(c)
+			name, display, key, _ = template.ParseMetric(c)
 
 			// EMS only supports labels
 			prop.InstanceLabels[name] = display

@@ -2,8 +2,9 @@ package installer
 
 import (
 	"errors"
+	"github.com/Netapp/harvest-automation/test/cmds"
 	"github.com/Netapp/harvest-automation/test/docker"
-	"github.com/Netapp/harvest-automation/test/utils"
+	"github.com/Netapp/harvest-automation/test/errs"
 	"log/slog"
 	"os"
 	"os/exec"
@@ -26,17 +27,17 @@ func (g *Grafana) Install() bool {
 	if err != nil {
 		slog.Warn("Error while stopping Grafana container", slog.Any("err", err))
 	}
-	cmd := exec.Command("docker", "run", "-d", "--name", "grafana", "-e", "GF_LOG_LEVEL=debug", "-p", utils.GrafanaPort+":"+utils.GrafanaPort, g.image) //nolint:gosec
+	cmd := exec.Command("docker", "run", "-d", "--name", "grafana", "-e", "GF_LOG_LEVEL=debug", "-p", cmds.GrafanaPort+":"+cmds.GrafanaPort, g.image) //nolint:gosec
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Start()
-	utils.PanicIfNotNil(err)
+	errs.PanicIfNotNil(err)
 	waitCount := 0
 	maxWaitCount := 3
 	for waitCount < maxWaitCount {
 		waitCount++
 		time.Sleep(1 * time.Minute)
-		if utils.IsURLReachable("http://localhost:" + utils.GrafanaPort) {
+		if cmds.IsURLReachable("http://localhost:" + cmds.GrafanaPort) {
 			return true
 		}
 		slog.Info("Grafana is not yet reachable.", slog.Int("waitCount", waitCount), slog.Int("maxWaitCount", maxWaitCount))
@@ -46,11 +47,11 @@ func (g *Grafana) Install() bool {
 }
 
 func (g *Grafana) Upgrade() bool {
-	utils.PanicIfNotNil(errors.New("not supported"))
+	errs.PanicIfNotNil(errors.New("not supported"))
 	return false
 }
 
 func (g *Grafana) Stop() bool {
-	utils.PanicIfNotNil(errors.New("not supported"))
+	errs.PanicIfNotNil(errors.New("not supported"))
 	return false
 }

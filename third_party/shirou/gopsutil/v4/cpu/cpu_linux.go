@@ -148,7 +148,7 @@ func InfoWithContext(ctx context.Context) ([]InfoStat, error) {
 				ret = append(ret, c)
 			}
 			c = InfoStat{Cores: 1, ModelName: processorName}
-			t, err := strconv.ParseInt(value, 10, 64)
+			t, err := strconv.ParseInt(value, 10, 32)
 			if err != nil {
 				return ret, err
 			}
@@ -222,7 +222,7 @@ func InfoWithContext(ctx context.Context) ([]InfoStat, error) {
 				val = strings.Split(value, ".")[0]
 			}
 
-			t, err := strconv.ParseInt(val, 10, 64)
+			t, err := strconv.ParseInt(val, 10, 32)
 			if err != nil {
 				return ret, err
 			}
@@ -233,7 +233,7 @@ func InfoWithContext(ctx context.Context) ([]InfoStat, error) {
 				c.Mhz = t
 			}
 		case "cache size":
-			t, err := strconv.ParseInt(strings.Replace(value, " KB", "", 1), 10, 64)
+			t, err := strconv.ParseInt(strings.Replace(value, " KB", "", 1), 10, 32)
 			if err != nil {
 				return ret, err
 			}

@@ -2,7 +2,8 @@ package installer
 
 import (
 	"errors"
-	"github.com/Netapp/harvest-automation/test/utils"
+	"github.com/Netapp/harvest-automation/test/cmds"
+	"github.com/Netapp/harvest-automation/test/errs"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
 )
@@ -19,25 +20,25 @@ func (n *Native) Install() bool {
 	harvestFile := "harvest.yml"
 	harvestObj := new(Harvest)
 	tarFileName := "harvest.tar.gz"
-	utils.RemoveSafely(tarFileName)
-	err := utils.DownloadFile(tarFileName, n.path)
+	cmds.RemoveSafely(tarFileName)
+	err := cmds.DownloadFile(tarFileName, n.path)
 	if err != nil {
 		panic(err)
 	}
 	slog.Info("Downloaded: " + n.path)
 	Uninstall()
 	slog.Info("Installing " + tarFileName)
-	unTarOutput, err := utils.Run("tar", "-xf", tarFileName, "--one-top-level=harvest", "--strip-components", "1", "-C", "/opt")
+	unTarOutput, err := cmds.Run("tar", "-xf", tarFileName, "--one-top-level=harvest", "--strip-components", "1", "-C", "/opt")
 	if err != nil {
 		slog.Error("", slogx.Err(err))
 		panic(err)
 	}
 	slog.Info("Untar output: " + unTarOutput)
-	utils.RemoveSafely(HarvestHome + "/" + harvestFile)
-	utils.UseCertFile(HarvestHome)
-	_, err1 := utils.Run("cp", GetPerfFileWithQosCounters(ZapiPerfDefaultFile, "defaultZapi.yaml"), HarvestHome+"/"+ZapiPerfDefaultFile)
-	_, err2 := utils.Run("cp", GetPerfFileWithQosCounters(RestPerfDefaultFile, "defaultRest.yaml"), HarvestHome+"/"+RestPerfDefaultFile)
-	_, err3 := utils.Run("cp", harvestFile, HarvestHome+"/"+harvestFile)
+	cmds.RemoveSafely(HarvestHome + "/" + harvestFile)
+	cmds.UseCertFile(HarvestHome)
+	_, err1 := cmds.Run("cp", GetPerfFileWithQosCounters(ZapiPerfDefaultFile, "defaultZapi.yaml"), HarvestHome+"/"+ZapiPerfDefaultFile)
+	_, err2 := cmds.Run("cp", GetPerfFileWithQosCounters(RestPerfDefaultFile, "defaultRest.yaml"), HarvestHome+"/"+RestPerfDefaultFile)
+	_, err3 := cmds.Run("cp", harvestFile, HarvestHome+"/"+harvestFile)
 	err = errors.Join(err1, err2, err3)
 	if err != nil {
 		panic(err)
@@ -50,14 +51,14 @@ func (n *Native) Install() bool {
 }
 
 func (n *Native) Upgrade() bool {
-	utils.PanicIfNotNil(errors.New("not supported"))
+	errs.PanicIfNotNil(errors.New("not supported"))
 	return false
 }
 
 func (n *Native) Stop() bool {
-	if utils.FileExists(HarvestHome) {
+	if cmds.FileExists(HarvestHome) {
 		harvestObj := new(Harvest)
-		if utils.FileExists(HarvestHome + "/bin/harvest") {
+		if cmds.FileExists(HarvestHome + "/bin/harvest") {
 			if harvestObj.AllRunning() {
 				harvestObj.Stop()
 			}

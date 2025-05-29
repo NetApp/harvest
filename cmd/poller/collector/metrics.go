@@ -1,8 +1,8 @@
 package collector
 
 import (
+	"github.com/netapp/harvest/v2/pkg/num"
 	"github.com/netapp/harvest/v2/pkg/slogx"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/shirou/gopsutil/v4/mem"
 	"github.com/netapp/harvest/v2/third_party/shirou/gopsutil/v4/process"
 	"log/slog"
@@ -46,7 +46,7 @@ func MemoryMetrics() MemMetrics {
 
 	// Get OS memory metrics
 	pid := os.Getpid()
-	pid32, err := util.SafeConvertToInt32(pid)
+	pid32, err := num.SafeConvertToInt32(pid)
 	if err != nil {
 		slog.Warn(err.Error(), slog.Int("pid", pid))
 		return memStats

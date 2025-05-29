@@ -2,8 +2,8 @@ package rest
 
 import (
 	"bytes"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 
 	"github.com/netapp/harvest/v2/pkg/auth"
@@ -39,7 +39,7 @@ func NewDummyClient() *Client {
 		logRest:  true,
 		APIPath:  "/api/v1",
 		auth:     &auth.Credentials{},
-		Metadata: &util.Metadata{},
+		Metadata: &collector.Metadata{},
 	}
 
 	return client

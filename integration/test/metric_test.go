@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/Netapp/harvest-automation/test/cmds"
 	"github.com/Netapp/harvest-automation/test/installer"
-	"github.com/Netapp/harvest-automation/test/utils"
+	"github.com/Netapp/harvest-automation/test/request"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
@@ -26,7 +27,7 @@ var skipDuplicates = map[string]bool{
 }
 
 func TestPollerMetrics(t *testing.T) {
-	utils.SkipIfMissing(t, utils.Regression)
+	cmds.SkipIfMissing(t, cmds.Regression)
 	_, err := conf.LoadHarvestConfig(installer.HarvestConfigFile)
 	if err != nil {
 		slog.Error("Unable to load harvest config", slogx.Err(err))
@@ -38,7 +39,7 @@ func TestPollerMetrics(t *testing.T) {
 		portString := strconv.Itoa(port)
 		var validCounters = 0
 		uniqueSetOfMetricLabels := make(map[string]bool)
-		sb, err2 := utils.GetResponse("http://localhost:" + strings.TrimSpace(portString) + "/metrics")
+		sb, err2 := request.GetResponse("http://localhost:" + strings.TrimSpace(portString) + "/metrics")
 		if err2 != nil {
 			t.Fatalf("Unable to get metric data for %s", pollerName)
 		}

@@ -17,13 +17,14 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
+	collector2 "github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/slogx"
+	"github.com/netapp/harvest/v2/pkg/template"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"iter"
 	"log/slog"
@@ -499,8 +500,8 @@ func parseMetricResponses(instanceData gjson.Result, metric map[string]*rest2.Me
 				labels := each.Get("labels").ClonedString()
 				if values != "" {
 					mapMetricResponses[name] = &metricResponse{
-						value:   util.ArrayMetricToString(values),
-						label:   util.ArrayMetricToString(labels),
+						value:   template.ArrayMetricToString(values),
+						label:   template.ArrayMetricToString(labels),
 						isArray: true,
 					}
 					numSeen++
@@ -513,14 +514,14 @@ func parseMetricResponses(instanceData gjson.Result, metric map[string]*rest2.Me
 
 				// handle sub metrics
 				subLabelsS := labels
-				subLabelsS = util.ArrayMetricToString(subLabelsS)
+				subLabelsS = template.ArrayMetricToString(subLabelsS)
 				subLabelSlice := strings.Split(subLabelsS, ",")
 				var finalLabels []string
 				var finalValues []string
 				subCounters.ForEach(func(_, subCounter gjson.Result) bool {
 					label := subCounter.Get("label").ClonedString()
 					subValues := subCounter.Get("values").ClonedString()
-					m := util.ArrayMetricToString(subValues)
+					m := template.ArrayMetricToString(subValues)
 					ms := strings.Split(m, ",")
 					if len(ms) > len(subLabelSlice) {
 						return false
@@ -566,8 +567,8 @@ func parseMetricResponse(instanceData gjson.Result, metric string) *metricRespon
 		}
 		if values.ClonedString() != "" {
 			return &metricResponse{
-				value:   util.ArrayMetricToString(values.ClonedString()),
-				label:   util.ArrayMetricToString(labels.ClonedString()),
+				value:   template.ArrayMetricToString(values.ClonedString()),
+				label:   template.ArrayMetricToString(labels.ClonedString()),
 				isArray: true,
 			}
 		}
@@ -577,14 +578,14 @@ func parseMetricResponse(instanceData gjson.Result, metric string) *metricRespon
 			var finalLabels []string
 			var finalValues []string
 			subLabelsS := labels.ClonedString()
-			subLabelsS = util.ArrayMetricToString(subLabelsS)
+			subLabelsS = template.ArrayMetricToString(subLabelsS)
 			subLabelSlice := strings.Split(subLabelsS, ",")
 			ls := subLabels.Array()
 			vs := subValues.Array()
 			var vLen int
 			for i, v := range vs {
 				label := ls[i].ClonedString()
-				m := util.ArrayMetricToString(v.ClonedString())
+				m := template.ArrayMetricToString(v.ClonedString())
 				ms := strings.Split(m, ",")
 				for range ms {
 					finalLabels = append(finalLabels, label+arrayKeyToken+subLabelSlice[vLen])
@@ -885,13 +886,13 @@ func (r *RestPerf) processPerfRecords(perfRecords []rest.PerfRecord, curMat *mat
 	startTime := time.Now()
 
 	// init current time
-	ts = float64(startTime.UnixNano()) / util.BILLION
+	ts = float64(startTime.UnixNano()) / collector2.BILLION
 	for _, perfRecord := range perfRecords {
 		pr := perfRecord.Records
 		t := perfRecord.Timestamp
 
 		if t != 0 {
-			ts = float64(t) / util.BILLION
+			ts = float64(t) / collector2.BILLION
 		} else {
 			r.Logger.Warn("Missing timestamp in response")
 		}

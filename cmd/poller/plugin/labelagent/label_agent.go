@@ -7,11 +7,11 @@ package labelagent
 import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"strings"
 )
@@ -60,7 +60,7 @@ func (a *LabelAgent) Init(remote conf.Remote) error {
 	return err
 }
 
-func (a *LabelAgent) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (a *LabelAgent) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 
 	var err error
 

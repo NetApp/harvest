@@ -5,12 +5,12 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"strconv"
 )
@@ -64,7 +64,7 @@ func (v *Volume) Init(remote conf.Remote) error {
 	return nil
 }
 
-func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 
 	data := dataMap[v.Object]
 	v.client.Metadata.Reset()
@@ -107,21 +107,21 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util
 		clear(volumeFootprintMap)
 	}
 
-	// update volume instance labels
-	v.updateVolumeLabels(data, volumeCloneMap)
-	flexgroupFootPrintMatrix := v.processVolumeFootPrint(data, volumeFootprintMap)
+	flexgroupFootPrintMatrix := v.processAndUpdateVolume(data, volumeFootprintMap, volumeCloneMap)
 
 	v.currentVal++
 	return []*matrix.Matrix{flexgroupFootPrintMatrix}, v.client.Metadata, nil
 }
 
-func (v *Volume) processVolumeFootPrint(data *matrix.Matrix, volumeFootprintMap map[string]map[string]string) *matrix.Matrix {
+func (v *Volume) processAndUpdateVolume(data *matrix.Matrix, volumeFootprintMap map[string]map[string]string, volumeCloneMap map[string]volumeClone) *matrix.Matrix {
 	var err error
-	// Handling volume footprint metrics
+	// Handling volume footprint metrics and updating volume labels
 	for _, volume := range data.GetInstances() {
 		name := volume.GetLabel("volume")
 		svm := volume.GetLabel("svm")
 		key := name + svm
+
+		// Process volume footprint metrics
 		if vf, ok := volumeFootprintMap[key]; ok {
 			for vfKey, vfVal := range vf {
 				vfMetric := data.GetMetric(vfKey)
@@ -141,13 +141,8 @@ func (v *Volume) processVolumeFootPrint(data *matrix.Matrix, volumeFootprintMap 
 				}
 			}
 		}
-	}
-	return collectors.ProcessFlexGroupFootPrint(data, v.SLogger)
-}
 
-func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[string]volumeClone) {
-	var err error
-	for _, volume := range data.GetInstances() {
+		// Update volume labels
 		if !volume.IsExportable() {
 			continue
 		}
@@ -163,10 +158,6 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[stri
 		}
 
 		volume.SetLabel("isHardwareEncrypted", strconv.FormatBool(v.aggrsMap[volume.GetLabel("aggr")]))
-
-		name := volume.GetLabel("volume")
-		svm := volume.GetLabel("svm")
-		key := name + svm
 
 		if vc, ok := volumeCloneMap[key]; ok {
 			volume.SetLabel("clone_parent_snapshot", vc.parentSnapshot)
@@ -201,6 +192,7 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeCloneMap map[stri
 			splitEstimate.SetValueFloat64(volume, splitEstimateBytes)
 		}
 	}
+	return collectors.ProcessFlexGroupFootPrint(data, v.SLogger)
 }
 
 func (v *Volume) getVolumeCloneInfo() (map[string]volumeClone, error) {

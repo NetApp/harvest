@@ -6,9 +6,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/auth"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"io"
 	"log/slog"
@@ -28,7 +28,7 @@ type Client struct {
 	remote   conf.Remote
 	Timeout  time.Duration
 	auth     *auth.Credentials
-	Metadata *util.Metadata
+	Metadata *collector.Metadata
 }
 type apiType string
 
@@ -212,7 +212,7 @@ func New(poller *conf.Poller, timeout time.Duration, credentials *auth.Credentia
 
 	client = Client{
 		auth:     credentials,
-		Metadata: &util.Metadata{},
+		Metadata: &collector.Metadata{},
 	}
 	client.Logger = slog.Default().With(slog.String("REST", "Client"))
 

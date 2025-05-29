@@ -4,7 +4,7 @@ import (
 	"crypto/sha256"
 	"flag"
 	"fmt"
-	"github.com/Netapp/harvest-automation/test/utils"
+	"github.com/Netapp/harvest-automation/test/cmds"
 	"io"
 	"log/slog"
 	"os"
@@ -22,7 +22,7 @@ var (
 )
 
 func main() {
-	utils.SetupLogging()
+	cmds.SetupLogging()
 	parseCLI()
 	begin()
 }
