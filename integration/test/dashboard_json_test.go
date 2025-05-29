@@ -75,6 +75,7 @@ var excludeCounters = []string{
 	"efficiency_savings",
 	"ems_destination_labels",
 	"ems_events",
+	"ethernet_switch_port",
 	"external_service_op_num_",
 	"external_service_op_request_",
 	"fabricpool_cloud_bin_op_latency_average",

@@ -21,7 +21,7 @@ objects:
   ClusterSoftware:             clustersoftware.yaml
   Disk:                        disk.yaml
   EmsDestination:              ems_destination.yaml
-#  EthernetSwitchPort:          ethernet_switch_port.yaml
+  EthernetSwitchPort:          ethernet_switch_port.yaml
 #  ExportRule:                  exports.yaml
   FlexCache:                   flexcache.yaml
   FCP:                         fcp.yaml
