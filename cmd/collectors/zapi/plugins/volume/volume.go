@@ -155,6 +155,7 @@ func (v *Volume) processAndUpdateVolume(data *matrix.Matrix, volumeFootprintMap 
 			continue
 		}
 
+		// SVM names ending with "-mc" are MetroCluster SVMs. We should only export volume metrics from these SVMs if the volume is online.
 		if volState == "offline" && strings.HasSuffix(svm, "-mc") {
 			volume.SetExportable(false)
 			continue

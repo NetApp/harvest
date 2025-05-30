@@ -138,6 +138,7 @@ func (s *SVM) updateSVM(data *matrix.Matrix) {
 		svmName := svmInstance.GetLabel("svm")
 		svmState := svmInstance.GetLabel("state")
 
+		// SVM names ending with "-mc" are MetroCluster SVMs. We should only export svm metrics from these SVMs if the svm is online.
 		if svmState == "offline" && strings.HasSuffix(svmName, "-mc") {
 			svmInstance.SetExportable(false)
 			continue
