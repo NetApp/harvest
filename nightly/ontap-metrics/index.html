@@ -28500,7 +28500,7 @@ These can be generated on demand by running <code>bin/harvest grafana metrics</c
 <p>More information about ONTAP REST performance counters can be found <a href="https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html">here</a>.</p>
 </li>
 </ul>
-<div class="highlight"><pre><span></span><code>Creation Date : 2025-May-29
+<div class="highlight"><pre><span></span><code>Creation Date : 2025-May-30
 ONTAP Version: 9.16.1
 </code></pre></div>
 <h2 id="understanding-the-structure">Understanding the structure<a class="headerlink" href="#understanding-the-structure" title="Permanent link">&para;</a></h2>
@@ -36265,6 +36265,12 @@ ONTAP Version: 9.16.1
 <td>conf/keyperf/9.15.0/flexcache.yaml</td>
 </tr>
 <tr>
+<td>StatPerf</td>
+<td><code>flexcache_per_volume</code></td>
+<td><code>blocks_requested_from_client</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/statperf/9.8.0/flexcache.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances flexcache_per_volume</code></td>
 <td><code>blocks_requested_from_client</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
@@ -36291,6 +36297,12 @@ ONTAP Version: 9.16.1
 <td>conf/keyperf/9.15.0/flexcache.yaml</td>
 </tr>
 <tr>
+<td>StatPerf</td>
+<td><code>flexcache_per_volume</code></td>
+<td><code>blocks_retrieved_from_origin</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/statperf/9.8.0/flexcache.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances flexcache_per_volume</code></td>
 <td><code>blocks_retrieved_from_origin</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span></td>
@@ -36310,6 +36322,12 @@ ONTAP Version: 9.16.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>StatPerf</td>
+<td><code>flexcache_per_volume</code></td>
+<td><code>evict_rw_cache_skipped_reason_disconnected</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/statperf/9.8.0/flexcache.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances flexcache_per_volume</code></td>
@@ -36331,6 +36349,12 @@ ONTAP Version: 9.16.1
 </thead>
 <tbody>
 <tr>
+<td>StatPerf</td>
+<td><code>flexcache_per_volume</code></td>
+<td><code>evict_skipped_reason_config_noent</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/statperf/9.8.0/flexcache.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances flexcache_per_volume</code></td>
 <td><code>evict_skipped_reason_config_noent</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
@@ -36350,6 +36374,12 @@ ONTAP Version: 9.16.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>StatPerf</td>
+<td><code>flexcache_per_volume</code></td>
+<td><code>evict_skipped_reason_disconnected</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/statperf/9.8.0/flexcache.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances flexcache_per_volume</code></td>
@@ -36371,6 +36401,12 @@ ONTAP Version: 9.16.1
 </thead>
 <tbody>
 <tr>
+<td>StatPerf</td>
+<td><code>flexcache_per_volume</code></td>
+<td><code>evict_skipped_reason_offline</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/statperf/9.8.0/flexcache.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances flexcache_per_volume</code></td>
 <td><code>evict_skipped_reason_offline</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
@@ -36390,6 +36426,12 @@ ONTAP Version: 9.16.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>StatPerf</td>
+<td><code>flexcache_per_volume</code></td>
+<td><code>invalidate_skipped_reason_config_noent</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/statperf/9.8.0/flexcache.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances flexcache_per_volume</code></td>
@@ -36411,6 +36453,12 @@ ONTAP Version: 9.16.1
 </thead>
 <tbody>
 <tr>
+<td>StatPerf</td>
+<td><code>flexcache_per_volume</code></td>
+<td><code>invalidate_skipped_reason_disconnected</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/statperf/9.8.0/flexcache.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances flexcache_per_volume</code></td>
 <td><code>invalidate_skipped_reason_disconnected</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
@@ -36430,6 +36478,12 @@ ONTAP Version: 9.16.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>StatPerf</td>
+<td><code>flexcache_per_volume</code></td>
+<td><code>invalidate_skipped_reason_offline</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/statperf/9.8.0/flexcache.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances flexcache_per_volume</code></td>
@@ -36457,6 +36511,12 @@ ONTAP Version: 9.16.1
 <td>conf/keyperf/9.15.0/flexcache.yaml</td>
 </tr>
 <tr>
+<td>StatPerf</td>
+<td><code>flexcache_per_volume</code></td>
+<td><code>blocks_retrieved_from_origin, blocks_requested_from_client</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/statperf/9.8.0/flexcache.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>flexcache_per_volume</code></td>
 <td><code>blocks_retrieved_from_origin, blocks_requested_from_client</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
@@ -36476,6 +36536,12 @@ ONTAP Version: 9.16.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>StatPerf</td>
+<td><code>flexcache_per_volume</code></td>
+<td><code>nix_retry_skipped_reason_initiator_retrieve</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/statperf/9.8.0/flexcache.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances flexcache_per_volume</code></td>
@@ -36497,6 +36563,12 @@ ONTAP Version: 9.16.1
 </thead>
 <tbody>
 <tr>
+<td>StatPerf</td>
+<td><code>flexcache_per_volume</code></td>
+<td><code>nix_skipped_reason_config_noent</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/statperf/9.8.0/flexcache.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances flexcache_per_volume</code></td>
 <td><code>nix_skipped_reason_config_noent</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
@@ -36516,6 +36588,12 @@ ONTAP Version: 9.16.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>StatPerf</td>
+<td><code>flexcache_per_volume</code></td>
+<td><code>nix_skipped_reason_disconnected</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/statperf/9.8.0/flexcache.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances flexcache_per_volume</code></td>
@@ -36537,6 +36615,12 @@ ONTAP Version: 9.16.1
 </thead>
 <tbody>
 <tr>
+<td>StatPerf</td>
+<td><code>flexcache_per_volume</code></td>
+<td><code>nix_skipped_reason_in_progress</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/statperf/9.8.0/flexcache.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances flexcache_per_volume</code></td>
 <td><code>nix_skipped_reason_in_progress</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
@@ -36556,6 +36640,12 @@ ONTAP Version: 9.16.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>StatPerf</td>
+<td><code>flexcache_per_volume</code></td>
+<td><code>nix_skipped_reason_offline</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/statperf/9.8.0/flexcache.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances flexcache_per_volume</code></td>
@@ -36577,6 +36667,12 @@ ONTAP Version: 9.16.1
 </thead>
 <tbody>
 <tr>
+<td>StatPerf</td>
+<td><code>flexcache_per_volume</code></td>
+<td><code>reconciled_data_entries</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/statperf/9.8.0/flexcache.yaml</td>
+</tr>
+<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances flexcache_per_volume</code></td>
 <td><code>reconciled_data_entries</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span></td>
@@ -36596,6 +36692,12 @@ ONTAP Version: 9.16.1
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>StatPerf</td>
+<td><code>flexcache_per_volume</code></td>
+<td><code>reconciled_lock_entries</code><br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/statperf/9.8.0/flexcache.yaml</td>
+</tr>
 <tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances flexcache_per_volume</code></td>
