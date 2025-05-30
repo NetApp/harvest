@@ -3,9 +3,9 @@ package main
 import (
 	"errors"
 	"fmt"
+	"github.com/Netapp/harvest-automation/test/cmds"
 	"github.com/Netapp/harvest-automation/test/docker"
 	"github.com/Netapp/harvest-automation/test/installer"
-	"github.com/Netapp/harvest-automation/test/utils"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
 	"os/exec"
@@ -13,7 +13,7 @@ import (
 )
 
 func TestCopyLogs(t *testing.T) {
-	utils.SkipIfMissing(t, utils.CopyDockerLogs)
+	cmds.SkipIfMissing(t, cmds.CopyDockerLogs)
 	installer.CleanLogDir()
 	installer.CreateLogDir()
 	pollerProcessName := "bin/poller"
@@ -44,7 +44,7 @@ type containerInfo struct {
 }
 
 func TestNoErrors(t *testing.T) {
-	utils.SkipIfMissing(t, utils.AnalyzeDockerLogs)
+	cmds.SkipIfMissing(t, cmds.AnalyzeDockerLogs)
 
 	containerPatterns := []containerInfo{
 		{name: "bin/poller", ignorePattern: pollerIgnore(), errorPattern: "ERR"},

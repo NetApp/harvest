@@ -30,8 +30,8 @@ import (
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/cmd/tools/zapi"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/ps"
 	"github.com/netapp/harvest/v2/pkg/set"
-	"github.com/netapp/harvest/v2/pkg/util"
 	tw "github.com/netapp/harvest/v2/third_party/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 	"log"
@@ -175,7 +175,7 @@ func doManageCmd(cmd *cobra.Command, args []string) {
 	printTable(pollersFiltered, statusesByName)
 }
 
-func printTable(filteredPollers []string, statusesByName map[string][]*util.PollerStatus) {
+func printTable(filteredPollers []string, statusesByName map[string][]*ps.PollerStatus) {
 	table := tw.NewWriter(os.Stdout)
 	table.SetBorder(false)
 	table.SetAutoFormatHeaders(false)
@@ -185,8 +185,8 @@ func printTable(filteredPollers []string, statusesByName map[string][]*util.Poll
 		table.SetHeader([]string{"Datacenter", "Poller", "PID", "PromPort", "Status"})
 	}
 	table.SetColumnAlignment([]int{tw.ALIGN_LEFT, tw.ALIGN_LEFT, tw.ALIGN_RIGHT, tw.ALIGN_RIGHT, tw.ALIGN_RIGHT})
-	notRunning := &util.PollerStatus{Status: util.StatusNotRunning}
-	disabled := &util.PollerStatus{Status: util.StatusDisabled}
+	notRunning := &ps.PollerStatus{Status: ps.StatusNotRunning}
+	disabled := &ps.PollerStatus{Status: ps.StatusDisabled}
 
 	for _, name := range filteredPollers {
 		var (
@@ -220,16 +220,16 @@ func printTable(filteredPollers []string, statusesByName map[string][]*util.Poll
 }
 
 // stop all pollers then start them instead of stop/starting each individually
-func restartPollers(pollersFiltered []string, statusesByName map[string][]*util.PollerStatus) {
+func restartPollers(pollersFiltered []string, statusesByName map[string][]*ps.PollerStatus) {
 	stopAllPollers(pollersFiltered, statusesByName)
 	startAllPollers(pollersFiltered, statusesByName)
 }
 
-func startAllPollers(pollersFiltered []string, statusesByName map[string][]*util.PollerStatus) {
+func startAllPollers(pollersFiltered []string, statusesByName map[string][]*ps.PollerStatus) {
 	for _, name := range pollersFiltered {
 		if statuses, wasRunning := statusesByName[name]; wasRunning {
 			for _, ss := range statuses {
-				if ss.Status == util.StatusRunning || ss.Status == util.StatusStoppingFailed {
+				if ss.Status == ps.StatusRunning || ss.Status == ps.StatusStoppingFailed {
 					continue
 				}
 				promPort := getPollerPrometheusPort(name, opts)
@@ -247,7 +247,7 @@ func startAllPollers(pollersFiltered []string, statusesByName map[string][]*util
 	}
 }
 
-func stopAllPollers(pollersFiltered []string, statusesByName map[string][]*util.PollerStatus) {
+func stopAllPollers(pollersFiltered []string, statusesByName map[string][]*ps.PollerStatus) {
 	for _, name := range pollersFiltered {
 		if statuses, isRunning := statusesByName[name]; isRunning {
 			for _, s := range statuses {
@@ -257,11 +257,11 @@ func stopAllPollers(pollersFiltered []string, statusesByName map[string][]*util.
 	}
 }
 
-func getPollersStatus() map[string][]*util.PollerStatus {
-	var statuses []util.PollerStatus
-	statusesByName := map[string][]*util.PollerStatus{}
+func getPollersStatus() map[string][]*ps.PollerStatus {
+	var statuses []ps.PollerStatus
+	statusesByName := map[string][]*ps.PollerStatus{}
 
-	statuses, err := util.GetPollerStatuses()
+	statuses, err := ps.GetPollerStatuses()
 	if err != nil {
 		fmt.Printf("Unable to GetPollerStatuses err: %+v\n", err)
 		return nil
@@ -274,7 +274,7 @@ func getPollersStatus() map[string][]*util.PollerStatus {
 }
 
 func stopGhostPollers(skipPoller []string) {
-	statuses, err := util.GetPollerStatuses()
+	statuses, err := ps.GetPollerStatuses()
 	if err != nil {
 		fmt.Printf("Unable to get poller statatuses err=%v\n", err)
 		return
@@ -305,40 +305,40 @@ func stopGhostPollers(skipPoller []string) {
 	}
 }
 
-func killPoller(ps *util.PollerStatus) {
+func killPoller(pollerStatus *ps.PollerStatus) {
 	// exit if pid was not found
-	if ps.Pid < 1 {
+	if pollerStatus.Pid < 1 {
 		return
 	}
 
 	// send kill signal
-	proc, _ := os.FindProcess(ps.Pid)
+	proc, _ := os.FindProcess(pollerStatus.Pid)
 	if err := proc.Kill(); err != nil {
 		if strings.HasSuffix(err.Error(), "process already finished") {
-			ps.Status = util.StatusAlreadyExited
+			pollerStatus.Status = ps.StatusAlreadyExited
 		} else {
 			fmt.Println("kill:", err)
 			os.Exit(1)
 		}
 	} else {
-		ps.Status = util.StatusKilled
+		pollerStatus.Status = ps.StatusKilled
 	}
 }
 
 // Stop the poller if it's stoppable
-func stopPoller(ps *util.PollerStatus) {
+func stopPoller(pollerStatus *ps.PollerStatus) {
 	// if we get no valid PID, assume process is not running
-	if ps.Pid < 1 {
+	if pollerStatus.Pid < 1 {
 		return
 	}
 
-	proc, _ := os.FindProcess(ps.Pid)
+	proc, _ := os.FindProcess(pollerStatus.Pid)
 
 	// send terminate signal
 	if err := proc.Signal(syscall.SIGTERM); err != nil {
 		if os.IsPermission(err) {
-			fmt.Printf("Insufficient privileges to terminate process for pid=%d poller=%s\n", ps.Pid, ps.Name)
-			ps.Status = util.StatusStoppingFailed
+			fmt.Printf("Insufficient privileges to terminate process for pid=%d poller=%s\n", pollerStatus.Pid, pollerStatus.Name)
+			pollerStatus.Status = ps.StatusStoppingFailed
 			return
 		}
 		fmt.Println(err)
@@ -348,7 +348,7 @@ func stopPoller(ps *util.PollerStatus) {
 	// give the poller a chance to clean up and exit
 	for range 5 {
 		if proc.Signal(syscall.Signal(0)) != nil {
-			ps.Status = util.StatusStopped
+			pollerStatus.Status = ps.StatusStopped
 			return
 		}
 		time.Sleep(10 * time.Millisecond)
@@ -356,7 +356,7 @@ func stopPoller(ps *util.PollerStatus) {
 
 	// couldn't verify poller exited
 	// just try to kill it and cleanup
-	killPoller(ps)
+	killPoller(pollerStatus)
 }
 
 func startPoller(pollerName string, promPort int, opts *options) {
@@ -474,17 +474,17 @@ func closeDevNull(devNull *os.File) {
 	}
 }
 
-func printStatus(table *tw.Table, long bool, dc, pn string, ps *util.PollerStatus) {
+func printStatus(table *tw.Table, long bool, dc, pn string, pollerStatus *ps.PollerStatus) {
 	dct := truncate(dc)
 	pnt := truncate(pn)
 	var row []string
 	if long {
-		row = []string{dct, pnt, "", ps.PromPort, ps.ProfilingPort, string(ps.Status)}
+		row = []string{dct, pnt, "", pollerStatus.PromPort, pollerStatus.ProfilingPort, string(pollerStatus.Status)}
 	} else {
-		row = []string{dct, pnt, "", ps.PromPort, string(ps.Status)}
+		row = []string{dct, pnt, "", pollerStatus.PromPort, string(pollerStatus.Status)}
 	}
-	if ps.Pid != 0 {
-		row[2] = strconv.Itoa(ps.Pid)
+	if pollerStatus.Pid != 0 {
+		row[2] = strconv.Itoa(pollerStatus.Pid)
 	}
 	table.Append(row)
 }

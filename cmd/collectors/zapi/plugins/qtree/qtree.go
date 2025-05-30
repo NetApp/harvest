@@ -5,12 +5,13 @@ package qtree
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
+	"github.com/netapp/harvest/v2/pkg/template"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"strconv"
 	"strings"
@@ -121,7 +122,7 @@ func (q *Qtree) Init(remote conf.Remote) error {
 
 	for _, obj := range objects.GetAllChildContentS() {
 
-		metricName, display, _, _ := util.ParseMetric(obj)
+		metricName, display, _, _ := template.ParseMetric(obj)
 
 		_, err := q.data.NewMetricFloat64(metricName, display)
 		if err != nil {
@@ -145,7 +146,7 @@ func (q *Qtree) Init(remote conf.Remote) error {
 	return nil
 }
 
-func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (q *Qtree) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	var (
 		request, response *node.Node
 		quotas            []*node.Node

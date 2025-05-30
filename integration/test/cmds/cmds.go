@@ -1,4 +1,4 @@
-package utils
+package cmds
 
 import (
 	"bytes"
@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/Netapp/harvest-automation/test/errs"
+	"github.com/Netapp/harvest-automation/test/request"
 	"github.com/carlmjohnson/requests"
 	"github.com/netapp/harvest/v2/cmd/tools/grafana"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -47,7 +49,7 @@ func Run(command string, arg ...string) (string, error) {
 func MkDir(dirname string) {
 	if _, err := os.Stat(dirname); os.IsNotExist(err) {
 		err := os.Mkdir(dirname, 0750)
-		PanicIfNotNil(err)
+		errs.PanicIfNotNil(err)
 	}
 }
 
@@ -149,7 +151,7 @@ func UseCertFile(harvestHome string) {
 	slog.Info("Copy certificate files", slog.String("path", path))
 	if FileExists(path) {
 		err := RemoveDir(path)
-		PanicIfNotNil(err)
+		errs.PanicIfNotNil(err)
 	}
 	_, _ = Run("mkdir", "-p", path)
 	_, _ = Run("cp", "-R", GetConfigDir()+"/cert", harvestHome)
@@ -196,7 +198,7 @@ func AddPrometheusToGrafana() {
 		"url": "%s", "isDefault": true, "basicAuth": false}`,
 		grafana.DefaultDataSource,
 		"http://"+GetOutboundIP()+":"+PrometheusPort))
-	data := SendReqAndGetRes(url, method, jsonValue)
+	data := request.SendReqAndGetRes(url, method, jsonValue)
 	key := fmt.Sprintf("%v", data["message"])
 	if key == "Datasource added" {
 		slog.Info("Prometheus has been added successfully into Grafana .")
@@ -215,19 +217,13 @@ func CreateGrafanaToken() string {
 	if err != nil {
 		panic(err)
 	}
-	data := SendReqAndGetRes(url, method, jsonValue)
+	data := request.SendReqAndGetRes(url, method, jsonValue)
 	key := fmt.Sprintf("%v", data["key"])
 	if key != "" {
 		slog.Info("Grafana: Token has been created successfully.")
 		return key
 	}
 	panic(errors.New("ERROR: unable to create grafana token"))
-}
-
-func PanicIfNotNil(err error) {
-	if err != nil {
-		panic(err)
-	}
 }
 
 func GetOutboundIP() string {
@@ -258,7 +254,7 @@ func WriteToken(token string) {
 	filename := "harvest.yml"
 	abs, _ := filepath.Abs(filename)
 	_, err = conf.LoadHarvestConfig(filename)
-	PanicIfNotNil(err)
+	errs.PanicIfNotNil(err)
 	tools := conf.Config.Tools
 	if tools != nil {
 		if tools.GrafanaAPIToken != "" {
@@ -290,18 +286,9 @@ func GetPrometheusURL() string {
 	return "http://localhost:" + PrometheusPort
 }
 
-func Contains(s []string, str string) bool {
-	for _, v := range s {
-		if v == str {
-			return true
-		}
-	}
-	return false
-}
-
 func GetHarvestRootDir() string {
 	path, err := os.Getwd()
-	PanicIfNotNil(err)
+	errs.PanicIfNotNil(err)
 	return filepath.Dir(filepath.Dir(path))
 }
 

@@ -386,10 +386,13 @@ func toChainedVar(defStr string, label string) string {
 		if firstParen == -1 {
 			return ""
 		}
-		if lastComma == -1 { //nolint:revive
-			// Case 1: There are not existing labels
-			// label_values(datacenter) becomes label_values({foo=~"$Foo"}, datacenter)
-		} else {
+		// There are two cases:
+		// 1. There are no existing labels, e.g.,
+		// label_values(datacenter) becomes label_values({foo=~"$Foo"}, datacenter)
+		// 2. There is a single metric, e.g.,
+		// label_values(poller_status, datacenter) becomes label_values(poller_status{org=~"$org"}, datacenter)
+
+		if lastComma != -1 {
 			// Case 2: There is a single metric
 			// label_values(poller_status, datacenter) becomes label_values(poller_status{org=~"$org"}, datacenter)
 			return defStr[0:lastComma] + "{" + label + `=~"$` + title + `"},` + defStr[lastComma+1:]

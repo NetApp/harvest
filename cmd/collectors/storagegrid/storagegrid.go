@@ -11,8 +11,8 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
+	"github.com/netapp/harvest/v2/pkg/template"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"slices"
@@ -437,7 +437,7 @@ func (s *StorageGrid) ParseCounters(counter *node.Node, prop *prop) {
 
 	for _, c := range counter.GetAllChildContentS() {
 		if c != "" {
-			name, display, kind, metricType = util.ParseMetric(c)
+			name, display, kind, metricType = template.ParseMetric(c)
 			s.Logger.Debug(
 				"Collected",
 				slog.String("kind", kind),
@@ -471,19 +471,19 @@ func (s *StorageGrid) InitProp() {
 
 func (s *StorageGrid) LoadTemplate() (string, error) {
 	var (
-		template *node.Node
-		path     string
-		err      error
+		subTemplate *node.Node
+		path        string
+		err         error
 	)
 
 	jitter := s.Params.GetChildContentS("jitter")
 
-	template, path, err = s.ImportSubTemplate("", rest.TemplateFn(s.Params, s.Object), jitter, s.Remote.Version)
+	subTemplate, path, err = s.ImportSubTemplate("", rest.TemplateFn(s.Params, s.Object), jitter, s.Remote.Version)
 	if err != nil {
 		return "", err
 	}
 
-	s.Params.Union(template)
+	s.Params.Union(subTemplate)
 	return path, nil
 }
 

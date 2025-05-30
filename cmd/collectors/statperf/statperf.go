@@ -9,12 +9,12 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/cmd/tools/rest/clirequestbuilder"
+	collector2 "github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/slogx"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"slices"
@@ -157,9 +157,9 @@ func (s *StatPerf) loadParamInt(name string, defaultValue int) int {
 	return defaultValue
 }
 
-func getCounterInstanceBaseSet() string {
+func GetCounterInstanceBaseSet() string {
 	baseSetTemplate := `set -showseparator "%s" -showallfields true -rows 0 diagnostic -confirmations off;statistics settings modify -counter-display all;`
-	return fmt.Sprintf(baseSetTemplate, util.StatPerfSeparator)
+	return fmt.Sprintf(baseSetTemplate, collector2.StatPerfSeparator)
 }
 
 func getDataBaseSet() string {
@@ -174,7 +174,7 @@ func (s *StatPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 	)
 
 	cliCommand, err := clirequestbuilder.New().
-		BaseSet(getCounterInstanceBaseSet()).
+		BaseSet(GetCounterInstanceBaseSet()).
 		Query("statistics catalog counter show").
 		Object(s.Prop.Query).
 		Fields([]string{"counter", "base-counter", "properties", "type", "is-deprecated", "replaced-by"}).
@@ -293,9 +293,9 @@ func (s *StatPerf) pollCounter(records []gjson.Result, apiD time.Duration) error
 			if _, ok := s.perfProp.counterInfo[name]; !ok {
 				s.perfProp.counterInfo[name] = &counter{
 					name:        name,
-					counterType: normalizeCounterValue(c.Type),
+					counterType: NormalizeCounterValue(c.Type),
 					property:    s.parseCounterProperty(name, c.Properties),
-					denominator: normalizeCounterValue(c.BaseCounter),
+					denominator: NormalizeCounterValue(c.BaseCounter),
 				}
 				if p := s.GetOverride(name); p != "" {
 					s.perfProp.counterInfo[name].property = p
@@ -345,7 +345,7 @@ func (s *StatPerf) pollCounter(records []gjson.Result, apiD time.Duration) error
 	return nil
 }
 
-func normalizeCounterValue(input string) string {
+func NormalizeCounterValue(input string) string {
 	if input == "-" {
 		return ""
 	}
@@ -565,7 +565,7 @@ func (s *StatPerf) processPerfRecords(records []gjson.Result, curMat *matrix.Mat
 				return true
 			}
 			if display, ok := s.Prop.InstanceLabels[metricName]; ok {
-				instance.SetLabel(display, normalizeCounterValue(metricValue))
+				instance.SetLabel(display, NormalizeCounterValue(metricValue))
 				count++
 			} else {
 				if metric, ok := s.Prop.Metrics[metricName]; ok {
@@ -836,7 +836,7 @@ func (s *StatPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 	}
 
 	cliCommand, err := clirequestbuilder.New().
-		BaseSet(getCounterInstanceBaseSet()).
+		BaseSet(GetCounterInstanceBaseSet()).
 		Query("statistics catalog instance show").
 		Object(s.Prop.Query).
 		Fields([]string{"instance", "instanceUUID"}).

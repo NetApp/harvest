@@ -7,8 +7,8 @@ package zapi
 import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
+	"github.com/netapp/harvest/v2/pkg/template"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"strings"
 )
@@ -25,10 +25,10 @@ func ParseShortestPath(m *matrix.Matrix, l map[string]string) []string {
 		keys = append(keys, strings.Split(key, "."))
 	}
 
-	minLen := util.MinLen(keys)
+	minLen := node.MinLen(keys)
 
 	for i := range minLen {
-		if util.AllSame(keys, i) {
+		if node.AllSame(keys, i) {
 			prefix = append(prefix, keys[0][i])
 		} else {
 			break
@@ -96,7 +96,7 @@ func (z *Zapi) HandleCounter(path []string, content string) string {
 	key = strings.Join(fullPath, ".")
 
 	if display == "" {
-		display = util.ParseZAPIDisplay(mat.Object, fullPath)
+		display = template.ParseZAPIDisplay(mat.Object, fullPath)
 	}
 
 	if content[0] == '^' {

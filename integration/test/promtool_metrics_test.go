@@ -3,9 +3,8 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github.com/Netapp/harvest-automation/test/utils"
+	"github.com/Netapp/harvest-automation/test/cmds"
 	"github.com/netapp/harvest/v2/cmd/tools/grafana"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"github.com/netapp/harvest/v2/third_party/tidwall/sjson"
 	"os"
@@ -14,6 +13,14 @@ import (
 	"slices"
 	"strings"
 	"testing"
+)
+
+const (
+	TopresourceConstant      = "999999"
+	RangeConstant            = "888888"
+	RangeReverseConstant     = "10d6h54m48s"
+	IntervalConstant         = "777777"
+	IntervalDurationConstant = "666666"
 )
 
 var allowedList = []string{
@@ -37,7 +44,7 @@ var allowedList = []string{
 }
 
 func TestPrometheusMetrics(t *testing.T) {
-	utils.SkipIfMissing(t, utils.CheckMetrics)
+	cmds.SkipIfMissing(t, cmds.CheckMetrics)
 	ports := []int{12990, 12992, 12993, 12994}
 	for _, port := range ports {
 		checkMetrics(t, port)
@@ -82,7 +89,7 @@ func checkMetrics(t *testing.T, port int) {
 }
 
 func TestFormatQueries(t *testing.T) {
-	utils.SkipIfMissing(t, utils.CheckFormat)
+	cmds.SkipIfMissing(t, cmds.CheckFormat)
 	grafana.VisitDashboards(
 		[]string{
 			"../../grafana/dashboards/cisco",
@@ -114,7 +121,7 @@ func changeExpr(t *testing.T, path string, data []byte, promtoolPath string) {
 		value.Get("targets").ForEach(func(targetKey, target gjson.Result) bool {
 			expr := target.Get("expr")
 			if expr.Exists() && expr.ClonedString() != "" {
-				updatedExpr := util.Format(expr.ClonedString(), promtoolPath)
+				updatedExpr := format(expr.ClonedString(), promtoolPath)
 				if updatedExpr != expr.ClonedString() {
 					notFormatted = true
 					updatedData, err = sjson.SetBytes(updatedData, path+".targets."+targetKey.ClonedString()+".expr", []byte(updatedExpr))
@@ -133,6 +140,35 @@ func changeExpr(t *testing.T, path string, data []byte, promtoolPath string) {
 		t.Errorf("%v \nFormatted version created at path=%s.\ncp %s %s",
 			errorStr, sortedPath, sortedPath, path)
 	}
+}
+
+func format(query string, path string) string {
+	replacedQuery := strings.ReplaceAll(query, "$TopResources", TopresourceConstant)
+	replacedQuery = strings.ReplaceAll(replacedQuery, "$__range", RangeConstant)
+	replacedQuery = strings.ReplaceAll(replacedQuery, "$__interval", IntervalConstant)
+	replacedQuery = strings.ReplaceAll(replacedQuery, "${Interval}", IntervalDurationConstant)
+
+	command := exec.Command(path, "--experimental", "promql", "format", replacedQuery)
+	output, err := command.CombinedOutput()
+	updatedQuery := strings.TrimSuffix(string(output), "\n")
+	if strings.HasPrefix(updatedQuery, "  ") {
+		updatedQuery = strings.TrimLeft(updatedQuery, " ")
+	}
+	if err != nil {
+		// An exit code can't be used since we need to ignore metrics that are not formatted but can't change
+		fmt.Printf("ERR formating metrics query=%s err=%v output=%s", query, err, string(output))
+		return query
+	}
+
+	if len(output) == 0 {
+		return query
+	}
+
+	updatedQuery = strings.ReplaceAll(updatedQuery, TopresourceConstant, "$TopResources")
+	updatedQuery = strings.ReplaceAll(updatedQuery, RangeReverseConstant, "$__range")
+	updatedQuery = strings.ReplaceAll(updatedQuery, IntervalConstant, "$__interval")
+	updatedQuery = strings.ReplaceAll(updatedQuery, IntervalDurationConstant, "${Interval}")
+	return updatedQuery
 }
 
 func writeFormatted(t *testing.T, path string, updatedData []byte) string {

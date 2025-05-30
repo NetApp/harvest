@@ -6,11 +6,11 @@ import (
 	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/pkg/auth"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/go-version"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"io"
@@ -42,7 +42,7 @@ type Client struct {
 	logRest  bool // used to log Rest request/response
 	APIPath  string
 	auth     *auth.Credentials
-	Metadata *util.Metadata
+	Metadata *collector.Metadata
 }
 
 func NewClient(pollerName string, clientTimeout string, c *auth.Credentials) (*Client, error) {
@@ -83,7 +83,7 @@ func New(poller *conf.Poller, timeout time.Duration, c *auth.Credentials) (*Clie
 
 	client = Client{
 		auth:     c,
-		Metadata: &util.Metadata{},
+		Metadata: &collector.Metadata{},
 	}
 	client.Logger = slog.Default().With(slog.String("StorageGrid", "Client"))
 
@@ -247,7 +247,7 @@ func (c *Client) fetch() ([]byte, error) {
 		if body, err = io.ReadAll(response.Body); err == nil {
 			return nil, errs.NewStorageGridErr(response.StatusCode, body)
 		}
-		api := util.GetURLWithoutHost(c.request)
+		api := requests.GetURLWithoutHost(c.request)
 		return nil, errs.NewRest().
 			StatusCode(response.StatusCode).
 			Error(err).

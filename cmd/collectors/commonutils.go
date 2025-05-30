@@ -3,11 +3,11 @@ package collectors
 import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"os"
@@ -320,7 +320,7 @@ func SplitVscanName(ontapName string, isZapi bool) (VscanNames, bool) {
 	return VscanNames{Node: ontapName[:firstColon], Svm: ontapName[firstColon+1 : lastColon], Scanner: ontapName[lastColon+1:]}, true
 }
 
-func AggregatePerScanner(logger *slog.Logger, data *matrix.Matrix, latencyKey string, rateKey string) ([]*matrix.Matrix, *util.Metadata, error) {
+func AggregatePerScanner(logger *slog.Logger, data *matrix.Matrix, latencyKey string, rateKey string) ([]*matrix.Matrix, *collector.Metadata, error) {
 	// When isPerScanner=true, Harvest 1.6 uses this form:
 	// netapp.perf.dev.nltl-fas2520.vscan.scanner.10_64_30_62.scanner_stats_pct_mem_used 18 1501765640
 

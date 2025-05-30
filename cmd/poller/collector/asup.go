@@ -12,8 +12,8 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/num"
 	"github.com/netapp/harvest/v2/pkg/slogx"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"github.com/netapp/harvest/v2/third_party/shirou/gopsutil/v4/mem"
 	"github.com/netapp/harvest/v2/third_party/shirou/gopsutil/v4/process"
 	"log/slog"
@@ -247,7 +247,7 @@ func BuildAndWriteAutoSupport(collectors []Collector, status *matrix.Matrix, pol
 	// Get the PID and RSS in bytes of the current process.
 	// If there is an error, rssBytes will be zero
 	pid := os.Getpid()
-	pid32, err := util.SafeConvertToInt32(pid)
+	pid32, err := num.SafeConvertToInt32(pid)
 	if err != nil {
 		logging.Get().Error("", slogx.Err(err), slog.Int("pid", pid))
 	} else {

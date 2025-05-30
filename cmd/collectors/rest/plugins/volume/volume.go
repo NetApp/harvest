@@ -9,12 +9,13 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
+	"github.com/netapp/harvest/v2/pkg/version"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"strconv"
@@ -113,14 +114,14 @@ func (v *Volume) Init(remote conf.Remote) error {
 	// Read template to decide inclusion of flexgroup constituents
 	v.includeConstituents = collectors.ReadPluginKey(v.Params, "include_constituents")
 	// ARW feature is supported from 9.10 onwards, If we ask this field in Rest call in plugin, then it will be failed.
-	v.isArwSupportedVersion, err = util.VersionAtLeast(v.client.Remote().Version, ARWSupportedVersion)
+	v.isArwSupportedVersion, err = version.AtLeast(v.client.Remote().Version, ARWSupportedVersion)
 	if err != nil {
 		return fmt.Errorf("unable to get version %w", err)
 	}
 	return nil
 }
 
-func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[v.Object]
 	v.client.Metadata.Reset()
 

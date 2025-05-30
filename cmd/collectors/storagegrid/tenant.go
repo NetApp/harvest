@@ -2,10 +2,10 @@ package storagegrid
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 )
 
@@ -22,7 +22,7 @@ func NewTenant(p *plugin.AbstractPlugin, s *StorageGrid) plugin.Plugin {
 	return &Tenant{AbstractPlugin: p, sg: s}
 }
 
-func (t *Tenant) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Metadata, error) {
+func (t *Tenant) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 
 	var (
 		used, quota, usedPercent *matrix.Metric

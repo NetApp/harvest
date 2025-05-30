@@ -6,18 +6,21 @@ import (
 	"fmt"
 	"github.com/goccy/go-yaml"
 	"github.com/netapp/harvest/v2/cmd/collectors/keyperf"
+	"github.com/netapp/harvest/v2/cmd/collectors/statperf"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
+	"github.com/netapp/harvest/v2/cmd/tools/rest/clirequestbuilder"
 	template2 "github.com/netapp/harvest/v2/cmd/tools/template"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/auth"
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/set"
+	template3 "github.com/netapp/harvest/v2/pkg/template"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
 	tw "github.com/netapp/harvest/v2/third_party/olekukonko/tablewriter"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"io"
@@ -396,6 +399,8 @@ func processRestCounters(dir string, client *rest.Client) map[string]Counter {
 		return processRestConfigCounters(path, keyPerfAPI)
 	})
 
+	statPerfCounters := visitRestTemplates(filepath.Join(dir, "conf", "statperf"), client, processStatPerfCounters)
+
 	for k, v := range restPerfCounters {
 		restCounters[k] = v
 	}
@@ -406,6 +411,20 @@ func processRestCounters(dir string, client *rest.Client) map[string]Counter {
 			continue
 		}
 		v := keyPerfCounters[k]
+		if v1, ok := restCounters[k]; !ok {
+			restCounters[k] = v
+		} else {
+			v1.APIs = append(v1.APIs, v.APIs...)
+			restCounters[k] = v1
+		}
+	}
+
+	statPerfKeys := slices.Sorted(maps.Keys(statPerfCounters))
+	for _, k := range statPerfKeys {
+		if strings.Contains(k, "labels") {
+			continue
+		}
+		v := statPerfCounters[k]
 		if v1, ok := restCounters[k]; !ok {
 			restCounters[k] = v
 		} else {
@@ -476,7 +495,7 @@ func handleZapiCounter(path []string, content string, object string) (string, st
 	fullPath = append(fullPath, name)
 	key = strings.Join(fullPath, ".")
 	if display == "" {
-		display = util.ParseZAPIDisplay(object, fullPath)
+		display = template3.ParseZAPIDisplay(object, fullPath)
 	}
 
 	if content[0] != '^' {
@@ -601,7 +620,7 @@ func processCounters(counterContents []string, model *template2.Model, path, que
 			continue
 		}
 		var co Counter
-		name, display, m, _ := util.ParseMetric(c)
+		name, display, m, _ := template3.ParseMetric(c)
 		if _, ok := excludeCounters[name]; ok {
 			continue
 		}
@@ -778,7 +797,7 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 	}
 	for _, c := range templateCounters.GetAllChildContentS() {
 		if c != "" {
-			name, display, m, _ := util.ParseMetric(c)
+			name, display, m, _ := template3.ParseMetric(c)
 			if strings.HasPrefix(display, model.Object) {
 				display = strings.TrimPrefix(display, model.Object)
 				display = strings.TrimPrefix(display, "_")
@@ -1237,7 +1256,7 @@ func processRestPerfCounters(path string, client *rest.Client) map[string]Counte
 	}
 	for _, c := range templateCounters.GetAllChildContentS() {
 		if c != "" {
-			name, display, m, _ := util.ParseMetric(c)
+			name, display, m, _ := template3.ParseMetric(c)
 			if m == "float" {
 				counterMap[name] = model.Object + "_" + display
 				counterMapNoPrefix[name] = display
@@ -1330,6 +1349,153 @@ func processRestPerfCounters(path string, client *rest.Client) map[string]Counte
 	// handling for templates with common object names/metric name
 	if specialPerfObjects[model.Object] {
 		return specialHandlingPerfCounters(counters, model)
+	}
+	return counters
+}
+
+func processStatPerfCounters(path string, client *rest.Client) map[string]Counter {
+	var (
+		records    []gjson.Result
+		counters   = make(map[string]Counter)
+		cliCommand []byte
+	)
+	t, err := tree.ImportYaml(path)
+	if t == nil || err != nil {
+		fmt.Printf("Unable to import template file %s. File is invalid or empty\n", path)
+		return nil
+	}
+	model, err := template2.ReadTemplate(path)
+	if err != nil {
+		fmt.Printf("Unable to import template file %s. File is invalid or empty err=%s\n", path, err)
+		return nil
+	}
+	noExtraMetrics := len(model.MultiplierMetrics) == 0 && len(model.PluginMetrics) == 0
+	templateCounters := t.GetChildS("counters")
+	override := t.GetChildS("override")
+	if model.ExportData == "false" && noExtraMetrics {
+		return nil
+	}
+	if templateCounters == nil {
+		return nil
+	}
+	counterMap := make(map[string]string)
+	counterMapNoPrefix := make(map[string]string)
+	metricLabels, labels, isInstanceLabels := getAllExportedLabels(t, templateCounters.GetAllChildContentS())
+	if isInstanceLabels {
+		description := "This metric provides information about " + model.Name
+		// This is for object_labels metrics
+		harvestName := model.Object + "_" + "labels"
+		counters[harvestName] = Counter{
+			Name:        harvestName,
+			Description: description,
+			APIs: []MetricDef{
+				{
+					API:          "StatPerf",
+					Endpoint:     model.Query,
+					Template:     path,
+					ONTAPCounter: "Harvest generated",
+				},
+			},
+			Labels: labels,
+		}
+	}
+	for _, c := range templateCounters.GetAllChildContentS() {
+		if c != "" {
+			name, display, m, _ := template3.ParseMetric(c)
+			if m == "float" {
+				counterMap[name] = model.Object + "_" + display
+				counterMapNoPrefix[name] = display
+			}
+		}
+	}
+	cliCommand, err = clirequestbuilder.New().
+		BaseSet(statperf.GetCounterInstanceBaseSet()).
+		Query("statistics catalog counter show").
+		Object(model.Query).
+		Fields([]string{"counter", "base-counter", "properties", "type", "is-deprecated", "replaced-by", "unit", "description"}).
+		Build()
+	if err != nil {
+		fmt.Printf("error while build clicommand %+v\n", err)
+		return nil
+	}
+	records, err = rest.FetchPost(client, "api/private/cli", cliCommand)
+	if err != nil {
+		fmt.Printf("error while invoking api %+v\n", err)
+		return nil
+	}
+
+	firstRecord := records[0]
+	fr := firstRecord.ClonedString()
+	if fr == "" {
+		fmt.Printf("no data found for query %s template %s", model.Query, path)
+		return nil
+	}
+
+	pCounters, err := parseCounters(fr)
+	if err != nil {
+		fmt.Printf("error while parsing records for query %s template %s: %+v\n", model.Query, path, err)
+		return nil
+	}
+
+	for _, p := range pCounters {
+		ontapCounterName := statperf.NormalizeCounterValue(p.Name)
+		description := statperf.NormalizeCounterValue(p.Description)
+		ty := p.Type
+		if override != nil {
+			oty := override.GetChildContentS(ontapCounterName)
+			if oty != "" {
+				ty = oty
+			}
+		}
+		if v, ok := counterMap[ontapCounterName]; ok {
+			if ty == "string" {
+				continue
+			}
+			c := Counter{
+				Object:      model.Object,
+				Name:        v,
+				Description: description,
+				APIs: []MetricDef{
+					{
+						API:          "StatPerf",
+						Endpoint:     model.Query,
+						Template:     path,
+						ONTAPCounter: ontapCounterName,
+						Unit:         statperf.NormalizeCounterValue(p.Unit),
+						Type:         statperf.NormalizeCounterValue(ty),
+						BaseCounter:  statperf.NormalizeCounterValue(p.BaseCounter),
+					},
+				},
+				Labels: metricLabels,
+			}
+			if model.ExportData != "false" {
+				counters[c.Name] = c
+			}
+
+			// If the template has any MultiplierMetrics, add them
+			for _, metric := range model.MultiplierMetrics {
+				mc := c
+				addAggregatedCounter(&mc, metric, v, counterMapNoPrefix[ontapCounterName])
+				counters[mc.Name] = mc
+			}
+		}
+	}
+
+	// If the template has any PluginMetrics, add them
+	for _, metric := range model.PluginMetrics {
+		co := Counter{
+			Object: model.Object,
+			Name:   model.Object + "_" + metric.Name,
+			APIs: []MetricDef{
+				{
+					API:          "StatPerf",
+					Endpoint:     model.Query,
+					Template:     path,
+					ONTAPCounter: metric.Source,
+				},
+			},
+		}
+		counters[co.Name] = co
 	}
 	return counters
 }
@@ -1631,7 +1797,7 @@ func getAllExportedLabels(t *node.Node, counterContents []string) ([]string, []s
 					if c == "" {
 						continue
 					}
-					if _, display, m, _ := util.ParseMetric(c); m == "key" || m == "label" {
+					if _, display, m, _ := template3.ParseMetric(c); m == "key" || m == "label" {
 						metricLabels = append(metricLabels, display)
 					}
 				}
@@ -1648,4 +1814,62 @@ func getAllExportedLabels(t *node.Node, counterContents []string) ([]string, []s
 		}
 	}
 	return metricLabels, append(labels, metricLabels...), isInstanceLabels
+}
+
+func parseCounters(input string) (map[string]statperf.CounterProperty, error) {
+	linesFiltered := statperf.FilterNonEmpty(input)
+
+	// Search for the header row, which is expected to have at least 9 columns when split.
+	var headerIndex = -1
+	for i, line := range linesFiltered {
+		fields := strings.Split(line, collector.StatPerfSeparator)
+		if len(fields) >= 12 {
+			// Check if this header row contains a known header word like "counter"
+			lower := strings.ToLower(line)
+			if strings.Contains(lower, "counter") {
+				headerIndex = i
+				break
+			}
+		}
+	}
+
+	if headerIndex < 0 {
+		return nil, errors.New("no valid header row found")
+	}
+
+	// Expect at least one additional header row to follow the header row.
+	if len(linesFiltered) < headerIndex+2 {
+		return nil, errors.New("not enough header rows following the detected header")
+	}
+
+	// counter rows start after the second header row.
+	dataStart := headerIndex + 2
+	if dataStart >= len(linesFiltered) {
+		return nil, errors.New("no data rows found")
+	}
+
+	counters := make(map[string]statperf.CounterProperty)
+
+	for _, row := range linesFiltered[dataStart:] {
+		fields := strings.Split(row, collector.StatPerfSeparator)
+		if len(fields) < 12 {
+			fmt.Printf("skipping incomplete row %s\n", row)
+			continue
+		}
+
+		cp := statperf.CounterProperty{
+			Counter:     strings.TrimSpace(fields[2]),
+			Name:        strings.TrimSpace(fields[3]),
+			BaseCounter: strings.TrimSpace(fields[4]),
+			Description: strings.Trim(fields[5], ` "'`),
+			Properties:  strings.TrimSpace(fields[7]), // Skipping the second description field
+			Type:        strings.TrimSpace(fields[8]),
+			Unit:        strings.TrimSpace(fields[9]),
+			Deprecated:  strings.TrimSpace(fields[10]),
+			ReplacedBy:  strings.TrimSpace(fields[11]),
+		}
+
+		counters[cp.Counter] = cp
+	}
+	return counters, nil
 }

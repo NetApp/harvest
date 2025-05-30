@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"github.com/Netapp/harvest-automation/test/cmds"
 	"github.com/Netapp/harvest-automation/test/dashboard"
-	"github.com/Netapp/harvest-automation/test/utils"
+	"github.com/Netapp/harvest-automation/test/errs"
+	"github.com/Netapp/harvest-automation/test/request"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -75,6 +77,7 @@ var excludeCounters = []string{
 	"efficiency_savings",
 	"ems_destination_labels",
 	"ems_events",
+	"ethernet_switch_port",
 	"external_service_op_num_",
 	"external_service_op_request_",
 	"fabricpool_cloud_bin_op_latency_average",
@@ -134,13 +137,13 @@ var validateQueries = []string{
 }
 
 func TestMain(m *testing.M) {
-	utils.SetupLogging()
+	cmds.SetupLogging()
 	os.Exit(m.Run())
 }
 
 func TestDashboardsLoad(t *testing.T) {
-	utils.SkipIfMissing(t, utils.Regression)
-	jsonDir := utils.GetHarvestRootDir() + "/grafana/dashboards"
+	cmds.SkipIfMissing(t, cmds.Regression)
+	jsonDir := cmds.GetHarvestRootDir() + "/grafana/dashboards"
 	slog.Info("Dashboard directory path", slog.String("jsonDir", jsonDir))
 	fileSet = GetAllJsons(jsonDir)
 	if len(fileSet) == 0 {
@@ -150,7 +153,7 @@ func TestDashboardsLoad(t *testing.T) {
 }
 
 func TestJsonExpression(t *testing.T) {
-	utils.SkipIfMissing(t, utils.Regression)
+	cmds.SkipIfMissing(t, cmds.Regression)
 	if len(fileSet) == 0 {
 		TestDashboardsLoad(t)
 	}
@@ -199,7 +202,7 @@ func TestJsonExpression(t *testing.T) {
 				allExpr = append(allExpr, targets.Map()["expr"].Str)
 			}
 		}
-		allExpr = utils.RemoveDuplicateStr(allExpr)
+		allExpr = cmds.RemoveDuplicateStr(allExpr)
 
 		for _, expression := range allExpr {
 			counters := getAllCounters(expression)
@@ -414,13 +417,13 @@ func GetAllJsons(dir string) []string {
 				return err
 			}
 			fileInfo, err := os.Stat(path)
-			utils.PanicIfNotNil(err)
+			errs.PanicIfNotNil(err)
 			if !fileInfo.IsDir() && strings.Contains(path, ".json") {
 				fileSet = append(fileSet, path)
 			}
 			return nil
 		})
-	utils.PanicIfNotNil(err)
+	errs.PanicIfNotNil(err)
 	return fileSet
 }
 
@@ -456,7 +459,7 @@ func hasDataInDB(query string, waitFor time.Duration) bool {
 	now := time.Now()
 	for {
 		q := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d", dashboard.PrometheusURL, query, time.Now().Unix())
-		response, _ := utils.GetResponse(q)
+		response, _ := request.GetResponse(q)
 		value := gjson.Get(response, "data.result")
 		if len(value.Array()) > 0 {
 			return true
@@ -471,7 +474,7 @@ func hasDataInDB(query string, waitFor time.Duration) bool {
 func generateQueryWithValue(query string, expression string) string {
 	timeNow := time.Now().Unix()
 	queryURL := fmt.Sprintf("%s/api/v1/query?query=%s&time=%d", dashboard.PrometheusURL, query, timeNow)
-	response, _ := utils.GetResponse(queryURL)
+	response, _ := request.GetResponse(queryURL)
 	newExpression := expression
 	/**
 	We are not following standard naming convention for variables in the json

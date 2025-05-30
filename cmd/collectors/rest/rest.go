@@ -32,13 +32,15 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/auth"
+	collector2 "github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/util"
+	"github.com/netapp/harvest/v2/pkg/version"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"os"
@@ -245,7 +247,7 @@ func (r *Rest) getClient(a *collector.AbstractCollector, c *auth.Credentials) (*
 	}
 	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
 	if a.Options.IsTest {
-		return &rest.Client{Metadata: &util.Metadata{}}, nil
+		return &rest.Client{Metadata: &collector2.Metadata{}}, nil
 	}
 	if client, err = rest.New(poller, timeout, c); err != nil {
 		r.Logger.Error("error creating new client", slogx.Err(err), slog.String("poller", opt.Poller))
@@ -277,7 +279,7 @@ func (r *Rest) InitEndPoints() error {
 			for _, line1 := range line.GetChildren() {
 				if line1.GetNameS() == "query" {
 					p.Query = line1.GetContentS()
-					p.IsPublic = util.IsPublicAPI(p.Query)
+					p.IsPublic = requests.IsPublicAPI(p.Query)
 				}
 				if line1.GetNameS() == "instance_add" {
 					iAdd := line1.GetContentS()
@@ -317,7 +319,7 @@ func (r *Rest) PollCounter() (map[string]*matrix.Matrix, error) {
 	apiD := time.Since(startTime)
 
 	startTime = time.Now()
-	v, err := util.VersionAtLeast(r.Remote.Version, "9.11.1")
+	v, err := version.AtLeast(r.Remote.Version, "9.11.1")
 	if err != nil {
 		return nil, err
 	}
@@ -431,7 +433,7 @@ func (r *Rest) pollData(records []gjson.Result, oldInstances *set.Set) (uint64, 
 	startTime := time.Now()
 	mat := r.Matrix[r.Object]
 
-	count, _ = r.HandleResults(mat, records, r.Prop, false, oldInstances, time.Now().UnixNano()/util.BILLION)
+	count, _ = r.HandleResults(mat, records, r.Prop, false, oldInstances, time.Now().UnixNano()/collector2.BILLION)
 	parseD = time.Since(startTime)
 
 	return count, parseD
@@ -472,7 +474,7 @@ func (r *Rest) ProcessEndPoints(mat *matrix.Matrix, endpointFunc func(e *EndPoin
 			continue
 		}
 		isImmutable := !endpoint.instanceAdd
-		count, _ = r.HandleResults(mat, records, endpoint.Prop, isImmutable, oldInstances, time.Now().UnixNano()/util.BILLION)
+		count, _ = r.HandleResults(mat, records, endpoint.Prop, isImmutable, oldInstances, time.Now().UnixNano()/collector2.BILLION)
 	}
 
 	return count, totalAPID

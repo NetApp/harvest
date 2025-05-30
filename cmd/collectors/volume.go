@@ -1,10 +1,10 @@
 package collectors
 
 import (
+	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/slogx"
-	"github.com/netapp/harvest/v2/pkg/util"
 	"log/slog"
 	"maps"
 	"regexp"
@@ -29,7 +29,7 @@ var footprintMetrics = map[string]struct{}{
 
 }
 
-func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string, includeConstituents bool, opsKeyPrefix string, volumesMap map[string]string, enableVolumeAggrMatrix bool) ([]*matrix.Matrix, *util.Metadata, error) {
+func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string, includeConstituents bool, opsKeyPrefix string, volumesMap map[string]string, enableVolumeAggrMatrix bool) ([]*matrix.Matrix, *collector.Metadata, error) {
 	var err error
 
 	if volumesMap == nil {
