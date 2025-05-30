@@ -157,6 +157,7 @@ func (v *Volume) processAndUpdateVolume(data *matrix.Matrix, volumeFootprintMap 
 
 		if volState == "offline" && strings.HasSuffix(svm, "-mc") {
 			volume.SetExportable(false)
+			continue
 		}
 
 		if volume.GetLabel("style") == "flexgroup_constituent" {

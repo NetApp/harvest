@@ -188,6 +188,7 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]vo
 
 		if volState == "offline" && strings.HasSuffix(svm, "-mc") {
 			volume.SetExportable(false)
+			continue
 		}
 
 		if volume.GetLabel("style") == "flexgroup_constituent" {

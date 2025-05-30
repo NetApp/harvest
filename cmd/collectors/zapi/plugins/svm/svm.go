@@ -216,6 +216,12 @@ func (s *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 			continue
 		}
 		svmName := svmInstance.GetLabel("svm")
+		svmState := svmInstance.GetLabel("state")
+
+		if svmState == "offline" && strings.HasSuffix(svmName, "-mc") {
+			svmInstance.SetExportable(false)
+			continue
+		}
 
 		// Update audit_protocol_enabled label in svm
 		svmInstance.SetLabel("audit_protocol_enabled", s.auditProtocols[svmName])

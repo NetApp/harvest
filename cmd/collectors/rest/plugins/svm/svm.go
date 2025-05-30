@@ -127,9 +127,21 @@ func (s *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 		}
 	}
 
+	s.updateSVM(data)
+
+	return nil, s.client.Metadata, nil
+}
+
+func (s *SVM) updateSVM(data *matrix.Matrix) {
 	// update svm instance based on the above zapi response
 	for _, svmInstance := range data.GetInstances() {
 		svmName := svmInstance.GetLabel("svm")
+		svmState := svmInstance.GetLabel("state")
+
+		if svmState == "offline" && strings.HasSuffix(svmName, "-mc") {
+			svmInstance.SetExportable(false)
+			continue
+		}
 
 		// Update nameservice_switch and nis_domain label in svm
 		if nsswitchInfo, ok := s.nsswitchInfo[svmName]; ok {
@@ -169,7 +181,6 @@ func (s *SVM) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *util.Me
 			svmInstance.SetLabel("insecured", strconv.FormatBool(insecured))
 		}
 	}
-	return nil, s.client.Metadata, nil
 }
 
 func (s *SVM) GetNSSwitchInfo(data *matrix.Matrix) (map[string]Nsswitch, error) {
