@@ -180,9 +180,16 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]vo
 		svm := volume.GetLabel("svm")
 		vol := volume.GetLabel("volume")
 		tags := volume.GetLabel("tags")
+		volState := volume.GetLabel("state")
 		v.volTagMap[vKey] = volumeTag{vol: vol, svm: svm, tags: tags}
 
 		if !volume.IsExportable() {
+			continue
+		}
+
+		// SVM names ending with "-mc" are MetroCluster SVMs. We should only export volume metrics from these SVMs if the volume is online.
+		if volState == "offline" && strings.HasSuffix(svm, "-mc") {
+			volume.SetExportable(false)
 			continue
 		}
 

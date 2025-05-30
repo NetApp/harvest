@@ -13,6 +13,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"log/slog"
 	"strconv"
+	"strings"
 )
 
 type Volume struct {
@@ -119,6 +120,7 @@ func (v *Volume) processAndUpdateVolume(data *matrix.Matrix, volumeFootprintMap 
 	for _, volume := range data.GetInstances() {
 		name := volume.GetLabel("volume")
 		svm := volume.GetLabel("svm")
+		volState := volume.GetLabel("state")
 		key := name + svm
 
 		// Process volume footprint metrics
@@ -149,6 +151,12 @@ func (v *Volume) processAndUpdateVolume(data *matrix.Matrix, volumeFootprintMap 
 
 		// ZAPI includes node root and temp volumes, while REST does not. To make ZAPI and REST consistent, Harvest will exclude the node root and temp volumes by not exporting them.
 		if volume.GetLabel("node_root") == "true" || volume.GetLabel("type") == "tmp" {
+			volume.SetExportable(false)
+			continue
+		}
+
+		// SVM names ending with "-mc" are MetroCluster SVMs. We should only export volume metrics from these SVMs if the volume is online.
+		if volState == "offline" && strings.HasSuffix(svm, "-mc") {
 			volume.SetExportable(false)
 			continue
 		}
