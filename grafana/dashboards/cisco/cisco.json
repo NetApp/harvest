@@ -265,6 +265,15 @@
           "interval": "",
           "legendFormat": "",
           "refId": "D"
+        },
+        {
+          "exemplar": false,
+          "expr": "cisco_switch_uptime{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "E"
         }
       ],
       "title": "Switch Details",
@@ -290,7 +299,8 @@
                 "value 1",
                 "value 2",
                 "datacenter 1",
-                "Value #D"
+                "Value #D",
+                "Value #E"
               ]
             }
           }
@@ -300,15 +310,16 @@
           "options": {
             "excludeByName": {},
             "indexByName": {
+              "Value #E": 2,
               "biosVersion": 4,
               "chassis": 3,
               "datacenter 1": 0,
               "osVersion": 5,
-              "switch": 1,
-              "upTime": 2
+              "switch": 1
             },
             "renameByName": {
               "Value #D": "Fan Speed",
+              "Value #E": "Uptime",
               "biosVersion": "BIOS Version",
               "chassis": "Chassis",
               "datacenter 3": "",
