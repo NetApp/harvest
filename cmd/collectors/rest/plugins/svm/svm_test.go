@@ -37,20 +37,17 @@ func populatedData() *matrix.Matrix {
 	// Create test data
 	data := matrix.New("svm", "svm", "svm")
 
-	// instance in svm-mc with online state
 	instance1, _ := data.NewInstance("svm1-mc")
 	instance1.SetLabel("svm", "svm1-mc")
-	instance1.SetLabel("state", "online")
+	instance1.SetLabel("state", "running")
 
-	// instance in svm-mc with offline state
 	instance2, _ := data.NewInstance("svm2-mc")
 	instance2.SetLabel("svm", "svm2-mc")
-	instance2.SetLabel("state", "offline")
+	instance2.SetLabel("state", "stopped")
 
-	// instance in other svm with offline state
 	instance3, _ := data.NewInstance("svm-test")
 	instance3.SetLabel("svm", "svm-test")
-	instance3.SetLabel("state", "offline")
+	instance3.SetLabel("state", "stopped")
 
 	return data
 }

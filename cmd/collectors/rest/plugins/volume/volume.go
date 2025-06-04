@@ -187,10 +187,10 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]vo
 			continue
 		}
 
-		// SVM names ending with "-mc" are MetroCluster SVMs. We should only export volume metrics from these SVMs if the volume is online.
-		if volState == "offline" && strings.HasSuffix(svm, "-mc") {
-			volume.SetExportable(false)
-			continue
+		// SVM names ending with "-mc" are MetroCluster SVMs.
+		// Only export volume metrics from MetroCluster SVMs if the volume is online.
+		if strings.HasSuffix(svm, "-mc") {
+			volume.SetExportable(volState == "online")
 		}
 
 		if volume.GetLabel("style") == "flexgroup_constituent" {
