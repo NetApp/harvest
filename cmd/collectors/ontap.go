@@ -62,7 +62,7 @@ func checkRest(pollerName string, cred *auth.Credentials) (conf.Remote, error) {
 		return conf.Remote{}, err
 	}
 
-	if err := client.Init(5, conf.Remote{}); err != nil {
+	if err := client.Init(1, conf.Remote{}); err != nil {
 		return conf.Remote{}, err
 	}
 
@@ -87,7 +87,7 @@ func checkZapi(pollerName string, cred *auth.Credentials) (conf.Remote, error) {
 	}
 
 	zapisExist = true
-	err = client.Init(2, conf.Remote{})
+	err = client.Init(1, conf.Remote{})
 
 	if err != nil {
 
@@ -133,7 +133,7 @@ func checkCiscoRest(pollerName string, cred *auth.Credentials) (conf.Remote, err
 		return conf.Remote{}, err
 	}
 
-	if err := client.Init(5, conf.Remote{}); err != nil {
+	if err := client.Init(1, conf.Remote{}); err != nil {
 		return conf.Remote{}, err
 	}
 

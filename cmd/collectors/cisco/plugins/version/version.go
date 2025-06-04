@@ -10,13 +10,18 @@ import (
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"regexp"
-	"strconv"
 	"time"
 )
 
 const (
 	labels = "labels"
+	uptime = "uptime"
 )
+
+var metrics = []string{
+	labels,
+	uptime,
+}
 
 type Version struct {
 	*plugin.AbstractPlugin
@@ -87,8 +92,10 @@ func (v *Version) initMatrix(name string) (*matrix.Matrix, error) {
 
 	mat := matrix.New(v.Parent+name, name, name)
 
-	if err := matrix.CreateMetric(labels, mat); err != nil {
-		return nil, fmt.Errorf("error while creating metric %s: %w", labels, err)
+	for _, k := range metrics {
+		if err := matrix.CreateMetric(k, mat); err != nil {
+			return nil, fmt.Errorf("error while creating metric %s: %w", k, err)
+		}
 	}
 
 	return mat, nil
@@ -108,8 +115,7 @@ func (v *Version) parseVersionAndBanner(output gjson.Result, versionMat *matrix.
 	uptmHrs := versionOutput.Get("kern_uptm_hrs").Float()
 	uptmMins := versionOutput.Get("kern_uptm_mins").Float()
 	uptmSeconds := versionOutput.Get("kern_uptm_secs").Float()
-	totalSeconds := (60 * 60 * 24 * uptmDays) + (60 * 60 * uptmHrs) + (60 * uptmMins) + uptmSeconds
-	upTime := strconv.FormatFloat(totalSeconds, 'f', -1, 64)
+	uptimeSeconds := (60 * 60 * 24 * uptmDays) + (60 * 60 * uptmHrs) + (60 * uptmMins) + uptmSeconds
 
 	instanceKey := chassis
 	instance, err := versionMat.NewInstance(instanceKey)
@@ -132,11 +138,11 @@ func (v *Version) parseVersionAndBanner(output gjson.Result, versionMat *matrix.
 	instance.SetLabel("chassis", chassis)
 	instance.SetLabel("hostname", hostname)
 	instance.SetLabel("osVersion", osVersion)
-	instance.SetLabel("upTime", upTime)
 	instance.SetLabel("rcf_filename", anRCF.Filename)
 	instance.SetLabel("rcf_version", anRCF.Version)
 
 	versionMat.GetMetric(labels).SetValueFloat64(instance, 1.0)
+	versionMat.GetMetric(uptime).SetValueFloat64(instance, uptimeSeconds)
 }
 
 var filenameRegex = regexp.MustCompile(`(?m)Filename\s+:\s+(.*?)$`)
