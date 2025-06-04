@@ -19,14 +19,13 @@ func TestMCCVolumes(t *testing.T) {
 	instance1, _ := data.NewInstance("vol_test1")
 	instance1.SetLabel("volume", "vol_test1")
 	instance1.SetLabel("svm", "svm-mc")
-	instance1.SetLabel("state", "online")
 	volumesMap["vol_test1"+"svm-mc"] = volumeInfo{}
 
-	// instance in svm-mc with offline state
+	// instance in svm-mc with online state
 	instance2, _ := data.NewInstance("vol_test2")
 	instance2.SetLabel("volume", "vol_test2")
 	instance2.SetLabel("svm", "svm-mc")
-	instance2.SetLabel("state", "offline")
+	instance2.SetLabel("state", "online")
 	volumesMap["vol_test2"+"svm-mc"] = volumeInfo{}
 
 	// instance in other svm with offline state
@@ -38,19 +37,19 @@ func TestMCCVolumes(t *testing.T) {
 
 	v.updateVolumeLabels(data, volumesMap)
 
-	// vol_test1 should be exportable
+	// vol_test1 should not be exported
 	instance := data.GetInstance("vol_test1")
-	if exportable := instance.IsExportable(); !exportable {
-		t.Fatalf("%s exported should be true, got %t", "vol_test1", exportable)
-	}
-
-	// vol_test2 should not be exportable
-	instance = data.GetInstance("vol_test2")
 	if exportable := instance.IsExportable(); exportable {
-		t.Fatalf("%s exported should be false, got %t", "vol_test2", exportable)
+		t.Fatalf("%s exported should be false, got %t", "vol_test1", exportable)
 	}
 
-	// vol_test3 should be exportable
+	// vol_test2 should be exported
+	instance = data.GetInstance("vol_test2")
+	if exportable := instance.IsExportable(); !exportable {
+		t.Fatalf("%s exported should be true, got %t", "vol_test2", exportable)
+	}
+
+	// vol_test3 should be exported
 	instance = data.GetInstance("vol_test3")
 	if exportable := instance.IsExportable(); !exportable {
 		t.Fatalf("%s exported should be true, got %t", "vol_test3", exportable)
