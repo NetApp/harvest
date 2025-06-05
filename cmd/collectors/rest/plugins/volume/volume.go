@@ -187,10 +187,22 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]vo
 			continue
 		}
 
+		debugVolumeName := "svm08cap_root"
+
+		if vol == debugVolumeName {
+			v.SLogger.Info("DEBUG VOL", slog.String("volume", vol), slog.String("svm", svm), slog.String("state", volState))
+		}
+
 		// SVM names ending with "-mc" are MetroCluster SVMs.
 		// Only export volume metrics from MetroCluster SVMs if the volume is online.
 		if strings.HasSuffix(svm, "-mc") {
 			volume.SetExportable(volState == "online")
+			if vol == debugVolumeName {
+				v.SLogger.Info("DEBUG VOL", slog.String("volume", vol), slog.String("svm", svm), slog.String("state", volState), slog.Bool("exportable", volume.IsExportable()))
+			}
+			if !volume.IsExportable() {
+				continue
+			}
 		}
 
 		if volume.GetLabel("style") == "flexgroup_constituent" {
