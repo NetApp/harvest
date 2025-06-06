@@ -32,6 +32,23 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"log/slog"
+	"math"
+	"net/http"
+	_ "net/http/pprof" // #nosec since pprof is off by default
+	"os"
+	"os/exec"
+	"os/signal"
+	"regexp"
+	"runtime"
+	"slices"
+	"strconv"
+	"strings"
+	"sync"
+	"syscall"
+	"time"
+
 	"github.com/goccy/go-yaml"
 	"github.com/goccy/go-yaml/ast"
 	"github.com/goccy/go-yaml/parser"
@@ -48,6 +65,7 @@ import (
 	_ "github.com/netapp/harvest/v2/cmd/collectors/zapiperf"
 	"github.com/netapp/harvest/v2/cmd/exporters/influxdb"
 	"github.com/netapp/harvest/v2/cmd/exporters/prometheus"
+	"github.com/netapp/harvest/v2/cmd/exporters/servicecontrol"
 	"github.com/netapp/harvest/v2/cmd/harvest/version"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/exporter"
@@ -65,22 +83,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	goversion "github.com/netapp/harvest/v2/third_party/go-version"
 	"github.com/spf13/cobra"
-	"io"
-	"log/slog"
-	"math"
-	"net/http"
-	_ "net/http/pprof" // #nosec since pprof is off by default
-	"os"
-	"os/exec"
-	"os/signal"
-	"regexp"
-	"runtime"
-	"slices"
-	"strconv"
-	"strings"
-	"sync"
-	"syscall"
-	"time"
 )
 
 // default params
@@ -1055,6 +1057,9 @@ func (p *Poller) loadExporter(name string) exporter.Exporter {
 		exp = prometheus.New(absExp)
 	case "InfluxDB":
 		exp = influxdb.New(absExp)
+	case "ServiceControl":
+		exp = servicecontrol.New(absExp)
+
 	default:
 		logger.Error("no exporter of name:type", slog.String("name", name), slog.String("type", class))
 		return nil

@@ -7,14 +7,6 @@ package conf
 import (
 	"errors"
 	"fmt"
-	"github.com/goccy/go-yaml"
-	"github.com/goccy/go-yaml/ast"
-	"github.com/goccy/go-yaml/parser"
-	"github.com/goccy/go-yaml/token"
-	"github.com/netapp/harvest/v2/pkg/errs"
-	"github.com/netapp/harvest/v2/pkg/requests"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/third_party/mergo"
 	"log"
 	"log/slog"
 	"os"
@@ -25,6 +17,15 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+
+	"github.com/goccy/go-yaml"
+	"github.com/goccy/go-yaml/ast"
+	"github.com/goccy/go-yaml/parser"
+	"github.com/goccy/go-yaml/token"
+	"github.com/netapp/harvest/v2/pkg/errs"
+	"github.com/netapp/harvest/v2/pkg/requests"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"github.com/netapp/harvest/v2/third_party/mergo"
 )
 
 var (
@@ -804,6 +805,9 @@ type Exporter struct {
 
 	IsTest     bool `yaml:"-"` // true when run from unit tests
 	IsEmbedded bool `yaml:"-"` // true when the exporter is embedded in a poller
+
+	// Google Service Control specific
+	ServiceName *string `yaml:"service_name,omitempty"`
 }
 
 type Pollers struct {
