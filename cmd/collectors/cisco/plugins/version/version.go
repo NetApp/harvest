@@ -144,6 +144,7 @@ var generatorRegex = regexp.MustCompile(`Generator:\s+([^\s_]+)`)
 var versionRegexes = []*regexp.Regexp{
 	regexp.MustCompile(`Version\s+:\s+(.*?)$`),
 	regexp.MustCompile(`Generator version:\s+([^\s_]+)`),
+	regexp.MustCompile(`version\s+(.*?)\s+`),
 }
 
 type rcf struct {
@@ -155,35 +156,31 @@ func parseRCF(banner string) rcf {
 
 	var anRCF rcf
 
-	matches := filenameRegex.FindStringSubmatch(banner)
-	if len(matches) != 2 {
-		return anRCF
-	}
-
-	anRCF.Filename = matches[1]
-
-	// There are several different kinds of banners.
-	// One form looks like this:
-	// * Date      : Generator: v1.6c 2023-12-05_001, file creation: 2024-07-29, 11:19:36
-	// Another form looks like this:
-	// * Version  : v1.10
-	// Another form looks like this:
-	// * Date      : Generator version: v1.4a_2022-mm-dd_001
-	// The first form should extract version=v1.6c, the second form should extract v1.10
-	// The third form should extract v1.4a
-
-	matches = generatorRegex.FindStringSubmatch(banner)
-	if len(matches) == 2 {
-		anRCF.Version = matches[1]
-	} else {
-		for _, regex := range versionRegexes {
-			matches = regex.FindStringSubmatch(banner)
-			if len(matches) == 2 {
-				anRCF.Version = matches[1]
-				break
-			}
-		}
-	}
+	parseFilename(banner, &anRCF)
+	parseVersion(banner, &anRCF)
 
 	return anRCF
+}
+
+func parseVersion(banner string, r *rcf) {
+	matches := generatorRegex.FindStringSubmatch(banner)
+	if len(matches) == 2 {
+		r.Version = matches[1]
+		return
+	}
+
+	for _, regex := range versionRegexes {
+		matches = regex.FindStringSubmatch(banner)
+		if len(matches) == 2 {
+			r.Version = matches[1]
+			break
+		}
+	}
+}
+
+func parseFilename(banner string, r *rcf) {
+	matches := filenameRegex.FindStringSubmatch(banner)
+	if len(matches) == 2 {
+		r.Filename = matches[1]
+	}
 }

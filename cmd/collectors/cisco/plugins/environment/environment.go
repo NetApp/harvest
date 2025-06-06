@@ -212,11 +212,11 @@ func (e *Environment) parsePower(output gjson.Result, envMat *matrix.Matrix) {
 		}
 	}
 
-	e.setReduncancyMode("configured", model.RedunMode, envMat)
-	e.setReduncancyMode("operational", model.OperationMode, envMat)
+	e.setRedundancyMode("configured", model.RedunMode, envMat)
+	e.setRedundancyMode("operational", model.OperationMode, envMat)
 }
 
-func (e *Environment) setReduncancyMode(key string, mode string, envMat *matrix.Matrix) {
+func (e *Environment) setRedundancyMode(key string, mode string, envMat *matrix.Matrix) {
 	instanceKey := key
 	instance, err := envMat.NewInstance(instanceKey)
 	if err != nil {
