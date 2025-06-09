@@ -693,15 +693,6 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#system-manager" class="md-nav__link">
-    <span class="md-ellipsis">
-      System Manager
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#ontap-cli" class="md-nav__link">
     <span class="md-ellipsis">
       ONTAP CLI
@@ -712,54 +703,27 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#least-privilege-approach" class="md-nav__link">
+  <a href="#rest-least-privilege-role" class="md-nav__link">
     <span class="md-ellipsis">
-      Least-privilege approach
+      REST least-privilege role
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#create-harvest-user-and-associate-with-the-harvest-role" class="md-nav__link">
+  <a href="#zapi-least-privilege-role" class="md-nav__link">
     <span class="md-ellipsis">
-      Create harvest user and associate with the harvest role
+      Zapi least-privilege role
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#create-rest-role" class="md-nav__link">
+  <a href="#statperf-least-privilege-role" class="md-nav__link">
     <span class="md-ellipsis">
-      Create REST role
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#associate-rest-role-with-harvest-user" class="md-nav__link">
-    <span class="md-ellipsis">
-      Associate REST role with harvest user
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#verify-that-the-harvest-role-has-web-access" class="md-nav__link">
-    <span class="md-ellipsis">
-      Verify that the harvest role has web access
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#statperf-collector-permissions" class="md-nav__link">
-    <span class="md-ellipsis">
-      StatPerf Collector Permissions
+      StatPerf least-privilege role
     </span>
   </a>
   
@@ -776,6 +740,15 @@
         
       </ul>
     </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#system-manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      System Manager
+    </span>
+  </a>
   
 </li>
         
@@ -1975,15 +1948,6 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#system-manager" class="md-nav__link">
-    <span class="md-ellipsis">
-      System Manager
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#ontap-cli" class="md-nav__link">
     <span class="md-ellipsis">
       ONTAP CLI
@@ -1994,54 +1958,27 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#least-privilege-approach" class="md-nav__link">
+  <a href="#rest-least-privilege-role" class="md-nav__link">
     <span class="md-ellipsis">
-      Least-privilege approach
+      REST least-privilege role
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#create-harvest-user-and-associate-with-the-harvest-role" class="md-nav__link">
+  <a href="#zapi-least-privilege-role" class="md-nav__link">
     <span class="md-ellipsis">
-      Create harvest user and associate with the harvest role
+      Zapi least-privilege role
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#create-rest-role" class="md-nav__link">
+  <a href="#statperf-least-privilege-role" class="md-nav__link">
     <span class="md-ellipsis">
-      Create REST role
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#associate-rest-role-with-harvest-user" class="md-nav__link">
-    <span class="md-ellipsis">
-      Associate REST role with harvest user
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#verify-that-the-harvest-role-has-web-access" class="md-nav__link">
-    <span class="md-ellipsis">
-      Verify that the harvest role has web access
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#statperf-collector-permissions" class="md-nav__link">
-    <span class="md-ellipsis">
-      StatPerf Collector Permissions
+      StatPerf least-privilege role
     </span>
   </a>
   
@@ -2058,6 +1995,15 @@
         
       </ul>
     </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#system-manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      System Manager
+    </span>
+  </a>
   
 </li>
         
@@ -2236,11 +2182,10 @@
 Although a generic admin account can be used, it is better to create a dedicated read-only monitoring account.</p>
 <p>In the examples below, the user, group, roles, etc., use a naming convention of <code>netapp-harvest</code>.
 These can be modified as needed to match your organizational needs.</p>
-<p>There are few steps required to prepare each system for monitoring.
+<p>There are a few steps required to prepare each system for monitoring.
 Harvest supports
 two <a href="https://netapp.github.io/harvest/latest/configure-harvest-basic/#authentication">authentication styles</a>
-(<code>auth_style</code>) to connect to ONTAP clusters.
-These are <code>basic_auth</code> or <code>certificate_auth</code>.
+(<code>auth_style</code>) to connect to ONTAP clusters: <code>basic_auth</code> and <code>certificate_auth</code>.
 Both work well, but if you're starting fresh, the recommendation is to create a read-only harvest user on your ONTAP
 server and use <a href="#using-certificate-authentication">certificate-based</a> TLS authentication.</p>
 <p>Here's a summary of what we're going to do</p>
@@ -2254,105 +2199,17 @@ server and use <a href="#using-certificate-authentication">certificate-based</a>
 <li>Create a role with read-only access to all API objects via <a href="#system-manager">System Manager</a>.</li>
 <li>Create a role with read-only access to the limited set of APIs Harvest collects via <a href="#ontap-cli">ONTAP's command line interface (CLI)</a>.</li>
 </ul>
-<h3 id="system-manager">System Manager<a class="headerlink" href="#system-manager" title="Permanent link">&para;</a></h3>
-<p>Open System Manager. Click on <em>CLUSTER</em> in the left menu bar, <em>Settings</em> and <em>Users and Roles</em>.</p>
-<p><img alt="System Manager Settings" src="../assets/prepare-ontap/ontap_user_sm_0.png" /></p>
-<p>In the right column, under <em>Roles</em>, click on <em>Add</em> to add a new role.</p>
-<p><img alt="System Manager Settings" src="../assets/prepare-ontap/ontap_user_sm_1.png" /></p>
-<p>Choose a role name (e.g. <em>harvest2-role</em>). In the <em>REST API PATH</em> field, type <em>/api</em> and select <em>Read-Only</em> for
-<em>ACCESS</em>. Click on <em>Save</em>.</p>
-<p><img alt="System Manager Settings" src="../assets/prepare-ontap/ontap_user_sm_2.png" /></p>
-<p>In the left column, under <em>Users</em>, click on <em>Add</em> to create a new user. Choose a username. Under <em>Role</em>, select the role
-that we just created. Under <em>User Login Methods</em> select <em>ONTAPI</em>, and one of the two authentication methods.
-Press the <code>Add</code> button and select <em>HTTP</em> and one of the authentication methods.
-Type in a password if you chose <em>Password</em>. Click on <em>Save</em></p>
-<p><img alt="System Manager Settings" src="../assets/prepare-ontap/ontap_user_sm_3.png" /></p>
-<p>If you chose <em>Password</em>, you can add the username and password to the Harvest configuration file and start Harvest. If
-you chose <em>Certificate</em> jump to <a href="#using-certificate-authentication">Using Certificate Authentication</a> to generate
-certificates files.</p>
-<details>
-<summary>System Manager Classic interface</summary>
-<p>Open System Manager. Click on the Settings icon in the top-right corner of the window.</p>
-<p><img alt="System Manager Classic Settings" src="../assets/prepare-ontap/ontap_user_smc_0.png" /></p>
-<p>Click on <em>Roles</em> in the left menu bar and click <em>Add</em>. Choose a role name (e.g. <em>harvest2-role</em>).</p>
-<p><img alt="System Manager Classic Settings" src="../assets/prepare-ontap/ontap_user_smc_1.png" /></p>
-<p>Under <em>Role Attributes</em> click on <em>Add</em>, under <em>Command</em> type <em>DEFAULT</em>, leave <em>Query</em> empty, select <em>readonly</em> under <em>Access Level</em>, click on <em>OK</em> and <em>Add</em>.</p>
-<p>After you click on <em>Add</em>, this is what you should see:</p>
-<p><img alt="System Manager Classic Settings" src="../assets/prepare-ontap/ontap_user_smc_2.png" /></p>
-<p>Now we need to create a user. Click on <em>Users</em> in the left menu bar and <em>Add</em>. Choose a username and password. Under
-<em>User Login Methods</em> click on <em>Add</em>, select <em>ontapi</em> as <em>Application</em> and select the role that we just created as <em>Role</em>.
-Repeat by clicking on <em>Add</em>, select <em>http</em> as <em>Application</em> and select the role that we just created as <em>Role</em>.
-Click on <em>Add</em> in the pop-up window to save.</p>
-<p><img alt="System Manager Classic Settings" src="../assets/prepare-ontap/ontap_user_smc_3.png" /></p>
-</details>
 <h3 id="ontap-cli">ONTAP CLI<a class="headerlink" href="#ontap-cli" title="Permanent link">&para;</a></h3>
 <p>We are going to:</p>
 <ol>
 <li>create a Harvest role with read-only access to a <a href="#least-privilege-approach">limited set of objects</a></li>
 <li><a href="#create-harvest-user-and-associate-with-the-harvest-role">create a Harvest user</a> and assign it to that role</li>
+<li>Depending on which collectors you want to use, add permissions for one or all of the <a href="#rest-least-privilege-role">Rest</a>, <a href="#zapi-least-privilege-role">Zapi</a>, <a href="#statperf-least-privilege-role">StatPerf</a> collectors.</li>
 </ol>
 <p>Login to the CLI of your cDOT ONTAP system using SSH.</p>
-<h4 id="least-privilege-approach">Least-privilege approach<a class="headerlink" href="#least-privilege-approach" title="Permanent link">&para;</a></h4>
+<h4 id="rest-least-privilege-role">REST least-privilege role<a class="headerlink" href="#rest-least-privilege-role" title="Permanent link">&para;</a></h4>
 <p>Verify there are no errors when you copy/paste these.
 Warnings are fine.</p>
-<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;cluster&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;event notification destination show&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;event notification destination&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;event log&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;event catalog show&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;lun&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;metrocluster configuration-settings mediator add&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;metrocluster&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;network connections active show&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;network fcp adapter show&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;network interface&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;network port show&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;network port ifgrp show&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;network route show&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;qos adaptive-policy-group&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;qos policy-group&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;qos workload show&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;security&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;snapmirror&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;statistics&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;storage aggregate&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;storage disk&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;storage encryption disk&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;storage failover show&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;storage iscsi-initiator show&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;storage shelf&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system chassis fru show&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system controller fru show&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system health alert show&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system health status show&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system health subsystem show&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system license show&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system node&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system node environment sensors show&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system service-processor show&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;version&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;volume&quot;</span>
-security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;vserver&quot;</span>
-</code></pre></div>
-<h4 id="create-harvest-user-and-associate-with-the-harvest-role">Create harvest user and associate with the harvest role<a class="headerlink" href="#create-harvest-user-and-associate-with-the-harvest-role" title="Permanent link">&para;</a></h4>
-<p>Use this for password authentication</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># If the harvest2 user does not exist, you will be prompted to enter a password</span>
-security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>ontapi<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-authentication-method<span class="w"> </span>password
-</code></pre></div>
-<p>Or this for certificate authentication</p>
-<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>ontapi<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-authentication-method<span class="w"> </span>cert
-</code></pre></div>
-<h4 id="create-rest-role">Create REST role<a class="headerlink" href="#create-rest-role" title="Permanent link">&para;</a></h4>
-<p>Replace <code>$ADMIN_VSERVER</code> with your SVM admin name.</p>
-<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api<span class="w"> </span>-vserver<span class="w"> </span><span class="nv">$ADMIN_VSERVER</span>
-</code></pre></div>
-<details>
-<summary>Least-privilege approach for REST</summary>
-<p>If you are on ONTAP version 9.14.X or later,
-instead of the above command,
-you can use the following commands to create a REST role with read-only access to a limited set of objects.</p>
-<p>Since REST roles are defined in terms of legacy roles, if you have already created a legacy role with the same name, 
-you will need to delete it first or use a different name. </p>
 <div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/cloud/targets
 security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/cluster
 security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/cluster/counter/tables
@@ -2440,8 +2297,7 @@ security<span class="w"> </span>login<span class="w"> </span>rest-role<span clas
 security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/private/cli/vserver/object-store-server/bucket/policy
 </code></pre></div>
 <p>See <a href="https://github.com/NetApp/harvest/issues/2991">#2991</a> for more information.</p>
-</details>
-<h4 id="associate-rest-role-with-harvest-user">Associate REST role with harvest user<a class="headerlink" href="#associate-rest-role-with-harvest-user" title="Permanent link">&para;</a></h4>
+<p><strong>Associate the REST role with the harvest user</strong></p>
 <p>Using password authentication</p>
 <div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-role<span class="w"> </span>harvest2-rest-role<span class="w"> </span>-authentication-method<span class="w"> </span>password
 </code></pre></div>
@@ -2462,26 +2318,77 @@ security<span class="w"> </span>login<span class="w"> </span>create<span class="
 security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-role<span class="w"> </span>harvest2-rest-role<span class="w"> </span>-authentication-method<span class="w"> </span>cert
 </code></pre></div>
 </details>
-<h4 id="verify-that-the-harvest-role-has-web-access">Verify that the harvest role has web access<a class="headerlink" href="#verify-that-the-harvest-role-has-web-access" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code>vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>show<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-name<span class="w"> </span>ontapi
-vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>show<span class="w"> </span>-role<span class="w"> </span>harvest2-rest-role<span class="w"> </span>-name<span class="w"> </span>rest
-vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>show<span class="w"> </span>-role<span class="w"> </span>harvest2-rest-role<span class="w"> </span>-name<span class="w"> </span>docs-api
+<h4 id="zapi-least-privilege-role">Zapi least-privilege role<a class="headerlink" href="#zapi-least-privilege-role" title="Permanent link">&para;</a></h4>
+<p>Verify there are no errors when you copy/paste these.
+Warnings are fine.</p>
+<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;cluster&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;event notification destination show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;event notification destination&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;event log&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;event catalog show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;lun&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;metrocluster configuration-settings mediator add&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;metrocluster&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;network connections active show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;network fcp adapter show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;network interface&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;network port show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;network port ifgrp show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;network route show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;qos adaptive-policy-group&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;qos policy-group&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;qos workload show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;security&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;snapmirror&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;statistics&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;storage aggregate&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;storage disk&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;storage encryption disk&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;storage failover show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;storage iscsi-initiator show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;storage shelf&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system chassis fru show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system controller fru show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system health alert show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system health status show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system health subsystem show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system license show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system node&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system node environment sensors show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system service-processor show&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;version&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;volume&quot;</span>
+security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;vserver&quot;</span>
 </code></pre></div>
-<p>If any entries are missing, enable access by running the following. Replace <code>$ADMIN_VSERVER</code> with your SVM admin name.
-<div class="highlight"><pre><span></span><code>vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>create<span class="w"> </span>-vserver<span class="w"> </span><span class="nv">$ADMIN_VSERVER</span><span class="w"> </span>-name<span class="w"> </span>ontapi<span class="w"> </span>-role<span class="w"> </span>harvest2-role
-vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>create<span class="w"> </span>-vserver<span class="w"> </span><span class="nv">$ADMIN_VSERVER</span><span class="w"> </span>-name<span class="w"> </span>rest<span class="w"> </span>-role<span class="w"> </span>harvest2-rest-role
-vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>create<span class="w"> </span>-vserver<span class="w"> </span><span class="nv">$ADMIN_VSERVER</span><span class="w"> </span>-name<span class="w"> </span>docs-api<span class="w"> </span>-role<span class="w"> </span>harvest2-rest-role
-</code></pre></div></p>
-<h4 id="statperf-collector-permissions">StatPerf Collector Permissions<a class="headerlink" href="#statperf-collector-permissions" title="Permanent link">&para;</a></h4>
-<p>To use the <code>StatPerf</code> collector, the <code>harvest</code> user requires additional permissions. Execute the following commands to configure the necessary roles and logins:</p>
+<p><strong>Associate the ZAPI role with the harvest user</strong></p>
+<p>Use this for password authentication</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># If the harvest2 user does not exist, you will be prompted to enter a password</span>
+security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>ontapi<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-authentication-method<span class="w"> </span>password
+</code></pre></div>
+<p>Or this for certificate authentication</p>
+<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>ontapi<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-authentication-method<span class="w"> </span>cert
+</code></pre></div>
+<p>Verify that the harvest2-role role has web access by running the following commands.</p>
+<div class="highlight"><pre><span></span><code>vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>show<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-name<span class="w"> </span>ontapi
+</code></pre></div>
+<p>If there are no matching entries, enable access by running the following.</p>
+<div class="highlight"><pre><span></span><code>vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-name<span class="w"> </span>ontapi<span class="w"> </span>
+</code></pre></div>
+<h4 id="statperf-least-privilege-role">StatPerf least-privilege role<a class="headerlink" href="#statperf-least-privilege-role" title="Permanent link">&para;</a></h4>
+<p>Verify there are no errors when you copy/paste these.
+Warnings are fine.</p>
 <div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span>all<span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;set&quot;</span>
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;statistics&quot;</span>
+
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/cluster
 security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-rest-role<span class="w"> </span>-access<span class="w"> </span>read_create<span class="w"> </span>-api<span class="w"> </span>/api/private/cli
 security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>ssh<span class="w"> </span>-authentication-method<span class="w"> </span>password<span class="w"> </span>-role<span class="w"> </span>harvest2-role
 security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-authentication-method<span class="w"> </span>password<span class="w"> </span>-role<span class="w"> </span>harvest2-rest-role
 </code></pre></div>
 <h4 id="7-mode-cli">7-Mode CLI<a class="headerlink" href="#7-mode-cli" title="Permanent link">&para;</a></h4>
-<p>Login to the CLI of your 7-Mode ONTAP system (e.g. using SSH). First, we create a user role. If you want to give the
+<p>Login to the CLI of your 7-Mode ONTAP system (e.g., using SSH).
+First, we create a user role.
+If you want to give the
 user readonly access to <strong>all</strong> API objects, type in the following command:</p>
 <div class="highlight"><pre><span></span><code>useradmin<span class="w"> </span>role<span class="w"> </span>modify<span class="w"> </span>harvest2-role<span class="w"> </span>-a<span class="w"> </span>login-http-admin,api-system-get-version,<span class="w"> </span><span class="se">\</span>
 api-system-get-info,api-perf-object-*,api-ems-autosupport-log,api-diagnosis-status-get,<span class="w"> </span><span class="se">\</span>
@@ -2489,6 +2396,37 @@ api-lun-list-info,api-diagnosis-subsystem-config-get-iter,api-disk-list-info,<sp
 api-diagnosis-config-get-iter,api-aggr-list-info,api-volume-list-info,<span class="w"> </span><span class="se">\</span>
 api-storage-shelf-environment-list-info,api-qtree-list,api-quota-report
 </code></pre></div>
+<h3 id="system-manager">System Manager<a class="headerlink" href="#system-manager" title="Permanent link">&para;</a></h3>
+<p>Open System Manager. Click on <em>CLUSTER</em> in the left menu bar, <em>Settings</em> and <em>Users and Roles</em>.</p>
+<p><img alt="System Manager Settings" src="../assets/prepare-ontap/ontap_user_sm_0.png" /></p>
+<p>In the right column, under <em>Roles</em>, click on <em>Add</em> to add a new role.</p>
+<p><img alt="System Manager Settings" src="../assets/prepare-ontap/ontap_user_sm_1.png" /></p>
+<p>Choose a role name (e.g. <em>harvest2-role</em>). In the <em>REST API PATH</em> field, type <em>/api</em> and select <em>Read-Only</em> for
+<em>ACCESS</em>. Click on <em>Save</em>.</p>
+<p><img alt="System Manager Settings" src="../assets/prepare-ontap/ontap_user_sm_2.png" /></p>
+<p>In the left column, under <em>Users</em>, click on <em>Add</em> to create a new user. Choose a username. Under <em>Role</em>, select the role
+that we just created. Under <em>User Login Methods</em> select <em>ONTAPI</em>, and one of the two authentication methods.
+Press the <code>Add</code> button and select <em>HTTP</em> and one of the authentication methods.
+Type in a password if you chose <em>Password</em>. Click on <em>Save</em></p>
+<p><img alt="System Manager Settings" src="../assets/prepare-ontap/ontap_user_sm_3.png" /></p>
+<p>If you chose <em>Password</em>, you can add the username and password to the Harvest configuration file and start Harvest. If
+you chose <em>Certificate</em> jump to <a href="#using-certificate-authentication">Using Certificate Authentication</a> to generate
+certificates files.</p>
+<details>
+<summary>System Manager Classic interface</summary>
+<p>Open System Manager. Click on the Settings icon in the top-right corner of the window.</p>
+<p><img alt="System Manager Classic Settings" src="../assets/prepare-ontap/ontap_user_smc_0.png" /></p>
+<p>Click on <em>Roles</em> in the left menu bar and click <em>Add</em>. Choose a role name (e.g. <em>harvest2-role</em>).</p>
+<p><img alt="System Manager Classic Settings" src="../assets/prepare-ontap/ontap_user_smc_1.png" /></p>
+<p>Under <em>Role Attributes</em> click on <em>Add</em>, under <em>Command</em> type <em>DEFAULT</em>, leave <em>Query</em> empty, select <em>readonly</em> under <em>Access Level</em>, click on <em>OK</em> and <em>Add</em>.</p>
+<p>After you click on <em>Add</em>, this is what you should see:</p>
+<p><img alt="System Manager Classic Settings" src="../assets/prepare-ontap/ontap_user_smc_2.png" /></p>
+<p>Now we need to create a user. Click on <em>Users</em> in the left menu bar and <em>Add</em>. Choose a username and password. Under
+<em>User Login Methods</em> click on <em>Add</em>, select <em>ontapi</em> as <em>Application</em> and select the role that we just created as <em>Role</em>.
+Repeat by clicking on <em>Add</em>, select <em>http</em> as <em>Application</em> and select the role that we just created as <em>Role</em>.
+Click on <em>Add</em> in the pop-up window to save.</p>
+<p><img alt="System Manager Classic Settings" src="../assets/prepare-ontap/ontap_user_smc_3.png" /></p>
+</details>
 <h1 id="using-certificate-authentication">Using Certificate Authentication<a class="headerlink" href="#using-certificate-authentication" title="Permanent link">&para;</a></h1>
 <p>See <a href="https://github.com/NetApp/harvest/issues/314#issuecomment-882120238">comments here for troubleshooting</a> client
 certificate authentication.</p>
