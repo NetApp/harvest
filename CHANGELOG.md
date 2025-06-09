@@ -1,6 +1,18 @@
 # Change Log
 ## [Releases](https://github.com/NetApp/harvest/releases)
 
+## 25.05.1 / 2025-06-10 Release
+:pushpin: This release is identical to 25.05.1, If you are using the Cisco collector, we recommend upgrading to version 25.05.1 to reduce cardinality issues caused by storing a switch's uptime as a label instead of a metric value.
+
+This release also includes:
+
+1. Introduced a new `ONTAP: Switch` dashboard that provides detailed information about switches connected to ONTAP.
+2. Enhanced functionality to parse the Cisco version when the RCF is missing.
+3. Updated to Golang 1.23.4, which includes several security vulnerability fixes (CVEs).
+4. MetroCluster internal SVMs and volumes are no longer exported when they are offline.
+
+---
+
 ## 25.05.0 / 2025-05-19 Release
 pushpin: Highlights of this major release include:
 ## :star: New Features
