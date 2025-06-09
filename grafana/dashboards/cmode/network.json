@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1723188904112,
+  "iteration": 1749475358867,
   "links": [
     {
       "asDropdown": true,
@@ -564,7 +564,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Ethernet port details.",
+          "description": "Displays a collection of ports (physical, VLAN and LAG) for an entire cluster.",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -762,6 +762,18 @@
                     "value": "Mbits"
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "MTU"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "string"
+                  }
+                ]
               }
             ]
           },
@@ -893,7 +905,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "NIC port details.",
+          "description": "This table tracks hardware network traffic performance and errors for all supported network interface cards (NIC), such as Intel Niantic, Qlogic, and CNA.",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -1614,7 +1626,7 @@
               "exemplar": false,
               "expr": "nic_util_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      nic_util_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[3h] @ end()\n    )\n  )",
               "interval": "",
-              "legendFormat": "{{node}} {{nic}}",
+              "legendFormat": "{{node}} - {{nic}}",
               "refId": "A"
             }
           ],
@@ -1703,15 +1715,17 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
+              "exemplar": false,
               "expr": "sum by (cluster) (\n  nic_tx_total_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\n)",
               "interval": "",
-              "legendFormat": "TOTAL",
+              "legendFormat": "TOTAL - {{cluster}}",
               "refId": "A"
             },
             {
+              "exemplar": false,
               "expr": "sum by (cluster) (\n  nic_tx_hw_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\n)",
               "interval": "",
-              "legendFormat": "HW",
+              "legendFormat": "HW - {{cluster}}",
               "refId": "D"
             }
           ],
@@ -1800,27 +1814,31 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
+              "exemplar": false,
               "expr": "sum by (cluster) (\n  nic_rx_total_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\n)",
               "interval": "",
-              "legendFormat": "TOTAL",
+              "legendFormat": "TOTAL- {{cluster}}",
               "refId": "A"
             },
             {
+              "exemplar": false,
               "expr": "sum by (cluster) (\n  nic_rx_alignment_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\n)",
               "interval": "",
-              "legendFormat": "ALIGNMENT",
+              "legendFormat": "ALIGNMENT- {{cluster}}",
               "refId": "B"
             },
             {
+              "exemplar": false,
               "expr": "sum by (cluster) (\n  nic_rx_crc_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\n)",
               "interval": "",
-              "legendFormat": "CRC",
+              "legendFormat": "CRC- {{cluster}}",
               "refId": "C"
             },
             {
+              "exemplar": false,
               "expr": "sum by (cluster) (\n  nic_rx_length_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\n)",
               "interval": "",
-              "legendFormat": "LENGTH",
+              "legendFormat": "LENGTH- {{cluster}}",
               "refId": "D"
             }
           ],
@@ -2145,8 +2163,8 @@
                   "Value #F": 8,
                   "cluster": 1,
                   "datacenter": 0,
-                  "nic": 2,
-                  "node": 3
+                  "nic": 3,
+                  "node": 2
                 },
                 "renameByName": {
                   "Value #A": "",
@@ -5179,5 +5197,5 @@
   "timezone": "",
   "title": "ONTAP: Network",
   "uid": "cdot-network",
-  "version": 12
+  "version": 13
 }
