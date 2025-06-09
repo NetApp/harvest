@@ -31,7 +31,7 @@ We are going to:
 
 1. create a Harvest role with read-only access to a [limited set of objects](#least-privilege-approach)
 2. [create a Harvest user](#create-harvest-user-and-associate-with-the-harvest-role) and assign it to that role
-3. Depending on which collectors you want to use, add permissions for one or all of the `Rest`, [Zapi](#zapi-least-privilege-role), `StatPerf` collectors.
+3. Depending on which collectors you want to use, add permissions for one or all of the [Rest](#rest-least-privilege-role), [Zapi](#zapi-least-privilege-role), [StatPerf](#statperf-least-privilege-role) collectors.
 
 Login to the CLI of your cDOT ONTAP system using SSH.
 
