@@ -40,6 +40,10 @@ func Test_parseRCF(t *testing.T) {
 * Date      : Generator version: v1.4a_2022-mm-dd_001, file creation: 2024-02-15, 10:28:44`,
 			want: rcf{Version: "v1.4a", Filename: "NX3232_v1.90-X1_Switch-B2.txt"},
 		},
+		{
+			name: "Generator no filename", banner: `N3K NetApp Reference Configuration File (RCF) version 1.1-24p10g-26p40g (2016-08-23)`,
+			want: rcf{Version: "1.1-24p10g-26p40g", Filename: ""},
+		},
 	}
 
 	for _, tt := range tests {
