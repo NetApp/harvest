@@ -148,6 +148,23 @@ func (c *Client) callWithAuthRetry(command string, callType apiType) (gjson.Resu
 
 	result := gjson.GetBytes(body, "ins_api.outputs")
 
+	// Check if the result is an error, e.g.
+	// {
+	//  "output": {
+	//    "clierror": "Internal Server error",
+	//    "input": "show version",
+	//    "msg": "Max sessions reached. If you are a new user/client, please try again later.",
+	//    "code": "429"
+	//  }
+	// }
+	code := result.Get("output.code")
+	if code.Exists() {
+		errMsg := result.Get("output.msg").String()
+		if errMsg == "" {
+			errMsg = "unknown error"
+		}
+		return gjson.Result{}, fmt.Errorf("API call failed with code %s: %s", code.String(), errMsg)
+	}
 	return result, nil
 }
 
