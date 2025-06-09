@@ -392,14 +392,27 @@ pipeline {
 
 def void stopAndRemoveDockers() {
     sh '''
+        # Remove and recreate the directory
         rm -rf /opt/home/nightly/
         mkdir -p /opt/home/nightly/
-        for container_id in $(docker ps -a -q);do docker stop $container_id;done
+
+        # Stop and remove all containers
+        docker ps -aq | xargs docker rm -f
+
+        # Remove all images
+        docker images -q | xargs docker rmi -f
+
+        # Prune all unused volumes
+        docker volume prune --force
+
+        # Prune all unused networks
+        docker network prune --force
+
+        # Prune build cache
+        docker builder prune --force
+
+        # Prune the entire system
         docker system prune --force --volumes
-        volumes=$(docker volume ls -qf dangling=true)
-        if [ "$volumes" ]; then
-            docker volume rm $volumes
-        fi
     '''
 }
 
