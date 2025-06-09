@@ -33,6 +33,12 @@
       "name": "Time series",
       "type": "panel",
       "version": ""
+    },
+    {
+      "id": "text",
+      "name": "Text",
+      "type": "panel",
+      "version": ""
     }
   ],
   "annotations": {
@@ -85,6 +91,37 @@
         "w": 24,
         "x": 0,
         "y": 0
+      },
+      "id": 44,
+      "panels": [],
+      "title": "Important Information about the Switch Dashboard",
+      "type": "row"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 42,
+      "options": {
+        "content": "This dashboard is compatible with ONTAP 9.8+ and requires the KeyPerf collector. To use this dashboard, please follow the step below:\n\n1. **Enable the KeyPerf Collector**: Update your `harvest.yml` configuration file to enable the [KeyPerf](https://netapp.github.io/harvest/latest/configure-keyperf/) collector.",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.1.8",
+      "type": "text"
+    },
+    {
+      "collapsed": false,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 4
       },
       "id": 6,
       "panels": [],
@@ -230,7 +267,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 1
+        "y": 5
       },
       "id": 5,
       "interval": "",
@@ -310,7 +347,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 8
+        "y": 12
       },
       "id": 30,
       "panels": [
@@ -707,7 +744,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 9
+        "y": 13
       },
       "id": 25,
       "panels": [
@@ -1321,5 +1358,5 @@
   "timezone": "",
   "title": "ONTAP: Switch",
   "uid": "cdot-switch",
-  "version": 2
+  "version": 3
 }
