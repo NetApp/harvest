@@ -1062,7 +1062,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "min_over_time(\nethernet_switch_port_new_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",interface=~\"$Interface\",speed!=\"auto-speed\",switch=~\"$Switch\"}[1d]\n  )\n==\n  0",
+              "expr": "min_over_time(\n    ethernet_switch_port_new_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",interface=~\"$Interface\",speed!=\"auto-speed\",switch=~\"$Switch\"}[1d]\n  )\n==\n  0",
               "format": "time_series",
               "instant": false,
               "interval": "",
