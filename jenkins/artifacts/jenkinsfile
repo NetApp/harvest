@@ -397,10 +397,16 @@ def void stopAndRemoveDockers() {
         mkdir -p /opt/home/nightly/
 
         # Stop and remove all containers
-        docker ps -aq | xargs docker rm -f
+        containers=$(docker ps -aq)
+        if [ -n "$containers" ]; then
+            echo "$containers" | xargs docker rm -f
+        fi
 
         # Remove all images
-        docker images -q | xargs docker rmi -f
+        images=$(docker images -q)
+        if [ -n "$images" ]; then
+            echo "$images" | xargs docker rmi -f
+        fi
 
         # Prune all unused volumes
         docker volume prune --force
