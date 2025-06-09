@@ -2,7 +2,7 @@
 ## [Releases](https://github.com/NetApp/harvest/releases)
 
 ## 25.05.1 / 2025-06-10 Release
-:pushpin: This release is identical to 25.05.1, If you are using the Cisco collector, we recommend upgrading to version 25.05.1 to reduce cardinality issues caused by storing a switch's uptime as a label instead of a metric value.
+:pushpin: This release is identical to 25.05.0, If you are using the Cisco collector, we recommend upgrading to version 25.05.1 to reduce cardinality issues caused by storing a switch's uptime as a label instead of a metric value.
 
 This release also includes:
 
