@@ -158,7 +158,7 @@ func (c *Client) callWithAuthRetry(command string, callType apiType) (gjson.Resu
 	//  }
 	// }
 	code := result.Get("output.code")
-	if code.Exists() {
+	if code.Exists() && code.Int() != 200 {
 		errMsg := result.Get("output.msg").String()
 		if errMsg == "" {
 			errMsg = "unknown error"

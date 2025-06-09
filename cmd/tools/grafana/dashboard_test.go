@@ -1007,16 +1007,17 @@ func ensureLookBack(text string) string {
 
 func TestOnlyHighlightsExpanded(t *testing.T) {
 	exceptions := map[string]int{
-		"cmode/shelf.json":              2,
-		"cmode/fsa.json":                2,
-		"cmode/flexcache.json":          2,
-		"cmode/workload.json":           2,
-		"cmode/smb.json":                2,
-		"cmode/health.json":             2,
-		"cmode/power.json":              2,
-		"storagegrid/fabricpool.json":   2,
 		"cmode/auditlog.json":           2,
+		"cmode/flexcache.json":          2,
+		"cmode/fsa.json":                2,
+		"cmode/health.json":             2,
 		"cmode/nfsTroubleshooting.json": 3,
+		"cmode/power.json":              2,
+		"cmode/shelf.json":              2,
+		"cmode/smb.json":                2,
+		"cmode/switch.json":             2,
+		"cmode/workload.json":           2,
+		"storagegrid/fabricpool.json":   2,
 	}
 	// count the number of expanded sections in the dashboard and ensure num expanded = 1
 	VisitDashboards(
