@@ -63,7 +63,7 @@ Parameters in the poller section should define the following required parameters
 | parameter              | type                 | description                                                                    | default |
 |------------------------|----------------------|--------------------------------------------------------------------------------|---------|
 | Poller name (header)   | string, **required** | Poller name, user-defined value                                                |         |
-| `addr`                 | string, **required** | IPv4, IPv6 or FQDN of the target system                                        |         |
+| `addr`                 | string, **required** | IPv4, IPv6, or FQDN of the target system. To specify a custom port, use the format `<host>:<port>`. Example: `storagegrid.example.com:8080` |         |
 | `datacenter`           | string, **required** | Datacenter name, user-defined value                                            |         |
 | `username`, `password` | string, **required** | StorageGRID username and password with at least `Tenant accounts` permissions  |         |
 | `collectors`           | list, **required**   | Name of collector to run for this poller, use `StorageGrid` for this collector |         |
