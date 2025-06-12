@@ -25,12 +25,12 @@ plugins:
 export_options:
   instance_keys:
     - snapshot_policy
+    - svm
   instance_labels:
     - comment
     - copies
     - enabled
     - schedules
     - scope
-    - svm
 
 
