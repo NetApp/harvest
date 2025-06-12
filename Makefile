@@ -67,9 +67,7 @@ clean: ## Cleanup the project binary (bin) folders
 
 test: ## Run tests
 	@echo "Testing"
-	@# The ldflags force the old Apple linker to suppress ld warning messages on MacOS
-	@# See https://github.com/golang/go/issues/61229#issuecomment-1988965927
-	@go test -ldflags=-extldflags=-Wl,-ld_classic -race -shuffle=on ./...
+	@FORMAT_PROMQL=1 go test -race -shuffle=on ./...
 
 fmt: ## Format the go source files
 	@echo "Formatting"
@@ -148,8 +146,6 @@ ifneq (${FETCH_ASUP_EXISTS}, )
 endif
 
 docs: mkdocs ## Serve docs for local dev
-
-test-local: test promtool
 
 license-check:
 	@echo "Licence checking"

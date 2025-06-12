@@ -248,7 +248,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "(avg(environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) or vector(0))\n/\n  (\n          (sum(aggr_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) / 1024 / 1024 / 1024 / 1024)\n        /\n          count(sum(node_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))\n      \u003e\n        1\n    or\n      max(\n          aggr_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n        /\n          aggr_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n      )\n  )",
+          "expr": "(\n      (avg(environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) or vector(0))\n    +\n      avg(\n          (\n              shelf_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n            * on (datacenter, cluster, shelf)\n              shelf_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",isEmbedded=\"No\"}\n          )\n        or\n          vector(0)\n      )\n  )\n/\n  (\n          (sum(aggr_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) / 1024 / 1024 / 1024 / 1024)\n        /\n          count(sum(node_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))\n      \u003e\n        1\n    or\n      max(\n          aggr_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n        /\n          aggr_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n      )\n  )",
           "hide": false,
           "interval": "",
           "legendFormat": "",
@@ -441,7 +441,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(node_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n/\n  (avg(environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) or vector(1))",
+          "expr": "avg(node_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n/\n  (\n      (\n          (avg(environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) or vector(0))\n        +\n          avg(\n              (\n                  shelf_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n                * on (datacenter, cluster, shelf)\n                  shelf_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",isEmbedded=\"No\"}\n              )\n            or\n              vector(0)\n          )\n      )\n    or\n      vector(1)\n  )",
           "hide": false,
           "interval": "",
           "legendFormat": "",
