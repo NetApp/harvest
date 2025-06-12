@@ -3,9 +3,11 @@ package grafana
 import (
 	"fmt"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/sjson"
 	"maps"
 	"net/url"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
 	"slices"
@@ -13,6 +15,15 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+)
+
+const (
+	TopResourceConstant      = "999999"
+	RangeConstant            = "888888"
+	RangeReverseConstant     = "10d6h54m48s"
+	IntervalConstant         = "777777"
+	IntervalDurationConstant = "666666"
+	FormatPromQL             = "FORMAT_PROMQL"
 )
 
 var cDotDashboards = []string{
@@ -1853,5 +1864,129 @@ func checkTags(t *testing.T, path string, data []byte) {
 			allowedTags := slices.Sorted(maps.Keys(allowedTagsMap))
 			t.Errorf(`dashboard=%s got tag=%s, which is not in the allowed set=%v`, path, tag.ClonedString(), allowedTags)
 		}
+	}
+}
+
+func TestFormatedPromQL(t *testing.T) {
+	SkipIfMissing(t, FormatPromQL)
+
+	VisitDashboards(
+		Dashboards,
+		func(path string, data []byte) {
+			checkIfPromQLIsFormatted(t, path, data)
+		},
+	)
+}
+
+func checkIfPromQLIsFormatted(t *testing.T, path string, data []byte) {
+	var (
+		updatedData  []byte
+		notFormatted bool
+		errorStr     []string
+		err          error
+	)
+
+	updatedData = slices.Clone(data)
+	dashPath := ShortPath(path)
+
+	// Change all panel expressions
+	VisitAllPanels(updatedData, func(path string, _, value gjson.Result) {
+		title := value.Get("title").ClonedString()
+		// Rewrite expressions
+		value.Get("targets").ForEach(func(targetKey, target gjson.Result) bool {
+			expr := target.Get("expr")
+			if expr.Exists() && expr.ClonedString() != "" {
+				updatedExpr := formatPromQL(expr.ClonedString())
+				if updatedExpr != expr.ClonedString() {
+					notFormatted = true
+					updatedData, err = sjson.SetBytes(updatedData, path+".targets."+targetKey.ClonedString()+".expr", []byte(updatedExpr))
+					if err != nil {
+						fmt.Printf("Error while updating the panel query format: %v\n", err)
+					}
+					errorStr = append(errorStr, fmt.Sprintf("query not formatted in dashboard %s panel `%s`, it should be \n %s\n", dashPath, title, updatedExpr))
+				}
+			}
+			return true
+		})
+	})
+	if notFormatted {
+		sortedPath := writeFormatted(t, dashPath, updatedData)
+		path = "grafana/dashboards/" + dashPath
+		t.Errorf("%v \nFormatted version created at path=%s.\ncp %s %s",
+			errorStr, sortedPath, sortedPath, path)
+	}
+}
+
+func formatPromQL(query string) string {
+	replacedQuery := strings.ReplaceAll(query, "$TopResources", TopResourceConstant)
+	replacedQuery = strings.ReplaceAll(replacedQuery, "$__range", RangeConstant)
+	replacedQuery = strings.ReplaceAll(replacedQuery, "$__interval", IntervalConstant)
+	replacedQuery = strings.ReplaceAll(replacedQuery, "${Interval}", IntervalDurationConstant)
+
+	command := exec.Command("promtool", "--experimental", "promql", "format", replacedQuery)
+	output, err := command.CombinedOutput()
+	updatedQuery := strings.TrimSuffix(string(output), "\n")
+	if strings.HasPrefix(updatedQuery, "  ") {
+		updatedQuery = strings.TrimLeft(updatedQuery, " ")
+	}
+	if err != nil {
+		// An exit code can't be used since we need to ignore metrics that are not formatted but can't change
+		fmt.Printf("ERR formating metrics query=%s err=%v output=%s", query, err, string(output))
+		return query
+	}
+
+	if len(output) == 0 {
+		return query
+	}
+
+	updatedQuery = strings.ReplaceAll(updatedQuery, TopResourceConstant, "$TopResources")
+	updatedQuery = strings.ReplaceAll(updatedQuery, RangeReverseConstant, "$__range")
+	updatedQuery = strings.ReplaceAll(updatedQuery, IntervalConstant, "$__interval")
+	updatedQuery = strings.ReplaceAll(updatedQuery, IntervalDurationConstant, "${Interval}")
+	return updatedQuery
+}
+
+func writeFormatted(t *testing.T, path string, updatedData []byte) string {
+	dir, file := filepath.Split(path)
+	dir = filepath.Dir(dir)
+	tempDir := "/tmp"
+	dest := filepath.Join(tempDir, dir, file)
+	destDir := filepath.Dir(dest)
+	err := os.MkdirAll(destDir, 0750)
+	if err != nil {
+		t.Errorf("failed to create dir=%s err=%v", destDir, err)
+		return ""
+	}
+	create, err := os.Create(dest)
+
+	if err != nil {
+		t.Errorf("failed to create file=%s err=%v", dest, err)
+		return ""
+	}
+	_, err = create.Write(updatedData)
+	if err != nil {
+		t.Errorf("failed to write formatted json to file=%s err=%v", dest, err)
+		return ""
+	}
+	err = create.Close()
+	if err != nil {
+		t.Errorf("failed to close file=%s err=%v", dest, err)
+		return ""
+	}
+	return dest
+}
+
+func SkipIfMissing(t *testing.T, vars ...string) {
+	t.Helper()
+	anyMatches := false
+	for _, v := range vars {
+		e := os.Getenv(v)
+		if e != "" {
+			anyMatches = true
+			break
+		}
+	}
+	if !anyMatches {
+		t.Skipf("Set one of %s envvars to run this test", strings.Join(vars, ", "))
 	}
 }
