@@ -1,0 +1,96 @@
+
+
+object·objectname·counter·name·base-counter·label·description·desc·properties·type·is-deprecated·replaced-by·
+Object·Object·Counter·Counter·Denominator For Percent/Average·Labels for Array Counters·Description·Description·Counter Properties·Counter Type·Is Counter Deprecated·Replaced By Counter If Deprecated·
+nic_common·nic_common·collisions·collisions·-·-·"Collisions on csma interfaces"·"Collisions on csma interfaces"·delta·-·false·-·
+nic_common·nic_common·hwassist·hwassist·-·-·"HW offload capability of the interface"·"HW offload capability of the interface"·delta·-·false·-·
+nic_common·nic_common·instance_name·instance_name·-·-·"Instance Name"·"Instance Name"·string·-·false·-·
+nic_common·nic_common·instance_uuid·instance_uuid·-·-·"Instance UUID"·"Instance UUID"·string,no-display·-·false·-·
+nic_common·nic_common·link_current_state·link_current_state·-·-·"Current link state"·"Current link state"·string·-·false·-·
+nic_common·nic_common·link_duplex·link_duplex·-·-·"Link duplex setting is half or full"·"Link duplex setting is half or full"·string·-·false·-·
+nic_common·nic_common·link_flowcontrol·link_flowcontrol·-·-·"Current link flow control state (TX or RX or Both)"·"Current link flow control state (TX or RX or Both)"·string·-·false·-·
+nic_common·nic_common·link_media_state·link_media_state·-·-·"Current media state is active or no carrier"·"Current media state is active or no carrier"·string·-·false·-·
+nic_common·nic_common·link_speed·link_speed·-·-·"Link Speed"·"Link Speed"·string·-·false·-·
+nic_common·nic_common·link_up_to_downs·link_up_to_downs·-·-·"Number of link state change from UP to DOWN."·"Number of link state change from UP to DOWN."·delta·-·false·-·
+nic_common·nic_common·nic_ipspace·nic_ipspace·-·-·"IPSpace of an interface."·"IPSpace of an interface."·raw·-·false·-·
+nic_common·nic_common·nic_type·nic_type·-·-·"NIC card type, such as ixgbe, qlge, etc."·"NIC card type, such as ixgbe, qlge, etc."·string·-·false·-·
+nic_common·nic_common·node_name·node_name·-·-·"System node name"·"System node name"·string·-·false·-·
+nic_common·nic_common·node_uuid·node_uuid·-·-·"System node id"·"System node id"·string,no-display·-·false·-·
+nic_common·nic_common·process_name·process_name·-·-·"Ontap process that provided this instance"·"Ontap process that provided this instance"·string·-·false·-·
+nic_common·nic_common·rss_cg_stat·rss_cg_stat·-·cg_id,"queue_0,queue_1,queue_2,queue_3,queue_4,queue_5,queue_6,queue_7,queue_8,queue_9,queue_10,queue_11,queue_12,queue_13,queue_14,queue_15,queue_16,queue_17,queue_18,queue_19,queue_20,queue_21,queue_22,queue_23,queue_24,queue_25,queue_26,queue_27,queue_28,queue_29,queue_30,queue_31,queue_32,queue_33,queue_34,queue_35,queue_36,queue_37,queue_38,queue_39,queue_40,queue_41,queue_42,queue_43,queue_44,queue_45,queue_46,queue_47,queue_48,queue_49,queue_50,queue_51,queue_52,queue_53,queue_54,queue_55,queue_56,queue_57,queue_58,queue_59,queue_60,queue_61,queue_62,queue_63"·"RSS receive queue to CG queue mapping"·"RSS receive queue to CG queue mapping"·raw,no-zero-values·array·false·-·
+nic_common·nic_common·rss_enabled·rss_enabled·-·-·"Indicates whether the interface is enabled for RSS. Value can be on or off."·"Indicates whether the interface is enabled for RSS. Value can be on or off."·string·-·false·-·
+nic_common·nic_common·rss_hash_errors·rss_hash_errors·-·-·"Number of hash errors"·"Number of hash errors"·delta·-·false·-·
+nic_common·nic_common·rss_itable_updates·rss_itable_updates·-·-·"Number of hash table updates"·"Number of hash table updates"·delta·-·false·-·
+nic_common·nic_common·rss_matrix·rss_matrix·-·"tx_frames,tx_bytes,rx_frames,rx_bytes,requeued","queue_0,queue_1,queue_2,queue_3,queue_4,queue_5,queue_6,queue_7,queue_8,queue_9,queue_10,queue_11,queue_12,queue_13,queue_14,queue_15,queue_16,queue_17,queue_18,queue_19,queue_20,queue_21,queue_22,queue_23,queue_24,queue_25,queue_26,queue_27,queue_28,queue_29,queue_30,queue_31,queue_32,queue_33,queue_34,queue_35,queue_36,queue_37,queue_38,queue_39,queue_40,queue_41,queue_42,queue_43,queue_44,queue_45,queue_46,queue_47,queue_48,queue_49,queue_50,queue_51,queue_52,queue_53,queue_54,queue_55,queue_56,queue_57,queue_58,queue_59,queue_60,queue_61,queue_62,queue_63"·"Matrix of RSS queue stats. The distribution of packet processing on each network queue. Each queue will have TX/RX frames/bytes counting and requeue counting"·"Matrix of RSS queue stats. The distribution of packet processing on each network queue. Each queue will have TX/RX frames/bytes counting and requeue counting"·delta·array·false·-·
+nic_common·nic_common·rss_num_of_queues_used·rss_num_of_queues_used·-·-·"Number of queues used in RSS"·"Number of queues used in RSS"·raw·-·false·-·
+nic_common·nic_common·rx_alignment_errors·rx_alignment_errors·-·-·"Alignment errors detected on received packets"·"Alignment errors detected on received packets"·delta·-·false·-·
+nic_common·nic_common·rx_bus_overruns·rx_bus_overruns·-·-·"Bus overruns received"·"Bus overruns received"·delta·-·false·-·
+nic_common·nic_common·rx_bytes·rx_bytes·-·-·"Bytes received"·"Bytes received"·rate·-·false·-·
+nic_common·nic_common·rx_crc_errors·rx_crc_errors·-·-·"CRC errors detected on received packets"·"CRC errors detected on received packets"·delta·-·false·-·
+nic_common·nic_common·rx_discards·rx_discards·-·-·"Discarded receiving frames"·"Discarded receiving frames"·rate·-·false·-·
+nic_common·nic_common·rx_error_symbol·rx_error_symbol·-·-·"Error symbol frames received"·"Error symbol frames received"·delta·-·false·-·
+nic_common·nic_common·rx_errors·rx_errors·-·-·"Error received"·"Error received"·rate·-·false·-·
+nic_common·nic_common·rx_errs·rx_errs·-·-·"Total number of received error packets"·"Total number of received error packets"·delta·-·false·-·
+nic_common·nic_common·rx_fragment·rx_fragment·-·-·"Fragmented frames received"·"Fragmented frames received"·delta·-·false·-·
+nic_common·nic_common·rx_frames·rx_frames·-·-·"Frames received"·"Frames received"·rate·-·false·-·
+nic_common·nic_common·rx_illegal_symbol·rx_illegal_symbol·-·-·"Illegal symbol frames received"·"Illegal symbol frames received"·delta·-·false·-·
+nic_common·nic_common·rx_jabber·rx_jabber·-·-·"Jabber frames received"·"Jabber frames received"·delta·-·false·-·
+nic_common·nic_common·rx_jumbo·rx_jumbo·-·-·"Jumbo frames received"·"Jumbo frames received"·delta·-·false·-·
+nic_common·nic_common·rx_length_errors·rx_length_errors·-·-·"Length errors detected on received packets"·"Length errors detected on received packets"·delta·-·false·-·
+nic_common·nic_common·rx_long_frames·rx_long_frames·-·-·"Very long frames received"·"Very long frames received"·delta·-·false·-·
+nic_common·nic_common·rx_lro6_bytes·rx_lro6_bytes·-·-·"IPv6 frame LRO (Large Receive Offload) bytes received"·"IPv6 frame LRO (Large Receive Offload) bytes received"·delta·-·false·-·
+nic_common·nic_common·rx_lro6_segments·rx_lro6_segments·-·-·"IPv6 frame LRO (Large Receive Offload) segments received"·"IPv6 frame LRO (Large Receive Offload) segments received"·delta·-·false·-·
+nic_common·nic_common·rx_lro_bytes·rx_lro_bytes·-·-·"LRO (Large Receive Offload) bytes received"·"LRO (Large Receive Offload) bytes received"·delta·-·false·-·
+nic_common·nic_common·rx_lro_segments·rx_lro_segments·-·-·"LRO (Large Receive Offload) segments received"·"LRO (Large Receive Offload) segments received"·delta·-·false·-·
+nic_common·nic_common·rx_mcast_v6_solicit·rx_mcast_v6_solicit·-·-·"IPv6 multicast received"·"IPv6 multicast received"·delta·-·false·-·
+nic_common·nic_common·rx_multi_broadcast·rx_multi_broadcast·-·-·"Multicast or broadcast frames received"·"Multicast or broadcast frames received"·delta·-·false·-·
+nic_common·nic_common·rx_no_buffers·rx_no_buffers·-·-·"No receiving buffer available counter"·"No receiving buffer available counter"·delta·-·false·-·
+nic_common·nic_common·rx_non_primary_uc·rx_non_primary_uc·-·-·"Frames with non-primary unicast address received"·"Frames with non-primary unicast address received"·delta·-·false·-·
+nic_common·nic_common·rx_pause·rx_pause·-·-·"Total number of MAC pause frames received"·"Total number of MAC pause frames received"·delta·-·false·-·
+nic_common·nic_common·rx_runt_frames·rx_runt_frames·-·-·"Very short frames received"·"Very short frames received"·delta·-·false·-·
+nic_common·nic_common·rx_tag_drop·rx_tag_drop·-·-·"Dropped frames with tag received"·"Dropped frames with tag received"·delta·-·false·-·
+nic_common·nic_common·rx_total_bytes·rx_total_bytes·-·-·"Total bytes received"·"Total bytes received"·delta·-·false·-·
+nic_common·nic_common·rx_total_discards·rx_total_discards·-·-·"Total queue drop or discard frame received"·"Total queue drop or discard frame received"·delta·-·false·-·
+nic_common·nic_common·rx_total_errors·rx_total_errors·-·-·"Total errors received"·"Total errors received"·delta·-·false·-·
+nic_common·nic_common·rx_total_frames·rx_total_frames·-·-·"Total frames received"·"Total frames received"·delta·-·false·-·
+nic_common·nic_common·rx_unsupported_op·rx_unsupported_op·-·-·"Total number of unsupported MAC Control Opcode received in Ethernet MAC control frame format field"·"Total number of unsupported MAC Control Opcode received in Ethernet MAC control frame format field"·delta·-·false·-·
+nic_common·nic_common·rx_vlan_broadcasts·rx_vlan_broadcasts·-·-·"Frames received which are broadcasted onto a VLAN"·"Frames received which are broadcasted onto a VLAN"·delta·-·false·-·
+nic_common·nic_common·rx_vlan_forwards·rx_vlan_forwards·-·-·"Frames received which are forwarded on the VLAN"·"Frames received which are forwarded on the VLAN"·delta·-·false·-·
+nic_common·nic_common·rx_vlan_tag_drop·rx_vlan_tag_drop·-·-·"Dropped frames with tag on a VLAN received"·"Dropped frames with tag on a VLAN received"·delta·-·false·-·
+nic_common·nic_common·rx_vlan_unicasts·rx_vlan_unicasts·-·-·"Frames received which are unicasted on the VLAN"·"Frames received which are unicasted on the VLAN"·delta·-·false·-·
+nic_common·nic_common·rx_vlan_untag_drop·rx_vlan_untag_drop·-·-·"Dropped frames without tag received"·"Dropped frames without tag received"·delta·-·false·-·
+nic_common·nic_common·rx_xoff·rx_xoff·-·-·"Xoff frames received"·"Xoff frames received"·delta·-·false·-·
+nic_common·nic_common·rx_xon·rx_xon·-·-·"Xon frames received"·"Xon frames received"·delta·-·false·-·
+nic_common·nic_common·total_bytes·total_bytes·-·-·"Bytes received and sent"·"Bytes received and sent"·rate·-·false·-·
+nic_common·nic_common·total_errors·total_errors·-·-·"Error received and sent"·"Error received and sent"·rate·-·false·-·
+nic_common·nic_common·tx_bus_overruns·tx_bus_overruns·-·-·"Bus overruns sent"·"Bus overruns sent"·delta·-·false·-·
+nic_common·nic_common·tx_bytes·tx_bytes·-·-·"Bytes sent"·"Bytes sent"·rate·-·false·-·
+nic_common·nic_common·tx_cfg_up_down·tx_cfg_up_down·-·-·"Link down state changes"·"Link down state changes"·delta·-·false·-·
+nic_common·nic_common·tx_discards·tx_discards·-·-·"Discards frames sent"·"Discards frames sent"·rate·-·false·-·
+nic_common·nic_common·tx_errors·tx_errors·-·-·"Error sent"·"Error sent"·rate·-·false·-·
+nic_common·nic_common·tx_frames·tx_frames·-·-·"Frames sent"·"Frames sent"·rate·-·false·-·
+nic_common·nic_common·tx_frames_queued·tx_frames_queued·-·-·"Sent frames queued"·"Sent frames queued"·delta·-·false·-·
+nic_common·nic_common·tx_hw_errors·tx_hw_errors·-·-·"Transmit errors reported by hardware"·"Transmit errors reported by hardware"·delta·-·false·-·
+nic_common·nic_common·tx_jumbo·tx_jumbo·-·-·"Jumbo frames sent"·"Jumbo frames sent"·delta·-·false·-·
+nic_common·nic_common·tx_late_collisions·tx_late_collisions·-·-·"Late collisions sent"·"Late collisions sent"·delta·-·false·-·
+nic_common·nic_common·tx_link_down_drop·tx_link_down_drop·-·-·"Transmit packets dropped by hardware because the link was down"·"Transmit packets dropped by hardware because the link was down"·delta·-·false·-·
+nic_common·nic_common·tx_max_collisions·tx_max_collisions·-·-·"Maximum collisions sent"·"Maximum collisions sent"·delta·-·false·-·
+nic_common·nic_common·tx_mcast_v6_solicit·tx_mcast_v6_solicit·-·-·"IPv6 multicast transmitted"·"IPv6 multicast transmitted"·delta·-·false·-·
+nic_common·nic_common·tx_mtus_too_big·tx_mtus_too_big·-·-·"Oversized packets sent (MTUs too big)"·"Oversized packets sent (MTUs too big)"·delta·-·false·-·
+nic_common·nic_common·tx_multi_broadcast·tx_multi_broadcast·-·-·"Total multicast/broadcast frames sent"·"Total multicast/broadcast frames sent"·delta·-·false·-·
+nic_common·nic_common·tx_multi_collisions·tx_multi_collisions·-·-·"Multi collisions sent"·"Multi collisions sent"·delta·-·false·-·
+nic_common·nic_common·tx_no_buffers·tx_no_buffers·-·-·"No sending buffers vailable count"·"No sending buffers vailable count"·delta·-·false·-·
+nic_common·nic_common·tx_pause·tx_pause·-·-·"Total number of MAC pause frames sent"·"Total number of MAC pause frames sent"·delta·-·false·-·
+nic_common·nic_common·tx_queue_overflows·tx_queue_overflows·-·-·"Sending queue overflows counter"·"Sending queue overflows counter"·delta·-·false·-·
+nic_common·nic_common·tx_single_collisions·tx_single_collisions·-·-·"Single collisions sent"·"Single collisions sent"·delta·-·false·-·
+nic_common·nic_common·tx_total_bytes·tx_total_bytes·-·-·"Total bytes sent"·"Total bytes sent"·delta·-·false·-·
+nic_common·nic_common·tx_total_discards·tx_total_discards·-·-·"Total queue drops on sending"·"Total queue drops on sending"·delta·-·false·-·
+nic_common·nic_common·tx_total_errors·tx_total_errors·-·-·"Total errors sent"·"Total errors sent"·delta·-·false·-·
+nic_common·nic_common·tx_total_frames·tx_total_frames·-·-·"Total frames sent"·"Total frames sent"·delta·-·false·-·
+nic_common·nic_common·tx_tso6_bytes·tx_tso6_bytes·-·-·"IPv6 frame TSO (TCP Segmentation Offload) bytes sent"·"IPv6 frame TSO (TCP Segmentation Offload) bytes sent"·delta·-·false·-·
+nic_common·nic_common·tx_tso6_segments·tx_tso6_segments·-·-·"IPv6 frame TSO (TCP Segmentation Offload) segments sent"·"IPv6 frame TSO (TCP Segmentation Offload) segments sent"·delta·-·false·-·
+nic_common·nic_common·tx_tso_bytes·tx_tso_bytes·-·-·"TSO (TCP Segmentation Offload) bytes sent"·"TSO (TCP Segmentation Offload) bytes sent"·delta·-·false·-·
+nic_common·nic_common·tx_tso_segments·tx_tso_segments·-·-·"TSO (TCP Segmentation Offload) segments sent"·"TSO (TCP Segmentation Offload) segments sent"·delta·-·false·-·
+nic_common·nic_common·tx_xoff·tx_xoff·-·-·"Transmitter Off (XOFF) frames sent"·"Transmitter Off (XOFF) frames sent"·delta·-·false·-·
+nic_common·nic_common·tx_xon·tx_xon·-·-·"Transmitter on (XON) frames sent"·"Transmitter on (XON) frames sent"·delta·-·false·-·
+

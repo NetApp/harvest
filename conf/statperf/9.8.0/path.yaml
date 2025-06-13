@@ -1,0 +1,31 @@
+
+name:                     Path
+query:                    path
+object:                   path
+
+counters:
+  - ^^instance_uuid
+  - ^node_name             => node
+  - read_data
+  - read_iops
+  - read_latency
+  - total_data
+  - total_iops
+  - write_data
+  - write_iops
+  - write_latency
+
+override:
+  - write_latency: delta
+
+plugins:
+  LabelAgent:
+    split:
+      - path `_` hostadapter,target_wwpn
+
+export_options:
+  instance_keys:
+    - hostadapter # from plugin
+    - node
+    - target_wwpn # from plugin
+

@@ -1,0 +1,23 @@
+name:                     HeadroomCPU
+query:                    resource_headroom_cpu
+object:                   headroom_cpu
+
+counters:
+  - ^^instance_uuid
+  - ^instance_name
+  - ^node_name             => node
+  - current_latency
+  - current_ops
+  - current_utilization
+  - ewma_daily
+  - ewma_hourly
+  - ewma_monthly
+  - ewma_weekly
+  - optimal_point_confidence_factor
+  - optimal_point_latency
+  - optimal_point_ops
+  - optimal_point_utilization
+
+export_options:
+  instance_keys:
+    - node

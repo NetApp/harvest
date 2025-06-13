@@ -22,6 +22,8 @@ const (
 func TestStatPerf_pollData(t *testing.T) {
 	conf.TestLoadHarvestConfig("testdata/config.yml")
 	tests := []struct {
+		object        string
+		path          string
 		name          string
 		wantErr       bool
 		pollInstance  string
@@ -35,6 +37,8 @@ func TestStatPerf_pollData(t *testing.T) {
 		record        bool
 	}{
 		{
+			object:        "flexcache_per_volume",
+			path:          "flexcache.yaml",
 			name:          "blocks_requested_from_client",
 			counter:       "blocks_requested_from_client",
 			pollCounters:  "testdata/counters.txt",
@@ -47,6 +51,8 @@ func TestStatPerf_pollData(t *testing.T) {
 			record:        true,
 		},
 		{
+			object:        "flexcache_per_volume",
+			path:          "flexcache.yaml",
 			name:          "blocks_requested_from_client",
 			counter:       "blocks_requested_from_client",
 			pollCounters:  "testdata/counters_1.txt",
@@ -59,6 +65,8 @@ func TestStatPerf_pollData(t *testing.T) {
 			record:        true,
 		},
 		{
+			object:        "flexcache_per_volume",
+			path:          "flexcache.yaml",
 			name:          "blocks_requested_from_client",
 			counter:       "blocks_requested_from_client",
 			pollCounters:  "testdata/counters_2.txt",
@@ -71,6 +79,8 @@ func TestStatPerf_pollData(t *testing.T) {
 			record:        true,
 		},
 		{
+			object:        "flexcache_per_volume",
+			path:          "flexcache.yaml",
 			name:          "blocks_requested_from_client",
 			counter:       "blocks_requested_from_client",
 			pollCounters:  "testdata/counters_2.txt",
@@ -82,10 +92,24 @@ func TestStatPerf_pollData(t *testing.T) {
 			sum:           30000000,
 			record:        false,
 		},
+		{
+			object:        "lun",
+			path:          "lun.yaml",
+			name:          "read_align_histo",
+			counter:       "read_align_histo#0",
+			pollCounters:  "testdata/array/lun_counters.txt",
+			pollInstance:  "testdata/array/lun_instances.txt",
+			pollDataPath1: "testdata/array/lun_data.txt",
+			pollDataPath2: "testdata/array/lun_data_1.txt",
+			numInstances:  5,
+			numMetrics:    195,
+			sum:           90,
+			record:        true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := newStatPerf("flexcache_per_volume", "flexcache.yaml")
+			s := newStatPerf(tt.object, tt.path)
 
 			counters, err := getDataJSON(tt.pollCounters)
 			if err != nil {
@@ -130,7 +154,7 @@ func TestStatPerf_pollData(t *testing.T) {
 				return
 			}
 
-			m := got["flexcache_per_volume"]
+			m := got[tt.object]
 			var exportInstances int
 			// collect exported instances
 			for _, instance := range m.GetInstances() {
@@ -193,7 +217,7 @@ func getDataJSON(filePath string) ([]gjson.Result, error) {
 	if err != nil {
 		return nil, err
 	}
-	jsonContent := `"` + strings.TrimSpace(string(content)) + `"`
+	jsonContent := `"` + strings.ReplaceAll(strings.TrimSpace(string(content)), `"`, ``) + `"`
 	var counters = []gjson.Result{gjson.Parse(jsonContent)}
 	return counters, nil
 }
@@ -203,6 +227,9 @@ func newStatPerf(object string, path string) *StatPerf {
 	homePath := "../../../"
 	conf.TestLoadHarvestConfig("testdata/config.yml")
 	opts := options.New(options.WithConfPath(homePath + "/conf"))
+	if path == "lun.yaml" {
+		opts = options.New(options.WithConfPath("testdata/conf"))
+	}
 	opts.Poller = pollerName
 	opts.HomePath = "testdata"
 	opts.IsTest = true

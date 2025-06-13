@@ -1,0 +1,13 @@
+name:                     Rwctx
+query:                    rw_ctx
+object:                   rw_ctx
+
+counters:
+  - ^^instance_uuid
+  - ^node_name          => node
+  - qos_flowcontrol
+  - qos_rewinds
+
+export_options:
+  instance_keys:
+    - node
