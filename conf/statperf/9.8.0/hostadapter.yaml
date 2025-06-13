@@ -1,0 +1,15 @@
+name:                     HostAdapter
+query:                    hostadapter
+object:                   hostadapter
+
+counters:
+  - ^^instance_uuid
+  - ^instance_name         => hostadapter
+  - ^node_name             => node
+  - bytes_read
+  - bytes_written
+
+export_options:
+  instance_keys:
+    - hostadapter
+    - node

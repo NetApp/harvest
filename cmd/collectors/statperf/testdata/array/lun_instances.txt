@@ -1,0 +1,10 @@
+
+
+object·objectname·instance·outputName·instanceUUID·
+Object·Object·Instance Name·Instance Name·Instance UUID·
+lun·lun·/vol/osc_iscsi_vol01/osc_iscsi_vol01·/vol/osc_iscsi_vol01/osc_iscsi_vol01·d32abf06-0327-4d06-bb9d-1c19c8eeea01·
+lun·lun·/vol/ostackvol1/volume-47f67be4-94c5-4c13-af88-b56b5829ec28·/vol/ostackvol1/volume-47f67be4-94c5-4c13-af88-b56b5829ec28·5284f98e-6fea-4746-b2af-3a55d667673e·
+lun·lun·/vol/ostackvol1/volume-8136f932-9d94-4620-bbfb-a5f7c4f58bd3·/vol/ostackvol1/volume-8136f932-9d94-4620-bbfb-a5f7c4f58bd3·98ba5831-06a3-44cb-ac9b-b9cc631cf850·
+lun·lun·/vol/ostackvol1/volume-8bdaa5b4-6bbd-4c96-9af6-892d869dfeaa·/vol/ostackvol1/volume-8bdaa5b4-6bbd-4c96-9af6-892d869dfeaa·2555ea74-0b40-4a9e-beb1-a4f26d2e0652·
+lun·lun·/vol/ostackvol1/volume-9454cc64-b4d1-4bfb-9a6b-8f1b39349421·/vol/ostackvol1/volume-9454cc64-b4d1-4bfb-9a6b-8f1b39349421·25a5cdbc-58d8-4b49-9979-4ff7f563c626·
+

@@ -1,0 +1,14 @@
+name:                     ObjectStoreClient
+query:                    object_store_client_op
+object:                   fabricpool
+
+counters:
+  - ^^instance_uuid
+  - ^instance_name          => fabricpool
+  - ^node_name              => node
+  - throughput_ops
+
+export_options:
+  instance_keys:
+    - fabricpool
+    - node

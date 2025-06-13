@@ -1,0 +1,42 @@
+
+name:                     Waffimsg
+query:                    waffimsg
+object:                   waffimsg
+
+counters:
+  - ^^instance_uuid
+  - ^class             => class
+  - ^instance_name     => msg
+  - ^msg_type          => msg_type
+  - ^node_name         => node
+  - ^process_name      => process
+  - ^queue
+  - cpu_overrun_rate
+  - cpu_rate
+  - num_msgs
+  - num_msgs_rate
+  - permsg_cpu_avg
+  - permsg_cpu_var
+  - permsg_wait_avg
+  - qos_num_msgs_bckgrnd
+  - qos_num_msgs_besteffort
+  - qos_num_msgs_deadline
+  - qos_num_msgs_urgent
+  - qos_permsg_wait_avg_bckgrnd
+  - qos_permsg_wait_avg_besteffort
+  - qos_permsg_wait_avg_deadline
+  - qos_permsg_wait_avg_urgent
+  - qos_permsg_wait_max_bckgrnd
+  - qos_permsg_wait_max_besteffort
+  - qos_permsg_wait_max_deadline
+
+export_options:
+  instance_keys:
+    - class
+    - msg
+    - msg_type
+    - node
+    - process
+    - queue
+
+

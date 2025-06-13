@@ -1,0 +1,28 @@
+name:                     Qtree
+query:                    qtree
+object:                   qtree
+
+client_timeout: 1m
+
+counters:
+  - ^^instance_uuid
+  - ^instance_name          => qtreefull
+  - ^node_name              => node
+  - ^parent_vol             => volume
+  - ^vserver_name           => svm
+  - cifs_ops
+  - internal_ops
+  - nfs_ops
+  - total_ops
+
+plugins:
+  - LabelAgent:
+      split:
+        - qtreefull `/` ,qtree
+      exclude_equals:
+        - qtree ``
+export_options:
+  instance_keys:
+    - qtree
+    - svm
+    - volume

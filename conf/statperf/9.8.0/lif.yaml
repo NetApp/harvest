@@ -1,0 +1,27 @@
+name:                     LIF
+query:                    lif
+object:                   lif
+
+counters:
+  - ^^instance_uuid
+  - ^current_port            => port
+  - ^instance_name           => lif
+  - ^node_name               => node
+  - ^vserver_name            => svm
+  - recv_data
+  - recv_errors
+  - recv_packet
+  - sent_data
+  - sent_errors
+  - sent_packet
+  - up_time                  => uptime
+
+export_options:
+  instance_keys:
+    - lif
+    - node
+    - port
+    - svm
+
+override:
+  up_time: raw

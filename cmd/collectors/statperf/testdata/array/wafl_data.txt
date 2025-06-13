@@ -1,0 +1,222 @@
+
+
+
+Object: wafl
+Instance: wafl
+Start-time: 6/13/2025 21:02:16
+End-time: 6/13/2025 21:02:16
+Scope: umeng-aff300-02
+
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    avg_non_wafl_msg_latency                              323702551ms
+    avg_wafl_msg_latency                                  114801789ms
+    avg_wafl_repl_msg_latency                                384115ms
+    cp_count                                                        -
+             wafl_timer generated CP                           386917
+                dynamic triggered CP                                0
+               snapshot generated CP                            16350
+        wafl_avail_bufs generated CP                                0
+          dirty_blk_cnt generated CP                             2520
+            full NV-log generated CP                               47
+                     back-to-back CP                                1
+               back-to-back CP start                             1263
+                  flush generated CP                                0
+                   sync generated CP                            15329
+            deferred back-to-back CP                                0
+              low mbufs generated CP                                0
+           low datavecs generated CP                                0
+    nvlog replay takeover time limit CP                           227
+                scanner triggered CP                             9128
+    cp_phase_times                                                  -
+                               SETUP                            47464
+                              PRE_P0                            20685
+                         P0_SNAP_DEL                             2097
+                             P1_WAIT                                0
+           P1_UPDATE_MERKLE_CHECKSUM                                0
+                        P1_PACK_DATA                             6813
+                            P1_CLEAN                           197280
+                            P1_QUOTA                             3081
+                             P2V_INO                            15958
+                         P2V_INO_L2I                                0
+                          P2V_FSINFO                            34347
+                  P2V_C2C_CBMAP_VVOL                                0
+                  P2V_C2C_SYNC_VBKTS                                0
+                        P2V_PRE_BLOG                             2800
+                            P2V_BLOG                             2396
+                        P2V_REFCOUNT                             8473
+                            P2V_SIDL                                0
+                              P2V_BM                           182908
+                            P2V_SNAP                            10827
+                         P2V_VOLINFO                            81512
+                      P2V_OOCP_DRAIN                                0
+                            P2V_CONT                           150486
+                             P2A_INO                            62044
+                         P2A_INO_L2I                                0
+                        P2A_PRE_BLOG                             3377
+                           P2A_DLOG1                                0
+                             P2A_HYA                                0
+                         P2A_CA_CBIN                             4557
+                           P2A_DLOG2                                0
+                            P2A_BLOG                            34969
+                          P2A_FSINFO                            12968
+                        P2A_REFCOUNT                              309
+                           P2A_TOPAA                             4125
+                     P2A_IRON_STATUS                                0
+                           P2A_HYABC                                0
+                            P2A_SIDL                                0
+                          P2A_FA_RFL                                0
+                         P2A_CA_META                           475140
+                        P2A_PMQ_META                                0
+                      P2A_FA_AAOWNER                                0
+                         P2A_HEATMAP                                0
+                              P2A_BM                           730279
+                            P2A_SNAP                             7273
+                         P2A_VOLINFO                            21173
+                            P2_FLUSH                         32737322
+                           P2_FINISH                             7833
+                         P3A_VOLINFO                           246700
+                           P4_FINISH                            15383
+                           P5_FINISH                                0
+    cpu_elapsed_time                                       1997179105
+    instance_uuid                         umeng-aff300-02:kernel:wafl
+    node_name                                         umeng-aff300-02
+    non_wafl_msg_total                           18446744071708784110
+    read_io_type                                                    -
+                               cache                        213732129
+                                pmem                                0
+                           ext_cache                                0
+                                disk                                0
+                          bamboo_ssd                           900078
+                             hya_hdd                                0
+                           hya_cache                                0
+                       hya_non_cache                                0
+                               cloud                                0
+                             fc_miss                               19
+                           cloud_s2c                                0
+    read_io_type_base                                       214632226
+    total_cp_msecs                                         39795876ms
+    total_cp_util                                           39795876%
+    wafl_memory_free                                            56683
+    wafl_memory_used                                             4280
+    wafl_msg_total                                         3562865602
+    wafl_reads_from_cache                                   213732129
+    wafl_reads_from_cloud                                           0
+    wafl_reads_from_cloud_s2c_bin                                   0
+    wafl_reads_from_disk                                            0
+    wafl_reads_from_ext_cache                                       0
+    wafl_reads_from_fc_miss                                        19
+    wafl_reads_from_pmem                                            0
+    wafl_reads_from_ssd                                        900078
+    wafl_repl_msg_total                                      10109535
+
+Object: wafl
+Instance: wafl
+Start-time: 6/13/2025 21:02:16
+End-time: 6/13/2025 21:02:16
+Scope: umeng-aff300-03
+
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    avg_non_wafl_msg_latency                             5574467285ms
+    avg_wafl_msg_latency                                 1190872676ms
+    avg_wafl_repl_msg_latency                              24059211ms
+    cp_count                                                        -
+             wafl_timer generated CP                           216853
+                dynamic triggered CP                                1
+               snapshot generated CP                             7864
+        wafl_avail_bufs generated CP                                0
+          dirty_blk_cnt generated CP                            17686
+            full NV-log generated CP                           228549
+                     back-to-back CP                               36
+               back-to-back CP start                              658
+                  flush generated CP                                0
+                   sync generated CP                            13383
+            deferred back-to-back CP                                0
+              low mbufs generated CP                                0
+           low datavecs generated CP                                0
+    nvlog replay takeover time limit CP                         32422
+                scanner triggered CP                                0
+    cp_phase_times                                                  -
+                               SETUP                           495897
+                              PRE_P0                           551214
+                         P0_SNAP_DEL                             1156
+                             P1_WAIT                                0
+           P1_UPDATE_MERKLE_CHECKSUM                                0
+                        P1_PACK_DATA                           519209
+                            P1_CLEAN                          3528518
+                            P1_QUOTA                           195499
+                             P2V_INO                           594264
+                         P2V_INO_L2I                                0
+                          P2V_FSINFO                           918564
+                  P2V_C2C_CBMAP_VVOL                                0
+                  P2V_C2C_SYNC_VBKTS                                0
+                        P2V_PRE_BLOG                             6850
+                            P2V_BLOG                             8084
+                        P2V_REFCOUNT                           257522
+                            P2V_SIDL                                0
+                              P2V_BM                          1476855
+                            P2V_SNAP                           242244
+                         P2V_VOLINFO                           982091
+                      P2V_OOCP_DRAIN                                0
+                            P2V_CONT                          1690629
+                             P2A_INO                          2337824
+                         P2A_INO_L2I                                0
+                        P2A_PRE_BLOG                             7668
+                           P2A_DLOG1                                0
+                             P2A_HYA                                0
+                         P2A_CA_CBIN                               70
+                           P2A_DLOG2                                0
+                            P2A_BLOG                          1265743
+                          P2A_FSINFO                            24223
+                        P2A_REFCOUNT                              865
+                           P2A_TOPAA                             7451
+                     P2A_IRON_STATUS                                0
+                           P2A_HYABC                                0
+                            P2A_SIDL                                0
+                          P2A_FA_RFL                                0
+                         P2A_CA_META                          1363615
+                        P2A_PMQ_META                                0
+                      P2A_FA_AAOWNER                                0
+                         P2A_HEATMAP                                0
+                              P2A_BM                          6118327
+                            P2A_SNAP                           476837
+                         P2A_VOLINFO                          1112093
+                            P2_FLUSH                        150962889
+                           P2_FINISH                           610897
+                         P3A_VOLINFO                          3954310
+                           P4_FINISH                          1133904
+                           P5_FINISH                                0
+    cpu_elapsed_time                                       1998471446
+    instance_uuid                         umeng-aff300-03:kernel:wafl
+    node_name                                         umeng-aff300-03
+    non_wafl_msg_total                                     1264416537
+    read_io_type                                                    -
+                               cache                       4560211229
+                                pmem                                0
+                           ext_cache                                0
+                                disk                                0
+                          bamboo_ssd                          1031443
+                             hya_hdd                                0
+                           hya_cache                                0
+                       hya_non_cache                                0
+                               cloud                                0
+                             fc_miss                       1664566062
+                           cloud_s2c                                0
+    read_io_type_base                                      6225808734
+    total_cp_msecs                                        194798304ms
+    total_cp_util                                          194798304%
+    wafl_memory_free                                            55599
+    wafl_memory_used                                             5364
+    wafl_msg_total                                         2184377894
+    wafl_reads_from_cache                                  4560211229
+    wafl_reads_from_cloud                                           0
+    wafl_reads_from_cloud_s2c_bin                                   0
+    wafl_reads_from_disk                                            0
+    wafl_reads_from_ext_cache                                       0
+    wafl_reads_from_fc_miss                                1664566062
+    wafl_reads_from_pmem                                            0
+    wafl_reads_from_ssd                                       1031443
+    wafl_repl_msg_total                                      35582909
+50 entries were displayed.
+

@@ -1,0 +1,35 @@
+name:                     Namespace
+query:                    namespace
+object:                   namespace
+
+counters:
+  - ^^instance_uuid
+  - ^instance_name         => path
+  - ^vserver_name          => svm
+  - avg_other_latency
+  - avg_read_latency
+  - avg_write_latency
+  - other_ops
+  - read_data
+  - read_ops
+  - remote_other_ops
+  - remote_read_data
+  - remote_read_ops
+  - remote_write_data
+  - remote_write_ops
+  - write_data
+  - write_ops
+
+plugins:
+  LabelAgent:
+    split:
+      - path `/` ,,volume,namespace
+
+export_options:
+  instance_keys:
+    - namespace
+    - path
+    - svm
+    - volume
+
+
