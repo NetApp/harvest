@@ -38,12 +38,13 @@ type CounterProperty struct {
 func (s *StatPerf) parseCounters(input string) (map[string]CounterProperty, error) {
 	linesFiltered := FilterNonEmpty(input)
 
-	// Search for the header row, which is expected to have at least 9 columns when split.
+	// Search for the header row, which is expected to have at least 11 columns when split.
+	var expectedFieldCount = 11
 	var headerIndex = -1
 	var headers []string
 	for i, line := range linesFiltered {
 		fields := strings.Split(line, collector.StatPerfSeparator)
-		if len(fields) >= 11 {
+		if len(fields) >= expectedFieldCount {
 			// Check if this header row contains a known header word like "counter"
 			lower := strings.ToLower(line)
 			if strings.Contains(lower, "counter") {
@@ -72,14 +73,14 @@ func (s *StatPerf) parseCounters(input string) (map[string]CounterProperty, erro
 	counters := make(map[string]CounterProperty)
 
 	// Create a map of header names to their indices
-	headerMap := make(map[string]int)
+	headerMap := make(map[string]int, len(headers))
 	for index, header := range headers {
 		headerMap[strings.TrimSpace(header)] = index
 	}
 
 	for _, row := range linesFiltered[dataStart:] {
 		fields := strings.Split(row, collector.StatPerfSeparator)
-		if len(fields) < 12 {
+		if len(fields) <= expectedFieldCount {
 			s.Logger.Warn("skipping incomplete row", slog.String("row", row))
 			continue
 		}
@@ -250,14 +251,14 @@ func (s *StatPerf) parseData(input string) (gjson.Result, error) {
 	return gjson.ParseBytes(groupedJSON), nil
 }
 
-func (s *StatPerf) parseRows(input string) ([]map[string]interface{}, error) {
+func (s *StatPerf) parseRows(input string) ([]map[string]any, error) {
 	defaultTimestamp := float64(time.Now().UnixNano() / collector.BILLION)
 	var timestamp float64
 	lines := FilterNonEmpty(input)
-	var data []map[string]interface{}
+	var data []map[string]any
 
 	var aggregation string
-	currentGroup := make(map[string]interface{})
+	currentGroup := make(map[string]any)
 	inTable := false
 	var tableLines []string
 	dividerWidth := 0
@@ -347,7 +348,7 @@ func (s *StatPerf) parseRows(input string) ([]map[string]interface{}, error) {
 
 		data = append(data, currentGroup)
 		tableLines = []string{}
-		currentGroup = make(map[string]interface{})
+		currentGroup = make(map[string]any)
 		timestamp = 0
 	}
 
