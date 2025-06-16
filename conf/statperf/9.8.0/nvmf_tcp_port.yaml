@@ -1,0 +1,29 @@
+
+name:                     NvmfTcpPort
+query:                    nvmf_tcp_port
+object:                   nvmf_tcp_port
+
+counters:
+  - ^^instance_uuid
+  - ^node_name             => node
+  - ^port_id               => lif
+  - ^port_ip_addr
+  - ^vserver_name          => svm
+  - avg_latency
+  - avg_other_latency
+  - avg_read_latency
+  - avg_write_latency
+  - other_ops
+  - read_data
+  - read_ops
+  - total_data
+  - total_ops
+  - write_data
+  - write_ops
+
+export_options:
+  instance_keys:
+    - lif
+    - node
+    - port_ip_addr
+    - svm

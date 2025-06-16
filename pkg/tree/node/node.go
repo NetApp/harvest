@@ -468,7 +468,11 @@ func DecodeHTML(x string) string {
 	x = strings.ReplaceAll(x, "&gt;", ">")
 	x = strings.ReplaceAll(x, "&apos;", "'")
 	x = strings.ReplaceAll(x, "&quot;", "\"")
-	x = strings.ReplaceAll(x, " ", "_") // not escape char, but wanted
+	return Normalize(x)
+}
+
+func Normalize(x string) string {
+	x = strings.ReplaceAll(x, " ", "_")
 	x = strings.ReplaceAll(x, "-", "_")
 	return x
 }

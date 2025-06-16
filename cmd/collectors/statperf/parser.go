@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/set"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"regexp"
@@ -16,6 +17,9 @@ import (
 var unitRegex = regexp.MustCompile(`^([\d.]+)(us|ms|%)$`)
 var aggRegex = regexp.MustCompile(`Number of Constituents:\s*\d+\s+\(([^)]+)\)`)
 var dividedRegex = regexp.MustCompile(`^[-\s]+$`)
+var arrayOneToManyRegex = regexp.MustCompile(`^([^,]+),"([^"]+)"$`)
+var arrayManyToManyRegex = regexp.MustCompile(`^"([^"]+)","([^"]+)"$`)
+var arrayRegex = regexp.MustCompile(`^"([^"]+)"$`)
 
 type CounterProperty struct {
 	Counter     string
@@ -25,22 +29,27 @@ type CounterProperty struct {
 	Type        string
 	Deprecated  string
 	ReplacedBy  string
-	Unit        string
+	Label       string
+	LabelCount  int
 	Description string
+	Unit        string
 }
 
 func (s *StatPerf) parseCounters(input string) (map[string]CounterProperty, error) {
 	linesFiltered := FilterNonEmpty(input)
 
-	// Search for the header row, which is expected to have at least 9 columns when split.
+	// Search for the header row, which is expected to have at least 11 columns when split.
+	var expectedFieldCount = 11
 	var headerIndex = -1
+	var headers []string
 	for i, line := range linesFiltered {
 		fields := strings.Split(line, collector.StatPerfSeparator)
-		if len(fields) >= 9 {
+		if len(fields) >= expectedFieldCount {
 			// Check if this header row contains a known header word like "counter"
 			lower := strings.ToLower(line)
 			if strings.Contains(lower, "counter") {
 				headerIndex = i
+				headers = fields
 				break
 			}
 		}
@@ -63,21 +72,64 @@ func (s *StatPerf) parseCounters(input string) (map[string]CounterProperty, erro
 
 	counters := make(map[string]CounterProperty)
 
+	// Create a map of header names to their indices
+	headerMap := make(map[string]int, len(headers))
+	for index, header := range headers {
+		headerMap[strings.TrimSpace(header)] = index
+	}
+
 	for _, row := range linesFiltered[dataStart:] {
 		fields := strings.Split(row, collector.StatPerfSeparator)
-		if len(fields) < 9 {
+		if len(fields) <= expectedFieldCount {
 			s.Logger.Warn("skipping incomplete row", slog.String("row", row))
 			continue
 		}
 
+		counterType := strings.TrimSpace(fields[headerMap["type"]])
+		var combinedLabels []string
+
+		labelField := strings.ToLower(node.Normalize(fields[headerMap["label"]]))
+		if counterType == "array" {
+			if match := arrayRegex.FindStringSubmatch(labelField); match != nil {
+				labelParts := strings.Split(match[1], ",")
+				combinedLabels = labelParts
+			} else if match = arrayOneToManyRegex.FindStringSubmatch(labelField); match != nil {
+				identifier := strings.TrimSpace(match[1])
+				quotedLabels := strings.Split(match[2], ",")
+				for _, label := range quotedLabels {
+					combinedLabels = append(combinedLabels, label+"."+identifier)
+				}
+			} else if match = arrayManyToManyRegex.FindStringSubmatch(labelField); match != nil {
+				firstSet := strings.Split(match[1], ",")
+				secondSet := strings.Split(match[2], ",")
+				for _, firstLabel := range firstSet {
+					for _, secondLabel := range secondSet {
+						combinedLabels = append(combinedLabels, secondLabel+"."+firstLabel)
+					}
+				}
+			} else {
+				// Fallback for simple comma-separated lists
+				labelParts := strings.Split(labelField, ",")
+				for _, label := range labelParts {
+					label = strings.TrimSpace(label)
+					if label != "" {
+						combinedLabels = append(combinedLabels, label)
+					}
+				}
+			}
+		}
+
 		cp := CounterProperty{
-			Counter:     strings.TrimSpace(fields[2]),
-			Name:        strings.TrimSpace(fields[3]),
-			BaseCounter: strings.TrimSpace(fields[4]),
-			Properties:  strings.TrimSpace(fields[5]),
-			Type:        strings.TrimSpace(fields[6]),
-			Deprecated:  strings.TrimSpace(fields[7]),
-			ReplacedBy:  strings.TrimSpace(fields[8]),
+			Counter:     strings.TrimSpace(fields[headerMap["counter"]]),
+			Name:        strings.TrimSpace(fields[headerMap["name"]]),
+			BaseCounter: strings.TrimSpace(fields[headerMap["base-counter"]]),
+			Label:       strings.Join(combinedLabels, ","),
+			LabelCount:  len(combinedLabels),
+			Description: strings.Trim(fields[headerMap["description"]], ` "'`),
+			Properties:  strings.TrimSpace(fields[headerMap["properties"]]),
+			Type:        counterType,
+			Deprecated:  strings.TrimSpace(fields[headerMap["is-deprecated"]]),
+			ReplacedBy:  strings.TrimSpace(fields[headerMap["replaced-by"]]),
 		}
 		counters[cp.Counter] = cp
 	}
@@ -186,7 +238,7 @@ func getDividerWidth(line string) int {
 // parseData processes an input string, extracts and groups rows (by instance),
 // and returns a gjson.Result.
 func (s *StatPerf) parseData(input string) (gjson.Result, error) {
-	groups, err := parseRows(input, s.Logger)
+	groups, err := s.parseRows(input)
 	if err != nil {
 		return gjson.Result{}, err
 	}
@@ -199,15 +251,14 @@ func (s *StatPerf) parseData(input string) (gjson.Result, error) {
 	return gjson.ParseBytes(groupedJSON), nil
 }
 
-func parseRows(input string, logger *slog.Logger) ([]map[string]string, error) {
+func (s *StatPerf) parseRows(input string) ([]map[string]any, error) {
 	defaultTimestamp := float64(time.Now().UnixNano() / collector.BILLION)
 	var timestamp float64
 	lines := FilterNonEmpty(input)
-	var groups []map[string]string
+	var data []map[string]any
 
 	var aggregation string
-	currentGroup := make(map[string]string)
-
+	currentGroup := make(map[string]any)
 	inTable := false
 	var tableLines []string
 	dividerWidth := 0
@@ -226,12 +277,33 @@ func parseRows(input string, logger *slog.Logger) ([]map[string]string, error) {
 				continue
 			}
 			tokens := strings.Fields(curRowLine)
+
 			if len(tokens) < 2 {
-				logger.Warn("skipping unexpected line", slog.String("row", curRowLine))
+				s.Logger.Warn("skipping unexpected line", slog.String("row", curRowLine))
 				continue
 			}
 			counter := strings.Join(tokens[:len(tokens)-1], " ")
 			value := tokens[len(tokens)-1]
+
+			// Check if the counter is an array-like element
+			if s.perfProp != nil && s.perfProp.counterInfo != nil {
+				if c, exists := s.perfProp.counterInfo[counter]; exists {
+					if c.counterType == "array" {
+						arrayData := make(map[string]string)
+						for range c.labelCount {
+							nextLineRaw := preprocessArrayLine(tableLines[i+1])
+							nextTokens := strings.Fields(nextLineRaw)
+							if len(nextTokens) != 2 {
+								break
+							}
+							arrayData[nextTokens[0]] = nextTokens[1]
+							i++
+						}
+						currentGroup[counter] = arrayData
+						continue
+					}
+				}
+			}
 
 			// Check for continuation lines.
 			for i+1 < len(tableLines) {
@@ -256,7 +328,7 @@ func parseRows(input string, logger *slog.Logger) ([]map[string]string, error) {
 			// So far, we have observed this issue only with this object.
 			trimmedCounter := strings.TrimSpace(counter)
 			if seenCounters.Has(trimmedCounter) {
-				logger.Warn("duplicate counter detected", slog.String("counter", trimmedCounter), slog.String("value", value))
+				s.Logger.Warn("duplicate counter detected", slog.String("counter", trimmedCounter), slog.String("value", value))
 			} else {
 				seenCounters.Add(trimmedCounter)
 			}
@@ -273,9 +345,10 @@ func parseRows(input string, logger *slog.Logger) ([]map[string]string, error) {
 		} else {
 			currentGroup["timestamp"] = strconv.FormatFloat(defaultTimestamp, 'f', -1, 64)
 		}
-		groups = append(groups, currentGroup)
+
+		data = append(data, currentGroup)
 		tableLines = []string{}
-		currentGroup = make(map[string]string)
+		currentGroup = make(map[string]any)
 		timestamp = 0
 	}
 
@@ -299,7 +372,7 @@ func parseRows(input string, logger *slog.Logger) ([]map[string]string, error) {
 			endTimeStr = strings.TrimSpace(endTimeStr)
 			endTime, err := time.Parse("1/2/2006 15:04:05", endTimeStr)
 			if err != nil {
-				logger.Warn("unable to parse end-time", slog.String("end-time", endTimeStr))
+				s.Logger.Warn("unable to parse end-time", slog.String("end-time", endTimeStr))
 				continue
 			}
 			timestamp = float64(endTime.UnixNano()) / collector.BILLION
@@ -349,8 +422,22 @@ func parseRows(input string, logger *slog.Logger) ([]map[string]string, error) {
 	}
 	flushTable()
 
-	if len(groups) == 0 {
+	if len(data) == 0 {
 		return nil, errors.New("no data found")
 	}
-	return groups, nil
+	return data, nil
+}
+
+func preprocessArrayLine(line string) string {
+	if line == "" {
+		return line
+	}
+	parts := strings.Fields(line)
+	if len(parts) < 2 {
+		return line
+	}
+	modifiedText := strings.ToLower(node.Normalize(strings.Join(parts[:len(parts)-1], " ")))
+	number := parts[len(parts)-1]
+	result := modifiedText + " " + number
+	return result
 }
