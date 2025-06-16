@@ -7628,6 +7628,7 @@ Average processor utilization across active processors in the system
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `average_processor_busy_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> cpu_elapsed_time | conf/restperf/9.12.0/system_node.yaml |
 | KeyPerf | `api/cluster/nodes` | `statistics.processor_utilization_raw`<br><span class="key">Unit:</span> statistics.processor_utilization_base<br><span class="key">Type:</span> percent<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/system_node.yaml |
+| StatPerf | `system:node` | `avg_processor_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> <br><span class="key">Base:</span> cpu_elapsed_time | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `avg_processor_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> cpu_elapsed_time | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -7734,6 +7735,7 @@ Number of CIFS operations per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `cifs_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `cifs_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `cifs_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -7808,6 +7810,7 @@ System CPU resource utilization. Returns a computed percentage for the default C
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `cpu_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> cpu_elapsed_time | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `cpu_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> <br><span class="key">Base:</span> cpu_elapsed_time | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `cpu_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> cpu_elapsed_time | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -7844,6 +7847,7 @@ Array of processor time in percentage spent in various domains
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `domain_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> cpu_elapsed_time | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `domain_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> array<br><span class="key">Base:</span> cpu_elapsed_time | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `domain_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> cpu_elapsed_time | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -7861,6 +7865,7 @@ Elapsed time since boot
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `cpu_elapsed_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `cpu_elapsed_time`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `cpu_elapsed_time`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-display<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -7934,6 +7939,7 @@ Number of disk kilobytes (KB) read per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `disk_data_read`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `disk_data_read`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `disk_data_read`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -7950,6 +7956,7 @@ Number of disk kilobytes (KB) written per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `disk_data_written`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `disk_data_written`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `disk_data_written`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -8323,6 +8330,7 @@ Number of FCP kilobytes (KB) received per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `fcp_data_received`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `fcp_data_recv`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `fcp_data_recv`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -8334,6 +8342,7 @@ Number of FCP kilobytes (KB) sent per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `fcp_data_sent`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `fcp_data_sent`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `fcp_data_sent`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -8345,6 +8354,7 @@ Number of FCP operations per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `fcp_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `fcp_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `fcp_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -8361,6 +8371,7 @@ Number of HDD Disk kilobytes (KB) read per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `hdd_data_read`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `hdd_data_read`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `hdd_data_read`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -8372,6 +8383,7 @@ Number of HDD kilobytes (KB) written per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `hdd_data_written`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `hdd_data_written`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `hdd_data_written`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -8383,6 +8395,7 @@ Number of iSCSI operations per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `iscsi_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `iscsi_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `iscsi_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -8423,6 +8436,7 @@ Total memory in megabytes (MB)
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `memory`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `memory`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `memory`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -8434,6 +8448,7 @@ Number of network kilobytes (KB) received per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `network_data_received`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `net_data_recv`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `net_data_recv`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -8445,6 +8460,7 @@ Number of network kilobytes (KB) sent per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `network_data_sent`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `net_data_sent`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `net_data_sent`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -9535,6 +9551,7 @@ Number of NFS operations per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `nfs_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `nfs_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `nfs_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -10491,6 +10508,7 @@ NVMe/FC kilobytes (KB) received per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `nvme_fc_data_received`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `nvme_fc_data_recv`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.15.1/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `nvme_fc_data_recv`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.15.1/system_node.yaml |
 
 
@@ -10502,6 +10520,7 @@ NVMe/FC kilobytes (KB) sent per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `nvme_fc_data_sent`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `nvme_fc_data_sent`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `nvme_fc_data_sent`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.15.1/system_node.yaml |
 
 
@@ -10513,6 +10532,7 @@ NVMe/FC operations per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `nvme_fc_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `nvme_fc_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `nvme_fc_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.15.1/system_node.yaml |
 
 
@@ -10524,6 +10544,7 @@ NVMe/FC kilobytes (KB) received per second.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `nvme_fc_data_received, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `nvme_fc_data_recv, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.15.1/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `nvmf_data_recv`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -10535,6 +10556,7 @@ NVMe/FC kilobytes (KB) sent per second.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `nvme_fc_data_sent, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `nvme_fc_data_sent, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.15.1/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `nvmf_data_sent`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -10546,6 +10568,7 @@ NVMe/FC operations per second.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `nvme_fc_ops, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `nvme_fc_ops, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.15.1/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `nvmf_ops`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -10562,6 +10585,7 @@ Other throughput
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `other_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `other_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `other_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -10573,6 +10597,7 @@ Average latency for all other operations in the system in microseconds
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> other_ops | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -10589,6 +10614,7 @@ All other operations per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -10605,6 +10631,7 @@ Read throughput
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -10621,6 +10648,7 @@ Average latency for all read operations in the system in microseconds
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> read_ops | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -10638,6 +10666,7 @@ Read operations per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -10654,6 +10683,7 @@ Number of SSD Disk kilobytes (KB) read per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `ssd_data_read`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `ssd_data_read`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `ssd_data_read`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -10665,6 +10695,7 @@ Number of SSD Disk kilobytes (KB) written per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `ssd_data_written`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `ssd_data_written`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `ssd_data_written`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -10676,6 +10707,7 @@ Total throughput in bytes
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -10698,6 +10730,7 @@ Average latency for all operations in the system in microseconds
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `total_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `total_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> total_ops | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `total_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -10720,6 +10753,7 @@ Total number of operations per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -11470,6 +11504,7 @@ Write throughput
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -11486,6 +11521,7 @@ Average latency for all write operations in the system in microseconds
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> write_ops | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -11503,6 +11539,7 @@ Write operations per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 

@@ -25,6 +25,8 @@ import (
 
 const (
 	latencyIoReqd       = 10
+	arrayKeyToken       = "#"
+	subLabelToken       = "."
 	timestampMetricName = "timestamp"
 	endpoint            = "api/private/cli"
 	keyToken            = "?#"
@@ -46,6 +48,8 @@ type counter struct {
 	counterType string
 	property    string
 	denominator string
+	description string
+	labelCount  int
 }
 
 type perfProp struct {
@@ -177,7 +181,7 @@ func (s *StatPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 		BaseSet(GetCounterInstanceBaseSet()).
 		Query("statistics catalog counter show").
 		Object(s.Prop.Query).
-		Fields([]string{"counter", "base-counter", "properties", "type", "is-deprecated", "replaced-by"}).
+		Fields([]string{"counter", "base-counter", "properties", "type", "is-deprecated", "replaced-by", "label", "description"}).
 		Build()
 	if err != nil {
 		return nil, err
@@ -230,7 +234,7 @@ func (s *StatPerf) pollCounter(records []gjson.Result, apiD time.Duration) error
 		return errs.New(errs.ErrConfig, "no data found")
 	}
 
-	counters, err := s.parseCounters(fr)
+	counters, err := s.ParseCounters(fr)
 	if err != nil {
 		return err
 	}
@@ -296,6 +300,8 @@ func (s *StatPerf) pollCounter(records []gjson.Result, apiD time.Duration) error
 					counterType: NormalizeCounterValue(c.Type),
 					property:    s.parseCounterProperty(name, c.Properties),
 					denominator: NormalizeCounterValue(c.BaseCounter),
+					description: c.Description,
+					labelCount:  c.LabelCount,
 				}
 				if p := s.GetOverride(name); p != "" {
 					s.perfProp.counterInfo[name].property = p
@@ -323,16 +329,6 @@ func (s *StatPerf) pollCounter(records []gjson.Result, apiD time.Duration) error
 		}
 		m.SetProperty("raw")
 		m.SetExportable(false)
-	}
-
-	// remove type array as they are not yet supported by the collector
-	for k, v := range s.perfProp.counterInfo {
-		if v.counterType == "array" {
-			delete(s.Prop.Metrics, k)
-			delete(s.perfProp.counterInfo, k)
-			delete(s.Prop.Counters, k)
-			s.Logger.Warn("Array metric not supported by collector", slog.String("name", k))
-		}
 	}
 
 	// update metadata for collector logs
@@ -558,12 +554,106 @@ func (s *StatPerf) processPerfRecords(records []gjson.Result, curMat *matrix.Mat
 		ts := data.Get("timestamp").ClonedString()
 
 		data.ForEach(func(k, v gjson.Result) bool {
-
+			var isHistogram bool
+			var histogramMetric *matrix.Metric
 			metricName := k.ClonedString()
 			metricValue := v.ClonedString()
 			if metricName == "_aggregation" || metricName == "timestamp" {
 				return true
 			}
+
+			if counterInfo, exists := s.perfProp.counterInfo[metricName]; exists {
+				if counterInfo.counterType == "array" {
+					metric := s.Prop.Metrics[metricName]
+					result := gjson.Parse(metricValue)
+
+					var labels []string
+					var values []string
+
+					// Iterate over the keys and values
+					result.ForEach(func(key, value gjson.Result) bool {
+						labels = append(labels, key.ClonedString())
+						values = append(values, value.ClonedString())
+						return true // keep iterating
+					})
+
+					if len(labels) != len(values) {
+						// warn & skip
+						s.Logger.Warn(
+							"labels don't match parsed values",
+							slog.Any("labels", labels),
+							slog.Any("value", values),
+						)
+						return true
+					}
+
+					// ONTAP does not have a `type` for histogram. Harvest tests the `desc` field to determine
+					// if a counter is a histogram
+					isHistogram = false
+					description := strings.ToLower(s.perfProp.counterInfo[metricName].description)
+					if strings.Contains(description, "histogram") {
+						key := metricName + ".bucket"
+						histogramMetric, err = collectors.GetMetric(curMat, prevMat, key, metric.Label)
+						if err != nil {
+							s.Logger.Error(
+								"unable to create histogram metric",
+								slogx.Err(err),
+								slog.String("key", key),
+							)
+							return true
+						}
+						histogramMetric.SetArray(true)
+						histogramMetric.SetExportable(metric.Exportable)
+						histogramMetric.SetBuckets(&labels)
+						isHistogram = true
+					}
+
+					for i, label := range labels {
+						k := metricName + arrayKeyToken + label
+						metr, ok := curMat.GetMetrics()[k]
+						if !ok {
+							if metr, err = collectors.GetMetric(curMat, prevMat, k, metric.Label); err != nil {
+								s.Logger.Error(
+									"NewMetricFloat64",
+									slogx.Err(err),
+									slog.String("name", k),
+								)
+								continue
+							}
+							if x := strings.Split(label, subLabelToken); len(x) == 2 {
+								// order is reversed to keep it backward compatible with ZapiPerf and RestPerf
+								metr.SetLabel("metric", x[1])
+								metr.SetLabel("submetric", x[0])
+							} else {
+								metr.SetLabel("metric", label)
+							}
+							// differentiate between array and normal counter
+							metr.SetArray(true)
+							metr.SetExportable(metric.Exportable)
+							if isHistogram {
+								// Save the index of this label so the labels can be exported in order
+								metr.SetLabel("comment", strconv.Itoa(i))
+								// Save the bucket name so the flattened metrics can find their bucket when exported
+								metr.SetLabel("bucket", metricName+".bucket")
+								metr.SetHistogram(true)
+							}
+						}
+						if err = metr.SetValueString(instance, values[i]); err != nil {
+							s.Logger.Error(
+								"Set value failed",
+								slogx.Err(err),
+								slog.String("name", metricName),
+								slog.String("label", label),
+								slog.String("value", values[i]),
+							)
+							continue
+						}
+						count++
+					}
+					return true
+				}
+			}
+
 			if display, ok := s.Prop.InstanceLabels[metricName]; ok {
 				instance.SetLabel(display, NormalizeCounterValue(metricValue))
 				count++
@@ -593,7 +683,6 @@ func (s *StatPerf) processPerfRecords(records []gjson.Result, curMat *matrix.Mat
 					count++
 				} else {
 					s.Logger.Warn("Counter is missing or unable to parse", slog.String("counter", metricName))
-
 				}
 			}
 			if err = curMat.GetMetric(timestampMetricName).SetValueString(instance, ts); err != nil {
@@ -605,6 +694,17 @@ func (s *StatPerf) processPerfRecords(records []gjson.Result, curMat *matrix.Mat
 	})
 	parseD = time.Since(startTime)
 	return count, numPartials, parseD
+}
+
+func (s *StatPerf) counterLookup(metric *matrix.Metric, metricKey string) *counter {
+	var c *counter
+	if metric.IsArray() {
+		name, _, _ := strings.Cut(metricKey, arrayKeyToken)
+		c = s.perfProp.counterInfo[name]
+	} else {
+		c = s.perfProp.counterInfo[metricKey]
+	}
+	return c
 }
 
 func (s *StatPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (map[string]*matrix.Matrix, error) {
@@ -634,7 +734,7 @@ func (s *StatPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (
 
 	for key, metric := range curMat.GetMetrics() {
 		if metric.GetName() != timestampMetricName && metric.Buckets() == nil {
-			counter := s.perfProp.counterInfo[key]
+			counter := s.counterLookup(metric, key)
 			if counter != nil {
 				if counter.denominator == "" {
 					// does not require base counter
@@ -668,7 +768,7 @@ func (s *StatPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (
 
 	for i, metric := range orderedMetrics {
 		key := orderedKeys[i]
-		counter := s.perfProp.counterInfo[key]
+		counter := s.counterLookup(metric, key)
 		if counter == nil {
 			s.Logger.Error(
 				"Missing counter:",
@@ -765,7 +865,7 @@ func (s *StatPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (
 	// calculate rates (which we deferred to calculate averages/percents first)
 	for i, metric := range orderedMetrics {
 		key := orderedKeys[i]
-		counter := s.perfProp.counterInfo[key]
+		counter := s.counterLookup(metric, key)
 		if counter != nil {
 			property := counter.property
 			if property == "rate" {
