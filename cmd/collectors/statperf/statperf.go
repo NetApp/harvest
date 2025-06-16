@@ -234,7 +234,7 @@ func (s *StatPerf) pollCounter(records []gjson.Result, apiD time.Duration) error
 		return errs.New(errs.ErrConfig, "no data found")
 	}
 
-	counters, err := s.parseCounters(fr)
+	counters, err := s.ParseCounters(fr)
 	if err != nil {
 		return err
 	}
@@ -572,8 +572,8 @@ func (s *StatPerf) processPerfRecords(records []gjson.Result, curMat *matrix.Mat
 
 					// Iterate over the keys and values
 					result.ForEach(func(key, value gjson.Result) bool {
-						labels = append(labels, key.String())
-						values = append(values, value.String())
+						labels = append(labels, key.ClonedString())
+						values = append(values, value.ClonedString())
 						return true // keep iterating
 					})
 

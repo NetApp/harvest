@@ -13,7 +13,6 @@ import (
 	template2 "github.com/netapp/harvest/v2/cmd/tools/template"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/auth"
-	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/logging"
 	"github.com/netapp/harvest/v2/pkg/requests"
@@ -196,6 +195,12 @@ var (
 		"security_",
 		"svm_ldap",
 		"ALERTS",
+	}
+
+	// include StatPerf Templates
+	includeStatPerfTemplates = map[string]struct{}{
+		"flexcache.yaml":   {},
+		"system_node.yaml": {},
 	}
 )
 
@@ -399,8 +404,12 @@ func processRestCounters(dir string, client *rest.Client) map[string]Counter {
 		return processRestConfigCounters(path, keyPerfAPI)
 	})
 
-	statPerfCounters := visitRestTemplates(filepath.Join(dir, "conf", "statperf"), client, processStatPerfCounters)
-
+	statPerfCounters := visitRestTemplates(filepath.Join(dir, "conf", "statperf"), client, func(path string, client *rest.Client) map[string]Counter {
+		if _, ok := includeStatPerfTemplates[filepath.Base(path)]; ok {
+			return processStatPerfCounters(path, client)
+		}
+		return nil
+	})
 	for k, v := range restPerfCounters {
 		restCounters[k] = v
 	}
@@ -1431,7 +1440,8 @@ func processStatPerfCounters(path string, client *rest.Client) map[string]Counte
 		return nil
 	}
 
-	pCounters, err := parseCounters(fr)
+	s := &statperf.StatPerf{}
+	pCounters, err := s.ParseCounters(fr)
 	if err != nil {
 		fmt.Printf("error while parsing records for query %s template %s: %+v\n", model.Query, path, err)
 		return nil
@@ -1814,62 +1824,4 @@ func getAllExportedLabels(t *node.Node, counterContents []string) ([]string, []s
 		}
 	}
 	return metricLabels, append(labels, metricLabels...), isInstanceLabels
-}
-
-func parseCounters(input string) (map[string]statperf.CounterProperty, error) {
-	linesFiltered := statperf.FilterNonEmpty(input)
-
-	// Search for the header row, which is expected to have at least 9 columns when split.
-	var headerIndex = -1
-	for i, line := range linesFiltered {
-		fields := strings.Split(line, collector.StatPerfSeparator)
-		if len(fields) >= 12 {
-			// Check if this header row contains a known header word like "counter"
-			lower := strings.ToLower(line)
-			if strings.Contains(lower, "counter") {
-				headerIndex = i
-				break
-			}
-		}
-	}
-
-	if headerIndex < 0 {
-		return nil, errors.New("no valid header row found")
-	}
-
-	// Expect at least one additional header row to follow the header row.
-	if len(linesFiltered) < headerIndex+2 {
-		return nil, errors.New("not enough header rows following the detected header")
-	}
-
-	// counter rows start after the second header row.
-	dataStart := headerIndex + 2
-	if dataStart >= len(linesFiltered) {
-		return nil, errors.New("no data rows found")
-	}
-
-	counters := make(map[string]statperf.CounterProperty)
-
-	for _, row := range linesFiltered[dataStart:] {
-		fields := strings.Split(row, collector.StatPerfSeparator)
-		if len(fields) < 12 {
-			fmt.Printf("skipping incomplete row %s\n", row)
-			continue
-		}
-
-		cp := statperf.CounterProperty{
-			Counter:     strings.TrimSpace(fields[2]),
-			Name:        strings.TrimSpace(fields[3]),
-			BaseCounter: strings.TrimSpace(fields[4]),
-			Description: strings.Trim(fields[5], ` "'`),
-			Properties:  strings.TrimSpace(fields[7]), // Skipping the second description field
-			Type:        strings.TrimSpace(fields[8]),
-			Unit:        strings.TrimSpace(fields[9]),
-			Deprecated:  strings.TrimSpace(fields[10]),
-			ReplacedBy:  strings.TrimSpace(fields[11]),
-		}
-
-		counters[cp.Counter] = cp
-	}
-	return counters, nil
 }

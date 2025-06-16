@@ -35,7 +35,7 @@ type CounterProperty struct {
 	Unit        string
 }
 
-func (s *StatPerf) parseCounters(input string) (map[string]CounterProperty, error) {
+func (s *StatPerf) ParseCounters(input string) (map[string]CounterProperty, error) {
 	linesFiltered := FilterNonEmpty(input)
 
 	// Search for the header row, which is expected to have at least 11 columns when split.
@@ -130,6 +130,7 @@ func (s *StatPerf) parseCounters(input string) (map[string]CounterProperty, erro
 			Type:        counterType,
 			Deprecated:  strings.TrimSpace(fields[headerMap["is-deprecated"]]),
 			ReplacedBy:  strings.TrimSpace(fields[headerMap["replaced-by"]]),
+			Unit:        strings.TrimSpace(fields[headerMap["unit"]]),
 		}
 		counters[cp.Counter] = cp
 	}
