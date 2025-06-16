@@ -137,13 +137,26 @@ func doDockerCompose(cmd *cobra.Command, _ []string) {
 
 func doGenerateMetrics(cmd *cobra.Command, _ []string) {
 	addRootOptions(cmd)
-	counters, cluster := BuildMetrics("", "", opts.Poller)
+	metricsPanelMap := make(map[string][]PanelDef)
+	visitDashboard(
+		[]string{
+			"grafana/dashboards/cmode",
+			"grafana/dashboards/cmode-details",
+			"grafana/dashboards/storagegrid",
+			"grafana/dashboards/cisco",
+		},
+		metricsPanelMap,
+		func(path string, data []byte, metricsPanelMap map[string][]PanelDef) {
+			visitExpressions(path, data, metricsPanelMap)
+		})
+	counters, cluster := BuildMetrics("", "", opts.Poller, metricsPanelMap)
 	generateCounterTemplate(counters, cluster.Version)
 }
 
 func doDescription(cmd *cobra.Command, _ []string) {
 	addRootOptions(cmd)
-	counters, _ := BuildMetrics("", "", opts.Poller)
+	metricsPanelMap := make(map[string][]PanelDef)
+	counters, _ := BuildMetrics("", "", opts.Poller, metricsPanelMap)
 	grafana.VisitDashboards(
 		[]string{"grafana/dashboards/cmode"},
 		func(path string, data []byte) {
@@ -560,7 +573,7 @@ func writeAdminSystemd(configFp string) {
 	println(color.Colorize("✓", color.Green) + " HTTP SD file: " + harvestAdminService + " created")
 }
 
-func BuildMetrics(dir, configPath, pollerName string) (map[string]Counter, conf.Remote) {
+func BuildMetrics(dir, configPath, pollerName string, metricsPanelMap map[string][]PanelDef) (map[string]Counter, conf.Remote) {
 	var (
 		poller         *conf.Poller
 		err            error
@@ -600,8 +613,8 @@ func BuildMetrics(dir, configPath, pollerName string) (map[string]Counter, conf.
 	}
 
 	swaggerBytes = readSwaggerJSON()
-	restCounters := processRestCounters(dir, restClient)
-	zapiCounters := processZapiCounters(dir, zapiClient)
+	restCounters := processRestCounters(dir, restClient, metricsPanelMap)
+	zapiCounters := processZapiCounters(dir, zapiClient, metricsPanelMap)
 	counters := mergeCounters(restCounters, zapiCounters)
 	counters = processExternalCounters(dir, counters)
 

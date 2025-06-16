@@ -879,14 +879,14 @@ func TestTopKRange(t *testing.T) {
 func checkTopKRange(t *testing.T, path string, data []byte) {
 
 	// collect all expressions
-	expressions := make([]exprP, 0)
+	expressions := make([]ExprP, 0)
 
 	VisitAllPanels(data, func(_ string, key, value gjson.Result) {
-		doTarget("", key, value, func(path string, expr string, format string, title string) {
+		DoTarget("", "", key, value, func(path string, expr string, format string, title string, _ string) {
 			if format == "table" || format == "stat" {
 				return
 			}
-			expressions = append(expressions, newExpr(path, expr, title))
+			expressions = append(expressions, NewExpr(path, expr, title, ""))
 		})
 	})
 
@@ -894,10 +894,10 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 	variables := allVariables(data)
 
 	for _, expr := range expressions {
-		if !strings.Contains(expr.expr, "topk") {
+		if !strings.Contains(expr.Expr, "topk") {
 			continue
 		}
-		if strings.Contains(expr.expr, "/") {
+		if strings.Contains(expr.Expr, "/") {
 			continue
 		}
 
@@ -918,9 +918,9 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 			}
 		}
 
-		problem := ensureLookBack(expr.expr)
+		problem := ensureLookBack(expr.Expr)
 		if problem != "" {
-			t.Errorf(`dashboard=%s path=%s topk got=%s %s`, ShortPath(path), expr.path, expr.expr, problem)
+			t.Errorf(`dashboard=%s path=%s topk got=%s %s`, ShortPath(path), expr.path, expr.Expr, problem)
 		}
 	}
 

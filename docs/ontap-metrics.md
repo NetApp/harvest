@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Jun-09
+Creation Date : 2025-Jun-16
 ONTAP Version: 9.16.1
 ```
 ## Understanding the structure
@@ -21,7 +21,7 @@ Number of I/Os queued to the disk but not yet issued <span class="key">Descripti
 * <span class="key">API</span> will be one of REST or ZAPI depending on which collector is used to collect the metric
 * <span class="key">Endpoint</span> name of the REST or ZAPI API used to collect this metric
 * <span class="key">Metric</span> name of the ONTAP metric
- <span class="key">Template</span> path of the template that collects the metric
+* <span class="key">Template</span> path of the template that collects the metric
 
 Performance related metrics also include:
 
@@ -47,6 +47,18 @@ The utilization percent of the disk. aggr_disk_busy is [disk_busy](#disk_busy) a
 | ZAPI | `perf-object-get-instances disk:constituent` | `disk_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Disk Utilization | Top $TopResources Average Disk Utilization per Aggregate |
+| cmode/aggregate.json | Disk Utilization | Top $TopResources Average Disk Utilization per Aggregate |
+| cmode/aggregate.json | Disk Utilization | Top $TopResources Average Disk Utilization Per Aggregate |
+| cmode/aggregate.json | Disk Utilization | Top $TopResources Average Disk Utilization Per Aggregate |
+| cmode/cluster.json | Throughput | Average Disk Utilization by Aggregate |
+| cmode/disk.json | Highlights | Raid Groups |
+| cmode/disk.json | Highlights | Plexes |
+
+
+
 ### aggr_disk_capacity
 
 Disk capacity in MB. aggr_disk_capacity is [disk_capacity](#disk_capacity) aggregated by `aggr`.
@@ -55,6 +67,7 @@ Disk capacity in MB. aggr_disk_capacity is [disk_capacity](#disk_capacity) aggre
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `capacity`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `disk_capacity`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### aggr_disk_cp_read_chain
@@ -67,6 +80,7 @@ Average number of blocks transferred in each consistency point read operation du
 | ZAPI | `perf-object-get-instances disk:constituent` | `cp_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_reads | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### aggr_disk_cp_read_latency
 
 Average latency per block in microseconds for consistency point read operations. aggr_disk_cp_read_latency is [disk_cp_read_latency](#disk_cp_read_latency) aggregated by `aggr`.
@@ -75,6 +89,7 @@ Average latency per block in microseconds for consistency point read operations.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_blocks | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `cp_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### aggr_disk_cp_reads
@@ -87,6 +102,7 @@ Number of disk read operations initiated each second for consistency point proce
 | ZAPI | `perf-object-get-instances disk:constituent` | `cp_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### aggr_disk_io_pending
 
 Average number of I/Os issued to the disk for which we have not yet received the response. aggr_disk_io_pending is [disk_io_pending](#disk_io_pending) aggregated by `aggr`.
@@ -95,6 +111,7 @@ Average number of I/Os issued to the disk for which we have not yet received the
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `io_pending`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `io_pending`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### aggr_disk_io_queued
@@ -107,6 +124,7 @@ Number of I/Os queued to the disk but not yet issued. aggr_disk_io_queued is [di
 | ZAPI | `perf-object-get-instances disk:constituent` | `io_queued`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### aggr_disk_max_busy
 
 The utilization percent of the disk. aggr_disk_max_busy is the maximum of [disk_busy](#disk_busy) for label `aggr`.
@@ -115,6 +133,16 @@ The utilization percent of the disk. aggr_disk_max_busy is the maximum of [disk_
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `disk_busy_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `disk_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/disk.json | Highlights | Top $TopResources Aggregates by Disk Utilization |
+| cmode/disk.json | Highlights | Top $TopResources Aggregates by Disk Utilization |
+| cmode/disk.json | Highlights | Top $TopResources Aggregates by Max Disk Utilization |
+| cmode/disk.json | Highlights | Top $TopResources Aggregates by Max Disk Utilization |
+| cmode/mcc_cluster.json | Highlights | Max Disk Utilization Per Aggregate |
+
 
 
 ### aggr_disk_max_capacity
@@ -127,6 +155,7 @@ Disk capacity in MB. aggr_disk_max_capacity is the maximum of [disk_capacity](#d
 | ZAPI | `perf-object-get-instances disk:constituent` | `disk_capacity`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### aggr_disk_max_cp_read_chain
 
 Average number of blocks transferred in each consistency point read operation during a CP. aggr_disk_max_cp_read_chain is the maximum of [disk_cp_read_chain](#disk_cp_read_chain) for label `aggr`.
@@ -135,6 +164,7 @@ Average number of blocks transferred in each consistency point read operation du
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_count | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `cp_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_reads | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### aggr_disk_max_cp_read_latency
@@ -147,6 +177,7 @@ Average latency per block in microseconds for consistency point read operations.
 | ZAPI | `perf-object-get-instances disk:constituent` | `cp_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### aggr_disk_max_cp_reads
 
 Number of disk read operations initiated each second for consistency point processing. aggr_disk_max_cp_reads is the maximum of [disk_cp_reads](#disk_cp_reads) for label `aggr`.
@@ -155,6 +186,7 @@ Number of disk read operations initiated each second for consistency point proce
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `cp_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### aggr_disk_max_io_pending
@@ -167,6 +199,7 @@ Average number of I/Os issued to the disk for which we have not yet received the
 | ZAPI | `perf-object-get-instances disk:constituent` | `io_pending`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### aggr_disk_max_io_queued
 
 Number of I/Os queued to the disk but not yet issued. aggr_disk_max_io_queued is the maximum of [disk_io_queued](#disk_io_queued) for label `aggr`.
@@ -175,6 +208,7 @@ Number of I/Os queued to the disk but not yet issued. aggr_disk_max_io_queued is
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `io_queued`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `io_queued`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### aggr_disk_max_total_data
@@ -187,6 +221,7 @@ Total throughput for user operations per second. aggr_disk_max_total_data is the
 | ZAPI | `perf-object-get-instances disk:constituent` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### aggr_disk_max_total_transfers
 
 Total number of disk operations involving data transfer initiated per second. aggr_disk_max_total_transfers is the maximum of [disk_total_transfers](#disk_total_transfers) for label `aggr`.
@@ -195,6 +230,15 @@ Total number of disk operations involving data transfer initiated per second. ag
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `total_transfer_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `total_transfers`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/disk.json | Highlights | Top $TopResources Aggregates by Disk Utilization |
+| cmode/disk.json | Highlights | Top $TopResources Aggregates by Disk Utilization |
+| cmode/disk.json | Highlights | Top $TopResources Aggregates by Disk Transfers |
+| cmode/disk.json | Highlights | Top $TopResources Aggregates by Disk Transfers |
+
 
 
 ### aggr_disk_max_user_read_blocks
@@ -207,6 +251,7 @@ Number of blocks transferred for user read operations per second. aggr_disk_max_
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_read_blocks`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### aggr_disk_max_user_read_chain
 
 Average number of blocks transferred in each user read operation. aggr_disk_max_user_read_chain is the maximum of [disk_user_read_chain](#disk_user_read_chain) for label `aggr`.
@@ -215,6 +260,13 @@ Average number of blocks transferred in each user read operation. aggr_disk_max_
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_count | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_reads | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/disk.json | Highlights | Top $TopResources Aggregates by User Read Chain Length |
+| cmode/disk.json | Highlights | Top $TopResources Aggregates by User Read Chain Length |
+
 
 
 ### aggr_disk_max_user_read_latency
@@ -227,6 +279,7 @@ Average latency per block in microseconds for user read operations. aggr_disk_ma
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### aggr_disk_max_user_reads
 
 Number of disk read operations initiated each second for retrieving data or metadata associated with user requests. aggr_disk_max_user_reads is the maximum of [disk_user_reads](#disk_user_reads) for label `aggr`.
@@ -235,6 +288,7 @@ Number of disk read operations initiated each second for retrieving data or meta
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_read_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### aggr_disk_max_user_write_blocks
@@ -247,6 +301,7 @@ Number of blocks transferred for user write operations per second. aggr_disk_max
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_write_blocks`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### aggr_disk_max_user_write_chain
 
 Average number of blocks transferred in each user write operation. aggr_disk_max_user_write_chain is the maximum of [disk_user_write_chain](#disk_user_write_chain) for label `aggr`.
@@ -255,6 +310,13 @@ Average number of blocks transferred in each user write operation. aggr_disk_max
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_write_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_count | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_write_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_writes | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/disk.json | Highlights | Top $TopResources Aggregates by User Write Chain Length |
+| cmode/disk.json | Highlights | Top $TopResources Aggregates by User Write Chain Length |
+
 
 
 ### aggr_disk_max_user_write_latency
@@ -267,6 +329,7 @@ Average latency per block in microseconds for user write operations. aggr_disk_m
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### aggr_disk_max_user_writes
 
 Number of disk write operations initiated each second for storing data or metadata associated with user requests. aggr_disk_max_user_writes is the maximum of [disk_user_writes](#disk_user_writes) for label `aggr`.
@@ -275,6 +338,7 @@ Number of disk write operations initiated each second for storing data or metada
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_write_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_writes`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### aggr_disk_total_data
@@ -287,6 +351,12 @@ Total throughput for user operations per second. aggr_disk_total_data is [disk_t
 | ZAPI | `perf-object-get-instances disk:constituent` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/power.json | Aggregate | Aggregates |
+
+
+
 ### aggr_disk_total_transfers
 
 Total number of disk operations involving data transfer initiated per second. aggr_disk_total_transfers is [disk_total_transfers](#disk_total_transfers) aggregated by `aggr`.
@@ -295,6 +365,12 @@ Total number of disk operations involving data transfer initiated per second. ag
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `total_transfer_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `total_transfers`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/power.json | Aggregate | Aggregates |
+
 
 
 ### aggr_disk_user_read_blocks
@@ -307,6 +383,7 @@ Number of blocks transferred for user read operations per second. aggr_disk_user
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_read_blocks`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### aggr_disk_user_read_chain
 
 Average number of blocks transferred in each user read operation. aggr_disk_user_read_chain is [disk_user_read_chain](#disk_user_read_chain) aggregated by `aggr`.
@@ -315,6 +392,7 @@ Average number of blocks transferred in each user read operation. aggr_disk_user
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_count | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_reads | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### aggr_disk_user_read_latency
@@ -327,6 +405,7 @@ Average latency per block in microseconds for user read operations. aggr_disk_us
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### aggr_disk_user_reads
 
 Number of disk read operations initiated each second for retrieving data or metadata associated with user requests. aggr_disk_user_reads is [disk_user_reads](#disk_user_reads) aggregated by `aggr`.
@@ -335,6 +414,13 @@ Number of disk read operations initiated each second for retrieving data or meta
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_read_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/power.json | Highlights | Top $TopResources Aggregates by IOPS per Power Consumed |
+| cmode/power.json | Highlights | Top $TopResources Aggregates by IOPS per Power Consumed |
+
 
 
 ### aggr_disk_user_write_blocks
@@ -347,6 +433,7 @@ Number of blocks transferred for user write operations per second. aggr_disk_use
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_write_blocks`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### aggr_disk_user_write_chain
 
 Average number of blocks transferred in each user write operation. aggr_disk_user_write_chain is [disk_user_write_chain](#disk_user_write_chain) aggregated by `aggr`.
@@ -355,6 +442,7 @@ Average number of blocks transferred in each user write operation. aggr_disk_use
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_write_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_count | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_write_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_writes | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### aggr_disk_user_write_latency
@@ -367,6 +455,7 @@ Average latency per block in microseconds for user write operations. aggr_disk_u
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### aggr_disk_user_writes
 
 Number of disk write operations initiated each second for storing data or metadata associated with user requests. aggr_disk_user_writes is [disk_user_writes](#disk_user_writes) aggregated by `aggr`.
@@ -375,6 +464,13 @@ Number of disk write operations initiated each second for storing data or metada
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_write_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_writes`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/power.json | Highlights | Top $TopResources Aggregates by IOPS per Power Consumed |
+| cmode/power.json | Highlights | Top $TopResources Aggregates by IOPS per Power Consumed |
+
 
 
 ### aggr_efficiency_savings
@@ -386,6 +482,7 @@ Space saved by storage efficiencies (logical_used - used)
 | REST | `api/storage/aggregates` | `space.efficiency.savings` | conf/rest/9.12.0/aggr.yaml |
 
 
+
 ### aggr_efficiency_savings_wo_snapshots
 
 Space saved by storage efficiencies (logical_used - used)
@@ -395,6 +492,7 @@ Space saved by storage efficiencies (logical_used - used)
 | REST | `api/storage/aggregates` | `space.efficiency_without_snapshots.savings` | conf/rest/9.12.0/aggr.yaml |
 
 
+
 ### aggr_efficiency_savings_wo_snapshots_flexclones
 
 Space saved by storage efficiencies (logical_used - used)
@@ -402,6 +500,7 @@ Space saved by storage efficiencies (logical_used - used)
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/storage/aggregates` | `space.efficiency_without_snapshots_flexclones.savings` | conf/rest/9.12.0/aggr.yaml |
+
 
 
 ### aggr_hybrid_cache_size_total
@@ -414,6 +513,7 @@ Total usable space in bytes of SSD cache. Only provided when hybrid_cache.enable
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-space-attributes.hybrid-cache-size-total` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
 
+
 ### aggr_hybrid_disk_count
 
 Number of disks used in the cache tier of the aggregate. Only provided when hybrid_cache.enabled is 'true'.
@@ -421,6 +521,7 @@ Number of disks used in the cache tier of the aggregate. Only provided when hybr
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/storage/aggregates` | `block_storage.hybrid_cache.disk_count` | conf/rest/9.12.0/aggr.yaml |
+
 
 
 ### aggr_inode_files_private_used
@@ -433,6 +534,7 @@ Number of system metadata files used. If the referenced file system is restricte
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-inode-attributes.files-private-used` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
 
+
 ### aggr_inode_files_total
 
 Maximum number of user-visible files that this referenced file system can currently hold. If the referenced file system is restricted or offline, a value of 0 is returned.
@@ -441,6 +543,13 @@ Maximum number of user-visible files that this referenced file system can curren
 |--------|----------|--------|---------|
 | REST | `api/storage/aggregates` | `inode_attributes.files_total` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-inode-attributes.files-total` | conf/zapi/cdot/9.8.0/aggr.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Inodes Files |
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Inodes Files |
+
 
 
 ### aggr_inode_files_used
@@ -453,6 +562,13 @@ Number of user-visible files used in the referenced file system. If the referenc
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-inode-attributes.files-used` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Inodes Files |
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Inodes Files |
+
+
+
 ### aggr_inode_inodefile_private_capacity
 
 Number of files that can currently be stored on disk for system metadata files. This number will dynamically increase as more system files are created.This is an advanced property; there is an added computational cost to retrieving its value. The field is not populated for either a collection GET or an instance GET unless it is explicitly requested using the <i>fields</i> query parameter containing either footprint or **.
@@ -461,6 +577,13 @@ Number of files that can currently be stored on disk for system metadata files. 
 |--------|----------|--------|---------|
 | REST | `api/storage/aggregates` | `inode_attributes.file_private_capacity` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-inode-attributes.inodefile-private-capacity` | conf/zapi/cdot/9.8.0/aggr.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Inode Capacity |
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Inode Capacity |
+
 
 
 ### aggr_inode_inodefile_public_capacity
@@ -473,6 +596,13 @@ Number of files that can currently be stored on disk for user-visible files.  Th
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-inode-attributes.inodefile-public-capacity` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Inode Capacity |
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Inode Capacity |
+
+
+
 ### aggr_inode_maxfiles_available
 
 The count of the maximum number of user-visible files currently allowable on the referenced file system.
@@ -481,6 +611,7 @@ The count of the maximum number of user-visible files currently allowable on the
 |--------|----------|--------|---------|
 | REST | `api/storage/aggregates` | `inode_attributes.max_files_available` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-inode-attributes.maxfiles-available` | conf/zapi/cdot/9.8.0/aggr.yaml |
+
 
 
 ### aggr_inode_maxfiles_possible
@@ -493,6 +624,7 @@ The largest value to which the maxfiles-available parameter can be increased by 
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-inode-attributes.maxfiles-possible` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
 
+
 ### aggr_inode_maxfiles_used
 
 The number of user-visible files currently in use on the referenced file system.
@@ -501,6 +633,7 @@ The number of user-visible files currently in use on the referenced file system.
 |--------|----------|--------|---------|
 | REST | `api/storage/aggregates` | `inode_attributes.max_files_used` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-inode-attributes.maxfiles-used` | conf/zapi/cdot/9.8.0/aggr.yaml |
+
 
 
 ### aggr_inode_used_percent
@@ -513,6 +646,13 @@ The percentage of disk space currently in use based on user-visible file count o
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-inode-attributes.percent-inode-used-capacity` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Inodes Used % |
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Inodes Used % |
+
+
+
 ### aggr_labels
 
 This metric provides information about Aggregate
@@ -521,6 +661,16 @@ This metric provides information about Aggregate
 |--------|----------|--------|---------|
 | REST | `api/storage/aggregates` | `Harvest generated` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/aggr.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Highlights | Aggregates |
+| cmode/aggregate.json | Highlights | Aggregates |
+| cmode/datacenter.json | Highlights | Object Count |
+| storagegrid/fabricpool.json | Highlights | Aggregates |
+| storagegrid/fabricpool.json | Highlights | Aggregates |
+
 
 
 ### aggr_logical_used_wo_snapshots
@@ -533,6 +683,19 @@ Logical used
 | ZAPI | `aggr-efficiency-get-iter` | `aggr-efficiency-info.aggr-efficiency-cumulative-info.total-data-reduction-logical-used-wo-snapshots` | conf/zapi/cdot/9.9.0/aggr_efficiency.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Storage Efficiency Ratios | Data Reduction with FlexClones |
+| cmode/aggregate.json | Storage Efficiency Ratios | Top $TopResources Aggregates by Logical Used with FlexClones |
+| cmode/aggregate.json | Storage Efficiency Ratios | Top $TopResources Aggregates by Logical Used with FlexClones |
+| cmode/cluster.json | Storage Efficiency Ratios | Data Reduction with FlexClones |
+| cmode/cluster.json | Storage Efficiency Ratios | Logical Used with FlexClones |
+| cmode/datacenter.json | Storage Efficiency | Data Reduction with FlexClones |
+| cmode/datacenter.json | Storage Efficiency | Top $TopResources Logical Used with FlexClones by Cluster |
+| cmode/datacenter.json | Storage Efficiency | Top $TopResources Logical Used with FlexClones by Cluster |
+
+
+
 ### aggr_logical_used_wo_snapshots_flexclones
 
 Logical used
@@ -541,6 +704,19 @@ Logical used
 |--------|----------|--------|---------|
 | REST | `api/storage/aggregates` | `space.efficiency_without_snapshots_flexclones.logical_used` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-efficiency-get-iter` | `aggr-efficiency-info.aggr-efficiency-cumulative-info.total-data-reduction-logical-used-wo-snapshots-flexclones` | conf/zapi/cdot/9.9.0/aggr_efficiency.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Storage Efficiency Ratios | Data Reduction |
+| cmode/aggregate.json | Storage Efficiency Ratios | Top $TopResources Aggregates by Logical Used |
+| cmode/aggregate.json | Storage Efficiency Ratios | Top $TopResources Aggregates by Logical Used |
+| cmode/cluster.json | Storage Efficiency Ratios | Data Reduction |
+| cmode/cluster.json | Storage Efficiency Ratios | Logical Used |
+| cmode/datacenter.json | Storage Efficiency | Data Reduction |
+| cmode/datacenter.json | Storage Efficiency | Top $TopResources Logical Used by Cluster |
+| cmode/datacenter.json | Storage Efficiency | Top $TopResources Logical Used by Cluster |
+
 
 
 ### aggr_new_status
@@ -553,6 +729,7 @@ This metric indicates a value of 1 if the aggregate state is online (indicating 
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
 
+
 ### aggr_object_store_logical_used
 
 Logical space usage of aggregates in the attached object store.
@@ -560,6 +737,7 @@ Logical space usage of aggregates in the attached object store.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/private/cli/aggr/show-space` | `object_store_logical_used` | conf/rest/9.12.0/aggr.yaml |
+
 
 
 ### aggr_object_store_physical_used
@@ -571,6 +749,7 @@ Physical space usage of aggregates in the attached object store.
 | REST | `api/private/cli/aggr/show-space` | `object_store_physical_used` | conf/rest/9.12.0/aggr.yaml |
 
 
+
 ### aggr_other_data
 
 Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.
@@ -578,6 +757,7 @@ Performance metric for other I/O operations. Other I/O operations can be metadat
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/storage/aggregates` | `statistics.throughput_raw.other`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/aggr.yaml |
+
 
 
 ### aggr_other_latency
@@ -589,6 +769,7 @@ Performance metric for other I/O operations. Other I/O operations can be metadat
 | KeyPerf | `api/storage/aggregates` | `statistics.latency_raw.other`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> aggr_statistics.iops_raw.other | conf/keyperf/9.15.0/aggr.yaml |
 
 
+
 ### aggr_other_ops
 
 Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.
@@ -596,6 +777,7 @@ Performance metric for other I/O operations. Other I/O operations can be metadat
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/storage/aggregates` | `statistics.iops_raw.other`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/aggr.yaml |
+
 
 
 ### aggr_physical_used_wo_snapshots
@@ -608,6 +790,19 @@ Total Data Reduction Physical Used Without Snapshots
 | ZAPI | `aggr-efficiency-get-iter` | `aggr-efficiency-info.aggr-efficiency-cumulative-info.total-data-reduction-physical-used-wo-snapshots` | conf/zapi/cdot/9.9.0/aggr_efficiency.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Storage Efficiency Ratios | Data Reduction with FlexClones |
+| cmode/aggregate.json | Storage Efficiency Ratios | Top $TopResources Aggregates by Physical Used with FlexClones |
+| cmode/aggregate.json | Storage Efficiency Ratios | Top $TopResources Aggregates by Physical Used with FlexClones |
+| cmode/cluster.json | Storage Efficiency Ratios | Data Reduction with FlexClones |
+| cmode/cluster.json | Storage Efficiency Ratios | Physical Used with FlexClones |
+| cmode/datacenter.json | Storage Efficiency | Data Reduction with FlexClones |
+| cmode/datacenter.json | Storage Efficiency | Top $TopResources Physical Used with FlexClones by Cluster |
+| cmode/datacenter.json | Storage Efficiency | Top $TopResources Physical Used with FlexClones by Cluster |
+
+
+
 ### aggr_physical_used_wo_snapshots_flexclones
 
 Total Data Reduction Physical Used without snapshots and flexclones
@@ -616,6 +811,19 @@ Total Data Reduction Physical Used without snapshots and flexclones
 |--------|----------|--------|---------|
 | REST | `api/storage/aggregates` | `space.efficiency_without_snapshots_flexclones.logical_used, space.efficiency_without_snapshots_flexclones.savings` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-efficiency-get-iter` | `aggr-efficiency-info.aggr-efficiency-cumulative-info.total-data-reduction-physical-used-wo-snapshots-flexclones` | conf/zapi/cdot/9.9.0/aggr_efficiency.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Storage Efficiency Ratios | Data Reduction |
+| cmode/aggregate.json | Storage Efficiency Ratios | Top $TopResources Aggregates by Physical Used |
+| cmode/aggregate.json | Storage Efficiency Ratios | Top $TopResources Aggregates by Physical Used |
+| cmode/cluster.json | Storage Efficiency Ratios | Data Reduction |
+| cmode/cluster.json | Storage Efficiency Ratios | Physical Used |
+| cmode/datacenter.json | Storage Efficiency | Data Reduction |
+| cmode/datacenter.json | Storage Efficiency | Top $TopResources Physical Used by Cluster |
+| cmode/datacenter.json | Storage Efficiency | Top $TopResources Physical Used by Cluster |
+
 
 
 ### aggr_power
@@ -628,6 +836,7 @@ Power consumed by aggregate in Watts.
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### aggr_primary_disk_count
 
 Number of disks used in the aggregate. This includes parity disks, but excludes disks in the hybrid cache.
@@ -635,6 +844,7 @@ Number of disks used in the aggregate. This includes parity disks, but excludes 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/storage/aggregates` | `block_storage.primary.disk_count` | conf/rest/9.12.0/aggr.yaml |
+
 
 
 ### aggr_raid_disk_count
@@ -647,6 +857,17 @@ Number of disks in the aggregate.
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-raid-attributes.disk-count` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Highlights | Disks |
+| cmode/aggregate.json | Highlights | Aggregates |
+| cmode/disk.json | Highlights | Total Disks by Aggregate(s) |
+| cmode/disk.json | Highlights | Disk Capacity per Aggregate |
+| storagegrid/fabricpool.json | Highlights | Disks |
+| storagegrid/fabricpool.json | Highlights | Aggregates |
+
+
+
 ### aggr_raid_plex_count
 
 Number of plexes in the aggregate
@@ -655,6 +876,7 @@ Number of plexes in the aggregate
 |--------|----------|--------|---------|
 | REST | `api/storage/aggregates` | `block_storage.plexes.#` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-raid-attributes.plex-count` | conf/zapi/cdot/9.8.0/aggr.yaml |
+
 
 
 ### aggr_raid_size
@@ -667,6 +889,7 @@ Option to specify the maximum number of disks that can be included in a RAID gro
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-raid-attributes.raid-size` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
 
+
 ### aggr_read_data
 
 Performance metric for read I/O operations.
@@ -674,6 +897,7 @@ Performance metric for read I/O operations.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/storage/aggregates` | `statistics.throughput_raw.read`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/aggr.yaml |
+
 
 
 ### aggr_read_latency
@@ -685,6 +909,7 @@ Performance metric for read I/O operations.
 | KeyPerf | `api/storage/aggregates` | `statistics.latency_raw.read`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> aggr_statistics.iops_raw.read | conf/keyperf/9.15.0/aggr.yaml |
 
 
+
 ### aggr_read_ops
 
 Performance metric for read I/O operations.
@@ -692,6 +917,7 @@ Performance metric for read I/O operations.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/storage/aggregates` | `statistics.iops_raw.read`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/aggr.yaml |
+
 
 
 ### aggr_snapshot_files_total
@@ -704,6 +930,13 @@ Total files allowed in snapshots
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-snapshot-attributes.files-total` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Snapshot Files |
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Snapshot Files |
+
+
+
 ### aggr_snapshot_files_used
 
 Total files created in snapshots
@@ -714,6 +947,13 @@ Total files created in snapshots
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-snapshot-attributes.files-used` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Snapshot Files |
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Snapshot Files |
+
+
+
 ### aggr_snapshot_inode_used_percent
 
 The percentage of disk space currently in use based on user-visible file (inode) count on the referenced file system.
@@ -721,6 +961,13 @@ The percentage of disk space currently in use based on user-visible file (inode)
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-snapshot-attributes.percent-inode-used-capacity` | conf/zapi/cdot/9.8.0/aggr.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Snapshot Inodes Used % |
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Snapshot Inodes Used % |
+
 
 
 ### aggr_snapshot_maxfiles_available
@@ -733,6 +980,13 @@ Maximum files available for snapshots
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-snapshot-attributes.maxfiles-available` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Snapshot MaxFiles |
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Snapshot MaxFiles |
+
+
+
 ### aggr_snapshot_maxfiles_possible
 
 The largest value to which the maxfiles-available parameter can be increased by reconfiguration, on the referenced file system.
@@ -741,6 +995,13 @@ The largest value to which the maxfiles-available parameter can be increased by 
 |--------|----------|--------|---------|
 | REST | `api/storage/aggregates` | `snapshot.max_files_available, snapshot.max_files_used` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-snapshot-attributes.maxfiles-possible` | conf/zapi/cdot/9.8.0/aggr.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Snapshot MaxFiles |
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Snapshot MaxFiles |
+
 
 
 ### aggr_snapshot_maxfiles_used
@@ -753,6 +1014,13 @@ Files in use by snapshots
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-snapshot-attributes.maxfiles-used` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Snapshot MaxFiles |
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Snapshot MaxFiles |
+
+
+
 ### aggr_snapshot_reserve_percent
 
 Percentage of space reserved for snapshots
@@ -761,6 +1029,13 @@ Percentage of space reserved for snapshots
 |--------|----------|--------|---------|
 | REST | `api/storage/aggregates` | `space.snapshot.reserve_percent` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-snapshot-attributes.snapshot-reserve-percent` | conf/zapi/cdot/9.8.0/aggr.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Space Reserved for Snapshots % |
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Space Reserved for Snapshots % |
+
 
 
 ### aggr_snapshot_size_available
@@ -773,6 +1048,13 @@ Available space for snapshots in bytes
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-snapshot-attributes.size-available` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Space Used by Snapshots |
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Space Used by Snapshots |
+
+
+
 ### aggr_snapshot_size_total
 
 Total space for snapshots in bytes
@@ -781,6 +1063,7 @@ Total space for snapshots in bytes
 |--------|----------|--------|---------|
 | REST | `api/storage/aggregates` | `space.snapshot.total` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-snapshot-attributes.size-total` | conf/zapi/cdot/9.8.0/aggr.yaml |
+
 
 
 ### aggr_snapshot_size_used
@@ -793,6 +1076,13 @@ Space used by snapshots in bytes
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-snapshot-attributes.size-used` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Space Used by Snapshots |
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Space Used by Snapshots |
+
+
+
 ### aggr_snapshot_used_percent
 
 Percentage of disk space used by snapshots
@@ -801,6 +1091,15 @@ Percentage of disk space used by snapshots
 |--------|----------|--------|---------|
 | REST | `api/storage/aggregates` | `space.snapshot.used_percent` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-snapshot-attributes.percent-used-capacity` | conf/zapi/cdot/9.8.0/aggr.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Space Used by Snapshots % |
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Space Used by Snapshots % |
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Space Used by Snapshots % |
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Space Used by Snapshots % |
+
 
 
 ### aggr_space_available
@@ -813,6 +1112,21 @@ Space available in bytes.
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-space-attributes.size-available` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Highlights | Available Space |
+| cmode/aggregate.json | Highlights | Aggregates |
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Space Available |
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Space Available |
+| cmode/cluster.json | Highlights | Available Space |
+| cmode/datacenter.json | Highlights | Available Space |
+| cmode/datacenter.json | Highlights | Top $TopResources Available Space by Cluster |
+| cmode/datacenter.json | Highlights | Top $TopResources Available Space by Cluster |
+| storagegrid/fabricpool.json | Highlights | Available Space |
+| storagegrid/fabricpool.json | Highlights | Space Available |
+
+
+
 ### aggr_space_capacity_tier_used
 
 Used space in bytes in the cloud store. Only applicable for aggregates with a cloud store tier.
@@ -821,6 +1135,16 @@ Used space in bytes in the cloud store. Only applicable for aggregates with a cl
 |--------|----------|--------|---------|
 | REST | `api/storage/aggregates` | `space.cloud_storage.used` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-space-attributes.capacity-tier-used` | conf/zapi/cdot/9.8.0/aggr.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Capacity Tier Used |
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Capacity Tier Used |
+| cmode/aggregate.json | FabricPool | Top $TopResources Aggregates by Capacity Tier Footprint |
+| cmode/aggregate.json | FabricPool | Top $TopResources Aggregates by Capacity Tier Footprint |
+| storagegrid/fabricpool.json | Highlights | Capacity Tier Used |
+
 
 
 ### aggr_space_data_compacted_count
@@ -833,6 +1157,7 @@ Amount of compacted data in bytes.
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-space-attributes.data-compacted-count` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
 
+
 ### aggr_space_data_compaction_saved
 
 Space saved in bytes by compacting the data.
@@ -841,6 +1166,13 @@ Space saved in bytes by compacting the data.
 |--------|----------|--------|---------|
 | REST | `api/storage/aggregates` | `space.block_storage.data_compaction_space_saved` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-space-attributes.data-compaction-space-saved` | conf/zapi/cdot/9.8.0/aggr.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Data Compaction space saved |
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Data Compaction space saved |
+
 
 
 ### aggr_space_data_compaction_saved_percent
@@ -853,6 +1185,7 @@ Percentage saved by compacting the data.
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-space-attributes.data-compaction-space-saved-percent` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
 
+
 ### aggr_space_performance_tier_inactive_user_data
 
 The size that is physically used in the block storage and has a cold temperature, in bytes. This property is only supported if the aggregate is either attached to a cloud store or can be attached to a cloud store.This is an advanced property; there is an added computational cost to retrieving its value. The field is not populated for either a collection GET or an instance GET unless it is explicitly requested using the <i>fields</i> query parameter containing either block_storage.inactive_user_data or **.
@@ -861,6 +1194,13 @@ The size that is physically used in the block storage and has a cold temperature
 |--------|----------|--------|---------|
 | REST | `api/storage/aggregates` | `space.block_storage.inactive_user_data` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-space-attributes.performance-tier-inactive-user-data` | conf/zapi/cdot/9.8.0/aggr.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Inactive Data |
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Inactive Data |
+
 
 
 ### aggr_space_performance_tier_inactive_user_data_percent
@@ -873,6 +1213,7 @@ The percentage of inactive user data in the block storage. This property is only
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-space-attributes.performance-tier-inactive-user-data-percent` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
 
+
 ### aggr_space_performance_tier_used
 
 A summation of volume footprints (including volume guarantees), in bytes. This includes all of the volume footprints in the block_storage tier and the cloud_storage tier.This is an advanced property; there is an added computational cost to retrieving its value. The field is not populated for either a collection GET or an instance GET unless it is explicitly requested using the <i>fields</i> query parameter containing either footprint or **.
@@ -881,6 +1222,13 @@ A summation of volume footprints (including volume guarantees), in bytes. This i
 |--------|----------|--------|---------|
 | REST | `api/storage/aggregates` | `space.footprint` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-space-get-iter` | `volume-footprints` | conf/zapi/cdot/9.8.0/aggr.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | FabricPool | Top $TopResources Aggregates by Performance Tier Footprint |
+| cmode/aggregate.json | FabricPool | Top $TopResources Aggregates by Performance Tier Footprint |
+
 
 
 ### aggr_space_performance_tier_used_percent
@@ -893,6 +1241,13 @@ A summation of volume footprints inside the aggregate,as a percentage. A volume'
 | ZAPI | `aggr-space-get-iter` | `volume-footprints-percent` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | FabricPool | Top $TopResources Aggregates by Performance Tier Footprint % |
+| cmode/aggregate.json | FabricPool | Top $TopResources Aggregates by Performance Tier Footprint % |
+
+
+
 ### aggr_space_physical_used
 
 Total physical used size of an aggregate in bytes.
@@ -901,6 +1256,19 @@ Total physical used size of an aggregate in bytes.
 |--------|----------|--------|---------|
 | REST | `api/storage/aggregates` | `space.block_storage.physical_used` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-space-attributes.physical-used` | conf/zapi/cdot/9.8.0/aggr.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Physical Space Used |
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Physical Space Used |
+| cmode/aggregate.json | Storage Efficiency Ratios | Top $TopResources Aggregates by Physical Used with Snapshots & FlexClones |
+| cmode/aggregate.json | Storage Efficiency Ratios | Top $TopResources Aggregates by Physical Used with Snapshots & FlexClones |
+| cmode/cluster.json | Storage Efficiency Ratios | Physical Used with Snapshots & FlexClones |
+| cmode/datacenter.json | Storage Efficiency | Top $TopResources Physical Used with Snapshots & FlexClones by Cluster |
+| cmode/datacenter.json | Storage Efficiency | Top $TopResources Physical Used with Snapshots & FlexClones by Cluster |
+| storagegrid/fabricpool.json | Highlights | Physical Space Used |
+
 
 
 ### aggr_space_physical_used_percent
@@ -913,6 +1281,15 @@ Physical used percentage.
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-space-attributes.physical-used-percent` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Physical Space Used % |
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Physical Space Used % |
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Inactive Data % |
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Inactive Data % |
+
+
+
 ### aggr_space_reserved
 
 The total disk space in bytes that is reserved on the referenced file system. The reserved space is already counted in the used space, so this element can be used to see what portion of the used space represents space reserved for future use.
@@ -920,6 +1297,7 @@ The total disk space in bytes that is reserved on the referenced file system. Th
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-space-attributes.total-reserved-space` | conf/zapi/cdot/9.8.0/aggr.yaml |
+
 
 
 ### aggr_space_sis_saved
@@ -932,6 +1310,13 @@ Amount of space saved in bytes by storage efficiency.
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-space-attributes.sis-space-saved` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  SIS space saved |
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  SIS space saved |
+
+
+
 ### aggr_space_sis_saved_percent
 
 Percentage of space saved by storage efficiency.
@@ -940,6 +1325,7 @@ Percentage of space saved by storage efficiency.
 |--------|----------|--------|---------|
 | REST | `api/storage/aggregates` | `space.block_storage.volume_deduplication_space_saved_percent` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-space-attributes.sis-space-saved-percent` | conf/zapi/cdot/9.8.0/aggr.yaml |
+
 
 
 ### aggr_space_sis_shared_count
@@ -952,6 +1338,7 @@ Amount of shared bytes counted by storage efficiency.
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-space-attributes.sis-shared-count` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
 
+
 ### aggr_space_total
 
 Total usable space in bytes, not including WAFL reserve and aggregate snapshot reserve.
@@ -960,6 +1347,33 @@ Total usable space in bytes, not including WAFL reserve and aggregate snapshot r
 |--------|----------|--------|---------|
 | REST | `api/storage/aggregates` | `space.block_storage.size` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-space-attributes.size-total` | conf/zapi/cdot/9.8.0/aggr.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Highlights | Total Space |
+| cmode/aggregate.json | Highlights | Space Used % |
+| cmode/aggregate.json | Highlights | Aggregates |
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Total Space |
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Total Space |
+| cmode/cdot.json | Capacity Metrics | Top $TopResources Aggregates by Capacity Used % |
+| cmode/cdot.json | Capacity Metrics | Top $TopResources Aggregates by Capacity Used % |
+| cmode/cdot.json | Capacity Metrics | Top $TopResources Aggregates by Capacity Used % |
+| cmode/cdot.json | Capacity Metrics | Top $TopResources Aggregates by Capacity Used % |
+| cmode/cluster.json | Highlights | Total Space |
+| cmode/cluster.json | Highlights | Space Used % |
+| cmode/cluster.json | Nodes & Subsystems - $Cluster | Capacity used |
+| cmode/datacenter.json | Highlights | Total Space |
+| cmode/datacenter.json | Highlights | Space Used % |
+| cmode/datacenter.json | Highlights | Top $TopResources Total Space by Cluster |
+| cmode/datacenter.json | Highlights | Top $TopResources Total Space by Cluster |
+| cmode/datacenter.json | Highlights | Top $TopResources Space Used % by Cluster |
+| cmode/datacenter.json | Highlights | Top $TopResources Space Used % by Cluster |
+| cmode/disk.json | Highlights | Disk Capacity per Aggregate |
+| storagegrid/fabricpool.json | Highlights | Total Space |
+| storagegrid/fabricpool.json | Highlights | Space Used % |
+| storagegrid/fabricpool.json | Highlights | Aggregates |
+
 
 
 ### aggr_space_used
@@ -972,6 +1386,35 @@ Space used or reserved in bytes. Includes volume guarantees and aggregate metada
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-space-attributes.size-used` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Highlights | Used and Reserved Space |
+| cmode/aggregate.json | Highlights | Space Used % |
+| cmode/aggregate.json | Highlights | Aggregates |
+| cmode/cdot.json | Capacity Metrics | Top $TopResources Aggregates by Capacity Used % |
+| cmode/cdot.json | Capacity Metrics | Top $TopResources Aggregates by Capacity Used % |
+| cmode/cdot.json | Capacity Metrics | Top $TopResources Aggregates by Capacity Used % |
+| cmode/cdot.json | Capacity Metrics | Top $TopResources Aggregates by Capacity Used % |
+| cmode/cluster.json | Highlights | Used and Reserved Space |
+| cmode/cluster.json | Highlights | Space Used % |
+| cmode/cluster.json | Nodes & Subsystems - $Cluster | Capacity used |
+| cmode/datacenter.json | Highlights | Space Used % |
+| cmode/datacenter.json | Highlights | Used and Reserved Space |
+| cmode/datacenter.json | Highlights | Top $TopResources Used and Reserved Space by Cluster |
+| cmode/datacenter.json | Highlights | Top $TopResources Used and Reserved Space by Cluster |
+| cmode/datacenter.json | Highlights | Top $TopResources Space Used % by Cluster |
+| cmode/datacenter.json | Highlights | Top $TopResources Space Used % by Cluster |
+| cmode/datacenter.json | Power and Temperature | Average Power/Used_TB |
+| cmode/datacenter.json | Power and Temperature | Average Power/Used_TB |
+| cmode/datacenter.json | Power and Temperature | Average Power/Used_TB |
+| cmode/power.json | Highlights | Average Power/Used_TB |
+| cmode/power.json | Highlights | Average Power/Used_TB |
+| cmode/power.json | Highlights | Average Power/Used_TB |
+| storagegrid/fabricpool.json | Highlights | Space Used % |
+| storagegrid/fabricpool.json | Highlights | Aggregates |
+
+
+
 ### aggr_space_used_percent
 
 The percentage of disk space currently in use on the referenced file system
@@ -980,6 +1423,15 @@ The percentage of disk space currently in use on the referenced file system
 |--------|----------|--------|---------|
 | REST | `api/storage/aggregates` | `space.block_storage.used, space.block_storage.size` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-space-attributes.percent-used-capacity` | conf/zapi/cdot/9.8.0/aggr.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Highlights | Aggregates |
+| cmode/cluster.json | Throughput | Average Aggregate Space Used |
+| cmode/disk.json | Highlights | Disk Capacity per Aggregate |
+| storagegrid/fabricpool.json | Highlights | Aggregates |
+
 
 
 ### aggr_total_data
@@ -991,6 +1443,7 @@ Performance metric aggregated over all types of I/O operations.
 | KeyPerf | `api/storage/aggregates` | `statistics.throughput_raw.total`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/aggr.yaml |
 
 
+
 ### aggr_total_latency
 
 Performance metric aggregated over all types of I/O operations.
@@ -998,6 +1451,7 @@ Performance metric aggregated over all types of I/O operations.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/storage/aggregates` | `statistics.latency_raw.total`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> aggr_statistics.iops_raw.total | conf/keyperf/9.15.0/aggr.yaml |
+
 
 
 ### aggr_total_logical_used
@@ -1010,6 +1464,27 @@ Logical used
 | ZAPI | `aggr-efficiency-get-iter` | `aggr-efficiency-info.aggr-efficiency-cumulative-info.total-logical-used` | conf/zapi/cdot/9.9.0/aggr_efficiency.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Storage Efficiency Ratios | Data Reduction with Snapshots & FlexClones |
+| cmode/aggregate.json | Storage Efficiency Ratios | Top $TopResources Aggregates by Logical Used with Snapshots & FlexClones |
+| cmode/aggregate.json | Storage Efficiency Ratios | Top $TopResources Aggregates by Logical Used with Snapshots & FlexClones |
+| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates Per Growth Rate of Logical Used |
+| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates Per Growth Rate of Logical Used |
+| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates by Logical Usage: Delta Report |
+| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates by Logical Usage: Delta Report |
+| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates by Logical Usage: Delta Report |
+| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates by Logical Usage: Delta Report |
+| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates by Logical Usage: Delta Report |
+| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates by Logical Usage: Delta Report |
+| cmode/cluster.json | Storage Efficiency Ratios | Data Reduction with Snapshots &FlexClones |
+| cmode/cluster.json | Storage Efficiency Ratios | Logical Used with Snapshots & FlexClones |
+| cmode/datacenter.json | Storage Efficiency | Data Reduction with Snapshots & FlexClones |
+| cmode/datacenter.json | Storage Efficiency | Top $TopResources Logical Used with Snapshots & FlexClones by Cluster |
+| cmode/datacenter.json | Storage Efficiency | Top $TopResources Logical Used with Snapshots & FlexClones by Cluster |
+
+
+
 ### aggr_total_ops
 
 Performance metric aggregated over all types of I/O operations.
@@ -1017,6 +1492,7 @@ Performance metric aggregated over all types of I/O operations.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/storage/aggregates` | `statistics.iops_raw.total`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/aggr.yaml |
+
 
 
 ### aggr_total_physical_used
@@ -1029,6 +1505,22 @@ Total Physical Used
 | ZAPI | `aggr-efficiency-get-iter` | `aggr-efficiency-info.aggr-efficiency-cumulative-info.total-physical-used` | conf/zapi/cdot/9.9.0/aggr_efficiency.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Storage Efficiency Ratios | Data Reduction with Snapshots & FlexClones |
+| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates Per Growth Rate of Physical Used |
+| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates Per Growth Rate of Physical Used |
+| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates by Physical Usage: Delta Report |
+| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates by Physical Usage: Delta Report |
+| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates by Physical Usage: Delta Report |
+| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates by Physical Usage: Delta Report |
+| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates by Physical Usage: Delta Report |
+| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates by Physical Usage: Delta Report |
+| cmode/cluster.json | Storage Efficiency Ratios | Data Reduction with Snapshots &FlexClones |
+| cmode/datacenter.json | Storage Efficiency | Data Reduction with Snapshots & FlexClones |
+
+
+
 ### aggr_volume_count
 
 The aggregate's volume count, which includes both FlexVols and FlexGroup constituents.
@@ -1037,6 +1529,15 @@ The aggregate's volume count, which includes both FlexVols and FlexGroup constit
 |--------|----------|--------|---------|
 | REST | `api/storage/aggregates` | `volume_count` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-volume-count-attributes.flexvol-count` | conf/zapi/cdot/9.8.0/aggr.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Highlights | Volumes |
+| cmode/aggregate.json | Highlights | Aggregates |
+| storagegrid/fabricpool.json | Highlights | Volumes |
+| storagegrid/fabricpool.json | Highlights | Aggregates |
+
 
 
 ### aggr_write_data
@@ -1048,6 +1549,7 @@ Performance metric for write I/O operations.
 | KeyPerf | `api/storage/aggregates` | `statistics.throughput_raw.write`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/aggr.yaml |
 
 
+
 ### aggr_write_latency
 
 Performance metric for write I/O operations.
@@ -1057,6 +1559,7 @@ Performance metric for write I/O operations.
 | KeyPerf | `api/storage/aggregates` | `statistics.latency_raw.write`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> aggr_statistics.iops_raw.write | conf/keyperf/9.15.0/aggr.yaml |
 
 
+
 ### aggr_write_ops
 
 Performance metric for write I/O operations.
@@ -1064,6 +1567,7 @@ Performance metric for write I/O operations.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/storage/aggregates` | `statistics.iops_raw.write`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/aggr.yaml |
+
 
 
 ### cifs_session_connection_count
@@ -1076,6 +1580,14 @@ A counter used to track requests that are sent to the volumes to the node.
 | ZAPI | `cifs-session-get-iter` | `cifs-session.connection-count` | conf/zapi/cdot/9.8.0/cifs_session.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/smb.json | Highlights | Top $TopResources Connection Count |
+| cmode/smb.json | Highlights | Top $TopResources Connection Count |
+| cmode/smb.json | Highlights | Connection Count By SMB version |
+
+
+
 ### cifs_session_labels
 
 This metric provides information about CIFSSession
@@ -1084,6 +1596,12 @@ This metric provides information about CIFSSession
 |--------|----------|--------|---------|
 | REST | `api/protocols/cifs/sessions` | `Harvest generated` | conf/rest/9.8.0/cifs_session.yaml |
 | ZAPI | `cifs-session-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/cifs_session.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/smb.json | Highlights | CIFS Sessions |
+
 
 
 ### cifs_share_labels
@@ -1096,6 +1614,7 @@ This metric provides information about CIFSShare
 | ZAPI | `cifs-share-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/cifs_share.yaml |
 
 
+
 ### cloud_target_labels
 
 This metric provides information about CloudTarget
@@ -1104,6 +1623,7 @@ This metric provides information about CloudTarget
 |--------|----------|--------|---------|
 | REST | `api/cloud/targets` | `Harvest generated` | conf/rest/9.12.0/cloud_target.yaml |
 | ZAPI | `aggr-object-store-config-get-iter` | `Harvest generated` | conf/zapi/cdot/9.10.0/aggr_object_store_config.yaml |
+
 
 
 ### cloud_target_used
@@ -1116,6 +1636,7 @@ The amount of cloud space used by all the aggregates attached to the target, in 
 | ZAPI | `aggr-object-store-config-get-iter` | `aggr-object-store-config-info.used-space` | conf/zapi/cdot/9.10.0/aggr_object_store_config.yaml |
 
 
+
 ### cluster_new_status
 
 It is an indicator of the overall health status of the cluster, with a value of 1 indicating a healthy status and a value of 0 indicating an unhealthy status.
@@ -1124,6 +1645,7 @@ It is an indicator of the overall health status of the cluster, with a value of 
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.12.0/status.yaml |
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/status.yaml |
+
 
 
 ### cluster_other_data
@@ -1135,6 +1657,7 @@ Performance metric for other I/O operations. Other I/O operations can be metadat
 | KeyPerf | `api/cluster` | `statistics.throughput_raw.other`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/cluster.yaml |
 
 
+
 ### cluster_other_latency
 
 Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.
@@ -1144,6 +1667,7 @@ Performance metric for other I/O operations. Other I/O operations can be metadat
 | KeyPerf | `api/cluster` | `statistics.latency_raw.other`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cluster_statistics.iops_raw.other | conf/keyperf/9.15.0/cluster.yaml |
 
 
+
 ### cluster_other_ops
 
 Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.
@@ -1151,6 +1675,7 @@ Performance metric for other I/O operations. Other I/O operations can be metadat
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/cluster` | `statistics.iops_raw.other`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/cluster.yaml |
+
 
 
 ### cluster_peer_labels
@@ -1163,6 +1688,17 @@ This metric provides information about ClusterPeer
 | ZAPI | `cluster-peer-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/clusterpeer.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/security.json | Highlights | Cluster Compliant % |
+| cmode/security.json | Highlights | Cluster Compliant % |
+| cmode/security.json | Highlights | Cluster Compliant |
+| cmode/security.json | Highlights | Cluster Compliant |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+
+
+
 ### cluster_peer_non_encrypted
 
 This metric indicates a value of 1 if the cluster peer encryption state is none (indicating the connection is not encrypted) and a value of 0 for any other state.
@@ -1171,6 +1707,7 @@ This metric indicates a value of 1 if the cluster peer encryption state is none 
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.12.0/clusterpeer.yaml |
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/clusterpeer.yaml |
+
 
 
 ### cluster_read_data
@@ -1182,6 +1719,7 @@ Performance metric for read I/O operations.
 | KeyPerf | `api/cluster` | `statistics.throughput_raw.read`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/cluster.yaml |
 
 
+
 ### cluster_read_latency
 
 Performance metric for read I/O operations.
@@ -1189,6 +1727,7 @@ Performance metric for read I/O operations.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/cluster` | `statistics.latency_raw.read`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cluster_statistics.iops_raw.read | conf/keyperf/9.15.0/cluster.yaml |
+
 
 
 ### cluster_read_ops
@@ -1200,6 +1739,7 @@ Performance metric for read I/O operations.
 | KeyPerf | `api/cluster` | `statistics.iops_raw.read`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/cluster.yaml |
 
 
+
 ### cluster_schedule_labels
 
 This metric provides information about ClusterSchedule
@@ -1207,6 +1747,12 @@ This metric provides information about ClusterSchedule
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/schedules` | `Harvest generated` | conf/rest/9.6.0/clusterschedule.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/data_protection.json | Local Policy | Schedules |
+
 
 
 ### cluster_software_status
@@ -1218,6 +1764,7 @@ Displays the software job with its status.
 | REST | `NA` | `Harvest generated` | conf/rest/9.6.0/clustersoftware.yaml |
 
 
+
 ### cluster_software_update
 
 Displays the software update phase with its status.
@@ -1227,6 +1774,7 @@ Displays the software update phase with its status.
 | REST | `NA` | `Harvest generated` | conf/rest/9.6.0/clustersoftware.yaml |
 
 
+
 ### cluster_software_validation
 
 Displays the software pre-validation checks with their status.
@@ -1234,6 +1782,7 @@ Displays the software pre-validation checks with their status.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.6.0/clustersoftware.yaml |
+
 
 
 ### cluster_subsystem_new_status
@@ -1246,6 +1795,7 @@ This metric indicates a value of 1 if the subsystem health is ok (indicating the
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/subsystem.yaml |
 
 
+
 ### cluster_subsystem_outstanding_alerts
 
 Number of outstanding alerts
@@ -1254,6 +1804,12 @@ Number of outstanding alerts
 |--------|----------|--------|---------|
 | REST | `api/private/cli/system/health/subsystem` | `outstanding_alert_count` | conf/rest/9.12.0/subsystem.yaml |
 | ZAPI | `diagnosis-subsystem-config-get-iter` | `diagnosis-subsystem-config-info.outstanding-alert-count` | conf/zapi/cdot/9.8.0/subsystem.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/cluster.json | Nodes & Subsystems - $Cluster | subsystems |
+
 
 
 ### cluster_subsystem_suppressed_alerts
@@ -1266,6 +1822,12 @@ Number of suppressed alerts
 | ZAPI | `diagnosis-subsystem-config-get-iter` | `diagnosis-subsystem-config-info.suppressed-alert-count` | conf/zapi/cdot/9.8.0/subsystem.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/cluster.json | Nodes & Subsystems - $Cluster | subsystems |
+
+
+
 ### cluster_tags
 
 Displays tags at the cluster level.
@@ -1273,6 +1835,7 @@ Displays tags at the cluster level.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.12.0/status.yaml |
+
 
 
 ### cluster_total_data
@@ -1284,6 +1847,7 @@ Performance metric aggregated over all types of I/O operations.
 | KeyPerf | `api/cluster` | `statistics.throughput_raw.total`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/cluster.yaml |
 
 
+
 ### cluster_total_latency
 
 Performance metric aggregated over all types of I/O operations.
@@ -1291,6 +1855,7 @@ Performance metric aggregated over all types of I/O operations.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/cluster` | `statistics.latency_raw.total`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cluster_statistics.iops_raw.total | conf/keyperf/9.15.0/cluster.yaml |
+
 
 
 ### cluster_total_ops
@@ -1302,6 +1867,7 @@ Performance metric aggregated over all types of I/O operations.
 | KeyPerf | `api/cluster` | `statistics.iops_raw.total`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/cluster.yaml |
 
 
+
 ### cluster_write_data
 
 Performance metric for write I/O operations.
@@ -1309,6 +1875,7 @@ Performance metric for write I/O operations.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/cluster` | `statistics.throughput_raw.write`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/cluster.yaml |
+
 
 
 ### cluster_write_latency
@@ -1320,6 +1887,7 @@ Performance metric for write I/O operations.
 | KeyPerf | `api/cluster` | `statistics.latency_raw.write`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cluster_statistics.iops_raw.write | conf/keyperf/9.15.0/cluster.yaml |
 
 
+
 ### cluster_write_ops
 
 Performance metric for write I/O operations.
@@ -1327,6 +1895,7 @@ Performance metric for write I/O operations.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/cluster` | `statistics.iops_raw.write`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/cluster.yaml |
+
 
 
 ### copy_manager_bce_copy_count_curr
@@ -1339,6 +1908,7 @@ Current number of copy requests being processed by the Block Copy Engine.
 | ZAPI | `perf-object-get-instances copy_manager` | `bce_copy_count_curr`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/copy_manager.yaml |
 
 
+
 ### copy_manager_kb_copied
 
 Sum of kilo-bytes copied.
@@ -1347,6 +1917,12 @@ Sum of kilo-bytes copied.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/copy_manager` | `KB_copied`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/copy_manager.yaml |
 | ZAPI | `perf-object-get-instances copy_manager` | `KB_copied`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/copy_manager.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | Copy Offload | Copy Offload Data Copied |
+
 
 
 ### copy_manager_ocs_copy_count_curr
@@ -1359,6 +1935,7 @@ Current number of copy requests being processed by the ONTAP copy subsystem.
 | ZAPI | `perf-object-get-instances copy_manager` | `ocs_copy_count_curr`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/copy_manager.yaml |
 
 
+
 ### copy_manager_sce_copy_count_curr
 
 Current number of copy requests being processed by the System Continuous Engineering.
@@ -1367,6 +1944,7 @@ Current number of copy requests being processed by the System Continuous Enginee
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/copy_manager` | `system_continuous_engineering_current_copy_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/copy_manager.yaml |
 | ZAPI | `perf-object-get-instances copy_manager` | `sce_copy_count_curr`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/copy_manager.yaml |
+
 
 
 ### copy_manager_spince_copy_count_curr
@@ -1379,6 +1957,7 @@ Current number of copy requests being processed by the SpinCE.
 | ZAPI | `perf-object-get-instances copy_manager` | `spince_copy_count_curr`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/copy_manager.yaml |
 
 
+
 ### disk_busy
 
 The utilization percent of the disk
@@ -1387,6 +1966,7 @@ The utilization percent of the disk
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `disk_busy_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `disk_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### disk_bytes_per_sector
@@ -1399,6 +1979,7 @@ Bytes per sector.
 | ZAPI | `storage-disk-get-iter` | `storage-disk-info.disk-inventory-info.bytes-per-sector` | conf/zapi/cdot/9.8.0/disk.yaml |
 
 
+
 ### disk_capacity
 
 Disk capacity in MB
@@ -1407,6 +1988,7 @@ Disk capacity in MB
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `capacity`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `disk_capacity`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### disk_cp_read_chain
@@ -1419,6 +2001,7 @@ Average number of blocks transferred in each consistency point read operation du
 | ZAPI | `perf-object-get-instances disk:constituent` | `cp_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_reads | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### disk_cp_read_latency
 
 Average latency per block in microseconds for consistency point read operations
@@ -1427,6 +2010,7 @@ Average latency per block in microseconds for consistency point read operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_blocks | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `cp_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### disk_cp_reads
@@ -1439,6 +2023,7 @@ Number of disk read operations initiated each second for consistency point proce
 | ZAPI | `perf-object-get-instances disk:constituent` | `cp_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### disk_io_pending
 
 Average number of I/Os issued to the disk for which we have not yet received the response
@@ -1447,6 +2032,7 @@ Average number of I/Os issued to the disk for which we have not yet received the
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `io_pending`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `io_pending`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### disk_io_queued
@@ -1459,6 +2045,7 @@ Number of I/Os queued to the disk but not yet issued
 | ZAPI | `perf-object-get-instances disk:constituent` | `io_queued`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### disk_labels
 
 This metric provides information about Disk
@@ -1467,6 +2054,16 @@ This metric provides information about Disk
 |--------|----------|--------|---------|
 | REST | `api/storage/disks` | `Harvest generated` | conf/rest/9.12.0/disk.yaml |
 | ZAPI | `storage-disk-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/disk.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/datacenter.json | Highlights | Object Count |
+| cmode/disk.json | Highlights | Total Disks |
+| cmode/disk.json | Highlights | Failed Disks |
+| cmode/disk.json | List of Disks | Disks in Cluster |
+| cmode/health.json | Disks | Disks Issues |
+
 
 
 ### disk_new_status
@@ -1479,6 +2076,7 @@ This metric indicates a value of 1 if the disk is not in an outage (i.e., the ou
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/disk.yaml |
 
 
+
 ### disk_power_on_hours
 
 Hours powered on.
@@ -1486,6 +2084,7 @@ Hours powered on.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/storage/disks` | `stats.power_on_hours` | conf/rest/9.12.0/disk.yaml |
+
 
 
 ### disk_sectors
@@ -1498,6 +2097,12 @@ Number of sectors on the disk.
 | ZAPI | `storage-disk-get-iter` | `storage-disk-info.disk-inventory-info.capacity-sectors` | conf/zapi/cdot/9.8.0/disk.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/disk.json | List of Disks | Disks in Cluster |
+
+
+
 ### disk_stats_average_latency
 
 Average I/O latency across all active paths, in milliseconds.
@@ -1506,6 +2111,12 @@ Average I/O latency across all active paths, in milliseconds.
 |--------|----------|--------|---------|
 | REST | `api/storage/disks` | `stats.average_latency` | conf/rest/9.12.0/disk.yaml |
 | ZAPI | `storage-disk-get-iter` | `storage-disk-info.disk-stats-info.average-latency` | conf/zapi/cdot/9.8.0/disk.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/disk.json | List of Disks | Disks in Cluster |
+
 
 
 ### disk_stats_io_kbps
@@ -1518,6 +2129,12 @@ Total Disk Throughput in KBPS Across All Active Paths
 | ZAPI | `storage-disk-get-iter` | `storage-disk-info.disk-stats-info.disk-io-kbps` | conf/zapi/cdot/9.8.0/disk.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/disk.json | List of Disks | Disks in Cluster |
+
+
+
 ### disk_stats_sectors_read
 
 Number of Sectors Read
@@ -1526,6 +2143,7 @@ Number of Sectors Read
 |--------|----------|--------|---------|
 | REST | `api/private/cli/disk` | `sectors_read` | conf/rest/9.12.0/disk.yaml |
 | ZAPI | `storage-disk-get-iter` | `storage-disk-info.disk-stats-info.sectors-read` | conf/zapi/cdot/9.8.0/disk.yaml |
+
 
 
 ### disk_stats_sectors_written
@@ -1538,6 +2156,7 @@ Number of Sectors Written
 | ZAPI | `storage-disk-get-iter` | `storage-disk-info.disk-stats-info.sectors-written` | conf/zapi/cdot/9.8.0/disk.yaml |
 
 
+
 ### disk_total_data
 
 Total throughput for user operations per second
@@ -1546,6 +2165,7 @@ Total throughput for user operations per second
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### disk_total_transfers
@@ -1558,6 +2178,7 @@ Total number of disk operations involving data transfer initiated per second
 | ZAPI | `perf-object-get-instances disk:constituent` | `total_transfers`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### disk_uptime
 
 Number of seconds the drive has been powered on
@@ -1568,6 +2189,12 @@ Number of seconds the drive has been powered on
 | ZAPI | `storage-disk-get-iter` | `storage-disk-info.disk-stats-info.power-on-time-interval` | conf/zapi/cdot/9.8.0/disk.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/disk.json | List of Disks | Disks in Cluster |
+
+
+
 ### disk_usable_size
 
 Usable size of each disk, in bytes.
@@ -1575,6 +2202,7 @@ Usable size of each disk, in bytes.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/storage/disks` | `usable_size` | conf/rest/9.12.0/disk.yaml |
+
 
 
 ### disk_user_read_blocks
@@ -1587,6 +2215,7 @@ Number of blocks transferred for user read operations per second
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_read_blocks`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### disk_user_read_chain
 
 Average number of blocks transferred in each user read operation
@@ -1595,6 +2224,7 @@ Average number of blocks transferred in each user read operation
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_count | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_reads | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### disk_user_read_latency
@@ -1607,6 +2237,7 @@ Average latency per block in microseconds for user read operations
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### disk_user_reads
 
 Number of disk read operations initiated each second for retrieving data or metadata associated with user requests
@@ -1615,6 +2246,7 @@ Number of disk read operations initiated each second for retrieving data or meta
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_read_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### disk_user_write_blocks
@@ -1627,6 +2259,7 @@ Number of blocks transferred for user write operations per second
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_write_blocks`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### disk_user_write_chain
 
 Average number of blocks transferred in each user write operation
@@ -1635,6 +2268,7 @@ Average number of blocks transferred in each user write operation
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_write_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_count | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_write_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_writes | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### disk_user_write_latency
@@ -1647,6 +2281,7 @@ Average latency per block in microseconds for user write operations
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### disk_user_writes
 
 Number of disk write operations initiated each second for storing data or metadata associated with user requests
@@ -1655,6 +2290,7 @@ Number of disk write operations initiated each second for storing data or metada
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_write_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_writes`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### ems_destination_labels
@@ -1667,6 +2303,13 @@ This metric provides information about EmsDestination
 | ZAPI | `ems-event-notification-destination-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/ems_destination.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+
+
+
 ### ems_events
 
 Indicates EMS events that have occurred in the ONTAP as configured in the ems.yaml.
@@ -1674,6 +2317,7 @@ Indicates EMS events that have occurred in the ONTAP as configured in the ems.ya
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/support/ems/events` | `Harvest generated` | conf/ems/9.6.0/ems.yaml |
+
 
 
 ### environment_sensor_average_ambient_temperature
@@ -1686,6 +2330,7 @@ Average temperature of all ambient sensors for node in Celsius.
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/sensor.yaml |
 
 
+
 ### environment_sensor_average_fan_speed
 
 Average fan speed for node in rpm.
@@ -1694,6 +2339,7 @@ Average fan speed for node in rpm.
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.12.0/sensor.yaml |
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/sensor.yaml |
+
 
 
 ### environment_sensor_average_temperature
@@ -1706,6 +2352,7 @@ Average temperature of all non-ambient sensors for node in Celsius.
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/sensor.yaml |
 
 
+
 ### environment_sensor_max_fan_speed
 
 Maximum fan speed for node in rpm.
@@ -1714,6 +2361,7 @@ Maximum fan speed for node in rpm.
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.12.0/sensor.yaml |
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/sensor.yaml |
+
 
 
 ### environment_sensor_max_temperature
@@ -1726,6 +2374,7 @@ Maximum temperature of all non-ambient sensors for node in Celsius.
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/sensor.yaml |
 
 
+
 ### environment_sensor_min_ambient_temperature
 
 Minimum temperature of all ambient sensors for node in Celsius.
@@ -1734,6 +2383,7 @@ Minimum temperature of all ambient sensors for node in Celsius.
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.12.0/sensor.yaml |
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/sensor.yaml |
+
 
 
 ### environment_sensor_min_fan_speed
@@ -1746,6 +2396,7 @@ Minimum fan speed for node in rpm.
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/sensor.yaml |
 
 
+
 ### environment_sensor_min_temperature
 
 Minimum temperature of all non-ambient sensors for node in Celsius.
@@ -1754,6 +2405,7 @@ Minimum temperature of all non-ambient sensors for node in Celsius.
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.12.0/sensor.yaml |
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/sensor.yaml |
+
 
 
 ### environment_sensor_power
@@ -1766,6 +2418,7 @@ Power consumed by a node in Watts.
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/sensor.yaml |
 
 
+
 ### environment_sensor_status
 
 This metric indicates a value of 1 if the sensor threshold state is normal (indicating the sensor is operating within normal parameters) and a value of 0 for any other state.
@@ -1774,6 +2427,7 @@ This metric indicates a value of 1 if the sensor threshold state is normal (indi
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.12.0/sensor.yaml |
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/sensor.yaml |
+
 
 
 ### environment_sensor_threshold_value
@@ -1786,6 +2440,16 @@ Provides the sensor reading.
 | ZAPI | `environment-sensors-get-iter` | `environment-sensors-info.threshold-sensor-value` | conf/zapi/cdot/9.8.0/sensor.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/datacenter.json | Issues | Errors |
+| cmode/health.json | Highlights | Total Errors |
+| cmode/health.json | Highlights | Errors |
+| cmode/health.json | Sensor | Sensor Issues |
+| cmode/power.json | Sensor Problems | Sensor Problems |
+
+
+
 ### ethernet_switch_port_receive_discards
 
 Total number of discarded packets.
@@ -1793,6 +2457,13 @@ Total number of discarded packets.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/network/ethernet/switch/ports` | `receive_raw.discards`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/ethernet_switch_port.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/switch.json | Traffic | Top $TopResources Interface Drops |
+| cmode/switch.json | Traffic | Top $TopResources Interface Drops |
+
 
 
 ### ethernet_switch_port_receive_errors
@@ -1804,6 +2475,13 @@ Number of packet errors.
 | KeyPerf | `api/network/ethernet/switch/ports` | `receive_raw.errors`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/ethernet_switch_port.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/switch.json | Traffic | Top $TopResources Interface Errors |
+| cmode/switch.json | Traffic | Top $TopResources Interface Errors |
+
+
+
 ### ethernet_switch_port_receive_packets
 
 Total packet count.
@@ -1811,6 +2489,13 @@ Total packet count.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/network/ethernet/switch/ports` | `receive_raw.packets`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/ethernet_switch_port.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/switch.json | Traffic | Top $TopResources Interface Receive Packets |
+| cmode/switch.json | Traffic | Top $TopResources Interface Receive Packets |
+
 
 
 ### ethernet_switch_port_transmit_discards
@@ -1822,6 +2507,13 @@ Total number of discarded packets.
 | KeyPerf | `api/network/ethernet/switch/ports` | `transmit_raw.discards`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/ethernet_switch_port.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/switch.json | Traffic | Top $TopResources Interface Drops |
+| cmode/switch.json | Traffic | Top $TopResources Interface Drops |
+
+
+
 ### ethernet_switch_port_transmit_errors
 
 Number of packet errors.
@@ -1829,6 +2521,13 @@ Number of packet errors.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/network/ethernet/switch/ports` | `transmit_raw.errors`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/ethernet_switch_port.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/switch.json | Traffic | Top $TopResources Interface Errors |
+| cmode/switch.json | Traffic | Top $TopResources Interface Errors |
+
 
 
 ### ethernet_switch_port_transmit_packets
@@ -1840,6 +2539,13 @@ Total packet count.
 | KeyPerf | `api/network/ethernet/switch/ports` | `transmit_raw.packets`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/ethernet_switch_port.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/switch.json | Traffic | Top $TopResources Interface Transmit Packets |
+| cmode/switch.json | Traffic | Top $TopResources Interface Transmit Packets |
+
+
+
 ### export_rule_labels
 
 This metric provides information about ExportRule
@@ -1847,6 +2553,7 @@ This metric provides information about ExportRule
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/private/cli/vserver/export-policy/rule` | `Harvest generated` | conf/rest/9.8.0/exports.yaml |
+
 
 
 ### external_service_op_num_not_found_responses
@@ -1858,6 +2565,13 @@ Number of &apos;Not Found&apos; responses for calls to this operation.
 | ZAPI | `perf-object-get-instances external_service_op` | `num_not_found_responses`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/external_service_operation.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/external_service_op.json | Highlights | Top $TopResources Number of 'Not Found' Responses per Operation |
+| cmode/external_service_op.json | Highlights | Top $TopResources Number of 'Not Found' Responses per Operation |
+
+
+
 ### external_service_op_num_request_failures
 
 A cumulative count of all request failures.
@@ -1865,6 +2579,13 @@ A cumulative count of all request failures.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | ZAPI | `perf-object-get-instances external_service_op` | `num_request_failures`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/external_service_operation.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/external_service_op.json | Highlights | Top $TopResources Number of Request Failures |
+| cmode/external_service_op.json | Highlights | Top $TopResources Number of Request Failures |
+
 
 
 ### external_service_op_num_requests_sent
@@ -1876,6 +2597,13 @@ Number of requests sent to this service.
 | ZAPI | `perf-object-get-instances external_service_op` | `num_requests_sent`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/external_service_operation.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/external_service_op.json | Highlights | Top $TopResources Number of Request Sent |
+| cmode/external_service_op.json | Highlights | Top $TopResources Number of Request Sent |
+
+
+
 ### external_service_op_num_responses_received
 
 Number of responses received from the server (does not include timeouts).
@@ -1883,6 +2611,13 @@ Number of responses received from the server (does not include timeouts).
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | ZAPI | `perf-object-get-instances external_service_op` | `num_responses_received`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/external_service_operation.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/external_service_op.json | Highlights | Top $TopResources Number of Responses Received |
+| cmode/external_service_op.json | Highlights | Top $TopResources Number of Responses Received |
+
 
 
 ### external_service_op_num_successful_responses
@@ -1894,6 +2629,13 @@ Number of successful responses to this operation.
 | ZAPI | `perf-object-get-instances external_service_op` | `num_successful_responses`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/external_service_operation.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/external_service_op.json | Highlights | Top $TopResources Number of Successful Responses |
+| cmode/external_service_op.json | Highlights | Top $TopResources Number of Successful Responses |
+
+
+
 ### external_service_op_num_timeouts
 
 Number of times requests to the server for this operation timed out, meaning no response was recevied in a given time period.
@@ -1901,6 +2643,13 @@ Number of times requests to the server for this operation timed out, meaning no 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | ZAPI | `perf-object-get-instances external_service_op` | `num_timeouts`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/external_service_operation.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/external_service_op.json | Highlights | Top $TopResources Number of Timeouts |
+| cmode/external_service_op.json | Highlights | Top $TopResources Number of Timeouts |
+
 
 
 ### external_service_op_request_latency
@@ -1912,6 +2661,13 @@ Average latency of requests for operations of this type on this server.
 | ZAPI | `perf-object-get-instances external_service_op` | `request_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> num_requests_sent | conf/zapiperf/cdot/9.8.0/external_service_operation.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/external_service_op.json | Highlights | Top $TopResources Request Latency to Server |
+| cmode/external_service_op.json | Highlights | Top $TopResources Request Latency to Server |
+
+
+
 ### external_service_op_request_latency_hist
 
 This histogram holds the latency values for requests of this operation to the specified server.
@@ -1921,6 +2677,7 @@ This histogram holds the latency values for requests of this operation to the sp
 | ZAPI | `perf-object-get-instances external_service_op` | `request_latency_hist`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/external_service_operation.yaml |
 
 
+
 ### fabricpool_average_latency
 
 This counter is deprecated.Average latencies executed during various phases of command execution. The execution-start latency represents the average time taken to start executing an operation. The request-prepare latency represent the average time taken to prepare the commplete request that needs to be sent to the server. The send latency represents the average time taken to send requests to the server. The execution-start-to-send-complete represents the average time taken to send an operation out since its execution started. The execution-start-to-first-byte-received represent the average time taken to receive the first byte of a response since the command's request execution started. These counters can be used to identify performance bottlenecks within the object store client module.
@@ -1928,6 +2685,7 @@ This counter is deprecated.Average latencies executed during various phases of c
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | ZAPI | `perf-object-get-instances object_store_client_op` | `average_latency`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/object_store_client_op.yaml |
+
 
 
 ### fabricpool_cloud_bin_op_latency_average
@@ -1940,6 +2698,15 @@ Cloud bin operation latency average in milliseconds.
 | ZAPI | `perf-object-get-instances wafl_comp_aggr_vol_bin` | `cloud_bin_op_latency_average`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl_comp_aggr_vol_bin.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/volume.json | Object Storage | Top $TopResources Volumes by Object Storage GET Latency |
+| cmode/volume.json | Object Storage | Top $TopResources Volumes by Object Storage GET Latency |
+| cmode/volume.json | Object Storage | Top $TopResources Volumes by Object Storage PUT Latency |
+| cmode/volume.json | Object Storage | Top $TopResources Volumes by Object Storage PUT Latency |
+
+
+
 ### fabricpool_cloud_bin_operation
 
 Cloud bin operation counters.
@@ -1948,6 +2715,17 @@ Cloud bin operation counters.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/wafl_comp_aggr_vol_bin` | `cloud_bin_op`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/wafl_comp_aggr_vol_bin.yaml |
 | ZAPI | `perf-object-get-instances wafl_comp_aggr_vol_bin` | `cloud_bin_operation`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl_comp_aggr_vol_bin.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/volume.json | Object Storage | Top $TopResources Volumes by Object Storage GET Request Count |
+| cmode/volume.json | Object Storage | Top $TopResources Volumes by Object Storage GET Request Count |
+| cmode/volume.json | Object Storage | Top $TopResources Volumes by Object Storage PUT Request Count |
+| cmode/volume.json | Object Storage | Top $TopResources Volumes by Object Storage PUT Request Count |
+| cmode/volume.json | Object Storage | Top $TopResources Volumes by Object Storage Requests |
+| cmode/volume.json | Object Storage | Top $TopResources Volumes by Object Storage Requests |
+
 
 
 ### fabricpool_get_throughput_bytes
@@ -1959,6 +2737,7 @@ This counter is deprecated. Counter that indicates the throughput for GET comman
 | ZAPI | `perf-object-get-instances object_store_client_op` | `get_throughput_bytes`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/object_store_client_op.yaml |
 
 
+
 ### fabricpool_put_throughput_bytes
 
 This counter is deprecated. Counter that indicates the throughput for PUT command in bytes per second.
@@ -1966,6 +2745,7 @@ This counter is deprecated. Counter that indicates the throughput for PUT comman
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | ZAPI | `perf-object-get-instances object_store_client_op` | `put_throughput_bytes`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/object_store_client_op.yaml |
+
 
 
 ### fabricpool_stats
@@ -1977,6 +2757,7 @@ This counter is deprecated. Counter that indicates the number of object store op
 | ZAPI | `perf-object-get-instances object_store_client_op` | `stats`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/object_store_client_op.yaml |
 
 
+
 ### fabricpool_throughput_ops
 
 Counter that indicates the throughput for commands in ops per second.
@@ -1984,6 +2765,7 @@ Counter that indicates the throughput for commands in ops per second.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | ZAPI | `perf-object-get-instances object_store_client_op` | `throughput_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/object_store_client_op.yaml |
+
 
 
 ### fcp_avg_other_latency
@@ -1996,6 +2778,7 @@ Average latency for operations other than read and write
 | ZAPI | `perf-object-get-instances fcp_port` | `avg_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/zapiperf/cdot/9.8.0/fcp.yaml |
 
 
+
 ### fcp_avg_read_latency
 
 Average latency for read operations
@@ -2004,6 +2787,13 @@ Average latency for read operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcp` | `average_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `avg_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/fcp.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | FibreChannel | Top $TopResources FCPs by Send Latency |
+| cmode/network.json | FibreChannel | Top $TopResources FCPs by Send Latency |
+
 
 
 ### fcp_avg_write_latency
@@ -2016,6 +2806,13 @@ Average latency for write operations
 | ZAPI | `perf-object-get-instances fcp_port` | `avg_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/fcp.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | FibreChannel | Top $TopResources FCPs by Receive Latency |
+| cmode/network.json | FibreChannel | Top $TopResources FCPs by Receive Latency |
+
+
+
 ### fcp_discarded_frames_count
 
 Number of discarded frames.
@@ -2026,6 +2823,12 @@ Number of discarded frames.
 | ZAPI | `perf-object-get-instances fcp_port` | `discarded_frames_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | FibreChannel | FCPs Transmission errors |
+
+
+
 ### fcp_fabric_connected_speed
 
 The negotiated data rate between the target FC port and the fabric in gigabits per second.
@@ -2033,6 +2836,12 @@ The negotiated data rate between the target FC port and the fabric in gigabits p
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/network/fc/ports` | `fabric.connected_speed` | conf/rest/9.6.0/fcp.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | FibreChannel | FC ports with Fabric detail |
+
 
 
 ### fcp_int_count
@@ -2045,6 +2854,12 @@ Number of interrupts
 | ZAPI | `perf-object-get-instances fcp_port` | `int_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | FibreChannel | FCPs Transmission interrupts |
+
+
+
 ### fcp_invalid_crc
 
 Number of invalid cyclic redundancy checks (CRC count)
@@ -2053,6 +2868,12 @@ Number of invalid cyclic redundancy checks (CRC count)
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcp` | `invalid.crc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `invalid_crc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | FibreChannel | FCPs Transmission interrupts |
+
 
 
 ### fcp_invalid_transmission_word
@@ -2065,6 +2886,12 @@ Number of invalid transmission words
 | ZAPI | `perf-object-get-instances fcp_port` | `invalid_transmission_word`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | FibreChannel | FCPs Transmission interrupts |
+
+
+
 ### fcp_isr_count
 
 Number of interrupt responses
@@ -2075,6 +2902,12 @@ Number of interrupt responses
 | ZAPI | `perf-object-get-instances fcp_port` | `isr_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | FibreChannel | FCPs Transmission interrupts |
+
+
+
 ### fcp_labels
 
 This metric provides information about FCP
@@ -2082,6 +2915,13 @@ This metric provides information about FCP
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/network/fc/ports` | `Harvest generated` | conf/rest/9.6.0/fcp.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/datacenter.json | Highlights | Object Count |
+| cmode/network.json | FibreChannel | FC ports with Fabric detail |
+
 
 
 ### fcp_lif_avg_latency
@@ -2094,6 +2934,15 @@ Average latency for FCP operations
 | ZAPI | `perf-object-get-instances fcp_lif` | `avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/fcp_lif.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | FCP Frontend | FCP Latency |
+| cmode/node.json | FCP Frontend | FCP Average Latency by Port / LIF |
+| cmode/svm.json | FCP | SVM FCP Average Latency |
+| cmode/svm.json | FCP | SVM FCP Average Latency |
+
+
+
 ### fcp_lif_avg_other_latency
 
 Average latency for operations other than read and write
@@ -2102,6 +2951,12 @@ Average latency for operations other than read and write
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcp_lif` | `average_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/restperf/9.12.0/fcp_lif.yaml |
 | ZAPI | `perf-object-get-instances fcp_lif` | `avg_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/zapiperf/cdot/9.8.0/fcp_lif.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | FCP | SVM FCP Average Latency |
+
 
 
 ### fcp_lif_avg_read_latency
@@ -2114,6 +2969,14 @@ Average latency for read operations
 | ZAPI | `perf-object-get-instances fcp_lif` | `avg_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/fcp_lif.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | FCP | SVM FCP Average Read Latency |
+| cmode/svm.json | FCP | SVM FCP Average Latency |
+| cmode/svm.json | NVMe/FC | SVM FCP Average Read Latency |
+
+
+
 ### fcp_lif_avg_write_latency
 
 Average latency for write operations
@@ -2122,6 +2985,14 @@ Average latency for write operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcp_lif` | `average_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/restperf/9.12.0/fcp_lif.yaml |
 | ZAPI | `perf-object-get-instances fcp_lif` | `avg_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/fcp_lif.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | FCP | SVM FCP Average Write Latency |
+| cmode/svm.json | FCP | SVM FCP Average Latency |
+| cmode/svm.json | NVMe/FC | SVM FCP Average Write Latency |
+
 
 
 ### fcp_lif_other_ops
@@ -2134,6 +3005,12 @@ Number of operations that are not read or write.
 | ZAPI | `perf-object-get-instances fcp_lif` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp_lif.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | FCP | SVM FCP IOPs |
+
+
+
 ### fcp_lif_read_data
 
 Amount of data read from the storage system
@@ -2142,6 +3019,16 @@ Amount of data read from the storage system
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcp_lif` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp_lif.yaml |
 | ZAPI | `perf-object-get-instances fcp_lif` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp_lif.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | FCP | SVM FCP Read Throughput |
+| cmode/svm.json | FCP | SVM FCP Throughput |
+| cmode/svm.json | FCP | Top $TopResources FCP LIFs by Send Throughput |
+| cmode/svm.json | FCP | Top $TopResources FCP LIFs by Send Throughput |
+| cmode/svm.json | NVMe/FC | SVM FCP Read Throughput |
+
 
 
 ### fcp_lif_read_ops
@@ -2154,6 +3041,14 @@ Number of read operations
 | ZAPI | `perf-object-get-instances fcp_lif` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp_lif.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | FCP | SVM FCP Read IOPs |
+| cmode/svm.json | FCP | SVM FCP IOPs |
+| cmode/svm.json | NVMe/FC | SVM FCP Read IOPs |
+
+
+
 ### fcp_lif_total_ops
 
 Total number of operations.
@@ -2162,6 +3057,14 @@ Total number of operations.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcp_lif` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp_lif.yaml |
 | ZAPI | `perf-object-get-instances fcp_lif` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp_lif.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | FCP Frontend | FCP IOPs |
+| cmode/node.json | FCP Frontend | FCP IOPs by Port / LIF |
+| cmode/svm.json | FCP | SVM FCP IOPs |
+
 
 
 ### fcp_lif_write_data
@@ -2174,6 +3077,18 @@ Amount of data written to the storage system
 | ZAPI | `perf-object-get-instances fcp_lif` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp_lif.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | FCP Frontend | FCP Throughput by Port / LIF |
+| cmode/svm.json | FCP | SVM FCP Throughput |
+| cmode/svm.json | FCP | SVM FCP Write Throughput |
+| cmode/svm.json | FCP | SVM FCP Throughput |
+| cmode/svm.json | FCP | Top $TopResources FCP LIFs by Receive Throughput |
+| cmode/svm.json | FCP | Top $TopResources FCP LIFs by Receive Throughput |
+| cmode/svm.json | NVMe/FC | SVM FCP Write Throughput |
+
+
+
 ### fcp_lif_write_ops
 
 Number of write operations
@@ -2182,6 +3097,14 @@ Number of write operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcp_lif` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp_lif.yaml |
 | ZAPI | `perf-object-get-instances fcp_lif` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp_lif.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | FCP | SVM FCP Write IOPs |
+| cmode/svm.json | FCP | SVM FCP IOPs |
+| cmode/svm.json | NVMe/FC | SVM FCP Write IOPs |
+
 
 
 ### fcp_link_down
@@ -2194,6 +3117,13 @@ Number of times the Fibre Channel link was lost
 | ZAPI | `perf-object-get-instances fcp_port` | `link_down`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | FibreChannel | Top $TopResources FCPs by Link Down |
+| cmode/network.json | FibreChannel | Top $TopResources FCPs by Link Down |
+
+
+
 ### fcp_link_failure
 
 Number of link failures
@@ -2202,6 +3132,13 @@ Number of link failures
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcp` | `link_failure`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `link_failure`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | FibreChannel | Top $TopResources FCPs by Link Failure |
+| cmode/network.json | FibreChannel | Top $TopResources FCPs by Link Failure |
+
 
 
 ### fcp_link_up
@@ -2214,6 +3151,7 @@ Number of times the Fibre Channel link was established
 | ZAPI | `perf-object-get-instances fcp_port` | `link_up`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/fcp.yaml |
 
 
+
 ### fcp_loss_of_signal
 
 Number of times this port lost signal
@@ -2222,6 +3160,12 @@ Number of times this port lost signal
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcp` | `loss_of_signal`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `loss_of_signal`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | FibreChannel | FCPs Transmission errors |
+
 
 
 ### fcp_loss_of_sync
@@ -2234,6 +3178,12 @@ Number of times this port lost sync
 | ZAPI | `perf-object-get-instances fcp_port` | `loss_of_sync`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | FibreChannel | FCPs Transmission errors |
+
+
+
 ### fcp_max_speed
 
 The maximum speed supported by the FC port in gigabits per second.
@@ -2241,6 +3191,12 @@ The maximum speed supported by the FC port in gigabits per second.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/network/fc/ports` | `speed.maximum` | conf/rest/9.6.0/fcp.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | FibreChannel | FC ports with Fabric detail |
+
 
 
 ### fcp_nvmf_avg_other_latency
@@ -2253,6 +3209,7 @@ Average latency for operations other than read and write (FC-NVMe)
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_avg_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nvmf_other_ops | conf/zapiperf/cdot/9.10.1/fcp.yaml |
 
 
+
 ### fcp_nvmf_avg_read_latency
 
 Average latency for read operations (FC-NVMe)
@@ -2261,6 +3218,13 @@ Average latency for read operations (FC-NVMe)
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcp` | `nvmf.average_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nvmf.read_ops | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_avg_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nvmf_read_ops | conf/zapiperf/cdot/9.10.1/fcp.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | NVMe/FC | Top $TopResources FCP_NVMFs by Send Latency |
+| cmode/network.json | NVMe/FC | Top $TopResources FCP_NVMFs by Send Latency |
+
 
 
 ### fcp_nvmf_avg_remote_other_latency
@@ -2273,6 +3237,7 @@ Average latency for remote operations other than read and write (FC-NVMe)
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_avg_remote_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nvmf_remote_other_ops | conf/zapiperf/cdot/9.10.1/fcp.yaml |
 
 
+
 ### fcp_nvmf_avg_remote_read_latency
 
 Average latency for remote read operations (FC-NVMe)
@@ -2281,6 +3246,7 @@ Average latency for remote read operations (FC-NVMe)
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcp` | `nvmf.average_remote_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nvmf_remote.read_ops | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_avg_remote_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nvmf_remote_read_ops | conf/zapiperf/cdot/9.10.1/fcp.yaml |
+
 
 
 ### fcp_nvmf_avg_remote_write_latency
@@ -2293,6 +3259,7 @@ Average latency for remote write operations (FC-NVMe)
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_avg_remote_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nvmf_remote_write_ops | conf/zapiperf/cdot/9.10.1/fcp.yaml |
 
 
+
 ### fcp_nvmf_avg_write_latency
 
 Average latency for write operations (FC-NVMe)
@@ -2301,6 +3268,13 @@ Average latency for write operations (FC-NVMe)
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcp` | `nvmf.average_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nvmf.write_ops | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_avg_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nvmf_write_ops | conf/zapiperf/cdot/9.10.1/fcp.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | NVMe/FC | Top $TopResources FCP_NVMFs by Receive Latency |
+| cmode/network.json | NVMe/FC | Top $TopResources FCP_NVMFs by Receive Latency |
+
 
 
 ### fcp_nvmf_caw_data
@@ -2313,6 +3287,7 @@ Amount of CAW data sent to the storage system (FC-NVMe)
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_caw_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/fcp.yaml |
 
 
+
 ### fcp_nvmf_caw_ops
 
 Number of FC-NVMe CAW operations
@@ -2321,6 +3296,7 @@ Number of FC-NVMe CAW operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcp` | `nvmf.caw_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_caw_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/fcp.yaml |
+
 
 
 ### fcp_nvmf_command_slots
@@ -2333,6 +3309,7 @@ Number of command slots that have been used by initiators logging into this port
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_command_slots`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/fcp.yaml |
 
 
+
 ### fcp_nvmf_other_ops
 
 Number of NVMF operations that are not read or write.
@@ -2341,6 +3318,7 @@ Number of NVMF operations that are not read or write.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcp` | `nvmf.other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/fcp.yaml |
+
 
 
 ### fcp_nvmf_read_data
@@ -2353,6 +3331,17 @@ Amount of data read from the storage system (FC-NVMe)
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/fcp.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | Highlights | FC Read Throughput |
+| cmode/network.json | NVMe/FC | NVMe/FC ports |
+| cmode/network.json | NVMe/FC | Top $TopResources FCP_NVMFs by Send Throughput |
+| cmode/network.json | NVMe/FC | Top $TopResources FCP_NVMFs by Send Throughput |
+| cmode/node.json | Network Layer | Top $TopResources FC Ports by Throughput |
+| cmode/node.json | Network Layer | Top $TopResources FC Ports by Throughput |
+
+
+
 ### fcp_nvmf_read_ops
 
 Number of FC-NVMe read operations
@@ -2361,6 +3350,12 @@ Number of FC-NVMe read operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcp` | `nvmf.read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/fcp.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | Highlights | FC Read Throughput |
+
 
 
 ### fcp_nvmf_remote_caw_data
@@ -2373,6 +3368,7 @@ Amount of remote CAW data sent to the storage system (FC-NVMe)
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_remote_caw_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/fcp.yaml |
 
 
+
 ### fcp_nvmf_remote_caw_ops
 
 Number of FC-NVMe remote CAW operations
@@ -2381,6 +3377,7 @@ Number of FC-NVMe remote CAW operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcp` | `nvmf_remote.caw_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_remote_caw_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/fcp.yaml |
+
 
 
 ### fcp_nvmf_remote_other_ops
@@ -2393,6 +3390,7 @@ Number of NVMF remote operations that are not read or write.
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_remote_other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/fcp.yaml |
 
 
+
 ### fcp_nvmf_remote_read_data
 
 Amount of remote data read from the storage system (FC-NVMe)
@@ -2401,6 +3399,7 @@ Amount of remote data read from the storage system (FC-NVMe)
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcp` | `nvmf_remote.read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_remote_read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/fcp.yaml |
+
 
 
 ### fcp_nvmf_remote_read_ops
@@ -2413,6 +3412,7 @@ Number of FC-NVMe remote read operations
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_remote_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/fcp.yaml |
 
 
+
 ### fcp_nvmf_remote_total_data
 
 Amount of remote FC-NVMe traffic to and from the storage system
@@ -2421,6 +3421,7 @@ Amount of remote FC-NVMe traffic to and from the storage system
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcp` | `nvmf_remote.total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_remote_total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/fcp.yaml |
+
 
 
 ### fcp_nvmf_remote_total_ops
@@ -2433,6 +3434,7 @@ Total number of remote FC-NVMe operations
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_remote_total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/fcp.yaml |
 
 
+
 ### fcp_nvmf_remote_write_data
 
 Amount of remote data written to the storage system (FC-NVMe)
@@ -2441,6 +3443,7 @@ Amount of remote data written to the storage system (FC-NVMe)
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcp` | `nvmf_remote.write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_remote_write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/fcp.yaml |
+
 
 
 ### fcp_nvmf_remote_write_ops
@@ -2453,6 +3456,7 @@ Number of FC-NVMe remote write operations
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_remote_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/fcp.yaml |
 
 
+
 ### fcp_nvmf_total_data
 
 Amount of FC-NVMe traffic to and from the storage system
@@ -2461,6 +3465,12 @@ Amount of FC-NVMe traffic to and from the storage system
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcp` | `nvmf.total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/fcp.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | Highlights | FC Throughput |
+
 
 
 ### fcp_nvmf_total_ops
@@ -2473,6 +3483,12 @@ Total number of FC-NVMe operations
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/fcp.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | Highlights | FC Throughput |
+
+
+
 ### fcp_nvmf_write_data
 
 Amount of data written to the storage system (FC-NVMe)
@@ -2481,6 +3497,17 @@ Amount of data written to the storage system (FC-NVMe)
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcp` | `nvmf.write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/fcp.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | Highlights | FC Write Throughput |
+| cmode/network.json | NVMe/FC | NVMe/FC ports |
+| cmode/network.json | NVMe/FC | Top $TopResources FCP_NVMFs by Receive Throughput |
+| cmode/network.json | NVMe/FC | Top $TopResources FCP_NVMFs by Receive Throughput |
+| cmode/node.json | Network Layer | Top $TopResources FC Ports by Throughput |
+| cmode/node.json | Network Layer | Top $TopResources FC Ports by Throughput |
+
 
 
 ### fcp_nvmf_write_ops
@@ -2493,6 +3520,12 @@ Number of FC-NVMe write operations
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/fcp.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | Highlights | FC Write Throughput |
+
+
+
 ### fcp_other_ops
 
 Number of operations that are not read or write.
@@ -2501,6 +3534,7 @@ Number of operations that are not read or write.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcp` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
+
 
 
 ### fcp_prim_seq_err
@@ -2513,6 +3547,12 @@ Number of primitive sequence errors
 | ZAPI | `perf-object-get-instances fcp_port` | `prim_seq_err`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | FibreChannel | FCPs Transmission errors |
+
+
+
 ### fcp_queue_full
 
 Number of times a queue full condition occurred.
@@ -2521,6 +3561,12 @@ Number of times a queue full condition occurred.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcp` | `queue_full`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `queue_full`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | FibreChannel | FCPs Transmission errors |
+
 
 
 ### fcp_read_data
@@ -2533,6 +3579,16 @@ Amount of data read from the storage system
 | ZAPI | `perf-object-get-instances fcp_port` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | FibreChannel | FC ports |
+| cmode/network.json | FibreChannel | Top $TopResources FCPs by Send Throughput |
+| cmode/network.json | FibreChannel | Top $TopResources FCPs by Send Throughput |
+| cmode/node.json | Network Layer | Top $TopResources FC Ports by Throughput |
+| cmode/node.json | Network Layer | Top $TopResources FC Ports by Throughput |
+
+
+
 ### fcp_read_ops
 
 Number of read operations
@@ -2541,6 +3597,7 @@ Number of read operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcp` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
+
 
 
 ### fcp_reset_count
@@ -2553,6 +3610,7 @@ Number of physical port resets
 | ZAPI | `perf-object-get-instances fcp_port` | `reset_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
 
 
+
 ### fcp_shared_int_count
 
 Number of shared interrupts
@@ -2561,6 +3619,7 @@ Number of shared interrupts
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcp` | `shared_interrupt_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `shared_int_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
+
 
 
 ### fcp_spurious_int_count
@@ -2573,6 +3632,12 @@ Number of spurious interrupts
 | ZAPI | `perf-object-get-instances fcp_port` | `spurious_int_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | FibreChannel | FCPs Transmission interrupts |
+
+
+
 ### fcp_threshold_full
 
 Number of times the total number of outstanding commands on the port exceeds the threshold supported by this port.
@@ -2581,6 +3646,12 @@ Number of times the total number of outstanding commands on the port exceeds the
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcp` | `threshold_full`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `threshold_full`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | FibreChannel | FCPs Transmission errors |
+
 
 
 ### fcp_total_data
@@ -2593,6 +3664,7 @@ Amount of FCP traffic to and from the storage system
 | ZAPI | `perf-object-get-instances fcp_port` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
 
 
+
 ### fcp_total_ops
 
 Total number of FCP operations
@@ -2601,6 +3673,7 @@ Total number of FCP operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcp` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
+
 
 
 ### fcp_write_data
@@ -2613,6 +3686,16 @@ Amount of data written to the storage system
 | ZAPI | `perf-object-get-instances fcp_port` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | FibreChannel | FC ports |
+| cmode/network.json | FibreChannel | Top $TopResources FCPs by Receive Throughput |
+| cmode/network.json | FibreChannel | Top $TopResources FCPs by Receive Throughput |
+| cmode/node.json | Network Layer | Top $TopResources FC Ports by Throughput |
+| cmode/node.json | Network Layer | Top $TopResources FC Ports by Throughput |
+
+
+
 ### fcp_write_ops
 
 Number of write operations
@@ -2621,6 +3704,7 @@ Number of write operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcp` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
+
 
 
 ### fcvi_firmware_invalid_crc_count
@@ -2633,6 +3717,12 @@ Firmware reported invalid CRC count
 | ZAPI | `perf-object-get-instances fcvi` | `fw_invalid_crc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcvi.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/mcc_cluster.json | MetroCluster FCVI | Invalid CRC Count |
+
+
+
 ### fcvi_firmware_invalid_transmit_word_count
 
 Firmware reported invalid transmit word count
@@ -2641,6 +3731,12 @@ Firmware reported invalid transmit word count
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcvi` | `firmware.invalid_transmit_word_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcvi.yaml |
 | ZAPI | `perf-object-get-instances fcvi` | `fw_invalid_xmit_words`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcvi.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/mcc_cluster.json | MetroCluster FCVI | Invalid Transmit Word Count |
+
 
 
 ### fcvi_firmware_link_failure_count
@@ -2653,6 +3749,12 @@ Firmware reported link failure count
 | ZAPI | `perf-object-get-instances fcvi` | `fw_link_failure`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcvi.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/mcc_cluster.json | MetroCluster FCVI | Link Failure Count |
+
+
+
 ### fcvi_firmware_loss_of_signal_count
 
 Firmware reported loss of signal count
@@ -2661,6 +3763,12 @@ Firmware reported loss of signal count
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcvi` | `firmware.loss_of_signal_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcvi.yaml |
 | ZAPI | `perf-object-get-instances fcvi` | `fw_loss_of_signal`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcvi.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/mcc_cluster.json | MetroCluster FCVI | Loss of Signal Count |
+
 
 
 ### fcvi_firmware_loss_of_sync_count
@@ -2673,6 +3781,12 @@ Firmware reported loss of sync count
 | ZAPI | `perf-object-get-instances fcvi` | `fw_loss_of_sync`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcvi.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/mcc_cluster.json | MetroCluster FCVI | Loss of Sync Count |
+
+
+
 ### fcvi_firmware_systat_discard_frames
 
 Firmware reported SyStatDiscardFrames value
@@ -2681,6 +3795,12 @@ Firmware reported SyStatDiscardFrames value
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcvi` | `firmware.systat.discard_frames`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcvi.yaml |
 | ZAPI | `perf-object-get-instances fcvi` | `fw_SyStatDiscardFrames`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcvi.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/mcc_cluster.json | MetroCluster FCVI | SyStatDiscardFrames Value |
+
 
 
 ### fcvi_hard_reset_count
@@ -2693,6 +3813,12 @@ Number of times hard reset of FCVI adapter got issued.
 | ZAPI | `perf-object-get-instances fcvi` | `hard_reset_cnt`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcvi.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/mcc_cluster.json | MetroCluster FCVI | Hard Reset Count |
+
+
+
 ### fcvi_rdma_write_avg_latency
 
 Average RDMA write I/O latency.
@@ -2701,6 +3827,13 @@ Average RDMA write I/O latency.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcvi` | `rdma.write_average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> rdma.write_ops | conf/restperf/9.12.0/fcvi.yaml |
 | ZAPI | `perf-object-get-instances fcvi` | `rdma_write_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> rdma_write_ops | conf/zapiperf/cdot/9.8.0/fcvi.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/mcc_cluster.json | Highlights | FCVI Write Latency |
+| cmode/mcc_cluster.json | MetroCluster FCVI | Write Latency |
+
 
 
 ### fcvi_rdma_write_ops
@@ -2713,6 +3846,13 @@ Number of RDMA write I/Os issued per second.
 | ZAPI | `perf-object-get-instances fcvi` | `rdma_write_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcvi.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/mcc_cluster.json | Highlights | FCVI Write IOPs |
+| cmode/mcc_cluster.json | MetroCluster FCVI | Write IOPs |
+
+
+
 ### fcvi_rdma_write_throughput
 
 RDMA write throughput in bytes per second.
@@ -2721,6 +3861,13 @@ RDMA write throughput in bytes per second.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/fcvi` | `rdma.write_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcvi.yaml |
 | ZAPI | `perf-object-get-instances fcvi` | `rdma_write_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcvi.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/mcc_cluster.json | Highlights | FCVI Write Throughput |
+| cmode/mcc_cluster.json | MetroCluster FCVI | Write Throughput |
+
 
 
 ### fcvi_soft_reset_count
@@ -2733,6 +3880,12 @@ Number of times soft reset of FCVI adapter got issued.
 | ZAPI | `perf-object-get-instances fcvi` | `soft_reset_cnt`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcvi.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/mcc_cluster.json | MetroCluster FCVI | Soft  Reset Count |
+
+
+
 ### flashcache_accesses
 
 External cache accesses per second
@@ -2741,6 +3894,7 @@ External cache accesses per second
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/external_cache` | `accesses`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/ext_cache_obj.yaml |
 | ZAPI | `perf-object-get-instances ext_cache_obj` | `accesses`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ext_cache_obj.yaml |
+
 
 
 ### flashcache_disk_reads_replaced
@@ -2753,6 +3907,12 @@ Estimated number of disk reads per second replaced by cache
 | ZAPI | `perf-object-get-instances ext_cache_obj` | `disk_reads_replaced`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ext_cache_obj.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/disk.json | Disk Utilization | Flash Cache |
+
+
+
 ### flashcache_evicts
 
 Number of blocks evicted from the external cache to make room for new blocks
@@ -2761,6 +3921,7 @@ Number of blocks evicted from the external cache to make room for new blocks
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/external_cache` | `evicts`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/ext_cache_obj.yaml |
 | ZAPI | `perf-object-get-instances ext_cache_obj` | `evicts`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ext_cache_obj.yaml |
+
 
 
 ### flashcache_hit
@@ -2773,6 +3934,7 @@ Number of WAFL buffers served off the external cache
 | ZAPI | `perf-object-get-instances ext_cache_obj` | `hit`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ext_cache_obj.yaml |
 
 
+
 ### flashcache_hit_directory
 
 Number of directory buffers served off the external cache
@@ -2781,6 +3943,7 @@ Number of directory buffers served off the external cache
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/external_cache` | `hit.directory`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/ext_cache_obj.yaml |
 | ZAPI | `perf-object-get-instances ext_cache_obj` | `hit_directory`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ext_cache_obj.yaml |
+
 
 
 ### flashcache_hit_indirect
@@ -2793,6 +3956,7 @@ Number of indirect file buffers served off the external cache
 | ZAPI | `perf-object-get-instances ext_cache_obj` | `hit_indirect`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ext_cache_obj.yaml |
 
 
+
 ### flashcache_hit_metadata_file
 
 Number of metadata file buffers served off the external cache
@@ -2801,6 +3965,7 @@ Number of metadata file buffers served off the external cache
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/external_cache` | `hit.metadata_file`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/ext_cache_obj.yaml |
 | ZAPI | `perf-object-get-instances ext_cache_obj` | `hit_metadata_file`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ext_cache_obj.yaml |
+
 
 
 ### flashcache_hit_normal_lev0
@@ -2813,6 +3978,7 @@ Number of normal level 0 WAFL buffers served off the external cache
 | ZAPI | `perf-object-get-instances ext_cache_obj` | `hit_normal_lev0`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ext_cache_obj.yaml |
 
 
+
 ### flashcache_hit_percent
 
 External cache hit rate
@@ -2821,6 +3987,12 @@ External cache hit rate
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/external_cache` | `hit.percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> average<br><span class="key">Base:</span> accesses | conf/restperf/9.12.0/ext_cache_obj.yaml |
 | ZAPI | `perf-object-get-instances ext_cache_obj` | `hit_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> accesses | conf/zapiperf/cdot/9.8.0/ext_cache_obj.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/disk.json | Disk Utilization | Flash Cache |
+
 
 
 ### flashcache_inserts
@@ -2833,6 +4005,7 @@ Number of WAFL buffers inserted into the external cache
 | ZAPI | `perf-object-get-instances ext_cache_obj` | `inserts`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ext_cache_obj.yaml |
 
 
+
 ### flashcache_invalidates
 
 Number of blocks invalidated in the external cache
@@ -2841,6 +4014,7 @@ Number of blocks invalidated in the external cache
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/external_cache` | `invalidates`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/ext_cache_obj.yaml |
 | ZAPI | `perf-object-get-instances ext_cache_obj` | `invalidates`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ext_cache_obj.yaml |
+
 
 
 ### flashcache_miss
@@ -2853,6 +4027,7 @@ External cache misses
 | ZAPI | `perf-object-get-instances ext_cache_obj` | `miss`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ext_cache_obj.yaml |
 
 
+
 ### flashcache_miss_directory
 
 External cache misses accessing directory buffers
@@ -2861,6 +4036,7 @@ External cache misses accessing directory buffers
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/external_cache` | `miss.directory`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/ext_cache_obj.yaml |
 | ZAPI | `perf-object-get-instances ext_cache_obj` | `miss_directory`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ext_cache_obj.yaml |
+
 
 
 ### flashcache_miss_indirect
@@ -2873,6 +4049,7 @@ External cache misses accessing indirect file buffers
 | ZAPI | `perf-object-get-instances ext_cache_obj` | `miss_indirect`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ext_cache_obj.yaml |
 
 
+
 ### flashcache_miss_metadata_file
 
 External cache misses accessing metadata file buffers
@@ -2881,6 +4058,7 @@ External cache misses accessing metadata file buffers
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/external_cache` | `miss.metadata_file`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/ext_cache_obj.yaml |
 | ZAPI | `perf-object-get-instances ext_cache_obj` | `miss_metadata_file`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ext_cache_obj.yaml |
+
 
 
 ### flashcache_miss_normal_lev0
@@ -2893,6 +4071,7 @@ External cache misses accessing normal level 0 buffers
 | ZAPI | `perf-object-get-instances ext_cache_obj` | `miss_normal_lev0`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ext_cache_obj.yaml |
 
 
+
 ### flashcache_usage
 
 Percentage of blocks in external cache currently containing valid data
@@ -2901,6 +4080,7 @@ Percentage of blocks in external cache currently containing valid data
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/external_cache` | `usage`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/ext_cache_obj.yaml |
 | ZAPI | `perf-object-get-instances ext_cache_obj` | `usage`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ext_cache_obj.yaml |
+
 
 
 ### flashpool_cache_stats
@@ -2913,6 +4093,7 @@ Automated Working-set Analyzer (AWA) per-interval pseudo cache statistics for th
 | ZAPI | `perf-object-get-instances wafl_hya_sizer` | `cache_stats`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl_hya_sizer.yaml |
 
 
+
 ### flashpool_evict_destage_rate
 
 Number of block destage per second.
@@ -2921,6 +4102,13 @@ Number of block destage per second.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `evict_destage_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml |
 | ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `evict_destage_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Cache Removals |
+| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Cache Removals |
+
 
 
 ### flashpool_evict_remove_rate
@@ -2933,6 +4121,13 @@ Number of block free per second.
 | ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `evict_remove_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Cache Removals |
+| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Cache Removals |
+
+
+
 ### flashpool_hya_read_hit_latency_average
 
 Average of RAID I/O latency on read hit.
@@ -2941,6 +4136,13 @@ Average of RAID I/O latency on read hit.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `hya_read_hit_latency_average`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_read_hit_latency_count | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml |
 | ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `hya_read_hit_latency_average`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_read_hit_latency_count | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by SSD and HDD Latency |
+| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by SSD and HDD Latency |
+
 
 
 ### flashpool_hya_read_miss_latency_average
@@ -2953,6 +4155,13 @@ Average read miss latency.
 | ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `hya_read_miss_latency_average`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_read_miss_latency_count | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by SSD and HDD Latency |
+| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by SSD and HDD Latency |
+
+
+
 ### flashpool_hya_write_hdd_latency_average
 
 Average write latency to HDD.
@@ -2961,6 +4170,7 @@ Average write latency to HDD.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `hya_write_hdd_latency_average`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_write_hdd_latency_count | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml |
 | ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `hya_write_hdd_latency_average`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_write_hdd_latency_count | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml |
+
 
 
 ### flashpool_hya_write_ssd_latency_average
@@ -2973,6 +4183,7 @@ Average of RAID I/O latency on write to SSD.
 | ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `hya_write_ssd_latency_average`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_write_ssd_latency_count | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml |
 
 
+
 ### flashpool_read_cache_ins_rate
 
 Cache insert rate blocks/sec.
@@ -2981,6 +4192,13 @@ Cache insert rate blocks/sec.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `read_cache_insert_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml |
 | ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `read_cache_ins_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Cache Inserts |
+| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Cache Inserts |
+
 
 
 ### flashpool_read_ops_replaced
@@ -2993,6 +4211,14 @@ Number of HDD read operations replaced by SSD reads per second.
 | ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `read_ops_replaced`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Flash Pool Activity |
+| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Flash Pool Activity |
+| cmode/disk.json | Disk Utilization | Flash Pool |
+
+
+
 ### flashpool_read_ops_replaced_percent
 
 Percentage of HDD read operations replace by SSD.
@@ -3001,6 +4227,14 @@ Percentage of HDD read operations replace by SSD.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `read_ops_replaced_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> read_ops_total | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml |
 | ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `read_ops_replaced_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> read_ops_total | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Flash Pool Activity |
+| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Flash Pool Activity |
+| cmode/disk.json | Disk Utilization | Flash Pool |
+
 
 
 ### flashpool_ssd_available
@@ -3013,6 +4247,7 @@ Total SSD blocks available.
 | ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `ssd_available`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml |
 
 
+
 ### flashpool_ssd_read_cached
 
 Total read cached SSD blocks.
@@ -3021,6 +4256,13 @@ Total read cached SSD blocks.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `ssd_read_cached`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml |
 | ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `ssd_read_cached`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Flash Pool Capacity Used |
+| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Flash Pool Capacity Used |
+
 
 
 ### flashpool_ssd_total
@@ -3033,6 +4275,13 @@ Total SSD blocks.
 | ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `ssd_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Flash Pool Capacity Used |
+| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Flash Pool Capacity Used |
+
+
+
 ### flashpool_ssd_total_used
 
 Total SSD blocks used.
@@ -3041,6 +4290,7 @@ Total SSD blocks used.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `ssd_total_used`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml |
 | ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `ssd_total_used`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml |
+
 
 
 ### flashpool_ssd_write_cached
@@ -3053,6 +4303,13 @@ Total write cached SSD blocks.
 | ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `ssd_write_cached`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Flash Pool Capacity Used |
+| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Flash Pool Capacity Used |
+
+
+
 ### flashpool_wc_write_blks_total
 
 Number of write-cache blocks written per second.
@@ -3061,6 +4318,13 @@ Number of write-cache blocks written per second.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `wc_write_blocks_total`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml |
 | ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `wc_write_blks_total`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Cache Inserts |
+| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Cache Inserts |
+
 
 
 ### flashpool_write_blks_replaced
@@ -3073,6 +4337,7 @@ Number of HDD write blocks replaced by SSD writes per second.
 | ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `write_blks_replaced`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml |
 
 
+
 ### flashpool_write_blks_replaced_percent
 
 Percentage of blocks overwritten to write-cache among all disk writes.
@@ -3081,6 +4346,7 @@ Percentage of blocks overwritten to write-cache among all disk writes.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `write_blocks_replaced_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> average<br><span class="key">Base:</span> estimated_write_blocks_total | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml |
 | ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `write_blks_replaced_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> average<br><span class="key">Base:</span> est_write_blks_total | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml |
+
 
 
 ### flexcache_blocks_requested_from_client
@@ -3094,6 +4360,13 @@ Total blocks requested by the client.
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `blocks_requested_from_client`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/flexcache.json | Highlights | Top $TopResources Blocks requested from Client |
+| cmode/flexcache.json | Highlights | Top $TopResources Blocks requested from Client |
+
+
+
 ### flexcache_blocks_retrieved_from_origin
 
 Blocks retrieved from origin in case of a cache miss. This can be divided by the raw client_requested_blocks and multiplied by 100 to calculate the cache miss percentage.
@@ -3103,6 +4376,13 @@ Blocks retrieved from origin in case of a cache miss. This can be divided by the
 | KeyPerf | `api/storage/volumes` | `statistics.flexcache_raw.cache_miss_blocks`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/flexcache.yaml |
 | StatPerf | `flexcache_per_volume` | `blocks_retrieved_from_origin`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/flexcache.yaml |
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `blocks_retrieved_from_origin`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/flexcache.json | Highlights | Top $TopResources Blocks requested from Origin |
+| cmode/flexcache.json | Highlights | Top $TopResources Blocks requested from Origin |
+
 
 
 ### flexcache_evict_rw_cache_skipped_reason_disconnected
@@ -3115,6 +4395,13 @@ Total number of read-write cache evict operations skipped because cache is disco
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `evict_rw_cache_skipped_reason_disconnected`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/flexcache.json | Evict | Top $TopResources Read-Write Cache Evictions Skipped Due to Cache Disconnection |
+| cmode/flexcache.json | Evict | Top $TopResources Read-Write Cache Evictions Skipped Due to Cache Disconnection |
+
+
+
 ### flexcache_evict_skipped_reason_config_noent
 
 Total number of evict operation is skipped because cache config is not available.
@@ -3123,6 +4410,13 @@ Total number of evict operation is skipped because cache config is not available
 |--------|----------|--------|---------|
 | StatPerf | `flexcache_per_volume` | `evict_skipped_reason_config_noent`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/flexcache.yaml |
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `evict_skipped_reason_config_noent`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/flexcache.json | Evict | Top $TopResources Evictions Skipped Due to Configuration Issues |
+| cmode/flexcache.json | Evict | Top $TopResources Evictions Skipped Due to Configuration Issues |
+
 
 
 ### flexcache_evict_skipped_reason_disconnected
@@ -3135,6 +4429,13 @@ Total number of evict operation is skipped because cache is disconnected.
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `evict_skipped_reason_disconnected`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/flexcache.json | Evict | Top $TopResources Evictions Skipped Due to Cache Disconnection |
+| cmode/flexcache.json | Evict | Top $TopResources Evictions Skipped Due to Cache Disconnection |
+
+
+
 ### flexcache_evict_skipped_reason_offline
 
 Total number of evict operation is skipped because cache volume is offline.
@@ -3143,6 +4444,15 @@ Total number of evict operation is skipped because cache volume is offline.
 |--------|----------|--------|---------|
 | StatPerf | `flexcache_per_volume` | `evict_skipped_reason_offline`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/flexcache.yaml |
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `evict_skipped_reason_offline`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/flexcache.json | Evict | Top $TopResources Evictions Skipped When Cache is Offline |
+| cmode/flexcache.json | Evict | Top $TopResources Evictions Skipped When Cache is Offline |
+| cmode/flexcache.json | Invalidate | Top $TopResources Invalidate Operations Skipped When Cache Volume is Offline |
+| cmode/flexcache.json | Invalidate | Top $TopResources Invalidate Operations Skipped When Cache Volume is Offline |
+
 
 
 ### flexcache_invalidate_skipped_reason_config_noent
@@ -3155,6 +4465,13 @@ Total number of invalidate operation is skipped because cache config is not avai
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `invalidate_skipped_reason_config_noent`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/flexcache.json | Invalidate | Top $TopResources Invalidate Operations Skipped Due to Unavailable Cache Configuration |
+| cmode/flexcache.json | Invalidate | Top $TopResources Invalidate Operations Skipped Due to Unavailable Cache Configuration |
+
+
+
 ### flexcache_invalidate_skipped_reason_disconnected
 
 Total number of invalidate operation is skipped because cache is disconnected.
@@ -3165,6 +4482,13 @@ Total number of invalidate operation is skipped because cache is disconnected.
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `invalidate_skipped_reason_disconnected`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/flexcache.json | Invalidate | Top $TopResources Invalidate Operations Skipped Due to Cache Disconnection |
+| cmode/flexcache.json | Invalidate | Top $TopResources Invalidate Operations Skipped Due to Cache Disconnection |
+
+
+
 ### flexcache_invalidate_skipped_reason_offline
 
 Total number of invalidate operation is skipped because cache volume is offline.
@@ -3173,6 +4497,7 @@ Total number of invalidate operation is skipped because cache volume is offline.
 |--------|----------|--------|---------|
 | StatPerf | `flexcache_per_volume` | `invalidate_skipped_reason_offline`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/flexcache.yaml |
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `invalidate_skipped_reason_offline`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
+
 
 
 ### flexcache_miss_percent
@@ -3186,6 +4511,13 @@ This metric represents the percentage of block requests from a client that resul
 | ZAPI | `flexcache_per_volume` | `blocks_retrieved_from_origin, blocks_requested_from_client`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/flexcache.json | Highlights | Top $TopResources Cache Miss percent |
+| cmode/flexcache.json | Highlights | Top $TopResources Cache Miss percent |
+
+
+
 ### flexcache_nix_retry_skipped_reason_initiator_retrieve
 
 Total retry nix operations skipped because the initiator is retrieve operation.
@@ -3194,6 +4526,13 @@ Total retry nix operations skipped because the initiator is retrieve operation.
 |--------|----------|--------|---------|
 | StatPerf | `flexcache_per_volume` | `nix_retry_skipped_reason_initiator_retrieve`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/flexcache.yaml |
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `nix_retry_skipped_reason_initiator_retrieve`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/flexcache.json | Nix | Top $TopResources Retry Nix Operations Skipped Due to Retrieve Operation Initiator |
+| cmode/flexcache.json | Nix | Top $TopResources Retry Nix Operations Skipped Due to Retrieve Operation Initiator |
+
 
 
 ### flexcache_nix_skipped_reason_config_noent
@@ -3206,6 +4545,13 @@ Total number of nix operation is skipped because cache config is not available.
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `nix_skipped_reason_config_noent`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/flexcache.json | Nix | Top $TopResources Nix Operations Skipped Due to Unavailable Cache Configuration |
+| cmode/flexcache.json | Nix | Top $TopResources Nix Operations Skipped Due to Unavailable Cache Configuration |
+
+
+
 ### flexcache_nix_skipped_reason_disconnected
 
 Total number of nix operation is skipped because cache is disconnected.
@@ -3214,6 +4560,13 @@ Total number of nix operation is skipped because cache is disconnected.
 |--------|----------|--------|---------|
 | StatPerf | `flexcache_per_volume` | `nix_skipped_reason_disconnected`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/flexcache.yaml |
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `nix_skipped_reason_disconnected`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/flexcache.json | Nix | Top $TopResources Nix Operations Skipped Due to Cache Disconnection |
+| cmode/flexcache.json | Nix | Top $TopResources Nix Operations Skipped Due to Cache Disconnection |
+
 
 
 ### flexcache_nix_skipped_reason_in_progress
@@ -3226,6 +4579,13 @@ Total nix operations skipped because of an in-progress nix.
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `nix_skipped_reason_in_progress`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/flexcache.json | Nix | Top $TopResources Nix Operations Skipped Due to In-Progress Nix Operation |
+| cmode/flexcache.json | Nix | Top $TopResources Nix Operations Skipped Due to In-Progress Nix Operation |
+
+
+
 ### flexcache_nix_skipped_reason_offline
 
 Total number of nix operation is skipped because cache volume is offline.
@@ -3234,6 +4594,13 @@ Total number of nix operation is skipped because cache volume is offline.
 |--------|----------|--------|---------|
 | StatPerf | `flexcache_per_volume` | `nix_skipped_reason_offline`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/flexcache.yaml |
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `nix_skipped_reason_offline`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/flexcache.json | Nix | Top $TopResources Nix Operations Skipped When Cache Volume is Offline |
+| cmode/flexcache.json | Nix | Top $TopResources Nix Operations Skipped When Cache Volume is Offline |
+
 
 
 ### flexcache_reconciled_data_entries
@@ -3246,6 +4613,13 @@ Total number of reconciled data entries at cache side.
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `reconciled_data_entries`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/flexcache.json | Reconcile Metrics | Top $TopResources Reconciled data entries |
+| cmode/flexcache.json | Reconcile Metrics | Top $TopResources Reconciled data entries |
+
+
+
 ### flexcache_reconciled_lock_entries
 
 Total number of reconciled lock entries at cache side.
@@ -3254,6 +4628,13 @@ Total number of reconciled lock entries at cache side.
 |--------|----------|--------|---------|
 | StatPerf | `flexcache_per_volume` | `reconciled_lock_entries`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/flexcache.yaml |
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `reconciled_lock_entries`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/flexcache.json | Reconcile Metrics | Top $TopResources Reconciled Lock Entries |
+| cmode/flexcache.json | Reconcile Metrics | Top $TopResources Reconciled Lock Entries |
+
 
 
 ### flexcache_size
@@ -3266,6 +4647,12 @@ Physical size of the volume, in bytes. The minimum size for a FlexVol volume is 
 | ZAPI | `flexcache-get-iter` | `flexcache-info.size` | conf/zapi/cdot/9.8.0/flexcache.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/flexcache.json | Highlights | FlexCache Details |
+
+
+
 ### fru_status
 
 This metric indicates a value of 1 if the FRU status is ok and a value of 0 for any other state.
@@ -3273,6 +4660,7 @@ This metric indicates a value of 1 if the FRU status is ok and a value of 0 for 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.12.0/fru.yaml |
+
 
 
 ### headroom_aggr_current_latency
@@ -3285,6 +4673,12 @@ This is the storage aggregate average latency per message at the disk level.
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `current_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> current_ops | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/headroom.json | Aggregate Headroom | Current Latency |
+
+
+
 ### headroom_aggr_current_ops
 
 Total number of I/Os processed by the aggregate per second.
@@ -3293,6 +4687,13 @@ Total number of I/Os processed by the aggregate per second.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/headroom_aggregate` | `current_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_aggr.yaml |
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `current_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/headroom.json | Highlights | Available Ops: Aggregate |
+| cmode/headroom.json | Aggregate Headroom | Current IOP/s |
+
 
 
 ### headroom_aggr_current_utilization
@@ -3305,6 +4706,12 @@ This is the storage aggregate average utilization of all the data disks in the a
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `current_utilization`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> current_utilization_total | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/headroom.json | Aggregate Headroom | Current Utilization |
+
+
+
 ### headroom_aggr_ewma_daily
 
 Daily exponential weighted moving average.
@@ -3313,6 +4720,7 @@ Daily exponential weighted moving average.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/headroom_aggregate` | `ewma.daily`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_aggr.yaml |
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `ewma_daily`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml |
+
 
 
 ### headroom_aggr_ewma_hourly
@@ -3325,6 +4733,7 @@ Hourly exponential weighted moving average.
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `ewma_hourly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml |
 
 
+
 ### headroom_aggr_ewma_monthly
 
 Monthly exponential weighted moving average.
@@ -3333,6 +4742,7 @@ Monthly exponential weighted moving average.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/headroom_aggregate` | `ewma.monthly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_aggr.yaml |
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `ewma_monthly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml |
+
 
 
 ### headroom_aggr_ewma_weekly
@@ -3345,6 +4755,7 @@ Weekly exponential weighted moving average.
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `ewma_weekly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml |
 
 
+
 ### headroom_aggr_optimal_point_confidence_factor
 
 The confidence factor for the optimal point value based on the observed resource latency and utilization.
@@ -3353,6 +4764,7 @@ The confidence factor for the optimal point value based on the observed resource
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/headroom_aggregate` | `optimal_point.confidence_factor`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_aggr.yaml |
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `optimal_point_confidence_factor`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point_samples | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml |
+
 
 
 ### headroom_aggr_optimal_point_latency
@@ -3365,6 +4777,12 @@ The latency component of the optimal point of the latency/utilization curve.
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `optimal_point_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point_samples | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/headroom.json | Aggregate Headroom | Optimal-Point Latency |
+
+
+
 ### headroom_aggr_optimal_point_ops
 
 The ops component of the optimal point derived from the latency/utilzation curve.
@@ -3373,6 +4791,13 @@ The ops component of the optimal point derived from the latency/utilzation curve
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/headroom_aggregate` | `optimal_point.ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_aggr.yaml |
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `optimal_point_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point_samples | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/headroom.json | Highlights | Available Ops: Aggregate |
+| cmode/headroom.json | Aggregate Headroom | Optimal-Point IOP/s |
+
 
 
 ### headroom_aggr_optimal_point_utilization
@@ -3385,6 +4810,12 @@ The utilization component of the optimal point of the latency/utilization curve.
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `optimal_point_utilization`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point_samples | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/headroom.json | Aggregate Headroom | Optimal-Point Utilization |
+
+
+
 ### headroom_cpu_current_latency
 
 Current operation latency of the resource.
@@ -3393,6 +4824,12 @@ Current operation latency of the resource.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/headroom_cpu` | `current_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> current_ops | conf/restperf/9.12.0/resource_headroom_cpu.yaml |
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `current_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> current_ops | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/headroom.json | CPU Headroom | Current Latency |
+
 
 
 ### headroom_cpu_current_ops
@@ -3405,6 +4842,14 @@ Total number of operations per second (also referred to as dblade ops).
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `current_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/headroom.json | Highlights | Available Ops: CPU |
+| cmode/headroom.json | CPU Headroom | Current CPU Ops |
+| cmode/nfsTroubleshooting.json | Highlights | Headroom Overview (Average by Time Range) |
+
+
+
 ### headroom_cpu_current_utilization
 
 Average processor utilization across all processors in the system.
@@ -3413,6 +4858,14 @@ Average processor utilization across all processors in the system.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/headroom_cpu` | `current_utilization`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> elapsed_time | conf/restperf/9.12.0/resource_headroom_cpu.yaml |
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `current_utilization`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> current_utilization_total | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/headroom.json | CPU Headroom | Current Utilization |
+| cmode/nfsTroubleshooting.json | Highlights | Headroom Overview (Average by Time Range) |
+| cmode/nfsTroubleshooting.json | Highlights | Headroom Overview (Average by Time Range) |
+
 
 
 ### headroom_cpu_ewma_daily
@@ -3425,6 +4878,13 @@ Daily exponential weighted moving average for current_ops, optimal_point_ops, cu
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `ewma_daily`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfsTroubleshooting.json | Highlights | Weighted Avg Daily (Headroom) |
+| cmode/nfsTroubleshooting.json | Highlights | Weighted Avg Daily (Headroom) |
+
+
+
 ### headroom_cpu_ewma_hourly
 
 Hourly exponential weighted moving average for current_ops, optimal_point_ops, current_latency, optimal_point_latency, current_utilization, optimal_point_utilization and optimal_point_confidence_factor.
@@ -3433,6 +4893,7 @@ Hourly exponential weighted moving average for current_ops, optimal_point_ops, c
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/headroom_cpu` | `ewma.hourly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_cpu.yaml |
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `ewma_hourly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml |
+
 
 
 ### headroom_cpu_ewma_monthly
@@ -3445,6 +4906,7 @@ Monthly exponential weighted moving average for current_ops, optimal_point_ops, 
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `ewma_monthly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml |
 
 
+
 ### headroom_cpu_ewma_weekly
 
 Weekly exponential weighted moving average for current_ops, optimal_point_ops, current_latency, optimal_point_latency, current_utilization, optimal_point_utilization and optimal_point_confidence_factor.
@@ -3453,6 +4915,13 @@ Weekly exponential weighted moving average for current_ops, optimal_point_ops, c
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/headroom_cpu` | `ewma.weekly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_cpu.yaml |
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `ewma_weekly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfsTroubleshooting.json | Highlights | Weighted Avg Weekly (Headroom) |
+| cmode/nfsTroubleshooting.json | Highlights | Weighted Avg Weekly (Headroom) |
+
 
 
 ### headroom_cpu_optimal_point_confidence_factor
@@ -3465,6 +4934,7 @@ Confidence factor for the optimal point value based on the observed resource lat
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `optimal_point_confidence_factor`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point_samples | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml |
 
 
+
 ### headroom_cpu_optimal_point_latency
 
 Latency component of the optimal point of the latency/utilization curve. This counter can provide an average latency over a range of time.
@@ -3473,6 +4943,12 @@ Latency component of the optimal point of the latency/utilization curve. This co
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/headroom_cpu` | `optimal_point.latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_cpu.yaml |
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `optimal_point_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point_samples | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/headroom.json | CPU Headroom | Optimal-Point Latency |
+
 
 
 ### headroom_cpu_optimal_point_ops
@@ -3485,6 +4961,14 @@ Ops component of the optimal point derived from the latency/utilization curve. T
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `optimal_point_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point_samples | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/headroom.json | Highlights | Available Ops: CPU |
+| cmode/headroom.json | CPU Headroom | Optimal-Point Ops |
+| cmode/nfsTroubleshooting.json | Highlights | Headroom Overview (Average by Time Range) |
+
+
+
 ### headroom_cpu_optimal_point_utilization
 
 Utilization component of the optimal point of the latency/utilization curve. This counter can provide an average utilization over a range of time.
@@ -3493,6 +4977,14 @@ Utilization component of the optimal point of the latency/utilization curve. Thi
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/headroom_cpu` | `optimal_point.utilization`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_cpu.yaml |
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `optimal_point_utilization`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point_samples | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/headroom.json | CPU Headroom | Optimal-Point Utilization |
+| cmode/nfsTroubleshooting.json | Highlights | Headroom Overview (Average by Time Range) |
+| cmode/nfsTroubleshooting.json | Highlights | Headroom Overview (Average by Time Range) |
+
 
 
 ### health_disk_alerts
@@ -3504,6 +4996,7 @@ Provides any issues related to Disks health check if disks are broken or unassig
 | REST | `NA` | `Harvest generated` | conf/rest/9.6.0/health.yaml |
 
 
+
 ### health_ems_alerts
 
 The health_ems_alerts metric monitors EMS (Event Management System), providing a count based on their severity and other attributes. This metric includes labels such as node, message, source, and severity (e.g., emergency, alert, error). By default, it monitors alerts with emergency severity.
@@ -3511,6 +5004,7 @@ The health_ems_alerts metric monitors EMS (Event Management System), providing a
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.6.0/health.yaml |
+
 
 
 ### health_ha_alerts
@@ -3522,6 +5016,7 @@ Provides any issues related to HA health check. Value of 1 means issue is happen
 | REST | `NA` | `Harvest generated` | conf/rest/9.6.0/health.yaml |
 
 
+
 ### health_license_alerts
 
 Provides any issues related to License health check. Value of 1 means issue is happening and 0 means that issue is resolved.
@@ -3529,6 +5024,7 @@ Provides any issues related to License health check. Value of 1 means issue is h
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.6.0/health.yaml |
+
 
 
 ### health_lif_alerts
@@ -3540,6 +5036,7 @@ Provides any issues related to LIF health check. Value of 1 means issue is happe
 | REST | `NA` | `Harvest generated` | conf/rest/9.6.0/health.yaml |
 
 
+
 ### health_network_ethernet_port_alerts
 
 Provides any issues related to Network Ethernet Port health check. Value of 1 means issue is happening and 0 means that issue is resolved.
@@ -3547,6 +5044,7 @@ Provides any issues related to Network Ethernet Port health check. Value of 1 me
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.6.0/health.yaml |
+
 
 
 ### health_network_fc_port_alerts
@@ -3558,6 +5056,7 @@ Provides any issues related to Network FC Port health check. Value of 1 means is
 | REST | `NA` | `Harvest generated` | conf/rest/9.6.0/health.yaml |
 
 
+
 ### health_node_alerts
 
 Provides any issues related to Node health check. Value of 1 means issue is happening and 0 means that issue is resolved.
@@ -3565,6 +5064,7 @@ Provides any issues related to Node health check. Value of 1 means issue is happ
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.6.0/health.yaml |
+
 
 
 ### health_shelf_alerts
@@ -3576,6 +5076,7 @@ Provides any issues related to Shelf health check. Value of 1 means issue is hap
 | REST | `NA` | `Harvest generated` | conf/rest/9.6.0/health.yaml |
 
 
+
 ### health_support_alerts
 
 Provides any issues related to Support health check. Value of 1 means issue is happening and 0 means that issue is resolved.
@@ -3583,6 +5084,7 @@ Provides any issues related to Support health check. Value of 1 means issue is h
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.6.0/health.yaml |
+
 
 
 ### health_volume_move_alerts
@@ -3594,6 +5096,7 @@ Provides any issues related to Volume Move health check. Value of 1 means issue 
 | REST | `NA` | `Harvest generated` | conf/rest/9.6.0/health.yaml |
 
 
+
 ### health_volume_ransomware_alerts
 
 Provides any issues related to Volume Ransomware health check. Value of 1 means issue is happening and 0 means that issue is resolved.
@@ -3601,6 +5104,7 @@ Provides any issues related to Volume Ransomware health check. Value of 1 means 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.6.0/health.yaml |
+
 
 
 ### hostadapter_bytes_read
@@ -3613,6 +5117,16 @@ Bytes read through a host adapter
 | ZAPI | `perf-object-get-instances hostadapter` | `bytes_read`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/hostadapter.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/disk.json | Disk Utilization | Disk and Tape Drives Throughput by Node |
+| cmode/disk.json | Disk Utilization | Top $TopResources Disk and Tape Drives Throughput by Host Adapter |
+| cmode/disk.json | Disk Utilization | Top $TopResources Disk and Tape Drives Throughput by Host Adapter |
+| cmode/mcc_cluster.json | Disk and Tape Adapter | Top $TopResources Adapters by Read Data |
+| cmode/mcc_cluster.json | Disk and Tape Adapter | Top $TopResources Adapters by Read Data |
+
+
+
 ### hostadapter_bytes_written
 
 Bytes written through a host adapter
@@ -3621,6 +5135,16 @@ Bytes written through a host adapter
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/host_adapter` | `bytes_written`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/hostadapter.yaml |
 | ZAPI | `perf-object-get-instances hostadapter` | `bytes_written`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/hostadapter.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/disk.json | Disk Utilization | Disk and Tape Drives Throughput by Node |
+| cmode/disk.json | Disk Utilization | Top $TopResources Disk and Tape Drives Throughput by Host Adapter |
+| cmode/disk.json | Disk Utilization | Top $TopResources Disk and Tape Drives Throughput by Host Adapter |
+| cmode/mcc_cluster.json | Disk and Tape Adapter | Top $TopResources Adapters by Write Data |
+| cmode/mcc_cluster.json | Disk and Tape Adapter | Top $TopResources Adapters by Write Data |
+
 
 
 ### iscsi_lif_avg_latency
@@ -3633,6 +5157,14 @@ Average latency for iSCSI operations
 | ZAPI | `perf-object-get-instances iscsi_lif` | `avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cmd_transfered | conf/zapiperf/cdot/9.8.0/iscsi_lif.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | iSCSI Frontend | iSCSI Latency |
+| cmode/node.json | iSCSI Frontend | Average Latency by LIF |
+| cmode/svm.json | iSCSI | SVM iSCSI Average Latency |
+
+
+
 ### iscsi_lif_avg_other_latency
 
 Average latency for operations other than read and write (for example, Inquiry, Report LUNs, SCSI Task Management Functions)
@@ -3641,6 +5173,12 @@ Average latency for operations other than read and write (for example, Inquiry, 
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/iscsi_lif` | `average_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> iscsi_other_ops | conf/restperf/9.12.0/iscsi_lif.yaml |
 | ZAPI | `perf-object-get-instances iscsi_lif` | `avg_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> iscsi_other_ops | conf/zapiperf/cdot/9.8.0/iscsi_lif.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | iSCSI | SVM iSCSI Average Latency |
+
 
 
 ### iscsi_lif_avg_read_latency
@@ -3653,6 +5191,13 @@ Average latency for read operations
 | ZAPI | `perf-object-get-instances iscsi_lif` | `avg_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> iscsi_read_ops | conf/zapiperf/cdot/9.8.0/iscsi_lif.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | iSCSI | SVM iSCSI Average Read Latency |
+| cmode/svm.json | iSCSI | SVM iSCSI Average Latency |
+
+
+
 ### iscsi_lif_avg_write_latency
 
 Average latency for write operations
@@ -3661,6 +5206,13 @@ Average latency for write operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/iscsi_lif` | `average_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> iscsi_write_ops | conf/restperf/9.12.0/iscsi_lif.yaml |
 | ZAPI | `perf-object-get-instances iscsi_lif` | `avg_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> iscsi_write_ops | conf/zapiperf/cdot/9.8.0/iscsi_lif.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | iSCSI | SVM iSCSI Average Write Latency |
+| cmode/svm.json | iSCSI | SVM iSCSI Average Latency |
+
 
 
 ### iscsi_lif_cmd_transfered
@@ -3673,6 +5225,7 @@ Command transferred by this iSCSI connection
 | ZAPI | `perf-object-get-instances iscsi_lif` | `cmd_transfered`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iscsi_lif.yaml |
 
 
+
 ### iscsi_lif_iscsi_other_ops
 
 iSCSI other operations per second on this logical interface (LIF)
@@ -3681,6 +5234,14 @@ iSCSI other operations per second on this logical interface (LIF)
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/iscsi_lif` | `iscsi_other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/iscsi_lif.yaml |
 | ZAPI | `perf-object-get-instances iscsi_lif` | `iscsi_other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iscsi_lif.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | iSCSI Frontend | iSCSI IOPs |
+| cmode/node.json | iSCSI Frontend | IOPs by LIF |
+| cmode/svm.json | iSCSI | SVM iSCSI IOPs |
+
 
 
 ### iscsi_lif_iscsi_read_ops
@@ -3693,6 +5254,12 @@ iSCSI read operations per second on this logical interface (LIF)
 | ZAPI | `perf-object-get-instances iscsi_lif` | `iscsi_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iscsi_lif.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | iSCSI | SVM iSCSI Read IOPs |
+
+
+
 ### iscsi_lif_iscsi_write_ops
 
 iSCSI write operations per second on this logical interface (LIF)
@@ -3701,6 +5268,12 @@ iSCSI write operations per second on this logical interface (LIF)
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/iscsi_lif` | `iscsi_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/iscsi_lif.yaml |
 | ZAPI | `perf-object-get-instances iscsi_lif` | `iscsi_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iscsi_lif.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | iSCSI | SVM iSCSI Write IOPs |
+
 
 
 ### iscsi_lif_protocol_errors
@@ -3713,6 +5286,7 @@ Number of protocol errors from iSCSI sessions on this logical interface (LIF)
 | ZAPI | `perf-object-get-instances iscsi_lif` | `protocol_errors`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iscsi_lif.yaml |
 
 
+
 ### iscsi_lif_read_data
 
 Amount of data read from the storage system in bytes
@@ -3721,6 +5295,17 @@ Amount of data read from the storage system in bytes
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/iscsi_lif` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/iscsi_lif.yaml |
 | ZAPI | `perf-object-get-instances iscsi_lif` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iscsi_lif.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | LIF | Top $TopResources iSCSI LIFs by Send Throughput |
+| cmode/svm.json | LIF | Top $TopResources iSCSI LIFs by Send Throughput |
+| cmode/svm.json | iSCSI | SVM iSCSI Read Throughput |
+| cmode/svm.json | iSCSI | Top $TopResources iSCSI LIFs by Send Throughput |
+| cmode/svm.json | iSCSI | Top $TopResources iSCSI LIFs by Send Throughput |
+| cmode/svm.json | iSCSI | SVM iSCSI Throughput |
+
 
 
 ### iscsi_lif_write_data
@@ -3733,6 +5318,19 @@ Amount of data written to the storage system in bytes
 | ZAPI | `perf-object-get-instances iscsi_lif` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iscsi_lif.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | iSCSI Frontend | Throughput by LIF |
+| cmode/svm.json | LIF | Top $TopResources iSCSI LIFs by Receive Throughput |
+| cmode/svm.json | LIF | Top $TopResources iSCSI LIFs by Receive Throughput |
+| cmode/svm.json | iSCSI | SVM iSCSI Throughput |
+| cmode/svm.json | iSCSI | SVM iSCSI Write Throughput |
+| cmode/svm.json | iSCSI | Top $TopResources iSCSI LIFs by Receive Throughput |
+| cmode/svm.json | iSCSI | Top $TopResources iSCSI LIFs by Receive Throughput |
+| cmode/svm.json | iSCSI | SVM iSCSI Throughput |
+
+
+
 ### iw_avg_latency
 
 Average RDMA I/O latency.
@@ -3741,6 +5339,12 @@ Average RDMA I/O latency.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/iwarp` | `average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> ops | conf/restperf/9.14.1/iwarp.yaml |
 | ZAPI | `perf-object-get-instances iwarp` | `iw_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> iw_ops | conf/zapiperf/cdot/9.8.0/iwarp.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/mcc_cluster.json | MetroCluster Iwarp | Average Latency |
+
 
 
 ### iw_ops
@@ -3753,6 +5357,12 @@ Number of RDMA I/Os issued.
 | ZAPI | `perf-object-get-instances iwarp` | `iw_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iwarp.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/mcc_cluster.json | MetroCluster Iwarp | IOPs |
+
+
+
 ### iw_read_ops
 
 Number of RDMA read I/Os issued.
@@ -3761,6 +5371,12 @@ Number of RDMA read I/Os issued.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/iwarp` | `read_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/iwarp.yaml |
 | ZAPI | `perf-object-get-instances iwarp` | `iw_read_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iwarp.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/mcc_cluster.json | MetroCluster Iwarp | Read IOPs |
+
 
 
 ### iw_write_ops
@@ -3773,6 +5389,12 @@ Number of RDMA write I/Os issued.
 | ZAPI | `perf-object-get-instances iwarp` | `iw_write_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iwarp.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/mcc_cluster.json | MetroCluster Iwarp | Write IOPs |
+
+
+
 ### lif_labels
 
 This metric provides information about LIF
@@ -3781,6 +5403,14 @@ This metric provides information about LIF
 |--------|----------|--------|---------|
 | REST | `api/network/ip/interfaces` | `Harvest generated` | conf/rest/9.12.0/lif.yaml |
 | ZAPI | `net-interface-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/lif.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/datacenter.json | Highlights | Object Count |
+| cmode/health.json | Lif | Lif not at home port |
+| cmode/svm.json | LIF | LIF Details |
+
 
 
 ### lif_recv_data
@@ -3794,6 +5424,13 @@ Number of bytes received per second
 | ZAPI | `perf-object-get-instances lif` | `recv_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lif.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | LIF | Top $TopResources NAS LIFs by Receive Throughput |
+| cmode/svm.json | LIF | Top $TopResources NAS LIFs by Receive Throughput |
+
+
+
 ### lif_recv_errors
 
 Number of received Errors per second
@@ -3804,6 +5441,7 @@ Number of received Errors per second
 | ZAPI | `perf-object-get-instances lif` | `recv_errors`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lif.yaml |
 
 
+
 ### lif_recv_packet
 
 Number of packets received per second
@@ -3812,6 +5450,7 @@ Number of packets received per second
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/lif` | `received_packets`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/lif.yaml |
 | ZAPI | `perf-object-get-instances lif` | `recv_packet`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lif.yaml |
+
 
 
 ### lif_sent_data
@@ -3825,6 +5464,13 @@ Number of bytes sent per second
 | ZAPI | `perf-object-get-instances lif` | `sent_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lif.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | LIF | Top $TopResources NAS LIFs by Send Throughput |
+| cmode/svm.json | LIF | Top $TopResources NAS LIFs by Send Throughput |
+
+
+
 ### lif_sent_errors
 
 Number of sent errors per second
@@ -3833,6 +5479,7 @@ Number of sent errors per second
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/lif` | `sent_errors`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/lif.yaml |
 | ZAPI | `perf-object-get-instances lif` | `sent_errors`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lif.yaml |
+
 
 
 ### lif_sent_packet
@@ -3845,6 +5492,7 @@ Number of packets sent per second
 | ZAPI | `perf-object-get-instances lif` | `sent_packet`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lif.yaml |
 
 
+
 ### lif_total_data
 
 Performance metric aggregated over all types of I/O operations.
@@ -3852,6 +5500,7 @@ Performance metric aggregated over all types of I/O operations.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/network/ip/interfaces` | `statistics.throughput_raw.total`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/lif.yaml |
+
 
 
 ### lif_uptime
@@ -3862,6 +5511,12 @@ Interface up time
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/lif` | `up_time`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/lif.yaml |
 | ZAPI | `perf-object-get-instances lif` | `up_time`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lif.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | LIF | LIF Details |
+
 
 
 ### lun_avg_read_latency
@@ -3875,6 +5530,17 @@ Average read latency in microseconds for all operations on the LUN
 | ZAPI | `perf-object-get-instances lun` | `avg_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/lun.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/lun.json | Highlights | Top $TopResources Luns by Average Read Latency |
+| cmode/lun.json | LUN Table | Top $TopResources Luns by Read Latency |
+| cmode/lun.json | LUN Table | Top $TopResources Luns by Read Latency |
+| cmode/lun.json | Top LUN Performance | Top $TopResources Luns by Average Read Latency |
+| cmode/lun.json | Top LUN Performance | Top $TopResources Luns by Average Read Latency |
+| cmode/lun.json | Per LUN (Must Select Cluster/SVM/Volume/LUN) | Latency |
+
+
+
 ### lun_avg_write_latency
 
 Average write latency in microseconds for all operations on the LUN
@@ -3884,6 +5550,17 @@ Average write latency in microseconds for all operations on the LUN
 | REST | `api/cluster/counter/tables/lun` | `average_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/restperf/9.12.0/lun.yaml |
 | KeyPerf | `api/storage/luns` | `statistics.latency_raw.write`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lun_statistics.iops_raw.write | conf/keyperf/9.15.0/lun.yaml |
 | ZAPI | `perf-object-get-instances lun` | `avg_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/lun.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/lun.json | Highlights | Top $TopResources Luns by Average Write Latency |
+| cmode/lun.json | LUN Table | Top $TopResources Luns by Write Latency |
+| cmode/lun.json | LUN Table | Top $TopResources Luns by Write Latency |
+| cmode/lun.json | Top LUN Performance | Top $TopResources Luns by Average Write Latency |
+| cmode/lun.json | Top LUN Performance | Top $TopResources Luns by Average Write Latency |
+| cmode/lun.json | Per LUN (Must Select Cluster/SVM/Volume/LUN) | Latency |
+
 
 
 ### lun_avg_xcopy_latency
@@ -3896,6 +5573,7 @@ Average latency in microseconds for xcopy requests
 | ZAPI | `perf-object-get-instances lun` | `avg_xcopy_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> xcopy_reqs | conf/zapiperf/cdot/9.8.0/lun.yaml |
 
 
+
 ### lun_caw_reqs
 
 Number of compare and write requests
@@ -3904,6 +5582,12 @@ Number of compare and write requests
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/lun` | `caw_requests`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/lun.yaml |
 | ZAPI | `perf-object-get-instances lun` | `caw_reqs`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/lun.json | Per LUN (Must Select Cluster/SVM/Volume/LUN) | vStorage Offload Operations |
+
 
 
 ### lun_enospc
@@ -3916,6 +5600,7 @@ Number of operations receiving ENOSPC errors
 | ZAPI | `perf-object-get-instances lun` | `enospc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml |
 
 
+
 ### lun_labels
 
 This metric provides information about Lun
@@ -3924,6 +5609,13 @@ This metric provides information about Lun
 |--------|----------|--------|---------|
 | REST | `api/storage/luns` | `Harvest generated` | conf/rest/9.12.0/lun.yaml |
 | ZAPI | `lun-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/lun.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/datacenter.json | Highlights | Object Count |
+| cmode/lun.json | LUN Table | LUNS in Cluster |
+
 
 
 ### lun_new_status
@@ -3936,6 +5628,7 @@ This metric indicates a value of 1 if the LUN state is online (indicating the LU
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/lun.yaml |
 
 
+
 ### lun_other_data
 
 Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.
@@ -3943,6 +5636,7 @@ Performance metric for other I/O operations. Other I/O operations can be metadat
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/storage/luns` | `statistics.throughput_raw.other`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/lun.yaml |
+
 
 
 ### lun_other_latency
@@ -3954,6 +5648,7 @@ Performance metric for other I/O operations. Other I/O operations can be metadat
 | KeyPerf | `api/storage/luns` | `statistics.latency_raw.other`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lun_statistics.iops_raw.other | conf/keyperf/9.15.0/lun.yaml |
 
 
+
 ### lun_other_ops
 
 Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.
@@ -3961,6 +5656,7 @@ Performance metric for other I/O operations. Other I/O operations can be metadat
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/storage/luns` | `statistics.iops_raw.other`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/lun.yaml |
+
 
 
 ### lun_queue_full
@@ -3973,6 +5669,7 @@ Queue full responses
 | ZAPI | `perf-object-get-instances lun` | `queue_full`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml |
 
 
+
 ### lun_read_align_histo
 
 Histogram of WAFL read alignment (number sectors off WAFL block start)
@@ -3981,6 +5678,13 @@ Histogram of WAFL read alignment (number sectors off WAFL block start)
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/lun` | `read_align_histogram`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> read_ops_sent | conf/restperf/9.12.0/lun.yaml |
 | ZAPI | `perf-object-get-instances lun` | `read_align_histo`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> read_ops_sent | conf/zapiperf/cdot/9.8.0/lun.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/lun.json | Top LUN Performance Efficiency | Top $TopResources Luns by Read Misalignment Buckets |
+| cmode/lun.json | Top LUN Performance Efficiency | Top $TopResources Luns by Read Misalignment Buckets |
+
 
 
 ### lun_read_data
@@ -3994,6 +5698,17 @@ Read bytes
 | ZAPI | `perf-object-get-instances lun` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/lun.json | Highlights | Top $TopResources Luns by Read Throughput |
+| cmode/lun.json | LUN Table | Top $TopResources Luns by Read Throughput |
+| cmode/lun.json | LUN Table | Top $TopResources Luns by Read Throughput |
+| cmode/lun.json | Top LUN Performance | Top $TopResources Luns by Read Throughput |
+| cmode/lun.json | Top LUN Performance | Top $TopResources Luns by Read Throughput |
+| cmode/lun.json | Per LUN (Must Select Cluster/SVM/Volume/LUN) | Throughput |
+
+
+
 ### lun_read_ops
 
 Number of read operations
@@ -4003,6 +5718,18 @@ Number of read operations
 | REST | `api/cluster/counter/tables/lun` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/lun.yaml |
 | KeyPerf | `api/storage/luns` | `statistics.iops_raw.read`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/lun.yaml |
 | ZAPI | `perf-object-get-instances lun` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/lun.json | Highlights | Top $TopResources Luns by Read IOPs |
+| cmode/lun.json | LUN Table | Top $TopResources Luns by Read IOPS |
+| cmode/lun.json | LUN Table | Top $TopResources Luns by Read IOPS |
+| cmode/lun.json | Top LUN Performance | Top $TopResources Luns by Read IOPs |
+| cmode/lun.json | Top LUN Performance | Top $TopResources Luns by Read IOPs |
+| cmode/lun.json | Per LUN (Must Select Cluster/SVM/Volume/LUN) | IOPs |
+| cmode/lun.json | Per LUN (Must Select Cluster/SVM/Volume/LUN) | IO Size |
+
 
 
 ### lun_read_partial_blocks
@@ -4015,6 +5742,7 @@ Percentage of reads whose size is not a multiple of WAFL block size
 | ZAPI | `perf-object-get-instances lun` | `read_partial_blocks`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/lun.yaml |
 
 
+
 ### lun_remote_bytes
 
 I/O to or from a LUN which is not owned by the storage system handling the I/O.
@@ -4023,6 +5751,12 @@ I/O to or from a LUN which is not owned by the storage system handling the I/O.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/lun` | `remote_bytes`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/lun.yaml |
 | ZAPI | `perf-object-get-instances lun` | `remote_bytes`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/lun.json | Per LUN (Must Select Cluster/SVM/Volume/LUN) | Indirect Access |
+
 
 
 ### lun_remote_ops
@@ -4035,6 +5769,14 @@ Number of operations received by a storage system that does not own the LUN targ
 | ZAPI | `perf-object-get-instances lun` | `remote_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/lun.json | Top LUN Performance Efficiency | Top $TopResources Luns by Indirect Access IOPS |
+| cmode/lun.json | Top LUN Performance Efficiency | Top $TopResources Luns by Indirect Access IOPS |
+| cmode/lun.json | Per LUN (Must Select Cluster/SVM/Volume/LUN) | Indirect Access |
+
+
+
 ### lun_size
 
 The total provisioned size of the LUN. The LUN size can be increased but not decreased using the REST interface.<br/>The maximum and minimum sizes listed here are the absolute maximum and absolute minimum sizes, in bytes. The actual minimum and maximum sizes vary depending on the ONTAP version, ONTAP platform and the available space in the containing volume and aggregate.<br/>For more information, see _Size properties_ in the _docs_ section of the ONTAP REST API documentation.
@@ -4043,6 +5785,12 @@ The total provisioned size of the LUN. The LUN size can be increased but not dec
 |--------|----------|--------|---------|
 | REST | `api/storage/luns` | `space.size` | conf/rest/9.12.0/lun.yaml |
 | ZAPI | `lun-get-iter` | `lun-info.size` | conf/zapi/cdot/9.8.0/lun.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/lun.json | LUN Table | LUNS in Cluster |
+
 
 
 ### lun_size_used
@@ -4055,6 +5803,12 @@ The amount of space consumed by the main data stream of the LUN.<br/>This value 
 | ZAPI | `lun-get-iter` | `lun-info.size-used` | conf/zapi/cdot/9.8.0/lun.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/lun.json | LUN Table | LUNS in Cluster |
+
+
+
 ### lun_size_used_percent
 
 This metric represents the percentage of a LUN that is currently being used.
@@ -4063,6 +5817,15 @@ This metric represents the percentage of a LUN that is currently being used.
 |--------|----------|--------|---------|
 | REST | `api/storage/luns` | `size_used, size` | conf/rest/9.12.0/lun.yaml |
 | ZAPI | `lun-get-iter` | `size_used, size` | conf/zapi/cdot/9.8.0/lun.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/lun.json | Top Volume and LUN Capacity | Top $TopResources LUNs by Percent Most Filled |
+| cmode/lun.json | Top Volume and LUN Capacity | Top $TopResources LUNs by Percent Most Filled |
+| cmode/lun.json | Top Volume and LUN Capacity | Top $TopResources LUNs by Percent Least Filled |
+| cmode/lun.json | Top Volume and LUN Capacity | Top $TopResources LUNs by Percent Least Filled |
+
 
 
 ### lun_total_data
@@ -4074,6 +5837,7 @@ Performance metric aggregated over all types of I/O operations.
 | KeyPerf | `api/storage/luns` | `statistics.throughput_raw.total`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/lun.yaml |
 
 
+
 ### lun_total_latency
 
 Performance metric aggregated over all types of I/O operations.
@@ -4083,6 +5847,7 @@ Performance metric aggregated over all types of I/O operations.
 | KeyPerf | `api/storage/luns` | `statistics.latency_raw.total`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lun_statistics.iops_raw.total | conf/keyperf/9.15.0/lun.yaml |
 
 
+
 ### lun_total_ops
 
 Performance metric aggregated over all types of I/O operations.
@@ -4090,6 +5855,7 @@ Performance metric aggregated over all types of I/O operations.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/storage/luns` | `statistics.iops_raw.total`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/lun.yaml |
+
 
 
 ### lun_unmap_reqs
@@ -4102,6 +5868,12 @@ Number of unmap command requests
 | ZAPI | `perf-object-get-instances lun` | `unmap_reqs`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/lun.json | Per LUN (Must Select Cluster/SVM/Volume/LUN) | vStorage Offload Operations |
+
+
+
 ### lun_write_align_histo
 
 Histogram of WAFL write alignment (number of sectors off WAFL block start)
@@ -4110,6 +5882,13 @@ Histogram of WAFL write alignment (number of sectors off WAFL block start)
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/lun` | `write_align_histogram`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> write_ops_sent | conf/restperf/9.12.0/lun.yaml |
 | ZAPI | `perf-object-get-instances lun` | `write_align_histo`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> write_ops_sent | conf/zapiperf/cdot/9.8.0/lun.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/lun.json | Top LUN Performance Efficiency | Top $TopResources Luns by Write Misalignment Buckets |
+| cmode/lun.json | Top LUN Performance Efficiency | Top $TopResources Luns by Write Misalignment Buckets |
+
 
 
 ### lun_write_data
@@ -4123,6 +5902,17 @@ Write bytes
 | ZAPI | `perf-object-get-instances lun` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/lun.json | Highlights | Top $TopResources Luns by Write Throughput |
+| cmode/lun.json | LUN Table | Top $TopResources Luns by Write Throughput |
+| cmode/lun.json | LUN Table | Top $TopResources Luns by Write Throughput |
+| cmode/lun.json | Top LUN Performance | Top $TopResources Luns by Write Throughput |
+| cmode/lun.json | Top LUN Performance | Top $TopResources Luns by Write Throughput |
+| cmode/lun.json | Per LUN (Must Select Cluster/SVM/Volume/LUN) | Throughput |
+
+
+
 ### lun_write_ops
 
 Number of write operations
@@ -4132,6 +5922,18 @@ Number of write operations
 | REST | `api/cluster/counter/tables/lun` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/lun.yaml |
 | KeyPerf | `api/storage/luns` | `statistics.iops_raw.write`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/lun.yaml |
 | ZAPI | `perf-object-get-instances lun` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/lun.json | Highlights | Top $TopResources Luns by Write IOPs |
+| cmode/lun.json | LUN Table | Top $TopResources Luns by Write IOPS |
+| cmode/lun.json | LUN Table | Top $TopResources Luns by Write IOPS |
+| cmode/lun.json | Top LUN Performance | Top $TopResources Luns by Write IOPs |
+| cmode/lun.json | Top LUN Performance | Top $TopResources Luns by Write IOPs |
+| cmode/lun.json | Per LUN (Must Select Cluster/SVM/Volume/LUN) | IOPs |
+| cmode/lun.json | Per LUN (Must Select Cluster/SVM/Volume/LUN) | IO Size |
+
 
 
 ### lun_write_partial_blocks
@@ -4144,6 +5946,7 @@ Percentage of writes whose size is not a multiple of WAFL block size
 | ZAPI | `perf-object-get-instances lun` | `write_partial_blocks`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/lun.yaml |
 
 
+
 ### lun_writesame_reqs
 
 Number of write same command requests
@@ -4152,6 +5955,12 @@ Number of write same command requests
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/lun` | `writesame_requests`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/lun.yaml |
 | ZAPI | `perf-object-get-instances lun` | `writesame_reqs`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/lun.json | Per LUN (Must Select Cluster/SVM/Volume/LUN) | vStorage Offload Operations |
+
 
 
 ### lun_writesame_unmap_reqs
@@ -4164,6 +5973,12 @@ Number of write same commands requests with unmap bit set
 | ZAPI | `perf-object-get-instances lun` | `writesame_unmap_reqs`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/lun.json | Per LUN (Must Select Cluster/SVM/Volume/LUN) | vStorage Offload Operations |
+
+
+
 ### lun_xcopy_reqs
 
 Total number of xcopy operations on the LUN
@@ -4174,6 +5989,12 @@ Total number of xcopy operations on the LUN
 | ZAPI | `perf-object-get-instances lun` | `xcopy_reqs`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/lun.json | Per LUN (Must Select Cluster/SVM/Volume/LUN) | vStorage Offload Operations |
+
+
+
 ### mediator_labels
 
 This metric provides information about Mediator
@@ -4181,6 +6002,7 @@ This metric provides information about Mediator
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/mediators` | `Harvest generated` | conf/rest/9.12.0/mediator.yaml |
+
 
 
 ### metadata_collector_api_time
@@ -4193,6 +6015,7 @@ amount of time to collect data from monitored cluster object
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> microseconds | NA | 
 
 
+
 ### metadata_collector_bytesRx
 
 The amount of data received by the collector from the monitored cluster.
@@ -4201,6 +6024,7 @@ The amount of data received by the collector from the monitored cluster.
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> bytes | NA | 
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> bytes | NA | 
+
 
 
 ### metadata_collector_calc_time
@@ -4213,6 +6037,7 @@ amount of time it took to compute metrics between two successive polls, specific
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> microseconds | NA | 
 
 
+
 ### metadata_collector_instances
 
 number of objects collected from monitored cluster
@@ -4221,6 +6046,7 @@ number of objects collected from monitored cluster
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> scalar | NA | 
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> scalar | NA | 
+
 
 
 ### metadata_collector_metrics
@@ -4233,6 +6059,7 @@ number of counters collected from monitored cluster
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> scalar | NA | 
 
 
+
 ### metadata_collector_numCalls
 
 The number of API calls made by the collector to the monitored cluster.
@@ -4241,6 +6068,7 @@ The number of API calls made by the collector to the monitored cluster.
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> scalar | NA | 
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> scalar | NA | 
+
 
 
 ### metadata_collector_numPartials
@@ -4253,6 +6081,7 @@ The number of partial responses received by the collector from the monitored clu
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> scalar | NA | 
 
 
+
 ### metadata_collector_parse_time
 
 amount of time to parse XML, JSON, etc. for cluster object
@@ -4261,6 +6090,7 @@ amount of time to parse XML, JSON, etc. for cluster object
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> microseconds | NA | 
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> microseconds | NA | 
+
 
 
 ### metadata_collector_pluginInstances
@@ -4273,6 +6103,7 @@ The number of plugin instances generated by the collector.
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> scalar | NA | 
 
 
+
 ### metadata_collector_plugin_time
 
 amount of time for all plugins to post-process metrics
@@ -4281,6 +6112,7 @@ amount of time for all plugins to post-process metrics
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> microseconds | NA | 
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> microseconds | NA | 
+
 
 
 ### metadata_collector_poll_time
@@ -4293,6 +6125,7 @@ amount of time it took for the poll to finish
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> microseconds | NA | 
 
 
+
 ### metadata_collector_skips
 
 number of metrics that were not calculated between two successive polls. This metric is available for ZapiPerf/RestPerf collectors.
@@ -4301,6 +6134,7 @@ number of metrics that were not calculated between two successive polls. This me
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> scalar | NA | 
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> scalar | NA | 
+
 
 
 ### metadata_collector_task_time
@@ -4313,6 +6147,7 @@ amount of time it took for each collector's subtasks to complete
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> microseconds | NA | 
 
 
+
 ### metadata_component_count
 
 number of metrics collected for each object
@@ -4321,6 +6156,7 @@ number of metrics collected for each object
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> scalar | NA | 
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> scalar | NA | 
+
 
 
 ### metadata_component_status
@@ -4333,6 +6169,7 @@ status of the collector - 0 means running, 1 means standby, 2 means failed
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> enum | NA | 
 
 
+
 ### metadata_exporter_count
 
 number of metrics and labels exported
@@ -4341,6 +6178,7 @@ number of metrics and labels exported
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> scalar | NA | 
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> scalar | NA | 
+
 
 
 ### metadata_exporter_time
@@ -4353,6 +6191,7 @@ amount of time it took to render, export, and serve exported data
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> microseconds | NA | 
 
 
+
 ### metadata_target_goroutines
 
 number of goroutines that exist within the poller
@@ -4361,6 +6200,7 @@ number of goroutines that exist within the poller
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> scalar | NA | 
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> scalar | NA | 
+
 
 
 ### metadata_target_ping
@@ -4373,6 +6213,7 @@ The response time (in milliseconds) of the ping to the target system. If the pin
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> milliseconds | NA | 
 
 
+
 ### metadata_target_status
 
 status of the system being monitored. 0 means reachable, 1 means unreachable
@@ -4381,6 +6222,7 @@ status of the system being monitored. 0 means reachable, 1 means unreachable
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> enum | NA | 
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> enum | NA | 
+
 
 
 ### metrocluster_check_aggr_status
@@ -4392,6 +6234,7 @@ Detail of the type of diagnostic operation run for the Aggregate with diagnostic
 | REST | `NA` | `Harvest generated` | conf/rest/9.12.0/metrocluster_check.yaml |
 
 
+
 ### metrocluster_check_cluster_status
 
 Detail of the type of diagnostic operation run for the Cluster with diagnostic operation result.
@@ -4399,6 +6242,7 @@ Detail of the type of diagnostic operation run for the Cluster with diagnostic o
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.12.0/metrocluster_check.yaml |
+
 
 
 ### metrocluster_check_node_status
@@ -4410,6 +6254,7 @@ Detail of the type of diagnostic operation run for the Node with diagnostic oper
 | REST | `NA` | `Harvest generated` | conf/rest/9.12.0/metrocluster_check.yaml |
 
 
+
 ### metrocluster_check_volume_status
 
 Detail of the type of diagnostic operation run for the Volume with diagnostic operation result.
@@ -4417,6 +6262,7 @@ Detail of the type of diagnostic operation run for the Volume with diagnostic op
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.12.0/metrocluster_check.yaml |
+
 
 
 ### namespace_avg_other_latency
@@ -4430,6 +6276,7 @@ Average other ops latency in microseconds for all operations on the Namespace
 | ZAPI | `perf-object-get-instances namespace` | `avg_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/zapiperf/cdot/9.10.1/namespace.yaml |
 
 
+
 ### namespace_avg_read_latency
 
 Average read latency in microseconds for all operations on the Namespace
@@ -4441,6 +6288,13 @@ Average read latency in microseconds for all operations on the Namespace
 | ZAPI | `perf-object-get-instances namespace` | `avg_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.10.1/namespace.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/namespace.json | Highlights | Top $TopResources NVMe Namespaces by Average Read Latency |
+| cmode/namespace.json | Highlights | Top $TopResources NVMe Namespaces by Average Read Latency |
+
+
+
 ### namespace_avg_total_latency
 
 Performance metric aggregated over all types of I/O operations.
@@ -4448,6 +6302,7 @@ Performance metric aggregated over all types of I/O operations.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/storage/namespaces` | `statistics.latency_raw.total`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> namespace_statistics.iops_raw.total | conf/keyperf/9.15.0/namespace.yaml |
+
 
 
 ### namespace_avg_write_latency
@@ -4461,6 +6316,13 @@ Average write latency in microseconds for all operations on the Namespace
 | ZAPI | `perf-object-get-instances namespace` | `avg_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.10.1/namespace.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/namespace.json | Highlights | Top $TopResources NVMe Namespaces by Average Write Latency |
+| cmode/namespace.json | Highlights | Top $TopResources NVMe Namespaces by Average Write Latency |
+
+
+
 ### namespace_block_size
 
 The size of blocks in the namespace in bytes. The default for namespaces with an `os_type` of _vmware_ is _512_. All other namespaces default to _4096_.<br/>Valid in POST when creating an NVMe namespace that is not a clone of another. Disallowed in POST when creating a namespace clone. Valid in POST.
@@ -4471,6 +6333,7 @@ The size of blocks in the namespace in bytes. The default for namespaces with an
 | ZAPI | `nvme-namespace-get-iter` | `nvme-namespace-info.block-size` | conf/zapi/cdot/9.8.0/namespace.yaml |
 
 
+
 ### namespace_labels
 
 This metric provides information about Namespace
@@ -4479,6 +6342,13 @@ This metric provides information about Namespace
 |--------|----------|--------|---------|
 | REST | `api/storage/namespaces` | `Harvest generated` | conf/rest/9.12.0/namespace.yaml |
 | ZAPI | `nvme-namespace-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/namespace.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/datacenter.json | Highlights | Object Count |
+| cmode/namespace.json | NVMe Namespaces Table | NVMe Namespaces |
+
 
 
 ### namespace_other_ops
@@ -4492,6 +6362,7 @@ Number of other operations
 | ZAPI | `perf-object-get-instances namespace` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml |
 
 
+
 ### namespace_read_data
 
 Read bytes
@@ -4501,6 +6372,13 @@ Read bytes
 | REST | `api/cluster/counter/tables/namespace` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/namespace.yaml |
 | KeyPerf | `api/storage/namespaces` | `statistics.throughput_raw.read`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/namespace.yaml |
 | ZAPI | `perf-object-get-instances namespace` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/namespace.json | Highlights | Top $TopResources NVMe Namespaces by Read Throughput |
+| cmode/namespace.json | Highlights | Top $TopResources NVMe Namespaces by Read Throughput |
+
 
 
 ### namespace_read_ops
@@ -4514,6 +6392,13 @@ Number of read operations
 | ZAPI | `perf-object-get-instances namespace` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/namespace.json | Highlights | Top $TopResources NVMe Namespaces by Read IOPs |
+| cmode/namespace.json | Highlights | Top $TopResources NVMe Namespaces by Read IOPs |
+
+
+
 ### namespace_remote_other_ops
 
 Number of remote other operations
@@ -4522,6 +6407,7 @@ Number of remote other operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/namespace` | `remote.other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/namespace.yaml |
 | ZAPI | `perf-object-get-instances namespace` | `remote_other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml |
+
 
 
 ### namespace_remote_read_data
@@ -4534,6 +6420,7 @@ Remote read bytes
 | ZAPI | `perf-object-get-instances namespace` | `remote_read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml |
 
 
+
 ### namespace_remote_read_ops
 
 Number of remote read operations
@@ -4542,6 +6429,7 @@ Number of remote read operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/namespace` | `remote.read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/namespace.yaml |
 | ZAPI | `perf-object-get-instances namespace` | `remote_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml |
+
 
 
 ### namespace_remote_write_data
@@ -4554,6 +6442,7 @@ Remote write bytes
 | ZAPI | `perf-object-get-instances namespace` | `remote_write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml |
 
 
+
 ### namespace_remote_write_ops
 
 Number of remote write operations
@@ -4562,6 +6451,7 @@ Number of remote write operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/namespace` | `remote.write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/namespace.yaml |
 | ZAPI | `perf-object-get-instances namespace` | `remote_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml |
+
 
 
 ### namespace_size
@@ -4574,6 +6464,12 @@ The total provisioned size of the NVMe namespace. Valid in POST and PATCH. The N
 | ZAPI | `nvme-namespace-get-iter` | `nvme-namespace-info.size` | conf/zapi/cdot/9.8.0/namespace.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/namespace.json | NVMe Namespaces Table | NVMe Namespaces |
+
+
+
 ### namespace_size_available
 
 This metric represents the amount of available space in a namespace.
@@ -4582,6 +6478,7 @@ This metric represents the amount of available space in a namespace.
 |--------|----------|--------|---------|
 | REST | `api/storage/namespaces` | `size, size_used` | conf/rest/9.12.0/namespace.yaml |
 | ZAPI | `nvme-namespace-get-iter` | `size, size_used` | conf/zapi/cdot/9.8.0/namespace.yaml |
+
 
 
 ### namespace_size_available_percent
@@ -4594,6 +6491,12 @@ This metric represents the percentage of available space in a namespace.
 | ZAPI | `nvme-namespace-get-iter` | `size_available, size` | conf/zapi/cdot/9.8.0/namespace.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/namespace.json | NVMe Namespaces Table | NVMe Namespaces |
+
+
+
 ### namespace_size_used
 
 The amount of space consumed by the main data stream of the NVMe namespace.<br/>This value is the total space consumed in the volume by the NVMe namespace, including filesystem overhead, but excluding prefix and suffix streams. Due to internal filesystem overhead and the many ways NVMe filesystems and applications utilize blocks within a namespace, this value does not necessarily reflect actual consumption/availability from the perspective of the filesystem or application. Without specific knowledge of how the namespace blocks are utilized outside of ONTAP, this property should not be used and an indicator for an out-of-space condition.<br/>For more information, see _Size properties_ in the _docs_ section of the ONTAP REST API documentation.
@@ -4602,6 +6505,12 @@ The amount of space consumed by the main data stream of the NVMe namespace.<br/>
 |--------|----------|--------|---------|
 | REST | `api/storage/namespaces` | `space.used` | conf/rest/9.12.0/namespace.yaml |
 | ZAPI | `nvme-namespace-get-iter` | `nvme-namespace-info.size-used` | conf/zapi/cdot/9.8.0/namespace.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/namespace.json | NVMe Namespaces Table | NVMe Namespaces |
+
 
 
 ### namespace_total_data
@@ -4613,6 +6522,7 @@ Performance metric aggregated over all types of I/O operations.
 | KeyPerf | `api/storage/namespaces` | `statistics.throughput_raw.total`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/namespace.yaml |
 
 
+
 ### namespace_total_ops
 
 Performance metric aggregated over all types of I/O operations.
@@ -4620,6 +6530,7 @@ Performance metric aggregated over all types of I/O operations.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/storage/namespaces` | `statistics.iops_raw.total`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/namespace.yaml |
+
 
 
 ### namespace_write_data
@@ -4633,6 +6544,13 @@ Write bytes
 | ZAPI | `perf-object-get-instances namespace` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/namespace.json | Highlights | Top $TopResources NVMe Namespaces by Write Throughput |
+| cmode/namespace.json | Highlights | Top $TopResources NVMe Namespaces by Write Throughput |
+
+
+
 ### namespace_write_ops
 
 Number of write operations
@@ -4644,6 +6562,13 @@ Number of write operations
 | ZAPI | `perf-object-get-instances namespace` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/namespace.json | Highlights | Top $TopResources NVMe Namespaces by Write IOPs |
+| cmode/namespace.json | Highlights | Top $TopResources NVMe Namespaces by Write IOPs |
+
+
+
 ### ndmp_session_data_bytes_processed
 
 Indicates the NDMP data bytes processed.
@@ -4651,6 +6576,7 @@ Indicates the NDMP data bytes processed.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/protocols/ndmp/sessions` | `data.bytes_processed` | conf/rest/9.7.0/ndmp_session.yaml |
+
 
 
 ### ndmp_session_mover_bytes_moved
@@ -4662,6 +6588,7 @@ Indicates the NDMP mover bytes moved.
 | REST | `api/protocols/ndmp/sessions` | `mover.bytes_moved` | conf/rest/9.7.0/ndmp_session.yaml |
 
 
+
 ### net_connection_labels
 
 This metric provides information about NetConnections
@@ -4669,6 +6596,7 @@ This metric provides information about NetConnections
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/private/cli/network/connections/active` | `Harvest generated` | conf/rest/9.12.0/netconnections.yaml |
+
 
 
 ### net_port_mtu
@@ -4681,6 +6609,12 @@ Maximum transmission unit, largest packet size on this network
 | ZAPI | `net-port-get-iter` | `net-port-info.mtu` | conf/zapi/cdot/9.8.0/netport.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | Ethernet | Ethernet ports |
+
+
+
 ### net_port_status
 
 This metric indicates a value of 1 if the port state is up and a value of 0 for any other state.
@@ -4689,6 +6623,7 @@ This metric indicates a value of 1 if the port state is up and a value of 0 for 
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.12.0/netport.yaml |
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/netport.yaml |
+
 
 
 ### net_route_labels
@@ -4700,6 +6635,12 @@ This metric provides information about NetRoute
 | REST | `api/network/ip/routes` | `Harvest generated` | conf/rest/9.8.0/netroute.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | Routes | Routes |
+
+
+
 ### netstat_bytes_recvd
 
 Number of bytes received by a TCP connection
@@ -4707,6 +6648,7 @@ Number of bytes received by a TCP connection
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | ZAPI | `perf-object-get-instances netstat` | `bytes_recvd`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
+
 
 
 ### netstat_bytes_sent
@@ -4718,6 +6660,7 @@ Number of bytes sent by a TCP connection
 | ZAPI | `perf-object-get-instances netstat` | `bytes_sent`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
 
 
+
 ### netstat_cong_win
 
 Congestion window of a TCP connection
@@ -4725,6 +6668,7 @@ Congestion window of a TCP connection
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | ZAPI | `perf-object-get-instances netstat` | `cong_win`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
+
 
 
 ### netstat_cong_win_th
@@ -4736,6 +6680,7 @@ Congestion window threshold of a TCP connection
 | ZAPI | `perf-object-get-instances netstat` | `cong_win_th`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
 
 
+
 ### netstat_ooorcv_pkts
 
 Number of out-of-order packets received by this TCP connection
@@ -4743,6 +6688,7 @@ Number of out-of-order packets received by this TCP connection
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | ZAPI | `perf-object-get-instances netstat` | `ooorcv_pkts`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
+
 
 
 ### netstat_recv_window
@@ -4754,6 +6700,7 @@ Receive window size of a TCP connection
 | ZAPI | `perf-object-get-instances netstat` | `recv_window`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
 
 
+
 ### netstat_rexmit_pkts
 
 Number of packets retransmitted by this TCP connection
@@ -4761,6 +6708,7 @@ Number of packets retransmitted by this TCP connection
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | ZAPI | `perf-object-get-instances netstat` | `rexmit_pkts`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
+
 
 
 ### netstat_send_window
@@ -4772,6 +6720,7 @@ Send window size of a TCP connection
 | ZAPI | `perf-object-get-instances netstat` | `send_window`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
 
 
+
 ### nfs_clients_idle_duration
 
 Specifies an ISO-8601 format of date and time to retrieve the idle time duration in hours, minutes, and seconds format.
@@ -4779,6 +6728,18 @@ Specifies an ISO-8601 format of date and time to retrieve the idle time duration
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/protocols/nfs/connected-clients` | `idle_duration` | conf/rest/9.7.0/nfs_clients.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs_clients.json | Highlights | Total NFS Connections |
+| cmode/nfs_clients.json | Highlights | NFS Connections by Protocol |
+| cmode/nfs_clients.json | Highlights | NFS Connections by Protocol |
+| cmode/nfs_clients.json | Highlights | NFS Connections by Protocol |
+| cmode/nfs_clients.json | Highlights | NFS Connections by Protocol |
+| cmode/nfs_clients.json | Highlights | NFS Connections by Protocol |
+| cmode/nfs_clients.json | Highlights | NFS Clients (active in the past 48 hours) |
+
 
 
 ### nfs_diag_storePool_ByteLockAlloc
@@ -4791,6 +6752,14 @@ Current number of byte range lock objects allocated.
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_ByteLockAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | ByteLockAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
+
+
 ### nfs_diag_storePool_ByteLockMax
 
 Maximum number of byte range lock objects.
@@ -4799,6 +6768,14 @@ Maximum number of byte range lock objects.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.byte_lock_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_ByteLockMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | ByteLockAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
 
 
 ### nfs_diag_storePool_ClientAlloc
@@ -4811,6 +6788,14 @@ Current number of client objects allocated.
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_ClientAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | ClientAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
+
+
 ### nfs_diag_storePool_ClientMax
 
 Maximum number of client objects.
@@ -4819,6 +6804,14 @@ Maximum number of client objects.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.client_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_ClientMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | ClientAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
 
 
 ### nfs_diag_storePool_ConnectionParentSessionReferenceAlloc
@@ -4831,6 +6824,14 @@ Current number of connection parent session reference objects allocated.
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_ConnectionParentSessionReferenceAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | ConnectionParentSessionReferenceAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
+
+
 ### nfs_diag_storePool_ConnectionParentSessionReferenceMax
 
 Maximum number of connection parent session reference objects.
@@ -4839,6 +6840,14 @@ Maximum number of connection parent session reference objects.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.connection_parent_session_reference_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_ConnectionParentSessionReferenceMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | ConnectionParentSessionReferenceAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
 
 
 ### nfs_diag_storePool_CopyStateAlloc
@@ -4851,6 +6860,14 @@ Current number of copy state objects allocated.
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_CopyStateAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | CopyStateAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
+
+
 ### nfs_diag_storePool_CopyStateMax
 
 Maximum number of copy state objects.
@@ -4859,6 +6876,14 @@ Maximum number of copy state objects.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.copy_state_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_CopyStateMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | CopyStateAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
 
 
 ### nfs_diag_storePool_DelegAlloc
@@ -4871,6 +6896,14 @@ Current number of delegation lock objects allocated.
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_DelegAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | DelegAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
+
+
 ### nfs_diag_storePool_DelegMax
 
 Maximum number delegation lock objects.
@@ -4879,6 +6912,14 @@ Maximum number delegation lock objects.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.delegation_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_DelegMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | DelegAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
 
 
 ### nfs_diag_storePool_DelegStateAlloc
@@ -4891,6 +6932,14 @@ Current number of delegation state objects allocated.
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_DelegStateAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | DelegStateAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
+
+
 ### nfs_diag_storePool_DelegStateMax
 
 Maximum number of delegation state objects.
@@ -4899,6 +6948,14 @@ Maximum number of delegation state objects.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.delegation_state_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_DelegStateMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | DelegStateAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
 
 
 ### nfs_diag_storePool_LayoutAlloc
@@ -4911,6 +6968,12 @@ Current number of layout objects allocated.
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_LayoutAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Lock | LayoutAlloc |
+
+
+
 ### nfs_diag_storePool_LayoutMax
 
 Maximum number of layout objects.
@@ -4919,6 +6982,12 @@ Maximum number of layout objects.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.layout_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_LayoutMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Lock | LayoutAlloc |
+
 
 
 ### nfs_diag_storePool_LayoutStateAlloc
@@ -4931,6 +7000,14 @@ Current number of layout state objects allocated.
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_LayoutStateAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | LayoutStateAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
+
+
 ### nfs_diag_storePool_LayoutStateMax
 
 Maximum number of layout state objects.
@@ -4939,6 +7016,14 @@ Maximum number of layout state objects.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.layout_state_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_LayoutStateMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | LayoutStateAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
 
 
 ### nfs_diag_storePool_LockStateAlloc
@@ -4951,6 +7036,14 @@ Current number of lock state objects allocated.
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_LockStateAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | LockStateAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
+
+
 ### nfs_diag_storePool_LockStateMax
 
 Maximum number of lock state objects.
@@ -4959,6 +7052,14 @@ Maximum number of lock state objects.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.lock_state_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_LockStateMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | LockStateAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
 
 
 ### nfs_diag_storePool_OpenAlloc
@@ -4971,6 +7072,14 @@ Current number of share objects allocated.
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_OpenAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | OpenAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
+
+
 ### nfs_diag_storePool_OpenMax
 
 Maximum number of share lock objects.
@@ -4979,6 +7088,14 @@ Maximum number of share lock objects.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.open_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_OpenMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | OpenAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
 
 
 ### nfs_diag_storePool_OpenStateAlloc
@@ -4991,6 +7108,14 @@ Current number of open state objects allocated.
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_OpenStateAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | OpenStateAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
+
+
 ### nfs_diag_storePool_OpenStateMax
 
 Maximum number of open state objects.
@@ -4999,6 +7124,14 @@ Maximum number of open state objects.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.openstate_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_OpenStateMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | OpenStateAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
 
 
 ### nfs_diag_storePool_OwnerAlloc
@@ -5011,6 +7144,14 @@ Current number of owner objects allocated.
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_OwnerAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | OwnerAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
+
+
 ### nfs_diag_storePool_OwnerMax
 
 Maximum number of owner objects.
@@ -5019,6 +7160,14 @@ Maximum number of owner objects.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.owner_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_OwnerMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | OwnerAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
 
 
 ### nfs_diag_storePool_SessionAlloc
@@ -5031,6 +7180,14 @@ Current number of session objects allocated.
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_SessionAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | SessionAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
+
+
 ### nfs_diag_storePool_SessionConnectionHolderAlloc
 
 Current number of session connection holder objects allocated.
@@ -5039,6 +7196,14 @@ Current number of session connection holder objects allocated.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.session_connection_holder_allocated`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_SessionConnectionHolderAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | SessionConnectionHolderAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
 
 
 ### nfs_diag_storePool_SessionConnectionHolderMax
@@ -5051,6 +7216,14 @@ Maximum number of session connection holder objects.
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_SessionConnectionHolderMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | SessionConnectionHolderAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
+
+
 ### nfs_diag_storePool_SessionHolderAlloc
 
 Current number of session holder objects allocated.
@@ -5059,6 +7232,14 @@ Current number of session holder objects allocated.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.session_holder_allocated`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_SessionHolderAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | SessionHolderAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
 
 
 ### nfs_diag_storePool_SessionHolderMax
@@ -5071,6 +7252,14 @@ Maximum number of session holder objects.
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_SessionHolderMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | SessionHolderAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
+
+
 ### nfs_diag_storePool_SessionMax
 
 Maximum number of session objects.
@@ -5079,6 +7268,14 @@ Maximum number of session objects.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.session_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_SessionMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | SessionAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
 
 
 ### nfs_diag_storePool_StateRefHistoryAlloc
@@ -5091,6 +7288,14 @@ Current number of state reference callstack history objects allocated.
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_StateRefHistoryAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | StateRefHistoryAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
+
+
 ### nfs_diag_storePool_StateRefHistoryMax
 
 Maximum number of state reference callstack history objects.
@@ -5099,6 +7304,14 @@ Maximum number of state reference callstack history objects.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.state_reference_history_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_StateRefHistoryMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | StateRefHistoryAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
 
 
 ### nfs_diag_storePool_StringAlloc
@@ -5111,6 +7324,14 @@ Current number of string objects allocated.
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_StringAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | StringAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
+
+
 ### nfs_diag_storePool_StringMax
 
 Maximum number of string objects.
@@ -5119,6 +7340,14 @@ Maximum number of string objects.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.string_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_StringMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
+| cmode/nfs4storePool.json | Lock | StringAlloc |
+| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+
 
 
 ### nic_ifgrp_rx_bytes
@@ -5131,6 +7360,7 @@ Link Aggregation Group (LAG) Bytes received.
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
 
 
+
 ### nic_ifgrp_tx_bytes
 
 Link Aggregation Group (LAG) Bytes sent.
@@ -5139,6 +7369,7 @@ Link Aggregation Group (LAG) Bytes sent.
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml |
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
+
 
 
 ### nic_labels
@@ -5151,6 +7382,14 @@ This metric provides information about NicCommon
 | ZAPI | `nic_common` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | Ethernet | NIC ports |
+| cmode/network.json | Ethernet | Ethernet port errors |
+| cmode/nfsTroubleshooting.json | Network Port Table | Ethernet ports |
+
+
+
 ### nic_link_up_to_downs
 
 Number of link state change from UP to DOWN.
@@ -5159,6 +7398,13 @@ Number of link state change from UP to DOWN.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nic_common` | `link_up_to_down`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml |
 | ZAPI | `perf-object-get-instances nic_common` | `link_up_to_downs`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | Ethernet | Ethernet port errors |
+| cmode/nfsTroubleshooting.json | Network Port Table | Ethernet ports |
+
 
 
 ### nic_new_status
@@ -5171,6 +7417,7 @@ This metric indicates a value of 1 if the NIC state is up (indicating the NIC is
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
 
 
+
 ### nic_rx_alignment_errors
 
 Alignment errors detected on received packets
@@ -5179,6 +7426,12 @@ Alignment errors detected on received packets
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nic_common` | `receive_alignment_errors`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml |
 | ZAPI | `perf-object-get-instances nic_common` | `rx_alignment_errors`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | Ethernet | NICs Receive Errors by Cluster |
+
 
 
 ### nic_rx_bytes
@@ -5191,6 +7444,19 @@ Bytes received
 | ZAPI | `perf-object-get-instances nic_common` | `rx_bytes`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | Highlights | Ethernet Throughput |
+| cmode/network.json | Highlights | Ethernet Receive |
+| cmode/network.json | Ethernet | NIC ports |
+| cmode/network.json | Ethernet | Top $TopResources NICs by Receive Throughput |
+| cmode/network.json | Ethernet | Top $TopResources NICs by Receive Throughput |
+| cmode/nfsTroubleshooting.json | Network Port Table | Ethernet ports |
+| cmode/node.json | Network Layer | Top $TopResources Ethernet Ports by Throughput |
+| cmode/node.json | Network Layer | Top $TopResources Ethernet Ports by Throughput |
+
+
+
 ### nic_rx_crc_errors
 
 CRC errors detected on received packets
@@ -5199,6 +7465,13 @@ CRC errors detected on received packets
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nic_common` | `receive_crc_errors`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml |
 | ZAPI | `perf-object-get-instances nic_common` | `rx_crc_errors`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | Ethernet | NICs Receive Errors by Cluster |
+| cmode/network.json | Ethernet | Ethernet port errors |
+
 
 
 ### nic_rx_errors
@@ -5211,6 +7484,7 @@ Error received
 | ZAPI | `perf-object-get-instances nic_common` | `rx_errors`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
 
 
+
 ### nic_rx_length_errors
 
 Length errors detected on received packets
@@ -5219,6 +7493,12 @@ Length errors detected on received packets
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nic_common` | `receive_length_errors`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml |
 | ZAPI | `perf-object-get-instances nic_common` | `rx_length_errors`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | Ethernet | NICs Receive Errors by Cluster |
+
 
 
 ### nic_rx_percent
@@ -5231,6 +7511,7 @@ Bytes received percentage.
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
 
 
+
 ### nic_rx_total_errors
 
 Total errors received
@@ -5239,6 +7520,14 @@ Total errors received
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nic_common` | `receive_total_errors`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml |
 | ZAPI | `perf-object-get-instances nic_common` | `rx_total_errors`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | Ethernet | NICs Receive Errors by Cluster |
+| cmode/network.json | Ethernet | Ethernet port errors |
+| cmode/nfsTroubleshooting.json | Network Port Table | Ethernet ports |
+
 
 
 ### nic_tx_bytes
@@ -5251,6 +7540,18 @@ Bytes sent
 | ZAPI | `perf-object-get-instances nic_common` | `tx_bytes`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | Highlights | Ethernet Send |
+| cmode/network.json | Ethernet | NIC ports |
+| cmode/network.json | Ethernet | Top $TopResources NICs by Send Throughput |
+| cmode/network.json | Ethernet | Top $TopResources NICs by Send Throughput |
+| cmode/nfsTroubleshooting.json | Network Port Table | Ethernet ports |
+| cmode/node.json | Network Layer | Top $TopResources Ethernet Ports by Throughput |
+| cmode/node.json | Network Layer | Top $TopResources Ethernet Ports by Throughput |
+
+
+
 ### nic_tx_errors
 
 Error sent
@@ -5259,6 +7560,7 @@ Error sent
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nic_common` | `transmit_errors`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml |
 | ZAPI | `perf-object-get-instances nic_common` | `tx_errors`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
+
 
 
 ### nic_tx_hw_errors
@@ -5271,6 +7573,13 @@ Transmit errors reported by hardware
 | ZAPI | `perf-object-get-instances nic_common` | `tx_hw_errors`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | Ethernet | NICs Send Errors by Cluster |
+| cmode/network.json | Ethernet | Ethernet port errors |
+
+
+
 ### nic_tx_percent
 
 Bytes sent percentage.
@@ -5279,6 +7588,7 @@ Bytes sent percentage.
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml |
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
+
 
 
 ### nic_tx_total_errors
@@ -5291,6 +7601,14 @@ Total errors sent
 | ZAPI | `perf-object-get-instances nic_common` | `tx_total_errors`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/network.json | Ethernet | NICs Send Errors by Cluster |
+| cmode/network.json | Ethernet | Ethernet port errors |
+| cmode/nfsTroubleshooting.json | Network Port Table | Ethernet ports |
+
+
+
 ### nic_util_percent
 
 Max of Bytes received percentage and Bytes sent percentage.
@@ -5299,6 +7617,7 @@ Max of Bytes received percentage and Bytes sent percentage.
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml |
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
+
 
 
 ### node_avg_processor_busy
@@ -5312,6 +7631,22 @@ Average processor utilization across active processors in the system
 | ZAPI | `perf-object-get-instances system:node` | `avg_processor_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> cpu_elapsed_time | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/cdot.json | Cluster Metrics | Top $TopResources Clusters by Average CPU Utilization |
+| cmode/cdot.json | Cluster Metrics | Top $TopResources Clusters by Average CPU Utilization |
+| cmode/cluster.json | Highlights | Top $TopResources Nodes by Average CPU Utilization |
+| cmode/cluster.json | Nodes & Subsystems - $Cluster | Average CPU Utilization |
+| cmode/cluster.json | Nodes & Subsystems - $Cluster | Node Average CPU Utilization |
+| cmode/cluster.json | Throughput | Average CPU Utilization |
+| cmode/datacenter.json | Performance | Top $TopResources Average CPU Utilization by Cluster |
+| cmode/datacenter.json | Performance | Top $TopResources Average CPU Utilization by Cluster |
+| cmode/mcc_cluster.json | Highlights | Average CPU Utilization |
+| cmode/node.json | Highlights | Average CPU Utilization |
+| cmode/node.json | CPU Layer | Average CPU Utilization |
+
+
+
 ### node_cifs_connections
 
 Number of connections
@@ -5320,6 +7655,12 @@ Number of connections
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_cifs:node` | `connections`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_node.yaml |
 | ZAPI | `perf-object-get-instances cifs:node` | `connections`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_node.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | CIFS Frontend | CIFS Connections |
+
 
 
 ### node_cifs_established_sessions
@@ -5332,6 +7673,12 @@ Number of established SMB and SMB2 sessions
 | ZAPI | `perf-object-get-instances cifs:node` | `established_sessions`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_node.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | CIFS Frontend | CIFS Connections |
+
+
+
 ### node_cifs_latency
 
 Average latency for CIFS operations
@@ -5340,6 +7687,12 @@ Average latency for CIFS operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_cifs:node` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> latency_base | conf/restperf/9.12.0/cifs_node.yaml |
 | ZAPI | `perf-object-get-instances cifs:node` | `cifs_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cifs_latency_base | conf/zapiperf/cdot/9.8.0/cifs_node.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | CIFS Frontend | CIFS Latency |
+
 
 
 ### node_cifs_op_count
@@ -5352,6 +7705,12 @@ Array of select CIFS operation counts
 | ZAPI | `perf-object-get-instances cifs:node` | `cifs_op_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_node.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | CIFS Frontend | CIFS IOPs by Type |
+
+
+
 ### node_cifs_open_files
 
 Number of open files over SMB and SMB2
@@ -5360,6 +7719,12 @@ Number of open files over SMB and SMB2
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_cifs:node` | `open_files`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_node.yaml |
 | ZAPI | `perf-object-get-instances cifs:node` | `open_files`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_node.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | CIFS Frontend | CIFS Connections |
+
 
 
 ### node_cifs_ops
@@ -5372,6 +7737,15 @@ Number of CIFS operations per second
 | ZAPI | `perf-object-get-instances system:node` | `cifs_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/cdot.json | Cluster Metrics | Top $TopResources CIFS IOPs by Cluster |
+| cmode/cdot.json | Cluster Metrics | Top $TopResources CIFS IOPs by Cluster |
+| cmode/node.json | Backend | Protocol Backend IOPs |
+| cmode/node.json | CIFS Frontend | CIFS IOPs |
+
+
+
 ### node_cifs_read_latency
 
 Average latency for CIFS read operations
@@ -5380,6 +7754,7 @@ Average latency for CIFS read operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_cifs:node` | `average_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_read_ops | conf/restperf/9.12.0/cifs_node.yaml |
 | ZAPI | `perf-object-get-instances cifs:node` | `cifs_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cifs_read_ops | conf/zapiperf/cdot/9.8.0/cifs_node.yaml |
+
 
 
 ### node_cifs_read_ops
@@ -5392,6 +7767,7 @@ Total number of CIFS read operations
 | ZAPI | `perf-object-get-instances cifs:node` | `cifs_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_node.yaml |
 
 
+
 ### node_cifs_total_ops
 
 Total number of CIFS operations
@@ -5400,6 +7776,7 @@ Total number of CIFS operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_cifs:node` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_node.yaml |
 | ZAPI | `perf-object-get-instances cifs:node` | `cifs_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_node.yaml |
+
 
 
 ### node_cifs_write_latency
@@ -5412,6 +7789,7 @@ Average latency for CIFS write operations
 | ZAPI | `perf-object-get-instances cifs:node` | `cifs_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cifs_write_ops | conf/zapiperf/cdot/9.8.0/cifs_node.yaml |
 
 
+
 ### node_cifs_write_ops
 
 Total number of CIFS write operations
@@ -5420,6 +7798,7 @@ Total number of CIFS write operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_cifs:node` | `total_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_node.yaml |
 | ZAPI | `perf-object-get-instances cifs:node` | `cifs_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_node.yaml |
+
 
 
 ### node_cpu_busy
@@ -5432,6 +7811,21 @@ System CPU resource utilization. Returns a computed percentage for the default C
 | ZAPI | `perf-object-get-instances system:node` | `cpu_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> cpu_elapsed_time | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/cdot.json | Cluster Metrics | Top $TopResources Clusters by CPU busy |
+| cmode/cdot.json | Cluster Metrics | Top $TopResources Clusters by CPU busy |
+| cmode/cluster.json | Highlights | Top $TopResources Nodes by CPU busy |
+| cmode/cluster.json | Nodes & Subsystems - $Cluster | CPU busy |
+| cmode/cluster.json | Nodes & Subsystems - $Cluster | Node CPU Busy |
+| cmode/cluster.json | Throughput | CPU Busy |
+| cmode/datacenter.json | Performance | Top $TopResources CPU Busy by Cluster |
+| cmode/datacenter.json | Performance | Top $TopResources CPU Busy by Cluster |
+| cmode/node.json | Highlights | CPU Busy |
+| cmode/node.json | Backend | System Utilization |
+
+
+
 ### node_cpu_busytime
 
 The time (in hundredths of a second) that the CPU has been doing useful work since the last boot
@@ -5440,6 +7834,7 @@ The time (in hundredths of a second) that the CPU has been doing useful work sin
 |--------|----------|--------|---------|
 | REST | `api/private/cli/node` | `cpu_busy_time` | conf/rest/9.12.0/node.yaml |
 | ZAPI | `system-node-get-iter` | `node-details-info.cpu-busytime` | conf/zapi/cdot/9.8.0/node.yaml |
+
 
 
 ### node_cpu_domain_busy
@@ -5452,6 +7847,13 @@ Array of processor time in percentage spent in various domains
 | ZAPI | `perf-object-get-instances system:node` | `domain_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> cpu_elapsed_time | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | CPU Layer | CPU Busy Domains |
+| cmode/node.json | Backend | System Utilization |
+
+
+
 ### node_cpu_elapsed_time
 
 Elapsed time since boot
@@ -5460,6 +7862,7 @@ Elapsed time since boot
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `cpu_elapsed_time`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `cpu_elapsed_time`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-display<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
+
 
 
 ### node_disk_busy
@@ -5472,6 +7875,14 @@ The utilization percent of the disk. node_disk_busy is [disk_busy](#disk_busy) a
 | ZAPI | `perf-object-get-instances disk:constituent` | `disk_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/cluster.json | Highlights | Top $TopResources Nodes by Disk Utilization |
+| cmode/cluster.json | Nodes & Subsystems - $Cluster | Avg Disk Utilization by Cluster |
+| cmode/node.json | Backend | System Utilization |
+
+
+
 ### node_disk_capacity
 
 Disk capacity in MB. node_disk_capacity is [disk_capacity](#disk_capacity) aggregated by `node`.
@@ -5480,6 +7891,7 @@ Disk capacity in MB. node_disk_capacity is [disk_capacity](#disk_capacity) aggre
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `capacity`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `disk_capacity`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### node_disk_cp_read_chain
@@ -5492,6 +7904,7 @@ Average number of blocks transferred in each consistency point read operation du
 | ZAPI | `perf-object-get-instances disk:constituent` | `cp_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_reads | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### node_disk_cp_read_latency
 
 Average latency per block in microseconds for consistency point read operations. node_disk_cp_read_latency is [disk_cp_read_latency](#disk_cp_read_latency) aggregated by `node`.
@@ -5500,6 +7913,7 @@ Average latency per block in microseconds for consistency point read operations.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_blocks | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `cp_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### node_disk_cp_reads
@@ -5512,6 +7926,7 @@ Number of disk read operations initiated each second for consistency point proce
 | ZAPI | `perf-object-get-instances disk:constituent` | `cp_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### node_disk_data_read
 
 Number of disk kilobytes (KB) read per second
@@ -5520,6 +7935,12 @@ Number of disk kilobytes (KB) read per second
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `disk_data_read`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `disk_data_read`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/disk.json | Disk Utilization | Disk Throughput by Node |
+
 
 
 ### node_disk_data_written
@@ -5532,6 +7953,12 @@ Number of disk kilobytes (KB) written per second
 | ZAPI | `perf-object-get-instances system:node` | `disk_data_written`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/disk.json | Disk Utilization | Disk Throughput by Node |
+
+
+
 ### node_disk_io_pending
 
 Average number of I/Os issued to the disk for which we have not yet received the response. node_disk_io_pending is [disk_io_pending](#disk_io_pending) aggregated by `node`.
@@ -5540,6 +7967,7 @@ Average number of I/Os issued to the disk for which we have not yet received the
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `io_pending`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `io_pending`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### node_disk_io_queued
@@ -5552,6 +7980,7 @@ Number of I/Os queued to the disk but not yet issued. node_disk_io_queued is [di
 | ZAPI | `perf-object-get-instances disk:constituent` | `io_queued`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### node_disk_max_busy
 
 The utilization percent of the disk. node_disk_max_busy is the maximum of [disk_busy](#disk_busy) for label `node`.
@@ -5560,6 +7989,13 @@ The utilization percent of the disk. node_disk_max_busy is the maximum of [disk_
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `disk_busy_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `disk_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/cluster.json | Nodes & Subsystems - $Cluster | Max Disk Utilization by Cluster |
+| cmode/node.json | Highlights | Max Disk Utilization |
+
 
 
 ### node_disk_max_capacity
@@ -5572,6 +8008,7 @@ Disk capacity in MB. node_disk_max_capacity is the maximum of [disk_capacity](#d
 | ZAPI | `perf-object-get-instances disk:constituent` | `disk_capacity`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### node_disk_max_cp_read_chain
 
 Average number of blocks transferred in each consistency point read operation during a CP. node_disk_max_cp_read_chain is the maximum of [disk_cp_read_chain](#disk_cp_read_chain) for label `node`.
@@ -5580,6 +8017,7 @@ Average number of blocks transferred in each consistency point read operation du
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_count | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `cp_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_reads | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### node_disk_max_cp_read_latency
@@ -5592,6 +8030,7 @@ Average latency per block in microseconds for consistency point read operations.
 | ZAPI | `perf-object-get-instances disk:constituent` | `cp_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### node_disk_max_cp_reads
 
 Number of disk read operations initiated each second for consistency point processing. node_disk_max_cp_reads is the maximum of [disk_cp_reads](#disk_cp_reads) for label `node`.
@@ -5600,6 +8039,7 @@ Number of disk read operations initiated each second for consistency point proce
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `cp_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### node_disk_max_io_pending
@@ -5612,6 +8052,7 @@ Average number of I/Os issued to the disk for which we have not yet received the
 | ZAPI | `perf-object-get-instances disk:constituent` | `io_pending`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### node_disk_max_io_queued
 
 Number of I/Os queued to the disk but not yet issued. node_disk_max_io_queued is the maximum of [disk_io_queued](#disk_io_queued) for label `node`.
@@ -5620,6 +8061,7 @@ Number of I/Os queued to the disk but not yet issued. node_disk_max_io_queued is
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `io_queued`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `io_queued`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### node_disk_max_total_data
@@ -5632,6 +8074,7 @@ Total throughput for user operations per second. node_disk_max_total_data is the
 | ZAPI | `perf-object-get-instances disk:constituent` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### node_disk_max_total_transfers
 
 Total number of disk operations involving data transfer initiated per second. node_disk_max_total_transfers is the maximum of [disk_total_transfers](#disk_total_transfers) for label `node`.
@@ -5640,6 +8083,7 @@ Total number of disk operations involving data transfer initiated per second. no
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `total_transfer_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `total_transfers`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### node_disk_max_user_read_blocks
@@ -5652,6 +8096,7 @@ Number of blocks transferred for user read operations per second. node_disk_max_
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_read_blocks`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### node_disk_max_user_read_chain
 
 Average number of blocks transferred in each user read operation. node_disk_max_user_read_chain is the maximum of [disk_user_read_chain](#disk_user_read_chain) for label `node`.
@@ -5660,6 +8105,7 @@ Average number of blocks transferred in each user read operation. node_disk_max_
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_count | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_reads | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### node_disk_max_user_read_latency
@@ -5672,6 +8118,7 @@ Average latency per block in microseconds for user read operations. node_disk_ma
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### node_disk_max_user_reads
 
 Number of disk read operations initiated each second for retrieving data or metadata associated with user requests. node_disk_max_user_reads is the maximum of [disk_user_reads](#disk_user_reads) for label `node`.
@@ -5680,6 +8127,7 @@ Number of disk read operations initiated each second for retrieving data or meta
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_read_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### node_disk_max_user_write_blocks
@@ -5692,6 +8140,7 @@ Number of blocks transferred for user write operations per second. node_disk_max
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_write_blocks`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### node_disk_max_user_write_chain
 
 Average number of blocks transferred in each user write operation. node_disk_max_user_write_chain is the maximum of [disk_user_write_chain](#disk_user_write_chain) for label `node`.
@@ -5700,6 +8149,7 @@ Average number of blocks transferred in each user write operation. node_disk_max
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_write_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_count | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_write_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_writes | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### node_disk_max_user_write_latency
@@ -5712,6 +8162,7 @@ Average latency per block in microseconds for user write operations. node_disk_m
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### node_disk_max_user_writes
 
 Number of disk write operations initiated each second for storing data or metadata associated with user requests. node_disk_max_user_writes is the maximum of [disk_user_writes](#disk_user_writes) for label `node`.
@@ -5720,6 +8171,7 @@ Number of disk write operations initiated each second for storing data or metada
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_write_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_writes`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### node_disk_total_data
@@ -5732,6 +8184,7 @@ Total throughput for user operations per second. node_disk_total_data is [disk_t
 | ZAPI | `perf-object-get-instances disk:constituent` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### node_disk_total_transfers
 
 Total number of disk operations involving data transfer initiated per second. node_disk_total_transfers is [disk_total_transfers](#disk_total_transfers) aggregated by `node`.
@@ -5740,6 +8193,7 @@ Total number of disk operations involving data transfer initiated per second. no
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `total_transfer_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `total_transfers`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### node_disk_user_read_blocks
@@ -5752,6 +8206,7 @@ Number of blocks transferred for user read operations per second. node_disk_user
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_read_blocks`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### node_disk_user_read_chain
 
 Average number of blocks transferred in each user read operation. node_disk_user_read_chain is [disk_user_read_chain](#disk_user_read_chain) aggregated by `node`.
@@ -5760,6 +8215,7 @@ Average number of blocks transferred in each user read operation. node_disk_user
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_count | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_reads | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### node_disk_user_read_latency
@@ -5772,6 +8228,7 @@ Average latency per block in microseconds for user read operations. node_disk_us
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### node_disk_user_reads
 
 Number of disk read operations initiated each second for retrieving data or metadata associated with user requests. node_disk_user_reads is [disk_user_reads](#disk_user_reads) aggregated by `node`.
@@ -5780,6 +8237,7 @@ Number of disk read operations initiated each second for retrieving data or meta
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_read_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### node_disk_user_write_blocks
@@ -5792,6 +8250,7 @@ Number of blocks transferred for user write operations per second. node_disk_use
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_write_blocks`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### node_disk_user_write_chain
 
 Average number of blocks transferred in each user write operation. node_disk_user_write_chain is [disk_user_write_chain](#disk_user_write_chain) aggregated by `node`.
@@ -5800,6 +8259,7 @@ Average number of blocks transferred in each user write operation. node_disk_use
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_write_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_count | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_write_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_writes | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### node_disk_user_write_latency
@@ -5812,6 +8272,7 @@ Average latency per block in microseconds for user write operations. node_disk_u
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### node_disk_user_writes
 
 Number of disk write operations initiated each second for storing data or metadata associated with user requests. node_disk_user_writes is [disk_user_writes](#disk_user_writes) aggregated by `node`.
@@ -5820,6 +8281,7 @@ Number of disk write operations initiated each second for storing data or metada
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_write_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_writes`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### node_failed_fan
@@ -5832,6 +8294,12 @@ Specifies a count of the number of chassis fans that are not operating within th
 | ZAPI | `system-node-get-iter` | `node-details-info.env-failed-fan-count` | conf/zapi/cdot/9.8.0/node.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | Highlights | Node Details |
+
+
+
 ### node_failed_power
 
 Number of failed power supply units.
@@ -5840,6 +8308,12 @@ Number of failed power supply units.
 |--------|----------|--------|---------|
 | REST | `api/cluster/nodes` | `controller.failed_power_supply.count` | conf/rest/9.12.0/node.yaml |
 | ZAPI | `system-node-get-iter` | `node-details-info.env-failed-power-supply-count` | conf/zapi/cdot/9.8.0/node.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | Highlights | Node Details |
+
 
 
 ### node_fcp_data_recv
@@ -5852,6 +8326,7 @@ Number of FCP kilobytes (KB) received per second
 | ZAPI | `perf-object-get-instances system:node` | `fcp_data_recv`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
+
 ### node_fcp_data_sent
 
 Number of FCP kilobytes (KB) sent per second
@@ -5860,6 +8335,7 @@ Number of FCP kilobytes (KB) sent per second
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `fcp_data_sent`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `fcp_data_sent`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
+
 
 
 ### node_fcp_ops
@@ -5872,6 +8348,12 @@ Number of FCP operations per second
 | ZAPI | `perf-object-get-instances system:node` | `fcp_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | Backend | Protocol Backend IOPs |
+
+
+
 ### node_hdd_data_read
 
 Number of HDD Disk kilobytes (KB) read per second
@@ -5880,6 +8362,7 @@ Number of HDD Disk kilobytes (KB) read per second
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `hdd_data_read`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `hdd_data_read`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
+
 
 
 ### node_hdd_data_written
@@ -5892,6 +8375,7 @@ Number of HDD kilobytes (KB) written per second
 | ZAPI | `perf-object-get-instances system:node` | `hdd_data_written`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
+
 ### node_iscsi_ops
 
 Number of iSCSI operations per second
@@ -5900,6 +8384,12 @@ Number of iSCSI operations per second
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `iscsi_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `iscsi_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | Backend | Protocol Backend IOPs |
+
 
 
 ### node_labels
@@ -5912,6 +8402,20 @@ This metric provides information about Node
 | ZAPI | `system-node-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/node.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/cluster.json | Nodes & Subsystems - $Cluster | $Cluster |
+| cmode/datacenter.json | Highlights | Object Count |
+| cmode/datacenter.json | Health | Node Health |
+| cmode/datacenter.json | Power and Temperature | Average Power/Used_TB |
+| cmode/health.json | HA | HA Issues |
+| cmode/health.json | Node | Node Issues |
+| cmode/node.json | Highlights | Node Details |
+| cmode/power.json | Highlights | Average Power/Used_TB |
+| cmode/power.json | Nodes | Storage Nodes |
+
+
+
 ### node_memory
 
 Total memory in megabytes (MB)
@@ -5920,6 +8424,7 @@ Total memory in megabytes (MB)
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `memory`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `memory`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
+
 
 
 ### node_net_data_recv
@@ -5932,6 +8437,7 @@ Number of network kilobytes (KB) received per second
 | ZAPI | `perf-object-get-instances system:node` | `net_data_recv`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
+
 ### node_net_data_sent
 
 Number of network kilobytes (KB) sent per second
@@ -5942,6 +8448,7 @@ Number of network kilobytes (KB) sent per second
 | ZAPI | `perf-object-get-instances system:node` | `net_data_sent`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
+
 ### node_new_status
 
 This metric indicates a value of 1 if the node is healthy (true or up, indicating the node is operational) and a value of 0 for any other state.
@@ -5950,6 +8457,7 @@ This metric indicates a value of 1 if the node is healthy (true or up, indicatin
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.12.0/node.yaml |
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/node.yaml |
+
 
 
 ### node_nfs_access_avg_latency
@@ -5968,6 +8476,7 @@ Average latency of Access procedure requests. The counter keeps track of the ave
 | ZAPI | `perf-object-get-instances nfsv4:node` | `access_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> access_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_access_total
 
 Total number of Access procedure requests. It is the total number of access success and access error requests.
@@ -5984,6 +8493,7 @@ Total number of Access procedure requests. It is the total number of access succ
 | ZAPI | `perf-object-get-instances nfsv4:node` | `access_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_backchannel_ctl_avg_latency
 
 Average latency of BACKCHANNEL_CTL operations.
@@ -5994,6 +8504,7 @@ Average latency of BACKCHANNEL_CTL operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `backchannel_ctl.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> backchannel_ctl.total | conf/restperf/9.12.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `backchannel_ctl_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> backchannel_ctl_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `backchannel_ctl_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> backchannel_ctl_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
+
 
 
 ### node_nfs_backchannel_ctl_total
@@ -6008,6 +8519,7 @@ Total number of BACKCHANNEL_CTL operations.
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `backchannel_ctl_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 
 
+
 ### node_nfs_bind_conn_to_session_avg_latency
 
 Average latency of BIND_CONN_TO_SESSION operations.
@@ -6020,6 +8532,7 @@ Average latency of BIND_CONN_TO_SESSION operations.
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `bind_conn_to_session_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> bind_conn_to_session_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 
 
+
 ### node_nfs_bind_conn_to_session_total
 
 Total number of BIND_CONN_TO_SESSION operations.
@@ -6030,6 +8543,7 @@ Total number of BIND_CONN_TO_SESSION operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `bind_conn_to_session.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `bind_conn_to_session_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `bind_conn_to_session_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
+
 
 
 ### node_nfs_close_avg_latency
@@ -6046,6 +8560,7 @@ Average latency of CLOSE operations.
 | ZAPI | `perf-object-get-instances nfsv4:node` | `close_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> close_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_close_total
 
 Total number of CLOSE operations.
@@ -6058,6 +8573,7 @@ Total number of CLOSE operations.
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `close_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `close_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4:node` | `close_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
+
 
 
 ### node_nfs_commit_avg_latency
@@ -6076,6 +8592,7 @@ Average latency of Commit procedure requests. The counter keeps track of the ave
 | ZAPI | `perf-object-get-instances nfsv4:node` | `commit_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> commit_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_commit_total
 
 Total number of Commit procedure requests. It is the total number of Commit success and Commit error requests.
@@ -6090,6 +8607,7 @@ Total number of Commit procedure requests. It is the total number of Commit succ
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `commit_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `commit_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4:node` | `commit_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
+
 
 
 ### node_nfs_create_avg_latency
@@ -6108,6 +8626,7 @@ Average latency of Create procedure requests. The counter keeps track of the ave
 | ZAPI | `perf-object-get-instances nfsv4:node` | `create_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> create_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_create_session_avg_latency
 
 Average latency of CREATE_SESSION operations.
@@ -6120,6 +8639,7 @@ Average latency of CREATE_SESSION operations.
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `create_session_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> create_session_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 
 
+
 ### node_nfs_create_session_total
 
 Total number of CREATE_SESSION operations.
@@ -6130,6 +8650,7 @@ Total number of CREATE_SESSION operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `create_session.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `create_session_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `create_session_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
+
 
 
 ### node_nfs_create_total
@@ -6148,6 +8669,7 @@ Total number Create of procedure requests. It is the total number of create succ
 | ZAPI | `perf-object-get-instances nfsv4:node` | `create_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_delegpurge_avg_latency
 
 Average latency of DELEGPURGE operations.
@@ -6160,6 +8682,7 @@ Average latency of DELEGPURGE operations.
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `delegpurge_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delegpurge_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `delegpurge_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delegpurge_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4:node` | `delegpurge_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delegpurge_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
+
 
 
 ### node_nfs_delegpurge_total
@@ -6176,6 +8699,7 @@ Total number of DELEGPURGE operations.
 | ZAPI | `perf-object-get-instances nfsv4:node` | `delegpurge_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_delegreturn_avg_latency
 
 Average latency of DELEGRETURN operations.
@@ -6188,6 +8712,7 @@ Average latency of DELEGRETURN operations.
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `delegreturn_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delegreturn_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `delegreturn_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delegreturn_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4:node` | `delegreturn_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delegreturn_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
+
 
 
 ### node_nfs_delegreturn_total
@@ -6204,6 +8729,7 @@ Total number of DELEGRETURN operations.
 | ZAPI | `perf-object-get-instances nfsv4:node` | `delegreturn_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_destroy_clientid_avg_latency
 
 Average latency of DESTROY_CLIENTID operations.
@@ -6214,6 +8740,7 @@ Average latency of DESTROY_CLIENTID operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `destroy_clientid.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> destroy_clientid.total | conf/restperf/9.12.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `destroy_clientid_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> destroy_clientid_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `destroy_clientid_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> destroy_clientid_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
+
 
 
 ### node_nfs_destroy_clientid_total
@@ -6228,6 +8755,7 @@ Total number of DESTROY_CLIENTID operations.
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `destroy_clientid_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 
 
+
 ### node_nfs_destroy_session_avg_latency
 
 Average latency of DESTROY_SESSION operations.
@@ -6238,6 +8766,7 @@ Average latency of DESTROY_SESSION operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `destroy_session.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> destroy_session.total | conf/restperf/9.12.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `destroy_session_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> destroy_session_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `destroy_session_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> destroy_session_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
+
 
 
 ### node_nfs_destroy_session_total
@@ -6252,6 +8781,7 @@ Total number of DESTROY_SESSION operations.
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `destroy_session_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 
 
+
 ### node_nfs_exchange_id_avg_latency
 
 Average latency of EXCHANGE_ID operations.
@@ -6262,6 +8792,7 @@ Average latency of EXCHANGE_ID operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `exchange_id.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> exchange_id.total | conf/restperf/9.12.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `exchange_id_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> exchange_id_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `exchange_id_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> exchange_id_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
+
 
 
 ### node_nfs_exchange_id_total
@@ -6276,6 +8807,7 @@ Total number of EXCHANGE_ID operations.
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `exchange_id_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 
 
+
 ### node_nfs_free_stateid_avg_latency
 
 Average latency of FREE_STATEID operations.
@@ -6286,6 +8818,7 @@ Average latency of FREE_STATEID operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `free_stateid.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> free_stateid.total | conf/restperf/9.12.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `free_stateid_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> free_stateid_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `free_stateid_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> free_stateid_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
+
 
 
 ### node_nfs_free_stateid_total
@@ -6300,6 +8833,7 @@ Total number of FREE_STATEID operations.
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `free_stateid_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 
 
+
 ### node_nfs_fsinfo_avg_latency
 
 Average latency of FSInfo procedure requests. The counter keeps track of the average response time of FSInfo requests.
@@ -6308,6 +8842,7 @@ Average latency of FSInfo procedure requests. The counter keeps track of the ave
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `fsinfo.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> fsinfo.total | conf/restperf/9.12.0/nfsv3_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv3:node` | `fsinfo_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> fsinfo_total | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml |
+
 
 
 ### node_nfs_fsinfo_total
@@ -6320,6 +8855,7 @@ Total number FSInfo of procedure requests. It is the total number of FSInfo succ
 | ZAPI | `perf-object-get-instances nfsv3:node` | `fsinfo_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml |
 
 
+
 ### node_nfs_fsstat_avg_latency
 
 Average latency of FSStat procedure requests. The counter keeps track of the average response time of FSStat requests.
@@ -6330,6 +8866,7 @@ Average latency of FSStat procedure requests. The counter keeps track of the ave
 | ZAPI | `perf-object-get-instances nfsv3:node` | `fsstat_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> fsstat_total | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml |
 
 
+
 ### node_nfs_fsstat_total
 
 Total number FSStat of procedure requests. It is the total number of FSStat success and FSStat error requests.
@@ -6338,6 +8875,7 @@ Total number FSStat of procedure requests. It is the total number of FSStat succ
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `fsstat.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv3:node` | `fsstat_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml |
+
 
 
 ### node_nfs_get_dir_delegation_avg_latency
@@ -6352,6 +8890,7 @@ Average latency of GET_DIR_DELEGATION operations.
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `get_dir_delegation_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> get_dir_delegation_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 
 
+
 ### node_nfs_get_dir_delegation_total
 
 Total number of GET_DIR_DELEGATION operations.
@@ -6362,6 +8901,7 @@ Total number of GET_DIR_DELEGATION operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `get_dir_delegation.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `get_dir_delegation_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `get_dir_delegation_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
+
 
 
 ### node_nfs_getattr_avg_latency
@@ -6380,6 +8920,7 @@ Average latency of GetAttr procedure requests. This counter keeps track of the a
 | ZAPI | `perf-object-get-instances nfsv4:node` | `getattr_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getattr_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_getattr_total
 
 Total number of Getattr procedure requests. It is the total number of getattr success and getattr error requests.
@@ -6396,6 +8937,7 @@ Total number of Getattr procedure requests. It is the total number of getattr su
 | ZAPI | `perf-object-get-instances nfsv4:node` | `getattr_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_getdeviceinfo_avg_latency
 
 Average latency of GETDEVICEINFO operations.
@@ -6406,6 +8948,7 @@ Average latency of GETDEVICEINFO operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `getdeviceinfo.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> getdeviceinfo.total | conf/restperf/9.12.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `getdeviceinfo_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getdeviceinfo_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `getdeviceinfo_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getdeviceinfo_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
+
 
 
 ### node_nfs_getdeviceinfo_total
@@ -6420,6 +8963,7 @@ Total number of GETDEVICEINFO operations.
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `getdeviceinfo_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 
 
+
 ### node_nfs_getdevicelist_avg_latency
 
 Average latency of GETDEVICELIST operations.
@@ -6432,6 +8976,7 @@ Average latency of GETDEVICELIST operations.
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `getdevicelist_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getdevicelist_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 
 
+
 ### node_nfs_getdevicelist_total
 
 Total number of GETDEVICELIST operations.
@@ -6442,6 +8987,7 @@ Total number of GETDEVICELIST operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `getdevicelist.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `getdevicelist_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `getdevicelist_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
+
 
 
 ### node_nfs_getfh_avg_latency
@@ -6458,6 +9004,7 @@ Average latency of GETFH operations.
 | ZAPI | `perf-object-get-instances nfsv4:node` | `getfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getfh_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_getfh_total
 
 Total number of GETFH operations.
@@ -6470,6 +9017,7 @@ Total number of GETFH operations.
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `getfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `getfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4:node` | `getfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
+
 
 
 ### node_nfs_latency
@@ -6488,6 +9036,12 @@ Average latency of NFSv3 requests. This counter keeps track of the average respo
 | ZAPI | `perf-object-get-instances nfsv4:node` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | NFSv3 Frontend | NFSv3 Avg Latency |
+
+
+
 ### node_nfs_layoutcommit_avg_latency
 
 Average latency of LAYOUTCOMMIT operations.
@@ -6498,6 +9052,7 @@ Average latency of LAYOUTCOMMIT operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `layoutcommit.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> layoutcommit.total | conf/restperf/9.12.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `layoutcommit_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> layoutcommit_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `layoutcommit_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> layoutcommit_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
+
 
 
 ### node_nfs_layoutcommit_total
@@ -6512,6 +9067,7 @@ Total number of LAYOUTCOMMIT operations.
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `layoutcommit_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 
 
+
 ### node_nfs_layoutget_avg_latency
 
 Average latency of LAYOUTGET operations.
@@ -6522,6 +9078,7 @@ Average latency of LAYOUTGET operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `layoutget.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> layoutget.total | conf/restperf/9.12.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `layoutget_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> layoutget_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `layoutget_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> layoutget_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
+
 
 
 ### node_nfs_layoutget_total
@@ -6536,6 +9093,7 @@ Total number of LAYOUTGET operations.
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `layoutget_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 
 
+
 ### node_nfs_layoutreturn_avg_latency
 
 Average latency of LAYOUTRETURN operations.
@@ -6548,6 +9106,7 @@ Average latency of LAYOUTRETURN operations.
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `layoutreturn_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> layoutreturn_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 
 
+
 ### node_nfs_layoutreturn_total
 
 Total number of LAYOUTRETURN operations.
@@ -6558,6 +9117,7 @@ Total number of LAYOUTRETURN operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `layoutreturn.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `layoutreturn_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `layoutreturn_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
+
 
 
 ### node_nfs_link_avg_latency
@@ -6576,6 +9136,7 @@ Average latency of Link procedure requests. The counter keeps track of the avera
 | ZAPI | `perf-object-get-instances nfsv4:node` | `link_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> link_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_link_total
 
 Total number Link of procedure requests. It is the total number of Link success and Link error requests.
@@ -6592,6 +9153,7 @@ Total number Link of procedure requests. It is the total number of Link success 
 | ZAPI | `perf-object-get-instances nfsv4:node` | `link_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_lock_avg_latency
 
 Average latency of LOCK operations.
@@ -6604,6 +9166,7 @@ Average latency of LOCK operations.
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `lock_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lock_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `lock_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lock_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4:node` | `lock_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lock_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
+
 
 
 ### node_nfs_lock_total
@@ -6620,6 +9183,7 @@ Total number of LOCK operations.
 | ZAPI | `perf-object-get-instances nfsv4:node` | `lock_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_lockt_avg_latency
 
 Average latency of LOCKT operations.
@@ -6632,6 +9196,7 @@ Average latency of LOCKT operations.
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `lockt_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lockt_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `lockt_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lockt_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4:node` | `lockt_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lockt_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
+
 
 
 ### node_nfs_lockt_total
@@ -6648,6 +9213,7 @@ Total number of LOCKT operations.
 | ZAPI | `perf-object-get-instances nfsv4:node` | `lockt_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_locku_avg_latency
 
 Average latency of LOCKU operations.
@@ -6662,6 +9228,7 @@ Average latency of LOCKU operations.
 | ZAPI | `perf-object-get-instances nfsv4:node` | `locku_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> locku_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_locku_total
 
 Total number of LOCKU operations.
@@ -6674,6 +9241,7 @@ Total number of LOCKU operations.
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `locku_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `locku_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4:node` | `locku_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
+
 
 
 ### node_nfs_lookup_avg_latency
@@ -6692,6 +9260,7 @@ Average latency of LookUp procedure requests. This shows the average time it tak
 | ZAPI | `perf-object-get-instances nfsv4:node` | `lookup_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lookup_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_lookup_total
 
 Total number of Lookup procedure requests. It is the total number of lookup success and lookup error requests.
@@ -6708,6 +9277,7 @@ Total number of Lookup procedure requests. It is the total number of lookup succ
 | ZAPI | `perf-object-get-instances nfsv4:node` | `lookup_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_lookupp_avg_latency
 
 Average latency of LOOKUPP operations.
@@ -6720,6 +9290,7 @@ Average latency of LOOKUPP operations.
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `lookupp_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lookupp_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `lookupp_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lookupp_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4:node` | `lookupp_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lookupp_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
+
 
 
 ### node_nfs_lookupp_total
@@ -6736,6 +9307,7 @@ Total number of LOOKUPP operations.
 | ZAPI | `perf-object-get-instances nfsv4:node` | `lookupp_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_mkdir_avg_latency
 
 Average latency of MkDir procedure requests. The counter keeps track of the average response time of MkDir requests.
@@ -6744,6 +9316,7 @@ Average latency of MkDir procedure requests. The counter keeps track of the aver
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `mkdir.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> mkdir.total | conf/restperf/9.12.0/nfsv3_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv3:node` | `mkdir_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> mkdir_total | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml |
+
 
 
 ### node_nfs_mkdir_total
@@ -6756,6 +9329,7 @@ Total number MkDir of procedure requests. It is the total number of MkDir succes
 | ZAPI | `perf-object-get-instances nfsv3:node` | `mkdir_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml |
 
 
+
 ### node_nfs_mknod_avg_latency
 
 Average latency of MkNod procedure requests. The counter keeps track of the average response time of MkNod requests.
@@ -6766,6 +9340,7 @@ Average latency of MkNod procedure requests. The counter keeps track of the aver
 | ZAPI | `perf-object-get-instances nfsv3:node` | `mknod_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> mknod_total | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml |
 
 
+
 ### node_nfs_mknod_total
 
 Total number MkNod of procedure requests. It is the total number of MkNod success and MkNod error requests.
@@ -6774,6 +9349,7 @@ Total number MkNod of procedure requests. It is the total number of MkNod succes
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `mknod.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv3:node` | `mknod_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml |
+
 
 
 ### node_nfs_null_avg_latency
@@ -6792,6 +9368,7 @@ Average latency of Null procedure requests.
 | ZAPI | `perf-object-get-instances nfsv4:node` | `null_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> null_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_null_total
 
 Total number of Null procedure requests. It is the total of null success and null error requests.
@@ -6808,6 +9385,7 @@ Total number of Null procedure requests. It is the total of null success and nul
 | ZAPI | `perf-object-get-instances nfsv4:node` | `null_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_nverify_avg_latency
 
 Average latency of NVERIFY operations.
@@ -6820,6 +9398,7 @@ Average latency of NVERIFY operations.
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `nverify_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> nverify_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `nverify_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> nverify_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4:node` | `nverify_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> nverify_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
+
 
 
 ### node_nfs_nverify_total
@@ -6836,6 +9415,7 @@ Total number of NVERIFY operations.
 | ZAPI | `perf-object-get-instances nfsv4:node` | `nverify_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_open_avg_latency
 
 Average latency of OPEN operations.
@@ -6850,6 +9430,7 @@ Average latency of OPEN operations.
 | ZAPI | `perf-object-get-instances nfsv4:node` | `open_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> open_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_open_confirm_avg_latency
 
 Average latency of OPEN_CONFIRM procedures
@@ -6860,6 +9441,7 @@ Average latency of OPEN_CONFIRM procedures
 | ZAPI | `perf-object-get-instances nfsv4:node` | `open_confirm_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> open_confirm_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_open_confirm_total
 
 Total number of OPEN_CONFIRM procedures
@@ -6868,6 +9450,7 @@ Total number of OPEN_CONFIRM procedures
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `open_confirm.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4:node` | `open_confirm_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
+
 
 
 ### node_nfs_open_downgrade_avg_latency
@@ -6884,6 +9467,7 @@ Average latency of OPEN_DOWNGRADE operations.
 | ZAPI | `perf-object-get-instances nfsv4:node` | `open_downgrade_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> open_downgrade_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_open_downgrade_total
 
 Total number of OPEN_DOWNGRADE operations.
@@ -6896,6 +9480,7 @@ Total number of OPEN_DOWNGRADE operations.
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `open_downgrade_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `open_downgrade_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4:node` | `open_downgrade_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
+
 
 
 ### node_nfs_open_total
@@ -6912,6 +9497,7 @@ Total number of OPEN operations.
 | ZAPI | `perf-object-get-instances nfsv4:node` | `open_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_openattr_avg_latency
 
 Average latency of OPENATTR operations.
@@ -6924,6 +9510,7 @@ Average latency of OPENATTR operations.
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `openattr_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> openattr_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `openattr_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> openattr_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4:node` | `openattr_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> openattr_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
+
 
 
 ### node_nfs_openattr_total
@@ -6940,6 +9527,7 @@ Total number of OPENATTR operations.
 | ZAPI | `perf-object-get-instances nfsv4:node` | `openattr_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_ops
 
 Number of NFS operations per second
@@ -6948,6 +9536,16 @@ Number of NFS operations per second
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `nfs_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `nfs_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/cdot.json | Cluster Metrics | Top $TopResources NFS IOPs by Cluster |
+| cmode/cdot.json | Cluster Metrics | Top $TopResources NFS IOPs by Cluster |
+| cmode/node.json | Backend | Protocol Backend IOPs |
+| cmode/node.json | NFSv3 Frontend | NFS Avg IOPS |
+| cmode/node.json | NFSv3 Frontend | NFS Avg IOPS |
+
 
 
 ### node_nfs_pathconf_avg_latency
@@ -6960,6 +9558,7 @@ Average latency of PathConf procedure requests. The counter keeps track of the a
 | ZAPI | `perf-object-get-instances nfsv3:node` | `pathconf_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> pathconf_total | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml |
 
 
+
 ### node_nfs_pathconf_total
 
 Total number PathConf of procedure requests. It is the total number of PathConf success and PathConf error requests.
@@ -6968,6 +9567,7 @@ Total number PathConf of procedure requests. It is the total number of PathConf 
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `pathconf.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv3:node` | `pathconf_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml |
+
 
 
 ### node_nfs_putfh_avg_latency
@@ -6984,6 +9584,7 @@ The number of successful PUTPUBFH operations.
 | ZAPI | `perf-object-get-instances nfsv4:node` | `putfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> putfh_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_putfh_total
 
 Total number of PUTFH operations.
@@ -6996,6 +9597,7 @@ Total number of PUTFH operations.
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `putfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `putfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4:node` | `putfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
+
 
 
 ### node_nfs_putpubfh_avg_latency
@@ -7012,6 +9614,7 @@ Average latency of PUTPUBFH operations.
 | ZAPI | `perf-object-get-instances nfsv4:node` | `putpubfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> putpubfh_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_putpubfh_total
 
 Total number of PUTPUBFH operations.
@@ -7024,6 +9627,7 @@ Total number of PUTPUBFH operations.
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `putpubfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `putpubfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4:node` | `putpubfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
+
 
 
 ### node_nfs_putrootfh_avg_latency
@@ -7040,6 +9644,7 @@ Average latency of PUTROOTFH operations.
 | ZAPI | `perf-object-get-instances nfsv4:node` | `putrootfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> putrootfh_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_putrootfh_total
 
 Total number of PUTROOTFH operations.
@@ -7052,6 +9657,7 @@ Total number of PUTROOTFH operations.
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `putrootfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `putrootfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4:node` | `putrootfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
+
 
 
 ### node_nfs_read_avg_latency
@@ -7070,6 +9676,13 @@ Average latency of Read procedure requests. The counter keeps track of the avera
 | ZAPI | `perf-object-get-instances nfsv4:node` | `read_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> read_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | NFSv3 Frontend | NFSv3 Avg Read Latency |
+| cmode/node.json | NFSv3 Frontend | NFSv3 Read and Write Latency |
+
+
+
 ### node_nfs_read_ops
 
 Total observed NFSv3 read operations per second.
@@ -7078,6 +9691,14 @@ Total observed NFSv3 read operations per second.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv3:node` | `nfsv3_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | NFSv3 Frontend | NFS Avg IOPS |
+| cmode/node.json | NFSv3 Frontend | NFS Avg IOPS |
+| cmode/node.json | NFSv3 Frontend | NFSv3 Read and Write IOPs |
+
 
 
 ### node_nfs_read_symlink_avg_latency
@@ -7090,6 +9711,7 @@ Average latency of ReadSymLink procedure requests. The counter keeps track of th
 | ZAPI | `perf-object-get-instances nfsv3:node` | `read_symlink_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> read_symlink_total | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml |
 
 
+
 ### node_nfs_read_symlink_total
 
 Total number of ReadSymLink procedure requests. It is the total number of read symlink success and read symlink error requests.
@@ -7098,6 +9720,7 @@ Total number of ReadSymLink procedure requests. It is the total number of read s
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `read_symlink.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv3:node` | `read_symlink_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml |
+
 
 
 ### node_nfs_read_throughput
@@ -7116,6 +9739,13 @@ Rate of NFSv3 read data transfers per second.
 | ZAPI | `perf-object-get-instances nfsv4:node` | `nfs4_read_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | NFSv3 Frontend | NFSv3 Avg Throughput |
+| cmode/node.json | NFSv3 Frontend | NFSv3 Read and Write Throughput |
+
+
+
 ### node_nfs_read_total
 
 Total number Read of procedure requests. It is the total number of read success and read error requests.
@@ -7130,6 +9760,7 @@ Total number Read of procedure requests. It is the total number of read success 
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `read_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `read_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4:node` | `read_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
+
 
 
 ### node_nfs_readdir_avg_latency
@@ -7148,6 +9779,7 @@ Average latency of ReadDir procedure requests. The counter keeps track of the av
 | ZAPI | `perf-object-get-instances nfsv4:node` | `readdir_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> readdir_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_readdir_total
 
 Total number ReadDir of procedure requests. It is the total number of ReadDir success and ReadDir error requests.
@@ -7164,6 +9796,7 @@ Total number ReadDir of procedure requests. It is the total number of ReadDir su
 | ZAPI | `perf-object-get-instances nfsv4:node` | `readdir_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_readdirplus_avg_latency
 
 Average latency of ReadDirPlus procedure requests. The counter keeps track of the average response time of ReadDirPlus requests.
@@ -7174,6 +9807,7 @@ Average latency of ReadDirPlus procedure requests. The counter keeps track of th
 | ZAPI | `perf-object-get-instances nfsv3:node` | `readdirplus_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> readdirplus_total | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml |
 
 
+
 ### node_nfs_readdirplus_total
 
 Total number ReadDirPlus of procedure requests. It is the total number of ReadDirPlus success and ReadDirPlus error requests.
@@ -7182,6 +9816,7 @@ Total number ReadDirPlus of procedure requests. It is the total number of ReadDi
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `readdirplus.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv3:node` | `readdirplus_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml |
+
 
 
 ### node_nfs_readlink_avg_latency
@@ -7198,6 +9833,7 @@ Average latency of READLINK operations.
 | ZAPI | `perf-object-get-instances nfsv4:node` | `readlink_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> readlink_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_readlink_total
 
 Total number of READLINK operations.
@@ -7212,6 +9848,7 @@ Total number of READLINK operations.
 | ZAPI | `perf-object-get-instances nfsv4:node` | `readlink_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_reclaim_complete_avg_latency
 
 Average latency of RECLAIM_COMPLETE operations.
@@ -7222,6 +9859,7 @@ Average latency of RECLAIM_COMPLETE operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `reclaim_complete.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> reclaim_complete.total | conf/restperf/9.12.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `reclaim_complete_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> reclaim_complete_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `reclaim_complete_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> reclaim_complete_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
+
 
 
 ### node_nfs_reclaim_complete_total
@@ -7236,6 +9874,7 @@ Total number of RECLAIM_COMPLETE operations.
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `reclaim_complete_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 
 
+
 ### node_nfs_release_lock_owner_avg_latency
 
 Average Latency of RELEASE_LOCKOWNER procedures
@@ -7246,6 +9885,7 @@ Average Latency of RELEASE_LOCKOWNER procedures
 | ZAPI | `perf-object-get-instances nfsv4:node` | `release_lock_owner_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> release_lock_owner_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_release_lock_owner_total
 
 Total number of RELEASE_LOCKOWNER procedures
@@ -7254,6 +9894,7 @@ Total number of RELEASE_LOCKOWNER procedures
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `release_lock_owner.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4:node` | `release_lock_owner_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
+
 
 
 ### node_nfs_remove_avg_latency
@@ -7272,6 +9913,7 @@ Average latency of Remove procedure requests. The counter keeps track of the ave
 | ZAPI | `perf-object-get-instances nfsv4:node` | `remove_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> remove_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_remove_total
 
 Total number Remove of procedure requests. It is the total number of Remove success and Remove error requests.
@@ -7286,6 +9928,7 @@ Total number Remove of procedure requests. It is the total number of Remove succ
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `remove_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `remove_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4:node` | `remove_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
+
 
 
 ### node_nfs_rename_avg_latency
@@ -7304,6 +9947,7 @@ Average latency of Rename procedure requests. The counter keeps track of the ave
 | ZAPI | `perf-object-get-instances nfsv4:node` | `rename_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> rename_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_rename_total
 
 Total number Rename of procedure requests. It is the total number of Rename success and Rename error requests.
@@ -7320,6 +9964,7 @@ Total number Rename of procedure requests. It is the total number of Rename succ
 | ZAPI | `perf-object-get-instances nfsv4:node` | `rename_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_renew_avg_latency
 
 Average latency of RENEW procedures
@@ -7330,6 +9975,7 @@ Average latency of RENEW procedures
 | ZAPI | `perf-object-get-instances nfsv4:node` | `renew_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> renew_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_renew_total
 
 Total number of RENEW procedures
@@ -7338,6 +9984,7 @@ Total number of RENEW procedures
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `renew.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4:node` | `renew_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
+
 
 
 ### node_nfs_restorefh_avg_latency
@@ -7354,6 +10001,7 @@ Average latency of RESTOREFH operations.
 | ZAPI | `perf-object-get-instances nfsv4:node` | `restorefh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> restorefh_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_restorefh_total
 
 Total number of RESTOREFH operations.
@@ -7368,6 +10016,7 @@ Total number of RESTOREFH operations.
 | ZAPI | `perf-object-get-instances nfsv4:node` | `restorefh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_rmdir_avg_latency
 
 Average latency of RmDir procedure requests. The counter keeps track of the average response time of RmDir requests.
@@ -7378,6 +10027,7 @@ Average latency of RmDir procedure requests. The counter keeps track of the aver
 | ZAPI | `perf-object-get-instances nfsv3:node` | `rmdir_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> rmdir_total | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml |
 
 
+
 ### node_nfs_rmdir_total
 
 Total number RmDir of procedure requests. It is the total number of RmDir success and RmDir error requests.
@@ -7386,6 +10036,7 @@ Total number RmDir of procedure requests. It is the total number of RmDir succes
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `rmdir.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv3:node` | `rmdir_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml |
+
 
 
 ### node_nfs_savefh_avg_latency
@@ -7402,6 +10053,7 @@ Average latency of SAVEFH operations.
 | ZAPI | `perf-object-get-instances nfsv4:node` | `savefh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> savefh_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_savefh_total
 
 Total number of SAVEFH operations.
@@ -7414,6 +10066,7 @@ Total number of SAVEFH operations.
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `savefh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `savefh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4:node` | `savefh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
+
 
 
 ### node_nfs_secinfo_avg_latency
@@ -7430,6 +10083,7 @@ Average latency of SECINFO operations.
 | ZAPI | `perf-object-get-instances nfsv4:node` | `secinfo_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> secinfo_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_secinfo_no_name_avg_latency
 
 Average latency of SECINFO_NO_NAME operations.
@@ -7442,6 +10096,7 @@ Average latency of SECINFO_NO_NAME operations.
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `secinfo_no_name_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> secinfo_no_name_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 
 
+
 ### node_nfs_secinfo_no_name_total
 
 Total number of SECINFO_NO_NAME operations.
@@ -7452,6 +10107,7 @@ Total number of SECINFO_NO_NAME operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `secinfo_no_name.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `secinfo_no_name_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `secinfo_no_name_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
+
 
 
 ### node_nfs_secinfo_total
@@ -7468,6 +10124,7 @@ Total number of SECINFO operations.
 | ZAPI | `perf-object-get-instances nfsv4:node` | `secinfo_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_sequence_avg_latency
 
 Average latency of SEQUENCE operations.
@@ -7478,6 +10135,7 @@ Average latency of SEQUENCE operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `sequence.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> sequence.total | conf/restperf/9.12.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `sequence_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> sequence_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `sequence_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> sequence_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
+
 
 
 ### node_nfs_sequence_total
@@ -7492,6 +10150,7 @@ Total number of SEQUENCE operations.
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `sequence_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 
 
+
 ### node_nfs_set_ssv_avg_latency
 
 Average latency of SET_SSV operations.
@@ -7504,6 +10163,7 @@ Average latency of SET_SSV operations.
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `set_ssv_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> set_ssv_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 
 
+
 ### node_nfs_set_ssv_total
 
 Total number of SET_SSV operations.
@@ -7514,6 +10174,7 @@ Total number of SET_SSV operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `set_ssv.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `set_ssv_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `set_ssv_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
+
 
 
 ### node_nfs_setattr_avg_latency
@@ -7532,6 +10193,7 @@ Average latency of SetAttr procedure requests. The counter keeps track of the av
 | ZAPI | `perf-object-get-instances nfsv4:node` | `setattr_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> setattr_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_setattr_total
 
 Total number of Setattr procedure requests. It is the total number of Setattr success and setattr error requests.
@@ -7548,6 +10210,7 @@ Total number of Setattr procedure requests. It is the total number of Setattr su
 | ZAPI | `perf-object-get-instances nfsv4:node` | `setattr_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_setclientid_avg_latency
 
 Average latency of SETCLIENTID procedures
@@ -7556,6 +10219,7 @@ Average latency of SETCLIENTID procedures
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `setclientid.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> setclientid.total | conf/restperf/9.12.0/nfsv4_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4:node` | `setclientid_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> setclientid_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
+
 
 
 ### node_nfs_setclientid_confirm_avg_latency
@@ -7568,6 +10232,7 @@ Average latency of SETCLIENTID_CONFIRM procedures
 | ZAPI | `perf-object-get-instances nfsv4:node` | `setclientid_confirm_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> setclientid_confirm_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_setclientid_confirm_total
 
 Total number of SETCLIENTID_CONFIRM procedures
@@ -7576,6 +10241,7 @@ Total number of SETCLIENTID_CONFIRM procedures
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4:node` | `setclientid_confirm.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4:node` | `setclientid_confirm_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
+
 
 
 ### node_nfs_setclientid_total
@@ -7588,6 +10254,7 @@ Total number of SETCLIENTID procedures
 | ZAPI | `perf-object-get-instances nfsv4:node` | `setclientid_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_symlink_avg_latency
 
 Average latency of SymLink procedure requests. The counter keeps track of the average response time of SymLink requests.
@@ -7598,6 +10265,7 @@ Average latency of SymLink procedure requests. The counter keeps track of the av
 | ZAPI | `perf-object-get-instances nfsv3:node` | `symlink_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> symlink_total | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml |
 
 
+
 ### node_nfs_symlink_total
 
 Total number SymLink of procedure requests. It is the total number of SymLink success and create SymLink requests.
@@ -7606,6 +10274,7 @@ Total number SymLink of procedure requests. It is the total number of SymLink su
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `symlink.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv3:node` | `symlink_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml |
+
 
 
 ### node_nfs_test_stateid_avg_latency
@@ -7620,6 +10289,7 @@ Average latency of TEST_STATEID operations.
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `test_stateid_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> test_stateid_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 
 
+
 ### node_nfs_test_stateid_total
 
 Total number of TEST_STATEID operations.
@@ -7630,6 +10300,7 @@ Total number of TEST_STATEID operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `test_stateid.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `test_stateid_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `test_stateid_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
+
 
 
 ### node_nfs_throughput
@@ -7648,6 +10319,12 @@ Rate of NFSv3 data transfers per second.
 | ZAPI | `perf-object-get-instances nfsv4:node` | `nfs4_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | NFSv3 Frontend | NFSv3 Avg Throughput |
+
+
+
 ### node_nfs_total_ops
 
 Total number of NFSv3 procedure requests per second.
@@ -7664,6 +10341,12 @@ Total number of NFSv3 procedure requests per second.
 | ZAPI | `perf-object-get-instances nfsv4:node` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | NFSv3 Frontend | NFSv3 Read and Write IOPs |
+
+
+
 ### node_nfs_verify_avg_latency
 
 Average latency of VERIFY operations.
@@ -7676,6 +10359,7 @@ Average latency of VERIFY operations.
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `verify_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> verify_total | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `verify_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> verify_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4:node` | `verify_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> verify_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
+
 
 
 ### node_nfs_verify_total
@@ -7692,6 +10376,7 @@ Total number of VERIFY operations.
 | ZAPI | `perf-object-get-instances nfsv4:node` | `verify_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nfs_want_delegation_avg_latency
 
 Average latency of WANT_DELEGATION operations.
@@ -7704,6 +10389,7 @@ Average latency of WANT_DELEGATION operations.
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `want_delegation_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> want_delegation_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 
 
+
 ### node_nfs_want_delegation_total
 
 Total number of WANT_DELEGATION operations.
@@ -7714,6 +10400,7 @@ Total number of WANT_DELEGATION operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42:node` | `want_delegation.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1:node` | `want_delegation_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `want_delegation_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
+
 
 
 ### node_nfs_write_avg_latency
@@ -7732,6 +10419,13 @@ Average latency of Write procedure requests. The counter keeps track of the aver
 | ZAPI | `perf-object-get-instances nfsv4:node` | `write_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> write_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | NFSv3 Frontend | NFSv3 Avg Write Latency |
+| cmode/node.json | NFSv3 Frontend | NFSv3 Read and Write Latency |
+
+
+
 ### node_nfs_write_ops
 
 Total observed NFSv3 write operations per second.
@@ -7740,6 +10434,14 @@ Total observed NFSv3 write operations per second.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv3:node` | `nfsv3_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | NFSv3 Frontend | NFS Avg IOPS |
+| cmode/node.json | NFSv3 Frontend | NFS Avg IOPS |
+| cmode/node.json | NFSv3 Frontend | NFSv3 Read and Write IOPs |
+
 
 
 ### node_nfs_write_throughput
@@ -7758,6 +10460,13 @@ Rate of NFSv3 write data transfers per second.
 | ZAPI | `perf-object-get-instances nfsv4:node` | `nfs4_write_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | NFSv3 Frontend | NFSv3 Avg Throughput |
+| cmode/node.json | NFSv3 Frontend | NFSv3 Read and Write Throughput |
+
+
+
 ### node_nfs_write_total
 
 Total number of Write procedure requests. It is the total number of write success and write error requests.
@@ -7774,6 +10483,7 @@ Total number of Write procedure requests. It is the total number of write succes
 | ZAPI | `perf-object-get-instances nfsv4:node` | `write_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
 
+
 ### node_nvme_fc_data_recv
 
 NVMe/FC kilobytes (KB) received per second
@@ -7782,6 +10492,7 @@ NVMe/FC kilobytes (KB) received per second
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `nvme_fc_data_received`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `nvme_fc_data_recv`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.15.1/system_node.yaml |
+
 
 
 ### node_nvme_fc_data_sent
@@ -7794,6 +10505,7 @@ NVMe/FC kilobytes (KB) sent per second
 | ZAPI | `perf-object-get-instances system:node` | `nvme_fc_data_sent`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.15.1/system_node.yaml |
 
 
+
 ### node_nvme_fc_ops
 
 NVMe/FC operations per second
@@ -7802,6 +10514,7 @@ NVMe/FC operations per second
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `nvme_fc_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `nvme_fc_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.15.1/system_node.yaml |
+
 
 
 ### node_nvmf_data_recv
@@ -7814,6 +10527,7 @@ NVMe/FC kilobytes (KB) received per second.
 | ZAPI | `perf-object-get-instances system:node` | `nvmf_data_recv`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
+
 ### node_nvmf_data_sent
 
 NVMe/FC kilobytes (KB) sent per second.
@@ -7822,6 +10536,7 @@ NVMe/FC kilobytes (KB) sent per second.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `nvme_fc_data_sent, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `nvmf_data_sent`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
+
 
 
 ### node_nvmf_ops
@@ -7834,6 +10549,12 @@ NVMe/FC operations per second.
 | ZAPI | `perf-object-get-instances system:node` | `nvmf_ops`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | Backend | Protocol Backend IOPs |
+
+
+
 ### node_other_data
 
 Other throughput
@@ -7842,6 +10563,7 @@ Other throughput
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `other_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `other_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
+
 
 
 ### node_other_latency
@@ -7854,6 +10576,12 @@ Average latency for all other operations in the system in microseconds
 | ZAPI | `perf-object-get-instances system:node` | `other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | Backend | Average Latency |
+
+
+
 ### node_other_ops
 
 All other operations per second
@@ -7862,6 +10590,12 @@ All other operations per second
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | Backend | IOPs |
+
 
 
 ### node_read_data
@@ -7874,6 +10608,12 @@ Read throughput
 | ZAPI | `perf-object-get-instances system:node` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | Backend | Throughput |
+
+
+
 ### node_read_latency
 
 Average latency for all read operations in the system in microseconds
@@ -7882,6 +10622,13 @@ Average latency for all read operations in the system in microseconds
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/restperf/9.12.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/system_node.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/cluster.json | Highlights | Top $TopResources Nodes by Read Latency |
+| cmode/node.json | Backend | Average Latency |
+
 
 
 ### node_read_ops
@@ -7894,6 +10641,12 @@ Read operations per second
 | ZAPI | `perf-object-get-instances system:node` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | Backend | IOPs |
+
+
+
 ### node_ssd_data_read
 
 Number of SSD Disk kilobytes (KB) read per second
@@ -7902,6 +10655,7 @@ Number of SSD Disk kilobytes (KB) read per second
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `ssd_data_read`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `ssd_data_read`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
+
 
 
 ### node_ssd_data_written
@@ -7914,6 +10668,7 @@ Number of SSD Disk kilobytes (KB) written per second
 | ZAPI | `perf-object-get-instances system:node` | `ssd_data_written`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
+
 ### node_total_data
 
 Total throughput in bytes
@@ -7922,6 +10677,18 @@ Total throughput in bytes
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/cluster.json | Highlights | Top $TopResources Nodes by Throughput |
+| cmode/cluster.json | Highlights | Top $TopResources Nodes by Throughput |
+| cmode/cluster.json | Highlights | Top $TopResources Nodes by Throughput |
+| cmode/cluster.json | Highlights | Top $TopResources Nodes by Throughput |
+| cmode/cluster.json | Throughput | Data |
+| cmode/node.json | Highlights | Throughput |
+| cmode/node.json | Highlights | Throughput |
+
 
 
 ### node_total_latency
@@ -7934,6 +10701,18 @@ Average latency for all operations in the system in microseconds
 | ZAPI | `perf-object-get-instances system:node` | `total_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/cdot.json | Cluster Metrics | Top $TopResources Clusters by Max Node Latency |
+| cmode/cdot.json | Cluster Metrics | Top $TopResources Clusters by Max Node Latency |
+| cmode/cluster.json | Highlights | Top $TopResources Nodes by Latency |
+| cmode/cluster.json | Highlights | Top $TopResources Nodes by Latency |
+| cmode/cluster.json | Throughput | Max Latency |
+| cmode/node.json | Highlights | Average Latency |
+| cmode/node.json | Highlights | Latency |
+
+
+
 ### node_total_ops
 
 Total number of operations per second
@@ -7942,6 +10721,22 @@ Total number of operations per second
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/cdot.json | Cluster Metrics | Top $TopResources Total IOPs by Cluster |
+| cmode/cdot.json | Cluster Metrics | Top $TopResources Total IOPs by Cluster |
+| cmode/cluster.json | Highlights | Top $TopResources Nodes by IOPs |
+| cmode/cluster.json | Highlights | Top $TopResources Nodes by IOPs |
+| cmode/cluster.json | Highlights | Top $TopResources Nodes by IOPs |
+| cmode/cluster.json | Highlights | Top $TopResources Nodes by IOPs |
+| cmode/cluster.json | Throughput | IOPs |
+| cmode/datacenter.json | Power and Temperature | Average IOPs/Watt |
+| cmode/node.json | Highlights | IOPs |
+| cmode/node.json | Highlights | Top Average IOPs |
+| cmode/power.json | Highlights | Average IOPs/Watt |
+
 
 
 ### node_uptime
@@ -7954,6 +10749,12 @@ The total time, in seconds, that the node has been up.
 | ZAPI | `system-node-get-iter` | `node-details-info.node-uptime` | conf/zapi/cdot/9.8.0/node.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | Highlights | Node Details |
+
+
+
 ### node_vol_cifs_other_latency
 
 Average time for the WAFL filesystem to process other CIFS operations to the volume; not including CIFS protocol request processing or network communication time which will also be included in client observed CIFS request latency
@@ -7962,6 +10763,7 @@ Average time for the WAFL filesystem to process other CIFS operations to the vol
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume:node` | `cifs.other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cifs.other_ops | conf/restperf/9.12.0/volume_node.yaml |
 | ZAPI | `perf-object-get-instances volume:node` | `cifs_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cifs_other_ops | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
+
 
 
 ### node_vol_cifs_other_ops
@@ -7974,6 +10776,7 @@ Number of other CIFS operations per second to the volume
 | ZAPI | `perf-object-get-instances volume:node` | `cifs_other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
 
 
+
 ### node_vol_cifs_read_data
 
 Bytes read per second via CIFS
@@ -7982,6 +10785,7 @@ Bytes read per second via CIFS
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume:node` | `cifs.read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_node.yaml |
 | ZAPI | `perf-object-get-instances volume:node` | `cifs_read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
+
 
 
 ### node_vol_cifs_read_latency
@@ -7994,6 +10798,7 @@ Average time for the WAFL filesystem to process CIFS read requests to the volume
 | ZAPI | `perf-object-get-instances volume:node` | `cifs_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cifs_read_ops | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
 
 
+
 ### node_vol_cifs_read_ops
 
 Number of CIFS read operations per second from the volume
@@ -8002,6 +10807,7 @@ Number of CIFS read operations per second from the volume
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume:node` | `cifs.read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_node.yaml |
 | ZAPI | `perf-object-get-instances volume:node` | `cifs_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
+
 
 
 ### node_vol_cifs_write_data
@@ -8014,6 +10820,7 @@ Bytes written per second via CIFS
 | ZAPI | `perf-object-get-instances volume:node` | `cifs_write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
 
 
+
 ### node_vol_cifs_write_latency
 
 Average time for the WAFL filesystem to process CIFS write requests to the volume; not including CIFS protocol request processing or network communication time which will also be included in client observed CIFS request latency
@@ -8022,6 +10829,7 @@ Average time for the WAFL filesystem to process CIFS write requests to the volum
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume:node` | `cifs.write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cifs.write_ops | conf/restperf/9.12.0/volume_node.yaml |
 | ZAPI | `perf-object-get-instances volume:node` | `cifs_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cifs_write_ops | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
+
 
 
 ### node_vol_cifs_write_ops
@@ -8034,6 +10842,7 @@ Number of CIFS write operations per second to the volume
 | ZAPI | `perf-object-get-instances volume:node` | `cifs_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
 
 
+
 ### node_vol_fcp_other_latency
 
 Average time for the WAFL filesystem to process other FCP protocol operations to the volume; not including FCP protocol request processing or network communication time which will also be included in client observed FCP protocol request latency
@@ -8042,6 +10851,7 @@ Average time for the WAFL filesystem to process other FCP protocol operations to
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume:node` | `fcp.other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> fcp.other_ops | conf/restperf/9.12.0/volume_node.yaml |
 | ZAPI | `perf-object-get-instances volume:node` | `fcp_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> fcp_other_ops | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
+
 
 
 ### node_vol_fcp_other_ops
@@ -8054,6 +10864,7 @@ Number of other block protocol operations per second to the volume
 | ZAPI | `perf-object-get-instances volume:node` | `fcp_other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
 
 
+
 ### node_vol_fcp_read_data
 
 Bytes read per second via block protocol
@@ -8062,6 +10873,7 @@ Bytes read per second via block protocol
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume:node` | `fcp.read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_node.yaml |
 | ZAPI | `perf-object-get-instances volume:node` | `fcp_read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
+
 
 
 ### node_vol_fcp_read_latency
@@ -8074,6 +10886,7 @@ Average time for the WAFL filesystem to process FCP protocol read operations to 
 | ZAPI | `perf-object-get-instances volume:node` | `fcp_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> fcp_read_ops | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
 
 
+
 ### node_vol_fcp_read_ops
 
 Number of block protocol read operations per second from the volume
@@ -8082,6 +10895,7 @@ Number of block protocol read operations per second from the volume
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume:node` | `fcp.read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_node.yaml |
 | ZAPI | `perf-object-get-instances volume:node` | `fcp_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
+
 
 
 ### node_vol_fcp_write_data
@@ -8094,6 +10908,7 @@ Bytes written per second via block protocol
 | ZAPI | `perf-object-get-instances volume:node` | `fcp_write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
 
 
+
 ### node_vol_fcp_write_latency
 
 Average time for the WAFL filesystem to process FCP protocol write operations to the volume; not including FCP protocol request processing or network communication time which will also be included in client observed FCP protocol request latency
@@ -8102,6 +10917,7 @@ Average time for the WAFL filesystem to process FCP protocol write operations to
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume:node` | `fcp.write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> fcp.write_ops | conf/restperf/9.12.0/volume_node.yaml |
 | ZAPI | `perf-object-get-instances volume:node` | `fcp_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> fcp_write_ops | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
+
 
 
 ### node_vol_fcp_write_ops
@@ -8114,6 +10930,7 @@ Number of block protocol write operations per second to the volume
 | ZAPI | `perf-object-get-instances volume:node` | `fcp_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
 
 
+
 ### node_vol_iscsi_other_latency
 
 Average time for the WAFL filesystem to process other iSCSI protocol operations to the volume; not including iSCSI protocol request processing or network communication time which will also be included in client observed iSCSI protocol request latency
@@ -8122,6 +10939,7 @@ Average time for the WAFL filesystem to process other iSCSI protocol operations 
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume:node` | `iscsi.other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> iscsi.other_ops | conf/restperf/9.12.0/volume_node.yaml |
 | ZAPI | `perf-object-get-instances volume:node` | `iscsi_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> iscsi_other_ops | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
+
 
 
 ### node_vol_iscsi_other_ops
@@ -8134,6 +10952,7 @@ Number of other block protocol operations per second to the volume
 | ZAPI | `perf-object-get-instances volume:node` | `iscsi_other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
 
 
+
 ### node_vol_iscsi_read_data
 
 Bytes read per second via block protocol
@@ -8142,6 +10961,7 @@ Bytes read per second via block protocol
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume:node` | `iscsi.read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_node.yaml |
 | ZAPI | `perf-object-get-instances volume:node` | `iscsi_read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
+
 
 
 ### node_vol_iscsi_read_latency
@@ -8154,6 +10974,7 @@ Average time for the WAFL filesystem to process iSCSI protocol read operations t
 | ZAPI | `perf-object-get-instances volume:node` | `iscsi_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> iscsi_read_ops | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
 
 
+
 ### node_vol_iscsi_read_ops
 
 Number of block protocol read operations per second from the volume
@@ -8162,6 +10983,7 @@ Number of block protocol read operations per second from the volume
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume:node` | `iscsi.read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_node.yaml |
 | ZAPI | `perf-object-get-instances volume:node` | `iscsi_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
+
 
 
 ### node_vol_iscsi_write_data
@@ -8174,6 +10996,7 @@ Bytes written per second via block protocol
 | ZAPI | `perf-object-get-instances volume:node` | `iscsi_write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
 
 
+
 ### node_vol_iscsi_write_latency
 
 Average time for the WAFL filesystem to process iSCSI protocol write operations to the volume; not including iSCSI protocol request processing or network communication time which will also be included in client observed iSCSI request latency
@@ -8182,6 +11005,7 @@ Average time for the WAFL filesystem to process iSCSI protocol write operations 
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume:node` | `iscsi.write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> iscsi.write_ops | conf/restperf/9.12.0/volume_node.yaml |
 | ZAPI | `perf-object-get-instances volume:node` | `iscsi_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> iscsi_write_ops | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
+
 
 
 ### node_vol_iscsi_write_ops
@@ -8194,6 +11018,7 @@ Number of block protocol write operations per second to the volume
 | ZAPI | `perf-object-get-instances volume:node` | `iscsi_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
 
 
+
 ### node_vol_nfs_other_latency
 
 Average time for the WAFL filesystem to process other NFS operations to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency
@@ -8202,6 +11027,7 @@ Average time for the WAFL filesystem to process other NFS operations to the volu
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume:node` | `nfs.other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.other_ops | conf/restperf/9.12.0/volume_node.yaml |
 | ZAPI | `perf-object-get-instances volume:node` | `nfs_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_other_ops | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
+
 
 
 ### node_vol_nfs_other_ops
@@ -8214,6 +11040,7 @@ Number of other NFS operations per second to the volume
 | ZAPI | `perf-object-get-instances volume:node` | `nfs_other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
 
 
+
 ### node_vol_nfs_read_data
 
 Bytes read per second via NFS
@@ -8222,6 +11049,7 @@ Bytes read per second via NFS
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume:node` | `nfs.read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_node.yaml |
 | ZAPI | `perf-object-get-instances volume:node` | `nfs_read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
+
 
 
 ### node_vol_nfs_read_latency
@@ -8234,6 +11062,7 @@ Average time for the WAFL filesystem to process NFS protocol read requests to th
 | ZAPI | `perf-object-get-instances volume:node` | `nfs_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_read_ops | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
 
 
+
 ### node_vol_nfs_read_ops
 
 Number of NFS read operations per second from the volume
@@ -8242,6 +11071,7 @@ Number of NFS read operations per second from the volume
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume:node` | `nfs.read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_node.yaml |
 | ZAPI | `perf-object-get-instances volume:node` | `nfs_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
+
 
 
 ### node_vol_nfs_write_data
@@ -8254,6 +11084,7 @@ Bytes written per second via NFS
 | ZAPI | `perf-object-get-instances volume:node` | `nfs_write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
 
 
+
 ### node_vol_nfs_write_latency
 
 Average time for the WAFL filesystem to process NFS protocol write requests to the volume; not including NFS protocol request processing or network communication time, which will also be included in client observed NFS request latency
@@ -8262,6 +11093,7 @@ Average time for the WAFL filesystem to process NFS protocol write requests to t
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume:node` | `nfs.write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.write_ops | conf/restperf/9.12.0/volume_node.yaml |
 | ZAPI | `perf-object-get-instances volume:node` | `nfs_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_write_ops | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
+
 
 
 ### node_vol_nfs_write_ops
@@ -8274,6 +11106,7 @@ Number of NFS write operations per second to the volume
 | ZAPI | `perf-object-get-instances volume:node` | `nfs_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
 
 
+
 ### node_vol_read_latency
 
 Average latency in microseconds for the WAFL filesystem to process read request to the volume; not including request processing or network communication time
@@ -8284,6 +11117,7 @@ Average latency in microseconds for the WAFL filesystem to process read request 
 | ZAPI | `perf-object-get-instances volume:node` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
 
 
+
 ### node_vol_write_latency
 
 Average latency in microseconds for the WAFL filesystem to process write request to the volume; not including request processing or network communication time
@@ -8292,6 +11126,12 @@ Average latency in microseconds for the WAFL filesystem to process write request
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume:node` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_write_ops | conf/restperf/9.12.0/volume_node.yaml |
 | ZAPI | `perf-object-get-instances volume:node` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/disk.json | Disk Utilization | Write Latency by Node |
+
 
 
 ### node_volume_avg_latency
@@ -8305,6 +11145,7 @@ Average latency in microseconds for the WAFL filesystem to process all the opera
 | ZAPI | `perf-object-get-instances volume` | `avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
+
 ### node_volume_nfs_access_latency
 
 Average time for the WAFL filesystem to process NFS protocol access requests to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency. node_volume_nfs_access_latency is [volume_nfs_access_latency](#volume_nfs_access_latency) aggregated by `node`.
@@ -8313,6 +11154,7 @@ Average time for the WAFL filesystem to process NFS protocol access requests to 
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume` | `nfs.access_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.access_ops | conf/restperf/9.12.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_access_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_access_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
+
 
 
 ### node_volume_nfs_access_ops
@@ -8325,6 +11167,7 @@ Number of NFS accesses per second to the volume. node_volume_nfs_access_ops is [
 | ZAPI | `perf-object-get-instances volume` | `nfs_access_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
+
 ### node_volume_nfs_getattr_latency
 
 Average time for the WAFL filesystem to process NFS protocol getattr requests to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency. node_volume_nfs_getattr_latency is [volume_nfs_getattr_latency](#volume_nfs_getattr_latency) aggregated by `node`.
@@ -8333,6 +11176,7 @@ Average time for the WAFL filesystem to process NFS protocol getattr requests to
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume` | `nfs.getattr_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.getattr_ops | conf/restperf/9.12.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_getattr_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_getattr_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
+
 
 
 ### node_volume_nfs_getattr_ops
@@ -8345,6 +11189,7 @@ Number of NFS getattr per second to the volume. node_volume_nfs_getattr_ops is [
 | ZAPI | `perf-object-get-instances volume` | `nfs_getattr_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
+
 ### node_volume_nfs_lookup_latency
 
 Average time for the WAFL filesystem to process NFS protocol lookup requests to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency. node_volume_nfs_lookup_latency is [volume_nfs_lookup_latency](#volume_nfs_lookup_latency) aggregated by `node`.
@@ -8353,6 +11198,7 @@ Average time for the WAFL filesystem to process NFS protocol lookup requests to 
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume` | `nfs.lookup_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.lookup_ops | conf/restperf/9.12.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_lookup_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_lookup_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
+
 
 
 ### node_volume_nfs_lookup_ops
@@ -8365,6 +11211,7 @@ Number of NFS lookups per second to the volume. node_volume_nfs_lookup_ops is [v
 | ZAPI | `perf-object-get-instances volume` | `nfs_lookup_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
+
 ### node_volume_nfs_other_latency
 
 Average time for the WAFL filesystem to process other NFS operations to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency. node_volume_nfs_other_latency is [volume_nfs_other_latency](#volume_nfs_other_latency) aggregated by `node`.
@@ -8373,6 +11220,7 @@ Average time for the WAFL filesystem to process other NFS operations to the volu
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume` | `nfs.other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.other_ops | conf/restperf/9.12.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_other_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
+
 
 
 ### node_volume_nfs_other_ops
@@ -8385,6 +11233,7 @@ Number of other NFS operations per second to the volume. node_volume_nfs_other_o
 | ZAPI | `perf-object-get-instances volume` | `nfs_other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
+
 ### node_volume_nfs_punch_hole_latency
 
 Average time for the WAFL filesystem to process NFS protocol hole-punch requests to the volume. node_volume_nfs_punch_hole_latency is [volume_nfs_punch_hole_latency](#volume_nfs_punch_hole_latency) aggregated by `node`.
@@ -8393,6 +11242,7 @@ Average time for the WAFL filesystem to process NFS protocol hole-punch requests
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume` | `nfs.punch_hole_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.punch_hole_ops | conf/restperf/9.12.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_punch_hole_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_punch_hole_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
+
 
 
 ### node_volume_nfs_punch_hole_ops
@@ -8405,6 +11255,7 @@ Number of NFS hole-punch requests per second to the volume. node_volume_nfs_punc
 | ZAPI | `perf-object-get-instances volume` | `nfs_punch_hole_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
+
 ### node_volume_nfs_read_latency
 
 Average time for the WAFL filesystem to process NFS protocol read requests to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency. node_volume_nfs_read_latency is [volume_nfs_read_latency](#volume_nfs_read_latency) aggregated by `node`.
@@ -8413,6 +11264,7 @@ Average time for the WAFL filesystem to process NFS protocol read requests to th
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume` | `nfs.read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.read_ops | conf/restperf/9.12.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_read_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
+
 
 
 ### node_volume_nfs_read_ops
@@ -8425,6 +11277,7 @@ Number of NFS read operations per second from the volume. node_volume_nfs_read_o
 | ZAPI | `perf-object-get-instances volume` | `nfs_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
+
 ### node_volume_nfs_setattr_latency
 
 Average time for the WAFL filesystem to process NFS protocol setattr requests to the volume. node_volume_nfs_setattr_latency is [volume_nfs_setattr_latency](#volume_nfs_setattr_latency) aggregated by `node`.
@@ -8433,6 +11286,7 @@ Average time for the WAFL filesystem to process NFS protocol setattr requests to
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume` | `nfs.setattr_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.setattr_ops | conf/restperf/9.12.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_setattr_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_setattr_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
+
 
 
 ### node_volume_nfs_setattr_ops
@@ -8445,6 +11299,7 @@ Number of NFS setattr requests per second to the volume. node_volume_nfs_setattr
 | ZAPI | `perf-object-get-instances volume` | `nfs_setattr_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
+
 ### node_volume_nfs_total_ops
 
 Number of total NFS operations per second to the volume. node_volume_nfs_total_ops is [volume_nfs_total_ops](#volume_nfs_total_ops) aggregated by `node`.
@@ -8453,6 +11308,7 @@ Number of total NFS operations per second to the volume. node_volume_nfs_total_o
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume` | `nfs.total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
+
 
 
 ### node_volume_nfs_write_latency
@@ -8465,6 +11321,7 @@ Average time for the WAFL filesystem to process NFS protocol write requests to t
 | ZAPI | `perf-object-get-instances volume` | `nfs_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_write_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
+
 ### node_volume_nfs_write_ops
 
 Number of NFS write operations per second to the volume. node_volume_nfs_write_ops is [volume_nfs_write_ops](#volume_nfs_write_ops) aggregated by `node`.
@@ -8475,6 +11332,7 @@ Number of NFS write operations per second to the volume. node_volume_nfs_write_o
 | ZAPI | `perf-object-get-instances volume` | `nfs_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
+
 ### node_volume_other_data
 
 Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on. node_volume_other_data is [volume_other_data](#volume_other_data) aggregated by `node`.
@@ -8482,6 +11340,7 @@ Performance metric for other I/O operations. Other I/O operations can be metadat
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.other`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
+
 
 
 ### node_volume_other_latency
@@ -8495,6 +11354,7 @@ Average latency in microseconds for the WAFL filesystem to process other operati
 | ZAPI | `perf-object-get-instances volume` | `other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
+
 ### node_volume_other_ops
 
 Number of other operations per second to the volume. node_volume_other_ops is [volume_other_ops](#volume_other_ops) aggregated by `node`.
@@ -8504,6 +11364,7 @@ Number of other operations per second to the volume. node_volume_other_ops is [v
 | REST | `api/cluster/counter/tables/volume` | `total_other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.iops_raw.other`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
+
 
 
 ### node_volume_read_data
@@ -8517,6 +11378,7 @@ Bytes read per second. node_volume_read_data is [volume_read_data](#volume_read_
 | ZAPI | `perf-object-get-instances volume` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
+
 ### node_volume_read_latency
 
 Average latency in microseconds for the WAFL filesystem to process read request to the volume; not including request processing or network communication time. node_volume_read_latency is [volume_read_latency](#volume_read_latency) aggregated by `node`.
@@ -8526,6 +11388,7 @@ Average latency in microseconds for the WAFL filesystem to process read request 
 | REST | `api/cluster/counter/tables/volume` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_read_ops | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.latency_raw.read`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.read | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
+
 
 
 ### node_volume_read_ops
@@ -8539,6 +11402,7 @@ Number of read operations per second from the volume. node_volume_read_ops is [v
 | ZAPI | `perf-object-get-instances volume` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
+
 ### node_volume_total_data
 
 This metric represents the total amount of data that has been read from and written to volumes aggregated by node.
@@ -8548,6 +11412,7 @@ This metric represents the total amount of data that has been read from and writ
 | KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.total`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
+
 
 
 ### node_volume_total_ops
@@ -8561,6 +11426,7 @@ Number of operations per second serviced by the volume. node_volume_total_ops is
 | ZAPI | `perf-object-get-instances volume` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
+
 ### node_volume_write_data
 
 Bytes written per second. node_volume_write_data is [volume_write_data](#volume_write_data) aggregated by `node`.
@@ -8570,6 +11436,7 @@ Bytes written per second. node_volume_write_data is [volume_write_data](#volume_
 | REST | `api/cluster/counter/tables/volume` | `bytes_written`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.write`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
+
 
 
 ### node_volume_write_latency
@@ -8583,6 +11450,7 @@ Average latency in microseconds for the WAFL filesystem to process write request
 | ZAPI | `perf-object-get-instances volume` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
+
 ### node_volume_write_ops
 
 Number of write operations per second to the volume. node_volume_write_ops is [volume_write_ops](#volume_write_ops) aggregated by `node`.
@@ -8592,6 +11460,7 @@ Number of write operations per second to the volume. node_volume_write_ops is [v
 | REST | `api/cluster/counter/tables/volume` | `total_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.iops_raw.write`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
+
 
 
 ### node_write_data
@@ -8604,6 +11473,12 @@ Write throughput
 | ZAPI | `perf-object-get-instances system:node` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | Backend | Throughput |
+
+
+
 ### node_write_latency
 
 Average latency for all write operations in the system in microseconds
@@ -8612,6 +11487,13 @@ Average latency for all write operations in the system in microseconds
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/restperf/9.12.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/system_node.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/cluster.json | Highlights | Top $TopResources Nodes by Write Latency |
+| cmode/node.json | Backend | Average Latency |
+
 
 
 ### node_write_ops
@@ -8624,6 +11506,12 @@ Write operations per second
 | ZAPI | `perf-object-get-instances system:node` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | Backend | IOPs |
+
+
+
 ### ntpserver_labels
 
 This metric provides information about NtpServer
@@ -8632,6 +11520,15 @@ This metric provides information about NtpServer
 |--------|----------|--------|---------|
 | REST | `api/cluster/ntp/servers` | `Harvest generated` | conf/rest/9.12.0/ntpserver.yaml |
 | ZAPI | `ntp-server-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/ntpserver.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/security.json | Highlights | Cluster Compliant % |
+| cmode/security.json | Highlights | Cluster Compliant |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+
 
 
 ### nvme_lif_avg_latency
@@ -8644,6 +11541,15 @@ Average latency for NVMF operations
 | ZAPI | `perf-object-get-instances nvmf_fc_lif` | `avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.10.1/nvmf_lif.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | NVMe/FC Frontend | NVMe/FC Latency |
+| cmode/node.json | NVMe/FC Frontend | NVMe/FC Average Latency by Port / LIF |
+| cmode/svm.json | NVMe/FC | SVM NVMe/FC Average Latency |
+| cmode/svm.json | NVMe/FC | SVM NVMe/FC Average Latency |
+
+
+
 ### nvme_lif_avg_other_latency
 
 Average latency for operations other than read, write, compare or compare-and-write.
@@ -8652,6 +11558,12 @@ Average latency for operations other than read, write, compare or compare-and-wr
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nvmf_lif` | `average_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/restperf/9.12.0/nvmf_lif.yaml |
 | ZAPI | `perf-object-get-instances nvmf_fc_lif` | `avg_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/zapiperf/cdot/9.10.1/nvmf_lif.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | NVMe/FC | SVM NVMe/FC Average Latency |
+
 
 
 ### nvme_lif_avg_read_latency
@@ -8664,6 +11576,12 @@ Average latency for read operations
 | ZAPI | `perf-object-get-instances nvmf_fc_lif` | `avg_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.10.1/nvmf_lif.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | NVMe/FC | SVM NVMe/FC Average Latency |
+
+
+
 ### nvme_lif_avg_write_latency
 
 Average latency for write operations
@@ -8672,6 +11590,12 @@ Average latency for write operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nvmf_lif` | `average_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/restperf/9.12.0/nvmf_lif.yaml |
 | ZAPI | `perf-object-get-instances nvmf_fc_lif` | `avg_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.10.1/nvmf_lif.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | NVMe/FC | SVM NVMe/FC Average Latency |
+
 
 
 ### nvme_lif_other_ops
@@ -8684,6 +11608,12 @@ Number of operations that are not read, write, compare or compare-and-write.
 | ZAPI | `perf-object-get-instances nvmf_fc_lif` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/nvmf_lif.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | NVMe/FC | SVM NVMe/FC IOPs |
+
+
+
 ### nvme_lif_read_data
 
 Amount of data read from the storage system
@@ -8692,6 +11622,16 @@ Amount of data read from the storage system
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nvmf_lif` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nvmf_lif.yaml |
 | ZAPI | `perf-object-get-instances nvmf_fc_lif` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/nvmf_lif.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | LIF | Top $TopResources NVMe/FC LIFs by Send Throughput |
+| cmode/svm.json | LIF | Top $TopResources NVMe/FC LIFs by Send Throughput |
+| cmode/svm.json | NVMe/FC | SVM NVMe/FC Throughput |
+| cmode/svm.json | NVMe/FC | Top $TopResources SVM NVMe/FC LIFs by Send Throughput |
+| cmode/svm.json | NVMe/FC | Top $TopResources SVM NVMe/FC LIFs by Send Throughput |
+
 
 
 ### nvme_lif_read_ops
@@ -8704,6 +11644,12 @@ Number of read operations
 | ZAPI | `perf-object-get-instances nvmf_fc_lif` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/nvmf_lif.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | NVMe/FC | SVM NVMe/FC IOPs |
+
+
+
 ### nvme_lif_total_ops
 
 Total number of operations.
@@ -8712,6 +11658,14 @@ Total number of operations.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nvmf_lif` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nvmf_lif.yaml |
 | ZAPI | `perf-object-get-instances nvmf_fc_lif` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/nvmf_lif.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | NVMe/FC Frontend | NVMe/FC IOPs |
+| cmode/node.json | NVMe/FC Frontend | NVMe/FC IOPs by Port / LIF |
+| cmode/svm.json | NVMe/FC | SVM NVMe/FC IOPs |
+
 
 
 ### nvme_lif_write_data
@@ -8724,6 +11678,18 @@ Amount of data written to the storage system
 | ZAPI | `perf-object-get-instances nvmf_fc_lif` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/nvmf_lif.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | NVMe/FC Frontend | NVMe/FC Throughput by Port / LIF |
+| cmode/svm.json | LIF | Top $TopResources NVMe/FC LIFs by Receive Throughput |
+| cmode/svm.json | LIF | Top $TopResources NVMe/FC LIFs by Receive Throughput |
+| cmode/svm.json | NVMe/FC | SVM NVMe/FC Throughput |
+| cmode/svm.json | NVMe/FC | SVM NVMe/FC Throughput |
+| cmode/svm.json | NVMe/FC | Top $TopResources SVM NVMe/FC LIFs by Receive Throughput |
+| cmode/svm.json | NVMe/FC | Top $TopResources SVM NVMe/FC LIFs by Receive Throughput |
+
+
+
 ### nvme_lif_write_ops
 
 Number of write operations
@@ -8732,6 +11698,12 @@ Number of write operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nvmf_lif` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nvmf_lif.yaml |
 | ZAPI | `perf-object-get-instances nvmf_fc_lif` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/nvmf_lif.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | NVMe/FC | SVM NVMe/FC IOPs |
+
 
 
 ### nvmf_rdma_port_avg_latency
@@ -8744,6 +11716,7 @@ Average latency for NVMF operations
 | ZAPI | `perf-object-get-instances nvmf_rdma_port` | `avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/nvmf_rdma_port.yaml |
 
 
+
 ### nvmf_rdma_port_avg_other_latency
 
 Average latency for operations other than read, write, compare or compare-and-write
@@ -8752,6 +11725,7 @@ Average latency for operations other than read, write, compare or compare-and-wr
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nvmf_rdma_port` | `average_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/restperf/9.14.1/nvmf_rdma_port.yaml |
 | ZAPI | `perf-object-get-instances nvmf_rdma_port` | `avg_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/zapiperf/cdot/9.8.0/nvmf_rdma_port.yaml |
+
 
 
 ### nvmf_rdma_port_avg_read_latency
@@ -8764,6 +11738,7 @@ Average latency for read operations
 | ZAPI | `perf-object-get-instances nvmf_rdma_port` | `avg_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/nvmf_rdma_port.yaml |
 
 
+
 ### nvmf_rdma_port_avg_write_latency
 
 Average latency for write operations
@@ -8772,6 +11747,7 @@ Average latency for write operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nvmf_rdma_port` | `average_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/restperf/9.14.1/nvmf_rdma_port.yaml |
 | ZAPI | `perf-object-get-instances nvmf_rdma_port` | `avg_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/nvmf_rdma_port.yaml |
+
 
 
 ### nvmf_rdma_port_other_ops
@@ -8784,6 +11760,7 @@ Number of operations that are not read, write, compare or compare-and-right.
 | ZAPI | `perf-object-get-instances nvmf_rdma_port` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nvmf_rdma_port.yaml |
 
 
+
 ### nvmf_rdma_port_read_data
 
 Amount of data read from the storage system
@@ -8792,6 +11769,7 @@ Amount of data read from the storage system
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nvmf_rdma_port` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/nvmf_rdma_port.yaml |
 | ZAPI | `perf-object-get-instances nvmf_rdma_port` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nvmf_rdma_port.yaml |
+
 
 
 ### nvmf_rdma_port_read_ops
@@ -8804,6 +11782,7 @@ Number of read operations
 | ZAPI | `perf-object-get-instances nvmf_rdma_port` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nvmf_rdma_port.yaml |
 
 
+
 ### nvmf_rdma_port_total_data
 
 Amount of NVMF traffic to and from the storage system
@@ -8812,6 +11791,7 @@ Amount of NVMF traffic to and from the storage system
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nvmf_rdma_port` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/nvmf_rdma_port.yaml |
 | ZAPI | `perf-object-get-instances nvmf_rdma_port` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nvmf_rdma_port.yaml |
+
 
 
 ### nvmf_rdma_port_total_ops
@@ -8824,6 +11804,7 @@ Total number of operations.
 | ZAPI | `perf-object-get-instances nvmf_rdma_port` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nvmf_rdma_port.yaml |
 
 
+
 ### nvmf_rdma_port_write_data
 
 Amount of data written to the storage system
@@ -8832,6 +11813,7 @@ Amount of data written to the storage system
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nvmf_rdma_port` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/nvmf_rdma_port.yaml |
 | ZAPI | `perf-object-get-instances nvmf_rdma_port` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nvmf_rdma_port.yaml |
+
 
 
 ### nvmf_rdma_port_write_ops
@@ -8844,6 +11826,7 @@ Number of write operations
 | ZAPI | `perf-object-get-instances nvmf_rdma_port` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nvmf_rdma_port.yaml |
 
 
+
 ### nvmf_tcp_port_avg_latency
 
 Average latency for NVMF operations
@@ -8852,6 +11835,7 @@ Average latency for NVMF operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nvmf_tcp_port` | `average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/restperf/9.14.1/nvmf_tcp_port.yaml |
 | ZAPI | `perf-object-get-instances nvmf_tcp_port` | `avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/nvmf_tcp_port.yaml |
+
 
 
 ### nvmf_tcp_port_avg_other_latency
@@ -8864,6 +11848,7 @@ Average latency for operations other than read, write, compare or compare-and-wr
 | ZAPI | `perf-object-get-instances nvmf_tcp_port` | `avg_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/zapiperf/cdot/9.8.0/nvmf_tcp_port.yaml |
 
 
+
 ### nvmf_tcp_port_avg_read_latency
 
 Average latency for read operations
@@ -8872,6 +11857,7 @@ Average latency for read operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nvmf_tcp_port` | `average_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/restperf/9.14.1/nvmf_tcp_port.yaml |
 | ZAPI | `perf-object-get-instances nvmf_tcp_port` | `avg_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/nvmf_tcp_port.yaml |
+
 
 
 ### nvmf_tcp_port_avg_write_latency
@@ -8884,6 +11870,7 @@ Average latency for write operations
 | ZAPI | `perf-object-get-instances nvmf_tcp_port` | `avg_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/nvmf_tcp_port.yaml |
 
 
+
 ### nvmf_tcp_port_other_ops
 
 Number of operations that are not read, write, compare or compare-and-write.
@@ -8892,6 +11879,7 @@ Number of operations that are not read, write, compare or compare-and-write.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nvmf_tcp_port` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/nvmf_tcp_port.yaml |
 | ZAPI | `perf-object-get-instances nvmf_tcp_port` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nvmf_tcp_port.yaml |
+
 
 
 ### nvmf_tcp_port_read_data
@@ -8904,6 +11892,7 @@ Amount of data read from the storage system
 | ZAPI | `perf-object-get-instances nvmf_tcp_port` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nvmf_tcp_port.yaml |
 
 
+
 ### nvmf_tcp_port_read_ops
 
 Number of read operations
@@ -8912,6 +11901,7 @@ Number of read operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nvmf_tcp_port` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/nvmf_tcp_port.yaml |
 | ZAPI | `perf-object-get-instances nvmf_tcp_port` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nvmf_tcp_port.yaml |
+
 
 
 ### nvmf_tcp_port_total_data
@@ -8924,6 +11914,7 @@ Amount of NVMF traffic to and from the storage system
 | ZAPI | `perf-object-get-instances nvmf_tcp_port` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nvmf_tcp_port.yaml |
 
 
+
 ### nvmf_tcp_port_total_ops
 
 Total number of operations.
@@ -8932,6 +11923,7 @@ Total number of operations.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nvmf_tcp_port` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/nvmf_tcp_port.yaml |
 | ZAPI | `perf-object-get-instances nvmf_tcp_port` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nvmf_tcp_port.yaml |
+
 
 
 ### nvmf_tcp_port_write_data
@@ -8944,6 +11936,7 @@ Amount of data written to the storage system
 | ZAPI | `perf-object-get-instances nvmf_tcp_port` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nvmf_tcp_port.yaml |
 
 
+
 ### nvmf_tcp_port_write_ops
 
 Number of write operations
@@ -8952,6 +11945,7 @@ Number of write operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/nvmf_tcp_port` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/nvmf_tcp_port.yaml |
 | ZAPI | `perf-object-get-instances nvmf_tcp_port` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nvmf_tcp_port.yaml |
+
 
 
 ### ontaps3_labels
@@ -8963,6 +11957,17 @@ This metric provides information about OntapS3
 | REST | `api/protocols/s3/buckets` | `Harvest generated` | conf/rest/9.7.0/ontap_s3.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/data_protection.json | Bucket protection | Total Buckets |
+| cmode/data_protection.json | Bucket protection | Unprotected Buckets |
+| cmode/data_protection.json | Bucket protection | Not Backed up to Cloud |
+| cmode/data_protection.json | Bucket protection | Buckets |
+| cmode/datacenter.json | Highlights | Object Count |
+| cmode/s3ObjectStorage.json | Highlights | Bucket Overview |
+
+
+
 ### ontaps3_logical_used_size
 
 Specifies the bucket logical used size up to this point. This field cannot be specified using a POST or PATCH method.
@@ -8970,6 +11975,16 @@ Specifies the bucket logical used size up to this point. This field cannot be sp
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/protocols/s3/buckets` | `logical_used_size` | conf/rest/9.7.0/ontap_s3.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/data_protection.json | Bucket protection | Buckets |
+| cmode/s3ObjectStorage.json | Highlights | Bucket Overview |
+| cmode/s3ObjectStorage.json | Highlights | Bucket Overview |
+| cmode/s3ObjectStorage.json | Highlights | Top $TopResources Buckets by Used Size |
+| cmode/s3ObjectStorage.json | Highlights | Top $TopResources Buckets by Used Size |
+
 
 
 ### ontaps3_object_count
@@ -8981,6 +11996,12 @@ Specifies the bucket logical used size up to this point. This field cannot be sp
 | REST | `api/private/cli/vserver/object-store-server/bucket` | `object_count` | conf/rest/9.7.0/ontap_s3.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/s3ObjectStorage.json | Highlights | Bucket Overview |
+
+
+
 ### ontaps3_policy_labels
 
 This metric provides information about OntapS3Policy
@@ -8990,6 +12011,12 @@ This metric provides information about OntapS3Policy
 | REST | `api/private/cli/vserver/object-store-server/bucket/policy` | `Harvest generated` | conf/rest/9.7.0/ontap_s3_policy.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/s3ObjectStorage.json | Highlights | Bucket Permission |
+
+
+
 ### ontaps3_size
 
 Specifies the bucket size in bytes; ranges from 190MB to 62PB.
@@ -8997,6 +12024,13 @@ Specifies the bucket size in bytes; ranges from 190MB to 62PB.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/protocols/s3/buckets` | `size` | conf/rest/9.7.0/ontap_s3.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/data_protection.json | Bucket protection | Buckets |
+| cmode/s3ObjectStorage.json | Highlights | Bucket Overview |
+
 
 
 ### ontaps3_svm_abort_multipart_upload_failed
@@ -9009,6 +12043,7 @@ Number of failed Abort Multipart Upload operations. ontaps3_svm_abort_multipart_
 | ZAPI | `perf-object-get-instances object_store_server` | `abort_multipart_upload_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_abort_multipart_upload_failed_client_close
 
 Number of times Abort Multipart Upload operation failed because client terminated connection while the operation was still pending on server. ontaps3_svm_abort_multipart_upload_failed_client_close is [ontaps3_svm_abort_multipart_upload_failed_client_close](#ontaps3_svm_abort_multipart_upload_failed_client_close) aggregated by `svm`.
@@ -9017,6 +12052,7 @@ Number of times Abort Multipart Upload operation failed because client terminate
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `abort_multipart_upload_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `abort_multipart_upload_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_abort_multipart_upload_latency
@@ -9029,6 +12065,7 @@ Average latency for Abort Multipart Upload operations. ontaps3_svm_abort_multipa
 | ZAPI | `perf-object-get-instances object_store_server` | `abort_multipart_upload_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> abort_multipart_upload_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_abort_multipart_upload_rate
 
 Number of Abort Multipart Upload operations per second. ontaps3_svm_abort_multipart_upload_rate is [ontaps3_svm_abort_multipart_upload_rate](#ontaps3_svm_abort_multipart_upload_rate) aggregated by `svm`.
@@ -9037,6 +12074,7 @@ Number of Abort Multipart Upload operations per second. ontaps3_svm_abort_multip
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `abort_multipart_upload_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `abort_multipart_upload_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_abort_multipart_upload_total
@@ -9049,6 +12087,7 @@ Number of Abort Multipart Upload operations. ontaps3_svm_abort_multipart_upload_
 | ZAPI | `perf-object-get-instances object_store_server` | `abort_multipart_upload_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_allow_access
 
 Number of times access was allowed. ontaps3_svm_allow_access is [ontaps3_svm_allow_access](#ontaps3_svm_allow_access) aggregated by `svm`.
@@ -9057,6 +12096,7 @@ Number of times access was allowed. ontaps3_svm_allow_access is [ontaps3_svm_all
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `allow_access`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `allow_access`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_anonymous_access
@@ -9069,6 +12109,7 @@ Number of times anonymous access was allowed. ontaps3_svm_anonymous_access is [o
 | ZAPI | `perf-object-get-instances object_store_server` | `anonymous_access`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_anonymous_deny_access
 
 Number of times anonymous access was denied. ontaps3_svm_anonymous_deny_access is [ontaps3_svm_anonymous_deny_access](#ontaps3_svm_anonymous_deny_access) aggregated by `svm`.
@@ -9077,6 +12118,7 @@ Number of times anonymous access was denied. ontaps3_svm_anonymous_deny_access i
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `anonymous_deny_access`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `anonymous_deny_access`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_authentication_failures
@@ -9089,6 +12131,7 @@ Number of authentication failures. ontaps3_svm_authentication_failures is [ontap
 | ZAPI | `perf-object-get-instances object_store_server` | `authentication_failures`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_chunked_upload_reqs
 
 Total number of object store server chunked object upload requests. ontaps3_svm_chunked_upload_reqs is [ontaps3_svm_chunked_upload_reqs](#ontaps3_svm_chunked_upload_reqs) aggregated by `svm`.
@@ -9097,6 +12140,7 @@ Total number of object store server chunked object upload requests. ontaps3_svm_
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `chunked_upload_requests`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `chunked_upload_reqs`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_complete_multipart_upload_failed
@@ -9109,6 +12153,7 @@ Number of failed Complete Multipart Upload operations. ontaps3_svm_complete_mult
 | ZAPI | `perf-object-get-instances object_store_server` | `complete_multipart_upload_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_complete_multipart_upload_failed_client_close
 
 Number of times Complete Multipart Upload operation failed because client terminated connection while the operation was still pending on server. ontaps3_svm_complete_multipart_upload_failed_client_close is [ontaps3_svm_complete_multipart_upload_failed_client_close](#ontaps3_svm_complete_multipart_upload_failed_client_close) aggregated by `svm`.
@@ -9117,6 +12162,7 @@ Number of times Complete Multipart Upload operation failed because client termin
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `complete_multipart_upload_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `complete_multipart_upload_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_complete_multipart_upload_latency
@@ -9129,6 +12175,7 @@ Average latency for Complete Multipart Upload operations. ontaps3_svm_complete_m
 | ZAPI | `perf-object-get-instances object_store_server` | `complete_multipart_upload_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> complete_multipart_upload_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_complete_multipart_upload_rate
 
 Number of Complete Multipart Upload operations per second. ontaps3_svm_complete_multipart_upload_rate is [ontaps3_svm_complete_multipart_upload_rate](#ontaps3_svm_complete_multipart_upload_rate) aggregated by `svm`.
@@ -9137,6 +12184,7 @@ Number of Complete Multipart Upload operations per second. ontaps3_svm_complete_
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `complete_multipart_upload_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `complete_multipart_upload_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_complete_multipart_upload_total
@@ -9149,6 +12197,7 @@ Number of Complete Multipart Upload operations. ontaps3_svm_complete_multipart_u
 | ZAPI | `perf-object-get-instances object_store_server` | `complete_multipart_upload_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_connected_connections
 
 Number of object store server connections currently established. ontaps3_svm_connected_connections is [ontaps3_svm_connected_connections](#ontaps3_svm_connected_connections) aggregated by `svm`.
@@ -9157,6 +12206,7 @@ Number of object store server connections currently established. ontaps3_svm_con
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `connected_connections`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `connected_connections`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_connections
@@ -9169,6 +12219,12 @@ Total number of object store server connections. ontaps3_svm_connections is [ont
 | ZAPI | `perf-object-get-instances object_store_server` | `connections`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Requests & Connections stats |
+
+
+
 ### ontaps3_svm_create_bucket_failed
 
 Number of failed Create Bucket operations. ontaps3_svm_create_bucket_failed is [ontaps3_svm_create_bucket_failed](#ontaps3_svm_create_bucket_failed) aggregated by `svm`.
@@ -9177,6 +12233,7 @@ Number of failed Create Bucket operations. ontaps3_svm_create_bucket_failed is [
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `create_bucket_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `create_bucket_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_create_bucket_failed_client_close
@@ -9189,6 +12246,7 @@ Number of times Create Bucket operation failed because client terminated connect
 | ZAPI | `perf-object-get-instances object_store_server` | `create_bucket_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_create_bucket_latency
 
 Average latency for Create Bucket operations. ontaps3_svm_create_bucket_latency is [ontaps3_svm_create_bucket_latency](#ontaps3_svm_create_bucket_latency) aggregated by `svm`.
@@ -9197,6 +12255,7 @@ Average latency for Create Bucket operations. ontaps3_svm_create_bucket_latency 
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `create_bucket_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> create_bucket_total | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `create_bucket_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> create_bucket_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_create_bucket_rate
@@ -9209,6 +12268,7 @@ Number of Create Bucket operations per second. ontaps3_svm_create_bucket_rate is
 | ZAPI | `perf-object-get-instances object_store_server` | `create_bucket_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_create_bucket_total
 
 Number of Create Bucket operations. ontaps3_svm_create_bucket_total is [ontaps3_svm_create_bucket_total](#ontaps3_svm_create_bucket_total) aggregated by `svm`.
@@ -9217,6 +12277,7 @@ Number of Create Bucket operations. ontaps3_svm_create_bucket_total is [ontaps3_
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `create_bucket_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `create_bucket_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_default_deny_access
@@ -9229,6 +12290,7 @@ Number of times access was denied by default and not through any policy statemen
 | ZAPI | `perf-object-get-instances object_store_server` | `default_deny_access`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_delete_bucket_failed
 
 Number of failed Delete Bucket operations. ontaps3_svm_delete_bucket_failed is [ontaps3_svm_delete_bucket_failed](#ontaps3_svm_delete_bucket_failed) aggregated by `svm`.
@@ -9237,6 +12299,7 @@ Number of failed Delete Bucket operations. ontaps3_svm_delete_bucket_failed is [
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `delete_bucket_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `delete_bucket_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_delete_bucket_failed_client_close
@@ -9249,6 +12312,7 @@ Number of times Delete Bucket operation failed because client terminated connect
 | ZAPI | `perf-object-get-instances object_store_server` | `delete_bucket_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_delete_bucket_latency
 
 Average latency for Delete Bucket operations. ontaps3_svm_delete_bucket_latency is [ontaps3_svm_delete_bucket_latency](#ontaps3_svm_delete_bucket_latency) aggregated by `svm`.
@@ -9257,6 +12321,7 @@ Average latency for Delete Bucket operations. ontaps3_svm_delete_bucket_latency 
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `delete_bucket_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> delete_bucket_total | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `delete_bucket_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delete_bucket_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_delete_bucket_rate
@@ -9269,6 +12334,7 @@ Number of Delete Bucket operations per second. ontaps3_svm_delete_bucket_rate is
 | ZAPI | `perf-object-get-instances object_store_server` | `delete_bucket_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_delete_bucket_total
 
 Number of Delete Bucket operations. ontaps3_svm_delete_bucket_total is [ontaps3_svm_delete_bucket_total](#ontaps3_svm_delete_bucket_total) aggregated by `svm`.
@@ -9277,6 +12343,7 @@ Number of Delete Bucket operations. ontaps3_svm_delete_bucket_total is [ontaps3_
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `delete_bucket_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `delete_bucket_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_delete_object_failed
@@ -9289,6 +12356,7 @@ Number of failed DELETE object operations. ontaps3_svm_delete_object_failed is [
 | ZAPI | `perf-object-get-instances object_store_server` | `delete_object_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_delete_object_failed_client_close
 
 Number of times DELETE object operation failed due to the case where client closed the connection while the operation was still pending on server. ontaps3_svm_delete_object_failed_client_close is [ontaps3_svm_delete_object_failed_client_close](#ontaps3_svm_delete_object_failed_client_close) aggregated by `svm`.
@@ -9297,6 +12365,7 @@ Number of times DELETE object operation failed due to the case where client clos
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `delete_object_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `delete_object_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_delete_object_latency
@@ -9309,6 +12378,13 @@ Average latency for DELETE object operations. ontaps3_svm_delete_object_latency 
 | ZAPI | `perf-object-get-instances object_store_server` | `delete_object_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delete_object_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Latency |
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Latency |
+
+
+
 ### ontaps3_svm_delete_object_rate
 
 Number of DELETE object operations per second. ontaps3_svm_delete_object_rate is [ontaps3_svm_delete_object_rate](#ontaps3_svm_delete_object_rate) aggregated by `svm`.
@@ -9317,6 +12393,13 @@ Number of DELETE object operations per second. ontaps3_svm_delete_object_rate is
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `delete_object_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `delete_object_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Rate |
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Rate |
+
 
 
 ### ontaps3_svm_delete_object_tagging_failed
@@ -9329,6 +12412,7 @@ Number of failed DELETE object tagging operations. ontaps3_svm_delete_object_tag
 | ZAPI | `perf-object-get-instances object_store_server` | `delete_object_tagging_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_delete_object_tagging_failed_client_close
 
 Number of times DELETE object tagging operation failed because client terminated connection while the operation was still pending on server. ontaps3_svm_delete_object_tagging_failed_client_close is [ontaps3_svm_delete_object_tagging_failed_client_close](#ontaps3_svm_delete_object_tagging_failed_client_close) aggregated by `svm`.
@@ -9337,6 +12421,7 @@ Number of times DELETE object tagging operation failed because client terminated
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `delete_object_tagging_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `delete_object_tagging_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_delete_object_tagging_latency
@@ -9349,6 +12434,7 @@ Average latency for DELETE object tagging operations. ontaps3_svm_delete_object_
 | ZAPI | `perf-object-get-instances object_store_server` | `delete_object_tagging_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delete_object_tagging_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_delete_object_tagging_rate
 
 Number of DELETE object tagging operations per second. ontaps3_svm_delete_object_tagging_rate is [ontaps3_svm_delete_object_tagging_rate](#ontaps3_svm_delete_object_tagging_rate) aggregated by `svm`.
@@ -9357,6 +12443,7 @@ Number of DELETE object tagging operations per second. ontaps3_svm_delete_object
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `delete_object_tagging_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `delete_object_tagging_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_delete_object_tagging_total
@@ -9369,6 +12456,7 @@ Number of DELETE object tagging operations. ontaps3_svm_delete_object_tagging_to
 | ZAPI | `perf-object-get-instances object_store_server` | `delete_object_tagging_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_delete_object_total
 
 Number of DELETE object operations. ontaps3_svm_delete_object_total is [ontaps3_svm_delete_object_total](#ontaps3_svm_delete_object_total) aggregated by `svm`.
@@ -9377,6 +12465,13 @@ Number of DELETE object operations. ontaps3_svm_delete_object_total is [ontaps3_
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `delete_object_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `delete_object_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Operations |
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Operations |
+
 
 
 ### ontaps3_svm_explicit_deny_access
@@ -9389,6 +12484,7 @@ Number of times access was denied explicitly by a policy statement. ontaps3_svm_
 | ZAPI | `perf-object-get-instances object_store_server` | `explicit_deny_access`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_get_bucket_acl_failed
 
 Number of failed GET Bucket ACL operations. ontaps3_svm_get_bucket_acl_failed is [ontaps3_svm_get_bucket_acl_failed](#ontaps3_svm_get_bucket_acl_failed) aggregated by `svm`.
@@ -9397,6 +12493,7 @@ Number of failed GET Bucket ACL operations. ontaps3_svm_get_bucket_acl_failed is
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `get_bucket_acl_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `get_bucket_acl_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_get_bucket_acl_total
@@ -9409,6 +12506,7 @@ Number of GET Bucket ACL operations. ontaps3_svm_get_bucket_acl_total is [ontaps
 | ZAPI | `perf-object-get-instances object_store_server` | `get_bucket_acl_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_get_bucket_versioning_failed
 
 Number of failed Get Bucket Versioning operations. ontaps3_svm_get_bucket_versioning_failed is [ontaps3_svm_get_bucket_versioning_failed](#ontaps3_svm_get_bucket_versioning_failed) aggregated by `svm`.
@@ -9417,6 +12515,7 @@ Number of failed Get Bucket Versioning operations. ontaps3_svm_get_bucket_versio
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `get_bucket_versioning_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `get_bucket_versioning_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_get_bucket_versioning_total
@@ -9429,6 +12528,7 @@ Number of Get Bucket Versioning operations. ontaps3_svm_get_bucket_versioning_to
 | ZAPI | `perf-object-get-instances object_store_server` | `get_bucket_versioning_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_get_data
 
 Rate of GET object data transfers per second. ontaps3_svm_get_data is [ontaps3_svm_get_data](#ontaps3_svm_get_data) aggregated by `svm`.
@@ -9437,6 +12537,13 @@ Rate of GET object data transfers per second. ontaps3_svm_get_data is [ontaps3_s
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `get_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `get_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Data Transfer |
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Data Transfer |
+
 
 
 ### ontaps3_svm_get_object_acl_failed
@@ -9449,6 +12556,7 @@ Number of failed GET Object ACL operations. ontaps3_svm_get_object_acl_failed is
 | ZAPI | `perf-object-get-instances object_store_server` | `get_object_acl_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_get_object_acl_total
 
 Number of GET Object ACL operations. ontaps3_svm_get_object_acl_total is [ontaps3_svm_get_object_acl_total](#ontaps3_svm_get_object_acl_total) aggregated by `svm`.
@@ -9457,6 +12565,7 @@ Number of GET Object ACL operations. ontaps3_svm_get_object_acl_total is [ontaps
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `get_object_acl_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `get_object_acl_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_get_object_failed
@@ -9469,6 +12578,7 @@ Number of failed GET object operations. ontaps3_svm_get_object_failed is [ontaps
 | ZAPI | `perf-object-get-instances object_store_server` | `get_object_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_get_object_failed_client_close
 
 Number of times GET object operation failed due to the case where client closed the connection while the operation was still pending on server. ontaps3_svm_get_object_failed_client_close is [ontaps3_svm_get_object_failed_client_close](#ontaps3_svm_get_object_failed_client_close) aggregated by `svm`.
@@ -9477,6 +12587,7 @@ Number of times GET object operation failed due to the case where client closed 
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `get_object_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `get_object_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_get_object_lastbyte_latency
@@ -9489,6 +12600,7 @@ Average last-byte latency for GET object operations. ontaps3_svm_get_object_last
 | ZAPI | `perf-object-get-instances object_store_server` | `get_object_lastbyte_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> get_object_lastbyte_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_get_object_latency
 
 Average first-byte latency for GET object operations. ontaps3_svm_get_object_latency is [ontaps3_svm_get_object_latency](#ontaps3_svm_get_object_latency) aggregated by `svm`.
@@ -9497,6 +12609,13 @@ Average first-byte latency for GET object operations. ontaps3_svm_get_object_lat
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `get_object_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> get_object_total | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `get_object_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> get_object_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Latency |
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Latency |
+
 
 
 ### ontaps3_svm_get_object_rate
@@ -9509,6 +12628,13 @@ Number of GET object operations per second. ontaps3_svm_get_object_rate is [onta
 | ZAPI | `perf-object-get-instances object_store_server` | `get_object_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Rate |
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Rate |
+
+
+
 ### ontaps3_svm_get_object_tagging_failed
 
 Number of failed GET object tagging operations. ontaps3_svm_get_object_tagging_failed is [ontaps3_svm_get_object_tagging_failed](#ontaps3_svm_get_object_tagging_failed) aggregated by `svm`.
@@ -9517,6 +12643,7 @@ Number of failed GET object tagging operations. ontaps3_svm_get_object_tagging_f
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `get_object_tagging_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `get_object_tagging_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_get_object_tagging_failed_client_close
@@ -9529,6 +12656,7 @@ Number of times GET object tagging operation failed due to the case where client
 | ZAPI | `perf-object-get-instances object_store_server` | `get_object_tagging_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_get_object_tagging_latency
 
 Average latency for GET object tagging operations. ontaps3_svm_get_object_tagging_latency is [ontaps3_svm_get_object_tagging_latency](#ontaps3_svm_get_object_tagging_latency) aggregated by `svm`.
@@ -9537,6 +12665,7 @@ Average latency for GET object tagging operations. ontaps3_svm_get_object_taggin
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `get_object_tagging_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> get_object_tagging_total | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `get_object_tagging_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> get_object_tagging_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_get_object_tagging_rate
@@ -9549,6 +12678,7 @@ Number of GET object tagging operations per second. ontaps3_svm_get_object_taggi
 | ZAPI | `perf-object-get-instances object_store_server` | `get_object_tagging_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_get_object_tagging_total
 
 Number of GET object tagging operations. ontaps3_svm_get_object_tagging_total is [ontaps3_svm_get_object_tagging_total](#ontaps3_svm_get_object_tagging_total) aggregated by `svm`.
@@ -9557,6 +12687,7 @@ Number of GET object tagging operations. ontaps3_svm_get_object_tagging_total is
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `get_object_tagging_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `get_object_tagging_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_get_object_total
@@ -9569,6 +12700,13 @@ Number of GET object operations. ontaps3_svm_get_object_total is [ontaps3_svm_ge
 | ZAPI | `perf-object-get-instances object_store_server` | `get_object_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Operations |
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Operations |
+
+
+
 ### ontaps3_svm_group_policy_evaluated
 
 Number of times group policies were evaluated. ontaps3_svm_group_policy_evaluated is [ontaps3_svm_group_policy_evaluated](#ontaps3_svm_group_policy_evaluated) aggregated by `svm`.
@@ -9577,6 +12715,7 @@ Number of times group policies were evaluated. ontaps3_svm_group_policy_evaluate
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `group_policy_evaluated`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `group_policy_evaluated`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_head_bucket_failed
@@ -9589,6 +12728,7 @@ Number of failed HEAD bucket operations. ontaps3_svm_head_bucket_failed is [onta
 | ZAPI | `perf-object-get-instances object_store_server` | `head_bucket_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_head_bucket_failed_client_close
 
 Number of times HEAD bucket operation failed due to the case where client closed the connection while the operation was still pending on server. ontaps3_svm_head_bucket_failed_client_close is [ontaps3_svm_head_bucket_failed_client_close](#ontaps3_svm_head_bucket_failed_client_close) aggregated by `svm`.
@@ -9597,6 +12737,7 @@ Number of times HEAD bucket operation failed due to the case where client closed
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `head_bucket_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `head_bucket_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_head_bucket_latency
@@ -9609,6 +12750,7 @@ Average latency for HEAD bucket operations. ontaps3_svm_head_bucket_latency is [
 | ZAPI | `perf-object-get-instances object_store_server` | `head_bucket_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> head_bucket_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_head_bucket_rate
 
 Number of HEAD bucket operations per second. ontaps3_svm_head_bucket_rate is [ontaps3_svm_head_bucket_rate](#ontaps3_svm_head_bucket_rate) aggregated by `svm`.
@@ -9617,6 +12759,7 @@ Number of HEAD bucket operations per second. ontaps3_svm_head_bucket_rate is [on
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `head_bucket_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `head_bucket_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_head_bucket_total
@@ -9629,6 +12772,7 @@ Number of HEAD bucket operations. ontaps3_svm_head_bucket_total is [ontaps3_svm_
 | ZAPI | `perf-object-get-instances object_store_server` | `head_bucket_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_head_object_failed
 
 Number of failed HEAD Object operations. ontaps3_svm_head_object_failed is [ontaps3_svm_head_object_failed](#ontaps3_svm_head_object_failed) aggregated by `svm`.
@@ -9637,6 +12781,7 @@ Number of failed HEAD Object operations. ontaps3_svm_head_object_failed is [onta
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `head_object_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `head_object_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_head_object_failed_client_close
@@ -9649,6 +12794,7 @@ Number of times HEAD object operation failed due to the case where client closed
 | ZAPI | `perf-object-get-instances object_store_server` | `head_object_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_head_object_latency
 
 Average latency for HEAD object operations. ontaps3_svm_head_object_latency is [ontaps3_svm_head_object_latency](#ontaps3_svm_head_object_latency) aggregated by `svm`.
@@ -9657,6 +12803,13 @@ Average latency for HEAD object operations. ontaps3_svm_head_object_latency is [
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `head_object_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> head_object_total | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `head_object_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> head_object_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Latency |
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Latency |
+
 
 
 ### ontaps3_svm_head_object_rate
@@ -9669,6 +12822,13 @@ Number of HEAD Object operations per second. ontaps3_svm_head_object_rate is [on
 | ZAPI | `perf-object-get-instances object_store_server` | `head_object_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Rate |
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Rate |
+
+
+
 ### ontaps3_svm_head_object_total
 
 Number of HEAD Object operations. ontaps3_svm_head_object_total is [ontaps3_svm_head_object_total](#ontaps3_svm_head_object_total) aggregated by `svm`.
@@ -9677,6 +12837,13 @@ Number of HEAD Object operations. ontaps3_svm_head_object_total is [ontaps3_svm_
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `head_object_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `head_object_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Operations |
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Operations |
+
 
 
 ### ontaps3_svm_initiate_multipart_upload_failed
@@ -9689,6 +12856,7 @@ Number of failed Initiate Multipart Upload operations. ontaps3_svm_initiate_mult
 | ZAPI | `perf-object-get-instances object_store_server` | `initiate_multipart_upload_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_initiate_multipart_upload_failed_client_close
 
 Number of times Initiate Multipart Upload operation failed because client terminated connection while the operation was still pending on server. ontaps3_svm_initiate_multipart_upload_failed_client_close is [ontaps3_svm_initiate_multipart_upload_failed_client_close](#ontaps3_svm_initiate_multipart_upload_failed_client_close) aggregated by `svm`.
@@ -9697,6 +12865,7 @@ Number of times Initiate Multipart Upload operation failed because client termin
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `initiate_multipart_upload_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `initiate_multipart_upload_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_initiate_multipart_upload_latency
@@ -9709,6 +12878,7 @@ Average latency for Initiate Multipart Upload operations. ontaps3_svm_initiate_m
 | ZAPI | `perf-object-get-instances object_store_server` | `initiate_multipart_upload_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> initiate_multipart_upload_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_initiate_multipart_upload_rate
 
 Number of Initiate Multipart Upload operations per second. ontaps3_svm_initiate_multipart_upload_rate is [ontaps3_svm_initiate_multipart_upload_rate](#ontaps3_svm_initiate_multipart_upload_rate) aggregated by `svm`.
@@ -9717,6 +12887,7 @@ Number of Initiate Multipart Upload operations per second. ontaps3_svm_initiate_
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `initiate_multipart_upload_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `initiate_multipart_upload_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_initiate_multipart_upload_total
@@ -9729,6 +12900,7 @@ Number of Initiate Multipart Upload operations. ontaps3_svm_initiate_multipart_u
 | ZAPI | `perf-object-get-instances object_store_server` | `initiate_multipart_upload_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_input_flow_control_entry
 
 Number of times input flow control was entered. ontaps3_svm_input_flow_control_entry is [ontaps3_svm_input_flow_control_entry](#ontaps3_svm_input_flow_control_entry) aggregated by `svm`.
@@ -9737,6 +12909,7 @@ Number of times input flow control was entered. ontaps3_svm_input_flow_control_e
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `input_flow_control_entry`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `input_flow_control_entry`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_input_flow_control_exit
@@ -9749,6 +12922,7 @@ Number of times input flow control was exited. ontaps3_svm_input_flow_control_ex
 | ZAPI | `perf-object-get-instances object_store_server` | `input_flow_control_exit`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_list_buckets_failed
 
 Number of failed LIST Buckets operations. ontaps3_svm_list_buckets_failed is [ontaps3_svm_list_buckets_failed](#ontaps3_svm_list_buckets_failed) aggregated by `svm`.
@@ -9757,6 +12931,7 @@ Number of failed LIST Buckets operations. ontaps3_svm_list_buckets_failed is [on
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `list_buckets_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `list_buckets_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_list_buckets_failed_client_close
@@ -9769,6 +12944,7 @@ Number of times LIST Bucket operation failed due to the case where client closed
 | ZAPI | `perf-object-get-instances object_store_server` | `list_buckets_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_list_buckets_latency
 
 Average latency for LIST Buckets operations. ontaps3_svm_list_buckets_latency is [ontaps3_svm_list_buckets_latency](#ontaps3_svm_list_buckets_latency) aggregated by `svm`.
@@ -9777,6 +12953,7 @@ Average latency for LIST Buckets operations. ontaps3_svm_list_buckets_latency is
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `list_buckets_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> list_buckets_total | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `list_buckets_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> head_object_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_list_buckets_rate
@@ -9789,6 +12966,7 @@ Number of LIST Buckets operations per second. ontaps3_svm_list_buckets_rate is [
 | ZAPI | `perf-object-get-instances object_store_server` | `list_buckets_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_list_buckets_total
 
 Number of LIST Buckets operations. ontaps3_svm_list_buckets_total is [ontaps3_svm_list_buckets_total](#ontaps3_svm_list_buckets_total) aggregated by `svm`.
@@ -9797,6 +12975,7 @@ Number of LIST Buckets operations. ontaps3_svm_list_buckets_total is [ontaps3_sv
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `list_buckets_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `list_buckets_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_list_object_versions_failed
@@ -9809,6 +12988,7 @@ Number of failed LIST object versions operations. ontaps3_svm_list_object_versio
 | ZAPI | `perf-object-get-instances object_store_server` | `list_object_versions_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_list_object_versions_failed_client_close
 
 Number of times LIST object versions operation failed due to the case where client closed the connection while the operation was still pending on server. ontaps3_svm_list_object_versions_failed_client_close is [ontaps3_svm_list_object_versions_failed_client_close](#ontaps3_svm_list_object_versions_failed_client_close) aggregated by `svm`.
@@ -9817,6 +12997,7 @@ Number of times LIST object versions operation failed due to the case where clie
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `list_object_versions_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `list_object_versions_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_list_object_versions_latency
@@ -9829,6 +13010,7 @@ Average latency for LIST Object versions operations. ontaps3_svm_list_object_ver
 | ZAPI | `perf-object-get-instances object_store_server` | `list_object_versions_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> list_object_versions_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_list_object_versions_rate
 
 Number of LIST Object Versions operations per second. ontaps3_svm_list_object_versions_rate is [ontaps3_svm_list_object_versions_rate](#ontaps3_svm_list_object_versions_rate) aggregated by `svm`.
@@ -9837,6 +13019,7 @@ Number of LIST Object Versions operations per second. ontaps3_svm_list_object_ve
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `list_object_versions_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `list_object_versions_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_list_object_versions_total
@@ -9849,6 +13032,7 @@ Number of LIST Object Versions operations. ontaps3_svm_list_object_versions_tota
 | ZAPI | `perf-object-get-instances object_store_server` | `list_object_versions_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_list_objects_failed
 
 Number of failed LIST objects operations. ontaps3_svm_list_objects_failed is [ontaps3_svm_list_objects_failed](#ontaps3_svm_list_objects_failed) aggregated by `svm`.
@@ -9857,6 +13041,7 @@ Number of failed LIST objects operations. ontaps3_svm_list_objects_failed is [on
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `list_objects_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `list_objects_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_list_objects_failed_client_close
@@ -9869,6 +13054,7 @@ Number of times LIST objects operation failed due to the case where client close
 | ZAPI | `perf-object-get-instances object_store_server` | `list_objects_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_list_objects_latency
 
 Average latency for LIST Objects operations. ontaps3_svm_list_objects_latency is [ontaps3_svm_list_objects_latency](#ontaps3_svm_list_objects_latency) aggregated by `svm`.
@@ -9877,6 +13063,7 @@ Average latency for LIST Objects operations. ontaps3_svm_list_objects_latency is
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `list_objects_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> list_objects_total | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `list_objects_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> list_objects_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_list_objects_rate
@@ -9889,6 +13076,7 @@ Number of LIST Objects operations per second. ontaps3_svm_list_objects_rate is [
 | ZAPI | `perf-object-get-instances object_store_server` | `list_objects_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_list_objects_total
 
 Number of LIST Objects operations. ontaps3_svm_list_objects_total is [ontaps3_svm_list_objects_total](#ontaps3_svm_list_objects_total) aggregated by `svm`.
@@ -9897,6 +13085,7 @@ Number of LIST Objects operations. ontaps3_svm_list_objects_total is [ontaps3_sv
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `list_objects_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `list_objects_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_list_uploads_failed
@@ -9909,6 +13098,7 @@ Number of failed LIST Upload operations. ontaps3_svm_list_uploads_failed is [ont
 | ZAPI | `perf-object-get-instances object_store_server` | `list_uploads_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_list_uploads_failed_client_close
 
 Number of times LIST Upload operation failed due to the case where client closed the connection while the operation was still pending on server. ontaps3_svm_list_uploads_failed_client_close is [ontaps3_svm_list_uploads_failed_client_close](#ontaps3_svm_list_uploads_failed_client_close) aggregated by `svm`.
@@ -9917,6 +13107,7 @@ Number of times LIST Upload operation failed due to the case where client closed
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `list_uploads_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `list_uploads_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_list_uploads_latency
@@ -9929,6 +13120,7 @@ Average latency for LIST Upload operations. ontaps3_svm_list_uploads_latency is 
 | ZAPI | `perf-object-get-instances object_store_server` | `list_uploads_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> list_uploads_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_list_uploads_rate
 
 Number of LIST Upload operations per second. ontaps3_svm_list_uploads_rate is [ontaps3_svm_list_uploads_rate](#ontaps3_svm_list_uploads_rate) aggregated by `svm`.
@@ -9937,6 +13129,7 @@ Number of LIST Upload operations per second. ontaps3_svm_list_uploads_rate is [o
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `list_uploads_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `list_uploads_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_list_uploads_total
@@ -9949,6 +13142,7 @@ Number of LIST Upload operations. ontaps3_svm_list_uploads_total is [ontaps3_svm
 | ZAPI | `perf-object-get-instances object_store_server` | `list_uploads_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_max_cmds_per_connection
 
 Maximum commands pipelined at any instance on a connection. ontaps3_svm_max_cmds_per_connection is [ontaps3_svm_max_cmds_per_connection](#ontaps3_svm_max_cmds_per_connection) aggregated by `svm`.
@@ -9957,6 +13151,12 @@ Maximum commands pipelined at any instance on a connection. ontaps3_svm_max_cmds
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `maximum_commands_per_connection`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `max_cmds_per_connection`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Requests & Connections stats |
+
 
 
 ### ontaps3_svm_max_connected_connections
@@ -9969,6 +13169,12 @@ Maximum number of object store server connections established at one time. ontap
 | ZAPI | `perf-object-get-instances object_store_server` | `max_connected_connections`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Requests & Connections stats |
+
+
+
 ### ontaps3_svm_max_requests_outstanding
 
 Maximum number of object store server requests in process at one time. ontaps3_svm_max_requests_outstanding is [ontaps3_svm_max_requests_outstanding](#ontaps3_svm_max_requests_outstanding) aggregated by `svm`.
@@ -9977,6 +13183,12 @@ Maximum number of object store server requests in process at one time. ontaps3_s
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `maximum_requests_outstanding`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `max_requests_outstanding`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Requests & Connections stats |
+
 
 
 ### ontaps3_svm_multi_delete_reqs
@@ -9989,6 +13201,7 @@ Total number of object store server multiple object delete requests. ontaps3_svm
 | ZAPI | `perf-object-get-instances object_store_server` | `multi_delete_reqs`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_output_flow_control_entry
 
 Number of output flow control was entered. ontaps3_svm_output_flow_control_entry is [ontaps3_svm_output_flow_control_entry](#ontaps3_svm_output_flow_control_entry) aggregated by `svm`.
@@ -9997,6 +13210,7 @@ Number of output flow control was entered. ontaps3_svm_output_flow_control_entry
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `output_flow_control_entry`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `output_flow_control_entry`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_output_flow_control_exit
@@ -10009,6 +13223,7 @@ Number of times output flow control was exited. ontaps3_svm_output_flow_control_
 | ZAPI | `perf-object-get-instances object_store_server` | `output_flow_control_exit`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_presigned_url_reqs
 
 Total number of presigned object store server URL requests. ontaps3_svm_presigned_url_reqs is [ontaps3_svm_presigned_url_reqs](#ontaps3_svm_presigned_url_reqs) aggregated by `svm`.
@@ -10017,6 +13232,7 @@ Total number of presigned object store server URL requests. ontaps3_svm_presigne
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `presigned_url_requests`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `presigned_url_reqs`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_put_bucket_versioning_failed
@@ -10029,6 +13245,7 @@ Number of failed Put Bucket Versioning operations. ontaps3_svm_put_bucket_versio
 | ZAPI | `perf-object-get-instances object_store_server` | `put_bucket_versioning_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_put_bucket_versioning_total
 
 Number of Put Bucket Versioning operations. ontaps3_svm_put_bucket_versioning_total is [ontaps3_svm_put_bucket_versioning_total](#ontaps3_svm_put_bucket_versioning_total) aggregated by `svm`.
@@ -10037,6 +13254,7 @@ Number of Put Bucket Versioning operations. ontaps3_svm_put_bucket_versioning_to
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `put_bucket_versioning_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `put_bucket_versioning_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_put_data
@@ -10049,6 +13267,13 @@ Rate of PUT object data transfers per second. ontaps3_svm_put_data is [ontaps3_s
 | ZAPI | `perf-object-get-instances object_store_server` | `put_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Data Transfer |
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Data Transfer |
+
+
+
 ### ontaps3_svm_put_object_failed
 
 Number of failed PUT object operations. ontaps3_svm_put_object_failed is [ontaps3_svm_put_object_failed](#ontaps3_svm_put_object_failed) aggregated by `svm`.
@@ -10057,6 +13282,7 @@ Number of failed PUT object operations. ontaps3_svm_put_object_failed is [ontaps
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `put_object_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `put_object_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_put_object_failed_client_close
@@ -10069,6 +13295,7 @@ Number of times PUT object operation failed due to the case where client closed 
 | ZAPI | `perf-object-get-instances object_store_server` | `put_object_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_put_object_latency
 
 Average latency for PUT object operations. ontaps3_svm_put_object_latency is [ontaps3_svm_put_object_latency](#ontaps3_svm_put_object_latency) aggregated by `svm`.
@@ -10077,6 +13304,13 @@ Average latency for PUT object operations. ontaps3_svm_put_object_latency is [on
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `put_object_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> put_object_total | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `put_object_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> put_object_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Latency |
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Latency |
+
 
 
 ### ontaps3_svm_put_object_rate
@@ -10089,6 +13323,13 @@ Number of PUT object operations per second. ontaps3_svm_put_object_rate is [onta
 | ZAPI | `perf-object-get-instances object_store_server` | `put_object_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Rate |
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Rate |
+
+
+
 ### ontaps3_svm_put_object_tagging_failed
 
 Number of failed PUT object tagging operations. ontaps3_svm_put_object_tagging_failed is [ontaps3_svm_put_object_tagging_failed](#ontaps3_svm_put_object_tagging_failed) aggregated by `svm`.
@@ -10097,6 +13338,7 @@ Number of failed PUT object tagging operations. ontaps3_svm_put_object_tagging_f
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `put_object_tagging_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `put_object_tagging_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_put_object_tagging_failed_client_close
@@ -10109,6 +13351,7 @@ Number of times PUT object tagging operation failed because client terminated co
 | ZAPI | `perf-object-get-instances object_store_server` | `put_object_tagging_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_put_object_tagging_latency
 
 Average latency for PUT object tagging operations. ontaps3_svm_put_object_tagging_latency is [ontaps3_svm_put_object_tagging_latency](#ontaps3_svm_put_object_tagging_latency) aggregated by `svm`.
@@ -10117,6 +13360,7 @@ Average latency for PUT object tagging operations. ontaps3_svm_put_object_taggin
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `put_object_tagging_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> put_object_tagging_total | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `put_object_tagging_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> put_object_tagging_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_put_object_tagging_rate
@@ -10129,6 +13373,7 @@ Number of PUT object tagging operations per second. ontaps3_svm_put_object_taggi
 | ZAPI | `perf-object-get-instances object_store_server` | `put_object_tagging_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_put_object_tagging_total
 
 Number of PUT object tagging operations. ontaps3_svm_put_object_tagging_total is [ontaps3_svm_put_object_tagging_total](#ontaps3_svm_put_object_tagging_total) aggregated by `svm`.
@@ -10137,6 +13382,7 @@ Number of PUT object tagging operations. ontaps3_svm_put_object_tagging_total is
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `put_object_tagging_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `put_object_tagging_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_put_object_total
@@ -10149,6 +13395,13 @@ Number of PUT object operations. ontaps3_svm_put_object_total is [ontaps3_svm_pu
 | ZAPI | `perf-object-get-instances object_store_server` | `put_object_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Operations |
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Operations |
+
+
+
 ### ontaps3_svm_request_parse_errors
 
 Number of request parser errors due to malformed requests. ontaps3_svm_request_parse_errors is [ontaps3_svm_request_parse_errors](#ontaps3_svm_request_parse_errors) aggregated by `svm`.
@@ -10157,6 +13410,7 @@ Number of request parser errors due to malformed requests. ontaps3_svm_request_p
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `request_parse_errors`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `request_parse_errors`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_requests
@@ -10169,6 +13423,12 @@ Total number of object store server requests. ontaps3_svm_requests is [ontaps3_s
 | ZAPI | `perf-object-get-instances object_store_server` | `requests`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Requests & Connections stats |
+
+
+
 ### ontaps3_svm_requests_outstanding
 
 Number of object store server requests in process. ontaps3_svm_requests_outstanding is [ontaps3_svm_requests_outstanding](#ontaps3_svm_requests_outstanding) aggregated by `svm`.
@@ -10177,6 +13437,7 @@ Number of object store server requests in process. ontaps3_svm_requests_outstand
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `requests_outstanding`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `requests_outstanding`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_root_user_access
@@ -10189,6 +13450,7 @@ Number of times access was done by root user. ontaps3_svm_root_user_access is [o
 | ZAPI | `perf-object-get-instances object_store_server` | `root_user_access`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_server_connection_close
 
 Number of connection closes triggered by server due to fatal errors. ontaps3_svm_server_connection_close is [ontaps3_svm_server_connection_close](#ontaps3_svm_server_connection_close) aggregated by `svm`.
@@ -10197,6 +13459,7 @@ Number of connection closes triggered by server due to fatal errors. ontaps3_svm
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `server_connection_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `server_connection_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_signature_v2_reqs
@@ -10209,6 +13472,7 @@ Total number of object store server signature V2 requests. ontaps3_svm_signature
 | ZAPI | `perf-object-get-instances object_store_server` | `signature_v2_reqs`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_signature_v4_reqs
 
 Total number of object store server signature V4 requests. ontaps3_svm_signature_v4_reqs is [ontaps3_svm_signature_v4_reqs](#ontaps3_svm_signature_v4_reqs) aggregated by `svm`.
@@ -10217,6 +13481,7 @@ Total number of object store server signature V4 requests. ontaps3_svm_signature
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `signature_v4_requests`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `signature_v4_reqs`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_tagging
@@ -10229,6 +13494,7 @@ Number of requests with tagging specified. ontaps3_svm_tagging is [ontaps3_svm_t
 | ZAPI | `perf-object-get-instances object_store_server` | `tagging`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_upload_part_failed
 
 Number of failed Upload Part operations. ontaps3_svm_upload_part_failed is [ontaps3_svm_upload_part_failed](#ontaps3_svm_upload_part_failed) aggregated by `svm`.
@@ -10237,6 +13503,7 @@ Number of failed Upload Part operations. ontaps3_svm_upload_part_failed is [onta
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `upload_part_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `upload_part_failed`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_upload_part_failed_client_close
@@ -10249,6 +13516,7 @@ Number of times Upload Part operation failed because client terminated connectio
 | ZAPI | `perf-object-get-instances object_store_server` | `upload_part_failed_client_close`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_upload_part_latency
 
 Average latency for Upload Part operations. ontaps3_svm_upload_part_latency is [ontaps3_svm_upload_part_latency](#ontaps3_svm_upload_part_latency) aggregated by `svm`.
@@ -10257,6 +13525,7 @@ Average latency for Upload Part operations. ontaps3_svm_upload_part_latency is [
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/object_store_server` | `upload_part_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> upload_part_total | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `upload_part_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> upload_part_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
+
 
 
 ### ontaps3_svm_upload_part_rate
@@ -10269,6 +13538,7 @@ Number of Upload Part operations per second. ontaps3_svm_upload_part_rate is [on
 | ZAPI | `perf-object-get-instances object_store_server` | `upload_part_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_svm_upload_part_total
 
 Number of Upload Part operations. ontaps3_svm_upload_part_total is [ontaps3_svm_upload_part_total](#ontaps3_svm_upload_part_total) aggregated by `svm`.
@@ -10279,6 +13549,7 @@ Number of Upload Part operations. ontaps3_svm_upload_part_total is [ontaps3_svm_
 | ZAPI | `perf-object-get-instances object_store_server` | `upload_part_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
 
+
 ### ontaps3_used_percent
 
 The used_percent metric the percentage of a bucket's total capacity that is currently being used.
@@ -10286,6 +13557,14 @@ The used_percent metric the percentage of a bucket's total capacity that is curr
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/protocols/s3/buckets` | `logical_used_size, size` | conf/rest/9.7.0/ontap_s3.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/s3ObjectStorage.json | Highlights | Bucket Overview |
+| cmode/s3ObjectStorage.json | Highlights | Top $TopResources Buckets by Used Size Percent |
+| cmode/s3ObjectStorage.json | Highlights | Top $TopResources Buckets by Used Size Percent |
+
 
 
 ### path_read_data
@@ -10298,6 +13577,12 @@ The average read throughput in kilobytes per second read from the indicated targ
 | ZAPI | `perf-object-get-instances path` | `read_data`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/path.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/mcc_cluster.json | MetroCluster FibreBridge/Array | Read Data from FibreBridge/Array WWPN |
+
+
+
 ### path_read_iops
 
 The number of I/O read operations sent from the initiator port to the indicated target port.
@@ -10306,6 +13591,12 @@ The number of I/O read operations sent from the initiator port to the indicated 
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/path` | `read_iops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/path.yaml |
 | ZAPI | `perf-object-get-instances path` | `read_iops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/path.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/mcc_cluster.json | MetroCluster FibreBridge/Array | Read IOPs from FibreBridge/Array WWPN |
+
 
 
 ### path_read_latency
@@ -10318,6 +13609,12 @@ The average latency of I/O read operations sent from this controller to the indi
 | ZAPI | `perf-object-get-instances path` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_iops | conf/zapiperf/cdot/9.8.0/path.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/mcc_cluster.json | MetroCluster FibreBridge/Array | Read Latency from FibreBridge/Array WWPN |
+
+
+
 ### path_total_data
 
 The average throughput in kilobytes per second read and written from/to the indicated target port by the controller.
@@ -10326,6 +13623,7 @@ The average throughput in kilobytes per second read and written from/to the indi
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/path` | `total_data`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/path.yaml |
 | ZAPI | `perf-object-get-instances path` | `total_data`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/path.yaml |
+
 
 
 ### path_total_iops
@@ -10338,6 +13636,7 @@ The number of total read/write I/O operations sent from the initiator port to th
 | ZAPI | `perf-object-get-instances path` | `total_iops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/path.yaml |
 
 
+
 ### path_write_data
 
 The average write throughput in kilobytes per second written to the indicated target port by the controller.
@@ -10346,6 +13645,12 @@ The average write throughput in kilobytes per second written to the indicated ta
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/path` | `write_data`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/path.yaml |
 | ZAPI | `perf-object-get-instances path` | `write_data`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/path.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/mcc_cluster.json | MetroCluster FibreBridge/Array | Write Data to FibreBridge/Array WWPN |
+
 
 
 ### path_write_iops
@@ -10358,6 +13663,12 @@ The number of I/O write operations sent from the initiator port to the indicated
 | ZAPI | `perf-object-get-instances path` | `write_iops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/path.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/mcc_cluster.json | MetroCluster FibreBridge/Array | Write IOPs to FibreBridge/Array WWPN |
+
+
+
 ### path_write_latency
 
 The average latency of I/O write operations sent from this controller to the indicated target port.
@@ -10366,6 +13677,12 @@ The average latency of I/O write operations sent from this controller to the ind
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/path` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_iops | conf/restperf/9.12.0/path.yaml |
 | ZAPI | `perf-object-get-instances path` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_iops | conf/zapiperf/cdot/9.8.0/path.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/mcc_cluster.json | MetroCluster FibreBridge/Array | Write Latency to FibreBridge/Array WWPN |
+
 
 
 ### plex_disk_busy
@@ -10378,6 +13695,15 @@ The utilization percent of the disk. plex_disk_busy is [disk_busy](#disk_busy) a
 | ZAPI | `perf-object-get-instances disk:constituent` | `disk_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/mcc_cluster.json | MetroCluster Disk | Top $TopResources Plexes by Disk Utilization |
+| cmode/mcc_cluster.json | MetroCluster Disk | Top $TopResources Plexes by Disk Utilization |
+| cmode/mcc_cluster.json | MetroCluster Disk | Top $TopResources Plexes by Disk Utilization |
+| cmode/mcc_cluster.json | MetroCluster Disk | Top $TopResources Plexes by Disk Utilization |
+
+
+
 ### plex_disk_capacity
 
 Disk capacity in MB. plex_disk_capacity is [disk_capacity](#disk_capacity) aggregated by `plex`.
@@ -10386,6 +13712,7 @@ Disk capacity in MB. plex_disk_capacity is [disk_capacity](#disk_capacity) aggre
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `capacity`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `disk_capacity`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### plex_disk_cp_read_chain
@@ -10398,6 +13725,7 @@ Average number of blocks transferred in each consistency point read operation du
 | ZAPI | `perf-object-get-instances disk:constituent` | `cp_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_reads | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### plex_disk_cp_read_latency
 
 Average latency per block in microseconds for consistency point read operations. plex_disk_cp_read_latency is [disk_cp_read_latency](#disk_cp_read_latency) aggregated by `plex`.
@@ -10406,6 +13734,7 @@ Average latency per block in microseconds for consistency point read operations.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_blocks | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `cp_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### plex_disk_cp_reads
@@ -10418,6 +13747,7 @@ Number of disk read operations initiated each second for consistency point proce
 | ZAPI | `perf-object-get-instances disk:constituent` | `cp_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### plex_disk_io_pending
 
 Average number of I/Os issued to the disk for which we have not yet received the response. plex_disk_io_pending is [disk_io_pending](#disk_io_pending) aggregated by `plex`.
@@ -10426,6 +13756,7 @@ Average number of I/Os issued to the disk for which we have not yet received the
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `io_pending`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `io_pending`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### plex_disk_io_queued
@@ -10438,6 +13769,7 @@ Number of I/Os queued to the disk but not yet issued. plex_disk_io_queued is [di
 | ZAPI | `perf-object-get-instances disk:constituent` | `io_queued`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### plex_disk_total_data
 
 Total throughput for user operations per second. plex_disk_total_data is [disk_total_data](#disk_total_data) aggregated by `plex`.
@@ -10446,6 +13778,7 @@ Total throughput for user operations per second. plex_disk_total_data is [disk_t
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### plex_disk_total_transfers
@@ -10458,6 +13791,7 @@ Total number of disk operations involving data transfer initiated per second. pl
 | ZAPI | `perf-object-get-instances disk:constituent` | `total_transfers`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### plex_disk_user_read_blocks
 
 Number of blocks transferred for user read operations per second. plex_disk_user_read_blocks is [disk_user_read_blocks](#disk_user_read_blocks) aggregated by `plex`.
@@ -10466,6 +13800,7 @@ Number of blocks transferred for user read operations per second. plex_disk_user
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_read_block_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_read_blocks`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### plex_disk_user_read_chain
@@ -10478,6 +13813,7 @@ Average number of blocks transferred in each user read operation. plex_disk_user
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_reads | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### plex_disk_user_read_latency
 
 Average latency per block in microseconds for user read operations. plex_disk_user_read_latency is [disk_user_read_latency](#disk_user_read_latency) aggregated by `plex`.
@@ -10486,6 +13822,13 @@ Average latency per block in microseconds for user read operations. plex_disk_us
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_block_count | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/mcc_cluster.json | MetroCluster Disk | Top $TopResources Plexes by User Read Latency per 4KB IO |
+| cmode/mcc_cluster.json | MetroCluster Disk | Top $TopResources Plexes by User Read Latency per 4KB IO |
+
 
 
 ### plex_disk_user_reads
@@ -10498,6 +13841,13 @@ Number of disk read operations initiated each second for retrieving data or meta
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/mcc_cluster.json | MetroCluster Disk | Top $TopResources Plexes by User Reads |
+| cmode/mcc_cluster.json | MetroCluster Disk | Top $TopResources Plexes by User Reads |
+
+
+
 ### plex_disk_user_write_blocks
 
 Number of blocks transferred for user write operations per second. plex_disk_user_write_blocks is [disk_user_write_blocks](#disk_user_write_blocks) aggregated by `plex`.
@@ -10506,6 +13856,7 @@ Number of blocks transferred for user write operations per second. plex_disk_use
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_write_block_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_write_blocks`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### plex_disk_user_write_chain
@@ -10518,6 +13869,7 @@ Average number of blocks transferred in each user write operation. plex_disk_use
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_write_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_writes | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### plex_disk_user_write_latency
 
 Average latency per block in microseconds for user write operations. plex_disk_user_write_latency is [disk_user_write_latency](#disk_user_write_latency) aggregated by `plex`.
@@ -10526,6 +13878,13 @@ Average latency per block in microseconds for user write operations. plex_disk_u
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_block_count | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/mcc_cluster.json | MetroCluster Disk | Top $TopResources Plexes by User Write Latency per 4KB IO |
+| cmode/mcc_cluster.json | MetroCluster Disk | Top $TopResources Plexes by User Write Latency per 4KB IO |
+
 
 
 ### plex_disk_user_writes
@@ -10538,6 +13897,13 @@ Number of disk write operations initiated each second for storing data or metada
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_writes`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/mcc_cluster.json | MetroCluster Disk | Top $TopResources Plexes by User Writes |
+| cmode/mcc_cluster.json | MetroCluster Disk | Top $TopResources Plexes by User Writes |
+
+
+
 ### poller_memory
 
 Tracks the memory usage of the poller process, including Resident Set Size (RSS), swap memory, and Virtual Memory Size (VMS).
@@ -10546,6 +13912,7 @@ Tracks the memory usage of the poller process, including Resident Set Size (RSS)
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> bytes | NA | 
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> bytes | NA | 
+
 
 
 ### poller_memory_percent
@@ -10558,6 +13925,7 @@ Indicates the percentage of memory used by the poller process relative to the to
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> percent | NA | 
 
 
+
 ### poller_status
 
 Indicates the operational status of the poller process, where 1 means operational and 0 means not operational.
@@ -10566,6 +13934,7 @@ Indicates the operational status of the poller process, where 1 means operationa
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | NA |
 | ZAPI | `NA` | `Harvest generated` | NA |
+
 
 
 ### qos_concurrency
@@ -10578,6 +13947,13 @@ This is the average number of concurrent requests for the workload.
 | ZAPI | `perf-object-get-instances workload_volume` | `concurrency`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload_volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/workload.json | Highlights | Top $TopResources Workloads by Concurrency |
+| cmode/workload.json | Highlights | Top $TopResources Workloads by Concurrency |
+
+
+
 ### qos_latency
 
 This is the average response time for requests that were initiated by the workload.
@@ -10586,6 +13962,17 @@ This is the average response time for requests that were initiated by the worklo
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/qos_volume` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> ops | conf/restperf/9.12.0/workload_volume.yaml |
 | ZAPI | `perf-object-get-instances workload_volume` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> ops | conf/zapiperf/cdot/9.8.0/workload_volume.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | QoS Policy Group | Average QoS Latency |
+| cmode/volume.json | QoS | Top $TopResources QoS Volumes Latency |
+| cmode/volume.json | QoS | Top $TopResources QoS Volumes by Latency |
+| cmode/volume.json | QoS | Top $TopResources QoS Volumes by Latency |
+| cmode/workload.json | Highlights | Top $TopResources Workloads by Average Latency |
+| cmode/workload.json | Highlights | Top $TopResources Workloads by Average Latency |
+
 
 
 ### qos_ops
@@ -10598,6 +13985,27 @@ This field is the workload's rate of operations that completed during the measur
 | ZAPI | `perf-object-get-instances workload_volume` | `ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload_volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | QoS Policy Group | QoS IOPs |
+| cmode/volume.json | QoS | Top $TopResources QoS Volumes by Total IOPs |
+| cmode/volume.json | QoS | Top $TopResources QoS Volumes by Total IOPs |
+| cmode/volume.json | QoS | Top $TopResources QoS Volumes by Total IOPs |
+| cmode/workload.json | Highlights | Top $TopResources Workloads by Total IOPS |
+| cmode/workload.json | Highlights | Top $TopResources Workloads by Total IOPS |
+| cmode/workload.json | Fixed QoS Shared Policy Utilization | Top $TopResources Fixed QoS Shared Policy IOPs Utilization (%) |
+| cmode/workload.json | Fixed QoS Shared Policy Utilization | Top $TopResources Fixed QoS Shared Policy IOPs Utilization (%) |
+| cmode/workload.json | Fixed QoS Shared Policy Utilization | Fixed QoS Shared Policy IOPs Utilization (%) |
+| cmode/workload.json | Fixed QoS Workload Utilization | Top $TopResources Fixed QoS Workload IOPs Utilization (%) |
+| cmode/workload.json | Fixed QoS Workload Utilization | Top $TopResources Fixed QoS Workload IOPs Utilization (%) |
+| cmode/workload.json | Fixed QoS Workload Utilization | Fixed QoS Workload IOPs Utilization (%) |
+| cmode/workload.json | Adaptive QoS Workload Utilization | Top $TopResources Adaptive QoS Workload IOPs Utilization (%) |
+| cmode/workload.json | Adaptive QoS Workload Utilization | Top $TopResources Adaptive QoS Workload IOPs Utilization (%) |
+| cmode/workload.json | Adaptive QoS Workload Utilization | Adaptive QoS Workload IOPs Utilization (%) |
+| cmode/workload.json | Adaptive QoS Workload Utilization | Adaptive QoS Workload IOPs Utilization (%) |
+
+
+
 ### qos_other_ops
 
 This is the rate of this workload's other operations that completed during the measurement interval.
@@ -10606,6 +14014,15 @@ This is the rate of this workload's other operations that completed during the m
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/qos` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload.yaml |
 | ZAPI | `perf-object-get-instances workload_volume` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload_volume.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Other IOPS |
+| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Other IOPS |
+| cmode/workload.json | Highlights | Top $TopResources Workloads by Other IOPS |
+| cmode/workload.json | Highlights | Top $TopResources Workloads by Other IOPS |
+
 
 
 ### qos_policy_adaptive_absolute_min_iops
@@ -10618,6 +14035,7 @@ Specifies the absolute minimum IOPS that is used as an override when the expecte
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/qos_policy_adaptive.yaml |
 
 
+
 ### qos_policy_adaptive_expected_iops
 
 Specifies the size to be used to calculate expected IOPS per TB.
@@ -10626,6 +14044,7 @@ Specifies the size to be used to calculate expected IOPS per TB.
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.12.0/qos_policy_adaptive.yaml |
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/qos_policy_adaptive.yaml |
+
 
 
 ### qos_policy_adaptive_labels
@@ -10638,6 +14057,7 @@ This metric provides information about QosPolicyAdaptive
 | ZAPI | `qos-adaptive-policy-group-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/qos_policy_adaptive.yaml |
 
 
+
 ### qos_policy_adaptive_peak_iops
 
 Specifies the maximum possible IOPS per TB allocated based on the storage object allocated size or the storage object used size.
@@ -10646,6 +14066,7 @@ Specifies the maximum possible IOPS per TB allocated based on the storage object
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.12.0/qos_policy_adaptive.yaml |
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/qos_policy_adaptive.yaml |
+
 
 
 ### qos_policy_fixed_labels
@@ -10658,6 +14079,19 @@ This metric provides information about QosPolicyFixed
 | ZAPI | `qos-policy-group-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/qos_policy_fixed.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/workload.json | Fixed QoS Shared Policy Utilization | Top $TopResources Fixed QoS Shared Policy IOPs Utilization (%) |
+| cmode/workload.json | Fixed QoS Shared Policy Utilization | Top $TopResources Fixed QoS Shared Policy IOPs Utilization (%) |
+| cmode/workload.json | Fixed QoS Shared Policy Utilization | Top $TopResources Fixed QoS Shared Policy Bandwidth Utilization (%) |
+| cmode/workload.json | Fixed QoS Shared Policy Utilization | Top $TopResources Fixed QoS Shared Policy Bandwidth Utilization (%) |
+| cmode/workload.json | Fixed QoS Shared Policy Utilization | Fixed QoS Shared Policy IOPs Utilization (%) |
+| cmode/workload.json | Fixed QoS Shared Policy Utilization | Fixed QoS Shared Policy Bandwidth Utilization (%) |
+| cmode/workload.json | Fixed QoS Workload Utilization | Fixed QoS Workload IOPs Utilization (%) |
+| cmode/workload.json | Fixed QoS Workload Utilization | Fixed QoS Workload Bandwidth Utilization (%) |
+
+
+
 ### qos_policy_fixed_max_throughput_iops
 
 Maximum throughput defined by this policy. It is specified in terms of IOPS. 0 means no maximum throughput is enforced.
@@ -10666,6 +14100,7 @@ Maximum throughput defined by this policy. It is specified in terms of IOPS. 0 m
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.12.0/qos_policy_fixed.yaml |
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/qos_policy_fixed.yaml |
+
 
 
 ### qos_policy_fixed_max_throughput_mbps
@@ -10678,6 +14113,7 @@ Maximum throughput defined by this policy. It is specified in terms of Mbps. 0 m
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/qos_policy_fixed.yaml |
 
 
+
 ### qos_policy_fixed_min_throughput_iops
 
 Minimum throughput defined by this policy. It is specified in terms of IOPS. 0 means no minimum throughput is enforced. These floors are not guaranteed on non-AFF platforms or when FabricPool tiering policies are set.
@@ -10686,6 +14122,7 @@ Minimum throughput defined by this policy. It is specified in terms of IOPS. 0 m
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.12.0/qos_policy_fixed.yaml |
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/qos_policy_fixed.yaml |
+
 
 
 ### qos_policy_fixed_min_throughput_mbps
@@ -10698,6 +14135,7 @@ Minimum throughput defined by this policy. It is specified in terms of Mbps. 0 m
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/qos_policy_fixed.yaml |
 
 
+
 ### qos_read_data
 
 This is the amount of data read per second from the filer by the workload.
@@ -10706,6 +14144,21 @@ This is the amount of data read per second from the filer by the workload.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/qos_volume` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload_volume.yaml |
 | ZAPI | `perf-object-get-instances workload_volume` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload_volume.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | QoS Policy Group | QoS Read Throughput |
+| cmode/svm.json | QoS Policy Group | Top $TopResources SVMs by QoS Throughput |
+| cmode/svm.json | QoS Policy Group | Top $TopResources SVMs by QoS Throughput |
+| cmode/volume.json | QoS | Top $TopResources Qos Volumes Total Throughput |
+| cmode/volume.json | QoS | Top $TopResources QoS Volumes by Average Throughput |
+| cmode/volume.json | QoS | Top $TopResources QoS Volumes by Average Throughput |
+| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Read Throughput |
+| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Read Throughput |
+| cmode/workload.json | Highlights | Top $TopResources Workloads by Read Throughput |
+| cmode/workload.json | Highlights | Top $TopResources Workloads by Read Throughput |
+
 
 
 ### qos_read_io_type
@@ -10718,6 +14171,31 @@ This is the percentage of read requests served from various components (such as 
 | ZAPI | `perf-object-get-instances workload_volume` | `read_io_type`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> read_io_type_base | conf/zapiperf/cdot/9.8.0/workload_volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type bamboo_ssd |
+| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type bamboo_ssd |
+| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type cache |
+| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type cache |
+| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type cloud |
+| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type cloud |
+| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type cloud_s2c |
+| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type cloud_s2c |
+| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type disk |
+| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type disk |
+| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type ext_cache |
+| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type ext_cache |
+| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type fc_miss |
+| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type fc_miss |
+| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type hya_cache |
+| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type hya_cache |
+| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type hya_hdd |
+| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type hya_hdd |
+| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type hya_non_cache |
+| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type hya_non_cache |
+
+
+
 ### qos_read_latency
 
 This is the average response time for read requests that were initiated by the workload.
@@ -10726,6 +14204,18 @@ This is the average response time for read requests that were initiated by the w
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/qos_volume` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/restperf/9.12.0/workload_volume.yaml |
 | ZAPI | `perf-object-get-instances workload_volume` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/workload_volume.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | QoS Policy Group | Average QoS Read Latency |
+| cmode/svm.json | QoS Policy Group | Top $TopResources SVMs by QoS Latency |
+| cmode/svm.json | QoS Policy Group | Top $TopResources SVMs by QoS Latency |
+| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Read Latency |
+| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Read Latency |
+| cmode/workload.json | Highlights | Top $TopResources Workloads by Average Read Latency |
+| cmode/workload.json | Highlights | Top $TopResources Workloads by Average Read Latency |
+
 
 
 ### qos_read_ops
@@ -10738,6 +14228,18 @@ This is the rate of this workload's read operations that completed during the me
 | ZAPI | `perf-object-get-instances workload_volume` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload_volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | QoS Policy Group | QoS Read IOPs |
+| cmode/svm.json | QoS Policy Group | Top $TopResources SVMs by QoS IOPs |
+| cmode/svm.json | QoS Policy Group | Top $TopResources SVMs by QoS IOPs |
+| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Read IOPS |
+| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Read IOPS |
+| cmode/workload.json | Highlights | Top $TopResources Workloads by Read IOPS |
+| cmode/workload.json | Highlights | Top $TopResources Workloads by Read IOPS |
+
+
+
 ### qos_sequential_reads
 
 This is the percentage of reads, performed on behalf of the workload, that were sequential.
@@ -10746,6 +14248,17 @@ This is the percentage of reads, performed on behalf of the workload, that were 
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/qos_volume` | `sequential_reads_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> sequential_reads_base | conf/restperf/9.12.0/workload_volume.yaml |
 | ZAPI | `perf-object-get-instances workload_volume` | `sequential_reads`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent,no-zero-values<br><span class="key">Base:</span> sequential_reads_base | conf/zapiperf/cdot/9.8.0/workload_volume.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | QoS Policy Group | Top $TopResources Workloads by Sequential Reads (%) |
+| cmode/svm.json | QoS Policy Group | Top $TopResources Workloads by Sequential Reads (%) |
+| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Sequential Reads |
+| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Sequential Reads |
+| cmode/workload.json | Highlights | Top $TopResources Workloads by Sequential Reads (%) |
+| cmode/workload.json | Highlights | Top $TopResources Workloads by Sequential Reads (%) |
+
 
 
 ### qos_sequential_writes
@@ -10758,6 +14271,17 @@ This is the percentage of writes, performed on behalf of the workload, that were
 | ZAPI | `perf-object-get-instances workload_volume` | `sequential_writes`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent,no-zero-values<br><span class="key">Base:</span> sequential_writes_base | conf/zapiperf/cdot/9.8.0/workload_volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | QoS Policy Group | Top $TopResources Workloads by Sequential Writes (%) |
+| cmode/svm.json | QoS Policy Group | Top $TopResources Workloads by Sequential Writes (%) |
+| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Sequential Writes |
+| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Sequential Writes |
+| cmode/workload.json | Highlights | Top $TopResources Workloads by Sequential Writes (%) |
+| cmode/workload.json | Highlights | Top $TopResources Workloads by Sequential Writes (%) |
+
+
+
 ### qos_total_data
 
 This is the total amount of data read/written per second from/to the filer by the workload.
@@ -10766,6 +14290,21 @@ This is the total amount of data read/written per second from/to the filer by th
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/qos_volume` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload_volume.yaml |
 | ZAPI | `perf-object-get-instances workload_volume` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload_volume.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/workload.json | Fixed QoS Shared Policy Utilization | Top $TopResources Fixed QoS Shared Policy Bandwidth Utilization (%) |
+| cmode/workload.json | Fixed QoS Shared Policy Utilization | Top $TopResources Fixed QoS Shared Policy Bandwidth Utilization (%) |
+| cmode/workload.json | Fixed QoS Shared Policy Utilization | Fixed QoS Shared Policy Bandwidth Utilization (%) |
+| cmode/workload.json | Fixed QoS Workload Utilization | Top $TopResources Fixed QoS Workload Bandwidth Utilization (%) |
+| cmode/workload.json | Fixed QoS Workload Utilization | Top $TopResources Fixed QoS Workload Bandwidth Utilization (%) |
+| cmode/workload.json | Fixed QoS Workload Utilization | Fixed QoS Workload Bandwidth Utilization (%) |
+| cmode/workload.json | Adaptive QoS Workload Utilization | Top $TopResources Adaptive QoS Workload Bandwidth Utilization (%) |
+| cmode/workload.json | Adaptive QoS Workload Utilization | Top $TopResources Adaptive QoS Workload Bandwidth Utilization (%) |
+| cmode/workload.json | Adaptive QoS Workload Utilization | Adaptive QoS Workload Bandwidth Utilization (%) |
+| cmode/workload.json | Adaptive QoS Workload Utilization | Adaptive QoS Workload Bandwidth Utilization (%) |
+
 
 
 ### qos_workload_labels
@@ -10778,6 +14317,14 @@ This metric provides information about QosWorkload
 | ZAPI | `qos-workload-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/qos_workload.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/datacenter.json | Highlights | Object Count |
+| cmode/workload.json | Adaptive QoS Workload Utilization | Adaptive QoS Workload IOPs Utilization (%) |
+| cmode/workload.json | Adaptive QoS Workload Utilization | Adaptive QoS Workload Bandwidth Utilization (%) |
+
+
+
 ### qos_workload_max_throughput_iops
 
 Maximum throughput IOPs allowed for the workload.
@@ -10786,6 +14333,7 @@ Maximum throughput IOPs allowed for the workload.
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.12.0/qos_workload.yaml |
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/qos_workload.yaml |
+
 
 
 ### qos_workload_max_throughput_mbps
@@ -10798,6 +14346,7 @@ Maximum throughput Mbps allowed for the workload.
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/qos_workload.yaml |
 
 
+
 ### qos_write_data
 
 This is the amount of data written per second to the filer by the workload.
@@ -10806,6 +14355,22 @@ This is the amount of data written per second to the filer by the workload.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/qos_volume` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload_volume.yaml |
 | ZAPI | `perf-object-get-instances workload_volume` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload_volume.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | QoS Policy Group | QoS Throughput |
+| cmode/svm.json | QoS Policy Group | QoS Write Throughput |
+| cmode/svm.json | QoS Policy Group | Top $TopResources SVMs by QoS Throughput |
+| cmode/svm.json | QoS Policy Group | Top $TopResources SVMs by QoS Throughput |
+| cmode/volume.json | QoS | Top $TopResources Qos Volumes Total Throughput |
+| cmode/volume.json | QoS | Top $TopResources QoS Volumes by Average Throughput |
+| cmode/volume.json | QoS | Top $TopResources QoS Volumes by Average Throughput |
+| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Write Throughput |
+| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Write Throughput |
+| cmode/workload.json | Highlights | Top $TopResources Workloads by Write Throughput |
+| cmode/workload.json | Highlights | Top $TopResources Workloads by Write Throughput |
+
 
 
 ### qos_write_latency
@@ -10818,6 +14383,18 @@ This is the average response time for write requests that were initiated by the 
 | ZAPI | `perf-object-get-instances workload_volume` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/workload_volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | QoS Policy Group | Average QoS Write Latency |
+| cmode/svm.json | QoS Policy Group | Top $TopResources SVMs by QoS Latency |
+| cmode/svm.json | QoS Policy Group | Top $TopResources SVMs by QoS Latency |
+| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Write Latency |
+| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Write Latency |
+| cmode/workload.json | Highlights | Top $TopResources Workloads by Average Write Latency |
+| cmode/workload.json | Highlights | Top $TopResources Workloads by Average Write Latency |
+
+
+
 ### qos_write_ops
 
 This is the workload's write operations that completed during the measurement interval; measured per second.
@@ -10826,6 +14403,18 @@ This is the workload's write operations that completed during the measurement in
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/qos_volume` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload_volume.yaml |
 | ZAPI | `perf-object-get-instances workload_volume` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload_volume.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | QoS Policy Group | QoS Write IOPs |
+| cmode/svm.json | QoS Policy Group | Top $TopResources SVMs by QoS IOPs |
+| cmode/svm.json | QoS Policy Group | Top $TopResources SVMs by QoS IOPs |
+| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Write IOPS |
+| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Write IOPS |
+| cmode/workload.json | Highlights | Top $TopResources Workloads by Write IOPS |
+| cmode/workload.json | Highlights | Top $TopResources Workloads by Write IOPS |
+
 
 
 ### qtree_cifs_ops
@@ -10838,6 +14427,13 @@ Number of CIFS operations per second to the qtree
 | ZAPI | `perf-object-get-instances qtree` | `cifs_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/qtree.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/qtree.json | Highlights | Top $TopResources CIFS by IOPs |
+| cmode/qtree.json | Highlights | Top $TopResources CIFS by IOPs |
+
+
+
 ### qtree_id
 
 The identifier for the qtree, unique within the qtree's volume.
@@ -10845,6 +14441,7 @@ The identifier for the qtree, unique within the qtree's volume.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/storage/qtrees` | `id` | conf/rest/9.12.0/qtree.yaml |
+
 
 
 ### qtree_internal_ops
@@ -10857,6 +14454,13 @@ Number of internal operations generated by activites such as snapmirror and back
 | ZAPI | `perf-object-get-instances qtree` | `internal_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/qtree.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/qtree.json | Highlights | Top $TopResources Qtrees by Internal IOPs |
+| cmode/qtree.json | Highlights | Top $TopResources Qtrees by Internal IOPs |
+
+
+
 ### qtree_labels
 
 This metric provides information about Qtree
@@ -10865,6 +14469,12 @@ This metric provides information about Qtree
 |--------|----------|--------|---------|
 | REST | `api/storage/qtrees` | `Harvest generated` | conf/rest/9.12.0/qtree.yaml |
 | ZAPI | `qtree-list-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/qtree.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/datacenter.json | Highlights | Object Count |
+
 
 
 ### qtree_nfs_ops
@@ -10877,6 +14487,13 @@ Number of NFS operations per second to the qtree
 | ZAPI | `perf-object-get-instances qtree` | `nfs_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/qtree.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/qtree.json | Highlights | Top $TopResources NFSs by IOPs |
+| cmode/qtree.json | Highlights | Top $TopResources NFSs by IOPs |
+
+
+
 ### qtree_other_data
 
 Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.
@@ -10884,6 +14501,7 @@ Performance metric for other I/O operations. Other I/O operations can be metadat
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/storage/qtrees` | `statistics.throughput_raw.other`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/qtree.yaml |
+
 
 
 ### qtree_other_ops
@@ -10895,6 +14513,7 @@ Performance metric for other I/O operations. Other I/O operations can be metadat
 | KeyPerf | `api/storage/qtrees` | `statistics.iops_raw.other`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/qtree.yaml |
 
 
+
 ### qtree_read_data
 
 Performance metric for read I/O operations.
@@ -10902,6 +14521,7 @@ Performance metric for read I/O operations.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/storage/qtrees` | `statistics.throughput_raw.read`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/qtree.yaml |
+
 
 
 ### qtree_read_ops
@@ -10913,6 +14533,7 @@ Performance metric for read I/O operations.
 | KeyPerf | `api/storage/qtrees` | `statistics.iops_raw.read`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/qtree.yaml |
 
 
+
 ### qtree_total_data
 
 Performance metric aggregated over all types of I/O operations.
@@ -10920,6 +14541,7 @@ Performance metric aggregated over all types of I/O operations.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/storage/qtrees` | `statistics.throughput_raw.total`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/qtree.yaml |
+
 
 
 ### qtree_total_ops
@@ -10933,6 +14555,14 @@ Summation of NFS ops, CIFS ops, CSS ops and internal ops
 | ZAPI | `perf-object-get-instances qtree` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/qtree.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/qtree.json | Highlights | Top $TopResources Qtrees by IOPs |
+| cmode/qtree.json | Highlights | Top $TopResources Qtrees by IOPs |
+| cmode-details/volumeDeepDive.json | Highlights | Qtrees by IOPs |
+
+
+
 ### qtree_write_data
 
 Performance metric for write I/O operations.
@@ -10942,6 +14572,7 @@ Performance metric for write I/O operations.
 | KeyPerf | `api/storage/qtrees` | `statistics.throughput_raw.write`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/qtree.yaml |
 
 
+
 ### qtree_write_ops
 
 Performance metric for write I/O operations.
@@ -10949,6 +14580,7 @@ Performance metric for write I/O operations.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/storage/qtrees` | `statistics.iops_raw.write`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/qtree.yaml |
+
 
 
 ### quota_disk_limit
@@ -10961,6 +14593,13 @@ Maximum amount of disk space, in kilobytes, allowed for the quota target (hard d
 | ZAPI | `quota-report-iter` | `disk-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/datacenter.json | Highlights | Object Count |
+| cmode/quotaReport.json | Highlights | Reports |
+
+
+
 ### quota_disk_used
 
 Current amount of disk space, in kilobytes, used by the quota target.
@@ -10969,6 +14608,18 @@ Current amount of disk space, in kilobytes, used by the quota target.
 |--------|----------|--------|---------|
 | REST | `api/storage/quota/reports` | `space.used.total` | conf/rest/9.12.0/quota.yaml |
 | ZAPI | `quota-report-iter` | `disk-used` | conf/zapi/cdot/9.8.0/qtree.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/qtree.json | Usage | Top $TopResources Qtrees by Disk Used |
+| cmode/qtree.json | Usage | Top $TopResources Qtrees by Disk Used |
+| cmode/qtree.json | Usage | Top $TopResources Qtrees by Disk Used Growth |
+| cmode/qtree.json | Usage | Top $TopResources Qtrees by Disk Used Growth |
+| cmode/quotaReport.json | Highlights | Reports |
+| cmode/quotaReport.json | Space Usage | Top $TopResources Quotas by Space Used |
+| cmode/quotaReport.json | Space Usage | Top $TopResources Quotas by Space Used |
+
 
 
 ### quota_disk_used_pct_disk_limit
@@ -10981,6 +14632,14 @@ Current disk space used expressed as a percentage of hard disk limit.
 | ZAPI | `quota-report-iter` | `disk-used-pct-disk-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/quotaReport.json | Highlights | Reports |
+| cmode/quotaReport.json | Space Usage | Top $TopResources Quotas by Space Used % |
+| cmode/quotaReport.json | Space Usage | Top $TopResources Quotas by Space Used % |
+
+
+
 ### quota_disk_used_pct_soft_disk_limit
 
 Current disk space used expressed as a percentage of soft disk limit.
@@ -10991,6 +14650,7 @@ Current disk space used expressed as a percentage of soft disk limit.
 | ZAPI | `quota-report-iter` | `disk-used-pct-soft-disk-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
 
 
+
 ### quota_disk_used_pct_threshold
 
 Current disk space used expressed as a percentage of threshold.
@@ -10998,6 +14658,7 @@ Current disk space used expressed as a percentage of threshold.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | ZAPI | `quota-report-iter` | `disk-used-pct-threshold` | conf/zapi/cdot/9.8.0/qtree.yaml |
+
 
 
 ### quota_file_limit
@@ -11010,6 +14671,12 @@ Maximum number of files allowed for the quota target (hard files limit). The val
 | ZAPI | `quota-report-iter` | `file-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/quotaReport.json | Highlights | Reports |
+
+
+
 ### quota_files_used
 
 Current number of files used by the quota target.
@@ -11018,6 +14685,16 @@ Current number of files used by the quota target.
 |--------|----------|--------|---------|
 | REST | `api/storage/quota/reports` | `files.used.total` | conf/rest/9.12.0/quota.yaml |
 | ZAPI | `quota-report-iter` | `files-used` | conf/zapi/cdot/9.8.0/qtree.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/qtree.json | Usage | Top $TopResources Qtrees by Files Used |
+| cmode/qtree.json | Usage | Top $TopResources Qtrees by Files Used |
+| cmode/quotaReport.json | Highlights | Reports |
+| cmode/quotaReport.json | Space Usage | Top $TopResources Quotas by Files Used |
+| cmode/quotaReport.json | Space Usage | Top $TopResources Quotas by Files Used |
+
 
 
 ### quota_files_used_pct_file_limit
@@ -11030,6 +14707,14 @@ Current number of files used expressed as a percentage of hard file limit.
 | ZAPI | `quota-report-iter` | `files-used-pct-file-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/quotaReport.json | Highlights | Reports |
+| cmode/quotaReport.json | Space Usage | Top $TopResources Quotas by Files Used % |
+| cmode/quotaReport.json | Space Usage | Top $TopResources Quotas by Files Used % |
+
+
+
 ### quota_files_used_pct_soft_file_limit
 
 Current number of files used expressed as a percentage of soft file limit.
@@ -11038,6 +14723,7 @@ Current number of files used expressed as a percentage of soft file limit.
 |--------|----------|--------|---------|
 | REST | `api/storage/quota/reports` | `files.used.soft_limit_percent` | conf/rest/9.12.0/quota.yaml |
 | ZAPI | `quota-report-iter` | `files-used-pct-soft-file-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
+
 
 
 ### quota_soft_disk_limit
@@ -11050,6 +14736,12 @@ soft disk space limit, in kilobytes, for the quota target. The value is -1 if th
 | ZAPI | `quota-report-iter` | `soft-disk-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/quotaReport.json | Highlights | Reports |
+
+
+
 ### quota_soft_file_limit
 
 Soft file limit, in number of files, for the quota target. The value is -1 if the limit is unlimited.
@@ -11058,6 +14750,12 @@ Soft file limit, in number of files, for the quota target. The value is -1 if th
 |--------|----------|--------|---------|
 | REST | `api/storage/quota/reports` | `files.soft_limit` | conf/rest/9.12.0/quota.yaml |
 | ZAPI | `quota-report-iter` | `soft-file-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/quotaReport.json | Highlights | Reports |
+
 
 
 ### quota_threshold
@@ -11070,6 +14768,7 @@ Disk space threshold, in kilobytes, for the quota target. The value is -1 if the
 | REST | `NA` | `Harvest generated` | conf/rest/9.12.0/quota.yaml |
 
 
+
 ### raid_disk_busy
 
 The utilization percent of the disk. raid_disk_busy is [disk_busy](#disk_busy) aggregated by `raid`.
@@ -11078,6 +14777,13 @@ The utilization percent of the disk. raid_disk_busy is [disk_busy](#disk_busy) a
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `disk_busy_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `disk_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/disk.json | Top Disks: Raid-level Overview | Top $TopResources Disks by Disk Busy |
+| cmode/disk.json | Top Disks: Raid-level Overview | Top $TopResources Disks by Disk Busy |
+
 
 
 ### raid_disk_capacity
@@ -11090,6 +14796,7 @@ Disk capacity in MB. raid_disk_capacity is [disk_capacity](#disk_capacity) aggre
 | ZAPI | `perf-object-get-instances disk:constituent` | `disk_capacity`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### raid_disk_cp_read_chain
 
 Average number of blocks transferred in each consistency point read operation during a CP. raid_disk_cp_read_chain is [disk_cp_read_chain](#disk_cp_read_chain) aggregated by `raid`.
@@ -11098,6 +14805,7 @@ Average number of blocks transferred in each consistency point read operation du
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_count | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `cp_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_reads | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### raid_disk_cp_read_latency
@@ -11110,6 +14818,7 @@ Average latency per block in microseconds for consistency point read operations.
 | ZAPI | `perf-object-get-instances disk:constituent` | `cp_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cp_read_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### raid_disk_cp_reads
 
 Number of disk read operations initiated each second for consistency point processing. raid_disk_cp_reads is [disk_cp_reads](#disk_cp_reads) aggregated by `raid`.
@@ -11118,6 +14827,7 @@ Number of disk read operations initiated each second for consistency point proce
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `cp_read_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `cp_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### raid_disk_io_pending
@@ -11130,6 +14840,7 @@ Average number of I/Os issued to the disk for which we have not yet received the
 | ZAPI | `perf-object-get-instances disk:constituent` | `io_pending`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### raid_disk_io_queued
 
 Number of I/Os queued to the disk but not yet issued. raid_disk_io_queued is [disk_io_queued](#disk_io_queued) aggregated by `raid`.
@@ -11138,6 +14849,7 @@ Number of I/Os queued to the disk but not yet issued. raid_disk_io_queued is [di
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `io_queued`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `io_queued`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### raid_disk_total_data
@@ -11150,6 +14862,7 @@ Total throughput for user operations per second. raid_disk_total_data is [disk_t
 | ZAPI | `perf-object-get-instances disk:constituent` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### raid_disk_total_transfers
 
 Total number of disk operations involving data transfer initiated per second. raid_disk_total_transfers is [disk_total_transfers](#disk_total_transfers) aggregated by `raid`.
@@ -11158,6 +14871,13 @@ Total number of disk operations involving data transfer initiated per second. ra
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `total_transfer_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `total_transfers`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/disk.json | Top Disks: Raid-level Overview | Top $TopResources Disks by Total Transfers |
+| cmode/disk.json | Top Disks: Raid-level Overview | Top $TopResources Disks by Total Transfers |
+
 
 
 ### raid_disk_user_read_blocks
@@ -11170,6 +14890,7 @@ Number of blocks transferred for user read operations per second. raid_disk_user
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_read_blocks`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### raid_disk_user_read_chain
 
 Average number of blocks transferred in each user read operation. raid_disk_user_read_chain is [disk_user_read_chain](#disk_user_read_chain) aggregated by `raid`.
@@ -11178,6 +14899,7 @@ Average number of blocks transferred in each user read operation. raid_disk_user
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_count | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_reads | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### raid_disk_user_read_latency
@@ -11190,6 +14912,13 @@ Average latency per block in microseconds for user read operations. raid_disk_us
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/disk.json | Top Disks: Raid-level Overview | Top $TopResources Disks by User Read Latency |
+| cmode/disk.json | Top Disks: Raid-level Overview | Top $TopResources Disks by User Read Latency |
+
+
+
 ### raid_disk_user_reads
 
 Number of disk read operations initiated each second for retrieving data or metadata associated with user requests. raid_disk_user_reads is [disk_user_reads](#disk_user_reads) aggregated by `raid`.
@@ -11198,6 +14927,7 @@ Number of disk read operations initiated each second for retrieving data or meta
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_read_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### raid_disk_user_write_blocks
@@ -11210,6 +14940,7 @@ Number of blocks transferred for user write operations per second. raid_disk_use
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_write_blocks`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### raid_disk_user_write_chain
 
 Average number of blocks transferred in each user write operation. raid_disk_user_write_chain is [disk_user_write_chain](#disk_user_write_chain) aggregated by `raid`.
@@ -11218,6 +14949,7 @@ Average number of blocks transferred in each user write operation. raid_disk_use
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_write_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_count | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_write_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_writes | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### raid_disk_user_write_latency
@@ -11230,6 +14962,13 @@ Average latency per block in microseconds for user write operations. raid_disk_u
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/disk.json | Top Disks: Raid-level Overview | Top $TopResources Disks by User Write Latency |
+| cmode/disk.json | Top Disks: Raid-level Overview | Top $TopResources Disks by User Write Latency |
+
+
+
 ### raid_disk_user_writes
 
 Number of disk write operations initiated each second for storing data or metadata associated with user requests. raid_disk_user_writes is [disk_user_writes](#disk_user_writes) aggregated by `raid`.
@@ -11238,6 +14977,7 @@ Number of disk write operations initiated each second for storing data or metada
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_write_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_writes`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### rw_ctx_cifs_giveups
@@ -11250,6 +14990,13 @@ Array of number of give-ups of CIFS ops because they rewind more than a certain 
 | ZAPI | `perf-object-get-instances rw_ctx` | `cifs_giveups`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | Rewind View | Top $TopResources Metric by CIFS Giveups |
+| cmode/node.json | Rewind View | Top $TopResources Metric by CIFS Giveups |
+
+
+
 ### rw_ctx_cifs_rewinds
 
 Array of number of rewinds for CIFS ops based on their reasons.
@@ -11258,6 +15005,13 @@ Array of number of rewinds for CIFS ops based on their reasons.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/rewind_context` | `cifs_rewinds`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.16.0/rwctx.yaml |
 | ZAPI | `perf-object-get-instances rw_ctx` | `cifs_rewinds`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | Rewind View | Top $TopResources Metric by CIFS Rewinds |
+| cmode/node.json | Rewind View | Top $TopResources Metric by CIFS Rewinds |
+
 
 
 ### rw_ctx_nfs_giveups
@@ -11270,6 +15024,13 @@ Array of number of give-ups of NFS ops because they rewind more than a certain t
 | ZAPI | `perf-object-get-instances rw_ctx` | `nfs_giveups`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | Rewind View | Top $TopResources Metric by NFS Giveups |
+| cmode/node.json | Rewind View | Top $TopResources Metric by NFS Giveups |
+
+
+
 ### rw_ctx_nfs_rewinds
 
 Array of number of rewinds for NFS ops based on their reasons.
@@ -11278,6 +15039,13 @@ Array of number of rewinds for NFS ops based on their reasons.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/rewind_context` | `nfs_rewinds`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.16.0/rwctx.yaml |
 | ZAPI | `perf-object-get-instances rw_ctx` | `nfs_rewinds`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | Rewind View | Top $TopResources Metric by NFS Rewinds |
+| cmode/node.json | Rewind View | Top $TopResources Metric by NFS Rewinds |
+
 
 
 ### rw_ctx_qos_flowcontrol
@@ -11289,6 +15057,13 @@ The number of times QoS limiting has enabled stream flowcontrol.
 | ZAPI | `perf-object-get-instances rw_ctx` | `qos_flowcontrol`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | Rewind View | Top $TopResources Node by QoS Flowcontrol |
+| cmode/node.json | Rewind View | Top $TopResources Node by QoS Flowcontrol |
+
+
+
 ### rw_ctx_qos_rewinds
 
 The number of restarts after a rewind because of QoS limiting.
@@ -11296,6 +15071,13 @@ The number of restarts after a rewind because of QoS limiting.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | ZAPI | `perf-object-get-instances rw_ctx` | `qos_rewinds`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | Rewind View | Top $TopResources Node by QoS Rewinds |
+| cmode/node.json | Rewind View | Top $TopResources Node by QoS Rewinds |
+
 
 
 ### security_account_labels
@@ -11308,6 +15090,19 @@ This metric provides information about SecurityAccount
 | ZAPI | `security-login-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/security_account.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/security.json | Highlights | Cluster Compliant % |
+| cmode/security.json | Highlights | Cluster Compliant % |
+| cmode/security.json | Highlights | Cluster Compliant |
+| cmode/security.json | Highlights | Cluster Compliant |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+
+
+
 ### security_audit_destination_port
 
 The destination port used to forward the message.
@@ -11315,6 +15110,7 @@ The destination port used to forward the message.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | ZAPI | `cluster-log-forward-get-iter` | `cluster-log-forward-info.port` | conf/zapi/cdot/9.8.0/security_audit_dest.yaml |
+
 
 
 ### security_certificate_expiry_time
@@ -11327,6 +15123,12 @@ The destination port used to forward the message.
 | ZAPI | `security-certificate-get-iter` | `certificate-info.expiration-date` | conf/zapi/cdot/9.8.0/security_certificate.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/security.json | Highlights | SSL Certificates Expiration |
+
+
+
 ### security_certificate_labels
 
 This metric provides information about SecurityCert
@@ -11335,6 +15137,15 @@ This metric provides information about SecurityCert
 |--------|----------|--------|---------|
 | REST | `api/private/cli/security/certificate` | `Harvest generated` | conf/rest/9.12.0/security_certificate.yaml |
 | ZAPI | `security-certificate-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/security_certificate.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/security.json | Highlights | Expiring in < 60 days |
+| cmode/security.json | Highlights | Expired |
+| cmode/security.json | Highlights | SSL Certificates Expiration |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+
 
 
 ### security_labels
@@ -11347,6 +15158,23 @@ This metric provides information about Security
 | ZAPI | `cluster-identity-get` | `Harvest generated` | conf/zapi/cdot/9.8.0/security.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/security.json | Highlights | Cluster Compliant % |
+| cmode/security.json | Highlights | Cluster Compliant % |
+| cmode/security.json | Highlights | Cluster Compliant % |
+| cmode/security.json | Highlights | Cluster Compliant % |
+| cmode/security.json | Highlights | Cluster Compliant |
+| cmode/security.json | Highlights | Cluster Compliant |
+| cmode/security.json | Highlights | Cluster Compliant |
+| cmode/security.json | Highlights | Cluster Compliant |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+
+
+
 ### security_login_labels
 
 This metric provides information about SecurityLogin
@@ -11355,6 +15183,33 @@ This metric provides information about SecurityLogin
 |--------|----------|--------|---------|
 | REST | `api/security/login/messages` | `Harvest generated` | conf/rest/9.12.0/security_login.yaml |
 | ZAPI | `vserver-login-banner-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/security_login.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/security.json | Highlights | Cluster Compliant % |
+| cmode/security.json | Highlights | Cluster Compliant % |
+| cmode/security.json | Highlights | Cluster Compliant % |
+| cmode/security.json | Highlights | Cluster Compliant % |
+| cmode/security.json | Highlights | SVM Compliant % |
+| cmode/security.json | Highlights | SVM Compliant % |
+| cmode/security.json | Highlights | Cluster Compliant |
+| cmode/security.json | Highlights | Cluster Compliant |
+| cmode/security.json | Highlights | Cluster Compliant |
+| cmode/security.json | Highlights | Cluster Compliant |
+| cmode/security.json | Highlights | SVM Compliant |
+| cmode/security.json | Highlights | SVM Compliant |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| cmode/security.json | SVM Compliance | SVM Compliance |
+| cmode/security.json | SVM Compliance | SVM Compliance |
+| cmode/security.json | SVM Compliance | SVM Compliance |
+| cmode/security.json | SVM Compliance | SVM Compliance |
+
 
 
 ### security_ssh_labels
@@ -11366,6 +15221,14 @@ This metric provides information about SecuritySsh
 | REST | `api/security/ssh` | `Harvest generated` | conf/rest/9.12.0/security_ssh.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/security.json | Highlights | Cluster Compliant % |
+| cmode/security.json | Highlights | Cluster Compliant |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+
+
+
 ### security_ssh_max_instances
 
 Maximum possible simultaneous connections.
@@ -11373,6 +15236,7 @@ Maximum possible simultaneous connections.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/security/ssh` | `max_instances` | conf/rest/9.12.0/security_ssh.yaml |
+
 
 
 ### shelf_average_ambient_temperature
@@ -11385,6 +15249,7 @@ Average temperature of all ambient sensors for shelf in Celsius.
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### shelf_average_fan_speed
 
 Average fan speed for shelf in rpm.
@@ -11393,6 +15258,7 @@ Average fan speed for shelf in rpm.
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### shelf_average_temperature
@@ -11405,6 +15271,7 @@ Average temperature of all non-ambient sensors for shelf in Celsius.
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### shelf_disk_count
 
 Disk count in a shelf.
@@ -11413,6 +15280,14 @@ Disk count in a shelf.
 |--------|----------|--------|---------|
 | REST | `api/storage/shelves` | `disk_count` | conf/rest/9.12.0/shelf.yaml |
 | ZAPI | `storage-shelf-info-get-iter` | `storage-shelf-info.disk-count` | conf/zapi/cdot/9.8.0/shelf.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/health.json | Shelves | Storage Shelf Issues |
+| cmode/power.json | Shelves | Storage Shelves |
+| cmode/shelf.json | Highlights | Storage Shelves |
+
 
 
 ### shelf_fan_labels
@@ -11425,6 +15300,7 @@ This metric provides information about shelf fans.
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### shelf_fan_rpm
 
 Fan Rotation Per Minute.
@@ -11433,6 +15309,7 @@ Fan Rotation Per Minute.
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### shelf_fan_status
@@ -11445,6 +15322,7 @@ Fan Operational Status.
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### shelf_labels
 
 This metric provides information about Shelf
@@ -11453,6 +15331,21 @@ This metric provides information about Shelf
 |--------|----------|--------|---------|
 | REST | `api/storage/shelves` | `Harvest generated` | conf/rest/9.12.0/shelf.yaml |
 | ZAPI | `storage-shelf-info-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/shelf.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/datacenter.json | Highlights | Object Count |
+| cmode/datacenter.json | Power and Temperature | Total Power |
+| cmode/health.json | Shelves | Storage Shelf Issues |
+| cmode/power.json | Highlights | Total Power |
+| cmode/power.json | Highlights | Total Power Consumed |
+| cmode/power.json | Highlights | Average Power Consumption (kWh) Over Last Hour |
+| cmode/power.json | Shelves | Storage Shelves |
+| cmode/power.json | Shelves | Storage Shelves |
+| cmode/shelf.json | Highlights | Shelves |
+| cmode/shelf.json | Highlights | Storage Shelves |
+
 
 
 ### shelf_max_fan_speed
@@ -11465,6 +15358,7 @@ Maximum fan speed for shelf in rpm.
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### shelf_max_temperature
 
 Maximum temperature of all non-ambient sensors for shelf in Celsius.
@@ -11473,6 +15367,7 @@ Maximum temperature of all non-ambient sensors for shelf in Celsius.
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### shelf_min_ambient_temperature
@@ -11485,6 +15380,7 @@ Minimum temperature of all ambient sensors for shelf in Celsius.
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### shelf_min_fan_speed
 
 Minimum fan speed for shelf in rpm.
@@ -11493,6 +15389,7 @@ Minimum fan speed for shelf in rpm.
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### shelf_min_temperature
@@ -11505,6 +15402,7 @@ Minimum temperature of all non-ambient sensors for shelf in Celsius.
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### shelf_module_labels
 
 This metric provides information about shelf module.
@@ -11513,6 +15411,7 @@ This metric provides information about shelf module.
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### shelf_module_status
@@ -11525,6 +15424,7 @@ Displays the shelf module labels with their status.
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### shelf_new_status
 
 This metric indicates a value of 1 if the shelf state is online or ok (indicating the shelf is operational) and a value of 0 for any other state (indicating the shelf is not operational).
@@ -11533,6 +15433,7 @@ This metric indicates a value of 1 if the shelf state is online or ok (indicatin
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.12.0/shelf.yaml |
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/shelf.yaml |
+
 
 
 ### shelf_power
@@ -11545,6 +15446,7 @@ Power consumed by shelf in Watts.
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### shelf_psu_labels
 
 This metric provides information about shelf psu.
@@ -11553,6 +15455,7 @@ This metric provides information about shelf psu.
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### shelf_psu_power_drawn
@@ -11565,6 +15468,7 @@ Power Drawn From PSU In Watts.
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### shelf_psu_power_rating
 
 Power Supply Power Ratings In Watts.
@@ -11573,6 +15477,7 @@ Power Supply Power Ratings In Watts.
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### shelf_psu_status
@@ -11585,6 +15490,7 @@ Operational Status.
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### shelf_sensor_labels
 
 This metric provides information about shelf sensor.
@@ -11593,6 +15499,7 @@ This metric provides information about shelf sensor.
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### shelf_sensor_reading
@@ -11605,6 +15512,7 @@ Current Sensor Reading.
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### shelf_sensor_status
 
 Operational Status.
@@ -11613,6 +15521,7 @@ Operational Status.
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### shelf_temperature_labels
@@ -11625,6 +15534,7 @@ This metric provides information about shelf temperature.
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### shelf_temperature_reading
 
 Temperature Reading.
@@ -11633,6 +15543,7 @@ Temperature Reading.
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### shelf_temperature_status
@@ -11645,6 +15556,7 @@ Operational Status.
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### shelf_voltage_labels
 
 This metric provides information about shelf voltage.
@@ -11653,6 +15565,7 @@ This metric provides information about shelf voltage.
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### shelf_voltage_reading
@@ -11665,6 +15578,7 @@ Voltage Current Reading.
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
 
+
 ### shelf_voltage_status
 
 Operational Status.
@@ -11673,6 +15587,7 @@ Operational Status.
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
+
 
 
 ### smb2_close_latency
@@ -11685,6 +15600,12 @@ Average latency for SMB2_COM_CLOSE operations
 | ZAPI | `perf-object-get-instances smb2` | `close_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> close_latency_base | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/smb.json | SMB Performance | Other Latency |
+
+
+
 ### smb2_close_ops
 
 Number of SMB2_COM_CLOSE operations
@@ -11693,6 +15614,12 @@ Number of SMB2_COM_CLOSE operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/smb2` | `close_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `close_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/smb.json | SMB Performance | Other IOPS |
+
 
 
 ### smb2_create_latency
@@ -11705,6 +15632,12 @@ Average latency for SMB2_COM_CREATE operations
 | ZAPI | `perf-object-get-instances smb2` | `create_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> create_latency_base | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/smb.json | SMB Performance | Other Latency |
+
+
+
 ### smb2_create_ops
 
 Number of SMB2_COM_CREATE operations
@@ -11713,6 +15646,12 @@ Number of SMB2_COM_CREATE operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/smb2` | `create_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `create_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/smb.json | SMB Performance | Other IOPS |
+
 
 
 ### smb2_lock_latency
@@ -11725,6 +15664,12 @@ Average latency for SMB2_COM_LOCK operations
 | ZAPI | `perf-object-get-instances smb2` | `lock_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lock_latency_base | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/smb.json | SMB Performance | Other Latency |
+
+
+
 ### smb2_lock_ops
 
 Number of SMB2_COM_LOCK operations
@@ -11733,6 +15678,12 @@ Number of SMB2_COM_LOCK operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/smb2` | `lock_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `lock_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/smb.json | SMB Performance | Other IOPS |
+
 
 
 ### smb2_negotiate_latency
@@ -11745,6 +15696,12 @@ Average latency for SMB2_COM_NEGOTIATE operations
 | ZAPI | `perf-object-get-instances smb2` | `negotiate_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> negotiate_latency_base | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/smb.json | SMB Performance | Other Latency |
+
+
+
 ### smb2_negotiate_ops
 
 Number of SMB2_COM_NEGOTIATE operations
@@ -11753,6 +15710,12 @@ Number of SMB2_COM_NEGOTIATE operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/smb2` | `negotiate_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `negotiate_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/smb.json | SMB Performance | Other IOPS |
+
 
 
 ### smb2_oplock_break_latency
@@ -11765,6 +15728,12 @@ Average latency for SMB2_COM_OPLOCK_BREAK operations
 | ZAPI | `perf-object-get-instances smb2` | `oplock_break_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> oplock_break_latency_base | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/smb.json | SMB Performance | Other Latency |
+
+
+
 ### smb2_oplock_break_ops
 
 Number of SMB2_COM_OPLOCK_BREAK operations
@@ -11773,6 +15742,12 @@ Number of SMB2_COM_OPLOCK_BREAK operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/smb2` | `oplock_break_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `oplock_break_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/smb.json | SMB Performance | Other IOPS |
+
 
 
 ### smb2_query_directory_latency
@@ -11785,6 +15760,12 @@ Average latency for SMB2_COM_QUERY_DIRECTORY operations
 | ZAPI | `perf-object-get-instances smb2` | `query_directory_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> query_directory_latency_base | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/smb.json | SMB Performance | Other Latency |
+
+
+
 ### smb2_query_directory_ops
 
 Number of SMB2_COM_QUERY_DIRECTORY operations
@@ -11793,6 +15774,12 @@ Number of SMB2_COM_QUERY_DIRECTORY operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/smb2` | `query_directory_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `query_directory_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/smb.json | SMB Performance | Other IOPS |
+
 
 
 ### smb2_query_info_latency
@@ -11805,6 +15792,12 @@ Average latency for SMB2_COM_QUERY_INFO operations
 | ZAPI | `perf-object-get-instances smb2` | `query_info_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> query_info_latency_base | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/smb.json | SMB Performance | Other Latency |
+
+
+
 ### smb2_query_info_ops
 
 Number of SMB2_COM_QUERY_INFO operations
@@ -11813,6 +15806,12 @@ Number of SMB2_COM_QUERY_INFO operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/smb2` | `query_info_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `query_info_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/smb.json | SMB Performance | Other IOPS |
+
 
 
 ### smb2_read_latency
@@ -11825,6 +15824,12 @@ Average latency for SMB2_COM_READ operations
 | ZAPI | `perf-object-get-instances smb2` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/smb.json | SMB Performance | Read / Write Latency |
+
+
+
 ### smb2_read_ops
 
 Number of SMB2_COM_READ operations
@@ -11833,6 +15838,12 @@ Number of SMB2_COM_READ operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/smb2` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/smb.json | SMB Performance | Read / Write IOPS |
+
 
 
 ### smb2_session_setup_latency
@@ -11845,6 +15856,12 @@ Average latency for SMB2_COM_SESSION_SETUP operations
 | ZAPI | `perf-object-get-instances smb2` | `session_setup_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> session_setup_latency_base | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/smb.json | SMB Performance | Other Latency |
+
+
+
 ### smb2_session_setup_ops
 
 Number of SMB2_COM_SESSION_SETUP operations
@@ -11853,6 +15870,12 @@ Number of SMB2_COM_SESSION_SETUP operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/smb2` | `session_setup_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `session_setup_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/smb.json | SMB Performance | Other IOPS |
+
 
 
 ### smb2_set_info_latency
@@ -11865,6 +15888,12 @@ Average latency for SMB2_COM_SET_INFO operations
 | ZAPI | `perf-object-get-instances smb2` | `set_info_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> set_info_latency_base | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/smb.json | SMB Performance | Other Latency |
+
+
+
 ### smb2_set_info_ops
 
 Number of SMB2_COM_SET_INFO operations
@@ -11873,6 +15902,12 @@ Number of SMB2_COM_SET_INFO operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/smb2` | `set_info_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `set_info_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/smb.json | SMB Performance | Other IOPS |
+
 
 
 ### smb2_tree_connect_latency
@@ -11885,6 +15920,12 @@ Average latency for SMB2_COM_TREE_CONNECT operations
 | ZAPI | `perf-object-get-instances smb2` | `tree_connect_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> tree_connect_latency_base | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/smb.json | SMB Performance | Other Latency |
+
+
+
 ### smb2_tree_connect_ops
 
 Number of SMB2_COM_TREE_CONNECT operations
@@ -11893,6 +15934,13 @@ Number of SMB2_COM_TREE_CONNECT operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/smb2` | `tree_connect_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `tree_connect_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/smb.json | SMB Performance | Other IOPS |
+| cmode/smb.json | SMB Performance | Other IOPS |
+
 
 
 ### smb2_write_latency
@@ -11905,6 +15953,12 @@ Average latency for SMB2_COM_WRITE operations
 | ZAPI | `perf-object-get-instances smb2` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_latency_base | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/smb.json | SMB Performance | Read / Write Latency |
+
+
+
 ### smb2_write_ops
 
 Number of SMB2_COM_WRITE operations
@@ -11913,6 +15967,12 @@ Number of SMB2_COM_WRITE operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/smb2` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/smb.json | SMB Performance | Read / Write IOPS |
+
 
 
 ### snapmirror_break_failed_count
@@ -11925,6 +15985,12 @@ The number of failed SnapMirror break operations for the relationship
 | ZAPI | `snapmirror-get-iter` | `snapmirror-info.break-failed-count` | conf/zapi/cdot/9.8.0/snapmirror.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/snapmirror.json | Highlights | Number of Failed SnapMirror Transfers |
+
+
+
 ### snapmirror_break_successful_count
 
 The number of successful SnapMirror break operations for the relationship
@@ -11933,6 +15999,12 @@ The number of successful SnapMirror break operations for the relationship
 |--------|----------|--------|---------|
 | REST | `api/private/cli/snapmirror` | `break_successful_count` | conf/rest/9.12.0/snapmirror.yaml |
 | ZAPI | `snapmirror-get-iter` | `snapmirror-info.break-successful-count` | conf/zapi/cdot/9.8.0/snapmirror.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/snapmirror.json | Highlights | Number of Successful SnapMirror Transfers |
+
 
 
 ### snapmirror_labels
@@ -11945,6 +16017,42 @@ This metric provides information about SnapMirror
 | ZAPI | `snapmirror-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/snapmirror.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/datacenter.json | Highlights | Object Count |
+| cmode/snapmirror.json | Highlights | Unhealthy Relationships |
+| cmode/snapmirror.json | Highlights | Relationships |
+| cmode/snapmirror.json | Policy and Lag details | Relationships by Protection Policy |
+| cmode/snapmirror.json | Policy and Lag details | Relationships by Protection Policy |
+| cmode/snapmirror.json | Policy and Lag details | Relationships by Protection Policy |
+| cmode/snapmirror.json | Policy and Lag details | Relationships by Protection Policy |
+| cmode/snapmirror.json | Policy and Lag details | Relationships by Protection Policy |
+| cmode/snapmirror.json | Policy and Lag details | Relationships by Protection Policy |
+| cmode/snapmirror.json | Policy and Lag details | Relationships by Protection Policy |
+| cmode/snapmirror.json | Policy and Lag details | Protection Policy and Lag detail |
+| cmode/snapmirror_destinations.json | Highlights | Unhealthy |
+| cmode/snapmirror_destinations.json | Highlights | Relationships by Protection Policy |
+| cmode/snapmirror_destinations.json | Highlights | Relationships by Protection Policy |
+| cmode/snapmirror_destinations.json | Highlights | Relationships by Protection Policy |
+| cmode/snapmirror_destinations.json | Highlights | Relationships by Protection Policy |
+| cmode/snapmirror_destinations.json | Highlights | Relationships by Protection Policy |
+| cmode/snapmirror_destinations.json | Highlights | Relationships by Protection Policy |
+| cmode/snapmirror_destinations.json | Highlights | Relationships by Protection Policy |
+| cmode/snapmirror_destinations.json | Highlights | Healthy |
+| cmode/snapmirror_destinations.json | Highlights | Relationships |
+| cmode/snapmirror_destinations.json | Consistency Group Data Protection | Unhealthy |
+| cmode/snapmirror_destinations.json | Consistency Group Data Protection | Consistency Group relationships by relationship type |
+| cmode/snapmirror_destinations.json | Consistency Group Data Protection | Consistency Group relationships by relationship type |
+| cmode/snapmirror_destinations.json | Consistency Group Data Protection | Consistency Group relationships by relationship type |
+| cmode/snapmirror_destinations.json | Consistency Group Data Protection | Consistency Group relationships by relationship type |
+| cmode/snapmirror_destinations.json | Consistency Group Data Protection | Consistency Group relationships by relationship type |
+| cmode/snapmirror_destinations.json | Consistency Group Data Protection | Consistency Group relationships by relationship type |
+| cmode/snapmirror_destinations.json | Consistency Group Data Protection | Consistency Group relationships by relationship type |
+| cmode/snapmirror_destinations.json | Consistency Group Data Protection | Healthy |
+| cmode/snapmirror_destinations.json | Consistency Group Data Protection | Consistency Group Relationships |
+
+
+
 ### snapmirror_lag_time
 
 Amount of time since the last snapmirror transfer in seconds
@@ -11953,6 +16061,22 @@ Amount of time since the last snapmirror transfer in seconds
 |--------|----------|--------|---------|
 | REST | `api/private/cli/snapmirror` | `lag_time` | conf/rest/9.12.0/snapmirror.yaml |
 | ZAPI | `snapmirror-get-iter` | `snapmirror-info.lag-time` | conf/zapi/cdot/9.8.0/snapmirror.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/snapmirror.json | Highlights | Relationships |
+| cmode/snapmirror.json | Highlights | Top $TopResources Relationships by Lag Time |
+| cmode/snapmirror.json | Highlights | Top $TopResources Relationships by Lag Time |
+| cmode/snapmirror.json | Policy and Lag details | Relationships by Lag time |
+| cmode/snapmirror.json | Policy and Lag details | Relationships by Lag time |
+| cmode/snapmirror.json | Policy and Lag details | Relationships by Lag time |
+| cmode/snapmirror.json | Policy and Lag details | Relationships by Lag time |
+| cmode/snapmirror.json | Policy and Lag details | Protection Policy and Lag detail |
+| cmode/snapmirror_destinations.json | Highlights | Relationships |
+| cmode/snapmirror_destinations.json | Highlights | Top $TopResources Relationships by Lag Time |
+| cmode/snapmirror_destinations.json | Highlights | Top $TopResources Relationships by Lag Time |
+
 
 
 ### snapmirror_last_transfer_duration
@@ -11965,6 +16089,17 @@ Duration of the last SnapMirror transfer in seconds
 | ZAPI | `snapmirror-get-iter` | `snapmirror-info.last-transfer-duration` | conf/zapi/cdot/9.8.0/snapmirror.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/snapmirror.json | Highlights | Relationships |
+| cmode/snapmirror.json | Highlights | Top $TopResources Relationships by Transfer Duration |
+| cmode/snapmirror.json | Highlights | Top $TopResources Relationships by Transfer Duration |
+| cmode/snapmirror_destinations.json | Highlights | Relationships |
+| cmode/snapmirror_destinations.json | Highlights | Top $TopResources Relationships by Transfer Duration |
+| cmode/snapmirror_destinations.json | Highlights | Top $TopResources Relationships by Transfer Duration |
+
+
+
 ### snapmirror_last_transfer_end_timestamp
 
 The Timestamp of the end of the last transfer
@@ -11973,6 +16108,7 @@ The Timestamp of the end of the last transfer
 |--------|----------|--------|---------|
 | REST | `api/private/cli/snapmirror` | `last_transfer_end_timestamp` | conf/rest/9.12.0/snapmirror.yaml |
 | ZAPI | `snapmirror-get-iter` | `snapmirror-info.last-transfer-end-timestamp` | conf/zapi/cdot/9.8.0/snapmirror.yaml |
+
 
 
 ### snapmirror_last_transfer_size
@@ -11985,6 +16121,17 @@ Size in kilobytes (1024 bytes) of the last transfer
 | ZAPI | `snapmirror-get-iter` | `snapmirror-info.last-transfer-size` | conf/zapi/cdot/9.8.0/snapmirror.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/snapmirror.json | Highlights | Relationships |
+| cmode/snapmirror.json | Highlights | Top $TopResources Relationships by Transfer Data |
+| cmode/snapmirror.json | Highlights | Top $TopResources Relationships by Transfer Data |
+| cmode/snapmirror_destinations.json | Highlights | Relationships |
+| cmode/snapmirror_destinations.json | Highlights | Top $TopResources Relationships by Transfer Data |
+| cmode/snapmirror_destinations.json | Highlights | Top $TopResources Relationships by Transfer Data |
+
+
+
 ### snapmirror_newest_snapshot_timestamp
 
 The timestamp of the newest Snapshot copy on the destination volume
@@ -11995,6 +16142,7 @@ The timestamp of the newest Snapshot copy on the destination volume
 | ZAPI | `snapmirror-get-iter` | `snapmirror-info.newest-snapshot-timestamp` | conf/zapi/cdot/9.8.0/snapmirror.yaml |
 
 
+
 ### snapmirror_policy_labels
 
 This metric provides information about SnapMirrorPolicy
@@ -12002,6 +16150,12 @@ This metric provides information about SnapMirrorPolicy
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/snapmirror/policies` | `Harvest generated` | conf/rest/9.6.0/snapmirrorpolicy.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/data_protection.json | Local Policy | Protection policies |
+
 
 
 ### snapmirror_resync_failed_count
@@ -12014,6 +16168,12 @@ The number of failed SnapMirror resync operations for the relationship
 | ZAPI | `snapmirror-get-iter` | `snapmirror-info.resync-failed-count` | conf/zapi/cdot/9.8.0/snapmirror.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/snapmirror.json | Highlights | Number of Failed SnapMirror Transfers |
+
+
+
 ### snapmirror_resync_successful_count
 
 The number of successful SnapMirror resync operations for the relationship
@@ -12022,6 +16182,12 @@ The number of successful SnapMirror resync operations for the relationship
 |--------|----------|--------|---------|
 | REST | `api/private/cli/snapmirror` | `resync_successful_count` | conf/rest/9.12.0/snapmirror.yaml |
 | ZAPI | `snapmirror-get-iter` | `snapmirror-info.resync-successful-count` | conf/zapi/cdot/9.8.0/snapmirror.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/snapmirror.json | Highlights | Number of Successful SnapMirror Transfers |
+
 
 
 ### snapmirror_total_transfer_bytes
@@ -12034,6 +16200,7 @@ Cumulative bytes transferred for the relationship
 | ZAPI | `snapmirror-get-iter` | `snapmirror-info.total-transfer-bytes` | conf/zapi/cdot/9.8.0/snapmirror.yaml |
 
 
+
 ### snapmirror_total_transfer_time_secs
 
 Cumulative total transfer time in seconds for the relationship
@@ -12042,6 +16209,7 @@ Cumulative total transfer time in seconds for the relationship
 |--------|----------|--------|---------|
 | REST | `api/private/cli/snapmirror` | `total_transfer_time_secs` | conf/rest/9.12.0/snapmirror.yaml |
 | ZAPI | `snapmirror-get-iter` | `snapmirror-info.total-transfer-time-secs` | conf/zapi/cdot/9.8.0/snapmirror.yaml |
+
 
 
 ### snapmirror_update_failed_count
@@ -12054,6 +16222,12 @@ The number of successful SnapMirror update operations for the relationship
 | ZAPI | `snapmirror-get-iter` | `snapmirror-info.update-failed-count` | conf/zapi/cdot/9.8.0/snapmirror.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/snapmirror.json | Highlights | Number of Failed SnapMirror Transfers |
+
+
+
 ### snapmirror_update_successful_count
 
 Number of Successful Updates
@@ -12062,6 +16236,12 @@ Number of Successful Updates
 |--------|----------|--------|---------|
 | REST | `api/private/cli/snapmirror` | `update_successful_count` | conf/rest/9.12.0/snapmirror.yaml |
 | ZAPI | `snapmirror-get-iter` | `snapmirror-info.update-successful-count` | conf/zapi/cdot/9.8.0/snapmirror.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/snapmirror.json | Highlights | Number of Successful SnapMirror Transfers |
+
 
 
 ### snapshot_policy_labels
@@ -12074,6 +16254,21 @@ This metric provides information about SnapshotPolicy
 | ZAPI | `snapshot-policy-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/snapshotpolicy.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/data_protection.json | Snapshot Copies |  <10 Copies  |
+| cmode/data_protection.json | Snapshot Copies | 10-100 Copies |
+| cmode/data_protection.json | Snapshot Copies | 101-500 Copies |
+| cmode/data_protection.json | Snapshot Copies | >500 Copies |
+| cmode/data_protection.json | Snapshot Copies | Volume count by the number of Snapshot copies |
+| cmode/data_protection.json | Local Policy | Snapshot policies |
+| cmode/datacenter.json | Snapshots | Snapshot Copies |
+| cmode/datacenter.json | Snapshots | Snapshot Copies |
+| cmode/datacenter.json | Snapshots | Snapshot Copies |
+| cmode/datacenter.json | Snapshots | Snapshot Copies |
+
+
+
 ### support_auto_update_labels
 
 This metric provides information about SupportAutoUpdate
@@ -12081,6 +16276,13 @@ This metric provides information about SupportAutoUpdate
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/support/auto-update` | `Harvest generated` | conf/rest/9.12.0/support_auto_update.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+
 
 
 ### support_labels
@@ -12093,6 +16295,15 @@ This metric provides information about Support
 | ZAPI | `autosupport-config-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/support.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/security.json | Highlights | Cluster Compliant % |
+| cmode/security.json | Highlights | Cluster Compliant |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+
+
+
 ### svm_cifs_connections
 
 Number of connections
@@ -12101,6 +16312,12 @@ Number of connections
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_cifs` | `connections`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_vserver.yaml |
 | ZAPI | `perf-object-get-instances cifs:vserver` | `connections`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_vserver.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | CIFS | SVM CIFS Connections and Open Files |
+
 
 
 ### svm_cifs_established_sessions
@@ -12113,6 +16330,7 @@ Number of established SMB and SMB2 sessions
 | ZAPI | `perf-object-get-instances cifs:vserver` | `established_sessions`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_vserver.yaml |
 
 
+
 ### svm_cifs_latency
 
 Average latency for CIFS operations
@@ -12121,6 +16339,13 @@ Average latency for CIFS operations
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_cifs` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> latency_base | conf/restperf/9.12.0/cifs_vserver.yaml |
 | ZAPI | `perf-object-get-instances cifs:vserver` | `cifs_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cifs_latency_base | conf/zapiperf/cdot/9.8.0/cifs_vserver.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | CIFS | SVM CIFS Average Latency |
+| cmode/svm.json | CIFS | SVM CIFS Latency |
+
 
 
 ### svm_cifs_op_count
@@ -12133,6 +16358,14 @@ Array of select CIFS operation counts
 | ZAPI | `perf-object-get-instances cifs:vserver` | `cifs_op_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_vserver.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | CIFS | SVM CIFS IOPs |
+| cmode/svm.json | CIFS | SVM CIFS IOPs |
+| cmode/svm.json | CIFS | SVM CIFS IOP by Type |
+
+
+
 ### svm_cifs_open_files
 
 Number of open files over SMB and SMB2
@@ -12141,6 +16374,12 @@ Number of open files over SMB and SMB2
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_cifs` | `open_files`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_vserver.yaml |
 | ZAPI | `perf-object-get-instances cifs:vserver` | `open_files`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_vserver.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | CIFS | SVM CIFS Connections and Open Files |
+
 
 
 ### svm_cifs_ops
@@ -12153,6 +16392,7 @@ Total number of CIFS operations
 | ZAPI | `perf-object-get-instances cifs:vserver` | `cifs_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_vserver.yaml |
 
 
+
 ### svm_cifs_other_latency
 
 Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.
@@ -12160,6 +16400,7 @@ Performance metric for other I/O operations. Other I/O operations can be metadat
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/protocols/cifs/services` | `statistics.latency_raw.other`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> svm_cifs_statistics.iops_raw.other | conf/keyperf/9.15.0/cifs_vserver.yaml |
+
 
 
 ### svm_cifs_other_ops
@@ -12171,6 +16412,7 @@ Performance metric for other I/O operations. Other I/O operations can be metadat
 | KeyPerf | `api/protocols/cifs/services` | `statistics.iops_raw.other`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/cifs_vserver.yaml |
 
 
+
 ### svm_cifs_read_data
 
 Performance metric for read I/O operations.
@@ -12178,6 +16420,7 @@ Performance metric for read I/O operations.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/protocols/cifs/services` | `statistics.throughput_raw.read`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/cifs_vserver.yaml |
+
 
 
 ### svm_cifs_read_latency
@@ -12191,6 +16434,13 @@ Average latency for CIFS read operations
 | ZAPI | `perf-object-get-instances cifs:vserver` | `cifs_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cifs_read_ops | conf/zapiperf/cdot/9.8.0/cifs_vserver.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | CIFS | SVM CIFS Average Read Latency |
+| cmode/svm.json | CIFS | SVM CIFS Latency |
+
+
+
 ### svm_cifs_read_ops
 
 Total number of CIFS read operations
@@ -12200,6 +16450,13 @@ Total number of CIFS read operations
 | REST | `api/cluster/counter/tables/svm_cifs` | `total_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_vserver.yaml |
 | KeyPerf | `api/protocols/cifs/services` | `statistics.iops_raw.read`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/cifs_vserver.yaml |
 | ZAPI | `perf-object-get-instances cifs:vserver` | `cifs_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_vserver.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | CIFS | SVM CIFS Read IOPs |
+| cmode/svm.json | CIFS | SVM CIFS IOPs |
+
 
 
 ### svm_cifs_signed_sessions
@@ -12212,6 +16469,7 @@ Number of signed SMB and SMB2 sessions.
 | ZAPI | `perf-object-get-instances cifs:vserver` | `signed_sessions`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_vserver.yaml |
 
 
+
 ### svm_cifs_total_latency
 
 Performance metric aggregated over all types of I/O operations.
@@ -12219,6 +16477,7 @@ Performance metric aggregated over all types of I/O operations.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/protocols/cifs/services` | `statistics.latency_raw.total`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> svm_cifs_statistics.iops_raw.total | conf/keyperf/9.15.0/cifs_vserver.yaml |
+
 
 
 ### svm_cifs_total_ops
@@ -12230,6 +16489,7 @@ Performance metric aggregated over all types of I/O operations.
 | KeyPerf | `api/protocols/cifs/services` | `statistics.iops_raw.total`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/cifs_vserver.yaml |
 
 
+
 ### svm_cifs_write_data
 
 Performance metric for write I/O operations.
@@ -12237,6 +16497,7 @@ Performance metric for write I/O operations.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/protocols/cifs/services` | `statistics.throughput_raw.write`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/cifs_vserver.yaml |
+
 
 
 ### svm_cifs_write_latency
@@ -12250,6 +16511,13 @@ Average latency for CIFS write operations
 | ZAPI | `perf-object-get-instances cifs:vserver` | `cifs_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cifs_write_ops | conf/zapiperf/cdot/9.8.0/cifs_vserver.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | CIFS | SVM CIFS Average Write Latency |
+| cmode/svm.json | CIFS | SVM CIFS Latency |
+
+
+
 ### svm_cifs_write_ops
 
 Total number of CIFS write operations
@@ -12259,6 +16527,13 @@ Total number of CIFS write operations
 | REST | `api/cluster/counter/tables/svm_cifs` | `total_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_vserver.yaml |
 | KeyPerf | `api/protocols/cifs/services` | `statistics.iops_raw.write`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/cifs_vserver.yaml |
 | ZAPI | `perf-object-get-instances cifs:vserver` | `cifs_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_vserver.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | CIFS | SVM CIFS Write IOPs |
+| cmode/svm.json | CIFS | SVM CIFS IOPs |
+
 
 
 ### svm_labels
@@ -12271,6 +16546,53 @@ This metric provides information about SVM
 | ZAPI | `vserver-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/svm.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/cdot.json | Capacity Metrics | Top $TopResources SVMs by Capacity Used % |
+| cmode/cdot.json | Capacity Metrics | Top $TopResources SVMs by Capacity Used % |
+| cmode/cdot.json | SVM Metrics | Top $TopResources Average Throughput by SVMs |
+| cmode/datacenter.json | Highlights | Object Count |
+| cmode/security.json | Highlights | Cluster Compliant % |
+| cmode/security.json | Highlights | Cluster Compliant % |
+| cmode/security.json | Highlights | Cluster Compliant % |
+| cmode/security.json | Highlights | Cluster Compliant % |
+| cmode/security.json | Highlights | SVM Compliant % |
+| cmode/security.json | Highlights | SVM Compliant % |
+| cmode/security.json | Highlights | SVM Compliant % |
+| cmode/security.json | Highlights | SVM Compliant % |
+| cmode/security.json | Highlights | SVM Compliant % |
+| cmode/security.json | Highlights | SVM Compliant % |
+| cmode/security.json | Highlights | SVM Anti-ransomware Status % |
+| cmode/security.json | Highlights | SVM Anti-ransomware Status % |
+| cmode/security.json | Highlights | Cluster Compliant |
+| cmode/security.json | Highlights | Cluster Compliant |
+| cmode/security.json | Highlights | Cluster Compliant |
+| cmode/security.json | Highlights | Cluster Compliant |
+| cmode/security.json | Highlights | SVM Compliant |
+| cmode/security.json | Highlights | SVM Compliant |
+| cmode/security.json | Highlights | SVM Compliant |
+| cmode/security.json | Highlights | SVM Compliant |
+| cmode/security.json | Highlights | SVM Compliant |
+| cmode/security.json | Highlights | SVM Compliant |
+| cmode/security.json | Highlights | SVM Anti-ransomware Status |
+| cmode/security.json | Highlights | SVM Anti-ransomware Status |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| cmode/security.json | SVM Compliance | SVM Compliance |
+| cmode/security.json | SVM Compliance | SVM Compliance |
+| cmode/security.json | SVM Compliance | SVM Compliance |
+| cmode/security.json | SVM Compliance | SVM Compliance |
+| cmode/security.json | SVM Compliance | SVM Compliance |
+| cmode/security.json | SVM Compliance | SVM Compliance |
+| cmode/security.json | SVM Compliance | SVM Compliance |
+
+
+
 ### svm_new_status
 
 This metric indicates a value of 1 if the SVM state is online (indicating the SVM is operational) and a value of 0 for any other state.
@@ -12279,6 +16601,7 @@ This metric indicates a value of 1 if the SVM state is online (indicating the SV
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.10.0/svm.yaml |
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/svm.yaml |
+
 
 
 ### svm_nfs_access_avg_latency
@@ -12297,6 +16620,7 @@ Average latency of Access procedure requests. The counter keeps track of the ave
 | ZAPI | `perf-object-get-instances nfsv4_2` | `access_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> access_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_access_total
 
 Total number of Access procedure requests. It is the total number of access success and access error requests.
@@ -12313,6 +16637,7 @@ Total number of Access procedure requests. It is the total number of access succ
 | ZAPI | `perf-object-get-instances nfsv4_2` | `access_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_backchannel_ctl_avg_latency
 
 Average latency of BACKCHANNEL_CTL operations.
@@ -12323,6 +16648,7 @@ Average latency of BACKCHANNEL_CTL operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `backchannel_ctl.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> backchannel_ctl.total | conf/restperf/9.12.0/nfsv4_2.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `backchannel_ctl_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> backchannel_ctl_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `backchannel_ctl_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> backchannel_ctl_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_backchannel_ctl_total
@@ -12337,6 +16663,7 @@ Total number of BACKCHANNEL_CTL operations.
 | ZAPI | `perf-object-get-instances nfsv4_2` | `backchannel_ctl_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_bind_conn_to_session_avg_latency
 
 Average latency of BIND_CONN_TO_SESSION operations.
@@ -12349,6 +16676,7 @@ Average latency of BIND_CONN_TO_SESSION operations.
 | ZAPI | `perf-object-get-instances nfsv4_2` | `bind_conn_to_session_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> bind_conn_to_session_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_bind_conn_to_session_total
 
 Total number of BIND_CONN_TO_SESSION operations.
@@ -12359,6 +16687,7 @@ Total number of BIND_CONN_TO_SESSION operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `bind_conn_to_session.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `bind_conn_to_session_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `bind_conn_to_session_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_close_avg_latency
@@ -12375,6 +16704,7 @@ Average latency of CLOSE procedures
 | ZAPI | `perf-object-get-instances nfsv4_2` | `close_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> close_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_close_total
 
 Total number of CLOSE procedures
@@ -12387,6 +16717,7 @@ Total number of CLOSE procedures
 | ZAPI | `perf-object-get-instances nfsv4` | `close_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `close_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `close_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_commit_avg_latency
@@ -12405,6 +16736,7 @@ Average latency of Commit procedure requests. The counter keeps track of the ave
 | ZAPI | `perf-object-get-instances nfsv4_2` | `commit_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> commit_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_commit_total
 
 Total number of Commit procedure requests. It is the total number of Commit success and Commit error requests.
@@ -12419,6 +16751,7 @@ Total number of Commit procedure requests. It is the total number of Commit succ
 | ZAPI | `perf-object-get-instances nfsv4` | `commit_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `commit_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `commit_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_create_avg_latency
@@ -12437,6 +16770,7 @@ Average latency of Create procedure requests. The counter keeps track of the ave
 | ZAPI | `perf-object-get-instances nfsv4_2` | `create_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> create_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_create_session_avg_latency
 
 Average latency of CREATE_SESSION operations.
@@ -12449,6 +16783,7 @@ Average latency of CREATE_SESSION operations.
 | ZAPI | `perf-object-get-instances nfsv4_2` | `create_session_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> create_session_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_create_session_total
 
 Total number of CREATE_SESSION operations.
@@ -12459,6 +16794,7 @@ Total number of CREATE_SESSION operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `create_session.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `create_session_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `create_session_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_create_total
@@ -12477,6 +16813,7 @@ Total number Create of procedure requests. It is the total number of create succ
 | ZAPI | `perf-object-get-instances nfsv4_2` | `create_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_delegpurge_avg_latency
 
 Average latency of DELEGPURGE procedures
@@ -12489,6 +16826,7 @@ Average latency of DELEGPURGE procedures
 | ZAPI | `perf-object-get-instances nfsv4` | `delegpurge_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delegpurge_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `delegpurge_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delegpurge_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `delegpurge_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delegpurge_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_delegpurge_total
@@ -12505,6 +16843,7 @@ Total number of DELEGPURGE procedures
 | ZAPI | `perf-object-get-instances nfsv4_2` | `delegpurge_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_delegreturn_avg_latency
 
 Average latency of DELEGRETURN procedures
@@ -12517,6 +16856,7 @@ Average latency of DELEGRETURN procedures
 | ZAPI | `perf-object-get-instances nfsv4` | `delegreturn_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delegreturn_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `delegreturn_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delegreturn_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `delegreturn_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delegreturn_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_delegreturn_total
@@ -12533,6 +16873,7 @@ Total number of DELEGRETURN procedures
 | ZAPI | `perf-object-get-instances nfsv4_2` | `delegreturn_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_destroy_clientid_avg_latency
 
 Average latency of DESTROY_CLIENTID operations.
@@ -12543,6 +16884,7 @@ Average latency of DESTROY_CLIENTID operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `destroy_clientid.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> destroy_clientid.total | conf/restperf/9.12.0/nfsv4_2.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `destroy_clientid_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> destroy_clientid_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `destroy_clientid_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> destroy_clientid_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_destroy_clientid_total
@@ -12557,6 +16899,7 @@ Total number of DESTROY_CLIENTID operations.
 | ZAPI | `perf-object-get-instances nfsv4_2` | `destroy_clientid_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_destroy_session_avg_latency
 
 Average latency of DESTROY_SESSION operations.
@@ -12567,6 +16910,7 @@ Average latency of DESTROY_SESSION operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `destroy_session.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> destroy_session.total | conf/restperf/9.12.0/nfsv4_2.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `destroy_session_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> destroy_session_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `destroy_session_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> destroy_session_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_destroy_session_total
@@ -12581,6 +16925,7 @@ Total number of DESTROY_SESSION operations.
 | ZAPI | `perf-object-get-instances nfsv4_2` | `destroy_session_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_exchange_id_avg_latency
 
 Average latency of EXCHANGE_ID operations.
@@ -12591,6 +16936,7 @@ Average latency of EXCHANGE_ID operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `exchange_id.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> exchange_id.total | conf/restperf/9.12.0/nfsv4_2.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `exchange_id_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> exchange_id_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `exchange_id_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> exchange_id_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_exchange_id_total
@@ -12605,6 +16951,7 @@ Total number of EXCHANGE_ID operations.
 | ZAPI | `perf-object-get-instances nfsv4_2` | `exchange_id_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_free_stateid_avg_latency
 
 Average latency of FREE_STATEID operations.
@@ -12615,6 +16962,7 @@ Average latency of FREE_STATEID operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `free_stateid.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> free_stateid.total | conf/restperf/9.12.0/nfsv4_2.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `free_stateid_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> free_stateid_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `free_stateid_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> free_stateid_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_free_stateid_total
@@ -12629,6 +16977,7 @@ Total number of FREE_STATEID operations.
 | ZAPI | `perf-object-get-instances nfsv4_2` | `free_stateid_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_fsinfo_avg_latency
 
 Average latency of FSInfo procedure requests. The counter keeps track of the average response time of FSInfo requests.
@@ -12637,6 +16986,7 @@ Average latency of FSInfo procedure requests. The counter keeps track of the ave
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v3` | `fsinfo.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> fsinfo.total | conf/restperf/9.12.0/nfsv3.yaml |
 | ZAPI | `perf-object-get-instances nfsv3` | `fsinfo_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> fsinfo_total | conf/zapiperf/cdot/9.8.0/nfsv3.yaml |
+
 
 
 ### svm_nfs_fsinfo_total
@@ -12649,6 +16999,7 @@ Total number FSInfo of procedure requests. It is the total number of FSInfo succ
 | ZAPI | `perf-object-get-instances nfsv3` | `fsinfo_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml |
 
 
+
 ### svm_nfs_fsstat_avg_latency
 
 Average latency of FSStat procedure requests. The counter keeps track of the average response time of FSStat requests.
@@ -12659,6 +17010,7 @@ Average latency of FSStat procedure requests. The counter keeps track of the ave
 | ZAPI | `perf-object-get-instances nfsv3` | `fsstat_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> fsstat_total | conf/zapiperf/cdot/9.8.0/nfsv3.yaml |
 
 
+
 ### svm_nfs_fsstat_total
 
 Total number FSStat of procedure requests. It is the total number of FSStat success and FSStat error requests.
@@ -12667,6 +17019,7 @@ Total number FSStat of procedure requests. It is the total number of FSStat succ
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v3` | `fsstat.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml |
 | ZAPI | `perf-object-get-instances nfsv3` | `fsstat_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml |
+
 
 
 ### svm_nfs_get_dir_delegation_avg_latency
@@ -12681,6 +17034,7 @@ Average latency of GET_DIR_DELEGATION operations.
 | ZAPI | `perf-object-get-instances nfsv4_2` | `get_dir_delegation_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> get_dir_delegation_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_get_dir_delegation_total
 
 Total number of GET_DIR_DELEGATION operations.
@@ -12691,6 +17045,7 @@ Total number of GET_DIR_DELEGATION operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `get_dir_delegation.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `get_dir_delegation_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `get_dir_delegation_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_getattr_avg_latency
@@ -12709,6 +17064,7 @@ Average latency of GetAttr procedure requests. This counter keeps track of the a
 | ZAPI | `perf-object-get-instances nfsv4_2` | `getattr_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getattr_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_getattr_total
 
 Total number of Getattr procedure requests. It is the total number of getattr success and getattr error requests.
@@ -12725,6 +17081,7 @@ Total number of Getattr procedure requests. It is the total number of getattr su
 | ZAPI | `perf-object-get-instances nfsv4_2` | `getattr_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_getdeviceinfo_avg_latency
 
 Average latency of GETDEVICEINFO operations.
@@ -12735,6 +17092,7 @@ Average latency of GETDEVICEINFO operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `getdeviceinfo.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> getdeviceinfo.total | conf/restperf/9.12.0/nfsv4_2.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `getdeviceinfo_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getdeviceinfo_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `getdeviceinfo_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getdeviceinfo_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_getdeviceinfo_total
@@ -12749,6 +17107,7 @@ Total number of GETDEVICEINFO operations.
 | ZAPI | `perf-object-get-instances nfsv4_2` | `getdeviceinfo_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_getdevicelist_avg_latency
 
 Average latency of GETDEVICELIST operations.
@@ -12761,6 +17120,7 @@ Average latency of GETDEVICELIST operations.
 | ZAPI | `perf-object-get-instances nfsv4_2` | `getdevicelist_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getdevicelist_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_getdevicelist_total
 
 Total number of GETDEVICELIST operations.
@@ -12771,6 +17131,7 @@ Total number of GETDEVICELIST operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `getdevicelist.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `getdevicelist_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `getdevicelist_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_getfh_avg_latency
@@ -12787,6 +17148,7 @@ Average latency of GETFH procedures
 | ZAPI | `perf-object-get-instances nfsv4_2` | `getfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> getfh_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_getfh_total
 
 Total number of GETFH procedures
@@ -12799,6 +17161,7 @@ Total number of GETFH procedures
 | ZAPI | `perf-object-get-instances nfsv4` | `getfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `getfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `getfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_latency
@@ -12820,6 +17183,15 @@ Average latency of NFSv3 requests. This counter keeps track of the average respo
 | ZAPI | `perf-object-get-instances nfsv4_2` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | NFSv3 | NFSv3 Avg Latency |
+| cmode/svm.json | NFSv4 | NFSv4 Avg Latency |
+| cmode/svm.json | NFSv4.1 | NFSv4.1 Avg Latency |
+| cmode/svm.json | NFSv4.2 | NFSv4.2 Avg Latency |
+
+
+
 ### svm_nfs_layoutcommit_avg_latency
 
 Average latency of LAYOUTCOMMIT operations.
@@ -12830,6 +17202,7 @@ Average latency of LAYOUTCOMMIT operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `layoutcommit.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> layoutcommit.total | conf/restperf/9.12.0/nfsv4_2.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `layoutcommit_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> layoutcommit_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `layoutcommit_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> layoutcommit_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_layoutcommit_total
@@ -12844,6 +17217,7 @@ Total number of LAYOUTCOMMIT operations.
 | ZAPI | `perf-object-get-instances nfsv4_2` | `layoutcommit_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_layoutget_avg_latency
 
 Average latency of LAYOUTGET operations.
@@ -12854,6 +17228,7 @@ Average latency of LAYOUTGET operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `layoutget.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> layoutget.total | conf/restperf/9.12.0/nfsv4_2.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `layoutget_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> layoutget_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `layoutget_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> layoutget_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_layoutget_total
@@ -12868,6 +17243,7 @@ Total number of LAYOUTGET operations.
 | ZAPI | `perf-object-get-instances nfsv4_2` | `layoutget_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_layoutreturn_avg_latency
 
 Average latency of LAYOUTRETURN operations.
@@ -12880,6 +17256,7 @@ Average latency of LAYOUTRETURN operations.
 | ZAPI | `perf-object-get-instances nfsv4_2` | `layoutreturn_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> layoutreturn_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_layoutreturn_total
 
 Total number of LAYOUTRETURN operations.
@@ -12890,6 +17267,7 @@ Total number of LAYOUTRETURN operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `layoutreturn.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `layoutreturn_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `layoutreturn_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_link_avg_latency
@@ -12908,6 +17286,7 @@ Average latency of Link procedure requests. The counter keeps track of the avera
 | ZAPI | `perf-object-get-instances nfsv4_2` | `link_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> link_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_link_total
 
 Total number Link of procedure requests. It is the total number of Link success and Link error requests.
@@ -12924,6 +17303,7 @@ Total number Link of procedure requests. It is the total number of Link success 
 | ZAPI | `perf-object-get-instances nfsv4_2` | `link_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_lock_avg_latency
 
 Average latency of LOCK procedures
@@ -12936,6 +17316,7 @@ Average latency of LOCK procedures
 | ZAPI | `perf-object-get-instances nfsv4` | `lock_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lock_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `lock_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lock_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `lock_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lock_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_lock_total
@@ -12952,6 +17333,7 @@ Total number of LOCK procedures
 | ZAPI | `perf-object-get-instances nfsv4_2` | `lock_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_lockt_avg_latency
 
 Average latency of LOCKT procedures
@@ -12964,6 +17346,7 @@ Average latency of LOCKT procedures
 | ZAPI | `perf-object-get-instances nfsv4` | `lockt_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lockt_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `lockt_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lockt_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `lockt_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lockt_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_lockt_total
@@ -12980,6 +17363,7 @@ Total number of LOCKT procedures
 | ZAPI | `perf-object-get-instances nfsv4_2` | `lockt_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_locku_avg_latency
 
 Average latency of LOCKU procedures
@@ -12994,6 +17378,7 @@ Average latency of LOCKU procedures
 | ZAPI | `perf-object-get-instances nfsv4_2` | `locku_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> locku_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_locku_total
 
 Total number of LOCKU procedures
@@ -13006,6 +17391,7 @@ Total number of LOCKU procedures
 | ZAPI | `perf-object-get-instances nfsv4` | `locku_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `locku_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `locku_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_lookup_avg_latency
@@ -13024,6 +17410,7 @@ Average latency of LookUp procedure requests. This shows the average time it tak
 | ZAPI | `perf-object-get-instances nfsv4_2` | `lookup_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lookup_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_lookup_total
 
 Total number of Lookup procedure requests. It is the total number of lookup success and lookup error requests.
@@ -13040,6 +17427,7 @@ Total number of Lookup procedure requests. It is the total number of lookup succ
 | ZAPI | `perf-object-get-instances nfsv4_2` | `lookup_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_lookupp_avg_latency
 
 Average latency of LOOKUPP procedures
@@ -13052,6 +17440,7 @@ Average latency of LOOKUPP procedures
 | ZAPI | `perf-object-get-instances nfsv4` | `lookupp_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lookupp_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `lookupp_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lookupp_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `lookupp_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> lookupp_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_lookupp_total
@@ -13068,6 +17457,7 @@ Total number of LOOKUPP procedures
 | ZAPI | `perf-object-get-instances nfsv4_2` | `lookupp_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_mkdir_avg_latency
 
 Average latency of MkDir procedure requests. The counter keeps track of the average response time of MkDir requests.
@@ -13076,6 +17466,7 @@ Average latency of MkDir procedure requests. The counter keeps track of the aver
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v3` | `mkdir.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> mkdir.total | conf/restperf/9.12.0/nfsv3.yaml |
 | ZAPI | `perf-object-get-instances nfsv3` | `mkdir_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> mkdir_total | conf/zapiperf/cdot/9.8.0/nfsv3.yaml |
+
 
 
 ### svm_nfs_mkdir_total
@@ -13088,6 +17479,7 @@ Total number MkDir of procedure requests. It is the total number of MkDir succes
 | ZAPI | `perf-object-get-instances nfsv3` | `mkdir_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml |
 
 
+
 ### svm_nfs_mknod_avg_latency
 
 Average latency of MkNod procedure requests. The counter keeps track of the average response time of MkNod requests.
@@ -13098,6 +17490,7 @@ Average latency of MkNod procedure requests. The counter keeps track of the aver
 | ZAPI | `perf-object-get-instances nfsv3` | `mknod_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> mknod_total | conf/zapiperf/cdot/9.8.0/nfsv3.yaml |
 
 
+
 ### svm_nfs_mknod_total
 
 Total number MkNod of procedure requests. It is the total number of MkNod success and MkNod error requests.
@@ -13106,6 +17499,7 @@ Total number MkNod of procedure requests. It is the total number of MkNod succes
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v3` | `mknod.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml |
 | ZAPI | `perf-object-get-instances nfsv3` | `mknod_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml |
+
 
 
 ### svm_nfs_null_avg_latency
@@ -13124,6 +17518,7 @@ Average latency of Null procedure requests.
 | ZAPI | `perf-object-get-instances nfsv4_2` | `null_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> null_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_null_total
 
 Total number of Null procedure requests. It is the total of null success and null error requests.
@@ -13140,6 +17535,7 @@ Total number of Null procedure requests. It is the total of null success and nul
 | ZAPI | `perf-object-get-instances nfsv4_2` | `null_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_nverify_avg_latency
 
 Average latency of NVERIFY procedures
@@ -13152,6 +17548,7 @@ Average latency of NVERIFY procedures
 | ZAPI | `perf-object-get-instances nfsv4` | `nverify_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> nverify_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `nverify_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> nverify_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `nverify_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> nverify_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_nverify_total
@@ -13168,6 +17565,7 @@ Total number of NVERIFY procedures
 | ZAPI | `perf-object-get-instances nfsv4_2` | `nverify_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_open_avg_latency
 
 Average latency of OPEN procedures
@@ -13182,6 +17580,7 @@ Average latency of OPEN procedures
 | ZAPI | `perf-object-get-instances nfsv4_2` | `open_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> open_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_open_confirm_avg_latency
 
 Average latency of OPEN_CONFIRM procedures
@@ -13192,6 +17591,7 @@ Average latency of OPEN_CONFIRM procedures
 | ZAPI | `perf-object-get-instances nfsv4` | `open_confirm_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> open_confirm_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml |
 
 
+
 ### svm_nfs_open_confirm_total
 
 Total number of OPEN_CONFIRM procedures
@@ -13200,6 +17600,7 @@ Total number of OPEN_CONFIRM procedures
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4` | `open_confirm.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml |
 | ZAPI | `perf-object-get-instances nfsv4` | `open_confirm_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml |
+
 
 
 ### svm_nfs_open_downgrade_avg_latency
@@ -13216,6 +17617,7 @@ Average latency of OPEN_DOWNGRADE procedures
 | ZAPI | `perf-object-get-instances nfsv4_2` | `open_downgrade_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> open_downgrade_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_open_downgrade_total
 
 Total number of OPEN_DOWNGRADE procedures
@@ -13228,6 +17630,7 @@ Total number of OPEN_DOWNGRADE procedures
 | ZAPI | `perf-object-get-instances nfsv4` | `open_downgrade_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `open_downgrade_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `open_downgrade_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_open_total
@@ -13244,6 +17647,7 @@ Total number of OPEN procedures
 | ZAPI | `perf-object-get-instances nfsv4_2` | `open_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_openattr_avg_latency
 
 Average latency of OPENATTR procedures
@@ -13258,6 +17662,7 @@ Average latency of OPENATTR procedures
 | ZAPI | `perf-object-get-instances nfsv4_2` | `openattr_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> openattr_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_openattr_total
 
 Total number of OPENATTR procedures
@@ -13270,6 +17675,7 @@ Total number of OPENATTR procedures
 | ZAPI | `perf-object-get-instances nfsv4` | `openattr_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `openattr_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `openattr_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_ops
@@ -13291,6 +17697,23 @@ Total number of NFSv3 procedure requests per second.
 | ZAPI | `perf-object-get-instances nfsv4_2` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | NFSv3 | NFSv3 IOPs |
+| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by IOPs |
+| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by IOPs |
+| cmode/svm.json | NFSv4 | NFSv4 IOPs |
+| cmode/svm.json | NFSv4 | Top $TopResources NFSv4 SVMs by IOPs |
+| cmode/svm.json | NFSv4 | Top $TopResources NFSv4 SVMs by IOPs |
+| cmode/svm.json | NFSv4.1 | NFSv4.1 IOPs |
+| cmode/svm.json | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by IOPs |
+| cmode/svm.json | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by IOPs |
+| cmode/svm.json | NFSv4.2 | NFSv4.2 IOPs |
+| cmode/svm.json | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by IOPs |
+| cmode/svm.json | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by IOPs |
+
+
+
 ### svm_nfs_other_latency
 
 Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.
@@ -13300,6 +17723,7 @@ Performance metric for other I/O operations. Other I/O operations can be metadat
 | KeyPerf | `api/protocols/nfs/services` | `statistics.v3.latency_raw.other`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> svm_nfs_statistics.v3.iops_raw.other | conf/keyperf/9.15.0/nfsv3.yaml |
 | KeyPerf | `api/protocols/nfs/services` | `statistics.v4.latency_raw.other`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> svm_nfs_statistics.v4.iops_raw.other | conf/keyperf/9.15.0/nfsv4.yaml |
 | KeyPerf | `api/protocols/nfs/services` | `statistics.v41.latency_raw.other`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> svm_nfs_statistics.v41.iops_raw.other | conf/keyperf/9.15.0/nfsv4_1.yaml |
+
 
 
 ### svm_nfs_other_ops
@@ -13313,6 +17737,7 @@ Performance metric for other I/O operations. Other I/O operations can be metadat
 | KeyPerf | `api/protocols/nfs/services` | `statistics.v41.iops_raw.other`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/nfsv4_1.yaml |
 
 
+
 ### svm_nfs_pathconf_avg_latency
 
 Average latency of PathConf procedure requests. The counter keeps track of the average response time of PathConf requests.
@@ -13323,6 +17748,7 @@ Average latency of PathConf procedure requests. The counter keeps track of the a
 | ZAPI | `perf-object-get-instances nfsv3` | `pathconf_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> pathconf_total | conf/zapiperf/cdot/9.8.0/nfsv3.yaml |
 
 
+
 ### svm_nfs_pathconf_total
 
 Total number PathConf of procedure requests. It is the total number of PathConf success and PathConf error requests.
@@ -13331,6 +17757,7 @@ Total number PathConf of procedure requests. It is the total number of PathConf 
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v3` | `pathconf.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml |
 | ZAPI | `perf-object-get-instances nfsv3` | `pathconf_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml |
+
 
 
 ### svm_nfs_putfh_avg_latency
@@ -13347,6 +17774,7 @@ Average latency of PUTFH procedures
 | ZAPI | `perf-object-get-instances nfsv4_2` | `putfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> putfh_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_putfh_total
 
 Total number of PUTFH procedures
@@ -13359,6 +17787,7 @@ Total number of PUTFH procedures
 | ZAPI | `perf-object-get-instances nfsv4` | `putfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `putfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `putfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_putpubfh_avg_latency
@@ -13375,6 +17804,7 @@ Average latency of PUTPUBFH procedures
 | ZAPI | `perf-object-get-instances nfsv4_2` | `putpubfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> putpubfh_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_putpubfh_total
 
 Total number of PUTPUBFH procedures
@@ -13387,6 +17817,7 @@ Total number of PUTPUBFH procedures
 | ZAPI | `perf-object-get-instances nfsv4` | `putpubfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `putpubfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `putpubfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_putrootfh_avg_latency
@@ -13403,6 +17834,7 @@ Average latency of PUTROOTFH procedures
 | ZAPI | `perf-object-get-instances nfsv4_2` | `putrootfh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> putrootfh_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_putrootfh_total
 
 Total number of PUTROOTFH procedures
@@ -13415,6 +17847,7 @@ Total number of PUTROOTFH procedures
 | ZAPI | `perf-object-get-instances nfsv4` | `putrootfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `putrootfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `putrootfh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_read_avg_latency
@@ -13436,6 +17869,23 @@ Average latency of Read procedure requests. The counter keeps track of the avera
 | ZAPI | `perf-object-get-instances nfsv4_2` | `read_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> read_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | NFSv3 | NFSv3 Read Latency |
+| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by Read and Write Latency |
+| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by Read and Write Latency |
+| cmode/svm.json | NFSv4 | NFSv4 Read Latency |
+| cmode/svm.json | NFSv4 | Top $TopResources NFSv4 SVMs by Read and Write Latency |
+| cmode/svm.json | NFSv4 | Top $TopResources NFSv4 SVMs by Read and Write Latency |
+| cmode/svm.json | NFSv4.1 | NFSv4.1 Read Latency |
+| cmode/svm.json | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by Read and Write Latency |
+| cmode/svm.json | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by Read and Write Latency |
+| cmode/svm.json | NFSv4.2 | NFSv4.2 Read Latency |
+| cmode/svm.json | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by Read and Write Latency |
+| cmode/svm.json | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by Read and Write Latency |
+
+
+
 ### svm_nfs_read_ops
 
 Total observed NFSv3 read operations per second.
@@ -13449,6 +17899,14 @@ Total observed NFSv3 read operations per second.
 | ZAPI | `perf-object-get-instances nfsv3` | `nfsv3_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | NFSv3 | NFSv3 Read IOPs |
+| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by IOPs |
+| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by IOPs |
+
+
+
 ### svm_nfs_read_symlink_avg_latency
 
 Average latency of ReadSymLink procedure requests. The counter keeps track of the average response time of ReadSymLink requests.
@@ -13459,6 +17917,7 @@ Average latency of ReadSymLink procedure requests. The counter keeps track of th
 | ZAPI | `perf-object-get-instances nfsv3` | `read_symlink_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> read_symlink_total | conf/zapiperf/cdot/9.8.0/nfsv3.yaml |
 
 
+
 ### svm_nfs_read_symlink_total
 
 Total number of ReadSymLink procedure requests. It is the total number of read symlink success and read symlink error requests.
@@ -13467,6 +17926,7 @@ Total number of ReadSymLink procedure requests. It is the total number of read s
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v3` | `read_symlink.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml |
 | ZAPI | `perf-object-get-instances nfsv3` | `read_symlink_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml |
+
 
 
 ### svm_nfs_read_throughput
@@ -13488,6 +17948,23 @@ Rate of NFSv3 read data transfers per second.
 | ZAPI | `perf-object-get-instances nfsv4_2` | `nfs42_read_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | NFSv3 | NFSv3 Read Throughput |
+| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by Throughput |
+| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by Throughput |
+| cmode/svm.json | NFSv4 | NFSv4 Read Throughput |
+| cmode/svm.json | NFSv4 | Top $TopResources NFSv4 SVMs by Throughput |
+| cmode/svm.json | NFSv4 | Top $TopResources NFSv4 SVMs by Throughput |
+| cmode/svm.json | NFSv4.1 |  NFSv4.1 Read Throughput |
+| cmode/svm.json | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by Throughput |
+| cmode/svm.json | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by Throughput |
+| cmode/svm.json | NFSv4.2 |  NFSv4.2 Read Throughput |
+| cmode/svm.json | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by Throughput |
+| cmode/svm.json | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by Throughput |
+
+
+
 ### svm_nfs_read_total
 
 Total number Read of procedure requests. It is the total number of read success and read error requests.
@@ -13502,6 +17979,20 @@ Total number Read of procedure requests. It is the total number of read success 
 | ZAPI | `perf-object-get-instances nfsv4` | `read_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `read_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `read_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | NFSv4 | NFSv4 Read IOPs |
+| cmode/svm.json | NFSv4 | Top $TopResources NFSv4 SVMs by IOPs |
+| cmode/svm.json | NFSv4 | Top $TopResources NFSv4 SVMs by IOPs |
+| cmode/svm.json | NFSv4.1 | NFSv4.1 Read IOPs |
+| cmode/svm.json | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by IOPs |
+| cmode/svm.json | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by IOPs |
+| cmode/svm.json | NFSv4.2 | NFSv4.2 Read IOPs |
+| cmode/svm.json | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by IOPs |
+| cmode/svm.json | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by IOPs |
+
 
 
 ### svm_nfs_readdir_avg_latency
@@ -13520,6 +18011,7 @@ Average latency of ReadDir procedure requests. The counter keeps track of the av
 | ZAPI | `perf-object-get-instances nfsv4_2` | `readdir_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> readdir_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_readdir_total
 
 Total number ReadDir of procedure requests. It is the total number of ReadDir success and ReadDir error requests.
@@ -13536,6 +18028,7 @@ Total number ReadDir of procedure requests. It is the total number of ReadDir su
 | ZAPI | `perf-object-get-instances nfsv4_2` | `readdir_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_readdirplus_avg_latency
 
 Average latency of ReadDirPlus procedure requests. The counter keeps track of the average response time of ReadDirPlus requests.
@@ -13546,6 +18039,7 @@ Average latency of ReadDirPlus procedure requests. The counter keeps track of th
 | ZAPI | `perf-object-get-instances nfsv3` | `readdirplus_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> readdirplus_total | conf/zapiperf/cdot/9.8.0/nfsv3.yaml |
 
 
+
 ### svm_nfs_readdirplus_total
 
 Total number ReadDirPlus of procedure requests. It is the total number of ReadDirPlus success and ReadDirPlus error requests.
@@ -13554,6 +18048,7 @@ Total number ReadDirPlus of procedure requests. It is the total number of ReadDi
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v3` | `readdirplus.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml |
 | ZAPI | `perf-object-get-instances nfsv3` | `readdirplus_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml |
+
 
 
 ### svm_nfs_readlink_avg_latency
@@ -13570,6 +18065,7 @@ Average latency of READLINK procedures
 | ZAPI | `perf-object-get-instances nfsv4_2` | `readlink_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> readlink_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_readlink_total
 
 Total number of READLINK procedures
@@ -13584,6 +18080,7 @@ Total number of READLINK procedures
 | ZAPI | `perf-object-get-instances nfsv4_2` | `readlink_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_reclaim_complete_avg_latency
 
 Average latency of RECLAIM_COMPLETE operations.
@@ -13594,6 +18091,7 @@ Average latency of RECLAIM_COMPLETE operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `reclaim_complete.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> reclaim_complete.total | conf/restperf/9.12.0/nfsv4_2.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `reclaim_complete_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> reclaim_complete_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `reclaim_complete_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> reclaim_complete_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_reclaim_complete_total
@@ -13608,6 +18106,7 @@ Total number of RECLAIM_COMPLETE operations.
 | ZAPI | `perf-object-get-instances nfsv4_2` | `reclaim_complete_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_release_lock_owner_avg_latency
 
 Average Latency of RELEASE_LOCKOWNER procedures
@@ -13618,6 +18117,7 @@ Average Latency of RELEASE_LOCKOWNER procedures
 | ZAPI | `perf-object-get-instances nfsv4` | `release_lock_owner_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> release_lock_owner_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml |
 
 
+
 ### svm_nfs_release_lock_owner_total
 
 Total number of RELEASE_LOCKOWNER procedures
@@ -13626,6 +18126,7 @@ Total number of RELEASE_LOCKOWNER procedures
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4` | `release_lock_owner.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml |
 | ZAPI | `perf-object-get-instances nfsv4` | `release_lock_owner_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml |
+
 
 
 ### svm_nfs_remove_avg_latency
@@ -13644,6 +18145,7 @@ Average latency of Remove procedure requests. The counter keeps track of the ave
 | ZAPI | `perf-object-get-instances nfsv4_2` | `remove_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> remove_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_remove_total
 
 Total number Remove of procedure requests. It is the total number of Remove success and Remove error requests.
@@ -13658,6 +18160,7 @@ Total number Remove of procedure requests. It is the total number of Remove succ
 | ZAPI | `perf-object-get-instances nfsv4` | `remove_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `remove_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `remove_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_rename_avg_latency
@@ -13676,6 +18179,7 @@ Average latency of Rename procedure requests. The counter keeps track of the ave
 | ZAPI | `perf-object-get-instances nfsv4_2` | `rename_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> rename_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_rename_total
 
 Total number Rename of procedure requests. It is the total number of Rename success and Rename error requests.
@@ -13692,6 +18196,7 @@ Total number Rename of procedure requests. It is the total number of Rename succ
 | ZAPI | `perf-object-get-instances nfsv4_2` | `rename_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_renew_avg_latency
 
 Average latency of RENEW procedures
@@ -13702,6 +18207,7 @@ Average latency of RENEW procedures
 | ZAPI | `perf-object-get-instances nfsv4` | `renew_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> renew_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml |
 
 
+
 ### svm_nfs_renew_total
 
 Total number of RENEW procedures
@@ -13710,6 +18216,7 @@ Total number of RENEW procedures
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4` | `renew.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml |
 | ZAPI | `perf-object-get-instances nfsv4` | `renew_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml |
+
 
 
 ### svm_nfs_restorefh_avg_latency
@@ -13726,6 +18233,7 @@ Average latency of RESTOREFH procedures
 | ZAPI | `perf-object-get-instances nfsv4_2` | `restorefh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> restorefh_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_restorefh_total
 
 Total number of RESTOREFH procedures
@@ -13740,6 +18248,7 @@ Total number of RESTOREFH procedures
 | ZAPI | `perf-object-get-instances nfsv4_2` | `restorefh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_rmdir_avg_latency
 
 Average latency of RmDir procedure requests. The counter keeps track of the average response time of RmDir requests.
@@ -13750,6 +18259,7 @@ Average latency of RmDir procedure requests. The counter keeps track of the aver
 | ZAPI | `perf-object-get-instances nfsv3` | `rmdir_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> rmdir_total | conf/zapiperf/cdot/9.8.0/nfsv3.yaml |
 
 
+
 ### svm_nfs_rmdir_total
 
 Total number RmDir of procedure requests. It is the total number of RmDir success and RmDir error requests.
@@ -13758,6 +18268,7 @@ Total number RmDir of procedure requests. It is the total number of RmDir succes
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v3` | `rmdir.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml |
 | ZAPI | `perf-object-get-instances nfsv3` | `rmdir_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml |
+
 
 
 ### svm_nfs_savefh_avg_latency
@@ -13774,6 +18285,7 @@ Average latency of SAVEFH procedures
 | ZAPI | `perf-object-get-instances nfsv4_2` | `savefh_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> savefh_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_savefh_total
 
 Total number of SAVEFH procedures
@@ -13786,6 +18298,7 @@ Total number of SAVEFH procedures
 | ZAPI | `perf-object-get-instances nfsv4` | `savefh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `savefh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `savefh_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_secinfo_avg_latency
@@ -13802,6 +18315,7 @@ Average latency of SECINFO procedures
 | ZAPI | `perf-object-get-instances nfsv4_2` | `secinfo_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> secinfo_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_secinfo_no_name_avg_latency
 
 Average latency of SECINFO_NO_NAME operations.
@@ -13814,6 +18328,7 @@ Average latency of SECINFO_NO_NAME operations.
 | ZAPI | `perf-object-get-instances nfsv4_2` | `secinfo_no_name_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> secinfo_no_name_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_secinfo_no_name_total
 
 Total number of SECINFO_NO_NAME operations.
@@ -13824,6 +18339,7 @@ Total number of SECINFO_NO_NAME operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `secinfo_no_name.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `secinfo_no_name_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `secinfo_no_name_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_secinfo_total
@@ -13840,6 +18356,7 @@ Total number of SECINFO procedures
 | ZAPI | `perf-object-get-instances nfsv4_2` | `secinfo_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_sequence_avg_latency
 
 Average latency of SEQUENCE operations.
@@ -13850,6 +18367,7 @@ Average latency of SEQUENCE operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `sequence.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> sequence.total | conf/restperf/9.12.0/nfsv4_2.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `sequence_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> sequence_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `sequence_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> sequence_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_sequence_total
@@ -13864,6 +18382,7 @@ Total number of SEQUENCE operations.
 | ZAPI | `perf-object-get-instances nfsv4_2` | `sequence_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_set_ssv_avg_latency
 
 Average latency of SET_SSV operations.
@@ -13876,6 +18395,7 @@ Average latency of SET_SSV operations.
 | ZAPI | `perf-object-get-instances nfsv4_2` | `set_ssv_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> set_ssv_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_set_ssv_total
 
 Total number of SET_SSV operations.
@@ -13886,6 +18406,7 @@ Total number of SET_SSV operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `set_ssv.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `set_ssv_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `set_ssv_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_setattr_avg_latency
@@ -13904,6 +18425,7 @@ Average latency of SetAttr procedure requests. The counter keeps track of the av
 | ZAPI | `perf-object-get-instances nfsv4_2` | `setattr_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> setattr_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_setattr_total
 
 Total number of Setattr procedure requests. It is the total number of Setattr success and setattr error requests.
@@ -13920,6 +18442,7 @@ Total number of Setattr procedure requests. It is the total number of Setattr su
 | ZAPI | `perf-object-get-instances nfsv4_2` | `setattr_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_setclientid_avg_latency
 
 Average latency of SETCLIENTID procedures
@@ -13928,6 +18451,7 @@ Average latency of SETCLIENTID procedures
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4` | `setclientid.average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> setclientid.total | conf/restperf/9.12.0/nfsv4.yaml |
 | ZAPI | `perf-object-get-instances nfsv4` | `setclientid_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> setclientid_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml |
+
 
 
 ### svm_nfs_setclientid_confirm_avg_latency
@@ -13940,6 +18464,7 @@ Average latency of SETCLIENTID_CONFIRM procedures
 | ZAPI | `perf-object-get-instances nfsv4` | `setclientid_confirm_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> setclientid_confirm_total | conf/zapiperf/cdot/9.8.0/nfsv4.yaml |
 
 
+
 ### svm_nfs_setclientid_confirm_total
 
 Total number of SETCLIENTID_CONFIRM procedures
@@ -13948,6 +18473,7 @@ Total number of SETCLIENTID_CONFIRM procedures
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v4` | `setclientid_confirm.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4.yaml |
 | ZAPI | `perf-object-get-instances nfsv4` | `setclientid_confirm_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml |
+
 
 
 ### svm_nfs_setclientid_total
@@ -13960,6 +18486,7 @@ Total number of SETCLIENTID procedures
 | ZAPI | `perf-object-get-instances nfsv4` | `setclientid_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4.yaml |
 
 
+
 ### svm_nfs_symlink_avg_latency
 
 Average latency of SymLink procedure requests. The counter keeps track of the average response time of SymLink requests.
@@ -13970,6 +18497,7 @@ Average latency of SymLink procedure requests. The counter keeps track of the av
 | ZAPI | `perf-object-get-instances nfsv3` | `symlink_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> symlink_total | conf/zapiperf/cdot/9.8.0/nfsv3.yaml |
 
 
+
 ### svm_nfs_symlink_total
 
 Total number SymLink of procedure requests. It is the total number of SymLink success and create SymLink requests.
@@ -13978,6 +18506,7 @@ Total number SymLink of procedure requests. It is the total number of SymLink su
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_nfs_v3` | `symlink.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3.yaml |
 | ZAPI | `perf-object-get-instances nfsv3` | `symlink_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml |
+
 
 
 ### svm_nfs_test_stateid_avg_latency
@@ -13992,6 +18521,7 @@ Average latency of TEST_STATEID operations.
 | ZAPI | `perf-object-get-instances nfsv4_2` | `test_stateid_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> test_stateid_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_test_stateid_total
 
 Total number of TEST_STATEID operations.
@@ -14002,6 +18532,7 @@ Total number of TEST_STATEID operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `test_stateid.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `test_stateid_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `test_stateid_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_throughput
@@ -14020,6 +18551,17 @@ Rate of NFSv3 data transfers per second.
 | ZAPI | `perf-object-get-instances nfsv4_2` | `nfs42_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | NFSv3 | NFSv3 Throughput |
+| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by Throughput |
+| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by Throughput |
+| cmode/svm.json | NFSv4 | NFSv4 Throughput |
+| cmode/svm.json | NFSv4.1 | NFSv4.1 Throughput |
+| cmode/svm.json | NFSv4.2 | NFSv4.2 Throughput |
+
+
+
 ### svm_nfs_total_throughput
 
 Performance metric aggregated over all types of I/O operations.
@@ -14029,6 +18571,7 @@ Performance metric aggregated over all types of I/O operations.
 | KeyPerf | `api/protocols/nfs/services` | `statistics.v3.throughput_raw.total`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/nfsv3.yaml |
 | KeyPerf | `api/protocols/nfs/services` | `statistics.v4.throughput_raw.total`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/nfsv4.yaml |
 | KeyPerf | `api/protocols/nfs/services` | `statistics.v41.throughput_raw.total`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/nfsv4_1.yaml |
+
 
 
 ### svm_nfs_verify_avg_latency
@@ -14045,6 +18588,7 @@ Average latency of VERIFY procedures
 | ZAPI | `perf-object-get-instances nfsv4_2` | `verify_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> verify_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_verify_total
 
 Total number of VERIFY procedures
@@ -14059,6 +18603,7 @@ Total number of VERIFY procedures
 | ZAPI | `perf-object-get-instances nfsv4_2` | `verify_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_want_delegation_avg_latency
 
 Average latency of WANT_DELEGATION operations.
@@ -14071,6 +18616,7 @@ Average latency of WANT_DELEGATION operations.
 | ZAPI | `perf-object-get-instances nfsv4_2` | `want_delegation_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> want_delegation_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+
 ### svm_nfs_want_delegation_total
 
 Total number of WANT_DELEGATION operations.
@@ -14081,6 +18627,7 @@ Total number of WANT_DELEGATION operations.
 | REST | `api/cluster/counter/tables/svm_nfs_v42` | `want_delegation.total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_2.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_1` | `want_delegation_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `want_delegation_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
+
 
 
 ### svm_nfs_write_avg_latency
@@ -14102,6 +18649,23 @@ Average latency of Write procedure requests. The counter keeps track of the aver
 | ZAPI | `perf-object-get-instances nfsv4_2` | `write_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> write_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | NFSv3 | NFSv3 Write Latency |
+| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by Read and Write Latency |
+| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by Read and Write Latency |
+| cmode/svm.json | NFSv4 | NFSv4 Write Latency |
+| cmode/svm.json | NFSv4 | Top $TopResources NFSv4 SVMs by Read and Write Latency |
+| cmode/svm.json | NFSv4 | Top $TopResources NFSv4 SVMs by Read and Write Latency |
+| cmode/svm.json | NFSv4.1 | NFSv4.1 Write Latency |
+| cmode/svm.json | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by Read and Write Latency |
+| cmode/svm.json | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by Read and Write Latency |
+| cmode/svm.json | NFSv4.2 | NFSv4.2 Write Latency |
+| cmode/svm.json | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by Read and Write Latency |
+| cmode/svm.json | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by Read and Write Latency |
+
+
+
 ### svm_nfs_write_ops
 
 Total observed NFSv3 write operations per second.
@@ -14113,6 +18677,14 @@ Total observed NFSv3 write operations per second.
 | KeyPerf | `api/protocols/nfs/services` | `statistics.v4.iops_raw.write`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/nfsv4.yaml |
 | KeyPerf | `api/protocols/nfs/services` | `statistics.v41.iops_raw.write`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv3` | `nfsv3_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | NFSv3 | NFSv3 Write IOPs |
+| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by IOPs |
+| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by IOPs |
+
 
 
 ### svm_nfs_write_throughput
@@ -14134,6 +18706,23 @@ Rate of NFSv3 write data transfers per second.
 | ZAPI | `perf-object-get-instances nfsv4_2` | `nfs42_write_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | NFSv3 | NFSv3 Write Throughput |
+| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by Throughput |
+| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by Throughput |
+| cmode/svm.json | NFSv4 | NFSv4 Write Throughput |
+| cmode/svm.json | NFSv4 | Top $TopResources NFSv4 SVMs by Throughput |
+| cmode/svm.json | NFSv4 | Top $TopResources NFSv4 SVMs by Throughput |
+| cmode/svm.json | NFSv4.1 |  NFSv4.1 Write Throughput |
+| cmode/svm.json | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by Throughput |
+| cmode/svm.json | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by Throughput |
+| cmode/svm.json | NFSv4.2 |  NFSv4.2 Write Throughput |
+| cmode/svm.json | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by Throughput |
+| cmode/svm.json | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by Throughput |
+
+
+
 ### svm_nfs_write_total
 
 Total number of Write procedure requests. It is the total number of write success and write error requests.
@@ -14150,6 +18739,20 @@ Total number of Write procedure requests. It is the total number of write succes
 | ZAPI | `perf-object-get-instances nfsv4_2` | `write_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | NFSv4 | NFSv4 Write IOPs |
+| cmode/svm.json | NFSv4 | Top $TopResources NFSv4 SVMs by IOPs |
+| cmode/svm.json | NFSv4 | Top $TopResources NFSv4 SVMs by IOPs |
+| cmode/svm.json | NFSv4.1 | NFSv4.1 Write IOPs |
+| cmode/svm.json | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by IOPs |
+| cmode/svm.json | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by IOPs |
+| cmode/svm.json | NFSv4.2 | NFSv4.2 Write IOPs |
+| cmode/svm.json | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by IOPs |
+| cmode/svm.json | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by IOPs |
+
+
+
 ### svm_vol_avg_latency
 
 Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time
@@ -14161,6 +18764,16 @@ Average latency in microseconds for the WAFL filesystem to process all the opera
 | ZAPI | `perf-object-get-instances volume:vserver` | `avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/volume_svm.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/cdot.json | SVM Metrics | Top $TopResources Average Latency by SVMs |
+| cmode/cdot.json | SVM Metrics | Top $TopResources Average Latency by SVMs |
+| cmode/cluster.json | SVM Performance | Top $TopResources Latency |
+| cmode/cluster.json | SVM Performance | Top $TopResources Latency |
+| cmode/svm.json | Highlights | SVM Average Latency |
+
+
+
 ### svm_vol_other_data
 
 Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on. svm_vol_other_data is [volume_other_data](#volume_other_data) aggregated by `svm`.
@@ -14168,6 +18781,7 @@ Performance metric for other I/O operations. Other I/O operations can be metadat
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.other`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
+
 
 
 ### svm_vol_other_latency
@@ -14181,6 +18795,12 @@ Average latency in microseconds for the WAFL filesystem to process other operati
 | ZAPI | `perf-object-get-instances volume:vserver` | `other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/zapiperf/cdot/9.8.0/volume_svm.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | Highlights | SVM Average Latency |
+
+
+
 ### svm_vol_other_ops
 
 Number of other operations per second to the volume
@@ -14190,6 +18810,13 @@ Number of other operations per second to the volume
 | REST | `api/cluster/counter/tables/volume:svm` | `total_other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_svm.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.iops_raw.other`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume:vserver` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_svm.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfsTroubleshooting.json | Highlights | SVM Performance Table |
+| cmode/svm.json | Highlights | SVM IOPs |
+
 
 
 ### svm_vol_read_data
@@ -14203,6 +18830,18 @@ Bytes read per second
 | ZAPI | `perf-object-get-instances volume:vserver` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_svm.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/cdot.json | SVM Metrics | Top $TopResources Average Throughput by SVMs |
+| cmode/cdot.json | SVM Metrics | Top $TopResources Average Throughput by SVMs |
+| cmode/cluster.json | SVM Performance | Top $TopResources Throughput |
+| cmode/cluster.json | SVM Performance | Top $TopResources Throughput |
+| cmode/nfsTroubleshooting.json | Highlights | SVM Performance Table |
+| cmode/svm.json | Highlights | SVM Read Throughput |
+| cmode/svm.json | Highlights | SVM Throughput |
+
+
+
 ### svm_vol_read_latency
 
 Average latency in microseconds for the WAFL filesystem to process read request to the volume; not including request processing or network communication time
@@ -14212,6 +18851,13 @@ Average latency in microseconds for the WAFL filesystem to process read request 
 | REST | `api/cluster/counter/tables/volume:svm` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_read_ops | conf/restperf/9.12.0/volume_svm.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.latency_raw.read`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.read | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume:vserver` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/volume_svm.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | Highlights | SVM Average Read Latency |
+| cmode/svm.json | Highlights | SVM Average Latency |
+
 
 
 ### svm_vol_read_ops
@@ -14225,6 +18871,14 @@ Number of read operations per second from the volume
 | ZAPI | `perf-object-get-instances volume:vserver` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_svm.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfsTroubleshooting.json | Highlights | SVM Performance Table |
+| cmode/svm.json | Highlights | SVM Read IOPs |
+| cmode/svm.json | Highlights | SVM IOPs |
+
+
+
 ### svm_vol_total_data
 
 Performance metric aggregated over all types of I/O operations. svm_vol_total_data is [volume_total_data](#volume_total_data) aggregated by `svm`.
@@ -14232,6 +18886,7 @@ Performance metric aggregated over all types of I/O operations. svm_vol_total_da
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.total`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
+
 
 
 ### svm_vol_total_ops
@@ -14245,6 +18900,17 @@ Number of operations per second serviced by the volume
 | ZAPI | `perf-object-get-instances volume:vserver` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_svm.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/cdot.json | SVM Metrics | Top $TopResources IOPs by SVMs |
+| cmode/cdot.json | SVM Metrics | Top $TopResources IOPs by SVMs |
+| cmode/cluster.json | SVM Performance | Top $TopResources IOPs |
+| cmode/cluster.json | SVM Performance | Top $TopResources IOPs |
+| cmode/nfsTroubleshooting.json | Highlights | SVM Performance Table |
+| cmode/svm.json | Highlights | SVM IOPs |
+
+
+
 ### svm_vol_write_data
 
 Bytes written per second
@@ -14254,6 +18920,19 @@ Bytes written per second
 | REST | `api/cluster/counter/tables/volume:svm` | `bytes_written`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_svm.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.write`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume:vserver` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_svm.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/cdot.json | SVM Metrics | Top $TopResources Average Throughput by SVMs |
+| cmode/cdot.json | SVM Metrics | Top $TopResources Average Throughput by SVMs |
+| cmode/cluster.json | SVM Performance | Top $TopResources Throughput |
+| cmode/cluster.json | SVM Performance | Top $TopResources Throughput |
+| cmode/nfsTroubleshooting.json | Highlights | SVM Performance Table |
+| cmode/svm.json | Highlights | SVM Throughput |
+| cmode/svm.json | Highlights | SVM Write Throughput |
+| cmode/svm.json | Highlights | SVM Throughput |
+
 
 
 ### svm_vol_write_latency
@@ -14267,6 +18946,13 @@ Average latency in microseconds for the WAFL filesystem to process write request
 | ZAPI | `perf-object-get-instances volume:vserver` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/volume_svm.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | Highlights | SVM Average Write Latency |
+| cmode/svm.json | Highlights | SVM Average Latency |
+
+
+
 ### svm_vol_write_ops
 
 Number of write operations per second to the volume
@@ -14276,6 +18962,14 @@ Number of write operations per second to the volume
 | REST | `api/cluster/counter/tables/volume:svm` | `total_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_svm.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.iops_raw.write`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume:vserver` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_svm.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/nfsTroubleshooting.json | Highlights | SVM Performance Table |
+| cmode/svm.json | Highlights | SVM Write IOPs |
+| cmode/svm.json | Highlights | SVM IOPs |
+
 
 
 ### svm_vscan_connections_active
@@ -14288,6 +18982,13 @@ Total number of current active connections
 | ZAPI | `perf-object-get-instances offbox_vscan` | `connections_active`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/vscan_svm.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | CIFS | Virus Scan Connections Active |
+| cmode/vscan.json | Highlights | Active Connections |
+
+
+
 ### svm_vscan_dispatch_latency
 
 Average dispatch latency
@@ -14296,6 +18997,14 @@ Average dispatch latency
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_vscan` | `dispatch.latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> dispatch.requests | conf/restperf/9.13.0/vscan_svm.yaml |
 | ZAPI | `perf-object-get-instances offbox_vscan` | `dispatch_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> dispatch_latency_base | conf/zapiperf/cdot/9.8.0/vscan_svm.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | CIFS | Virus Scan Latency |
+| cmode/vscan.json | Highlights | Top $TopResources SVM by Dispatch Latency |
+| cmode/vscan.json | Highlights | Top $TopResources SVM by Dispatch Latency |
+
 
 
 ### svm_vscan_scan_latency
@@ -14308,6 +19017,14 @@ Average scan latency
 | ZAPI | `perf-object-get-instances offbox_vscan` | `scan_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> scan_latency_base | conf/zapiperf/cdot/9.8.0/vscan_svm.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | CIFS | Virus Scan Latency |
+| cmode/vscan.json | Highlights | Top $TopResources SVMs by Scan Latency |
+| cmode/vscan.json | Highlights | Top $TopResources SVMs by Scan Latency |
+
+
+
 ### svm_vscan_scan_noti_received_rate
 
 Total number of scan notifications received by the dispatcher per second
@@ -14316,6 +19033,14 @@ Total number of scan notifications received by the dispatcher per second
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/svm_vscan` | `scan.notification_received_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.13.0/vscan_svm.yaml |
 | ZAPI | `perf-object-get-instances offbox_vscan` | `scan_noti_received_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/vscan_svm.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | CIFS | Virus Scan Requests |
+| cmode/vscan.json | Highlights | Top $TopResources SVMs by Scan Notifications Received Throughput |
+| cmode/vscan.json | Highlights | Top $TopResources SVMs by Scan Notifications Received Throughput |
+
 
 
 ### svm_vscan_scan_request_dispatched_rate
@@ -14328,6 +19053,14 @@ Total number of scan requests sent to the Vscanner per second
 | ZAPI | `perf-object-get-instances offbox_vscan` | `scan_request_dispatched_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/vscan_svm.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | CIFS | Virus Scan Requests |
+| cmode/vscan.json | Highlights | Top $TopResources SVMs by Scan Requests Sent to Vscanner Throughput |
+| cmode/vscan.json | Highlights | Top $TopResources SVMs by Scan Requests Sent to Vscanner Throughput |
+
+
+
 ### token_copy_bytes
 
 Total number of bytes copied.
@@ -14336,6 +19069,7 @@ Total number of bytes copied.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/token_manager` | `token_copy.bytes`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/token_manager.yaml |
 | ZAPI | `perf-object-get-instances token_manager` | `token_copy_bytes`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/token_manager.yaml |
+
 
 
 ### token_copy_failure
@@ -14348,6 +19082,7 @@ Number of failed token copy requests.
 | ZAPI | `perf-object-get-instances token_manager` | `token_copy_failure`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/token_manager.yaml |
 
 
+
 ### token_copy_success
 
 Number of successful token copy requests.
@@ -14356,6 +19091,7 @@ Number of successful token copy requests.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/token_manager` | `token_copy.successes`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/token_manager.yaml |
 | ZAPI | `perf-object-get-instances token_manager` | `token_copy_success`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/token_manager.yaml |
+
 
 
 ### token_create_bytes
@@ -14368,6 +19104,7 @@ Total number of bytes for which tokens are created.
 | ZAPI | `perf-object-get-instances token_manager` | `token_create_bytes`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/token_manager.yaml |
 
 
+
 ### token_create_failure
 
 Number of failed token create requests.
@@ -14376,6 +19113,7 @@ Number of failed token create requests.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/token_manager` | `token_create.failures`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/token_manager.yaml |
 | ZAPI | `perf-object-get-instances token_manager` | `token_create_failure`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/token_manager.yaml |
+
 
 
 ### token_create_success
@@ -14388,6 +19126,7 @@ Number of successful token create requests.
 | ZAPI | `perf-object-get-instances token_manager` | `token_create_success`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/token_manager.yaml |
 
 
+
 ### token_zero_bytes
 
 Total number of bytes zeroed.
@@ -14396,6 +19135,7 @@ Total number of bytes zeroed.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/token_manager` | `token_zero.bytes`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/token_manager.yaml |
 | ZAPI | `perf-object-get-instances token_manager` | `token_zero_bytes`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/token_manager.yaml |
+
 
 
 ### token_zero_failure
@@ -14408,6 +19148,7 @@ Number of failed token zero requests.
 | ZAPI | `perf-object-get-instances token_manager` | `token_zero_failure`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/token_manager.yaml |
 
 
+
 ### token_zero_success
 
 Number of successful token zero requests.
@@ -14416,6 +19157,7 @@ Number of successful token zero requests.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/token_manager` | `token_zero.successes`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/token_manager.yaml |
 | ZAPI | `perf-object-get-instances token_manager` | `token_zero_success`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/token_manager.yaml |
+
 
 
 ### volume_analytics_bytes_used_by_accessed_time
@@ -14427,6 +19169,7 @@ Number of bytes used on-disk, broken down by date of last access.
 | REST | `api/storage/volumes/{volume.uuid}/files` | `analytics.by_accessed_time.bytes_used.values` | conf/rest/9.12.0/volume_analytics.yaml |
 
 
+
 ### volume_analytics_bytes_used_by_modified_time
 
 Number of bytes used on-disk, broken down by date of last modification.
@@ -14434,6 +19177,7 @@ Number of bytes used on-disk, broken down by date of last modification.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/storage/volumes/{volume.uuid}/files` | `analytics.by_modified_time.bytes_used.values` | conf/rest/9.12.0/volume_analytics.yaml |
+
 
 
 ### volume_analytics_bytes_used_percent_by_accessed_time
@@ -14445,6 +19189,7 @@ Percent used on-disk, broken down by date of last access.
 | REST | `api/storage/volumes/{volume.uuid}/files` | `analytics.by_accessed_time.bytes_used.percentages` | conf/rest/9.12.0/volume_analytics.yaml |
 
 
+
 ### volume_analytics_bytes_used_percent_by_modified_time
 
 Percent used on-disk, broken down by date of last modification.
@@ -14452,6 +19197,7 @@ Percent used on-disk, broken down by date of last modification.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/storage/volumes/{volume.uuid}/files` | `analytics.by_modified_time.bytes_used.percentages` | conf/rest/9.12.0/volume_analytics.yaml |
+
 
 
 ### volume_analytics_dir_bytes_used
@@ -14463,6 +19209,7 @@ The actual number of bytes used on disk by this file.
 | REST | `api/storage/volumes/{volume.uuid}/files` | `analytics.bytes_used` | conf/rest/9.12.0/volume_analytics.yaml |
 
 
+
 ### volume_analytics_dir_file_count
 
 Number of files in a directory.
@@ -14472,6 +19219,7 @@ Number of files in a directory.
 | REST | `api/storage/volumes/{volume.uuid}/files` | `analytics.file_count` | conf/rest/9.12.0/volume_analytics.yaml |
 
 
+
 ### volume_analytics_dir_subdir_count
 
 Number of sub directories in a directory.
@@ -14479,6 +19227,7 @@ Number of sub directories in a directory.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/storage/volumes/{volume.uuid}/files` | `analytics.subdir_count` | conf/rest/9.12.0/volume_analytics.yaml |
+
 
 
 ### volume_autosize_grow_threshold_percent
@@ -14491,6 +19240,7 @@ Used space threshold which triggers autogrow. When the size-used is greater than
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-autosize-attributes.grow-threshold-percent` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
+
 ### volume_autosize_maximum_size
 
 The maximum size (in bytes) to which the volume would be grown automatically. The default value is 20% greater than the volume size. It is an error for the maximum volume size to be less than the current volume size. It is also an error for the maximum size to be less than or equal to the minimum size.
@@ -14499,6 +19249,7 @@ The maximum size (in bytes) to which the volume would be grown automatically. Th
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume` | `max_autosize` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-autosize-attributes.maximum-size` | conf/zapi/cdot/9.8.0/volume.yaml |
+
 
 
 ### volume_avg_latency
@@ -14512,6 +19263,27 @@ Average latency in microseconds for the WAFL filesystem to process all the opera
 | ZAPI | `perf-object-get-instances volume` | `avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Average Latency |
+| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Average Latency |
+| cmode/cdot.json | Volume Metrics | Top $TopResources Volumes by Average Latency |
+| cmode/cdot.json | Volume Metrics | Top $TopResources Volumes by Average Latency |
+| cmode/datacenter.json | Performance | Top $TopResources Latency by Cluster |
+| cmode/datacenter.json | Performance | Top $TopResources Latency by Cluster |
+| cmode/flexgroup.json | Highlights | Top $TopResources Constituents by Average Latency |
+| cmode/flexgroup.json | Highlights | Top $TopResources Constituents by Average Latency |
+| cmode/mcc_cluster.json | Highlights | Volume Average Latency |
+| cmode/node.json | Volume Performance | Top $TopResources Volumes by Average Latency |
+| cmode/node.json | Volume Performance | Top $TopResources Volumes by Average Latency |
+| cmode/volume.json | Highlights | Volume Average Latency |
+| cmode/volume.json | Highlights | Top $TopResources Volumes by Average Latency |
+| cmode/volume.json | Highlights | Top $TopResources Volumes by Average Latency |
+| cmode-details/volumeDeepDive.json | Highlights | Avg Latency |
+| cmode-details/volumeDeepDive.json | Highlights | Max Latency |
+
+
+
 ### volume_capacity_tier_footprint
 
 This field represents the footprint of blocks written to the volume in bytes for bin 1.
@@ -14520,6 +19292,18 @@ This field represents the footprint of blocks written to the volume in bytes for
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume/footprint` | `volume_blocks_footprint_bin1` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-footprint-get-iter` | `volume-blocks-footprint-bin1` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Capacity Tier Footprint |
+| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Capacity Tier Footprint |
+| cmode/flexgroup.json | Top Volume FabricPool | Top $TopResources Volumes by Capacity Tier Footprint |
+| cmode/flexgroup.json | Top Volume FabricPool | Top $TopResources Volumes by Capacity Tier Footprint |
+| cmode/volume.json | FabricPool | Volumes Footprint |
+| cmode/volume.json | FabricPool | Top $TopResources Volumes by Capacity Tier Footprint |
+| cmode/volume.json | FabricPool | Top $TopResources Volumes by Capacity Tier Footprint |
+
 
 
 ### volume_capacity_tier_footprint_percent
@@ -14532,6 +19316,17 @@ This field represents the footprint of blocks written to the volume in bin 1 as 
 | ZAPI | `volume-footprint-get-iter` | `volume-blocks-footprint-bin1-percent` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Capacity Tier Footprint % |
+| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Capacity Tier Footprint % |
+| cmode/flexgroup.json | Top Volume FabricPool | Top $TopResources Volumes by Capacity Tier Footprint % |
+| cmode/flexgroup.json | Top Volume FabricPool | Top $TopResources Volumes by Capacity Tier Footprint % |
+| cmode/volume.json | FabricPool | Top $TopResources Volumes by Capacity Tier Footprint % |
+| cmode/volume.json | FabricPool | Top $TopResources Volumes by Capacity Tier Footprint % |
+
+
+
 ### volume_clone_split_estimate
 
 Display an estimate of additional storage required in the underlying aggregate to perform a volume clone split operation.
@@ -14540,6 +19335,7 @@ Display an estimate of additional storage required in the underlying aggregate t
 |--------|----------|--------|---------|
 | REST | `clone.split_estimate` | `api/storage/volumes` | conf/rest/9.12.0/volume.yaml |
 | ZAPI | `volume-clone-get-iter` | `split-estimate` | conf/zapi/cdot/9.8.0/volume.yaml |
+
 
 
 ### volume_delayed_free_footprint
@@ -14552,6 +19348,14 @@ This field represents the delayed free blocks footprint in bytes. This system is
 | ZAPI | `volume-footprint-get-iter` | `delayed-free-footprint` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/volume.json | FabricPool | Volumes Footprint |
+| cmode/volume.json | FabricPool | Top $TopResources Volumes by Delayed Free Footprint |
+| cmode/volume.json | FabricPool | Top $TopResources Volumes by Delayed Free Footprint |
+
+
+
 ### volume_filesystem_size
 
 Filesystem size (in bytes) of the volume.  This is the total usable size of the volume, not including WAFL reserve.  This value is the same as Size except for certain SnapMirror destination volumes.  It is possible for destination volumes to have a different filesystem-size because the filesystem-size is sent across from the source volume.  This field is valid only when the volume is online.
@@ -14560,6 +19364,7 @@ Filesystem size (in bytes) of the volume.  This is the total usable size of the 
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume` | `filesystem_size` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.filesystem-size` | conf/zapi/cdot/9.8.0/volume.yaml |
+
 
 
 ### volume_guarantee_footprint
@@ -14572,6 +19377,14 @@ This field represents the volume guarantee footprint in bytes. Alternatively, it
 | ZAPI | `volume-footprint-get-iter` | `volume-guarantee-footprint` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/volume.json | FabricPool | Volumes Footprint |
+| cmode/volume.json | FabricPool | Top $TopResources Volumes by Capacity Tier Footprint |
+| cmode/volume.json | FabricPool | Top $TopResources Volumes by Capacity Tier Footprint |
+
+
+
 ### volume_inode_files_total
 
 Total user-visible file (inode) count, i.e., current maximum number of user-visible files (inodes) that this volume can currently hold.
@@ -14580,6 +19393,14 @@ Total user-visible file (inode) count, i.e., current maximum number of user-visi
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume` | `files` | conf/rest/9.12.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-inode-attributes.files-total` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/volume.json | Inode | Top $TopResources Volumes by Inode Files Total |
+| cmode/volume.json | Inode | Top $TopResources Volumes by Inode Files Total |
+| cmode-details/volumeDeepDive.json | Inodes | Inode Files Total |
+
 
 
 ### volume_inode_files_used
@@ -14592,6 +19413,14 @@ Number of user-visible files (inodes) used. This field is valid only when the vo
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-inode-attributes.files-used` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/volume.json | Inode | Top $TopResources Volumes by Inode Files Used |
+| cmode/volume.json | Inode | Top $TopResources Volumes by Inode Files Used |
+| cmode-details/volumeDeepDive.json | Inodes | Inode Files Used |
+
+
+
 ### volume_inode_used_percent
 
 volume_inode_files_used / volume_inode_total
@@ -14600,6 +19429,14 @@ volume_inode_files_used / volume_inode_total
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume` | `inode_files_used, inode_files_total` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `inode_files_used, inode_files_total` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/volume.json | Inode | Top $TopResources Volumes by Inode Files Used Percentage |
+| cmode/volume.json | Inode | Top $TopResources Volumes by Inode Files Used Percentage |
+| cmode-details/volumeDeepDive.json | Inodes | Inode Files Used Percentage |
+
 
 
 ### volume_labels
@@ -14612,6 +19449,182 @@ This metric provides information about Volume
 | ZAPI | `volume-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/cdot.json | Capacity Metrics | Top $TopResources Volumes by Capacity Used % |
+| cmode/cdot.json | Capacity Metrics | Top $TopResources Volumes by Capacity Used % |
+| cmode/data_protection.json | Highlights | Snapshot copies (local) |
+| cmode/data_protection.json | Highlights | Snapshot copies (local) |
+| cmode/data_protection.json | Highlights | SnapMirrors (local or remote) |
+| cmode/data_protection.json | Highlights | SnapMirrors (local or remote) |
+| cmode/data_protection.json | Highlights | Back up to cloud |
+| cmode/data_protection.json | Highlights | Back up to cloud |
+| cmode/data_protection.json | Highlights | Volumes |
+| cmode/data_protection.json | Snapshot Copies | Volumes not protected |
+| cmode/data_protection.json | Snapshot Copies | Volumes protected |
+| cmode/data_protection.json | Snapshot Copies | Volumes breached |
+| cmode/data_protection.json | Snapshot Copies | Volumes not breached |
+| cmode/data_protection.json | Snapshot Copies | Volumes not breached |
+| cmode/data_protection.json | Snapshot Copies | Volumes Protected With Snapshot Copies (local) |
+| cmode/data_protection.json | Snapshot Copies | Volumes Breaching Snapshot Copy Reserve Space |
+| cmode/data_protection.json | Snapshot Copies |  <10 Copies  |
+| cmode/data_protection.json | Snapshot Copies | 10-100 Copies |
+| cmode/data_protection.json | Snapshot Copies | 101-500 Copies |
+| cmode/data_protection.json | Snapshot Copies | >500 Copies |
+| cmode/data_protection.json | Snapshot Copies | Volume count by the number of Snapshot copies |
+| cmode/datacenter.json | Highlights | Object Count |
+| cmode/datacenter.json | Snapshots | Protected Status |
+| cmode/datacenter.json | Snapshots | Protected Status |
+| cmode/datacenter.json | Snapshots | Breached Status |
+| cmode/datacenter.json | Snapshots | Breached Status |
+| cmode/datacenter.json | Snapshots | Breached Status |
+| cmode/datacenter.json | Snapshots | Snapshot Copies |
+| cmode/datacenter.json | Snapshots | Snapshot Copies |
+| cmode/datacenter.json | Snapshots | Snapshot Copies |
+| cmode/datacenter.json | Snapshots | Snapshot Copies |
+| cmode/flexgroup.json | Volume Table | FlexGroup Constituents in Cluster |
+| cmode/health.json | Volume | Volumes with Ransomware Issues (9.10+ Only) |
+| cmode/health.json | Volume | Volumes Move Issues |
+| cmode/nfsTroubleshooting.json | Highlights | SVM Performance Table |
+| cmode/s3ObjectStorage.json | Highlights | Bucket Overview |
+| cmode/security.json | Highlights | Volume Encryption % |
+| cmode/security.json | Highlights | Volume Encryption % |
+| cmode/security.json | Highlights | Volume Encryption % |
+| cmode/security.json | Highlights | Volume Anti-ransomware Status % |
+| cmode/security.json | Highlights | Volume Anti-ransomware Status % |
+| cmode/security.json | Highlights | Volume Encryption |
+| cmode/security.json | Highlights | Volume Encryption |
+| cmode/security.json | Highlights | Volume Encryption |
+| cmode/security.json | Highlights | Volume Encryption |
+| cmode/security.json | Highlights | Volume Anti-ransomware Status |
+| cmode/security.json | Highlights | Volume Anti-ransomware Status |
+| cmode/security.json | Highlights | Volume Anti-ransomware Status |
+| cmode/security.json | Highlights | Volume Anti-ransomware Status |
+| cmode/security.json | Volume Encryption & Anti-ransomware Status | Volume Encryption & Anti-ransomware Status |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| cmode/snapmirror.json | Highlights | Unprotected Volumes |
+| cmode/snapmirror.json | Highlights | Unprotected Volumes |
+| cmode/snapmirror.json | Highlights | Protected Volumes |
+| cmode/snapmirror.json | Highlights | Protected Volumes |
+| cmode/volume.json | Highlights | Volume Average Latency |
+| cmode/volume.json | Highlights | Top $TopResources Volumes Total Throughput |
+| cmode/volume.json | Highlights | Top $TopResources Volumes Total Throughput |
+| cmode/volume.json | Highlights | Top $TopResources Volumes by Total IOPs |
+| cmode/volume.json | Highlights | Top $TopResources Volumes by Average Latency |
+| cmode/volume.json | Highlights | Top $TopResources Volumes by Average Throughput |
+| cmode/volume.json | Highlights | Top $TopResources Volumes by Average Throughput |
+| cmode/volume.json | Highlights | Top $TopResources Volumes by Total IOPs |
+| cmode/volume.json | Volume Table | Volumes in Cluster |
+| cmode/volume.json | Volume Table | Volumes in Cluster |
+| cmode/volume.json | Volume Table | Volumes in Cluster |
+| cmode/volume.json | Volume Table | Volumes in Cluster |
+| cmode/volume.json | Volume Table | Volumes in Cluster |
+| cmode/volume.json | Volume Table | Volumes in Cluster |
+| cmode/volume.json | Volume Table | Volumes in Cluster |
+| cmode/volume.json | Volume Table | Volumes in Cluster |
+| cmode/volume.json | Volume Table | Volumes in Cluster |
+| cmode/volume.json | Volume Table | Volumes in Cluster |
+| cmode/volume.json | Volume Table | Top $TopResources Volumes by Read Latency |
+| cmode/volume.json | Volume Table | Top $TopResources Volumes by Read Throughput |
+| cmode/volume.json | Volume Table | Top $TopResources Volumes by Read IOPS |
+| cmode/volume.json | Volume Table | Top $TopResources Volumes by Write Latency |
+| cmode/volume.json | Volume Table | Top $TopResources Volumes by Write Throughput |
+| cmode/volume.json | Volume Table | Top $TopResources Volumes by Write IOPS |
+| cmode/volume.json | Performance | Top $TopResources Volumes by Read Latency |
+| cmode/volume.json | Performance | Top $TopResources Volumes by Write Latency |
+| cmode/volume.json | Performance | Top $TopResources Volumes by Other Latency |
+| cmode/volume.json | Performance | Top $TopResources Volumes by Read IOPs |
+| cmode/volume.json | Performance | Top $TopResources Volumes by Write IOPs |
+| cmode/volume.json | Performance | Top $TopResources Volumes by Other IOPs |
+| cmode/volume.json | Performance | Top $TopResources Volumes by Read Throughput |
+| cmode/volume.json | Performance | Top $TopResources Volumes by Write Throughput |
+| cmode/volume.json | QoS | Top $TopResources QoS Volumes Latency |
+| cmode/volume.json | QoS | Top $TopResources Qos Volumes Total Throughput |
+| cmode/volume.json | QoS | Top $TopResources Qos Volumes Total Throughput |
+| cmode/volume.json | QoS | Top $TopResources QoS Volumes by Total IOPs |
+| cmode/volume.json | QoS | Top $TopResources QoS Volumes by Latency |
+| cmode/volume.json | QoS | Top $TopResources QoS Volumes by Average Throughput |
+| cmode/volume.json | QoS | Top $TopResources QoS Volumes by Average Throughput |
+| cmode/volume.json | QoS | Top $TopResources QoS Volumes by Total IOPs |
+| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Read Latency |
+| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Write Latency |
+| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Read IOPS |
+| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Write IOPS |
+| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Other IOPS |
+| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Read Throughput |
+| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Write Throughput |
+| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Sequential Reads |
+| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Sequential Writes |
+| cmode/volume.json | I/O Density | Top $TopResources Volumes by IO Density (IOPs/TiB) |
+| cmode/volume.json | I/O Density | Top $TopResources Volumes by IO Density (IOPs/TiB) |
+| cmode/volume.json | I/O Density | Top $TopResources Volumes by IO Density (IOPs/TiB) |
+| cmode/volume.json | I/O Density | Bottom $TopResources Volumes by IO Density (IOPs/TiB) |
+| cmode/volume.json | I/O Density | Bottom $TopResources Volumes by IO Density (IOPs/TiB) |
+| cmode/volume.json | I/O Density | Bottom $TopResources Volumes by IO Density (IOPs/TiB) |
+| cmode/volume.json | I/O Density | Bottom $TopResources Volumes by IO Density (IOPs/TiB) |
+| cmode/volume.json | Capacity | Top $TopResources Volumes Per Physical Space Used |
+| cmode/volume.json | Capacity | Top $TopResources Volumes Per Logical Space Used |
+| cmode/volume.json | Capacity | Top $TopResources Volumes Per Volume Size Used |
+| cmode/volume.json | Capacity | Top $TopResources Volumes Per Volume Total Size |
+| cmode/volume.json | Capacity | Top $TopResources Volumes Per Snapshot Size Available |
+| cmode/volume.json | Capacity | Top $TopResources Volumes Per Snapshot Reserve Size |
+| cmode/volume.json | Capacity | Top $TopResources Volumes Per Snapshot Reserve Available |
+| cmode/volume.json | Capacity | Top $TopResources Volumes Per Snapshot Size Used |
+| cmode/volume.json | Capacity | Top $TopResources Volumes by Inactive Data |
+| cmode/volume.json | Capacity % | Top $TopResources Volumes Per Physical Space Used |
+| cmode/volume.json | Capacity % | Top $TopResources Volumes Per Logical Space Used |
+| cmode/volume.json | Capacity % | Top $TopResources Volumes Per Volume Size Used |
+| cmode/volume.json | Capacity % | Top $TopResources Volumes Per Snapshot Reserve |
+| cmode/volume.json | Capacity % | Top $TopResources Volumes Per Snapshot Reserve Used |
+| cmode/volume.json | Capacity % | Top $TopResources Volumes by Inactive Data |
+| cmode/volume.json | Clients | Top $TopResources Volumes Clients by Read IOPs |
+| cmode/volume.json | Clients | Top $TopResources Volumes Clients by Write IOPs |
+| cmode/volume.json | Clients | Top $TopResources Volumes Clients by Read Throughput |
+| cmode/volume.json | Clients | Top $TopResources Volumes Clients by Write Throughput |
+| cmode/volume.json | Files | Top $TopResources Volumes Files by Read IOPs |
+| cmode/volume.json | Files | Top $TopResources Volumes Files by Write IOPs |
+| cmode/volume.json | Files | Top $TopResources Volumes Files by Read Throughput |
+| cmode/volume.json | Files | Top $TopResources Volumes Files by Write Throughput |
+| cmode/volume.json | Object Storage | Top $TopResources Volumes by Object Storage GET Latency |
+| cmode/volume.json | Object Storage | Top $TopResources Volumes by Object Storage GET Request Count |
+| cmode/volume.json | Object Storage | Top $TopResources Volumes by Object Storage PUT Latency |
+| cmode/volume.json | Object Storage | Top $TopResources Volumes by Object Storage PUT Request Count |
+| cmode/volume.json | Object Storage | Top $TopResources Volumes by Object Storage Requests |
+| cmode/volume.json | FabricPool | Top $TopResources Volumes by Performance Tier Footprint |
+| cmode/volume.json | FabricPool | Top $TopResources Volumes by Performance Tier Footprint % |
+| cmode/volume.json | FabricPool | Top $TopResources Volumes by Capacity Tier Footprint |
+| cmode/volume.json | FabricPool | Top $TopResources Volumes by Capacity Tier Footprint % |
+| cmode/volume.json | FabricPool | Top $TopResources Volumes by Delayed Free Footprint |
+| cmode/volume.json | FabricPool | Top $TopResources Volumes by Metadata Footprint |
+| cmode/volume.json | FabricPool | Top $TopResources Volumes by Total Footprint |
+| cmode/volume.json | FabricPool | Top $TopResources Volumes by Total Metadata Footprint |
+| cmode/volume.json | FabricPool | Top $TopResources Volumes by Capacity Tier Footprint |
+| cmode/volume.json | Inode | Top $TopResources Volumes by Inode Files Used |
+| cmode/volume.json | Inode | Top $TopResources Volumes by Inode Files Total |
+| cmode/volume.json | Inode | Top $TopResources Volumes by Inode Files Used Percentage |
+| cmode/volume.json | Sis Stat | Top $TopResources Volumes by Number of Compress Fail % |
+| cmode/volume.json | Sis Stat | Top $TopResources Volumes by Number of Compress Fail % |
+| cmode/volume.json | Sis Stat | Top $TopResources Volumes by Number of Compress Attempts |
+| cmode/volume.json | Sis Stat | Top $TopResources Volumes by Number of Compress Fail |
+| cmode/volume.json | Growth Rate | Top $TopResources Volumes Per Growth Rate of Physical Used |
+| cmode/volume.json | Growth Rate | Top $TopResources Volumes Per Growth Rate of Logical Used |
+| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Physical Usage: Delta |
+| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Physical Usage: Delta |
+| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Physical Usage: Delta |
+| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Logical Usage: Delta |
+| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Logical Usage: Delta |
+| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Logical Usage: Delta |
+| cmode/volume.json | Forecast Volume Capacity | Top $TopResources Volumes Per Size Used Percentage Trend |
+| cmode/volume.json | Forecast Volume Capacity | Top $TopResources Volumes Per Size Used Percentage Trend |
+| cmode-details/volumeBySVM.json | Highlights | Volume Performance for $SVM (Click volume for detailed drill-down) |
+| cmode-details/volumeDeepDive.json | Highlights | Volume Performance |
+| cmode-details/volumeDeepDive.json | Volume Capacity: $Volume | Volumes in Cluster |
+
+
+
 ### volume_metadata_footprint
 
 This field represents flexible volume or flexgroup metadata in bytes.
@@ -14620,6 +19633,14 @@ This field represents flexible volume or flexgroup metadata in bytes.
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume/footprint` | `flexvol_metadata_footprint` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-footprint-get-iter` | `flexvol-metadata-footprint` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/volume.json | FabricPool | Volumes Footprint |
+| cmode/volume.json | FabricPool | Top $TopResources Volumes by Metadata Footprint |
+| cmode/volume.json | FabricPool | Top $TopResources Volumes by Metadata Footprint |
+
 
 
 ### volume_new_status
@@ -14632,6 +19653,7 @@ This metric indicates a value of 1 if the volume state is online (indicating the
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
+
 ### volume_nfs_access_latency
 
 Average time for the WAFL filesystem to process NFS protocol access requests to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency.
@@ -14640,6 +19662,7 @@ Average time for the WAFL filesystem to process NFS protocol access requests to 
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume` | `nfs.access_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.access_ops | conf/restperf/9.12.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_access_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_access_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
+
 
 
 ### volume_nfs_access_ops
@@ -14652,6 +19675,7 @@ Number of NFS accesses per second to the volume.
 | ZAPI | `perf-object-get-instances volume` | `nfs_access_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
+
 ### volume_nfs_getattr_latency
 
 Average time for the WAFL filesystem to process NFS protocol getattr requests to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency.
@@ -14660,6 +19684,7 @@ Average time for the WAFL filesystem to process NFS protocol getattr requests to
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume` | `nfs.getattr_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.getattr_ops | conf/restperf/9.12.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_getattr_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_getattr_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
+
 
 
 ### volume_nfs_getattr_ops
@@ -14672,6 +19697,7 @@ Number of NFS getattr per second to the volume.
 | ZAPI | `perf-object-get-instances volume` | `nfs_getattr_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
+
 ### volume_nfs_lookup_latency
 
 Average time for the WAFL filesystem to process NFS protocol lookup requests to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency.
@@ -14680,6 +19706,7 @@ Average time for the WAFL filesystem to process NFS protocol lookup requests to 
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume` | `nfs.lookup_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.lookup_ops | conf/restperf/9.12.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_lookup_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_lookup_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
+
 
 
 ### volume_nfs_lookup_ops
@@ -14692,6 +19719,7 @@ Number of NFS lookups per second to the volume.
 | ZAPI | `perf-object-get-instances volume` | `nfs_lookup_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
+
 ### volume_nfs_other_latency
 
 Average time for the WAFL filesystem to process other NFS operations to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency
@@ -14700,6 +19728,7 @@ Average time for the WAFL filesystem to process other NFS operations to the volu
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume` | `nfs.other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.other_ops | conf/restperf/9.12.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_other_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
+
 
 
 ### volume_nfs_other_ops
@@ -14712,6 +19741,7 @@ Number of other NFS operations per second to the volume
 | ZAPI | `perf-object-get-instances volume` | `nfs_other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
+
 ### volume_nfs_punch_hole_latency
 
 Average time for the WAFL filesystem to process NFS protocol hole-punch requests to the volume.
@@ -14720,6 +19750,7 @@ Average time for the WAFL filesystem to process NFS protocol hole-punch requests
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume` | `nfs.punch_hole_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.punch_hole_ops | conf/restperf/9.12.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_punch_hole_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_punch_hole_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
+
 
 
 ### volume_nfs_punch_hole_ops
@@ -14732,6 +19763,7 @@ Number of NFS hole-punch requests per second to the volume.
 | ZAPI | `perf-object-get-instances volume` | `nfs_punch_hole_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
+
 ### volume_nfs_read_latency
 
 Average time for the WAFL filesystem to process NFS protocol read requests to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency
@@ -14740,6 +19772,7 @@ Average time for the WAFL filesystem to process NFS protocol read requests to th
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume` | `nfs.read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.read_ops | conf/restperf/9.12.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_read_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
+
 
 
 ### volume_nfs_read_ops
@@ -14752,6 +19785,7 @@ Number of NFS read operations per second from the volume
 | ZAPI | `perf-object-get-instances volume` | `nfs_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
+
 ### volume_nfs_setattr_latency
 
 Average time for the WAFL filesystem to process NFS protocol setattr requests to the volume.
@@ -14760,6 +19794,7 @@ Average time for the WAFL filesystem to process NFS protocol setattr requests to
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume` | `nfs.setattr_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.setattr_ops | conf/restperf/9.12.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_setattr_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_setattr_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
+
 
 
 ### volume_nfs_setattr_ops
@@ -14772,6 +19807,7 @@ Number of NFS setattr requests per second to the volume.
 | ZAPI | `perf-object-get-instances volume` | `nfs_setattr_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
+
 ### volume_nfs_total_ops
 
 Number of total NFS operations per second to the volume.
@@ -14780,6 +19816,7 @@ Number of total NFS operations per second to the volume.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume` | `nfs.total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
+
 
 
 ### volume_nfs_write_latency
@@ -14792,6 +19829,7 @@ Average time for the WAFL filesystem to process NFS protocol write requests to t
 | ZAPI | `perf-object-get-instances volume` | `nfs_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_write_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
+
 ### volume_nfs_write_ops
 
 Number of NFS write operations per second to the volume
@@ -14800,6 +19838,7 @@ Number of NFS write operations per second to the volume
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/volume` | `nfs.write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
+
 
 
 ### volume_num_compress_attempts
@@ -14811,6 +19850,15 @@ Number of NFS write operations per second to the volume
 | REST | `api/private/cli/volume/efficiency/stat` | `num_compress_attempts` | conf/rest/9.14.0/volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/volume.json | Sis Stat | Top $TopResources Volumes by Number of Compress Fail % |
+| cmode/volume.json | Sis Stat | Top $TopResources Volumes by Number of Compress Fail % |
+| cmode/volume.json | Sis Stat | Top $TopResources Volumes by Number of Compress Attempts |
+| cmode/volume.json | Sis Stat | Top $TopResources Volumes by Number of Compress Attempts |
+
+
+
 ### volume_num_compress_fail
 
 
@@ -14820,6 +19868,15 @@ Number of NFS write operations per second to the volume
 | REST | `api/private/cli/volume/efficiency/stat` | `num_compress_fail` | conf/rest/9.14.0/volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/volume.json | Sis Stat | Top $TopResources Volumes by Number of Compress Fail % |
+| cmode/volume.json | Sis Stat | Top $TopResources Volumes by Number of Compress Fail % |
+| cmode/volume.json | Sis Stat | Top $TopResources Volumes by Number of Compress Fail |
+| cmode/volume.json | Sis Stat | Top $TopResources Volumes by Number of Compress Fail |
+
+
+
 ### volume_other_data
 
 Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.
@@ -14827,6 +19884,7 @@ Performance metric for other I/O operations. Other I/O operations can be metadat
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.other`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
+
 
 
 ### volume_other_latency
@@ -14840,6 +19898,15 @@ Average latency in microseconds for the WAFL filesystem to process other operati
 | ZAPI | `perf-object-get-instances volume` | `other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Other Latency |
+| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Other Latency |
+| cmode/volume.json | Performance | Top $TopResources Volumes by Other Latency |
+| cmode/volume.json | Performance | Top $TopResources Volumes by Other Latency |
+
+
+
 ### volume_other_ops
 
 Number of other operations per second to the volume
@@ -14849,6 +19916,18 @@ Number of other operations per second to the volume
 | REST | `api/cluster/counter/tables/volume` | `total_other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.iops_raw.other`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Other IOPs |
+| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Other IOPs |
+| cmode/volume.json | Performance | Top $TopResources Volumes by Other IOPs |
+| cmode/volume.json | Performance | Top $TopResources Volumes by Other IOPs |
+| cmode-details/volumeBySVM.json | Highlights | Volume Performance for $SVM (Click volume for detailed drill-down) |
+| cmode-details/volumeDeepDive.json | Highlights | Volume Performance |
+| cmode-details/volumeDeepDive.json | Highlights | Other IOPs |
+
 
 
 ### volume_overwrite_reserve_available
@@ -14861,6 +19940,7 @@ amount of storage space that is currently available for overwrites, calculated b
 | ZAPI | `volume-get-iter` | `overwrite_reserve_total, overwrite_reserve_used` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
+
 ### volume_overwrite_reserve_total
 
 The size (in bytes) that is reserved for overwriting snapshotted data in an otherwise full volume. This space is usable only by space-reserved LUNs and files, and then only when the volume is full.This field is valid only when the volume is online.
@@ -14869,6 +19949,7 @@ The size (in bytes) that is reserved for overwriting snapshotted data in an othe
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume` | `overwrite_reserve` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.overwrite-reserve` | conf/zapi/cdot/9.8.0/volume.yaml |
+
 
 
 ### volume_overwrite_reserve_used
@@ -14881,6 +19962,7 @@ The reserved size (in bytes) that is not available for new overwrites. The numbe
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.overwrite-reserve-used` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
+
 ### volume_performance_tier_footprint
 
 This field represents the footprint of blocks written to the volume in bytes for the performance tier (bin 0).
@@ -14891,6 +19973,18 @@ This field represents the footprint of blocks written to the volume in bytes for
 | ZAPI | `volume-footprint-get-iter` | `volume-blocks-footprint-bin0` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Performance Tier Footprint |
+| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Performance Tier Footprint |
+| cmode/flexgroup.json | Top Volume FabricPool | Top $TopResources Volumes by Performance Tier Footprint |
+| cmode/flexgroup.json | Top Volume FabricPool | Top $TopResources Volumes by Performance Tier Footprint |
+| cmode/volume.json | FabricPool | Volumes Footprint |
+| cmode/volume.json | FabricPool | Top $TopResources Volumes by Performance Tier Footprint |
+| cmode/volume.json | FabricPool | Top $TopResources Volumes by Performance Tier Footprint |
+
+
+
 ### volume_performance_tier_footprint_percent
 
 This field represents the footprint of blocks written to the volume in bin 0 as a percentage of aggregate size.
@@ -14899,6 +19993,17 @@ This field represents the footprint of blocks written to the volume in bin 0 as 
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume/footprint` | `volume_blocks_footprint_bin0_percent` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-footprint-get-iter` | `volume-blocks-footprint-bin0-percent` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Performance Tier Footprint % |
+| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Performance Tier Footprint % |
+| cmode/flexgroup.json | Top Volume FabricPool | Top $TopResources Volumes by Performance Tier Footprint % |
+| cmode/flexgroup.json | Top Volume FabricPool | Top $TopResources Volumes by Performance Tier Footprint % |
+| cmode/volume.json | FabricPool | Top $TopResources Volumes by Performance Tier Footprint % |
+| cmode/volume.json | FabricPool | Top $TopResources Volumes by Performance Tier Footprint % |
+
 
 
 ### volume_read_data
@@ -14912,6 +20017,38 @@ Bytes read per second
 | ZAPI | `perf-object-get-instances volume` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Average Throughput |
+| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Average Throughput |
+| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Read Throughput |
+| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Read Throughput |
+| cmode/cdot.json | Volume Metrics | Top $TopResources Volumes by Average Throughput |
+| cmode/cdot.json | Volume Metrics | Top $TopResources Volumes by Average Throughput |
+| cmode/flexgroup.json | Highlights | Top $TopResources Constituents by Average Throughput |
+| cmode/flexgroup.json | Highlights | Top $TopResources Constituents by Average Throughput |
+| cmode/flexgroup.json | Volume Table | Top $TopResources Volumes by Read Throughput |
+| cmode/flexgroup.json | Volume Table | Top $TopResources Volumes by Read Throughput |
+| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Read Throughput |
+| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Read Throughput |
+| cmode/node.json | Volume Performance | Top $TopResources Volumes by Average Throughput |
+| cmode/node.json | Volume Performance | Top $TopResources Volumes by Average Throughput |
+| cmode/svm.json | Volume Performance | Top $TopResources Volumes by Read Throughput |
+| cmode/svm.json | Volume Performance | Top $TopResources Volumes by Read Throughput |
+| cmode/volume.json | Highlights | Top $TopResources Volumes Total Throughput |
+| cmode/volume.json | Highlights | Top $TopResources Volumes by Average Throughput |
+| cmode/volume.json | Highlights | Top $TopResources Volumes by Average Throughput |
+| cmode/volume.json | Volume Table | Top $TopResources Volumes by Read Throughput |
+| cmode/volume.json | Volume Table | Top $TopResources Volumes by Read Throughput |
+| cmode/volume.json | Performance | Top $TopResources Volumes by Read Throughput |
+| cmode/volume.json | Performance | Top $TopResources Volumes by Read Throughput |
+| cmode-details/volumeBySVM.json | Highlights | Volume Performance for $SVM (Click volume for detailed drill-down) |
+| cmode-details/volumeDeepDive.json | Highlights | Volume Performance |
+| cmode-details/volumeDeepDive.json | Highlights | Max Read Op Size |
+| cmode-details/volumeDeepDive.json | Highlights | Read Throughput |
+
+
+
 ### volume_read_latency
 
 Average latency in microseconds for the WAFL filesystem to process read request to the volume; not including request processing or network communication time
@@ -14921,6 +20058,24 @@ Average latency in microseconds for the WAFL filesystem to process read request 
 | REST | `api/cluster/counter/tables/volume` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_read_ops | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.latency_raw.read`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.read | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Read Latency |
+| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Read Latency |
+| cmode/flexgroup.json | Volume Table | Top $TopResources Volumes by Read Latency |
+| cmode/flexgroup.json | Volume Table | Top $TopResources Volumes by Read Latency |
+| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Read Latency |
+| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Read Latency |
+| cmode/svm.json | Volume Performance | Top $TopResources Volumes by Read Latency |
+| cmode/svm.json | Volume Performance | Top $TopResources Volumes by Read Latency |
+| cmode/volume.json | Volume Table | Top $TopResources Volumes by Read Latency |
+| cmode/volume.json | Volume Table | Top $TopResources Volumes by Read Latency |
+| cmode/volume.json | Performance | Top $TopResources Volumes by Read Latency |
+| cmode/volume.json | Performance | Top $TopResources Volumes by Read Latency |
+| cmode-details/volumeDeepDive.json | Highlights | Read Latency |
+
 
 
 ### volume_read_ops
@@ -14934,6 +20089,27 @@ Number of read operations per second from the volume
 | ZAPI | `perf-object-get-instances volume` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Read IOPs |
+| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Read IOPs |
+| cmode/flexgroup.json | Volume Table | Top $TopResources Volumes by Read IOPS |
+| cmode/flexgroup.json | Volume Table | Top $TopResources Volumes by Read IOPS |
+| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Read IOPs |
+| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Read IOPs |
+| cmode/svm.json | Volume Performance | Top $TopResources Volumes by Read IOPs |
+| cmode/svm.json | Volume Performance | Top $TopResources Volumes by Read IOPs |
+| cmode/volume.json | Volume Table | Top $TopResources Volumes by Read IOPS |
+| cmode/volume.json | Volume Table | Top $TopResources Volumes by Read IOPS |
+| cmode/volume.json | Performance | Top $TopResources Volumes by Read IOPs |
+| cmode/volume.json | Performance | Top $TopResources Volumes by Read IOPs |
+| cmode-details/volumeBySVM.json | Highlights | Volume Performance for $SVM (Click volume for detailed drill-down) |
+| cmode-details/volumeDeepDive.json | Highlights | Volume Performance |
+| cmode-details/volumeDeepDive.json | Highlights | Max Read Op Size |
+| cmode-details/volumeDeepDive.json | Highlights | Read IOPs |
+
+
+
 ### volume_sis_compress_saved
 
 The total disk space (in bytes) that is saved by compressing blocks on the referenced file system.
@@ -14942,6 +20118,23 @@ The total disk space (in bytes) that is saved by compressing blocks on the refer
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume` | `compression_space_saved` | conf/rest/9.12.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-sis-attributes.compression-space-saved` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/flexgroup.json | Volume Table | FlexGroup Constituents in Cluster |
+| cmode/flexgroup.json | Volume Table | FlexGroup Constituents in Cluster |
+| cmode/health.json | Volume | Volumes with Ransomware Issues (9.10+ Only) |
+| cmode/health.json | Volume | Volumes with Ransomware Issues (9.10+ Only) |
+| cmode/health.json | Volume | Volumes Move Issues |
+| cmode/health.json | Volume | Volumes Move Issues |
+| cmode/svm.json | Volume Capacity | Top $TopResources Volumes by Compression Savings |
+| cmode/svm.json | Volume Capacity | Top $TopResources Volumes by Compression Savings |
+| cmode/volume.json | Volume Table | Volumes in Cluster |
+| cmode/volume.json | Volume Table | Volumes in Cluster |
+| cmode-details/volumeDeepDive.json | Volume Capacity: $Volume | Volumes in Cluster |
+| cmode-details/volumeDeepDive.json | Volume Capacity: $Volume | Volumes in Cluster |
+
 
 
 ### volume_sis_compress_saved_percent
@@ -14954,6 +20147,15 @@ Percentage of the total disk space that is saved by compressing blocks on the re
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-sis-attributes.percentage-compression-space-saved` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/lun.json | Top Volume and LUN Capacity | Top $TopResources Volumes by Compression Percent Saved |
+| cmode/lun.json | Top Volume and LUN Capacity | Top $TopResources Volumes by Compression Percent Saved |
+| cmode/svm.json | Volume Capacity % | Top $TopResources Volumes by Compression Saved % |
+| cmode/svm.json | Volume Capacity % | Top $TopResources Volumes by Compression Saved % |
+
+
+
 ### volume_sis_dedup_saved
 
 The total disk space (in bytes) that is saved by deduplication and file cloning.
@@ -14962,6 +20164,18 @@ The total disk space (in bytes) that is saved by deduplication and file cloning.
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume` | `dedupe_space_saved` | conf/rest/9.12.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-sis-attributes.deduplication-space-saved` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/flexgroup.json | Volume Table | FlexGroup Constituents in Cluster |
+| cmode/health.json | Volume | Volumes with Ransomware Issues (9.10+ Only) |
+| cmode/health.json | Volume | Volumes Move Issues |
+| cmode/svm.json | Volume Capacity | Top $TopResources Volumes by Deduplication Savings |
+| cmode/svm.json | Volume Capacity | Top $TopResources Volumes by Deduplication Savings |
+| cmode/volume.json | Volume Table | Volumes in Cluster |
+| cmode-details/volumeDeepDive.json | Volume Capacity: $Volume | Volumes in Cluster |
+
 
 
 ### volume_sis_dedup_saved_percent
@@ -14974,6 +20188,15 @@ Percentage of the total disk space that is saved by deduplication and file cloni
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-sis-attributes.percentage-deduplication-space-saved` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/lun.json | Top Volume and LUN Capacity | Top $TopResources Volumes by Deduplication Percent Saved |
+| cmode/lun.json | Top Volume and LUN Capacity | Top $TopResources Volumes by Deduplication Percent Saved |
+| cmode/svm.json | Volume Capacity % | Top $TopResources Volumes by Deduplication Saved % |
+| cmode/svm.json | Volume Capacity % | Top $TopResources Volumes by Deduplication Saved % |
+
+
+
 ### volume_sis_total_saved
 
 Total space saved (in bytes) in the volume due to deduplication, compression, and file cloning.
@@ -14982,6 +20205,13 @@ Total space saved (in bytes) in the volume due to deduplication, compression, an
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume` | `sis_space_saved` | conf/rest/9.12.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-sis-attributes.total-space-saved` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | Volume Capacity | Top $TopResources Volumes by Total Efficiency Savings |
+| cmode/svm.json | Volume Capacity | Top $TopResources Volumes by Total Efficiency Savings |
+
 
 
 ### volume_sis_total_saved_percent
@@ -14994,6 +20224,7 @@ Percentage of total disk space that is saved by compressing blocks, deduplicatio
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-sis-attributes.percentage-total-space-saved` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
+
 ### volume_size
 
 Physical size of the volume, in bytes. The minimum size for a FlexVol volume is 20MB and the minimum size for a FlexGroup volume is 200MB per constituent. The recommended size for a FlexGroup volume is a minimum of 100GB per constituent. For all volumes, the default size is equal to the minimum size.
@@ -15002,6 +20233,20 @@ Physical size of the volume, in bytes. The minimum size for a FlexVol volume is 
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume` | `size` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.size` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/fsa.json | Volume Activity | Volume Access ($Activity) History By Percent |
+| cmode/fsa.json | Volume Activity | Volume Access ($Activity) History By Percent |
+| cmode/fsa.json | Volume Activity | Volume Modify ($Activity) History By Percent |
+| cmode/fsa.json | Volume Activity | Volume Modify ($Activity) History By Percent |
+| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Volume Total Size |
+| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Volume Total Size |
+| cmode/volume.json | Capacity | Top $TopResources Volumes Per Volume Total Size |
+| cmode/volume.json | Capacity | Top $TopResources Volumes Per Volume Total Size |
+| cmode-details/volumeDeepDive.json | Per Volume Statistics | Per Volume Space Used |
+
 
 
 ### volume_size_available
@@ -15014,6 +20259,12 @@ The size (in bytes) that is still available in the volume. This field is valid o
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.size-available` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/fsa.json | Highlights | Available |
+
+
+
 ### volume_size_total
 
 Total usable size (in bytes) of the volume, not including WAFL reserve or volume snapshot reserve.  If the volume is restricted or offline, a value of 0 is returned.
@@ -15022,6 +20273,26 @@ Total usable size (in bytes) of the volume, not including WAFL reserve or volume
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume` | `total` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.size-total` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/cdot.json | Capacity Metrics | Top $TopResources SVMs by Capacity Used % |
+| cmode/cdot.json | Capacity Metrics | Top $TopResources SVMs by Capacity Used % |
+| cmode/cdot.json | Capacity Metrics | Top $TopResources Volumes by Capacity Used % |
+| cmode/cdot.json | Capacity Metrics | Top $TopResources Volumes by Capacity Used % |
+| cmode/cdot.json | Capacity Metrics | Top $TopResources SVMs by Capacity Used % |
+| cmode/cdot.json | Capacity Metrics | Top $TopResources SVMs by Capacity Used % |
+| cmode/cdot.json | Capacity Metrics | Top $TopResources Volumes by Capacity Used % |
+| cmode/cdot.json | Capacity Metrics | Top $TopResources Volumes by Capacity Used % |
+| cmode/flexgroup.json | Volume Table | FlexGroup Constituents in Cluster |
+| cmode/fsa.json | Highlights | Size |
+| cmode/fsa.json | Highlights | Used Percentage |
+| cmode/health.json | Volume | Volumes with Ransomware Issues (9.10+ Only) |
+| cmode/health.json | Volume | Volumes Move Issues |
+| cmode/volume.json | Volume Table | Volumes in Cluster |
+| cmode-details/volumeDeepDive.json | Volume Capacity: $Volume | Volumes in Cluster |
+
 
 
 ### volume_size_used
@@ -15034,6 +20305,30 @@ Number of bytes used in the volume.  If the volume is restricted or offline, a v
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.size-used` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Space Used by Aggregate |
+| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Space Used by Aggregate |
+| cmode/cdot.json | Capacity Metrics | Top $TopResources SVMs by Capacity Used % |
+| cmode/cdot.json | Capacity Metrics | Top $TopResources SVMs by Capacity Used % |
+| cmode/cdot.json | Capacity Metrics | Top $TopResources Volumes by Capacity Used % |
+| cmode/cdot.json | Capacity Metrics | Top $TopResources Volumes by Capacity Used % |
+| cmode/cdot.json | Capacity Metrics | Top $TopResources SVMs by Capacity Used % |
+| cmode/cdot.json | Capacity Metrics | Top $TopResources SVMs by Capacity Used % |
+| cmode/cdot.json | Capacity Metrics | Top $TopResources Volumes by Capacity Used % |
+| cmode/cdot.json | Capacity Metrics | Top $TopResources Volumes by Capacity Used % |
+| cmode/fsa.json | Highlights | Used |
+| cmode/fsa.json | Highlights | Used Percentage |
+| cmode/svm.json | Capacity | Top $TopResources SVMs by Volume Space Usage |
+| cmode/svm.json | Capacity | Top $TopResources SVMs by Volume Space Usage |
+| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Volume Size Used |
+| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Volume Size Used |
+| cmode/volume.json | Capacity | Top $TopResources Volumes Per Volume Size Used |
+| cmode/volume.json | Capacity | Top $TopResources Volumes Per Volume Size Used |
+| cmode-details/volumeDeepDive.json | Per Volume Statistics | Per Volume Space Used |
+
+
+
 ### volume_size_used_percent
 
 percentage of utilized storage space in a volume relative to its total capacity
@@ -15042,6 +20337,30 @@ percentage of utilized storage space in a volume relative to its total capacity
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume` | `percent_used` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.percentage-size-used` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Space Used % |
+| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Space Used % |
+| cmode/flexgroup.json | Volume Table | FlexGroup Constituents in Cluster |
+| cmode/health.json | Volume | Volumes with Ransomware Issues (9.10+ Only) |
+| cmode/health.json | Volume | Volumes Move Issues |
+| cmode/lun.json | Top Volume and LUN Capacity | Top $TopResources Volumes by Used % |
+| cmode/lun.json | Top Volume and LUN Capacity | Top $TopResources Volumes by Used % |
+| cmode/svm.json | Volume Capacity % | Top $TopResources Volumes Per Volume Size Used |
+| cmode/svm.json | Volume Capacity % | Top $TopResources Volumes Per Volume Size Used |
+| cmode/volume.json | Volume Table | Volumes in Cluster |
+| cmode/volume.json | Capacity % | Top $TopResources Volumes Per Volume Size Used |
+| cmode/volume.json | Capacity % | Top $TopResources Volumes Per Volume Size Used |
+| cmode/volume.json | Forecast Volume Capacity | Top $TopResources Volumes Per Size Used Percentage Trend |
+| cmode/volume.json | Forecast Volume Capacity | Top $TopResources Volumes Per Size Used Percentage Trend |
+| cmode/volume.json | Forecast Volume Capacity | Top $TopResources Volumes Per Size Used Percentage Trend |
+| cmode/volume.json | Forecast Volume Capacity | Top $TopResources Volumes Per Size Used Percentage Trend |
+| cmode-details/volumeDeepDive.json | Volume Capacity: $Volume | Volumes in Cluster |
+| cmode-details/volumeDeepDive.json | Per Volume Statistics | Per Volume Space Used Percent |
+| cmode-details/volumeDeepDive.json | Per Volume Statistics | Per Volume Snapshot Space Used Percent |
+
 
 
 ### volume_snapshot_count
@@ -15054,6 +20373,26 @@ Number of snapshots in the volume.
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-snapshot-attributes.snapshot-count` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/data_protection.json | Snapshot Copies |  <10 Copies  |
+| cmode/data_protection.json | Snapshot Copies |  <10 Copies  |
+| cmode/data_protection.json | Snapshot Copies | 10-100 Copies |
+| cmode/data_protection.json | Snapshot Copies | 10-100 Copies |
+| cmode/data_protection.json | Snapshot Copies | 101-500 Copies |
+| cmode/data_protection.json | Snapshot Copies | 101-500 Copies |
+| cmode/data_protection.json | Snapshot Copies | >500 Copies |
+| cmode/data_protection.json | Snapshot Copies | Volume count by the number of Snapshot copies |
+| cmode/datacenter.json | Snapshots | Snapshot Copies |
+| cmode/datacenter.json | Snapshots | Snapshot Copies |
+| cmode/datacenter.json | Snapshots | Snapshot Copies |
+| cmode/datacenter.json | Snapshots | Snapshot Copies |
+| cmode/datacenter.json | Snapshots | Snapshot Copies |
+| cmode/datacenter.json | Snapshots | Snapshot Copies |
+| cmode/datacenter.json | Snapshots | Snapshot Copies |
+
+
+
 ### volume_snapshot_reserve_available
 
 The size (in bytes) that is available for Snapshot copies inside the Snapshot reserve. This value is zero if Snapshot spill is present. For 'none' guaranteed volumes, this may get reduced due to less available space in the aggregate. This parameter is not supported on Infinite Volumes.
@@ -15062,6 +20401,16 @@ The size (in bytes) that is available for Snapshot copies inside the Snapshot re
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume` | `snapshot_reserve_available` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.snapshot-reserve-available` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Snapshot Reserve Available |
+| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Snapshot Reserve Available |
+| cmode/volume.json | Capacity | Top $TopResources Volumes Per Snapshot Reserve Available |
+| cmode/volume.json | Capacity | Top $TopResources Volumes Per Snapshot Reserve Available |
+| cmode-details/volumeDeepDive.json | Per Volume Statistics | Per Volume Snapshot Space Used |
+
 
 
 ### volume_snapshot_reserve_percent
@@ -15074,6 +20423,16 @@ The percentage of volume disk space that has been set aside as reserve for snaps
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.percentage-snapshot-reserve` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | Volume Capacity % | Top $TopResources Volumes Per Snapshot Reserve |
+| cmode/svm.json | Volume Capacity % | Top $TopResources Volumes Per Snapshot Reserve |
+| cmode/volume.json | Capacity % | Top $TopResources Volumes Per Snapshot Reserve |
+| cmode/volume.json | Capacity % | Top $TopResources Volumes Per Snapshot Reserve |
+| cmode-details/volumeDeepDive.json | Per Volume Statistics | Per Volume Snapshot Space Used Percent |
+
+
+
 ### volume_snapshot_reserve_size
 
 The size (in bytes) in the volume that has been set aside as reserve for snapshot usage.
@@ -15082,6 +20441,27 @@ The size (in bytes) in the volume that has been set aside as reserve for snapsho
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume` | `snapshot_reserve_size` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.snapshot-reserve-size` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/data_protection.json | Snapshot Copies | Volumes breached |
+| cmode/data_protection.json | Snapshot Copies | Volumes breached |
+| cmode/data_protection.json | Snapshot Copies | Volumes not breached |
+| cmode/data_protection.json | Snapshot Copies | Volumes not breached |
+| cmode/data_protection.json | Snapshot Copies | Volumes not breached |
+| cmode/data_protection.json | Snapshot Copies | Volumes Breaching Snapshot Copy Reserve Space |
+| cmode/datacenter.json | Snapshots | Breached Status |
+| cmode/datacenter.json | Snapshots | Breached Status |
+| cmode/datacenter.json | Snapshots | Breached Status |
+| cmode/datacenter.json | Snapshots | Breached Status |
+| cmode/datacenter.json | Snapshots | Breached Status |
+| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Snapshot Reserve Size |
+| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Snapshot Reserve Size |
+| cmode/volume.json | Capacity | Top $TopResources Volumes Per Snapshot Reserve Size |
+| cmode/volume.json | Capacity | Top $TopResources Volumes Per Snapshot Reserve Size |
+| cmode-details/volumeDeepDive.json | Per Volume Statistics | Per Volume Snapshot Space Used |
+
 
 
 ### volume_snapshot_reserve_used
@@ -15094,6 +20474,7 @@ amount of storage space currently used by a volume's snapshot reserve, which is 
 | ZAPI | `volume-get-iter` | `snapshot_reserve_size, snapshot_reserve_available` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
+
 ### volume_snapshot_reserve_used_percent
 
 Percentage of the volume reserved for snapshots that has been used. Note that in some scenarios, it is possible to pass 100% of the space allocated.
@@ -15102,6 +20483,20 @@ Percentage of the volume reserved for snapshots that has been used. Note that in
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume` | `snapshot_space_used` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.percentage-snapshot-reserve-used` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Snapshot Space Used % |
+| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Snapshot Space Used % |
+| cmode/lun.json | Top Volume and LUN Capacity | Top $TopResources Volumes by Snapshot Used % |
+| cmode/lun.json | Top Volume and LUN Capacity | Top $TopResources Volumes by Snapshot Used % |
+| cmode/svm.json | Volume Capacity % | Top $TopResources Volumes Per Snapshot Reserve Used |
+| cmode/svm.json | Volume Capacity % | Top $TopResources Volumes Per Snapshot Reserve Used |
+| cmode/volume.json | Capacity % | Top $TopResources Volumes Per Snapshot Reserve Used |
+| cmode/volume.json | Capacity % | Top $TopResources Volumes Per Snapshot Reserve Used |
+| cmode-details/volumeDeepDive.json | Per Volume Statistics | Per Volume Snapshot Space Used Percent |
+
 
 
 ### volume_snapshots_size_available
@@ -15114,6 +20509,16 @@ Total free space (in bytes) available in the volume and the snapshot reserve. If
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.size-available-for-snapshots` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Snapshot Size Available |
+| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Snapshot Size Available |
+| cmode/volume.json | Capacity | Top $TopResources Volumes Per Snapshot Size Available |
+| cmode/volume.json | Capacity | Top $TopResources Volumes Per Snapshot Size Available |
+| cmode-details/volumeDeepDive.json | Per Volume Statistics | Per Volume Snapshot Space Used |
+
+
+
 ### volume_snapshots_size_used
 
 The size (in bytes) that is used by snapshots in the volume.
@@ -15122,6 +20527,30 @@ The size (in bytes) that is used by snapshots in the volume.
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume` | `size_used_by_snapshots` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.size-used-by-snapshots` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Snapshot Space Used |
+| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Snapshot Space Used |
+| cmode/data_protection.json | Snapshot Copies | Volumes breached |
+| cmode/data_protection.json | Snapshot Copies | Volumes breached |
+| cmode/data_protection.json | Snapshot Copies | Volumes not breached |
+| cmode/data_protection.json | Snapshot Copies | Volumes not breached |
+| cmode/data_protection.json | Snapshot Copies | Volumes not breached |
+| cmode/data_protection.json | Snapshot Copies | Volumes Breaching Snapshot Copy Reserve Space |
+| cmode/data_protection.json | Snapshot Copies | Volumes Breaching Snapshot Copy Reserve Space |
+| cmode/datacenter.json | Snapshots | Breached Status |
+| cmode/datacenter.json | Snapshots | Breached Status |
+| cmode/datacenter.json | Snapshots | Breached Status |
+| cmode/datacenter.json | Snapshots | Breached Status |
+| cmode/datacenter.json | Snapshots | Breached Status |
+| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Snapshot Size Used |
+| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Snapshot Size Used |
+| cmode/volume.json | Capacity | Top $TopResources Volumes Per Snapshot Size Used |
+| cmode/volume.json | Capacity | Top $TopResources Volumes Per Snapshot Size Used |
+| cmode-details/volumeDeepDive.json | Per Volume Statistics | Per Volume Snapshot Space Used |
+
 
 
 ### volume_space_expected_available
@@ -15134,6 +20563,7 @@ The size (in bytes) that should be available for the volume irrespective of avai
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.expected-available` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
+
 ### volume_space_logical_available
 
 The size (in bytes) that is logically available in the volume.This is the amount of free space available considering space saved by the storage efficiency features as being used.This does not include Snapshot reserve.This parameter is not supported on FlexGroups or Infinite Volumes.
@@ -15142,6 +20572,7 @@ The size (in bytes) that is logically available in the volume.This is the amount
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume` | `logical_available` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.logical-available` | conf/zapi/cdot/9.8.0/volume.yaml |
+
 
 
 ### volume_space_logical_used
@@ -15154,6 +20585,35 @@ The size (in bytes) that is logically used in the volume.This value includes all
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.logical-used` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/flexgroup.json | Volume Table | FlexGroup Constituents in Cluster |
+| cmode/health.json | Volume | Volumes with Ransomware Issues (9.10+ Only) |
+| cmode/health.json | Volume | Volumes Move Issues |
+| cmode/svm.json | Capacity | Top $TopResources SVMs by Logical Space Usage Across Volumes |
+| cmode/svm.json | Capacity | Top $TopResources SVMs by Logical Space Usage Across Volumes |
+| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Logical Space Used |
+| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Logical Space Used |
+| cmode/volume.json | Volume Table | Volumes in Cluster |
+| cmode/volume.json | I/O Density | Top $TopResources Volumes by IO Density (IOPs/TiB) |
+| cmode/volume.json | I/O Density | Top $TopResources Volumes by IO Density (IOPs/TiB) |
+| cmode/volume.json | I/O Density | Bottom $TopResources Volumes by IO Density (IOPs/TiB) |
+| cmode/volume.json | I/O Density | Bottom $TopResources Volumes by IO Density (IOPs/TiB) |
+| cmode/volume.json | Capacity | Top $TopResources Volumes Per Logical Space Used |
+| cmode/volume.json | Capacity | Top $TopResources Volumes Per Logical Space Used |
+| cmode/volume.json | Growth Rate | Top $TopResources Volumes Per Growth Rate of Logical Used |
+| cmode/volume.json | Growth Rate | Top $TopResources Volumes Per Growth Rate of Logical Used |
+| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Logical Usage: Delta |
+| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Logical Usage: Delta |
+| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Logical Usage: Delta |
+| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Logical Usage: Delta |
+| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Logical Usage: Delta |
+| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Logical Usage: Delta |
+| cmode-details/volumeDeepDive.json | Volume Capacity: $Volume | Volumes in Cluster |
+| cmode-details/volumeDeepDive.json | Per Volume Statistics | Per Volume Space Used |
+
+
+
 ### volume_space_logical_used_by_afs
 
 The size (in bytes) that is logically used by the active filesystem of the volume.This value differs from 'logical-used' by the amount of Snapshot spill that exceeds Snapshot reserve.This parameter is not supported on FlexGroups or Infinite Volumes.
@@ -15162,6 +20622,7 @@ The size (in bytes) that is logically used by the active filesystem of the volum
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume` | `logical_used_by_afs` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.logical-used-by-afs` | conf/zapi/cdot/9.8.0/volume.yaml |
+
 
 
 ### volume_space_logical_used_by_snapshots
@@ -15174,6 +20635,7 @@ The size (in bytes) that is logically used across all Snapshot copies in the vol
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.logical-used-by-snapshots` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
+
 ### volume_space_logical_used_percent
 
 Percentage of the logical used size of the volume.This parameter is not supported on FlexGroups or Infinite Volumes.
@@ -15182,6 +20644,16 @@ Percentage of the logical used size of the volume.This parameter is not supporte
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume` | `logical_used_percent` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.logical-used-percent` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | Volume Capacity % | Top $TopResources Volumes Per Logical Space Used |
+| cmode/svm.json | Volume Capacity % | Top $TopResources Volumes Per Logical Space Used |
+| cmode/volume.json | Capacity % | Top $TopResources Volumes Per Logical Space Used |
+| cmode/volume.json | Capacity % | Top $TopResources Volumes Per Logical Space Used |
+| cmode-details/volumeDeepDive.json | Per Volume Statistics | Per Volume Space Used Percent |
+
 
 
 ### volume_space_performance_tier_inactive_user_data
@@ -15194,6 +20666,13 @@ The size that is physically used in the performance tier of the volume and has a
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.performance-tier-inactive-user-data` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/volume.json | Capacity | Top $TopResources Volumes by Inactive Data |
+| cmode/volume.json | Capacity | Top $TopResources Volumes by Inactive Data |
+
+
+
 ### volume_space_performance_tier_inactive_user_data_percent
 
 The size (in percent) that is physically used in the performance tier of the volume and has a cold temperature. This parameter is only supported if the volume is in an aggregate that is either attached to object store or could be attached to an object store.
@@ -15202,6 +20681,13 @@ The size (in percent) that is physically used in the performance tier of the vol
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume` | `performance_tier_inactive_user_data_percent` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.performance-tier-inactive-user-data-percent` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/volume.json | Capacity % | Top $TopResources Volumes by Inactive Data |
+| cmode/volume.json | Capacity % | Top $TopResources Volumes by Inactive Data |
+
 
 
 ### volume_space_physical_used
@@ -15214,6 +20700,29 @@ The size (in bytes) that is physically used in the volume.This differs from 'tot
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.physical-used` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/flexgroup.json | Volume Table | FlexGroup Constituents in Cluster |
+| cmode/health.json | Volume | Volumes with Ransomware Issues (9.10+ Only) |
+| cmode/health.json | Volume | Volumes Move Issues |
+| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Physical Space Used |
+| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Physical Space Used |
+| cmode/volume.json | Volume Table | Volumes in Cluster |
+| cmode/volume.json | Capacity | Top $TopResources Volumes Per Physical Space Used |
+| cmode/volume.json | Capacity | Top $TopResources Volumes Per Physical Space Used |
+| cmode/volume.json | Growth Rate | Top $TopResources Volumes Per Growth Rate of Physical Used |
+| cmode/volume.json | Growth Rate | Top $TopResources Volumes Per Growth Rate of Physical Used |
+| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Physical Usage: Delta |
+| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Physical Usage: Delta |
+| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Physical Usage: Delta |
+| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Physical Usage: Delta |
+| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Physical Usage: Delta |
+| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Physical Usage: Delta |
+| cmode-details/volumeDeepDive.json | Volume Capacity: $Volume | Volumes in Cluster |
+| cmode-details/volumeDeepDive.json | Per Volume Statistics | Per Volume Space Used |
+
+
+
 ### volume_space_physical_used_percent
 
 The size (in percent) that is physically used in the volume.The percentage is based on volume size including the space reserved for Snapshot copies.This field is valid only if the volume is online.
@@ -15224,6 +20733,16 @@ The size (in percent) that is physically used in the volume.The percentage is ba
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.physical-used-percent` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/svm.json | Volume Capacity % | Top $TopResources Volumes Per Physical Space Used |
+| cmode/svm.json | Volume Capacity % | Top $TopResources Volumes Per Physical Space Used |
+| cmode/volume.json | Capacity % | Top $TopResources Volumes Per Physical Space Used |
+| cmode/volume.json | Capacity % | Top $TopResources Volumes Per Physical Space Used |
+| cmode-details/volumeDeepDive.json | Per Volume Statistics | Per Volume Space Used Percent |
+
+
+
 ### volume_tags
 
 Displays tags at the volume level.
@@ -15231,6 +20750,7 @@ Displays tags at the volume level.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.12.0/volume.yaml |
+
 
 
 ### volume_top_clients_read_data
@@ -15243,6 +20763,7 @@ This metric measures the amount of data read by the top clients to a specific vo
 | KeyPerf | `api/storage/volumes/*/top-metrics/clients` | `throughput.read`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 
 
+
 ### volume_top_clients_read_ops
 
 This metric tracks the number of read operations performed by the top clients on a specific volume.
@@ -15251,6 +20772,7 @@ This metric tracks the number of read operations performed by the top clients on
 |--------|----------|--------|---------|
 | REST | `api/storage/volumes/*/top-metrics/clients` | `iops.read` | conf/rest/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes/*/top-metrics/clients` | `iops.read`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
+
 
 
 ### volume_top_clients_write_data
@@ -15263,6 +20785,7 @@ This metric measures the amount of data written by the top clients to a specific
 | KeyPerf | `api/storage/volumes/*/top-metrics/files` | `throughput.write`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 
 
+
 ### volume_top_clients_write_ops
 
 This metric tracks the number of write operations performed by the top clients on a specific volume.
@@ -15271,6 +20794,7 @@ This metric tracks the number of write operations performed by the top clients o
 |--------|----------|--------|---------|
 | REST | `api/storage/volumes/*/top-metrics/clients` | `iops.write` | conf/rest/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes/*/top-metrics/clients` | `iops.write`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
+
 
 
 ### volume_top_files_read_data
@@ -15283,6 +20807,7 @@ This metric measures the amount of data read from the files of a specific volume
 | KeyPerf | `api/storage/volumes/*/top-metrics/files` | `throughput.read`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 
 
+
 ### volume_top_files_read_ops
 
 This metric tracks the number of read operations performed on the files of a specific volume.
@@ -15291,6 +20816,7 @@ This metric tracks the number of read operations performed on the files of a spe
 |--------|----------|--------|---------|
 | REST | `api/storage/volumes/*/top-metrics/files` | `iops.read` | conf/rest/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes/*/top-metrics/files` | `iops.read`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
+
 
 
 ### volume_top_files_write_data
@@ -15303,6 +20829,7 @@ This metric measures the amount of data written to the top files of a specific v
 | KeyPerf | `api/storage/volumes/*/top-metrics/files` | `throughput.write`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 
 
+
 ### volume_top_files_write_ops
 
 This metric tracks the number of write operations performed on the files of a specific volume.
@@ -15311,6 +20838,7 @@ This metric tracks the number of write operations performed on the files of a sp
 |--------|----------|--------|---------|
 | REST | `api/storage/volumes/*/top-metrics/files` | `iops.write` | conf/rest/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes/*/top-metrics/files` | `iops.write`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
+
 
 
 ### volume_total_data
@@ -15324,6 +20852,13 @@ This metric represents the total amount of data that has been read from and writ
 | ZAPI | `volume` | `read_data, write_data`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/datacenter.json | Performance | Top $TopResources Throughput by Cluster |
+| cmode/datacenter.json | Performance | Top $TopResources Throughput by Cluster |
+
+
+
 ### volume_total_footprint
 
 This field represents the total footprint in bytes.
@@ -15334,6 +20869,14 @@ This field represents the total footprint in bytes.
 | ZAPI | `volume-footprint-get-iter` | `total-footprint` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/volume.json | FabricPool | Volumes Footprint |
+| cmode/volume.json | FabricPool | Top $TopResources Volumes by Total Footprint |
+| cmode/volume.json | FabricPool | Top $TopResources Volumes by Total Footprint |
+
+
+
 ### volume_total_metadata_footprint
 
 This field represents the total metadata footprint in bytes.
@@ -15342,6 +20885,14 @@ This field represents the total metadata footprint in bytes.
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume/footprint` | `total_metadata_footprint` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-footprint-get-iter` | `volume_total_metadata_footprint` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/volume.json | FabricPool | Volumes Footprint |
+| cmode/volume.json | FabricPool | Top $TopResources Volumes by Total Metadata Footprint |
+| cmode/volume.json | FabricPool | Top $TopResources Volumes by Total Metadata Footprint |
+
 
 
 ### volume_total_ops
@@ -15355,6 +20906,31 @@ Number of operations per second serviced by the volume
 | ZAPI | `perf-object-get-instances volume` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by IOPs |
+| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by IOPs |
+| cmode/cdot.json | Volume Metrics | Top $TopResources Volumes by IOPs |
+| cmode/cdot.json | Volume Metrics | Top $TopResources Volumes by IOPs |
+| cmode/datacenter.json | Performance | Top $TopResources  IOPs by Cluster |
+| cmode/datacenter.json | Performance | Top $TopResources  IOPs by Cluster |
+| cmode/flexgroup.json | Highlights | Top $TopResources Constituents by Total IOPs |
+| cmode/flexgroup.json | Highlights | Top $TopResources Constituents by Total IOPs |
+| cmode/node.json | Volume Performance | Top $TopResources Volumes by IOPs |
+| cmode/node.json | Volume Performance | Top $TopResources Volumes by IOPs |
+| cmode/volume.json | Highlights | Top $TopResources Volumes by Total IOPs |
+| cmode/volume.json | Highlights | Top $TopResources Volumes by Total IOPs |
+| cmode/volume.json | Highlights | Top $TopResources Volumes by Total IOPs |
+| cmode/volume.json | I/O Density | Top $TopResources Volumes by IO Density (IOPs/TiB) |
+| cmode/volume.json | I/O Density | Top $TopResources Volumes by IO Density (IOPs/TiB) |
+| cmode/volume.json | I/O Density | Bottom $TopResources Volumes by IO Density (IOPs/TiB) |
+| cmode/volume.json | I/O Density | Bottom $TopResources Volumes by IO Density (IOPs/TiB) |
+| cmode/volume.json | I/O Density | Bottom $TopResources Volumes by IO Density (IOPs/TiB) |
+| cmode-details/volumeBySVM.json | Highlights | Volume Performance for $SVM (Click volume for detailed drill-down) |
+| cmode-details/volumeDeepDive.json | Highlights | Volume Performance |
+
+
+
 ### volume_write_data
 
 Bytes written per second
@@ -15364,6 +20940,38 @@ Bytes written per second
 | REST | `api/cluster/counter/tables/volume` | `bytes_written`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.write`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Average Throughput |
+| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Average Throughput |
+| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Write Throughput |
+| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Write Throughput |
+| cmode/cdot.json | Volume Metrics | Top $TopResources Volumes by Average Throughput |
+| cmode/cdot.json | Volume Metrics | Top $TopResources Volumes by Average Throughput |
+| cmode/flexgroup.json | Highlights | Top $TopResources Constituents by Average Throughput |
+| cmode/flexgroup.json | Highlights | Top $TopResources Constituents by Average Throughput |
+| cmode/flexgroup.json | Volume Table | Top $TopResources Volumes by Write Throughput |
+| cmode/flexgroup.json | Volume Table | Top $TopResources Volumes by Write Throughput |
+| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Write Throughput |
+| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Write Throughput |
+| cmode/node.json | Volume Performance | Top $TopResources Volumes by Average Throughput |
+| cmode/node.json | Volume Performance | Top $TopResources Volumes by Average Throughput |
+| cmode/svm.json | Volume Performance | Top $TopResources Volumes by Write Throughput |
+| cmode/svm.json | Volume Performance | Top $TopResources Volumes by Write Throughput |
+| cmode/volume.json | Highlights | Top $TopResources Volumes Total Throughput |
+| cmode/volume.json | Highlights | Top $TopResources Volumes by Average Throughput |
+| cmode/volume.json | Highlights | Top $TopResources Volumes by Average Throughput |
+| cmode/volume.json | Volume Table | Top $TopResources Volumes by Write Throughput |
+| cmode/volume.json | Volume Table | Top $TopResources Volumes by Write Throughput |
+| cmode/volume.json | Performance | Top $TopResources Volumes by Write Throughput |
+| cmode/volume.json | Performance | Top $TopResources Volumes by Write Throughput |
+| cmode-details/volumeBySVM.json | Highlights | Volume Performance for $SVM (Click volume for detailed drill-down) |
+| cmode-details/volumeDeepDive.json | Highlights | Volume Performance |
+| cmode-details/volumeDeepDive.json | Highlights | Max Write Op Size |
+| cmode-details/volumeDeepDive.json | Highlights | Write Throughput |
+
 
 
 ### volume_write_latency
@@ -15377,6 +20985,24 @@ Average latency in microseconds for the WAFL filesystem to process write request
 | ZAPI | `perf-object-get-instances volume` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Write Latency |
+| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Write Latency |
+| cmode/flexgroup.json | Volume Table | Top $TopResources Volumes by Write Latency |
+| cmode/flexgroup.json | Volume Table | Top $TopResources Volumes by Write Latency |
+| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Write Latency |
+| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Write Latency |
+| cmode/svm.json | Volume Performance | Top $TopResources Volumes by Write Latency |
+| cmode/svm.json | Volume Performance | Top $TopResources Volumes by Write Latency |
+| cmode/volume.json | Volume Table | Top $TopResources Volumes by Write Latency |
+| cmode/volume.json | Volume Table | Top $TopResources Volumes by Write Latency |
+| cmode/volume.json | Performance | Top $TopResources Volumes by Write Latency |
+| cmode/volume.json | Performance | Top $TopResources Volumes by Write Latency |
+| cmode-details/volumeDeepDive.json | Highlights | Write Latency |
+
+
+
 ### volume_write_ops
 
 Number of write operations per second to the volume
@@ -15388,6 +21014,27 @@ Number of write operations per second to the volume
 | ZAPI | `perf-object-get-instances volume` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Write IOPs |
+| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Write IOPs |
+| cmode/flexgroup.json | Volume Table | Top $TopResources Volumes by Write IOPS |
+| cmode/flexgroup.json | Volume Table | Top $TopResources Volumes by Write IOPS |
+| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Write IOPs |
+| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Write IOPs |
+| cmode/svm.json | Volume Performance | Top $TopResources Volumes by Write IOPs |
+| cmode/svm.json | Volume Performance | Top $TopResources Volumes by Write IOPs |
+| cmode/volume.json | Volume Table | Top $TopResources Volumes by Write IOPS |
+| cmode/volume.json | Volume Table | Top $TopResources Volumes by Write IOPS |
+| cmode/volume.json | Performance | Top $TopResources Volumes by Write IOPs |
+| cmode/volume.json | Performance | Top $TopResources Volumes by Write IOPs |
+| cmode-details/volumeBySVM.json | Highlights | Volume Performance for $SVM (Click volume for detailed drill-down) |
+| cmode-details/volumeDeepDive.json | Highlights | Volume Performance |
+| cmode-details/volumeDeepDive.json | Highlights | Max Write Op Size |
+| cmode-details/volumeDeepDive.json | Highlights | Write IOPs |
+
+
+
 ### vscan_labels
 
 This metric provides information about Vscan
@@ -15395,6 +21042,7 @@ This metric provides information about Vscan
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/protocols/vscan` | `Harvest generated` | conf/rest/9.12.0/vscan.yaml |
+
 
 
 ### vscan_scan_latency
@@ -15407,6 +21055,13 @@ Average scan latency
 | ZAPI | `perf-object-get-instances offbox_vscan_server` | `scan_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> scan_latency_base | conf/zapiperf/cdot/9.8.0/vscan.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/vscan.json | Connection Status Counters | Top $TopResources Scanners by Scanner Latency |
+| cmode/vscan.json | Connection Status Counters | Top $TopResources Scanners by Scanner Latency |
+
+
+
 ### vscan_scan_request_dispatched_rate
 
 Total number of scan requests sent to the scanner per second
@@ -15415,6 +21070,13 @@ Total number of scan requests sent to the scanner per second
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/vscan` | `scan.request_dispatched_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.13.0/vscan.yaml |
 | ZAPI | `perf-object-get-instances offbox_vscan_server` | `scan_request_dispatched_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/vscan.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/vscan.json | Connection Status Counters | Top $TopResources Scanners by Scanner Requests Throughput |
+| cmode/vscan.json | Connection Status Counters | Top $TopResources Scanners by Scanner Requests Throughput |
+
 
 
 ### vscan_scanner_stats_pct_cpu_used
@@ -15427,6 +21089,12 @@ Percentage CPU utilization on scanner calculated over the last 15 seconds.
 | ZAPI | `perf-object-get-instances offbox_vscan_server` | `scanner_stats_pct_cpu_used`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/vscan.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/vscan.json | Scanner utilization | Scanner CPU Utilization |
+
+
+
 ### vscan_scanner_stats_pct_mem_used
 
 Percentage RAM utilization on scanner calculated over the last 15 seconds.
@@ -15435,6 +21103,12 @@ Percentage RAM utilization on scanner calculated over the last 15 seconds.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/vscan` | `scanner.stats_percent_mem_used`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.13.0/vscan.yaml |
 | ZAPI | `perf-object-get-instances offbox_vscan_server` | `scanner_stats_pct_mem_used`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/vscan.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/vscan.json | Scanner utilization | Scanner Mem Utilization |
+
 
 
 ### vscan_scanner_stats_pct_network_used
@@ -15447,6 +21121,12 @@ Percentage network utilization on scanner calculated for the last 15 seconds.
 | ZAPI | `perf-object-get-instances offbox_vscan_server` | `scanner_stats_pct_network_used`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/vscan.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/vscan.json | Scanner utilization | Scanner Network Utilization |
+
+
+
 ### wafl_avg_msg_latency
 
 Average turnaround time for WAFL messages in milliseconds.
@@ -15455,6 +21135,7 @@ Average turnaround time for WAFL messages in milliseconds.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/wafl` | `average_msg_latency`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> msg_total | conf/restperf/9.12.0/wafl.yaml |
 | ZAPI | `perf-object-get-instances wafl` | `avg_wafl_msg_latency`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> wafl_msg_total | conf/zapiperf/cdot/9.8.0/wafl.yaml |
+
 
 
 ### wafl_avg_non_wafl_msg_latency
@@ -15467,6 +21148,7 @@ Average turnaround time for non-WAFL messages in milliseconds.
 | ZAPI | `perf-object-get-instances wafl` | `avg_non_wafl_msg_latency`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> non_wafl_msg_total | conf/zapiperf/cdot/9.8.0/wafl.yaml |
 
 
+
 ### wafl_avg_repl_msg_latency
 
 Average turnaround time for replication WAFL messages in milliseconds.
@@ -15475,6 +21157,7 @@ Average turnaround time for replication WAFL messages in milliseconds.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/wafl` | `average_replication_msg_latency`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> replication_msg_total | conf/restperf/9.12.0/wafl.yaml |
 | ZAPI | `perf-object-get-instances wafl` | `avg_wafl_repl_msg_latency`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> wafl_repl_msg_total | conf/zapiperf/cdot/9.8.0/wafl.yaml |
+
 
 
 ### wafl_cp_count
@@ -15487,6 +21170,12 @@ Array of counts of different types of Consistency Points (CP).
 | ZAPI | `perf-object-get-instances wafl` | `cp_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/disk.json | Disk Utilization | CP (Consistency Points) Counts |
+
+
+
 ### wafl_cp_phase_times
 
 Array of percentage time spent in different phases of Consistency Point (CP).
@@ -15495,6 +21184,12 @@ Array of percentage time spent in different phases of Consistency Point (CP).
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/wafl` | `cp_phase_times`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> total_cp_msecs | conf/restperf/9.12.0/wafl.yaml |
 | ZAPI | `perf-object-get-instances wafl` | `cp_phase_times`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> total_cp_msecs | conf/zapiperf/cdot/9.8.0/wafl.yaml |
+
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | Backend | System Utilization |
+
 
 
 ### wafl_memory_free
@@ -15507,6 +21202,7 @@ The current WAFL memory available in the system.
 | ZAPI | `perf-object-get-instances wafl` | `wafl_memory_free`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl.yaml |
 
 
+
 ### wafl_memory_used
 
 The current WAFL memory used in the system.
@@ -15515,6 +21211,7 @@ The current WAFL memory used in the system.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/wafl` | `memory_used`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/wafl.yaml |
 | ZAPI | `perf-object-get-instances wafl` | `wafl_memory_used`<br><span class="key">Unit:</span> mb<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl.yaml |
+
 
 
 ### wafl_msg_total
@@ -15527,6 +21224,7 @@ Total number of WAFL messages per second.
 | ZAPI | `perf-object-get-instances wafl` | `wafl_msg_total`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl.yaml |
 
 
+
 ### wafl_non_wafl_msg_total
 
 Total number of non-WAFL messages per second.
@@ -15535,6 +21233,7 @@ Total number of non-WAFL messages per second.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/wafl` | `non_wafl_msg_total`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/wafl.yaml |
 | ZAPI | `perf-object-get-instances wafl` | `non_wafl_msg_total`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl.yaml |
+
 
 
 ### wafl_read_io_type
@@ -15547,6 +21246,12 @@ Percentage of reads served from buffer cache, external cache, or disk.
 | ZAPI | `perf-object-get-instances wafl` | `read_io_type`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> read_io_type_base | conf/zapiperf/cdot/9.8.0/wafl.yaml |
 
 
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/node.json | Backend | Reads From |
+
+
+
 ### wafl_reads_from_cache
 
 WAFL reads from cache.
@@ -15555,6 +21260,7 @@ WAFL reads from cache.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/wafl` | `reads_from_cache`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/wafl.yaml |
 | ZAPI | `perf-object-get-instances wafl` | `wafl_reads_from_cache`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl.yaml |
+
 
 
 ### wafl_reads_from_cloud
@@ -15567,6 +21273,7 @@ WAFL reads from cloud storage.
 | ZAPI | `perf-object-get-instances wafl` | `wafl_reads_from_cloud`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl.yaml |
 
 
+
 ### wafl_reads_from_cloud_s2c_bin
 
 WAFL reads from cloud storage via s2c bin.
@@ -15575,6 +21282,7 @@ WAFL reads from cloud storage via s2c bin.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/wafl` | `reads_from_cloud_s2c_bin`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/wafl.yaml |
 | ZAPI | `perf-object-get-instances wafl` | `wafl_reads_from_cloud_s2c_bin`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl.yaml |
+
 
 
 ### wafl_reads_from_disk
@@ -15587,6 +21295,7 @@ WAFL reads from disk.
 | ZAPI | `perf-object-get-instances wafl` | `wafl_reads_from_disk`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl.yaml |
 
 
+
 ### wafl_reads_from_ext_cache
 
 WAFL reads from external cache.
@@ -15595,6 +21304,7 @@ WAFL reads from external cache.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/wafl` | `reads_from_external_cache`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/wafl.yaml |
 | ZAPI | `perf-object-get-instances wafl` | `wafl_reads_from_ext_cache`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl.yaml |
+
 
 
 ### wafl_reads_from_fc_miss
@@ -15607,6 +21317,7 @@ WAFL reads from remote volume for fc_miss.
 | ZAPI | `perf-object-get-instances wafl` | `wafl_reads_from_fc_miss`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl.yaml |
 
 
+
 ### wafl_reads_from_pmem
 
 Wafl reads from persistent mmeory.
@@ -15614,6 +21325,7 @@ Wafl reads from persistent mmeory.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | ZAPI | `perf-object-get-instances wafl` | `wafl_reads_from_pmem`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl.yaml |
+
 
 
 ### wafl_reads_from_ssd
@@ -15626,6 +21338,7 @@ WAFL reads from SSD.
 | ZAPI | `perf-object-get-instances wafl` | `wafl_reads_from_ssd`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl.yaml |
 
 
+
 ### wafl_repl_msg_total
 
 Total number of replication WAFL messages per second.
@@ -15634,6 +21347,7 @@ Total number of replication WAFL messages per second.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/wafl` | `replication_msg_total`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/wafl.yaml |
 | ZAPI | `perf-object-get-instances wafl` | `wafl_repl_msg_total`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl.yaml |
+
 
 
 ### wafl_total_cp_msecs
@@ -15646,6 +21360,7 @@ Milliseconds spent in Consistency Point (CP).
 | ZAPI | `perf-object-get-instances wafl` | `total_cp_msecs`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl.yaml |
 
 
+
 ### wafl_total_cp_util
 
 Percentage of time spent in a Consistency Point (CP).
@@ -15654,5 +21369,6 @@ Percentage of time spent in a Consistency Point (CP).
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/wafl` | `total_cp_util`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> cpu_elapsed_time | conf/restperf/9.12.0/wafl.yaml |
 | ZAPI | `perf-object-get-instances wafl` | `total_cp_util`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> cpu_elapsed_time | conf/zapiperf/cdot/9.8.0/wafl.yaml |
+
 
 

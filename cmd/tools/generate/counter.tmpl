@@ -21,7 +21,7 @@ Number of I/Os queued to the disk but not yet issued <span class="key">Descripti
 * <span class="key">API</span> will be one of REST or ZAPI depending on which collector is used to collect the metric
 * <span class="key">Endpoint</span> name of the REST or ZAPI API used to collect this metric
 * <span class="key">Metric</span> name of the ONTAP metric
- <span class="key">Template</span> path of the template that collects the metric
+* <span class="key">Template</span> path of the template that collects the metric
 
 Performance related metrics also include:
 
@@ -47,4 +47,12 @@ Performance related metrics also include:
 {{.TableRow -}}
 {{end}}
 {{end}}
+
+{{- if .HasPanels}}
+{{.PanelHeader -}}
+{{range .Panels}}
+{{.DashboardTableRow -}}
+{{end}}
+{{end}}
+
 {{end}}
