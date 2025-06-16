@@ -234,7 +234,7 @@ func (s *StatPerf) pollCounter(records []gjson.Result, apiD time.Duration) error
 		return errs.New(errs.ErrConfig, "no data found")
 	}
 
-	counters, err := s.parseCounters(fr)
+	counters, err := s.ParseCounters(fr)
 	if err != nil {
 		return err
 	}

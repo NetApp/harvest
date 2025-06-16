@@ -27,7 +27,7 @@ func runCounterTest(t *testing.T, tc testCase) {
 		}
 
 		sp := &StatPerf{}
-		counters, err := sp.parseCounters(string(content))
+		counters, err := sp.ParseCounters(string(content))
 		if err != nil {
 			t.Fatalf("Unexpected error during parseCounters: %v", err)
 		}
