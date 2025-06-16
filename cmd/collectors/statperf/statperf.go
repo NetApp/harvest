@@ -572,8 +572,8 @@ func (s *StatPerf) processPerfRecords(records []gjson.Result, curMat *matrix.Mat
 
 					// Iterate over the keys and values
 					result.ForEach(func(key, value gjson.Result) bool {
-						labels = append(labels, key.String())
-						values = append(values, value.String())
+						labels = append(labels, key.ClonedString())
+						values = append(values, value.ClonedString())
 						return true // keep iterating
 					})
 
