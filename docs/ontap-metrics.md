@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Jun-16
+Creation Date : 2025-Jun-17
 ONTAP Version: 9.16.1
 ```
 ## Understanding the structure
@@ -46,16 +46,15 @@ The utilization percent of the disk. aggr_disk_busy is [disk_busy](#disk_busy) a
 | REST | `api/cluster/counter/tables/disk:constituent` | `disk_busy_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `disk_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
+The `aggr_disk_busy` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Disk Utilization | Top $TopResources Average Disk Utilization per Aggregate |
-| cmode/aggregate.json | Disk Utilization | Top $TopResources Average Disk Utilization per Aggregate |
-| cmode/aggregate.json | Disk Utilization | Top $TopResources Average Disk Utilization Per Aggregate |
-| cmode/aggregate.json | Disk Utilization | Top $TopResources Average Disk Utilization Per Aggregate |
-| cmode/cluster.json | Throughput | Average Disk Utilization by Aggregate |
-| cmode/disk.json | Highlights | Raid Groups |
-| cmode/disk.json | Highlights | Plexes |
+| ONTAP: Aggregate | Disk Utilization | Top $TopResources Average Disk Utilization per Aggregate |
+| ONTAP: Aggregate | Disk Utilization | Top $TopResources Average Disk Utilization Per Aggregate |
+| ONTAP: Cluster | Throughput | Average Disk Utilization by Aggregate |
+| ONTAP: Disk | Highlights | Raid Groups |
+| ONTAP: Disk | Highlights | Plexes |
 
 
 
@@ -134,14 +133,13 @@ The utilization percent of the disk. aggr_disk_max_busy is the maximum of [disk_
 | REST | `api/cluster/counter/tables/disk:constituent` | `disk_busy_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `disk_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
+The `aggr_disk_max_busy` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/disk.json | Highlights | Top $TopResources Aggregates by Disk Utilization |
-| cmode/disk.json | Highlights | Top $TopResources Aggregates by Disk Utilization |
-| cmode/disk.json | Highlights | Top $TopResources Aggregates by Max Disk Utilization |
-| cmode/disk.json | Highlights | Top $TopResources Aggregates by Max Disk Utilization |
-| cmode/mcc_cluster.json | Highlights | Max Disk Utilization Per Aggregate |
+| ONTAP: Disk | Highlights | Top $TopResources Aggregates by Disk Utilization |
+| ONTAP: Disk | Highlights | Top $TopResources Aggregates by Max Disk Utilization |
+| ONTAP: MetroCluster | Highlights | Max Disk Utilization Per Aggregate |
 
 
 
@@ -231,13 +229,12 @@ Total number of disk operations involving data transfer initiated per second. ag
 | REST | `api/cluster/counter/tables/disk:constituent` | `total_transfer_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `total_transfers`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
+The `aggr_disk_max_total_transfers` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/disk.json | Highlights | Top $TopResources Aggregates by Disk Utilization |
-| cmode/disk.json | Highlights | Top $TopResources Aggregates by Disk Utilization |
-| cmode/disk.json | Highlights | Top $TopResources Aggregates by Disk Transfers |
-| cmode/disk.json | Highlights | Top $TopResources Aggregates by Disk Transfers |
+| ONTAP: Disk | Highlights | Top $TopResources Aggregates by Disk Utilization |
+| ONTAP: Disk | Highlights | Top $TopResources Aggregates by Disk Transfers |
 
 
 
@@ -261,11 +258,11 @@ Average number of blocks transferred in each user read operation. aggr_disk_max_
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_count | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_read_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_reads | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
+The `aggr_disk_max_user_read_chain` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/disk.json | Highlights | Top $TopResources Aggregates by User Read Chain Length |
-| cmode/disk.json | Highlights | Top $TopResources Aggregates by User Read Chain Length |
+| ONTAP: Disk | Highlights | Top $TopResources Aggregates by User Read Chain Length |
 
 
 
@@ -311,11 +308,11 @@ Average number of blocks transferred in each user write operation. aggr_disk_max
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_write_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_count | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_write_chain`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_writes | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
+The `aggr_disk_max_user_write_chain` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/disk.json | Highlights | Top $TopResources Aggregates by User Write Chain Length |
-| cmode/disk.json | Highlights | Top $TopResources Aggregates by User Write Chain Length |
+| ONTAP: Disk | Highlights | Top $TopResources Aggregates by User Write Chain Length |
 
 
 
@@ -350,10 +347,11 @@ Total throughput for user operations per second. aggr_disk_total_data is [disk_t
 | REST | `api/cluster/counter/tables/disk:constituent` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
+The `aggr_disk_total_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/power.json | Aggregate | Aggregates |
+| ONTAP: Power | Aggregate | Aggregates |
 
 
 
@@ -366,10 +364,11 @@ Total number of disk operations involving data transfer initiated per second. ag
 | REST | `api/cluster/counter/tables/disk:constituent` | `total_transfer_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `total_transfers`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
+The `aggr_disk_total_transfers` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/power.json | Aggregate | Aggregates |
+| ONTAP: Power | Aggregate | Aggregates |
 
 
 
@@ -415,11 +414,11 @@ Number of disk read operations initiated each second for retrieving data or meta
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_read_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
+The `aggr_disk_user_reads` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/power.json | Highlights | Top $TopResources Aggregates by IOPS per Power Consumed |
-| cmode/power.json | Highlights | Top $TopResources Aggregates by IOPS per Power Consumed |
+| ONTAP: Power | Highlights | Top $TopResources Aggregates by IOPS per Power Consumed |
 
 
 
@@ -465,11 +464,11 @@ Number of disk write operations initiated each second for storing data or metada
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_write_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_writes`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
+The `aggr_disk_user_writes` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/power.json | Highlights | Top $TopResources Aggregates by IOPS per Power Consumed |
-| cmode/power.json | Highlights | Top $TopResources Aggregates by IOPS per Power Consumed |
+| ONTAP: Power | Highlights | Top $TopResources Aggregates by IOPS per Power Consumed |
 
 
 
@@ -544,11 +543,11 @@ Maximum number of user-visible files that this referenced file system can curren
 | REST | `api/storage/aggregates` | `inode_attributes.files_total` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-inode-attributes.files-total` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
+The `aggr_inode_files_total` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Inodes Files |
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Inodes Files |
+| ONTAP: Aggregate | Highlights | Top $TopResources Aggregates by  Inodes Files |
 
 
 
@@ -561,11 +560,11 @@ Number of user-visible files used in the referenced file system. If the referenc
 | REST | `api/storage/aggregates` | `inode_attributes.files_used` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-inode-attributes.files-used` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
+The `aggr_inode_files_used` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Inodes Files |
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Inodes Files |
+| ONTAP: Aggregate | Highlights | Top $TopResources Aggregates by  Inodes Files |
 
 
 
@@ -578,11 +577,11 @@ Number of files that can currently be stored on disk for system metadata files. 
 | REST | `api/storage/aggregates` | `inode_attributes.file_private_capacity` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-inode-attributes.inodefile-private-capacity` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
+The `aggr_inode_inodefile_private_capacity` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Inode Capacity |
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Inode Capacity |
+| ONTAP: Aggregate | Highlights | Top $TopResources Aggregates by  Inode Capacity |
 
 
 
@@ -595,11 +594,11 @@ Number of files that can currently be stored on disk for user-visible files.  Th
 | REST | `api/storage/aggregates` | `inode_attributes.file_public_capacity` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-inode-attributes.inodefile-public-capacity` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
+The `aggr_inode_inodefile_public_capacity` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Inode Capacity |
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Inode Capacity |
+| ONTAP: Aggregate | Highlights | Top $TopResources Aggregates by  Inode Capacity |
 
 
 
@@ -645,11 +644,11 @@ The percentage of disk space currently in use based on user-visible file count o
 | REST | `api/storage/aggregates` | `inode_attributes.used_percent` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-inode-attributes.percent-inode-used-capacity` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
+The `aggr_inode_used_percent` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Inodes Used % |
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Inodes Used % |
+| ONTAP: Aggregate | Highlights | Top $TopResources Aggregates by  Inodes Used % |
 
 
 
@@ -662,14 +661,13 @@ This metric provides information about Aggregate
 | REST | `api/storage/aggregates` | `Harvest generated` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
+The `aggr_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Highlights | Aggregates |
-| cmode/aggregate.json | Highlights | Aggregates |
-| cmode/datacenter.json | Highlights | Object Count |
-| storagegrid/fabricpool.json | Highlights | Aggregates |
-| storagegrid/fabricpool.json | Highlights | Aggregates |
+| ONTAP: Aggregate | Highlights | Aggregates |
+| ONTAP: Datacenter | Highlights | Object Count |
+| ONTAP: StorageGrid FabricPool | Highlights | Aggregates |
 
 
 
@@ -682,17 +680,16 @@ Logical used
 | REST | `api/storage/aggregates` | `space.efficiency_without_snapshots.logical_used` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-efficiency-get-iter` | `aggr-efficiency-info.aggr-efficiency-cumulative-info.total-data-reduction-logical-used-wo-snapshots` | conf/zapi/cdot/9.9.0/aggr_efficiency.yaml |
 
+The `aggr_logical_used_wo_snapshots` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Storage Efficiency Ratios | Data Reduction with FlexClones |
-| cmode/aggregate.json | Storage Efficiency Ratios | Top $TopResources Aggregates by Logical Used with FlexClones |
-| cmode/aggregate.json | Storage Efficiency Ratios | Top $TopResources Aggregates by Logical Used with FlexClones |
-| cmode/cluster.json | Storage Efficiency Ratios | Data Reduction with FlexClones |
-| cmode/cluster.json | Storage Efficiency Ratios | Logical Used with FlexClones |
-| cmode/datacenter.json | Storage Efficiency | Data Reduction with FlexClones |
-| cmode/datacenter.json | Storage Efficiency | Top $TopResources Logical Used with FlexClones by Cluster |
-| cmode/datacenter.json | Storage Efficiency | Top $TopResources Logical Used with FlexClones by Cluster |
+| ONTAP: Aggregate | Storage Efficiency Ratios | Data Reduction with FlexClones |
+| ONTAP: Aggregate | Storage Efficiency Ratios | Top $TopResources Aggregates by Logical Used with FlexClones |
+| ONTAP: Cluster | Storage Efficiency Ratios | Data Reduction with FlexClones |
+| ONTAP: Cluster | Storage Efficiency Ratios | Logical Used with FlexClones |
+| ONTAP: Datacenter | Storage Efficiency | Data Reduction with FlexClones |
+| ONTAP: Datacenter | Storage Efficiency | Top $TopResources Logical Used with FlexClones by Cluster |
 
 
 
@@ -705,17 +702,16 @@ Logical used
 | REST | `api/storage/aggregates` | `space.efficiency_without_snapshots_flexclones.logical_used` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-efficiency-get-iter` | `aggr-efficiency-info.aggr-efficiency-cumulative-info.total-data-reduction-logical-used-wo-snapshots-flexclones` | conf/zapi/cdot/9.9.0/aggr_efficiency.yaml |
 
+The `aggr_logical_used_wo_snapshots_flexclones` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Storage Efficiency Ratios | Data Reduction |
-| cmode/aggregate.json | Storage Efficiency Ratios | Top $TopResources Aggregates by Logical Used |
-| cmode/aggregate.json | Storage Efficiency Ratios | Top $TopResources Aggregates by Logical Used |
-| cmode/cluster.json | Storage Efficiency Ratios | Data Reduction |
-| cmode/cluster.json | Storage Efficiency Ratios | Logical Used |
-| cmode/datacenter.json | Storage Efficiency | Data Reduction |
-| cmode/datacenter.json | Storage Efficiency | Top $TopResources Logical Used by Cluster |
-| cmode/datacenter.json | Storage Efficiency | Top $TopResources Logical Used by Cluster |
+| ONTAP: Aggregate | Storage Efficiency Ratios | Data Reduction |
+| ONTAP: Aggregate | Storage Efficiency Ratios | Top $TopResources Aggregates by Logical Used |
+| ONTAP: Cluster | Storage Efficiency Ratios | Data Reduction |
+| ONTAP: Cluster | Storage Efficiency Ratios | Logical Used |
+| ONTAP: Datacenter | Storage Efficiency | Data Reduction |
+| ONTAP: Datacenter | Storage Efficiency | Top $TopResources Logical Used by Cluster |
 
 
 
@@ -738,6 +734,12 @@ Logical space usage of aggregates in the attached object store.
 |--------|----------|--------|---------|
 | REST | `api/private/cli/aggr/show-space` | `object_store_logical_used` | conf/rest/9.12.0/aggr.yaml |
 
+The `aggr_object_store_logical_used` metric is visualized in the following Grafana dashboards:
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by logical space usage in Object Store |
+
 
 
 ### aggr_object_store_physical_used
@@ -747,6 +749,12 @@ Physical space usage of aggregates in the attached object store.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/private/cli/aggr/show-space` | `object_store_physical_used` | conf/rest/9.12.0/aggr.yaml |
+
+The `aggr_object_store_physical_used` metric is visualized in the following Grafana dashboards:
+
+| Dashboard | Row | Panel |
+|--------|----------|--------|
+| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by physical space usage in Object Store |
 
 
 
@@ -789,17 +797,16 @@ Total Data Reduction Physical Used Without Snapshots
 | REST | `api/storage/aggregates` | `space.efficiency_without_snapshots.logical_used, space.efficiency_without_snapshots.savings` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-efficiency-get-iter` | `aggr-efficiency-info.aggr-efficiency-cumulative-info.total-data-reduction-physical-used-wo-snapshots` | conf/zapi/cdot/9.9.0/aggr_efficiency.yaml |
 
+The `aggr_physical_used_wo_snapshots` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Storage Efficiency Ratios | Data Reduction with FlexClones |
-| cmode/aggregate.json | Storage Efficiency Ratios | Top $TopResources Aggregates by Physical Used with FlexClones |
-| cmode/aggregate.json | Storage Efficiency Ratios | Top $TopResources Aggregates by Physical Used with FlexClones |
-| cmode/cluster.json | Storage Efficiency Ratios | Data Reduction with FlexClones |
-| cmode/cluster.json | Storage Efficiency Ratios | Physical Used with FlexClones |
-| cmode/datacenter.json | Storage Efficiency | Data Reduction with FlexClones |
-| cmode/datacenter.json | Storage Efficiency | Top $TopResources Physical Used with FlexClones by Cluster |
-| cmode/datacenter.json | Storage Efficiency | Top $TopResources Physical Used with FlexClones by Cluster |
+| ONTAP: Aggregate | Storage Efficiency Ratios | Data Reduction with FlexClones |
+| ONTAP: Aggregate | Storage Efficiency Ratios | Top $TopResources Aggregates by Physical Used with FlexClones |
+| ONTAP: Cluster | Storage Efficiency Ratios | Data Reduction with FlexClones |
+| ONTAP: Cluster | Storage Efficiency Ratios | Physical Used with FlexClones |
+| ONTAP: Datacenter | Storage Efficiency | Data Reduction with FlexClones |
+| ONTAP: Datacenter | Storage Efficiency | Top $TopResources Physical Used with FlexClones by Cluster |
 
 
 
@@ -812,17 +819,16 @@ Total Data Reduction Physical Used without snapshots and flexclones
 | REST | `api/storage/aggregates` | `space.efficiency_without_snapshots_flexclones.logical_used, space.efficiency_without_snapshots_flexclones.savings` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-efficiency-get-iter` | `aggr-efficiency-info.aggr-efficiency-cumulative-info.total-data-reduction-physical-used-wo-snapshots-flexclones` | conf/zapi/cdot/9.9.0/aggr_efficiency.yaml |
 
+The `aggr_physical_used_wo_snapshots_flexclones` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Storage Efficiency Ratios | Data Reduction |
-| cmode/aggregate.json | Storage Efficiency Ratios | Top $TopResources Aggregates by Physical Used |
-| cmode/aggregate.json | Storage Efficiency Ratios | Top $TopResources Aggregates by Physical Used |
-| cmode/cluster.json | Storage Efficiency Ratios | Data Reduction |
-| cmode/cluster.json | Storage Efficiency Ratios | Physical Used |
-| cmode/datacenter.json | Storage Efficiency | Data Reduction |
-| cmode/datacenter.json | Storage Efficiency | Top $TopResources Physical Used by Cluster |
-| cmode/datacenter.json | Storage Efficiency | Top $TopResources Physical Used by Cluster |
+| ONTAP: Aggregate | Storage Efficiency Ratios | Data Reduction |
+| ONTAP: Aggregate | Storage Efficiency Ratios | Top $TopResources Aggregates by Physical Used |
+| ONTAP: Cluster | Storage Efficiency Ratios | Data Reduction |
+| ONTAP: Cluster | Storage Efficiency Ratios | Physical Used |
+| ONTAP: Datacenter | Storage Efficiency | Data Reduction |
+| ONTAP: Datacenter | Storage Efficiency | Top $TopResources Physical Used by Cluster |
 
 
 
@@ -856,15 +862,16 @@ Number of disks in the aggregate.
 | REST | `api/storage/aggregates` | `block_storage.primary.disk_count, block_storage.hybrid_cache.disk_count` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-raid-attributes.disk-count` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
+The `aggr_raid_disk_count` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Highlights | Disks |
-| cmode/aggregate.json | Highlights | Aggregates |
-| cmode/disk.json | Highlights | Total Disks by Aggregate(s) |
-| cmode/disk.json | Highlights | Disk Capacity per Aggregate |
-| storagegrid/fabricpool.json | Highlights | Disks |
-| storagegrid/fabricpool.json | Highlights | Aggregates |
+| ONTAP: Aggregate | Highlights | Disks |
+| ONTAP: Aggregate | Highlights | Aggregates |
+| ONTAP: Disk | Highlights | Total Disks by Aggregate(s) |
+| ONTAP: Disk | Highlights | Disk Capacity per Aggregate |
+| ONTAP: StorageGrid FabricPool | Highlights | Disks |
+| ONTAP: StorageGrid FabricPool | Highlights | Aggregates |
 
 
 
@@ -929,11 +936,11 @@ Total files allowed in snapshots
 | REST | `api/storage/aggregates` | `snapshot.files_total` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-snapshot-attributes.files-total` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
+The `aggr_snapshot_files_total` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Snapshot Files |
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Snapshot Files |
+| ONTAP: Aggregate | Highlights | Top $TopResources Aggregates by Snapshot Files |
 
 
 
@@ -946,11 +953,11 @@ Total files created in snapshots
 | REST | `api/storage/aggregates` | `snapshot.files_used` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-snapshot-attributes.files-used` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
+The `aggr_snapshot_files_used` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Snapshot Files |
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Snapshot Files |
+| ONTAP: Aggregate | Highlights | Top $TopResources Aggregates by Snapshot Files |
 
 
 
@@ -962,11 +969,11 @@ The percentage of disk space currently in use based on user-visible file (inode)
 |--------|----------|--------|---------|
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-snapshot-attributes.percent-inode-used-capacity` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
+The `aggr_snapshot_inode_used_percent` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Snapshot Inodes Used % |
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Snapshot Inodes Used % |
+| ONTAP: Aggregate | Highlights | Top $TopResources Aggregates by Snapshot Inodes Used % |
 
 
 
@@ -979,11 +986,11 @@ Maximum files available for snapshots
 | REST | `api/storage/aggregates` | `snapshot.max_files_available` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-snapshot-attributes.maxfiles-available` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
+The `aggr_snapshot_maxfiles_available` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Snapshot MaxFiles |
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Snapshot MaxFiles |
+| ONTAP: Aggregate | Highlights | Top $TopResources Aggregates by Snapshot MaxFiles |
 
 
 
@@ -996,11 +1003,11 @@ The largest value to which the maxfiles-available parameter can be increased by 
 | REST | `api/storage/aggregates` | `snapshot.max_files_available, snapshot.max_files_used` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-snapshot-attributes.maxfiles-possible` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
+The `aggr_snapshot_maxfiles_possible` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Snapshot MaxFiles |
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Snapshot MaxFiles |
+| ONTAP: Aggregate | Highlights | Top $TopResources Aggregates by Snapshot MaxFiles |
 
 
 
@@ -1013,11 +1020,11 @@ Files in use by snapshots
 | REST | `api/storage/aggregates` | `snapshot.max_files_used` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-snapshot-attributes.maxfiles-used` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
+The `aggr_snapshot_maxfiles_used` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Snapshot MaxFiles |
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Snapshot MaxFiles |
+| ONTAP: Aggregate | Highlights | Top $TopResources Aggregates by Snapshot MaxFiles |
 
 
 
@@ -1030,11 +1037,11 @@ Percentage of space reserved for snapshots
 | REST | `api/storage/aggregates` | `space.snapshot.reserve_percent` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-snapshot-attributes.snapshot-reserve-percent` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
+The `aggr_snapshot_reserve_percent` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Space Reserved for Snapshots % |
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Space Reserved for Snapshots % |
+| ONTAP: Aggregate | Highlights | Top $TopResources Aggregates by Space Reserved for Snapshots % |
 
 
 
@@ -1047,11 +1054,11 @@ Available space for snapshots in bytes
 | REST | `api/storage/aggregates` | `space.snapshot.available` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-snapshot-attributes.size-available` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
+The `aggr_snapshot_size_available` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Space Used by Snapshots |
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Space Used by Snapshots |
+| ONTAP: Aggregate | Highlights | Top $TopResources Aggregates by Space Used by Snapshots |
 
 
 
@@ -1075,11 +1082,11 @@ Space used by snapshots in bytes
 | REST | `api/storage/aggregates` | `space.snapshot.used` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-snapshot-attributes.size-used` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
+The `aggr_snapshot_size_used` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Space Used by Snapshots |
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Space Used by Snapshots |
+| ONTAP: Aggregate | Highlights | Top $TopResources Aggregates by Space Used by Snapshots |
 
 
 
@@ -1092,13 +1099,11 @@ Percentage of disk space used by snapshots
 | REST | `api/storage/aggregates` | `space.snapshot.used_percent` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-snapshot-attributes.percent-used-capacity` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
+The `aggr_snapshot_used_percent` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Space Used by Snapshots % |
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Space Used by Snapshots % |
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Space Used by Snapshots % |
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Space Used by Snapshots % |
+| ONTAP: Aggregate | Highlights | Top $TopResources Aggregates by  Space Used by Snapshots % |
 
 
 
@@ -1111,19 +1116,18 @@ Space available in bytes.
 | REST | `api/storage/aggregates` | `space.block_storage.available` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-space-attributes.size-available` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
+The `aggr_space_available` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Highlights | Available Space |
-| cmode/aggregate.json | Highlights | Aggregates |
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Space Available |
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Space Available |
-| cmode/cluster.json | Highlights | Available Space |
-| cmode/datacenter.json | Highlights | Available Space |
-| cmode/datacenter.json | Highlights | Top $TopResources Available Space by Cluster |
-| cmode/datacenter.json | Highlights | Top $TopResources Available Space by Cluster |
-| storagegrid/fabricpool.json | Highlights | Available Space |
-| storagegrid/fabricpool.json | Highlights | Space Available |
+| ONTAP: Aggregate | Highlights | Available Space |
+| ONTAP: Aggregate | Highlights | Aggregates |
+| ONTAP: Aggregate | Highlights | Top $TopResources Aggregates by Space Available |
+| ONTAP: Cluster | Highlights | Available Space |
+| ONTAP: Datacenter | Highlights | Available Space |
+| ONTAP: Datacenter | Highlights | Top $TopResources Available Space by Cluster |
+| ONTAP: StorageGrid FabricPool | Highlights | Available Space |
+| ONTAP: StorageGrid FabricPool | Highlights | Space Available |
 
 
 
@@ -1136,14 +1140,13 @@ Used space in bytes in the cloud store. Only applicable for aggregates with a cl
 | REST | `api/storage/aggregates` | `space.cloud_storage.used` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-space-attributes.capacity-tier-used` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
+The `aggr_space_capacity_tier_used` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Capacity Tier Used |
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Capacity Tier Used |
-| cmode/aggregate.json | FabricPool | Top $TopResources Aggregates by Capacity Tier Footprint |
-| cmode/aggregate.json | FabricPool | Top $TopResources Aggregates by Capacity Tier Footprint |
-| storagegrid/fabricpool.json | Highlights | Capacity Tier Used |
+| ONTAP: Aggregate | Highlights | Top $TopResources Aggregates by  Capacity Tier Used |
+| ONTAP: Aggregate | FabricPool | Top $TopResources Aggregates by Capacity Tier Footprint |
+| ONTAP: StorageGrid FabricPool | Highlights | Capacity Tier Used |
 
 
 
@@ -1167,11 +1170,11 @@ Space saved in bytes by compacting the data.
 | REST | `api/storage/aggregates` | `space.block_storage.data_compaction_space_saved` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-space-attributes.data-compaction-space-saved` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
+The `aggr_space_data_compaction_saved` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Data Compaction space saved |
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Data Compaction space saved |
+| ONTAP: Aggregate | Highlights | Top $TopResources Aggregates by  Data Compaction space saved |
 
 
 
@@ -1195,11 +1198,11 @@ The size that is physically used in the block storage and has a cold temperature
 | REST | `api/storage/aggregates` | `space.block_storage.inactive_user_data` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-space-attributes.performance-tier-inactive-user-data` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
+The `aggr_space_performance_tier_inactive_user_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Inactive Data |
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Inactive Data |
+| ONTAP: Aggregate | Highlights | Top $TopResources Aggregates by Inactive Data |
 
 
 
@@ -1223,11 +1226,11 @@ A summation of volume footprints (including volume guarantees), in bytes. This i
 | REST | `api/storage/aggregates` | `space.footprint` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-space-get-iter` | `volume-footprints` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
+The `aggr_space_performance_tier_used` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | FabricPool | Top $TopResources Aggregates by Performance Tier Footprint |
-| cmode/aggregate.json | FabricPool | Top $TopResources Aggregates by Performance Tier Footprint |
+| ONTAP: Aggregate | FabricPool | Top $TopResources Aggregates by Performance Tier Footprint |
 
 
 
@@ -1240,11 +1243,11 @@ A summation of volume footprints inside the aggregate,as a percentage. A volume'
 | REST | `api/storage/aggregates` | `space.footprint_percent` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-space-get-iter` | `volume-footprints-percent` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
+The `aggr_space_performance_tier_used_percent` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | FabricPool | Top $TopResources Aggregates by Performance Tier Footprint % |
-| cmode/aggregate.json | FabricPool | Top $TopResources Aggregates by Performance Tier Footprint % |
+| ONTAP: Aggregate | FabricPool | Top $TopResources Aggregates by Performance Tier Footprint % |
 
 
 
@@ -1257,17 +1260,15 @@ Total physical used size of an aggregate in bytes.
 | REST | `api/storage/aggregates` | `space.block_storage.physical_used` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-space-attributes.physical-used` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
+The `aggr_space_physical_used` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Physical Space Used |
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Physical Space Used |
-| cmode/aggregate.json | Storage Efficiency Ratios | Top $TopResources Aggregates by Physical Used with Snapshots & FlexClones |
-| cmode/aggregate.json | Storage Efficiency Ratios | Top $TopResources Aggregates by Physical Used with Snapshots & FlexClones |
-| cmode/cluster.json | Storage Efficiency Ratios | Physical Used with Snapshots & FlexClones |
-| cmode/datacenter.json | Storage Efficiency | Top $TopResources Physical Used with Snapshots & FlexClones by Cluster |
-| cmode/datacenter.json | Storage Efficiency | Top $TopResources Physical Used with Snapshots & FlexClones by Cluster |
-| storagegrid/fabricpool.json | Highlights | Physical Space Used |
+| ONTAP: Aggregate | Highlights | Top $TopResources Aggregates by Physical Space Used |
+| ONTAP: Aggregate | Storage Efficiency Ratios | Top $TopResources Aggregates by Physical Used with Snapshots & FlexClones |
+| ONTAP: Cluster | Storage Efficiency Ratios | Physical Used with Snapshots & FlexClones |
+| ONTAP: Datacenter | Storage Efficiency | Top $TopResources Physical Used with Snapshots & FlexClones by Cluster |
+| ONTAP: StorageGrid FabricPool | Highlights | Physical Space Used |
 
 
 
@@ -1280,13 +1281,12 @@ Physical used percentage.
 | REST | `api/storage/aggregates` | `space.block_storage.physical_used_percent` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-space-attributes.physical-used-percent` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
+The `aggr_space_physical_used_percent` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Physical Space Used % |
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Physical Space Used % |
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Inactive Data % |
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  Inactive Data % |
+| ONTAP: Aggregate | Highlights | Top $TopResources Aggregates by  Physical Space Used % |
+| ONTAP: Aggregate | Highlights | Top $TopResources Aggregates by  Inactive Data % |
 
 
 
@@ -1309,11 +1309,11 @@ Amount of space saved in bytes by storage efficiency.
 | REST | `api/storage/aggregates` | `space.block_storage.volume_deduplication_space_saved` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-space-attributes.sis-space-saved` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
+The `aggr_space_sis_saved` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  SIS space saved |
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by  SIS space saved |
+| ONTAP: Aggregate | Highlights | Top $TopResources Aggregates by  SIS space saved |
 
 
 
@@ -1348,31 +1348,26 @@ Total usable space in bytes, not including WAFL reserve and aggregate snapshot r
 | REST | `api/storage/aggregates` | `space.block_storage.size` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-space-attributes.size-total` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
+The `aggr_space_total` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Highlights | Total Space |
-| cmode/aggregate.json | Highlights | Space Used % |
-| cmode/aggregate.json | Highlights | Aggregates |
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Total Space |
-| cmode/aggregate.json | Highlights | Top $TopResources Aggregates by Total Space |
-| cmode/cdot.json | Capacity Metrics | Top $TopResources Aggregates by Capacity Used % |
-| cmode/cdot.json | Capacity Metrics | Top $TopResources Aggregates by Capacity Used % |
-| cmode/cdot.json | Capacity Metrics | Top $TopResources Aggregates by Capacity Used % |
-| cmode/cdot.json | Capacity Metrics | Top $TopResources Aggregates by Capacity Used % |
-| cmode/cluster.json | Highlights | Total Space |
-| cmode/cluster.json | Highlights | Space Used % |
-| cmode/cluster.json | Nodes & Subsystems - $Cluster | Capacity used |
-| cmode/datacenter.json | Highlights | Total Space |
-| cmode/datacenter.json | Highlights | Space Used % |
-| cmode/datacenter.json | Highlights | Top $TopResources Total Space by Cluster |
-| cmode/datacenter.json | Highlights | Top $TopResources Total Space by Cluster |
-| cmode/datacenter.json | Highlights | Top $TopResources Space Used % by Cluster |
-| cmode/datacenter.json | Highlights | Top $TopResources Space Used % by Cluster |
-| cmode/disk.json | Highlights | Disk Capacity per Aggregate |
-| storagegrid/fabricpool.json | Highlights | Total Space |
-| storagegrid/fabricpool.json | Highlights | Space Used % |
-| storagegrid/fabricpool.json | Highlights | Aggregates |
+| ONTAP: Aggregate | Highlights | Total Space |
+| ONTAP: Aggregate | Highlights | Space Used % |
+| ONTAP: Aggregate | Highlights | Aggregates |
+| ONTAP: Aggregate | Highlights | Top $TopResources Aggregates by Total Space |
+| ONTAP: cDOT | Capacity Metrics | Top $TopResources Aggregates by Capacity Used % |
+| ONTAP: Cluster | Highlights | Total Space |
+| ONTAP: Cluster | Highlights | Space Used % |
+| ONTAP: Cluster | Nodes & Subsystems - $Cluster | Capacity used |
+| ONTAP: Datacenter | Highlights | Total Space |
+| ONTAP: Datacenter | Highlights | Space Used % |
+| ONTAP: Datacenter | Highlights | Top $TopResources Total Space by Cluster |
+| ONTAP: Datacenter | Highlights | Top $TopResources Space Used % by Cluster |
+| ONTAP: Disk | Highlights | Disk Capacity per Aggregate |
+| ONTAP: StorageGrid FabricPool | Highlights | Total Space |
+| ONTAP: StorageGrid FabricPool | Highlights | Space Used % |
+| ONTAP: StorageGrid FabricPool | Highlights | Aggregates |
 
 
 
@@ -1385,33 +1380,25 @@ Space used or reserved in bytes. Includes volume guarantees and aggregate metada
 | REST | `api/storage/aggregates` | `space.block_storage.used` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-space-attributes.size-used` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
+The `aggr_space_used` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Highlights | Used and Reserved Space |
-| cmode/aggregate.json | Highlights | Space Used % |
-| cmode/aggregate.json | Highlights | Aggregates |
-| cmode/cdot.json | Capacity Metrics | Top $TopResources Aggregates by Capacity Used % |
-| cmode/cdot.json | Capacity Metrics | Top $TopResources Aggregates by Capacity Used % |
-| cmode/cdot.json | Capacity Metrics | Top $TopResources Aggregates by Capacity Used % |
-| cmode/cdot.json | Capacity Metrics | Top $TopResources Aggregates by Capacity Used % |
-| cmode/cluster.json | Highlights | Used and Reserved Space |
-| cmode/cluster.json | Highlights | Space Used % |
-| cmode/cluster.json | Nodes & Subsystems - $Cluster | Capacity used |
-| cmode/datacenter.json | Highlights | Space Used % |
-| cmode/datacenter.json | Highlights | Used and Reserved Space |
-| cmode/datacenter.json | Highlights | Top $TopResources Used and Reserved Space by Cluster |
-| cmode/datacenter.json | Highlights | Top $TopResources Used and Reserved Space by Cluster |
-| cmode/datacenter.json | Highlights | Top $TopResources Space Used % by Cluster |
-| cmode/datacenter.json | Highlights | Top $TopResources Space Used % by Cluster |
-| cmode/datacenter.json | Power and Temperature | Average Power/Used_TB |
-| cmode/datacenter.json | Power and Temperature | Average Power/Used_TB |
-| cmode/datacenter.json | Power and Temperature | Average Power/Used_TB |
-| cmode/power.json | Highlights | Average Power/Used_TB |
-| cmode/power.json | Highlights | Average Power/Used_TB |
-| cmode/power.json | Highlights | Average Power/Used_TB |
-| storagegrid/fabricpool.json | Highlights | Space Used % |
-| storagegrid/fabricpool.json | Highlights | Aggregates |
+| ONTAP: Aggregate | Highlights | Used and Reserved Space |
+| ONTAP: Aggregate | Highlights | Space Used % |
+| ONTAP: Aggregate | Highlights | Aggregates |
+| ONTAP: cDOT | Capacity Metrics | Top $TopResources Aggregates by Capacity Used % |
+| ONTAP: Cluster | Highlights | Used and Reserved Space |
+| ONTAP: Cluster | Highlights | Space Used % |
+| ONTAP: Cluster | Nodes & Subsystems - $Cluster | Capacity used |
+| ONTAP: Datacenter | Highlights | Space Used % |
+| ONTAP: Datacenter | Highlights | Used and Reserved Space |
+| ONTAP: Datacenter | Highlights | Top $TopResources Used and Reserved Space by Cluster |
+| ONTAP: Datacenter | Highlights | Top $TopResources Space Used % by Cluster |
+| ONTAP: Datacenter | Power and Temperature | Average Power/Used_TB |
+| ONTAP: Power | Highlights | Average Power/Used_TB |
+| ONTAP: StorageGrid FabricPool | Highlights | Space Used % |
+| ONTAP: StorageGrid FabricPool | Highlights | Aggregates |
 
 
 
@@ -1424,13 +1411,14 @@ The percentage of disk space currently in use on the referenced file system
 | REST | `api/storage/aggregates` | `space.block_storage.used, space.block_storage.size` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-space-attributes.percent-used-capacity` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
+The `aggr_space_used_percent` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Highlights | Aggregates |
-| cmode/cluster.json | Throughput | Average Aggregate Space Used |
-| cmode/disk.json | Highlights | Disk Capacity per Aggregate |
-| storagegrid/fabricpool.json | Highlights | Aggregates |
+| ONTAP: Aggregate | Highlights | Aggregates |
+| ONTAP: Cluster | Throughput | Average Aggregate Space Used |
+| ONTAP: Disk | Highlights | Disk Capacity per Aggregate |
+| ONTAP: StorageGrid FabricPool | Highlights | Aggregates |
 
 
 
@@ -1463,25 +1451,18 @@ Logical used
 | REST | `api/storage/aggregates` | `space.efficiency.logical_used` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-efficiency-get-iter` | `aggr-efficiency-info.aggr-efficiency-cumulative-info.total-logical-used` | conf/zapi/cdot/9.9.0/aggr_efficiency.yaml |
 
+The `aggr_total_logical_used` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Storage Efficiency Ratios | Data Reduction with Snapshots & FlexClones |
-| cmode/aggregate.json | Storage Efficiency Ratios | Top $TopResources Aggregates by Logical Used with Snapshots & FlexClones |
-| cmode/aggregate.json | Storage Efficiency Ratios | Top $TopResources Aggregates by Logical Used with Snapshots & FlexClones |
-| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates Per Growth Rate of Logical Used |
-| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates Per Growth Rate of Logical Used |
-| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates by Logical Usage: Delta Report |
-| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates by Logical Usage: Delta Report |
-| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates by Logical Usage: Delta Report |
-| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates by Logical Usage: Delta Report |
-| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates by Logical Usage: Delta Report |
-| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates by Logical Usage: Delta Report |
-| cmode/cluster.json | Storage Efficiency Ratios | Data Reduction with Snapshots &FlexClones |
-| cmode/cluster.json | Storage Efficiency Ratios | Logical Used with Snapshots & FlexClones |
-| cmode/datacenter.json | Storage Efficiency | Data Reduction with Snapshots & FlexClones |
-| cmode/datacenter.json | Storage Efficiency | Top $TopResources Logical Used with Snapshots & FlexClones by Cluster |
-| cmode/datacenter.json | Storage Efficiency | Top $TopResources Logical Used with Snapshots & FlexClones by Cluster |
+| ONTAP: Aggregate | Storage Efficiency Ratios | Data Reduction with Snapshots & FlexClones |
+| ONTAP: Aggregate | Storage Efficiency Ratios | Top $TopResources Aggregates by Logical Used with Snapshots & FlexClones |
+| ONTAP: Aggregate | Growth Rate | Top $TopResources Aggregates Per Growth Rate of Logical Used |
+| ONTAP: Aggregate | Growth Rate | Top $TopResources Aggregates by Logical Usage: Delta Report |
+| ONTAP: Cluster | Storage Efficiency Ratios | Data Reduction with Snapshots &FlexClones |
+| ONTAP: Cluster | Storage Efficiency Ratios | Logical Used with Snapshots & FlexClones |
+| ONTAP: Datacenter | Storage Efficiency | Data Reduction with Snapshots & FlexClones |
+| ONTAP: Datacenter | Storage Efficiency | Top $TopResources Logical Used with Snapshots & FlexClones by Cluster |
 
 
 
@@ -1504,20 +1485,15 @@ Total Physical Used
 | REST | `api/storage/aggregates` | `space.efficiency.logical_used, space.efficiency.savings` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-efficiency-get-iter` | `aggr-efficiency-info.aggr-efficiency-cumulative-info.total-physical-used` | conf/zapi/cdot/9.9.0/aggr_efficiency.yaml |
 
+The `aggr_total_physical_used` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Storage Efficiency Ratios | Data Reduction with Snapshots & FlexClones |
-| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates Per Growth Rate of Physical Used |
-| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates Per Growth Rate of Physical Used |
-| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates by Physical Usage: Delta Report |
-| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates by Physical Usage: Delta Report |
-| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates by Physical Usage: Delta Report |
-| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates by Physical Usage: Delta Report |
-| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates by Physical Usage: Delta Report |
-| cmode/aggregate.json | Growth Rate | Top $TopResources Aggregates by Physical Usage: Delta Report |
-| cmode/cluster.json | Storage Efficiency Ratios | Data Reduction with Snapshots &FlexClones |
-| cmode/datacenter.json | Storage Efficiency | Data Reduction with Snapshots & FlexClones |
+| ONTAP: Aggregate | Storage Efficiency Ratios | Data Reduction with Snapshots & FlexClones |
+| ONTAP: Aggregate | Growth Rate | Top $TopResources Aggregates Per Growth Rate of Physical Used |
+| ONTAP: Aggregate | Growth Rate | Top $TopResources Aggregates by Physical Usage: Delta Report |
+| ONTAP: Cluster | Storage Efficiency Ratios | Data Reduction with Snapshots &FlexClones |
+| ONTAP: Datacenter | Storage Efficiency | Data Reduction with Snapshots & FlexClones |
 
 
 
@@ -1530,13 +1506,14 @@ The aggregate's volume count, which includes both FlexVols and FlexGroup constit
 | REST | `api/storage/aggregates` | `volume_count` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-volume-count-attributes.flexvol-count` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
+The `aggr_volume_count` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Highlights | Volumes |
-| cmode/aggregate.json | Highlights | Aggregates |
-| storagegrid/fabricpool.json | Highlights | Volumes |
-| storagegrid/fabricpool.json | Highlights | Aggregates |
+| ONTAP: Aggregate | Highlights | Volumes |
+| ONTAP: Aggregate | Highlights | Aggregates |
+| ONTAP: StorageGrid FabricPool | Highlights | Volumes |
+| ONTAP: StorageGrid FabricPool | Highlights | Aggregates |
 
 
 
@@ -1579,12 +1556,12 @@ A counter used to track requests that are sent to the volumes to the node.
 | REST | `api/protocols/cifs/sessions` | `connection_count` | conf/rest/9.8.0/cifs_session.yaml |
 | ZAPI | `cifs-session-get-iter` | `cifs-session.connection-count` | conf/zapi/cdot/9.8.0/cifs_session.yaml |
 
+The `cifs_session_connection_count` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/smb.json | Highlights | Top $TopResources Connection Count |
-| cmode/smb.json | Highlights | Top $TopResources Connection Count |
-| cmode/smb.json | Highlights | Connection Count By SMB version |
+| ONTAP: SMB | Highlights | Top $TopResources Connection Count |
+| ONTAP: SMB | Highlights | Connection Count By SMB version |
 
 
 
@@ -1597,10 +1574,11 @@ This metric provides information about CIFSSession
 | REST | `api/protocols/cifs/sessions` | `Harvest generated` | conf/rest/9.8.0/cifs_session.yaml |
 | ZAPI | `cifs-session-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/cifs_session.yaml |
 
+The `cifs_session_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/smb.json | Highlights | CIFS Sessions |
+| ONTAP: SMB | Highlights | CIFS Sessions |
 
 
 
@@ -1687,15 +1665,13 @@ This metric provides information about ClusterPeer
 | REST | `api/cluster/peers` | `Harvest generated` | conf/rest/9.12.0/clusterpeer.yaml |
 | ZAPI | `cluster-peer-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/clusterpeer.yaml |
 
+The `cluster_peer_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/security.json | Highlights | Cluster Compliant % |
-| cmode/security.json | Highlights | Cluster Compliant % |
-| cmode/security.json | Highlights | Cluster Compliant |
-| cmode/security.json | Highlights | Cluster Compliant |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| ONTAP: Security | Highlights | Cluster Compliant % |
+| ONTAP: Security | Highlights | Cluster Compliant |
+| ONTAP: Security | Cluster Compliance | Cluster Compliance |
 
 
 
@@ -1748,10 +1724,11 @@ This metric provides information about ClusterSchedule
 |--------|----------|--------|---------|
 | REST | `api/cluster/schedules` | `Harvest generated` | conf/rest/9.6.0/clusterschedule.yaml |
 
+The `cluster_schedule_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/data_protection.json | Local Policy | Schedules |
+| ONTAP: Data Protection | Local Policy | Schedules |
 
 
 
@@ -1805,10 +1782,11 @@ Number of outstanding alerts
 | REST | `api/private/cli/system/health/subsystem` | `outstanding_alert_count` | conf/rest/9.12.0/subsystem.yaml |
 | ZAPI | `diagnosis-subsystem-config-get-iter` | `diagnosis-subsystem-config-info.outstanding-alert-count` | conf/zapi/cdot/9.8.0/subsystem.yaml |
 
+The `cluster_subsystem_outstanding_alerts` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/cluster.json | Nodes & Subsystems - $Cluster | subsystems |
+| ONTAP: Cluster | Nodes & Subsystems - $Cluster | subsystems |
 
 
 
@@ -1821,10 +1799,11 @@ Number of suppressed alerts
 | REST | `api/private/cli/system/health/subsystem` | `suppressed_alert_count` | conf/rest/9.12.0/subsystem.yaml |
 | ZAPI | `diagnosis-subsystem-config-get-iter` | `diagnosis-subsystem-config-info.suppressed-alert-count` | conf/zapi/cdot/9.8.0/subsystem.yaml |
 
+The `cluster_subsystem_suppressed_alerts` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/cluster.json | Nodes & Subsystems - $Cluster | subsystems |
+| ONTAP: Cluster | Nodes & Subsystems - $Cluster | subsystems |
 
 
 
@@ -1918,10 +1897,11 @@ Sum of kilo-bytes copied.
 | REST | `api/cluster/counter/tables/copy_manager` | `KB_copied`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/copy_manager.yaml |
 | ZAPI | `perf-object-get-instances copy_manager` | `KB_copied`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/copy_manager.yaml |
 
+The `copy_manager_kb_copied` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | Copy Offload | Copy Offload Data Copied |
+| ONTAP: SVM | Copy Offload | Copy Offload Data Copied |
 
 
 
@@ -2055,14 +2035,15 @@ This metric provides information about Disk
 | REST | `api/storage/disks` | `Harvest generated` | conf/rest/9.12.0/disk.yaml |
 | ZAPI | `storage-disk-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/disk.yaml |
 
+The `disk_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/datacenter.json | Highlights | Object Count |
-| cmode/disk.json | Highlights | Total Disks |
-| cmode/disk.json | Highlights | Failed Disks |
-| cmode/disk.json | List of Disks | Disks in Cluster |
-| cmode/health.json | Disks | Disks Issues |
+| ONTAP: Datacenter | Highlights | Object Count |
+| ONTAP: Disk | Highlights | Total Disks |
+| ONTAP: Disk | Highlights | Failed Disks |
+| ONTAP: Disk | List of Disks | Disks in Cluster |
+| ONTAP: Health | Disks | Disks Issues |
 
 
 
@@ -2096,10 +2077,11 @@ Number of sectors on the disk.
 | REST | `api/storage/disks` | `sector_count` | conf/rest/9.12.0/disk.yaml |
 | ZAPI | `storage-disk-get-iter` | `storage-disk-info.disk-inventory-info.capacity-sectors` | conf/zapi/cdot/9.8.0/disk.yaml |
 
+The `disk_sectors` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/disk.json | List of Disks | Disks in Cluster |
+| ONTAP: Disk | List of Disks | Disks in Cluster |
 
 
 
@@ -2112,10 +2094,11 @@ Average I/O latency across all active paths, in milliseconds.
 | REST | `api/storage/disks` | `stats.average_latency` | conf/rest/9.12.0/disk.yaml |
 | ZAPI | `storage-disk-get-iter` | `storage-disk-info.disk-stats-info.average-latency` | conf/zapi/cdot/9.8.0/disk.yaml |
 
+The `disk_stats_average_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/disk.json | List of Disks | Disks in Cluster |
+| ONTAP: Disk | List of Disks | Disks in Cluster |
 
 
 
@@ -2128,10 +2111,11 @@ Total Disk Throughput in KBPS Across All Active Paths
 | REST | `api/private/cli/disk` | `disk_io_kbps_total` | conf/rest/9.12.0/disk.yaml |
 | ZAPI | `storage-disk-get-iter` | `storage-disk-info.disk-stats-info.disk-io-kbps` | conf/zapi/cdot/9.8.0/disk.yaml |
 
+The `disk_stats_io_kbps` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/disk.json | List of Disks | Disks in Cluster |
+| ONTAP: Disk | List of Disks | Disks in Cluster |
 
 
 
@@ -2188,10 +2172,11 @@ Number of seconds the drive has been powered on
 | REST | `api/storage/disks` | `stats.power_on_hours, 60, 60` | conf/rest/9.12.0/disk.yaml |
 | ZAPI | `storage-disk-get-iter` | `storage-disk-info.disk-stats-info.power-on-time-interval` | conf/zapi/cdot/9.8.0/disk.yaml |
 
+The `disk_uptime` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/disk.json | List of Disks | Disks in Cluster |
+| ONTAP: Disk | List of Disks | Disks in Cluster |
 
 
 
@@ -2302,11 +2287,11 @@ This metric provides information about EmsDestination
 | REST | `api/support/ems/destinations` | `Harvest generated` | conf/rest/9.12.0/ems_destination.yaml |
 | ZAPI | `ems-event-notification-destination-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/ems_destination.yaml |
 
+The `ems_destination_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| ONTAP: Security | Cluster Compliance | Cluster Compliance |
 
 
 
@@ -2439,14 +2424,15 @@ Provides the sensor reading.
 | REST | `api/cluster/sensors` | `value` | conf/rest/9.12.0/sensor.yaml |
 | ZAPI | `environment-sensors-get-iter` | `environment-sensors-info.threshold-sensor-value` | conf/zapi/cdot/9.8.0/sensor.yaml |
 
+The `environment_sensor_threshold_value` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/datacenter.json | Issues | Errors |
-| cmode/health.json | Highlights | Total Errors |
-| cmode/health.json | Highlights | Errors |
-| cmode/health.json | Sensor | Sensor Issues |
-| cmode/power.json | Sensor Problems | Sensor Problems |
+| ONTAP: Datacenter | Issues | Errors |
+| ONTAP: Health | Highlights | Total Errors |
+| ONTAP: Health | Highlights | Errors |
+| ONTAP: Health | Sensor | Sensor Issues |
+| ONTAP: Power | Sensor Problems | Sensor Problems |
 
 
 
@@ -2458,11 +2444,11 @@ Total number of discarded packets.
 |--------|----------|--------|---------|
 | KeyPerf | `api/network/ethernet/switch/ports` | `receive_raw.discards`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/ethernet_switch_port.yaml |
 
+The `ethernet_switch_port_receive_discards` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/switch.json | Traffic | Top $TopResources Interface Drops |
-| cmode/switch.json | Traffic | Top $TopResources Interface Drops |
+| ONTAP: Switch | Traffic | Top $TopResources Interface Drops |
 
 
 
@@ -2474,11 +2460,11 @@ Number of packet errors.
 |--------|----------|--------|---------|
 | KeyPerf | `api/network/ethernet/switch/ports` | `receive_raw.errors`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/ethernet_switch_port.yaml |
 
+The `ethernet_switch_port_receive_errors` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/switch.json | Traffic | Top $TopResources Interface Errors |
-| cmode/switch.json | Traffic | Top $TopResources Interface Errors |
+| ONTAP: Switch | Traffic | Top $TopResources Interface Errors |
 
 
 
@@ -2490,11 +2476,11 @@ Total packet count.
 |--------|----------|--------|---------|
 | KeyPerf | `api/network/ethernet/switch/ports` | `receive_raw.packets`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/ethernet_switch_port.yaml |
 
+The `ethernet_switch_port_receive_packets` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/switch.json | Traffic | Top $TopResources Interface Receive Packets |
-| cmode/switch.json | Traffic | Top $TopResources Interface Receive Packets |
+| ONTAP: Switch | Traffic | Top $TopResources Interface Receive Packets |
 
 
 
@@ -2506,11 +2492,11 @@ Total number of discarded packets.
 |--------|----------|--------|---------|
 | KeyPerf | `api/network/ethernet/switch/ports` | `transmit_raw.discards`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/ethernet_switch_port.yaml |
 
+The `ethernet_switch_port_transmit_discards` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/switch.json | Traffic | Top $TopResources Interface Drops |
-| cmode/switch.json | Traffic | Top $TopResources Interface Drops |
+| ONTAP: Switch | Traffic | Top $TopResources Interface Drops |
 
 
 
@@ -2522,11 +2508,11 @@ Number of packet errors.
 |--------|----------|--------|---------|
 | KeyPerf | `api/network/ethernet/switch/ports` | `transmit_raw.errors`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/ethernet_switch_port.yaml |
 
+The `ethernet_switch_port_transmit_errors` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/switch.json | Traffic | Top $TopResources Interface Errors |
-| cmode/switch.json | Traffic | Top $TopResources Interface Errors |
+| ONTAP: Switch | Traffic | Top $TopResources Interface Errors |
 
 
 
@@ -2538,11 +2524,11 @@ Total packet count.
 |--------|----------|--------|---------|
 | KeyPerf | `api/network/ethernet/switch/ports` | `transmit_raw.packets`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/ethernet_switch_port.yaml |
 
+The `ethernet_switch_port_transmit_packets` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/switch.json | Traffic | Top $TopResources Interface Transmit Packets |
-| cmode/switch.json | Traffic | Top $TopResources Interface Transmit Packets |
+| ONTAP: Switch | Traffic | Top $TopResources Interface Transmit Packets |
 
 
 
@@ -2564,11 +2550,11 @@ Number of &apos;Not Found&apos; responses for calls to this operation.
 |--------|----------|--------|---------|
 | ZAPI | `perf-object-get-instances external_service_op` | `num_not_found_responses`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/external_service_operation.yaml |
 
+The `external_service_op_num_not_found_responses` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/external_service_op.json | Highlights | Top $TopResources Number of 'Not Found' Responses per Operation |
-| cmode/external_service_op.json | Highlights | Top $TopResources Number of 'Not Found' Responses per Operation |
+| ONTAP: External Service Operation | Highlights | Top $TopResources Number of 'Not Found' Responses per Operation |
 
 
 
@@ -2580,11 +2566,11 @@ A cumulative count of all request failures.
 |--------|----------|--------|---------|
 | ZAPI | `perf-object-get-instances external_service_op` | `num_request_failures`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/external_service_operation.yaml |
 
+The `external_service_op_num_request_failures` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/external_service_op.json | Highlights | Top $TopResources Number of Request Failures |
-| cmode/external_service_op.json | Highlights | Top $TopResources Number of Request Failures |
+| ONTAP: External Service Operation | Highlights | Top $TopResources Number of Request Failures |
 
 
 
@@ -2596,11 +2582,11 @@ Number of requests sent to this service.
 |--------|----------|--------|---------|
 | ZAPI | `perf-object-get-instances external_service_op` | `num_requests_sent`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/external_service_operation.yaml |
 
+The `external_service_op_num_requests_sent` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/external_service_op.json | Highlights | Top $TopResources Number of Request Sent |
-| cmode/external_service_op.json | Highlights | Top $TopResources Number of Request Sent |
+| ONTAP: External Service Operation | Highlights | Top $TopResources Number of Request Sent |
 
 
 
@@ -2612,11 +2598,11 @@ Number of responses received from the server (does not include timeouts).
 |--------|----------|--------|---------|
 | ZAPI | `perf-object-get-instances external_service_op` | `num_responses_received`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/external_service_operation.yaml |
 
+The `external_service_op_num_responses_received` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/external_service_op.json | Highlights | Top $TopResources Number of Responses Received |
-| cmode/external_service_op.json | Highlights | Top $TopResources Number of Responses Received |
+| ONTAP: External Service Operation | Highlights | Top $TopResources Number of Responses Received |
 
 
 
@@ -2628,11 +2614,11 @@ Number of successful responses to this operation.
 |--------|----------|--------|---------|
 | ZAPI | `perf-object-get-instances external_service_op` | `num_successful_responses`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/external_service_operation.yaml |
 
+The `external_service_op_num_successful_responses` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/external_service_op.json | Highlights | Top $TopResources Number of Successful Responses |
-| cmode/external_service_op.json | Highlights | Top $TopResources Number of Successful Responses |
+| ONTAP: External Service Operation | Highlights | Top $TopResources Number of Successful Responses |
 
 
 
@@ -2644,11 +2630,11 @@ Number of times requests to the server for this operation timed out, meaning no 
 |--------|----------|--------|---------|
 | ZAPI | `perf-object-get-instances external_service_op` | `num_timeouts`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/external_service_operation.yaml |
 
+The `external_service_op_num_timeouts` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/external_service_op.json | Highlights | Top $TopResources Number of Timeouts |
-| cmode/external_service_op.json | Highlights | Top $TopResources Number of Timeouts |
+| ONTAP: External Service Operation | Highlights | Top $TopResources Number of Timeouts |
 
 
 
@@ -2660,11 +2646,11 @@ Average latency of requests for operations of this type on this server.
 |--------|----------|--------|---------|
 | ZAPI | `perf-object-get-instances external_service_op` | `request_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> num_requests_sent | conf/zapiperf/cdot/9.8.0/external_service_operation.yaml |
 
+The `external_service_op_request_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/external_service_op.json | Highlights | Top $TopResources Request Latency to Server |
-| cmode/external_service_op.json | Highlights | Top $TopResources Request Latency to Server |
+| ONTAP: External Service Operation | Highlights | Top $TopResources Request Latency to Server |
 
 
 
@@ -2697,13 +2683,12 @@ Cloud bin operation latency average in milliseconds.
 | REST | `api/cluster/counter/tables/wafl_comp_aggr_vol_bin` | `cloud_bin_op_latency_average`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/wafl_comp_aggr_vol_bin.yaml |
 | ZAPI | `perf-object-get-instances wafl_comp_aggr_vol_bin` | `cloud_bin_op_latency_average`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl_comp_aggr_vol_bin.yaml |
 
+The `fabricpool_cloud_bin_op_latency_average` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/volume.json | Object Storage | Top $TopResources Volumes by Object Storage GET Latency |
-| cmode/volume.json | Object Storage | Top $TopResources Volumes by Object Storage GET Latency |
-| cmode/volume.json | Object Storage | Top $TopResources Volumes by Object Storage PUT Latency |
-| cmode/volume.json | Object Storage | Top $TopResources Volumes by Object Storage PUT Latency |
+| ONTAP: Volume | Object Storage | Top $TopResources Volumes by Object Storage GET Latency |
+| ONTAP: Volume | Object Storage | Top $TopResources Volumes by Object Storage PUT Latency |
 
 
 
@@ -2716,15 +2701,13 @@ Cloud bin operation counters.
 | REST | `api/cluster/counter/tables/wafl_comp_aggr_vol_bin` | `cloud_bin_op`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/wafl_comp_aggr_vol_bin.yaml |
 | ZAPI | `perf-object-get-instances wafl_comp_aggr_vol_bin` | `cloud_bin_operation`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl_comp_aggr_vol_bin.yaml |
 
+The `fabricpool_cloud_bin_operation` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/volume.json | Object Storage | Top $TopResources Volumes by Object Storage GET Request Count |
-| cmode/volume.json | Object Storage | Top $TopResources Volumes by Object Storage GET Request Count |
-| cmode/volume.json | Object Storage | Top $TopResources Volumes by Object Storage PUT Request Count |
-| cmode/volume.json | Object Storage | Top $TopResources Volumes by Object Storage PUT Request Count |
-| cmode/volume.json | Object Storage | Top $TopResources Volumes by Object Storage Requests |
-| cmode/volume.json | Object Storage | Top $TopResources Volumes by Object Storage Requests |
+| ONTAP: Volume | Object Storage | Top $TopResources Volumes by Object Storage GET Request Count |
+| ONTAP: Volume | Object Storage | Top $TopResources Volumes by Object Storage PUT Request Count |
+| ONTAP: Volume | Object Storage | Top $TopResources Volumes by Object Storage Requests |
 
 
 
@@ -2788,11 +2771,11 @@ Average latency for read operations
 | REST | `api/cluster/counter/tables/fcp` | `average_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `avg_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/fcp.yaml |
 
+The `fcp_avg_read_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | FibreChannel | Top $TopResources FCPs by Send Latency |
-| cmode/network.json | FibreChannel | Top $TopResources FCPs by Send Latency |
+| ONTAP: Network | FibreChannel | Top $TopResources FCPs by Send Latency |
 
 
 
@@ -2805,11 +2788,11 @@ Average latency for write operations
 | REST | `api/cluster/counter/tables/fcp` | `average_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `avg_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/fcp.yaml |
 
+The `fcp_avg_write_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | FibreChannel | Top $TopResources FCPs by Receive Latency |
-| cmode/network.json | FibreChannel | Top $TopResources FCPs by Receive Latency |
+| ONTAP: Network | FibreChannel | Top $TopResources FCPs by Receive Latency |
 
 
 
@@ -2822,10 +2805,11 @@ Number of discarded frames.
 | REST | `api/cluster/counter/tables/fcp` | `discarded_frames_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `discarded_frames_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
 
+The `fcp_discarded_frames_count` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | FibreChannel | FCPs Transmission errors |
+| ONTAP: Network | FibreChannel | FCPs Transmission errors |
 
 
 
@@ -2837,10 +2821,11 @@ The negotiated data rate between the target FC port and the fabric in gigabits p
 |--------|----------|--------|---------|
 | REST | `api/network/fc/ports` | `fabric.connected_speed` | conf/rest/9.6.0/fcp.yaml |
 
+The `fcp_fabric_connected_speed` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | FibreChannel | FC ports with Fabric detail |
+| ONTAP: Network | FibreChannel | FC ports with Fabric detail |
 
 
 
@@ -2853,10 +2838,11 @@ Number of interrupts
 | REST | `api/cluster/counter/tables/fcp` | `interrupt_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `int_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
 
+The `fcp_int_count` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | FibreChannel | FCPs Transmission interrupts |
+| ONTAP: Network | FibreChannel | FCPs Transmission interrupts |
 
 
 
@@ -2869,10 +2855,11 @@ Number of invalid cyclic redundancy checks (CRC count)
 | REST | `api/cluster/counter/tables/fcp` | `invalid.crc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `invalid_crc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
 
+The `fcp_invalid_crc` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | FibreChannel | FCPs Transmission interrupts |
+| ONTAP: Network | FibreChannel | FCPs Transmission interrupts |
 
 
 
@@ -2885,10 +2872,11 @@ Number of invalid transmission words
 | REST | `api/cluster/counter/tables/fcp` | `invalid.transmission_word`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `invalid_transmission_word`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
 
+The `fcp_invalid_transmission_word` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | FibreChannel | FCPs Transmission interrupts |
+| ONTAP: Network | FibreChannel | FCPs Transmission interrupts |
 
 
 
@@ -2901,10 +2889,11 @@ Number of interrupt responses
 | REST | `api/cluster/counter/tables/fcp` | `isr.count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `isr_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
 
+The `fcp_isr_count` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | FibreChannel | FCPs Transmission interrupts |
+| ONTAP: Network | FibreChannel | FCPs Transmission interrupts |
 
 
 
@@ -2916,11 +2905,12 @@ This metric provides information about FCP
 |--------|----------|--------|---------|
 | REST | `api/network/fc/ports` | `Harvest generated` | conf/rest/9.6.0/fcp.yaml |
 
+The `fcp_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/datacenter.json | Highlights | Object Count |
-| cmode/network.json | FibreChannel | FC ports with Fabric detail |
+| ONTAP: Datacenter | Highlights | Object Count |
+| ONTAP: Network | FibreChannel | FC ports with Fabric detail |
 
 
 
@@ -2933,13 +2923,13 @@ Average latency for FCP operations
 | REST | `api/cluster/counter/tables/fcp_lif` | `average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/restperf/9.12.0/fcp_lif.yaml |
 | ZAPI | `perf-object-get-instances fcp_lif` | `avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/fcp_lif.yaml |
 
+The `fcp_lif_avg_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | FCP Frontend | FCP Latency |
-| cmode/node.json | FCP Frontend | FCP Average Latency by Port / LIF |
-| cmode/svm.json | FCP | SVM FCP Average Latency |
-| cmode/svm.json | FCP | SVM FCP Average Latency |
+| ONTAP: Node | FCP Frontend | FCP Latency |
+| ONTAP: Node | FCP Frontend | FCP Average Latency by Port / LIF |
+| ONTAP: SVM | FCP | SVM FCP Average Latency |
 
 
 
@@ -2952,10 +2942,11 @@ Average latency for operations other than read and write
 | REST | `api/cluster/counter/tables/fcp_lif` | `average_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/restperf/9.12.0/fcp_lif.yaml |
 | ZAPI | `perf-object-get-instances fcp_lif` | `avg_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/zapiperf/cdot/9.8.0/fcp_lif.yaml |
 
+The `fcp_lif_avg_other_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | FCP | SVM FCP Average Latency |
+| ONTAP: SVM | FCP | SVM FCP Average Latency |
 
 
 
@@ -2968,12 +2959,13 @@ Average latency for read operations
 | REST | `api/cluster/counter/tables/fcp_lif` | `average_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/restperf/9.12.0/fcp_lif.yaml |
 | ZAPI | `perf-object-get-instances fcp_lif` | `avg_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/fcp_lif.yaml |
 
+The `fcp_lif_avg_read_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | FCP | SVM FCP Average Read Latency |
-| cmode/svm.json | FCP | SVM FCP Average Latency |
-| cmode/svm.json | NVMe/FC | SVM FCP Average Read Latency |
+| ONTAP: SVM | FCP | SVM FCP Average Read Latency |
+| ONTAP: SVM | FCP | SVM FCP Average Latency |
+| ONTAP: SVM | NVMe/FC | SVM FCP Average Read Latency |
 
 
 
@@ -2986,12 +2978,13 @@ Average latency for write operations
 | REST | `api/cluster/counter/tables/fcp_lif` | `average_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/restperf/9.12.0/fcp_lif.yaml |
 | ZAPI | `perf-object-get-instances fcp_lif` | `avg_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/fcp_lif.yaml |
 
+The `fcp_lif_avg_write_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | FCP | SVM FCP Average Write Latency |
-| cmode/svm.json | FCP | SVM FCP Average Latency |
-| cmode/svm.json | NVMe/FC | SVM FCP Average Write Latency |
+| ONTAP: SVM | FCP | SVM FCP Average Write Latency |
+| ONTAP: SVM | FCP | SVM FCP Average Latency |
+| ONTAP: SVM | NVMe/FC | SVM FCP Average Write Latency |
 
 
 
@@ -3004,10 +2997,11 @@ Number of operations that are not read or write.
 | REST | `api/cluster/counter/tables/fcp_lif` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp_lif.yaml |
 | ZAPI | `perf-object-get-instances fcp_lif` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp_lif.yaml |
 
+The `fcp_lif_other_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | FCP | SVM FCP IOPs |
+| ONTAP: SVM | FCP | SVM FCP IOPs |
 
 
 
@@ -3020,14 +3014,14 @@ Amount of data read from the storage system
 | REST | `api/cluster/counter/tables/fcp_lif` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp_lif.yaml |
 | ZAPI | `perf-object-get-instances fcp_lif` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp_lif.yaml |
 
+The `fcp_lif_read_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | FCP | SVM FCP Read Throughput |
-| cmode/svm.json | FCP | SVM FCP Throughput |
-| cmode/svm.json | FCP | Top $TopResources FCP LIFs by Send Throughput |
-| cmode/svm.json | FCP | Top $TopResources FCP LIFs by Send Throughput |
-| cmode/svm.json | NVMe/FC | SVM FCP Read Throughput |
+| ONTAP: SVM | FCP | SVM FCP Read Throughput |
+| ONTAP: SVM | FCP | SVM FCP Throughput |
+| ONTAP: SVM | FCP | Top $TopResources FCP LIFs by Send Throughput |
+| ONTAP: SVM | NVMe/FC | SVM FCP Read Throughput |
 
 
 
@@ -3040,12 +3034,13 @@ Number of read operations
 | REST | `api/cluster/counter/tables/fcp_lif` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp_lif.yaml |
 | ZAPI | `perf-object-get-instances fcp_lif` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp_lif.yaml |
 
+The `fcp_lif_read_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | FCP | SVM FCP Read IOPs |
-| cmode/svm.json | FCP | SVM FCP IOPs |
-| cmode/svm.json | NVMe/FC | SVM FCP Read IOPs |
+| ONTAP: SVM | FCP | SVM FCP Read IOPs |
+| ONTAP: SVM | FCP | SVM FCP IOPs |
+| ONTAP: SVM | NVMe/FC | SVM FCP Read IOPs |
 
 
 
@@ -3058,12 +3053,13 @@ Total number of operations.
 | REST | `api/cluster/counter/tables/fcp_lif` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp_lif.yaml |
 | ZAPI | `perf-object-get-instances fcp_lif` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp_lif.yaml |
 
+The `fcp_lif_total_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | FCP Frontend | FCP IOPs |
-| cmode/node.json | FCP Frontend | FCP IOPs by Port / LIF |
-| cmode/svm.json | FCP | SVM FCP IOPs |
+| ONTAP: Node | FCP Frontend | FCP IOPs |
+| ONTAP: Node | FCP Frontend | FCP IOPs by Port / LIF |
+| ONTAP: SVM | FCP | SVM FCP IOPs |
 
 
 
@@ -3076,16 +3072,15 @@ Amount of data written to the storage system
 | REST | `api/cluster/counter/tables/fcp_lif` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp_lif.yaml |
 | ZAPI | `perf-object-get-instances fcp_lif` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp_lif.yaml |
 
+The `fcp_lif_write_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | FCP Frontend | FCP Throughput by Port / LIF |
-| cmode/svm.json | FCP | SVM FCP Throughput |
-| cmode/svm.json | FCP | SVM FCP Write Throughput |
-| cmode/svm.json | FCP | SVM FCP Throughput |
-| cmode/svm.json | FCP | Top $TopResources FCP LIFs by Receive Throughput |
-| cmode/svm.json | FCP | Top $TopResources FCP LIFs by Receive Throughput |
-| cmode/svm.json | NVMe/FC | SVM FCP Write Throughput |
+| ONTAP: Node | FCP Frontend | FCP Throughput by Port / LIF |
+| ONTAP: SVM | FCP | SVM FCP Throughput |
+| ONTAP: SVM | FCP | SVM FCP Write Throughput |
+| ONTAP: SVM | FCP | Top $TopResources FCP LIFs by Receive Throughput |
+| ONTAP: SVM | NVMe/FC | SVM FCP Write Throughput |
 
 
 
@@ -3098,12 +3093,13 @@ Number of write operations
 | REST | `api/cluster/counter/tables/fcp_lif` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp_lif.yaml |
 | ZAPI | `perf-object-get-instances fcp_lif` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp_lif.yaml |
 
+The `fcp_lif_write_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | FCP | SVM FCP Write IOPs |
-| cmode/svm.json | FCP | SVM FCP IOPs |
-| cmode/svm.json | NVMe/FC | SVM FCP Write IOPs |
+| ONTAP: SVM | FCP | SVM FCP Write IOPs |
+| ONTAP: SVM | FCP | SVM FCP IOPs |
+| ONTAP: SVM | NVMe/FC | SVM FCP Write IOPs |
 
 
 
@@ -3116,11 +3112,11 @@ Number of times the Fibre Channel link was lost
 | REST | `api/cluster/counter/tables/fcp` | `link.down`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `link_down`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
 
+The `fcp_link_down` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | FibreChannel | Top $TopResources FCPs by Link Down |
-| cmode/network.json | FibreChannel | Top $TopResources FCPs by Link Down |
+| ONTAP: Network | FibreChannel | Top $TopResources FCPs by Link Down |
 
 
 
@@ -3133,11 +3129,11 @@ Number of link failures
 | REST | `api/cluster/counter/tables/fcp` | `link_failure`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `link_failure`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
 
+The `fcp_link_failure` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | FibreChannel | Top $TopResources FCPs by Link Failure |
-| cmode/network.json | FibreChannel | Top $TopResources FCPs by Link Failure |
+| ONTAP: Network | FibreChannel | Top $TopResources FCPs by Link Failure |
 
 
 
@@ -3161,10 +3157,11 @@ Number of times this port lost signal
 | REST | `api/cluster/counter/tables/fcp` | `loss_of_signal`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `loss_of_signal`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
 
+The `fcp_loss_of_signal` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | FibreChannel | FCPs Transmission errors |
+| ONTAP: Network | FibreChannel | FCPs Transmission errors |
 
 
 
@@ -3177,10 +3174,11 @@ Number of times this port lost sync
 | REST | `api/cluster/counter/tables/fcp` | `loss_of_sync`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `loss_of_sync`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
 
+The `fcp_loss_of_sync` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | FibreChannel | FCPs Transmission errors |
+| ONTAP: Network | FibreChannel | FCPs Transmission errors |
 
 
 
@@ -3192,10 +3190,11 @@ The maximum speed supported by the FC port in gigabits per second.
 |--------|----------|--------|---------|
 | REST | `api/network/fc/ports` | `speed.maximum` | conf/rest/9.6.0/fcp.yaml |
 
+The `fcp_max_speed` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | FibreChannel | FC ports with Fabric detail |
+| ONTAP: Network | FibreChannel | FC ports with Fabric detail |
 
 
 
@@ -3219,11 +3218,11 @@ Average latency for read operations (FC-NVMe)
 | REST | `api/cluster/counter/tables/fcp` | `nvmf.average_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nvmf.read_ops | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_avg_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nvmf_read_ops | conf/zapiperf/cdot/9.10.1/fcp.yaml |
 
+The `fcp_nvmf_avg_read_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | NVMe/FC | Top $TopResources FCP_NVMFs by Send Latency |
-| cmode/network.json | NVMe/FC | Top $TopResources FCP_NVMFs by Send Latency |
+| ONTAP: Network | NVMe/FC | Top $TopResources FCP_NVMFs by Send Latency |
 
 
 
@@ -3269,11 +3268,11 @@ Average latency for write operations (FC-NVMe)
 | REST | `api/cluster/counter/tables/fcp` | `nvmf.average_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nvmf.write_ops | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_avg_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nvmf_write_ops | conf/zapiperf/cdot/9.10.1/fcp.yaml |
 
+The `fcp_nvmf_avg_write_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | NVMe/FC | Top $TopResources FCP_NVMFs by Receive Latency |
-| cmode/network.json | NVMe/FC | Top $TopResources FCP_NVMFs by Receive Latency |
+| ONTAP: Network | NVMe/FC | Top $TopResources FCP_NVMFs by Receive Latency |
 
 
 
@@ -3330,15 +3329,14 @@ Amount of data read from the storage system (FC-NVMe)
 | REST | `api/cluster/counter/tables/fcp` | `nvmf.read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/fcp.yaml |
 
+The `fcp_nvmf_read_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | Highlights | FC Read Throughput |
-| cmode/network.json | NVMe/FC | NVMe/FC ports |
-| cmode/network.json | NVMe/FC | Top $TopResources FCP_NVMFs by Send Throughput |
-| cmode/network.json | NVMe/FC | Top $TopResources FCP_NVMFs by Send Throughput |
-| cmode/node.json | Network Layer | Top $TopResources FC Ports by Throughput |
-| cmode/node.json | Network Layer | Top $TopResources FC Ports by Throughput |
+| ONTAP: Network | Highlights | FC Read Throughput |
+| ONTAP: Network | NVMe/FC | NVMe/FC ports |
+| ONTAP: Network | NVMe/FC | Top $TopResources FCP_NVMFs by Send Throughput |
+| ONTAP: Node | Network Layer | Top $TopResources FC Ports by Throughput |
 
 
 
@@ -3351,10 +3349,11 @@ Number of FC-NVMe read operations
 | REST | `api/cluster/counter/tables/fcp` | `nvmf.read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/fcp.yaml |
 
+The `fcp_nvmf_read_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | Highlights | FC Read Throughput |
+| ONTAP: Network | Highlights | FC Read Throughput |
 
 
 
@@ -3466,10 +3465,11 @@ Amount of FC-NVMe traffic to and from the storage system
 | REST | `api/cluster/counter/tables/fcp` | `nvmf.total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/fcp.yaml |
 
+The `fcp_nvmf_total_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | Highlights | FC Throughput |
+| ONTAP: Network | Highlights | FC Throughput |
 
 
 
@@ -3482,10 +3482,11 @@ Total number of FC-NVMe operations
 | REST | `api/cluster/counter/tables/fcp` | `nvmf.total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/fcp.yaml |
 
+The `fcp_nvmf_total_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | Highlights | FC Throughput |
+| ONTAP: Network | Highlights | FC Throughput |
 
 
 
@@ -3498,15 +3499,14 @@ Amount of data written to the storage system (FC-NVMe)
 | REST | `api/cluster/counter/tables/fcp` | `nvmf.write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/fcp.yaml |
 
+The `fcp_nvmf_write_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | Highlights | FC Write Throughput |
-| cmode/network.json | NVMe/FC | NVMe/FC ports |
-| cmode/network.json | NVMe/FC | Top $TopResources FCP_NVMFs by Receive Throughput |
-| cmode/network.json | NVMe/FC | Top $TopResources FCP_NVMFs by Receive Throughput |
-| cmode/node.json | Network Layer | Top $TopResources FC Ports by Throughput |
-| cmode/node.json | Network Layer | Top $TopResources FC Ports by Throughput |
+| ONTAP: Network | Highlights | FC Write Throughput |
+| ONTAP: Network | NVMe/FC | NVMe/FC ports |
+| ONTAP: Network | NVMe/FC | Top $TopResources FCP_NVMFs by Receive Throughput |
+| ONTAP: Node | Network Layer | Top $TopResources FC Ports by Throughput |
 
 
 
@@ -3519,10 +3519,11 @@ Number of FC-NVMe write operations
 | REST | `api/cluster/counter/tables/fcp` | `nvmf.write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `nvmf_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/fcp.yaml |
 
+The `fcp_nvmf_write_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | Highlights | FC Write Throughput |
+| ONTAP: Network | Highlights | FC Write Throughput |
 
 
 
@@ -3546,10 +3547,11 @@ Number of primitive sequence errors
 | REST | `api/cluster/counter/tables/fcp` | `primitive_seq_err`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `prim_seq_err`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
 
+The `fcp_prim_seq_err` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | FibreChannel | FCPs Transmission errors |
+| ONTAP: Network | FibreChannel | FCPs Transmission errors |
 
 
 
@@ -3562,10 +3564,11 @@ Number of times a queue full condition occurred.
 | REST | `api/cluster/counter/tables/fcp` | `queue_full`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `queue_full`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
 
+The `fcp_queue_full` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | FibreChannel | FCPs Transmission errors |
+| ONTAP: Network | FibreChannel | FCPs Transmission errors |
 
 
 
@@ -3578,14 +3581,13 @@ Amount of data read from the storage system
 | REST | `api/cluster/counter/tables/fcp` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
 
+The `fcp_read_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | FibreChannel | FC ports |
-| cmode/network.json | FibreChannel | Top $TopResources FCPs by Send Throughput |
-| cmode/network.json | FibreChannel | Top $TopResources FCPs by Send Throughput |
-| cmode/node.json | Network Layer | Top $TopResources FC Ports by Throughput |
-| cmode/node.json | Network Layer | Top $TopResources FC Ports by Throughput |
+| ONTAP: Network | FibreChannel | FC ports |
+| ONTAP: Network | FibreChannel | Top $TopResources FCPs by Send Throughput |
+| ONTAP: Node | Network Layer | Top $TopResources FC Ports by Throughput |
 
 
 
@@ -3631,10 +3633,11 @@ Number of spurious interrupts
 | REST | `api/cluster/counter/tables/fcp` | `spurious_interrupt_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `spurious_int_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
 
+The `fcp_spurious_int_count` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | FibreChannel | FCPs Transmission interrupts |
+| ONTAP: Network | FibreChannel | FCPs Transmission interrupts |
 
 
 
@@ -3647,10 +3650,11 @@ Number of times the total number of outstanding commands on the port exceeds the
 | REST | `api/cluster/counter/tables/fcp` | `threshold_full`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `threshold_full`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
 
+The `fcp_threshold_full` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | FibreChannel | FCPs Transmission errors |
+| ONTAP: Network | FibreChannel | FCPs Transmission errors |
 
 
 
@@ -3685,14 +3689,13 @@ Amount of data written to the storage system
 | REST | `api/cluster/counter/tables/fcp` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZAPI | `perf-object-get-instances fcp_port` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
 
+The `fcp_write_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | FibreChannel | FC ports |
-| cmode/network.json | FibreChannel | Top $TopResources FCPs by Receive Throughput |
-| cmode/network.json | FibreChannel | Top $TopResources FCPs by Receive Throughput |
-| cmode/node.json | Network Layer | Top $TopResources FC Ports by Throughput |
-| cmode/node.json | Network Layer | Top $TopResources FC Ports by Throughput |
+| ONTAP: Network | FibreChannel | FC ports |
+| ONTAP: Network | FibreChannel | Top $TopResources FCPs by Receive Throughput |
+| ONTAP: Node | Network Layer | Top $TopResources FC Ports by Throughput |
 
 
 
@@ -3716,10 +3719,11 @@ Firmware reported invalid CRC count
 | REST | `api/cluster/counter/tables/fcvi` | `firmware.invalid_crc_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcvi.yaml |
 | ZAPI | `perf-object-get-instances fcvi` | `fw_invalid_crc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcvi.yaml |
 
+The `fcvi_firmware_invalid_crc_count` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/mcc_cluster.json | MetroCluster FCVI | Invalid CRC Count |
+| ONTAP: MetroCluster | MetroCluster FCVI | Invalid CRC Count |
 
 
 
@@ -3732,10 +3736,11 @@ Firmware reported invalid transmit word count
 | REST | `api/cluster/counter/tables/fcvi` | `firmware.invalid_transmit_word_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcvi.yaml |
 | ZAPI | `perf-object-get-instances fcvi` | `fw_invalid_xmit_words`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcvi.yaml |
 
+The `fcvi_firmware_invalid_transmit_word_count` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/mcc_cluster.json | MetroCluster FCVI | Invalid Transmit Word Count |
+| ONTAP: MetroCluster | MetroCluster FCVI | Invalid Transmit Word Count |
 
 
 
@@ -3748,10 +3753,11 @@ Firmware reported link failure count
 | REST | `api/cluster/counter/tables/fcvi` | `firmware.link_failure_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcvi.yaml |
 | ZAPI | `perf-object-get-instances fcvi` | `fw_link_failure`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcvi.yaml |
 
+The `fcvi_firmware_link_failure_count` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/mcc_cluster.json | MetroCluster FCVI | Link Failure Count |
+| ONTAP: MetroCluster | MetroCluster FCVI | Link Failure Count |
 
 
 
@@ -3764,10 +3770,11 @@ Firmware reported loss of signal count
 | REST | `api/cluster/counter/tables/fcvi` | `firmware.loss_of_signal_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcvi.yaml |
 | ZAPI | `perf-object-get-instances fcvi` | `fw_loss_of_signal`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcvi.yaml |
 
+The `fcvi_firmware_loss_of_signal_count` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/mcc_cluster.json | MetroCluster FCVI | Loss of Signal Count |
+| ONTAP: MetroCluster | MetroCluster FCVI | Loss of Signal Count |
 
 
 
@@ -3780,10 +3787,11 @@ Firmware reported loss of sync count
 | REST | `api/cluster/counter/tables/fcvi` | `firmware.loss_of_sync_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcvi.yaml |
 | ZAPI | `perf-object-get-instances fcvi` | `fw_loss_of_sync`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcvi.yaml |
 
+The `fcvi_firmware_loss_of_sync_count` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/mcc_cluster.json | MetroCluster FCVI | Loss of Sync Count |
+| ONTAP: MetroCluster | MetroCluster FCVI | Loss of Sync Count |
 
 
 
@@ -3796,10 +3804,11 @@ Firmware reported SyStatDiscardFrames value
 | REST | `api/cluster/counter/tables/fcvi` | `firmware.systat.discard_frames`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcvi.yaml |
 | ZAPI | `perf-object-get-instances fcvi` | `fw_SyStatDiscardFrames`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcvi.yaml |
 
+The `fcvi_firmware_systat_discard_frames` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/mcc_cluster.json | MetroCluster FCVI | SyStatDiscardFrames Value |
+| ONTAP: MetroCluster | MetroCluster FCVI | SyStatDiscardFrames Value |
 
 
 
@@ -3812,10 +3821,11 @@ Number of times hard reset of FCVI adapter got issued.
 | REST | `api/cluster/counter/tables/fcvi` | `hard_reset_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcvi.yaml |
 | ZAPI | `perf-object-get-instances fcvi` | `hard_reset_cnt`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcvi.yaml |
 
+The `fcvi_hard_reset_count` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/mcc_cluster.json | MetroCluster FCVI | Hard Reset Count |
+| ONTAP: MetroCluster | MetroCluster FCVI | Hard Reset Count |
 
 
 
@@ -3828,11 +3838,12 @@ Average RDMA write I/O latency.
 | REST | `api/cluster/counter/tables/fcvi` | `rdma.write_average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> rdma.write_ops | conf/restperf/9.12.0/fcvi.yaml |
 | ZAPI | `perf-object-get-instances fcvi` | `rdma_write_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> rdma_write_ops | conf/zapiperf/cdot/9.8.0/fcvi.yaml |
 
+The `fcvi_rdma_write_avg_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/mcc_cluster.json | Highlights | FCVI Write Latency |
-| cmode/mcc_cluster.json | MetroCluster FCVI | Write Latency |
+| ONTAP: MetroCluster | Highlights | FCVI Write Latency |
+| ONTAP: MetroCluster | MetroCluster FCVI | Write Latency |
 
 
 
@@ -3845,11 +3856,12 @@ Number of RDMA write I/Os issued per second.
 | REST | `api/cluster/counter/tables/fcvi` | `rdma.write_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcvi.yaml |
 | ZAPI | `perf-object-get-instances fcvi` | `rdma_write_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcvi.yaml |
 
+The `fcvi_rdma_write_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/mcc_cluster.json | Highlights | FCVI Write IOPs |
-| cmode/mcc_cluster.json | MetroCluster FCVI | Write IOPs |
+| ONTAP: MetroCluster | Highlights | FCVI Write IOPs |
+| ONTAP: MetroCluster | MetroCluster FCVI | Write IOPs |
 
 
 
@@ -3862,11 +3874,12 @@ RDMA write throughput in bytes per second.
 | REST | `api/cluster/counter/tables/fcvi` | `rdma.write_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcvi.yaml |
 | ZAPI | `perf-object-get-instances fcvi` | `rdma_write_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcvi.yaml |
 
+The `fcvi_rdma_write_throughput` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/mcc_cluster.json | Highlights | FCVI Write Throughput |
-| cmode/mcc_cluster.json | MetroCluster FCVI | Write Throughput |
+| ONTAP: MetroCluster | Highlights | FCVI Write Throughput |
+| ONTAP: MetroCluster | MetroCluster FCVI | Write Throughput |
 
 
 
@@ -3879,10 +3892,11 @@ Number of times soft reset of FCVI adapter got issued.
 | REST | `api/cluster/counter/tables/fcvi` | `soft_reset_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcvi.yaml |
 | ZAPI | `perf-object-get-instances fcvi` | `soft_reset_cnt`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcvi.yaml |
 
+The `fcvi_soft_reset_count` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/mcc_cluster.json | MetroCluster FCVI | Soft  Reset Count |
+| ONTAP: MetroCluster | MetroCluster FCVI | Soft  Reset Count |
 
 
 
@@ -3906,10 +3920,11 @@ Estimated number of disk reads per second replaced by cache
 | REST | `api/cluster/counter/tables/external_cache` | `disk_reads_replaced`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/ext_cache_obj.yaml |
 | ZAPI | `perf-object-get-instances ext_cache_obj` | `disk_reads_replaced`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ext_cache_obj.yaml |
 
+The `flashcache_disk_reads_replaced` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/disk.json | Disk Utilization | Flash Cache |
+| ONTAP: Disk | Disk Utilization | Flash Cache |
 
 
 
@@ -3988,10 +4003,11 @@ External cache hit rate
 | REST | `api/cluster/counter/tables/external_cache` | `hit.percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> average<br><span class="key">Base:</span> accesses | conf/restperf/9.12.0/ext_cache_obj.yaml |
 | ZAPI | `perf-object-get-instances ext_cache_obj` | `hit_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> accesses | conf/zapiperf/cdot/9.8.0/ext_cache_obj.yaml |
 
+The `flashcache_hit_percent` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/disk.json | Disk Utilization | Flash Cache |
+| ONTAP: Disk | Disk Utilization | Flash Cache |
 
 
 
@@ -4103,11 +4119,11 @@ Number of block destage per second.
 | REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `evict_destage_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml |
 | ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `evict_destage_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml |
 
+The `flashpool_evict_destage_rate` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Cache Removals |
-| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Cache Removals |
+| ONTAP: Aggregate | Flash Pool | Top $TopResources Aggregates by Cache Removals |
 
 
 
@@ -4120,11 +4136,11 @@ Number of block free per second.
 | REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `evict_remove_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml |
 | ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `evict_remove_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml |
 
+The `flashpool_evict_remove_rate` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Cache Removals |
-| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Cache Removals |
+| ONTAP: Aggregate | Flash Pool | Top $TopResources Aggregates by Cache Removals |
 
 
 
@@ -4137,11 +4153,11 @@ Average of RAID I/O latency on read hit.
 | REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `hya_read_hit_latency_average`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_read_hit_latency_count | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml |
 | ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `hya_read_hit_latency_average`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_read_hit_latency_count | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml |
 
+The `flashpool_hya_read_hit_latency_average` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by SSD and HDD Latency |
-| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by SSD and HDD Latency |
+| ONTAP: Aggregate | Flash Pool | Top $TopResources Aggregates by SSD and HDD Latency |
 
 
 
@@ -4154,11 +4170,11 @@ Average read miss latency.
 | REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `hya_read_miss_latency_average`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_read_miss_latency_count | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml |
 | ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `hya_read_miss_latency_average`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> hya_read_miss_latency_count | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml |
 
+The `flashpool_hya_read_miss_latency_average` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by SSD and HDD Latency |
-| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by SSD and HDD Latency |
+| ONTAP: Aggregate | Flash Pool | Top $TopResources Aggregates by SSD and HDD Latency |
 
 
 
@@ -4193,11 +4209,11 @@ Cache insert rate blocks/sec.
 | REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `read_cache_insert_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml |
 | ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `read_cache_ins_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml |
 
+The `flashpool_read_cache_ins_rate` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Cache Inserts |
-| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Cache Inserts |
+| ONTAP: Aggregate | Flash Pool | Top $TopResources Aggregates by Cache Inserts |
 
 
 
@@ -4210,12 +4226,12 @@ Number of HDD read operations replaced by SSD reads per second.
 | REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `read_ops_replaced`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml |
 | ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `read_ops_replaced`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml |
 
+The `flashpool_read_ops_replaced` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Flash Pool Activity |
-| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Flash Pool Activity |
-| cmode/disk.json | Disk Utilization | Flash Pool |
+| ONTAP: Aggregate | Flash Pool | Top $TopResources Aggregates by Flash Pool Activity |
+| ONTAP: Disk | Disk Utilization | Flash Pool |
 
 
 
@@ -4228,12 +4244,12 @@ Percentage of HDD read operations replace by SSD.
 | REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `read_ops_replaced_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> read_ops_total | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml |
 | ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `read_ops_replaced_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> read_ops_total | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml |
 
+The `flashpool_read_ops_replaced_percent` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Flash Pool Activity |
-| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Flash Pool Activity |
-| cmode/disk.json | Disk Utilization | Flash Pool |
+| ONTAP: Aggregate | Flash Pool | Top $TopResources Aggregates by Flash Pool Activity |
+| ONTAP: Disk | Disk Utilization | Flash Pool |
 
 
 
@@ -4257,11 +4273,11 @@ Total read cached SSD blocks.
 | REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `ssd_read_cached`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml |
 | ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `ssd_read_cached`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml |
 
+The `flashpool_ssd_read_cached` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Flash Pool Capacity Used |
-| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Flash Pool Capacity Used |
+| ONTAP: Aggregate | Flash Pool | Top $TopResources Aggregates by Flash Pool Capacity Used |
 
 
 
@@ -4274,11 +4290,11 @@ Total SSD blocks.
 | REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `ssd_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml |
 | ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `ssd_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml |
 
+The `flashpool_ssd_total` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Flash Pool Capacity Used |
-| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Flash Pool Capacity Used |
+| ONTAP: Aggregate | Flash Pool | Top $TopResources Aggregates by Flash Pool Capacity Used |
 
 
 
@@ -4302,11 +4318,11 @@ Total write cached SSD blocks.
 | REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `ssd_write_cached`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml |
 | ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `ssd_write_cached`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml |
 
+The `flashpool_ssd_write_cached` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Flash Pool Capacity Used |
-| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Flash Pool Capacity Used |
+| ONTAP: Aggregate | Flash Pool | Top $TopResources Aggregates by Flash Pool Capacity Used |
 
 
 
@@ -4319,11 +4335,11 @@ Number of write-cache blocks written per second.
 | REST | `api/cluster/counter/tables/wafl_hya_per_aggregate` | `wc_write_blocks_total`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/wafl_hya_per_aggr.yaml |
 | ZAPI | `perf-object-get-instances wafl_hya_per_aggr` | `wc_write_blks_total`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl_hya_per_aggr.yaml |
 
+The `flashpool_wc_write_blks_total` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Cache Inserts |
-| cmode/aggregate.json | Flash Pool | Top $TopResources Aggregates by Cache Inserts |
+| ONTAP: Aggregate | Flash Pool | Top $TopResources Aggregates by Cache Inserts |
 
 
 
@@ -4359,11 +4375,11 @@ Total blocks requested by the client.
 | StatPerf | `flexcache_per_volume` | `blocks_requested_from_client`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/flexcache.yaml |
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `blocks_requested_from_client`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
 
+The `flexcache_blocks_requested_from_client` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/flexcache.json | Highlights | Top $TopResources Blocks requested from Client |
-| cmode/flexcache.json | Highlights | Top $TopResources Blocks requested from Client |
+| ONTAP: FlexCache | Highlights | Top $TopResources Blocks requested from Client |
 
 
 
@@ -4377,11 +4393,11 @@ Blocks retrieved from origin in case of a cache miss. This can be divided by the
 | StatPerf | `flexcache_per_volume` | `blocks_retrieved_from_origin`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/flexcache.yaml |
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `blocks_retrieved_from_origin`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
 
+The `flexcache_blocks_retrieved_from_origin` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/flexcache.json | Highlights | Top $TopResources Blocks requested from Origin |
-| cmode/flexcache.json | Highlights | Top $TopResources Blocks requested from Origin |
+| ONTAP: FlexCache | Highlights | Top $TopResources Blocks requested from Origin |
 
 
 
@@ -4394,11 +4410,11 @@ Total number of read-write cache evict operations skipped because cache is disco
 | StatPerf | `flexcache_per_volume` | `evict_rw_cache_skipped_reason_disconnected`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/flexcache.yaml |
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `evict_rw_cache_skipped_reason_disconnected`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
 
+The `flexcache_evict_rw_cache_skipped_reason_disconnected` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/flexcache.json | Evict | Top $TopResources Read-Write Cache Evictions Skipped Due to Cache Disconnection |
-| cmode/flexcache.json | Evict | Top $TopResources Read-Write Cache Evictions Skipped Due to Cache Disconnection |
+| ONTAP: FlexCache | Evict | Top $TopResources Read-Write Cache Evictions Skipped Due to Cache Disconnection |
 
 
 
@@ -4411,11 +4427,11 @@ Total number of evict operation is skipped because cache config is not available
 | StatPerf | `flexcache_per_volume` | `evict_skipped_reason_config_noent`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/flexcache.yaml |
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `evict_skipped_reason_config_noent`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
 
+The `flexcache_evict_skipped_reason_config_noent` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/flexcache.json | Evict | Top $TopResources Evictions Skipped Due to Configuration Issues |
-| cmode/flexcache.json | Evict | Top $TopResources Evictions Skipped Due to Configuration Issues |
+| ONTAP: FlexCache | Evict | Top $TopResources Evictions Skipped Due to Configuration Issues |
 
 
 
@@ -4428,11 +4444,11 @@ Total number of evict operation is skipped because cache is disconnected.
 | StatPerf | `flexcache_per_volume` | `evict_skipped_reason_disconnected`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/flexcache.yaml |
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `evict_skipped_reason_disconnected`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
 
+The `flexcache_evict_skipped_reason_disconnected` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/flexcache.json | Evict | Top $TopResources Evictions Skipped Due to Cache Disconnection |
-| cmode/flexcache.json | Evict | Top $TopResources Evictions Skipped Due to Cache Disconnection |
+| ONTAP: FlexCache | Evict | Top $TopResources Evictions Skipped Due to Cache Disconnection |
 
 
 
@@ -4445,13 +4461,12 @@ Total number of evict operation is skipped because cache volume is offline.
 | StatPerf | `flexcache_per_volume` | `evict_skipped_reason_offline`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/flexcache.yaml |
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `evict_skipped_reason_offline`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
 
+The `flexcache_evict_skipped_reason_offline` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/flexcache.json | Evict | Top $TopResources Evictions Skipped When Cache is Offline |
-| cmode/flexcache.json | Evict | Top $TopResources Evictions Skipped When Cache is Offline |
-| cmode/flexcache.json | Invalidate | Top $TopResources Invalidate Operations Skipped When Cache Volume is Offline |
-| cmode/flexcache.json | Invalidate | Top $TopResources Invalidate Operations Skipped When Cache Volume is Offline |
+| ONTAP: FlexCache | Evict | Top $TopResources Evictions Skipped When Cache is Offline |
+| ONTAP: FlexCache | Invalidate | Top $TopResources Invalidate Operations Skipped When Cache Volume is Offline |
 
 
 
@@ -4464,11 +4479,11 @@ Total number of invalidate operation is skipped because cache config is not avai
 | StatPerf | `flexcache_per_volume` | `invalidate_skipped_reason_config_noent`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/flexcache.yaml |
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `invalidate_skipped_reason_config_noent`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
 
+The `flexcache_invalidate_skipped_reason_config_noent` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/flexcache.json | Invalidate | Top $TopResources Invalidate Operations Skipped Due to Unavailable Cache Configuration |
-| cmode/flexcache.json | Invalidate | Top $TopResources Invalidate Operations Skipped Due to Unavailable Cache Configuration |
+| ONTAP: FlexCache | Invalidate | Top $TopResources Invalidate Operations Skipped Due to Unavailable Cache Configuration |
 
 
 
@@ -4481,11 +4496,11 @@ Total number of invalidate operation is skipped because cache is disconnected.
 | StatPerf | `flexcache_per_volume` | `invalidate_skipped_reason_disconnected`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/flexcache.yaml |
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `invalidate_skipped_reason_disconnected`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
 
+The `flexcache_invalidate_skipped_reason_disconnected` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/flexcache.json | Invalidate | Top $TopResources Invalidate Operations Skipped Due to Cache Disconnection |
-| cmode/flexcache.json | Invalidate | Top $TopResources Invalidate Operations Skipped Due to Cache Disconnection |
+| ONTAP: FlexCache | Invalidate | Top $TopResources Invalidate Operations Skipped Due to Cache Disconnection |
 
 
 
@@ -4510,11 +4525,11 @@ This metric represents the percentage of block requests from a client that resul
 | StatPerf | `flexcache_per_volume` | `blocks_retrieved_from_origin, blocks_requested_from_client`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/flexcache.yaml |
 | ZAPI | `flexcache_per_volume` | `blocks_retrieved_from_origin, blocks_requested_from_client`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
 
+The `flexcache_miss_percent` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/flexcache.json | Highlights | Top $TopResources Cache Miss percent |
-| cmode/flexcache.json | Highlights | Top $TopResources Cache Miss percent |
+| ONTAP: FlexCache | Highlights | Top $TopResources Cache Miss percent |
 
 
 
@@ -4527,11 +4542,11 @@ Total retry nix operations skipped because the initiator is retrieve operation.
 | StatPerf | `flexcache_per_volume` | `nix_retry_skipped_reason_initiator_retrieve`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/flexcache.yaml |
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `nix_retry_skipped_reason_initiator_retrieve`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
 
+The `flexcache_nix_retry_skipped_reason_initiator_retrieve` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/flexcache.json | Nix | Top $TopResources Retry Nix Operations Skipped Due to Retrieve Operation Initiator |
-| cmode/flexcache.json | Nix | Top $TopResources Retry Nix Operations Skipped Due to Retrieve Operation Initiator |
+| ONTAP: FlexCache | Nix | Top $TopResources Retry Nix Operations Skipped Due to Retrieve Operation Initiator |
 
 
 
@@ -4544,11 +4559,11 @@ Total number of nix operation is skipped because cache config is not available.
 | StatPerf | `flexcache_per_volume` | `nix_skipped_reason_config_noent`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/flexcache.yaml |
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `nix_skipped_reason_config_noent`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
 
+The `flexcache_nix_skipped_reason_config_noent` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/flexcache.json | Nix | Top $TopResources Nix Operations Skipped Due to Unavailable Cache Configuration |
-| cmode/flexcache.json | Nix | Top $TopResources Nix Operations Skipped Due to Unavailable Cache Configuration |
+| ONTAP: FlexCache | Nix | Top $TopResources Nix Operations Skipped Due to Unavailable Cache Configuration |
 
 
 
@@ -4561,11 +4576,11 @@ Total number of nix operation is skipped because cache is disconnected.
 | StatPerf | `flexcache_per_volume` | `nix_skipped_reason_disconnected`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/flexcache.yaml |
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `nix_skipped_reason_disconnected`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
 
+The `flexcache_nix_skipped_reason_disconnected` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/flexcache.json | Nix | Top $TopResources Nix Operations Skipped Due to Cache Disconnection |
-| cmode/flexcache.json | Nix | Top $TopResources Nix Operations Skipped Due to Cache Disconnection |
+| ONTAP: FlexCache | Nix | Top $TopResources Nix Operations Skipped Due to Cache Disconnection |
 
 
 
@@ -4578,11 +4593,11 @@ Total nix operations skipped because of an in-progress nix.
 | StatPerf | `flexcache_per_volume` | `nix_skipped_reason_in_progress`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/flexcache.yaml |
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `nix_skipped_reason_in_progress`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
 
+The `flexcache_nix_skipped_reason_in_progress` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/flexcache.json | Nix | Top $TopResources Nix Operations Skipped Due to In-Progress Nix Operation |
-| cmode/flexcache.json | Nix | Top $TopResources Nix Operations Skipped Due to In-Progress Nix Operation |
+| ONTAP: FlexCache | Nix | Top $TopResources Nix Operations Skipped Due to In-Progress Nix Operation |
 
 
 
@@ -4595,11 +4610,11 @@ Total number of nix operation is skipped because cache volume is offline.
 | StatPerf | `flexcache_per_volume` | `nix_skipped_reason_offline`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/flexcache.yaml |
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `nix_skipped_reason_offline`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
 
+The `flexcache_nix_skipped_reason_offline` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/flexcache.json | Nix | Top $TopResources Nix Operations Skipped When Cache Volume is Offline |
-| cmode/flexcache.json | Nix | Top $TopResources Nix Operations Skipped When Cache Volume is Offline |
+| ONTAP: FlexCache | Nix | Top $TopResources Nix Operations Skipped When Cache Volume is Offline |
 
 
 
@@ -4612,11 +4627,11 @@ Total number of reconciled data entries at cache side.
 | StatPerf | `flexcache_per_volume` | `reconciled_data_entries`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/flexcache.yaml |
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `reconciled_data_entries`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
 
+The `flexcache_reconciled_data_entries` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/flexcache.json | Reconcile Metrics | Top $TopResources Reconciled data entries |
-| cmode/flexcache.json | Reconcile Metrics | Top $TopResources Reconciled data entries |
+| ONTAP: FlexCache | Reconcile Metrics | Top $TopResources Reconciled data entries |
 
 
 
@@ -4629,11 +4644,11 @@ Total number of reconciled lock entries at cache side.
 | StatPerf | `flexcache_per_volume` | `reconciled_lock_entries`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/flexcache.yaml |
 | ZAPI | `perf-object-get-instances flexcache_per_volume` | `reconciled_lock_entries`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/flexcache.yaml |
 
+The `flexcache_reconciled_lock_entries` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/flexcache.json | Reconcile Metrics | Top $TopResources Reconciled Lock Entries |
-| cmode/flexcache.json | Reconcile Metrics | Top $TopResources Reconciled Lock Entries |
+| ONTAP: FlexCache | Reconcile Metrics | Top $TopResources Reconciled Lock Entries |
 
 
 
@@ -4646,10 +4661,11 @@ Physical size of the volume, in bytes. The minimum size for a FlexVol volume is 
 | REST | `api/storage/flexcache/flexcaches` | `size` | conf/rest/9.12.0/flexcache.yaml |
 | ZAPI | `flexcache-get-iter` | `flexcache-info.size` | conf/zapi/cdot/9.8.0/flexcache.yaml |
 
+The `flexcache_size` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/flexcache.json | Highlights | FlexCache Details |
+| ONTAP: FlexCache | Highlights | FlexCache Details |
 
 
 
@@ -4672,10 +4688,11 @@ This is the storage aggregate average latency per message at the disk level.
 | REST | `api/cluster/counter/tables/headroom_aggregate` | `current_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> current_ops | conf/restperf/9.12.0/resource_headroom_aggr.yaml |
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `current_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> current_ops | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml |
 
+The `headroom_aggr_current_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/headroom.json | Aggregate Headroom | Current Latency |
+| ONTAP: Headroom | Aggregate Headroom | Current Latency |
 
 
 
@@ -4688,11 +4705,12 @@ Total number of I/Os processed by the aggregate per second.
 | REST | `api/cluster/counter/tables/headroom_aggregate` | `current_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_aggr.yaml |
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `current_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml |
 
+The `headroom_aggr_current_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/headroom.json | Highlights | Available Ops: Aggregate |
-| cmode/headroom.json | Aggregate Headroom | Current IOP/s |
+| ONTAP: Headroom | Highlights | Available Ops: Aggregate |
+| ONTAP: Headroom | Aggregate Headroom | Current IOP/s |
 
 
 
@@ -4705,10 +4723,11 @@ This is the storage aggregate average utilization of all the data disks in the a
 | REST | `api/cluster/counter/tables/headroom_aggregate` | `current_utilization`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> current_utilization_denominator | conf/restperf/9.12.0/resource_headroom_aggr.yaml |
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `current_utilization`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> current_utilization_total | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml |
 
+The `headroom_aggr_current_utilization` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/headroom.json | Aggregate Headroom | Current Utilization |
+| ONTAP: Headroom | Aggregate Headroom | Current Utilization |
 
 
 
@@ -4776,10 +4795,11 @@ The latency component of the optimal point of the latency/utilization curve.
 | REST | `api/cluster/counter/tables/headroom_aggregate` | `optimal_point.latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_aggr.yaml |
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `optimal_point_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point_samples | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml |
 
+The `headroom_aggr_optimal_point_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/headroom.json | Aggregate Headroom | Optimal-Point Latency |
+| ONTAP: Headroom | Aggregate Headroom | Optimal-Point Latency |
 
 
 
@@ -4792,11 +4812,12 @@ The ops component of the optimal point derived from the latency/utilzation curve
 | REST | `api/cluster/counter/tables/headroom_aggregate` | `optimal_point.ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_aggr.yaml |
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `optimal_point_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point_samples | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml |
 
+The `headroom_aggr_optimal_point_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/headroom.json | Highlights | Available Ops: Aggregate |
-| cmode/headroom.json | Aggregate Headroom | Optimal-Point IOP/s |
+| ONTAP: Headroom | Highlights | Available Ops: Aggregate |
+| ONTAP: Headroom | Aggregate Headroom | Optimal-Point IOP/s |
 
 
 
@@ -4809,10 +4830,11 @@ The utilization component of the optimal point of the latency/utilization curve.
 | REST | `api/cluster/counter/tables/headroom_aggregate` | `optimal_point.utilization`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_aggr.yaml |
 | ZAPI | `perf-object-get-instances resource_headroom_aggr` | `optimal_point_utilization`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point_samples | conf/zapiperf/cdot/9.8.0/resource_headroom_aggr.yaml |
 
+The `headroom_aggr_optimal_point_utilization` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/headroom.json | Aggregate Headroom | Optimal-Point Utilization |
+| ONTAP: Headroom | Aggregate Headroom | Optimal-Point Utilization |
 
 
 
@@ -4825,10 +4847,11 @@ Current operation latency of the resource.
 | REST | `api/cluster/counter/tables/headroom_cpu` | `current_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> current_ops | conf/restperf/9.12.0/resource_headroom_cpu.yaml |
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `current_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> current_ops | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml |
 
+The `headroom_cpu_current_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/headroom.json | CPU Headroom | Current Latency |
+| ONTAP: Headroom | CPU Headroom | Current Latency |
 
 
 
@@ -4841,12 +4864,13 @@ Total number of operations per second (also referred to as dblade ops).
 | REST | `api/cluster/counter/tables/headroom_cpu` | `current_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_cpu.yaml |
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `current_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml |
 
+The `headroom_cpu_current_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/headroom.json | Highlights | Available Ops: CPU |
-| cmode/headroom.json | CPU Headroom | Current CPU Ops |
-| cmode/nfsTroubleshooting.json | Highlights | Headroom Overview (Average by Time Range) |
+| ONTAP: Headroom | Highlights | Available Ops: CPU |
+| ONTAP: Headroom | CPU Headroom | Current CPU Ops |
+| ONTAP: NFS Troubleshooting | Highlights | Headroom Overview (Average by Time Range) |
 
 
 
@@ -4859,12 +4883,12 @@ Average processor utilization across all processors in the system.
 | REST | `api/cluster/counter/tables/headroom_cpu` | `current_utilization`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> elapsed_time | conf/restperf/9.12.0/resource_headroom_cpu.yaml |
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `current_utilization`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> current_utilization_total | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml |
 
+The `headroom_cpu_current_utilization` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/headroom.json | CPU Headroom | Current Utilization |
-| cmode/nfsTroubleshooting.json | Highlights | Headroom Overview (Average by Time Range) |
-| cmode/nfsTroubleshooting.json | Highlights | Headroom Overview (Average by Time Range) |
+| ONTAP: Headroom | CPU Headroom | Current Utilization |
+| ONTAP: NFS Troubleshooting | Highlights | Headroom Overview (Average by Time Range) |
 
 
 
@@ -4877,11 +4901,11 @@ Daily exponential weighted moving average for current_ops, optimal_point_ops, cu
 | REST | `api/cluster/counter/tables/headroom_cpu` | `ewma.daily`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_cpu.yaml |
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `ewma_daily`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml |
 
+The `headroom_cpu_ewma_daily` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfsTroubleshooting.json | Highlights | Weighted Avg Daily (Headroom) |
-| cmode/nfsTroubleshooting.json | Highlights | Weighted Avg Daily (Headroom) |
+| ONTAP: NFS Troubleshooting | Highlights | Weighted Avg Daily (Headroom) |
 
 
 
@@ -4916,11 +4940,11 @@ Weekly exponential weighted moving average for current_ops, optimal_point_ops, c
 | REST | `api/cluster/counter/tables/headroom_cpu` | `ewma.weekly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/resource_headroom_cpu.yaml |
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `ewma_weekly`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml |
 
+The `headroom_cpu_ewma_weekly` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfsTroubleshooting.json | Highlights | Weighted Avg Weekly (Headroom) |
-| cmode/nfsTroubleshooting.json | Highlights | Weighted Avg Weekly (Headroom) |
+| ONTAP: NFS Troubleshooting | Highlights | Weighted Avg Weekly (Headroom) |
 
 
 
@@ -4944,10 +4968,11 @@ Latency component of the optimal point of the latency/utilization curve. This co
 | REST | `api/cluster/counter/tables/headroom_cpu` | `optimal_point.latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_cpu.yaml |
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `optimal_point_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point_samples | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml |
 
+The `headroom_cpu_optimal_point_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/headroom.json | CPU Headroom | Optimal-Point Latency |
+| ONTAP: Headroom | CPU Headroom | Optimal-Point Latency |
 
 
 
@@ -4960,12 +4985,13 @@ Ops component of the optimal point derived from the latency/utilization curve. T
 | REST | `api/cluster/counter/tables/headroom_cpu` | `optimal_point.ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_cpu.yaml |
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `optimal_point_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point_samples | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml |
 
+The `headroom_cpu_optimal_point_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/headroom.json | Highlights | Available Ops: CPU |
-| cmode/headroom.json | CPU Headroom | Optimal-Point Ops |
-| cmode/nfsTroubleshooting.json | Highlights | Headroom Overview (Average by Time Range) |
+| ONTAP: Headroom | Highlights | Available Ops: CPU |
+| ONTAP: Headroom | CPU Headroom | Optimal-Point Ops |
+| ONTAP: NFS Troubleshooting | Highlights | Headroom Overview (Average by Time Range) |
 
 
 
@@ -4978,12 +5004,12 @@ Utilization component of the optimal point of the latency/utilization curve. Thi
 | REST | `api/cluster/counter/tables/headroom_cpu` | `optimal_point.utilization`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point.samples | conf/restperf/9.12.0/resource_headroom_cpu.yaml |
 | ZAPI | `perf-object-get-instances resource_headroom_cpu` | `optimal_point_utilization`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> average<br><span class="key">Base:</span> optimal_point_samples | conf/zapiperf/cdot/9.8.0/resource_headroom_cpu.yaml |
 
+The `headroom_cpu_optimal_point_utilization` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/headroom.json | CPU Headroom | Optimal-Point Utilization |
-| cmode/nfsTroubleshooting.json | Highlights | Headroom Overview (Average by Time Range) |
-| cmode/nfsTroubleshooting.json | Highlights | Headroom Overview (Average by Time Range) |
+| ONTAP: Headroom | CPU Headroom | Optimal-Point Utilization |
+| ONTAP: NFS Troubleshooting | Highlights | Headroom Overview (Average by Time Range) |
 
 
 
@@ -5116,14 +5142,13 @@ Bytes read through a host adapter
 | REST | `api/cluster/counter/tables/host_adapter` | `bytes_read`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/hostadapter.yaml |
 | ZAPI | `perf-object-get-instances hostadapter` | `bytes_read`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/hostadapter.yaml |
 
+The `hostadapter_bytes_read` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/disk.json | Disk Utilization | Disk and Tape Drives Throughput by Node |
-| cmode/disk.json | Disk Utilization | Top $TopResources Disk and Tape Drives Throughput by Host Adapter |
-| cmode/disk.json | Disk Utilization | Top $TopResources Disk and Tape Drives Throughput by Host Adapter |
-| cmode/mcc_cluster.json | Disk and Tape Adapter | Top $TopResources Adapters by Read Data |
-| cmode/mcc_cluster.json | Disk and Tape Adapter | Top $TopResources Adapters by Read Data |
+| ONTAP: Disk | Disk Utilization | Disk and Tape Drives Throughput by Node |
+| ONTAP: Disk | Disk Utilization | Top $TopResources Disk and Tape Drives Throughput by Host Adapter |
+| ONTAP: MetroCluster | Disk and Tape Adapter | Top $TopResources Adapters by Read Data |
 
 
 
@@ -5136,14 +5161,13 @@ Bytes written through a host adapter
 | REST | `api/cluster/counter/tables/host_adapter` | `bytes_written`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/hostadapter.yaml |
 | ZAPI | `perf-object-get-instances hostadapter` | `bytes_written`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/hostadapter.yaml |
 
+The `hostadapter_bytes_written` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/disk.json | Disk Utilization | Disk and Tape Drives Throughput by Node |
-| cmode/disk.json | Disk Utilization | Top $TopResources Disk and Tape Drives Throughput by Host Adapter |
-| cmode/disk.json | Disk Utilization | Top $TopResources Disk and Tape Drives Throughput by Host Adapter |
-| cmode/mcc_cluster.json | Disk and Tape Adapter | Top $TopResources Adapters by Write Data |
-| cmode/mcc_cluster.json | Disk and Tape Adapter | Top $TopResources Adapters by Write Data |
+| ONTAP: Disk | Disk Utilization | Disk and Tape Drives Throughput by Node |
+| ONTAP: Disk | Disk Utilization | Top $TopResources Disk and Tape Drives Throughput by Host Adapter |
+| ONTAP: MetroCluster | Disk and Tape Adapter | Top $TopResources Adapters by Write Data |
 
 
 
@@ -5156,12 +5180,13 @@ Average latency for iSCSI operations
 | REST | `api/cluster/counter/tables/iscsi_lif` | `average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cmd_transferred | conf/restperf/9.12.0/iscsi_lif.yaml |
 | ZAPI | `perf-object-get-instances iscsi_lif` | `avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cmd_transfered | conf/zapiperf/cdot/9.8.0/iscsi_lif.yaml |
 
+The `iscsi_lif_avg_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | iSCSI Frontend | iSCSI Latency |
-| cmode/node.json | iSCSI Frontend | Average Latency by LIF |
-| cmode/svm.json | iSCSI | SVM iSCSI Average Latency |
+| ONTAP: Node | iSCSI Frontend | iSCSI Latency |
+| ONTAP: Node | iSCSI Frontend | Average Latency by LIF |
+| ONTAP: SVM | iSCSI | SVM iSCSI Average Latency |
 
 
 
@@ -5174,10 +5199,11 @@ Average latency for operations other than read and write (for example, Inquiry, 
 | REST | `api/cluster/counter/tables/iscsi_lif` | `average_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> iscsi_other_ops | conf/restperf/9.12.0/iscsi_lif.yaml |
 | ZAPI | `perf-object-get-instances iscsi_lif` | `avg_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> iscsi_other_ops | conf/zapiperf/cdot/9.8.0/iscsi_lif.yaml |
 
+The `iscsi_lif_avg_other_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | iSCSI | SVM iSCSI Average Latency |
+| ONTAP: SVM | iSCSI | SVM iSCSI Average Latency |
 
 
 
@@ -5190,11 +5216,12 @@ Average latency for read operations
 | REST | `api/cluster/counter/tables/iscsi_lif` | `average_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> iscsi_read_ops | conf/restperf/9.12.0/iscsi_lif.yaml |
 | ZAPI | `perf-object-get-instances iscsi_lif` | `avg_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> iscsi_read_ops | conf/zapiperf/cdot/9.8.0/iscsi_lif.yaml |
 
+The `iscsi_lif_avg_read_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | iSCSI | SVM iSCSI Average Read Latency |
-| cmode/svm.json | iSCSI | SVM iSCSI Average Latency |
+| ONTAP: SVM | iSCSI | SVM iSCSI Average Read Latency |
+| ONTAP: SVM | iSCSI | SVM iSCSI Average Latency |
 
 
 
@@ -5207,11 +5234,12 @@ Average latency for write operations
 | REST | `api/cluster/counter/tables/iscsi_lif` | `average_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> iscsi_write_ops | conf/restperf/9.12.0/iscsi_lif.yaml |
 | ZAPI | `perf-object-get-instances iscsi_lif` | `avg_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> iscsi_write_ops | conf/zapiperf/cdot/9.8.0/iscsi_lif.yaml |
 
+The `iscsi_lif_avg_write_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | iSCSI | SVM iSCSI Average Write Latency |
-| cmode/svm.json | iSCSI | SVM iSCSI Average Latency |
+| ONTAP: SVM | iSCSI | SVM iSCSI Average Write Latency |
+| ONTAP: SVM | iSCSI | SVM iSCSI Average Latency |
 
 
 
@@ -5235,12 +5263,13 @@ iSCSI other operations per second on this logical interface (LIF)
 | REST | `api/cluster/counter/tables/iscsi_lif` | `iscsi_other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/iscsi_lif.yaml |
 | ZAPI | `perf-object-get-instances iscsi_lif` | `iscsi_other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iscsi_lif.yaml |
 
+The `iscsi_lif_iscsi_other_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | iSCSI Frontend | iSCSI IOPs |
-| cmode/node.json | iSCSI Frontend | IOPs by LIF |
-| cmode/svm.json | iSCSI | SVM iSCSI IOPs |
+| ONTAP: Node | iSCSI Frontend | iSCSI IOPs |
+| ONTAP: Node | iSCSI Frontend | IOPs by LIF |
+| ONTAP: SVM | iSCSI | SVM iSCSI IOPs |
 
 
 
@@ -5253,10 +5282,11 @@ iSCSI read operations per second on this logical interface (LIF)
 | REST | `api/cluster/counter/tables/iscsi_lif` | `iscsi_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/iscsi_lif.yaml |
 | ZAPI | `perf-object-get-instances iscsi_lif` | `iscsi_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iscsi_lif.yaml |
 
+The `iscsi_lif_iscsi_read_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | iSCSI | SVM iSCSI Read IOPs |
+| ONTAP: SVM | iSCSI | SVM iSCSI Read IOPs |
 
 
 
@@ -5269,10 +5299,11 @@ iSCSI write operations per second on this logical interface (LIF)
 | REST | `api/cluster/counter/tables/iscsi_lif` | `iscsi_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/iscsi_lif.yaml |
 | ZAPI | `perf-object-get-instances iscsi_lif` | `iscsi_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iscsi_lif.yaml |
 
+The `iscsi_lif_iscsi_write_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | iSCSI | SVM iSCSI Write IOPs |
+| ONTAP: SVM | iSCSI | SVM iSCSI Write IOPs |
 
 
 
@@ -5296,15 +5327,14 @@ Amount of data read from the storage system in bytes
 | REST | `api/cluster/counter/tables/iscsi_lif` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/iscsi_lif.yaml |
 | ZAPI | `perf-object-get-instances iscsi_lif` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iscsi_lif.yaml |
 
+The `iscsi_lif_read_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | LIF | Top $TopResources iSCSI LIFs by Send Throughput |
-| cmode/svm.json | LIF | Top $TopResources iSCSI LIFs by Send Throughput |
-| cmode/svm.json | iSCSI | SVM iSCSI Read Throughput |
-| cmode/svm.json | iSCSI | Top $TopResources iSCSI LIFs by Send Throughput |
-| cmode/svm.json | iSCSI | Top $TopResources iSCSI LIFs by Send Throughput |
-| cmode/svm.json | iSCSI | SVM iSCSI Throughput |
+| ONTAP: SVM | LIF | Top $TopResources iSCSI LIFs by Send Throughput |
+| ONTAP: SVM | iSCSI | SVM iSCSI Read Throughput |
+| ONTAP: SVM | iSCSI | Top $TopResources iSCSI LIFs by Send Throughput |
+| ONTAP: SVM | iSCSI | SVM iSCSI Throughput |
 
 
 
@@ -5317,17 +5347,15 @@ Amount of data written to the storage system in bytes
 | REST | `api/cluster/counter/tables/iscsi_lif` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/iscsi_lif.yaml |
 | ZAPI | `perf-object-get-instances iscsi_lif` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iscsi_lif.yaml |
 
+The `iscsi_lif_write_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | iSCSI Frontend | Throughput by LIF |
-| cmode/svm.json | LIF | Top $TopResources iSCSI LIFs by Receive Throughput |
-| cmode/svm.json | LIF | Top $TopResources iSCSI LIFs by Receive Throughput |
-| cmode/svm.json | iSCSI | SVM iSCSI Throughput |
-| cmode/svm.json | iSCSI | SVM iSCSI Write Throughput |
-| cmode/svm.json | iSCSI | Top $TopResources iSCSI LIFs by Receive Throughput |
-| cmode/svm.json | iSCSI | Top $TopResources iSCSI LIFs by Receive Throughput |
-| cmode/svm.json | iSCSI | SVM iSCSI Throughput |
+| ONTAP: Node | iSCSI Frontend | Throughput by LIF |
+| ONTAP: SVM | LIF | Top $TopResources iSCSI LIFs by Receive Throughput |
+| ONTAP: SVM | iSCSI | SVM iSCSI Throughput |
+| ONTAP: SVM | iSCSI | SVM iSCSI Write Throughput |
+| ONTAP: SVM | iSCSI | Top $TopResources iSCSI LIFs by Receive Throughput |
 
 
 
@@ -5340,10 +5368,11 @@ Average RDMA I/O latency.
 | REST | `api/cluster/counter/tables/iwarp` | `average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> ops | conf/restperf/9.14.1/iwarp.yaml |
 | ZAPI | `perf-object-get-instances iwarp` | `iw_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> iw_ops | conf/zapiperf/cdot/9.8.0/iwarp.yaml |
 
+The `iw_avg_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/mcc_cluster.json | MetroCluster Iwarp | Average Latency |
+| ONTAP: MetroCluster | MetroCluster Iwarp | Average Latency |
 
 
 
@@ -5356,10 +5385,11 @@ Number of RDMA I/Os issued.
 | REST | `api/cluster/counter/tables/iwarp` | `ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/iwarp.yaml |
 | ZAPI | `perf-object-get-instances iwarp` | `iw_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iwarp.yaml |
 
+The `iw_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/mcc_cluster.json | MetroCluster Iwarp | IOPs |
+| ONTAP: MetroCluster | MetroCluster Iwarp | IOPs |
 
 
 
@@ -5372,10 +5402,11 @@ Number of RDMA read I/Os issued.
 | REST | `api/cluster/counter/tables/iwarp` | `read_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/iwarp.yaml |
 | ZAPI | `perf-object-get-instances iwarp` | `iw_read_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iwarp.yaml |
 
+The `iw_read_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/mcc_cluster.json | MetroCluster Iwarp | Read IOPs |
+| ONTAP: MetroCluster | MetroCluster Iwarp | Read IOPs |
 
 
 
@@ -5388,10 +5419,11 @@ Number of RDMA write I/Os issued.
 | REST | `api/cluster/counter/tables/iwarp` | `write_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/iwarp.yaml |
 | ZAPI | `perf-object-get-instances iwarp` | `iw_write_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iwarp.yaml |
 
+The `iw_write_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/mcc_cluster.json | MetroCluster Iwarp | Write IOPs |
+| ONTAP: MetroCluster | MetroCluster Iwarp | Write IOPs |
 
 
 
@@ -5404,12 +5436,13 @@ This metric provides information about LIF
 | REST | `api/network/ip/interfaces` | `Harvest generated` | conf/rest/9.12.0/lif.yaml |
 | ZAPI | `net-interface-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/lif.yaml |
 
+The `lif_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/datacenter.json | Highlights | Object Count |
-| cmode/health.json | Lif | Lif not at home port |
-| cmode/svm.json | LIF | LIF Details |
+| ONTAP: Datacenter | Highlights | Object Count |
+| ONTAP: Health | Lif | Lif not at home port |
+| ONTAP: SVM | LIF | LIF Details |
 
 
 
@@ -5423,11 +5456,11 @@ Number of bytes received per second
 | KeyPerf | `api/network/ip/interfaces` | `statistics.throughput_raw.write`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/lif.yaml |
 | ZAPI | `perf-object-get-instances lif` | `recv_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lif.yaml |
 
+The `lif_recv_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | LIF | Top $TopResources NAS LIFs by Receive Throughput |
-| cmode/svm.json | LIF | Top $TopResources NAS LIFs by Receive Throughput |
+| ONTAP: SVM | LIF | Top $TopResources NAS LIFs by Receive Throughput |
 
 
 
@@ -5463,11 +5496,11 @@ Number of bytes sent per second
 | KeyPerf | `api/network/ip/interfaces` | `statistics.throughput_raw.read`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/lif.yaml |
 | ZAPI | `perf-object-get-instances lif` | `sent_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lif.yaml |
 
+The `lif_sent_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | LIF | Top $TopResources NAS LIFs by Send Throughput |
-| cmode/svm.json | LIF | Top $TopResources NAS LIFs by Send Throughput |
+| ONTAP: SVM | LIF | Top $TopResources NAS LIFs by Send Throughput |
 
 
 
@@ -5512,10 +5545,11 @@ Interface up time
 | REST | `api/cluster/counter/tables/lif` | `up_time`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/lif.yaml |
 | ZAPI | `perf-object-get-instances lif` | `up_time`<br><span class="key">Unit:</span> millisec<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lif.yaml |
 
+The `lif_uptime` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | LIF | LIF Details |
+| ONTAP: SVM | LIF | LIF Details |
 
 
 
@@ -5529,15 +5563,14 @@ Average read latency in microseconds for all operations on the LUN
 | KeyPerf | `api/storage/luns` | `statistics.latency_raw.read`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lun_statistics.iops_raw.read | conf/keyperf/9.15.0/lun.yaml |
 | ZAPI | `perf-object-get-instances lun` | `avg_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/lun.yaml |
 
+The `lun_avg_read_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/lun.json | Highlights | Top $TopResources Luns by Average Read Latency |
-| cmode/lun.json | LUN Table | Top $TopResources Luns by Read Latency |
-| cmode/lun.json | LUN Table | Top $TopResources Luns by Read Latency |
-| cmode/lun.json | Top LUN Performance | Top $TopResources Luns by Average Read Latency |
-| cmode/lun.json | Top LUN Performance | Top $TopResources Luns by Average Read Latency |
-| cmode/lun.json | Per LUN (Must Select Cluster/SVM/Volume/LUN) | Latency |
+| ONTAP: LUN | Highlights | Top $TopResources Luns by Average Read Latency |
+| ONTAP: LUN | LUN Table | Top $TopResources Luns by Read Latency |
+| ONTAP: LUN | Top LUN Performance | Top $TopResources Luns by Average Read Latency |
+| ONTAP: LUN | Per LUN (Must Select Cluster/SVM/Volume/LUN) | Latency |
 
 
 
@@ -5551,15 +5584,14 @@ Average write latency in microseconds for all operations on the LUN
 | KeyPerf | `api/storage/luns` | `statistics.latency_raw.write`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lun_statistics.iops_raw.write | conf/keyperf/9.15.0/lun.yaml |
 | ZAPI | `perf-object-get-instances lun` | `avg_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/lun.yaml |
 
+The `lun_avg_write_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/lun.json | Highlights | Top $TopResources Luns by Average Write Latency |
-| cmode/lun.json | LUN Table | Top $TopResources Luns by Write Latency |
-| cmode/lun.json | LUN Table | Top $TopResources Luns by Write Latency |
-| cmode/lun.json | Top LUN Performance | Top $TopResources Luns by Average Write Latency |
-| cmode/lun.json | Top LUN Performance | Top $TopResources Luns by Average Write Latency |
-| cmode/lun.json | Per LUN (Must Select Cluster/SVM/Volume/LUN) | Latency |
+| ONTAP: LUN | Highlights | Top $TopResources Luns by Average Write Latency |
+| ONTAP: LUN | LUN Table | Top $TopResources Luns by Write Latency |
+| ONTAP: LUN | Top LUN Performance | Top $TopResources Luns by Average Write Latency |
+| ONTAP: LUN | Per LUN (Must Select Cluster/SVM/Volume/LUN) | Latency |
 
 
 
@@ -5583,10 +5615,11 @@ Number of compare and write requests
 | REST | `api/cluster/counter/tables/lun` | `caw_requests`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/lun.yaml |
 | ZAPI | `perf-object-get-instances lun` | `caw_reqs`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml |
 
+The `lun_caw_reqs` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/lun.json | Per LUN (Must Select Cluster/SVM/Volume/LUN) | vStorage Offload Operations |
+| ONTAP: LUN | Per LUN (Must Select Cluster/SVM/Volume/LUN) | vStorage Offload Operations |
 
 
 
@@ -5610,11 +5643,12 @@ This metric provides information about Lun
 | REST | `api/storage/luns` | `Harvest generated` | conf/rest/9.12.0/lun.yaml |
 | ZAPI | `lun-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/lun.yaml |
 
+The `lun_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/datacenter.json | Highlights | Object Count |
-| cmode/lun.json | LUN Table | LUNS in Cluster |
+| ONTAP: Datacenter | Highlights | Object Count |
+| ONTAP: LUN | LUN Table | LUNS in Cluster |
 
 
 
@@ -5679,11 +5713,11 @@ Histogram of WAFL read alignment (number sectors off WAFL block start)
 | REST | `api/cluster/counter/tables/lun` | `read_align_histogram`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> read_ops_sent | conf/restperf/9.12.0/lun.yaml |
 | ZAPI | `perf-object-get-instances lun` | `read_align_histo`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> read_ops_sent | conf/zapiperf/cdot/9.8.0/lun.yaml |
 
+The `lun_read_align_histo` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/lun.json | Top LUN Performance Efficiency | Top $TopResources Luns by Read Misalignment Buckets |
-| cmode/lun.json | Top LUN Performance Efficiency | Top $TopResources Luns by Read Misalignment Buckets |
+| ONTAP: LUN | Top LUN Performance Efficiency | Top $TopResources Luns by Read Misalignment Buckets |
 
 
 
@@ -5697,15 +5731,14 @@ Read bytes
 | KeyPerf | `api/storage/luns` | `statistics.throughput_raw.read`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/lun.yaml |
 | ZAPI | `perf-object-get-instances lun` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml |
 
+The `lun_read_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/lun.json | Highlights | Top $TopResources Luns by Read Throughput |
-| cmode/lun.json | LUN Table | Top $TopResources Luns by Read Throughput |
-| cmode/lun.json | LUN Table | Top $TopResources Luns by Read Throughput |
-| cmode/lun.json | Top LUN Performance | Top $TopResources Luns by Read Throughput |
-| cmode/lun.json | Top LUN Performance | Top $TopResources Luns by Read Throughput |
-| cmode/lun.json | Per LUN (Must Select Cluster/SVM/Volume/LUN) | Throughput |
+| ONTAP: LUN | Highlights | Top $TopResources Luns by Read Throughput |
+| ONTAP: LUN | LUN Table | Top $TopResources Luns by Read Throughput |
+| ONTAP: LUN | Top LUN Performance | Top $TopResources Luns by Read Throughput |
+| ONTAP: LUN | Per LUN (Must Select Cluster/SVM/Volume/LUN) | Throughput |
 
 
 
@@ -5719,16 +5752,15 @@ Number of read operations
 | KeyPerf | `api/storage/luns` | `statistics.iops_raw.read`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/lun.yaml |
 | ZAPI | `perf-object-get-instances lun` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml |
 
+The `lun_read_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/lun.json | Highlights | Top $TopResources Luns by Read IOPs |
-| cmode/lun.json | LUN Table | Top $TopResources Luns by Read IOPS |
-| cmode/lun.json | LUN Table | Top $TopResources Luns by Read IOPS |
-| cmode/lun.json | Top LUN Performance | Top $TopResources Luns by Read IOPs |
-| cmode/lun.json | Top LUN Performance | Top $TopResources Luns by Read IOPs |
-| cmode/lun.json | Per LUN (Must Select Cluster/SVM/Volume/LUN) | IOPs |
-| cmode/lun.json | Per LUN (Must Select Cluster/SVM/Volume/LUN) | IO Size |
+| ONTAP: LUN | Highlights | Top $TopResources Luns by Read IOPs |
+| ONTAP: LUN | LUN Table | Top $TopResources Luns by Read IOPS |
+| ONTAP: LUN | Top LUN Performance | Top $TopResources Luns by Read IOPs |
+| ONTAP: LUN | Per LUN (Must Select Cluster/SVM/Volume/LUN) | IOPs |
+| ONTAP: LUN | Per LUN (Must Select Cluster/SVM/Volume/LUN) | IO Size |
 
 
 
@@ -5752,10 +5784,11 @@ I/O to or from a LUN which is not owned by the storage system handling the I/O.
 | REST | `api/cluster/counter/tables/lun` | `remote_bytes`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/lun.yaml |
 | ZAPI | `perf-object-get-instances lun` | `remote_bytes`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml |
 
+The `lun_remote_bytes` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/lun.json | Per LUN (Must Select Cluster/SVM/Volume/LUN) | Indirect Access |
+| ONTAP: LUN | Per LUN (Must Select Cluster/SVM/Volume/LUN) | Indirect Access |
 
 
 
@@ -5768,12 +5801,12 @@ Number of operations received by a storage system that does not own the LUN targ
 | REST | `api/cluster/counter/tables/lun` | `remote_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/lun.yaml |
 | ZAPI | `perf-object-get-instances lun` | `remote_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml |
 
+The `lun_remote_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/lun.json | Top LUN Performance Efficiency | Top $TopResources Luns by Indirect Access IOPS |
-| cmode/lun.json | Top LUN Performance Efficiency | Top $TopResources Luns by Indirect Access IOPS |
-| cmode/lun.json | Per LUN (Must Select Cluster/SVM/Volume/LUN) | Indirect Access |
+| ONTAP: LUN | Top LUN Performance Efficiency | Top $TopResources Luns by Indirect Access IOPS |
+| ONTAP: LUN | Per LUN (Must Select Cluster/SVM/Volume/LUN) | Indirect Access |
 
 
 
@@ -5786,10 +5819,11 @@ The total provisioned size of the LUN. The LUN size can be increased but not dec
 | REST | `api/storage/luns` | `space.size` | conf/rest/9.12.0/lun.yaml |
 | ZAPI | `lun-get-iter` | `lun-info.size` | conf/zapi/cdot/9.8.0/lun.yaml |
 
+The `lun_size` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/lun.json | LUN Table | LUNS in Cluster |
+| ONTAP: LUN | LUN Table | LUNS in Cluster |
 
 
 
@@ -5802,10 +5836,11 @@ The amount of space consumed by the main data stream of the LUN.<br/>This value 
 | REST | `api/storage/luns` | `space.used` | conf/rest/9.12.0/lun.yaml |
 | ZAPI | `lun-get-iter` | `lun-info.size-used` | conf/zapi/cdot/9.8.0/lun.yaml |
 
+The `lun_size_used` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/lun.json | LUN Table | LUNS in Cluster |
+| ONTAP: LUN | LUN Table | LUNS in Cluster |
 
 
 
@@ -5818,13 +5853,12 @@ This metric represents the percentage of a LUN that is currently being used.
 | REST | `api/storage/luns` | `size_used, size` | conf/rest/9.12.0/lun.yaml |
 | ZAPI | `lun-get-iter` | `size_used, size` | conf/zapi/cdot/9.8.0/lun.yaml |
 
+The `lun_size_used_percent` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/lun.json | Top Volume and LUN Capacity | Top $TopResources LUNs by Percent Most Filled |
-| cmode/lun.json | Top Volume and LUN Capacity | Top $TopResources LUNs by Percent Most Filled |
-| cmode/lun.json | Top Volume and LUN Capacity | Top $TopResources LUNs by Percent Least Filled |
-| cmode/lun.json | Top Volume and LUN Capacity | Top $TopResources LUNs by Percent Least Filled |
+| ONTAP: LUN | Top Volume and LUN Capacity | Top $TopResources LUNs by Percent Most Filled |
+| ONTAP: LUN | Top Volume and LUN Capacity | Top $TopResources LUNs by Percent Least Filled |
 
 
 
@@ -5867,10 +5901,11 @@ Number of unmap command requests
 | REST | `api/cluster/counter/tables/lun` | `unmap_requests`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/lun.yaml |
 | ZAPI | `perf-object-get-instances lun` | `unmap_reqs`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml |
 
+The `lun_unmap_reqs` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/lun.json | Per LUN (Must Select Cluster/SVM/Volume/LUN) | vStorage Offload Operations |
+| ONTAP: LUN | Per LUN (Must Select Cluster/SVM/Volume/LUN) | vStorage Offload Operations |
 
 
 
@@ -5883,11 +5918,11 @@ Histogram of WAFL write alignment (number of sectors off WAFL block start)
 | REST | `api/cluster/counter/tables/lun` | `write_align_histogram`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> write_ops_sent | conf/restperf/9.12.0/lun.yaml |
 | ZAPI | `perf-object-get-instances lun` | `write_align_histo`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> write_ops_sent | conf/zapiperf/cdot/9.8.0/lun.yaml |
 
+The `lun_write_align_histo` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/lun.json | Top LUN Performance Efficiency | Top $TopResources Luns by Write Misalignment Buckets |
-| cmode/lun.json | Top LUN Performance Efficiency | Top $TopResources Luns by Write Misalignment Buckets |
+| ONTAP: LUN | Top LUN Performance Efficiency | Top $TopResources Luns by Write Misalignment Buckets |
 
 
 
@@ -5901,15 +5936,14 @@ Write bytes
 | KeyPerf | `api/storage/luns` | `statistics.throughput_raw.write`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/lun.yaml |
 | ZAPI | `perf-object-get-instances lun` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml |
 
+The `lun_write_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/lun.json | Highlights | Top $TopResources Luns by Write Throughput |
-| cmode/lun.json | LUN Table | Top $TopResources Luns by Write Throughput |
-| cmode/lun.json | LUN Table | Top $TopResources Luns by Write Throughput |
-| cmode/lun.json | Top LUN Performance | Top $TopResources Luns by Write Throughput |
-| cmode/lun.json | Top LUN Performance | Top $TopResources Luns by Write Throughput |
-| cmode/lun.json | Per LUN (Must Select Cluster/SVM/Volume/LUN) | Throughput |
+| ONTAP: LUN | Highlights | Top $TopResources Luns by Write Throughput |
+| ONTAP: LUN | LUN Table | Top $TopResources Luns by Write Throughput |
+| ONTAP: LUN | Top LUN Performance | Top $TopResources Luns by Write Throughput |
+| ONTAP: LUN | Per LUN (Must Select Cluster/SVM/Volume/LUN) | Throughput |
 
 
 
@@ -5923,16 +5957,15 @@ Number of write operations
 | KeyPerf | `api/storage/luns` | `statistics.iops_raw.write`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/lun.yaml |
 | ZAPI | `perf-object-get-instances lun` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml |
 
+The `lun_write_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/lun.json | Highlights | Top $TopResources Luns by Write IOPs |
-| cmode/lun.json | LUN Table | Top $TopResources Luns by Write IOPS |
-| cmode/lun.json | LUN Table | Top $TopResources Luns by Write IOPS |
-| cmode/lun.json | Top LUN Performance | Top $TopResources Luns by Write IOPs |
-| cmode/lun.json | Top LUN Performance | Top $TopResources Luns by Write IOPs |
-| cmode/lun.json | Per LUN (Must Select Cluster/SVM/Volume/LUN) | IOPs |
-| cmode/lun.json | Per LUN (Must Select Cluster/SVM/Volume/LUN) | IO Size |
+| ONTAP: LUN | Highlights | Top $TopResources Luns by Write IOPs |
+| ONTAP: LUN | LUN Table | Top $TopResources Luns by Write IOPS |
+| ONTAP: LUN | Top LUN Performance | Top $TopResources Luns by Write IOPs |
+| ONTAP: LUN | Per LUN (Must Select Cluster/SVM/Volume/LUN) | IOPs |
+| ONTAP: LUN | Per LUN (Must Select Cluster/SVM/Volume/LUN) | IO Size |
 
 
 
@@ -5956,10 +5989,11 @@ Number of write same command requests
 | REST | `api/cluster/counter/tables/lun` | `writesame_requests`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/lun.yaml |
 | ZAPI | `perf-object-get-instances lun` | `writesame_reqs`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml |
 
+The `lun_writesame_reqs` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/lun.json | Per LUN (Must Select Cluster/SVM/Volume/LUN) | vStorage Offload Operations |
+| ONTAP: LUN | Per LUN (Must Select Cluster/SVM/Volume/LUN) | vStorage Offload Operations |
 
 
 
@@ -5972,10 +6006,11 @@ Number of write same commands requests with unmap bit set
 | REST | `api/cluster/counter/tables/lun` | `writesame_unmap_requests`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/lun.yaml |
 | ZAPI | `perf-object-get-instances lun` | `writesame_unmap_reqs`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml |
 
+The `lun_writesame_unmap_reqs` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/lun.json | Per LUN (Must Select Cluster/SVM/Volume/LUN) | vStorage Offload Operations |
+| ONTAP: LUN | Per LUN (Must Select Cluster/SVM/Volume/LUN) | vStorage Offload Operations |
 
 
 
@@ -5988,10 +6023,11 @@ Total number of xcopy operations on the LUN
 | REST | `api/cluster/counter/tables/lun` | `xcopy_requests`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/lun.yaml |
 | ZAPI | `perf-object-get-instances lun` | `xcopy_reqs`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml |
 
+The `lun_xcopy_reqs` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/lun.json | Per LUN (Must Select Cluster/SVM/Volume/LUN) | vStorage Offload Operations |
+| ONTAP: LUN | Per LUN (Must Select Cluster/SVM/Volume/LUN) | vStorage Offload Operations |
 
 
 
@@ -6287,11 +6323,11 @@ Average read latency in microseconds for all operations on the Namespace
 | KeyPerf | `api/storage/namespaces` | `statistics.latency_raw.read`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> namespace_statistics.iops_raw.read | conf/keyperf/9.15.0/namespace.yaml |
 | ZAPI | `perf-object-get-instances namespace` | `avg_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.10.1/namespace.yaml |
 
+The `namespace_avg_read_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/namespace.json | Highlights | Top $TopResources NVMe Namespaces by Average Read Latency |
-| cmode/namespace.json | Highlights | Top $TopResources NVMe Namespaces by Average Read Latency |
+| ONTAP: NVMe Namespaces | Highlights | Top $TopResources NVMe Namespaces by Average Read Latency |
 
 
 
@@ -6315,11 +6351,11 @@ Average write latency in microseconds for all operations on the Namespace
 | KeyPerf | `api/storage/namespaces` | `statistics.latency_raw.write`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> namespace_statistics.iops_raw.write | conf/keyperf/9.15.0/namespace.yaml |
 | ZAPI | `perf-object-get-instances namespace` | `avg_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.10.1/namespace.yaml |
 
+The `namespace_avg_write_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/namespace.json | Highlights | Top $TopResources NVMe Namespaces by Average Write Latency |
-| cmode/namespace.json | Highlights | Top $TopResources NVMe Namespaces by Average Write Latency |
+| ONTAP: NVMe Namespaces | Highlights | Top $TopResources NVMe Namespaces by Average Write Latency |
 
 
 
@@ -6343,11 +6379,12 @@ This metric provides information about Namespace
 | REST | `api/storage/namespaces` | `Harvest generated` | conf/rest/9.12.0/namespace.yaml |
 | ZAPI | `nvme-namespace-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/namespace.yaml |
 
+The `namespace_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/datacenter.json | Highlights | Object Count |
-| cmode/namespace.json | NVMe Namespaces Table | NVMe Namespaces |
+| ONTAP: Datacenter | Highlights | Object Count |
+| ONTAP: NVMe Namespaces | NVMe Namespaces Table | NVMe Namespaces |
 
 
 
@@ -6373,11 +6410,11 @@ Read bytes
 | KeyPerf | `api/storage/namespaces` | `statistics.throughput_raw.read`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/namespace.yaml |
 | ZAPI | `perf-object-get-instances namespace` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml |
 
+The `namespace_read_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/namespace.json | Highlights | Top $TopResources NVMe Namespaces by Read Throughput |
-| cmode/namespace.json | Highlights | Top $TopResources NVMe Namespaces by Read Throughput |
+| ONTAP: NVMe Namespaces | Highlights | Top $TopResources NVMe Namespaces by Read Throughput |
 
 
 
@@ -6391,11 +6428,11 @@ Number of read operations
 | KeyPerf | `api/storage/namespaces` | `statistics.iops_raw.read`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/namespace.yaml |
 | ZAPI | `perf-object-get-instances namespace` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml |
 
+The `namespace_read_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/namespace.json | Highlights | Top $TopResources NVMe Namespaces by Read IOPs |
-| cmode/namespace.json | Highlights | Top $TopResources NVMe Namespaces by Read IOPs |
+| ONTAP: NVMe Namespaces | Highlights | Top $TopResources NVMe Namespaces by Read IOPs |
 
 
 
@@ -6463,10 +6500,11 @@ The total provisioned size of the NVMe namespace. Valid in POST and PATCH. The N
 | REST | `api/storage/namespaces` | `space.size` | conf/rest/9.12.0/namespace.yaml |
 | ZAPI | `nvme-namespace-get-iter` | `nvme-namespace-info.size` | conf/zapi/cdot/9.8.0/namespace.yaml |
 
+The `namespace_size` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/namespace.json | NVMe Namespaces Table | NVMe Namespaces |
+| ONTAP: NVMe Namespaces | NVMe Namespaces Table | NVMe Namespaces |
 
 
 
@@ -6490,10 +6528,11 @@ This metric represents the percentage of available space in a namespace.
 | REST | `api/storage/namespaces` | `size_available, size` | conf/rest/9.12.0/namespace.yaml |
 | ZAPI | `nvme-namespace-get-iter` | `size_available, size` | conf/zapi/cdot/9.8.0/namespace.yaml |
 
+The `namespace_size_available_percent` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/namespace.json | NVMe Namespaces Table | NVMe Namespaces |
+| ONTAP: NVMe Namespaces | NVMe Namespaces Table | NVMe Namespaces |
 
 
 
@@ -6506,10 +6545,11 @@ The amount of space consumed by the main data stream of the NVMe namespace.<br/>
 | REST | `api/storage/namespaces` | `space.used` | conf/rest/9.12.0/namespace.yaml |
 | ZAPI | `nvme-namespace-get-iter` | `nvme-namespace-info.size-used` | conf/zapi/cdot/9.8.0/namespace.yaml |
 
+The `namespace_size_used` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/namespace.json | NVMe Namespaces Table | NVMe Namespaces |
+| ONTAP: NVMe Namespaces | NVMe Namespaces Table | NVMe Namespaces |
 
 
 
@@ -6543,11 +6583,11 @@ Write bytes
 | KeyPerf | `api/storage/namespaces` | `statistics.throughput_raw.write`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/namespace.yaml |
 | ZAPI | `perf-object-get-instances namespace` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml |
 
+The `namespace_write_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/namespace.json | Highlights | Top $TopResources NVMe Namespaces by Write Throughput |
-| cmode/namespace.json | Highlights | Top $TopResources NVMe Namespaces by Write Throughput |
+| ONTAP: NVMe Namespaces | Highlights | Top $TopResources NVMe Namespaces by Write Throughput |
 
 
 
@@ -6561,11 +6601,11 @@ Number of write operations
 | KeyPerf | `api/storage/namespaces` | `statistics.iops_raw.write`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/namespace.yaml |
 | ZAPI | `perf-object-get-instances namespace` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/namespace.yaml |
 
+The `namespace_write_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/namespace.json | Highlights | Top $TopResources NVMe Namespaces by Write IOPs |
-| cmode/namespace.json | Highlights | Top $TopResources NVMe Namespaces by Write IOPs |
+| ONTAP: NVMe Namespaces | Highlights | Top $TopResources NVMe Namespaces by Write IOPs |
 
 
 
@@ -6608,10 +6648,11 @@ Maximum transmission unit, largest packet size on this network
 | REST | `api/network/ethernet/ports` | `mtu` | conf/rest/9.12.0/netport.yaml |
 | ZAPI | `net-port-get-iter` | `net-port-info.mtu` | conf/zapi/cdot/9.8.0/netport.yaml |
 
+The `net_port_mtu` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | Ethernet | Ethernet ports |
+| ONTAP: Network | Ethernet | Ethernet ports |
 
 
 
@@ -6634,10 +6675,11 @@ This metric provides information about NetRoute
 |--------|----------|--------|---------|
 | REST | `api/network/ip/routes` | `Harvest generated` | conf/rest/9.8.0/netroute.yaml |
 
+The `net_route_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | Routes | Routes |
+| ONTAP: Network | Routes | Routes |
 
 
 
@@ -6729,16 +6771,13 @@ Specifies an ISO-8601 format of date and time to retrieve the idle time duration
 |--------|----------|--------|---------|
 | REST | `api/protocols/nfs/connected-clients` | `idle_duration` | conf/rest/9.7.0/nfs_clients.yaml |
 
+The `nfs_clients_idle_duration` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs_clients.json | Highlights | Total NFS Connections |
-| cmode/nfs_clients.json | Highlights | NFS Connections by Protocol |
-| cmode/nfs_clients.json | Highlights | NFS Connections by Protocol |
-| cmode/nfs_clients.json | Highlights | NFS Connections by Protocol |
-| cmode/nfs_clients.json | Highlights | NFS Connections by Protocol |
-| cmode/nfs_clients.json | Highlights | NFS Connections by Protocol |
-| cmode/nfs_clients.json | Highlights | NFS Clients (active in the past 48 hours) |
+| ONTAP: NFS Clients | Highlights | Total NFS Connections |
+| ONTAP: NFS Clients | Highlights | NFS Connections by Protocol |
+| ONTAP: NFS Clients | Highlights | NFS Clients (active in the past 48 hours) |
 
 
 
@@ -6751,12 +6790,13 @@ Current number of byte range lock objects allocated.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.byte_lock_allocated`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_ByteLockAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_ByteLockAlloc` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | ByteLockAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | ByteLockAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -6769,12 +6809,13 @@ Maximum number of byte range lock objects.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.byte_lock_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_ByteLockMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_ByteLockMax` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | ByteLockAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | ByteLockAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -6787,12 +6828,13 @@ Current number of client objects allocated.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.client_allocated`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_ClientAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_ClientAlloc` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | ClientAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | ClientAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -6805,12 +6847,13 @@ Maximum number of client objects.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.client_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_ClientMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_ClientMax` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | ClientAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | ClientAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -6823,12 +6866,13 @@ Current number of connection parent session reference objects allocated.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.connection_parent_session_reference_allocated`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_ConnectionParentSessionReferenceAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_ConnectionParentSessionReferenceAlloc` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | ConnectionParentSessionReferenceAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | ConnectionParentSessionReferenceAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -6841,12 +6885,13 @@ Maximum number of connection parent session reference objects.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.connection_parent_session_reference_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_ConnectionParentSessionReferenceMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_ConnectionParentSessionReferenceMax` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | ConnectionParentSessionReferenceAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | ConnectionParentSessionReferenceAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -6859,12 +6904,13 @@ Current number of copy state objects allocated.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.copy_state_allocated`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_CopyStateAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_CopyStateAlloc` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | CopyStateAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | CopyStateAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -6877,12 +6923,13 @@ Maximum number of copy state objects.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.copy_state_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_CopyStateMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_CopyStateMax` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | CopyStateAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | CopyStateAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -6895,12 +6942,13 @@ Current number of delegation lock objects allocated.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.delegation_allocated`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_DelegAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_DelegAlloc` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | DelegAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | DelegAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -6913,12 +6961,13 @@ Maximum number delegation lock objects.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.delegation_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_DelegMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_DelegMax` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | DelegAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | DelegAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -6931,12 +6980,13 @@ Current number of delegation state objects allocated.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.delegation_state_allocated`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_DelegStateAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_DelegStateAlloc` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | DelegStateAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | DelegStateAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -6949,12 +6999,13 @@ Maximum number of delegation state objects.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.delegation_state_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_DelegStateMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_DelegStateMax` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | DelegStateAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | DelegStateAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -6967,10 +7018,11 @@ Current number of layout objects allocated.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.layout_allocated`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_LayoutAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_LayoutAlloc` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Lock | LayoutAlloc |
+| ONTAP: NFSv4 StorePool Monitors | Lock | LayoutAlloc |
 
 
 
@@ -6983,10 +7035,11 @@ Maximum number of layout objects.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.layout_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_LayoutMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_LayoutMax` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Lock | LayoutAlloc |
+| ONTAP: NFSv4 StorePool Monitors | Lock | LayoutAlloc |
 
 
 
@@ -6999,12 +7052,13 @@ Current number of layout state objects allocated.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.layout_state_allocated`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_LayoutStateAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_LayoutStateAlloc` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | LayoutStateAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | LayoutStateAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -7017,12 +7071,13 @@ Maximum number of layout state objects.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.layout_state_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_LayoutStateMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_LayoutStateMax` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | LayoutStateAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | LayoutStateAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -7035,12 +7090,13 @@ Current number of lock state objects allocated.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.lock_state_allocated`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_LockStateAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_LockStateAlloc` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | LockStateAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | LockStateAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -7053,12 +7109,13 @@ Maximum number of lock state objects.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.lock_state_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_LockStateMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_LockStateMax` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | LockStateAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | LockStateAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -7071,12 +7128,13 @@ Current number of share objects allocated.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.open_allocated`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_OpenAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_OpenAlloc` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | OpenAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | OpenAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -7089,12 +7147,13 @@ Maximum number of share lock objects.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.open_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_OpenMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_OpenMax` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | OpenAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | OpenAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -7107,12 +7166,13 @@ Current number of open state objects allocated.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.openstate_allocated`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_OpenStateAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_OpenStateAlloc` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | OpenStateAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | OpenStateAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -7125,12 +7185,13 @@ Maximum number of open state objects.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.openstate_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_OpenStateMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_OpenStateMax` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | OpenStateAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | OpenStateAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -7143,12 +7204,13 @@ Current number of owner objects allocated.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.owner_allocated`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_OwnerAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_OwnerAlloc` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | OwnerAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | OwnerAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -7161,12 +7223,13 @@ Maximum number of owner objects.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.owner_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_OwnerMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_OwnerMax` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | OwnerAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | OwnerAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -7179,12 +7242,13 @@ Current number of session objects allocated.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.session_allocated`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_SessionAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_SessionAlloc` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | SessionAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | SessionAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -7197,12 +7261,13 @@ Current number of session connection holder objects allocated.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.session_connection_holder_allocated`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_SessionConnectionHolderAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_SessionConnectionHolderAlloc` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | SessionConnectionHolderAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | SessionConnectionHolderAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -7215,12 +7280,13 @@ Maximum number of session connection holder objects.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.session_connection_holder_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_SessionConnectionHolderMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_SessionConnectionHolderMax` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | SessionConnectionHolderAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | SessionConnectionHolderAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -7233,12 +7299,13 @@ Current number of session holder objects allocated.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.session_holder_allocated`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_SessionHolderAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_SessionHolderAlloc` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | SessionHolderAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | SessionHolderAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -7251,12 +7318,13 @@ Maximum number of session holder objects.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.session_holder_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_SessionHolderMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_SessionHolderMax` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | SessionHolderAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | SessionHolderAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -7269,12 +7337,13 @@ Maximum number of session objects.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.session_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_SessionMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_SessionMax` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | SessionAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | SessionAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -7287,12 +7356,13 @@ Current number of state reference callstack history objects allocated.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.state_reference_history_allocated`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_StateRefHistoryAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_StateRefHistoryAlloc` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | StateRefHistoryAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | StateRefHistoryAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -7305,12 +7375,13 @@ Maximum number of state reference callstack history objects.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.state_reference_history_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_StateRefHistoryMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_StateRefHistoryMax` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | StateRefHistoryAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | StateRefHistoryAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -7323,12 +7394,13 @@ Current number of string objects allocated.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.string_allocated`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_StringAlloc`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_StringAlloc` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | StringAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | StringAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -7341,12 +7413,13 @@ Maximum number of string objects.
 | REST | `api/cluster/counter/tables/nfs_v4_diag` | `storepool.string_maximum`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_diag` | `storePool_StringMax`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_pool.yaml |
 
+The `nfs_diag_storePool_StringMax` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfs4storePool.json | Allocations over 50% | Allocations over 50% |
-| cmode/nfs4storePool.json | Lock | StringAlloc |
-| cmode/nfsTroubleshooting.json | Highlights | All nodes with 1% or more allocations in $Datacenter |
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | Allocations over 50% |
+| ONTAP: NFSv4 StorePool Monitors | Lock | StringAlloc |
+| ONTAP: NFS Troubleshooting | Highlights | All nodes with 1% or more allocations in $Datacenter |
 
 
 
@@ -7381,12 +7454,13 @@ This metric provides information about NicCommon
 | REST | `api/cluster/counter/tables/nic_common` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml |
 | ZAPI | `nic_common` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
 
+The `nic_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | Ethernet | NIC ports |
-| cmode/network.json | Ethernet | Ethernet port errors |
-| cmode/nfsTroubleshooting.json | Network Port Table | Ethernet ports |
+| ONTAP: Network | Ethernet | NIC ports |
+| ONTAP: Network | Ethernet | Ethernet port errors |
+| ONTAP: NFS Troubleshooting | Network Port Table | Ethernet ports |
 
 
 
@@ -7399,11 +7473,12 @@ Number of link state change from UP to DOWN.
 | REST | `api/cluster/counter/tables/nic_common` | `link_up_to_down`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml |
 | ZAPI | `perf-object-get-instances nic_common` | `link_up_to_downs`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
 
+The `nic_link_up_to_downs` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | Ethernet | Ethernet port errors |
-| cmode/nfsTroubleshooting.json | Network Port Table | Ethernet ports |
+| ONTAP: Network | Ethernet | Ethernet port errors |
+| ONTAP: NFS Troubleshooting | Network Port Table | Ethernet ports |
 
 
 
@@ -7427,10 +7502,11 @@ Alignment errors detected on received packets
 | REST | `api/cluster/counter/tables/nic_common` | `receive_alignment_errors`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml |
 | ZAPI | `perf-object-get-instances nic_common` | `rx_alignment_errors`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
 
+The `nic_rx_alignment_errors` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | Ethernet | NICs Receive Errors by Cluster |
+| ONTAP: Network | Ethernet | NICs Receive Errors by Cluster |
 
 
 
@@ -7443,17 +7519,16 @@ Bytes received
 | REST | `api/cluster/counter/tables/nic_common` | `receive_bytes`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml |
 | ZAPI | `perf-object-get-instances nic_common` | `rx_bytes`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
 
+The `nic_rx_bytes` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | Highlights | Ethernet Throughput |
-| cmode/network.json | Highlights | Ethernet Receive |
-| cmode/network.json | Ethernet | NIC ports |
-| cmode/network.json | Ethernet | Top $TopResources NICs by Receive Throughput |
-| cmode/network.json | Ethernet | Top $TopResources NICs by Receive Throughput |
-| cmode/nfsTroubleshooting.json | Network Port Table | Ethernet ports |
-| cmode/node.json | Network Layer | Top $TopResources Ethernet Ports by Throughput |
-| cmode/node.json | Network Layer | Top $TopResources Ethernet Ports by Throughput |
+| ONTAP: Network | Highlights | Ethernet Throughput |
+| ONTAP: Network | Highlights | Ethernet Receive |
+| ONTAP: Network | Ethernet | NIC ports |
+| ONTAP: Network | Ethernet | Top $TopResources NICs by Receive Throughput |
+| ONTAP: NFS Troubleshooting | Network Port Table | Ethernet ports |
+| ONTAP: Node | Network Layer | Top $TopResources Ethernet Ports by Throughput |
 
 
 
@@ -7466,11 +7541,12 @@ CRC errors detected on received packets
 | REST | `api/cluster/counter/tables/nic_common` | `receive_crc_errors`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml |
 | ZAPI | `perf-object-get-instances nic_common` | `rx_crc_errors`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
 
+The `nic_rx_crc_errors` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | Ethernet | NICs Receive Errors by Cluster |
-| cmode/network.json | Ethernet | Ethernet port errors |
+| ONTAP: Network | Ethernet | NICs Receive Errors by Cluster |
+| ONTAP: Network | Ethernet | Ethernet port errors |
 
 
 
@@ -7494,10 +7570,11 @@ Length errors detected on received packets
 | REST | `api/cluster/counter/tables/nic_common` | `receive_length_errors`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml |
 | ZAPI | `perf-object-get-instances nic_common` | `rx_length_errors`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
 
+The `nic_rx_length_errors` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | Ethernet | NICs Receive Errors by Cluster |
+| ONTAP: Network | Ethernet | NICs Receive Errors by Cluster |
 
 
 
@@ -7521,12 +7598,13 @@ Total errors received
 | REST | `api/cluster/counter/tables/nic_common` | `receive_total_errors`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml |
 | ZAPI | `perf-object-get-instances nic_common` | `rx_total_errors`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
 
+The `nic_rx_total_errors` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | Ethernet | NICs Receive Errors by Cluster |
-| cmode/network.json | Ethernet | Ethernet port errors |
-| cmode/nfsTroubleshooting.json | Network Port Table | Ethernet ports |
+| ONTAP: Network | Ethernet | NICs Receive Errors by Cluster |
+| ONTAP: Network | Ethernet | Ethernet port errors |
+| ONTAP: NFS Troubleshooting | Network Port Table | Ethernet ports |
 
 
 
@@ -7539,16 +7617,15 @@ Bytes sent
 | REST | `api/cluster/counter/tables/nic_common` | `transmit_bytes`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml |
 | ZAPI | `perf-object-get-instances nic_common` | `tx_bytes`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
 
+The `nic_tx_bytes` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | Highlights | Ethernet Send |
-| cmode/network.json | Ethernet | NIC ports |
-| cmode/network.json | Ethernet | Top $TopResources NICs by Send Throughput |
-| cmode/network.json | Ethernet | Top $TopResources NICs by Send Throughput |
-| cmode/nfsTroubleshooting.json | Network Port Table | Ethernet ports |
-| cmode/node.json | Network Layer | Top $TopResources Ethernet Ports by Throughput |
-| cmode/node.json | Network Layer | Top $TopResources Ethernet Ports by Throughput |
+| ONTAP: Network | Highlights | Ethernet Send |
+| ONTAP: Network | Ethernet | NIC ports |
+| ONTAP: Network | Ethernet | Top $TopResources NICs by Send Throughput |
+| ONTAP: NFS Troubleshooting | Network Port Table | Ethernet ports |
+| ONTAP: Node | Network Layer | Top $TopResources Ethernet Ports by Throughput |
 
 
 
@@ -7572,11 +7649,12 @@ Transmit errors reported by hardware
 | REST | `api/cluster/counter/tables/nic_common` | `transmit_hw_errors`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml |
 | ZAPI | `perf-object-get-instances nic_common` | `tx_hw_errors`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
 
+The `nic_tx_hw_errors` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | Ethernet | NICs Send Errors by Cluster |
-| cmode/network.json | Ethernet | Ethernet port errors |
+| ONTAP: Network | Ethernet | NICs Send Errors by Cluster |
+| ONTAP: Network | Ethernet | Ethernet port errors |
 
 
 
@@ -7600,12 +7678,13 @@ Total errors sent
 | REST | `api/cluster/counter/tables/nic_common` | `transmit_total_errors`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml |
 | ZAPI | `perf-object-get-instances nic_common` | `tx_total_errors`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
 
+The `nic_tx_total_errors` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/network.json | Ethernet | NICs Send Errors by Cluster |
-| cmode/network.json | Ethernet | Ethernet port errors |
-| cmode/nfsTroubleshooting.json | Network Port Table | Ethernet ports |
+| ONTAP: Network | Ethernet | NICs Send Errors by Cluster |
+| ONTAP: Network | Ethernet | Ethernet port errors |
+| ONTAP: NFS Troubleshooting | Network Port Table | Ethernet ports |
 
 
 
@@ -7631,20 +7710,19 @@ Average processor utilization across active processors in the system
 | StatPerf | `system:node` | `avg_processor_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> <br><span class="key">Base:</span> cpu_elapsed_time | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `avg_processor_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> cpu_elapsed_time | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
+The `node_avg_processor_busy` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/cdot.json | Cluster Metrics | Top $TopResources Clusters by Average CPU Utilization |
-| cmode/cdot.json | Cluster Metrics | Top $TopResources Clusters by Average CPU Utilization |
-| cmode/cluster.json | Highlights | Top $TopResources Nodes by Average CPU Utilization |
-| cmode/cluster.json | Nodes & Subsystems - $Cluster | Average CPU Utilization |
-| cmode/cluster.json | Nodes & Subsystems - $Cluster | Node Average CPU Utilization |
-| cmode/cluster.json | Throughput | Average CPU Utilization |
-| cmode/datacenter.json | Performance | Top $TopResources Average CPU Utilization by Cluster |
-| cmode/datacenter.json | Performance | Top $TopResources Average CPU Utilization by Cluster |
-| cmode/mcc_cluster.json | Highlights | Average CPU Utilization |
-| cmode/node.json | Highlights | Average CPU Utilization |
-| cmode/node.json | CPU Layer | Average CPU Utilization |
+| ONTAP: cDOT | Cluster Metrics | Top $TopResources Clusters by Average CPU Utilization |
+| ONTAP: Cluster | Highlights | Top $TopResources Nodes by Average CPU Utilization |
+| ONTAP: Cluster | Nodes & Subsystems - $Cluster | Average CPU Utilization |
+| ONTAP: Cluster | Nodes & Subsystems - $Cluster | Node Average CPU Utilization |
+| ONTAP: Cluster | Throughput | Average CPU Utilization |
+| ONTAP: Datacenter | Performance | Top $TopResources Average CPU Utilization by Cluster |
+| ONTAP: MetroCluster | Highlights | Average CPU Utilization |
+| ONTAP: Node | Highlights | Average CPU Utilization |
+| ONTAP: Node | CPU Layer | Average CPU Utilization |
 
 
 
@@ -7657,10 +7735,11 @@ Number of connections
 | REST | `api/cluster/counter/tables/svm_cifs:node` | `connections`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_node.yaml |
 | ZAPI | `perf-object-get-instances cifs:node` | `connections`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_node.yaml |
 
+The `node_cifs_connections` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | CIFS Frontend | CIFS Connections |
+| ONTAP: Node | CIFS Frontend | CIFS Connections |
 
 
 
@@ -7673,10 +7752,11 @@ Number of established SMB and SMB2 sessions
 | REST | `api/cluster/counter/tables/svm_cifs:node` | `established_sessions`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_node.yaml |
 | ZAPI | `perf-object-get-instances cifs:node` | `established_sessions`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_node.yaml |
 
+The `node_cifs_established_sessions` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | CIFS Frontend | CIFS Connections |
+| ONTAP: Node | CIFS Frontend | CIFS Connections |
 
 
 
@@ -7689,10 +7769,11 @@ Average latency for CIFS operations
 | REST | `api/cluster/counter/tables/svm_cifs:node` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> latency_base | conf/restperf/9.12.0/cifs_node.yaml |
 | ZAPI | `perf-object-get-instances cifs:node` | `cifs_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cifs_latency_base | conf/zapiperf/cdot/9.8.0/cifs_node.yaml |
 
+The `node_cifs_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | CIFS Frontend | CIFS Latency |
+| ONTAP: Node | CIFS Frontend | CIFS Latency |
 
 
 
@@ -7705,10 +7786,11 @@ Array of select CIFS operation counts
 | REST | `api/cluster/counter/tables/svm_cifs:node` | `op_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_node.yaml |
 | ZAPI | `perf-object-get-instances cifs:node` | `cifs_op_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_node.yaml |
 
+The `node_cifs_op_count` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | CIFS Frontend | CIFS IOPs by Type |
+| ONTAP: Node | CIFS Frontend | CIFS IOPs by Type |
 
 
 
@@ -7721,10 +7803,11 @@ Number of open files over SMB and SMB2
 | REST | `api/cluster/counter/tables/svm_cifs:node` | `open_files`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_node.yaml |
 | ZAPI | `perf-object-get-instances cifs:node` | `open_files`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_node.yaml |
 
+The `node_cifs_open_files` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | CIFS Frontend | CIFS Connections |
+| ONTAP: Node | CIFS Frontend | CIFS Connections |
 
 
 
@@ -7738,13 +7821,13 @@ Number of CIFS operations per second
 | StatPerf | `system:node` | `cifs_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `cifs_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
+The `node_cifs_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/cdot.json | Cluster Metrics | Top $TopResources CIFS IOPs by Cluster |
-| cmode/cdot.json | Cluster Metrics | Top $TopResources CIFS IOPs by Cluster |
-| cmode/node.json | Backend | Protocol Backend IOPs |
-| cmode/node.json | CIFS Frontend | CIFS IOPs |
+| ONTAP: cDOT | Cluster Metrics | Top $TopResources CIFS IOPs by Cluster |
+| ONTAP: Node | Backend | Protocol Backend IOPs |
+| ONTAP: Node | CIFS Frontend | CIFS IOPs |
 
 
 
@@ -7813,19 +7896,18 @@ System CPU resource utilization. Returns a computed percentage for the default C
 | StatPerf | `system:node` | `cpu_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> <br><span class="key">Base:</span> cpu_elapsed_time | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `cpu_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> cpu_elapsed_time | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
+The `node_cpu_busy` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/cdot.json | Cluster Metrics | Top $TopResources Clusters by CPU busy |
-| cmode/cdot.json | Cluster Metrics | Top $TopResources Clusters by CPU busy |
-| cmode/cluster.json | Highlights | Top $TopResources Nodes by CPU busy |
-| cmode/cluster.json | Nodes & Subsystems - $Cluster | CPU busy |
-| cmode/cluster.json | Nodes & Subsystems - $Cluster | Node CPU Busy |
-| cmode/cluster.json | Throughput | CPU Busy |
-| cmode/datacenter.json | Performance | Top $TopResources CPU Busy by Cluster |
-| cmode/datacenter.json | Performance | Top $TopResources CPU Busy by Cluster |
-| cmode/node.json | Highlights | CPU Busy |
-| cmode/node.json | Backend | System Utilization |
+| ONTAP: cDOT | Cluster Metrics | Top $TopResources Clusters by CPU busy |
+| ONTAP: Cluster | Highlights | Top $TopResources Nodes by CPU busy |
+| ONTAP: Cluster | Nodes & Subsystems - $Cluster | CPU busy |
+| ONTAP: Cluster | Nodes & Subsystems - $Cluster | Node CPU Busy |
+| ONTAP: Cluster | Throughput | CPU Busy |
+| ONTAP: Datacenter | Performance | Top $TopResources CPU Busy by Cluster |
+| ONTAP: Node | Highlights | CPU Busy |
+| ONTAP: Node | Backend | System Utilization |
 
 
 
@@ -7850,11 +7932,12 @@ Array of processor time in percentage spent in various domains
 | StatPerf | `system:node` | `domain_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> array<br><span class="key">Base:</span> cpu_elapsed_time | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `domain_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> cpu_elapsed_time | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
+The `node_cpu_domain_busy` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | CPU Layer | CPU Busy Domains |
-| cmode/node.json | Backend | System Utilization |
+| ONTAP: Node | CPU Layer | CPU Busy Domains |
+| ONTAP: Node | Backend | System Utilization |
 
 
 
@@ -7879,12 +7962,13 @@ The utilization percent of the disk. node_disk_busy is [disk_busy](#disk_busy) a
 | REST | `api/cluster/counter/tables/disk:constituent` | `disk_busy_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `disk_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
+The `node_disk_busy` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/cluster.json | Highlights | Top $TopResources Nodes by Disk Utilization |
-| cmode/cluster.json | Nodes & Subsystems - $Cluster | Avg Disk Utilization by Cluster |
-| cmode/node.json | Backend | System Utilization |
+| ONTAP: Cluster | Highlights | Top $TopResources Nodes by Disk Utilization |
+| ONTAP: Cluster | Nodes & Subsystems - $Cluster | Avg Disk Utilization by Cluster |
+| ONTAP: Node | Backend | System Utilization |
 
 
 
@@ -7942,10 +8026,11 @@ Number of disk kilobytes (KB) read per second
 | StatPerf | `system:node` | `disk_data_read`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `disk_data_read`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
+The `node_disk_data_read` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/disk.json | Disk Utilization | Disk Throughput by Node |
+| ONTAP: Disk | Disk Utilization | Disk Throughput by Node |
 
 
 
@@ -7959,10 +8044,11 @@ Number of disk kilobytes (KB) written per second
 | StatPerf | `system:node` | `disk_data_written`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `disk_data_written`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
+The `node_disk_data_written` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/disk.json | Disk Utilization | Disk Throughput by Node |
+| ONTAP: Disk | Disk Utilization | Disk Throughput by Node |
 
 
 
@@ -7997,11 +8083,12 @@ The utilization percent of the disk. node_disk_max_busy is the maximum of [disk_
 | REST | `api/cluster/counter/tables/disk:constituent` | `disk_busy_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `disk_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
+The `node_disk_max_busy` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/cluster.json | Nodes & Subsystems - $Cluster | Max Disk Utilization by Cluster |
-| cmode/node.json | Highlights | Max Disk Utilization |
+| ONTAP: Cluster | Nodes & Subsystems - $Cluster | Max Disk Utilization by Cluster |
+| ONTAP: Node | Highlights | Max Disk Utilization |
 
 
 
@@ -8300,10 +8387,11 @@ Specifies a count of the number of chassis fans that are not operating within th
 | REST | `api/cluster/nodes` | `controller.failed_fan.count` | conf/rest/9.12.0/node.yaml |
 | ZAPI | `system-node-get-iter` | `node-details-info.env-failed-fan-count` | conf/zapi/cdot/9.8.0/node.yaml |
 
+The `node_failed_fan` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | Highlights | Node Details |
+| ONTAP: Node | Highlights | Node Details |
 
 
 
@@ -8316,10 +8404,11 @@ Number of failed power supply units.
 | REST | `api/cluster/nodes` | `controller.failed_power_supply.count` | conf/rest/9.12.0/node.yaml |
 | ZAPI | `system-node-get-iter` | `node-details-info.env-failed-power-supply-count` | conf/zapi/cdot/9.8.0/node.yaml |
 
+The `node_failed_power` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | Highlights | Node Details |
+| ONTAP: Node | Highlights | Node Details |
 
 
 
@@ -8357,10 +8446,11 @@ Number of FCP operations per second
 | StatPerf | `system:node` | `fcp_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `fcp_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
+The `node_fcp_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | Backend | Protocol Backend IOPs |
+| ONTAP: Node | Backend | Protocol Backend IOPs |
 
 
 
@@ -8398,10 +8488,11 @@ Number of iSCSI operations per second
 | StatPerf | `system:node` | `iscsi_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `iscsi_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
+The `node_iscsi_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | Backend | Protocol Backend IOPs |
+| ONTAP: Node | Backend | Protocol Backend IOPs |
 
 
 
@@ -8414,18 +8505,19 @@ This metric provides information about Node
 | REST | `api/cluster/nodes` | `Harvest generated` | conf/rest/9.12.0/node.yaml |
 | ZAPI | `system-node-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/node.yaml |
 
+The `node_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/cluster.json | Nodes & Subsystems - $Cluster | $Cluster |
-| cmode/datacenter.json | Highlights | Object Count |
-| cmode/datacenter.json | Health | Node Health |
-| cmode/datacenter.json | Power and Temperature | Average Power/Used_TB |
-| cmode/health.json | HA | HA Issues |
-| cmode/health.json | Node | Node Issues |
-| cmode/node.json | Highlights | Node Details |
-| cmode/power.json | Highlights | Average Power/Used_TB |
-| cmode/power.json | Nodes | Storage Nodes |
+| ONTAP: Cluster | Nodes & Subsystems - $Cluster | $Cluster |
+| ONTAP: Datacenter | Highlights | Object Count |
+| ONTAP: Datacenter | Health | Node Health |
+| ONTAP: Datacenter | Power and Temperature | Average Power/Used_TB |
+| ONTAP: Health | HA | HA Issues |
+| ONTAP: Health | Node | Node Issues |
+| ONTAP: Node | Highlights | Node Details |
+| ONTAP: Power | Highlights | Average Power/Used_TB |
+| ONTAP: Power | Nodes | Storage Nodes |
 
 
 
@@ -9051,10 +9143,11 @@ Average latency of NFSv3 requests. This counter keeps track of the average respo
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4:node` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
+The `node_nfs_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | NFSv3 Frontend | NFSv3 Avg Latency |
+| ONTAP: Node | NFSv3 Frontend | NFSv3 Avg Latency |
 
 
 
@@ -9554,14 +9647,13 @@ Number of NFS operations per second
 | StatPerf | `system:node` | `nfs_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `nfs_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
+The `node_nfs_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/cdot.json | Cluster Metrics | Top $TopResources NFS IOPs by Cluster |
-| cmode/cdot.json | Cluster Metrics | Top $TopResources NFS IOPs by Cluster |
-| cmode/node.json | Backend | Protocol Backend IOPs |
-| cmode/node.json | NFSv3 Frontend | NFS Avg IOPS |
-| cmode/node.json | NFSv3 Frontend | NFS Avg IOPS |
+| ONTAP: cDOT | Cluster Metrics | Top $TopResources NFS IOPs by Cluster |
+| ONTAP: Node | Backend | Protocol Backend IOPs |
+| ONTAP: Node | NFSv3 Frontend | NFS Avg IOPS |
 
 
 
@@ -9692,11 +9784,12 @@ Average latency of Read procedure requests. The counter keeps track of the avera
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `read_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> read_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4:node` | `read_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> read_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
+The `node_nfs_read_avg_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | NFSv3 Frontend | NFSv3 Avg Read Latency |
-| cmode/node.json | NFSv3 Frontend | NFSv3 Read and Write Latency |
+| ONTAP: Node | NFSv3 Frontend | NFSv3 Avg Read Latency |
+| ONTAP: Node | NFSv3 Frontend | NFSv3 Read and Write Latency |
 
 
 
@@ -9709,12 +9802,12 @@ Total observed NFSv3 read operations per second.
 | REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv3:node` | `nfsv3_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml |
 
+The `node_nfs_read_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | NFSv3 Frontend | NFS Avg IOPS |
-| cmode/node.json | NFSv3 Frontend | NFS Avg IOPS |
-| cmode/node.json | NFSv3 Frontend | NFSv3 Read and Write IOPs |
+| ONTAP: Node | NFSv3 Frontend | NFS Avg IOPS |
+| ONTAP: Node | NFSv3 Frontend | NFSv3 Read and Write IOPs |
 
 
 
@@ -9755,11 +9848,12 @@ Rate of NFSv3 read data transfers per second.
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `nfs42_read_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4:node` | `nfs4_read_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
+The `node_nfs_read_throughput` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | NFSv3 Frontend | NFSv3 Avg Throughput |
-| cmode/node.json | NFSv3 Frontend | NFSv3 Read and Write Throughput |
+| ONTAP: Node | NFSv3 Frontend | NFSv3 Avg Throughput |
+| ONTAP: Node | NFSv3 Frontend | NFSv3 Read and Write Throughput |
 
 
 
@@ -10335,10 +10429,11 @@ Rate of NFSv3 data transfers per second.
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `nfs42_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4:node` | `nfs4_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
+The `node_nfs_throughput` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | NFSv3 Frontend | NFSv3 Avg Throughput |
+| ONTAP: Node | NFSv3 Frontend | NFSv3 Avg Throughput |
 
 
 
@@ -10357,10 +10452,11 @@ Total number of NFSv3 procedure requests per second.
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4:node` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
+The `node_nfs_total_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | NFSv3 Frontend | NFSv3 Read and Write IOPs |
+| ONTAP: Node | NFSv3 Frontend | NFSv3 Read and Write IOPs |
 
 
 
@@ -10435,11 +10531,12 @@ Average latency of Write procedure requests. The counter keeps track of the aver
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `write_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> write_total | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4:node` | `write_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> write_total | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
+The `node_nfs_write_avg_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | NFSv3 Frontend | NFSv3 Avg Write Latency |
-| cmode/node.json | NFSv3 Frontend | NFSv3 Read and Write Latency |
+| ONTAP: Node | NFSv3 Frontend | NFSv3 Avg Write Latency |
+| ONTAP: Node | NFSv3 Frontend | NFSv3 Read and Write Latency |
 
 
 
@@ -10452,12 +10549,12 @@ Total observed NFSv3 write operations per second.
 | REST | `api/cluster/counter/tables/svm_nfs_v3:node` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv3_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv3:node` | `nfsv3_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3_node.yaml |
 
+The `node_nfs_write_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | NFSv3 Frontend | NFS Avg IOPS |
-| cmode/node.json | NFSv3 Frontend | NFS Avg IOPS |
-| cmode/node.json | NFSv3 Frontend | NFSv3 Read and Write IOPs |
+| ONTAP: Node | NFSv3 Frontend | NFS Avg IOPS |
+| ONTAP: Node | NFSv3 Frontend | NFSv3 Read and Write IOPs |
 
 
 
@@ -10476,11 +10573,12 @@ Rate of NFSv3 write data transfers per second.
 | ZAPI | `perf-object-get-instances nfsv4_2:node` | `nfs42_write_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2_node.yaml |
 | ZAPI | `perf-object-get-instances nfsv4:node` | `nfs4_write_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_node.yaml |
 
+The `node_nfs_write_throughput` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | NFSv3 Frontend | NFSv3 Avg Throughput |
-| cmode/node.json | NFSv3 Frontend | NFSv3 Read and Write Throughput |
+| ONTAP: Node | NFSv3 Frontend | NFSv3 Avg Throughput |
+| ONTAP: Node | NFSv3 Frontend | NFSv3 Read and Write Throughput |
 
 
 
@@ -10571,10 +10669,11 @@ NVMe/FC operations per second.
 | StatPerf | `system:node` | `nvme_fc_ops, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.15.1/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `nvmf_ops`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
+The `node_nvmf_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | Backend | Protocol Backend IOPs |
+| ONTAP: Node | Backend | Protocol Backend IOPs |
 
 
 
@@ -10600,10 +10699,11 @@ Average latency for all other operations in the system in microseconds
 | StatPerf | `system:node` | `other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> other_ops | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
+The `node_other_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | Backend | Average Latency |
+| ONTAP: Node | Backend | Average Latency |
 
 
 
@@ -10617,10 +10717,11 @@ All other operations per second
 | StatPerf | `system:node` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
+The `node_other_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | Backend | IOPs |
+| ONTAP: Node | Backend | IOPs |
 
 
 
@@ -10634,10 +10735,11 @@ Read throughput
 | StatPerf | `system:node` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
+The `node_read_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | Backend | Throughput |
+| ONTAP: Node | Backend | Throughput |
 
 
 
@@ -10651,11 +10753,12 @@ Average latency for all read operations in the system in microseconds
 | StatPerf | `system:node` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> read_ops | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
+The `node_read_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/cluster.json | Highlights | Top $TopResources Nodes by Read Latency |
-| cmode/node.json | Backend | Average Latency |
+| ONTAP: Cluster | Highlights | Top $TopResources Nodes by Read Latency |
+| ONTAP: Node | Backend | Average Latency |
 
 
 
@@ -10669,10 +10772,11 @@ Read operations per second
 | StatPerf | `system:node` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
+The `node_read_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | Backend | IOPs |
+| ONTAP: Node | Backend | IOPs |
 
 
 
@@ -10710,16 +10814,13 @@ Total throughput in bytes
 | StatPerf | `system:node` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
+The `node_total_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/cluster.json | Highlights | Top $TopResources Nodes by Throughput |
-| cmode/cluster.json | Highlights | Top $TopResources Nodes by Throughput |
-| cmode/cluster.json | Highlights | Top $TopResources Nodes by Throughput |
-| cmode/cluster.json | Highlights | Top $TopResources Nodes by Throughput |
-| cmode/cluster.json | Throughput | Data |
-| cmode/node.json | Highlights | Throughput |
-| cmode/node.json | Highlights | Throughput |
+| ONTAP: Cluster | Highlights | Top $TopResources Nodes by Throughput |
+| ONTAP: Cluster | Throughput | Data |
+| ONTAP: Node | Highlights | Throughput |
 
 
 
@@ -10733,16 +10834,15 @@ Average latency for all operations in the system in microseconds
 | StatPerf | `system:node` | `total_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> total_ops | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `total_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
+The `node_total_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/cdot.json | Cluster Metrics | Top $TopResources Clusters by Max Node Latency |
-| cmode/cdot.json | Cluster Metrics | Top $TopResources Clusters by Max Node Latency |
-| cmode/cluster.json | Highlights | Top $TopResources Nodes by Latency |
-| cmode/cluster.json | Highlights | Top $TopResources Nodes by Latency |
-| cmode/cluster.json | Throughput | Max Latency |
-| cmode/node.json | Highlights | Average Latency |
-| cmode/node.json | Highlights | Latency |
+| ONTAP: cDOT | Cluster Metrics | Top $TopResources Clusters by Max Node Latency |
+| ONTAP: Cluster | Highlights | Top $TopResources Nodes by Latency |
+| ONTAP: Cluster | Throughput | Max Latency |
+| ONTAP: Node | Highlights | Average Latency |
+| ONTAP: Node | Highlights | Latency |
 
 
 
@@ -10756,20 +10856,17 @@ Total number of operations per second
 | StatPerf | `system:node` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
+The `node_total_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/cdot.json | Cluster Metrics | Top $TopResources Total IOPs by Cluster |
-| cmode/cdot.json | Cluster Metrics | Top $TopResources Total IOPs by Cluster |
-| cmode/cluster.json | Highlights | Top $TopResources Nodes by IOPs |
-| cmode/cluster.json | Highlights | Top $TopResources Nodes by IOPs |
-| cmode/cluster.json | Highlights | Top $TopResources Nodes by IOPs |
-| cmode/cluster.json | Highlights | Top $TopResources Nodes by IOPs |
-| cmode/cluster.json | Throughput | IOPs |
-| cmode/datacenter.json | Power and Temperature | Average IOPs/Watt |
-| cmode/node.json | Highlights | IOPs |
-| cmode/node.json | Highlights | Top Average IOPs |
-| cmode/power.json | Highlights | Average IOPs/Watt |
+| ONTAP: cDOT | Cluster Metrics | Top $TopResources Total IOPs by Cluster |
+| ONTAP: Cluster | Highlights | Top $TopResources Nodes by IOPs |
+| ONTAP: Cluster | Throughput | IOPs |
+| ONTAP: Datacenter | Power and Temperature | Average IOPs/Watt |
+| ONTAP: Node | Highlights | IOPs |
+| ONTAP: Node | Highlights | Top Average IOPs |
+| ONTAP: Power | Highlights | Average IOPs/Watt |
 
 
 
@@ -10782,10 +10879,11 @@ The total time, in seconds, that the node has been up.
 | REST | `api/cluster/nodes` | `uptime` | conf/rest/9.12.0/node.yaml |
 | ZAPI | `system-node-get-iter` | `node-details-info.node-uptime` | conf/zapi/cdot/9.8.0/node.yaml |
 
+The `node_uptime` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | Highlights | Node Details |
+| ONTAP: Node | Highlights | Node Details |
 
 
 
@@ -11161,10 +11259,11 @@ Average latency in microseconds for the WAFL filesystem to process write request
 | REST | `api/cluster/counter/tables/volume:node` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_write_ops | conf/restperf/9.12.0/volume_node.yaml |
 | ZAPI | `perf-object-get-instances volume:node` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
 
+The `node_vol_write_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/disk.json | Disk Utilization | Write Latency by Node |
+| ONTAP: Disk | Disk Utilization | Write Latency by Node |
 
 
 
@@ -11507,10 +11606,11 @@ Write throughput
 | StatPerf | `system:node` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
+The `node_write_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | Backend | Throughput |
+| ONTAP: Node | Backend | Throughput |
 
 
 
@@ -11524,11 +11624,12 @@ Average latency for all write operations in the system in microseconds
 | StatPerf | `system:node` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> write_ops | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
+The `node_write_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/cluster.json | Highlights | Top $TopResources Nodes by Write Latency |
-| cmode/node.json | Backend | Average Latency |
+| ONTAP: Cluster | Highlights | Top $TopResources Nodes by Write Latency |
+| ONTAP: Node | Backend | Average Latency |
 
 
 
@@ -11542,10 +11643,11 @@ Write operations per second
 | StatPerf | `system:node` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
+The `node_write_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | Backend | IOPs |
+| ONTAP: Node | Backend | IOPs |
 
 
 
@@ -11558,13 +11660,13 @@ This metric provides information about NtpServer
 | REST | `api/cluster/ntp/servers` | `Harvest generated` | conf/rest/9.12.0/ntpserver.yaml |
 | ZAPI | `ntp-server-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/ntpserver.yaml |
 
+The `ntpserver_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/security.json | Highlights | Cluster Compliant % |
-| cmode/security.json | Highlights | Cluster Compliant |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| ONTAP: Security | Highlights | Cluster Compliant % |
+| ONTAP: Security | Highlights | Cluster Compliant |
+| ONTAP: Security | Cluster Compliance | Cluster Compliance |
 
 
 
@@ -11577,13 +11679,13 @@ Average latency for NVMF operations
 | REST | `api/cluster/counter/tables/nvmf_lif` | `average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/restperf/9.12.0/nvmf_lif.yaml |
 | ZAPI | `perf-object-get-instances nvmf_fc_lif` | `avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.10.1/nvmf_lif.yaml |
 
+The `nvme_lif_avg_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | NVMe/FC Frontend | NVMe/FC Latency |
-| cmode/node.json | NVMe/FC Frontend | NVMe/FC Average Latency by Port / LIF |
-| cmode/svm.json | NVMe/FC | SVM NVMe/FC Average Latency |
-| cmode/svm.json | NVMe/FC | SVM NVMe/FC Average Latency |
+| ONTAP: Node | NVMe/FC Frontend | NVMe/FC Latency |
+| ONTAP: Node | NVMe/FC Frontend | NVMe/FC Average Latency by Port / LIF |
+| ONTAP: SVM | NVMe/FC | SVM NVMe/FC Average Latency |
 
 
 
@@ -11596,10 +11698,11 @@ Average latency for operations other than read, write, compare or compare-and-wr
 | REST | `api/cluster/counter/tables/nvmf_lif` | `average_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/restperf/9.12.0/nvmf_lif.yaml |
 | ZAPI | `perf-object-get-instances nvmf_fc_lif` | `avg_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/zapiperf/cdot/9.10.1/nvmf_lif.yaml |
 
+The `nvme_lif_avg_other_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | NVMe/FC | SVM NVMe/FC Average Latency |
+| ONTAP: SVM | NVMe/FC | SVM NVMe/FC Average Latency |
 
 
 
@@ -11612,10 +11715,11 @@ Average latency for read operations
 | REST | `api/cluster/counter/tables/nvmf_lif` | `average_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/restperf/9.12.0/nvmf_lif.yaml |
 | ZAPI | `perf-object-get-instances nvmf_fc_lif` | `avg_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.10.1/nvmf_lif.yaml |
 
+The `nvme_lif_avg_read_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | NVMe/FC | SVM NVMe/FC Average Latency |
+| ONTAP: SVM | NVMe/FC | SVM NVMe/FC Average Latency |
 
 
 
@@ -11628,10 +11732,11 @@ Average latency for write operations
 | REST | `api/cluster/counter/tables/nvmf_lif` | `average_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/restperf/9.12.0/nvmf_lif.yaml |
 | ZAPI | `perf-object-get-instances nvmf_fc_lif` | `avg_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.10.1/nvmf_lif.yaml |
 
+The `nvme_lif_avg_write_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | NVMe/FC | SVM NVMe/FC Average Latency |
+| ONTAP: SVM | NVMe/FC | SVM NVMe/FC Average Latency |
 
 
 
@@ -11644,10 +11749,11 @@ Number of operations that are not read, write, compare or compare-and-write.
 | REST | `api/cluster/counter/tables/nvmf_lif` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nvmf_lif.yaml |
 | ZAPI | `perf-object-get-instances nvmf_fc_lif` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/nvmf_lif.yaml |
 
+The `nvme_lif_other_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | NVMe/FC | SVM NVMe/FC IOPs |
+| ONTAP: SVM | NVMe/FC | SVM NVMe/FC IOPs |
 
 
 
@@ -11660,14 +11766,13 @@ Amount of data read from the storage system
 | REST | `api/cluster/counter/tables/nvmf_lif` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nvmf_lif.yaml |
 | ZAPI | `perf-object-get-instances nvmf_fc_lif` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/nvmf_lif.yaml |
 
+The `nvme_lif_read_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | LIF | Top $TopResources NVMe/FC LIFs by Send Throughput |
-| cmode/svm.json | LIF | Top $TopResources NVMe/FC LIFs by Send Throughput |
-| cmode/svm.json | NVMe/FC | SVM NVMe/FC Throughput |
-| cmode/svm.json | NVMe/FC | Top $TopResources SVM NVMe/FC LIFs by Send Throughput |
-| cmode/svm.json | NVMe/FC | Top $TopResources SVM NVMe/FC LIFs by Send Throughput |
+| ONTAP: SVM | LIF | Top $TopResources NVMe/FC LIFs by Send Throughput |
+| ONTAP: SVM | NVMe/FC | SVM NVMe/FC Throughput |
+| ONTAP: SVM | NVMe/FC | Top $TopResources SVM NVMe/FC LIFs by Send Throughput |
 
 
 
@@ -11680,10 +11785,11 @@ Number of read operations
 | REST | `api/cluster/counter/tables/nvmf_lif` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nvmf_lif.yaml |
 | ZAPI | `perf-object-get-instances nvmf_fc_lif` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/nvmf_lif.yaml |
 
+The `nvme_lif_read_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | NVMe/FC | SVM NVMe/FC IOPs |
+| ONTAP: SVM | NVMe/FC | SVM NVMe/FC IOPs |
 
 
 
@@ -11696,12 +11802,13 @@ Total number of operations.
 | REST | `api/cluster/counter/tables/nvmf_lif` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nvmf_lif.yaml |
 | ZAPI | `perf-object-get-instances nvmf_fc_lif` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/nvmf_lif.yaml |
 
+The `nvme_lif_total_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | NVMe/FC Frontend | NVMe/FC IOPs |
-| cmode/node.json | NVMe/FC Frontend | NVMe/FC IOPs by Port / LIF |
-| cmode/svm.json | NVMe/FC | SVM NVMe/FC IOPs |
+| ONTAP: Node | NVMe/FC Frontend | NVMe/FC IOPs |
+| ONTAP: Node | NVMe/FC Frontend | NVMe/FC IOPs by Port / LIF |
+| ONTAP: SVM | NVMe/FC | SVM NVMe/FC IOPs |
 
 
 
@@ -11714,16 +11821,14 @@ Amount of data written to the storage system
 | REST | `api/cluster/counter/tables/nvmf_lif` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nvmf_lif.yaml |
 | ZAPI | `perf-object-get-instances nvmf_fc_lif` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/nvmf_lif.yaml |
 
+The `nvme_lif_write_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | NVMe/FC Frontend | NVMe/FC Throughput by Port / LIF |
-| cmode/svm.json | LIF | Top $TopResources NVMe/FC LIFs by Receive Throughput |
-| cmode/svm.json | LIF | Top $TopResources NVMe/FC LIFs by Receive Throughput |
-| cmode/svm.json | NVMe/FC | SVM NVMe/FC Throughput |
-| cmode/svm.json | NVMe/FC | SVM NVMe/FC Throughput |
-| cmode/svm.json | NVMe/FC | Top $TopResources SVM NVMe/FC LIFs by Receive Throughput |
-| cmode/svm.json | NVMe/FC | Top $TopResources SVM NVMe/FC LIFs by Receive Throughput |
+| ONTAP: Node | NVMe/FC Frontend | NVMe/FC Throughput by Port / LIF |
+| ONTAP: SVM | LIF | Top $TopResources NVMe/FC LIFs by Receive Throughput |
+| ONTAP: SVM | NVMe/FC | SVM NVMe/FC Throughput |
+| ONTAP: SVM | NVMe/FC | Top $TopResources SVM NVMe/FC LIFs by Receive Throughput |
 
 
 
@@ -11736,10 +11841,11 @@ Number of write operations
 | REST | `api/cluster/counter/tables/nvmf_lif` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/nvmf_lif.yaml |
 | ZAPI | `perf-object-get-instances nvmf_fc_lif` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.10.1/nvmf_lif.yaml |
 
+The `nvme_lif_write_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | NVMe/FC | SVM NVMe/FC IOPs |
+| ONTAP: SVM | NVMe/FC | SVM NVMe/FC IOPs |
 
 
 
@@ -11993,15 +12099,16 @@ This metric provides information about OntapS3
 |--------|----------|--------|---------|
 | REST | `api/protocols/s3/buckets` | `Harvest generated` | conf/rest/9.7.0/ontap_s3.yaml |
 
+The `ontaps3_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/data_protection.json | Bucket protection | Total Buckets |
-| cmode/data_protection.json | Bucket protection | Unprotected Buckets |
-| cmode/data_protection.json | Bucket protection | Not Backed up to Cloud |
-| cmode/data_protection.json | Bucket protection | Buckets |
-| cmode/datacenter.json | Highlights | Object Count |
-| cmode/s3ObjectStorage.json | Highlights | Bucket Overview |
+| ONTAP: Data Protection | Bucket protection | Total Buckets |
+| ONTAP: Data Protection | Bucket protection | Unprotected Buckets |
+| ONTAP: Data Protection | Bucket protection | Not Backed up to Cloud |
+| ONTAP: Data Protection | Bucket protection | Buckets |
+| ONTAP: Datacenter | Highlights | Object Count |
+| ONTAP: S3 Object Storage | Highlights | Bucket Overview |
 
 
 
@@ -12013,14 +12120,13 @@ Specifies the bucket logical used size up to this point. This field cannot be sp
 |--------|----------|--------|---------|
 | REST | `api/protocols/s3/buckets` | `logical_used_size` | conf/rest/9.7.0/ontap_s3.yaml |
 
+The `ontaps3_logical_used_size` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/data_protection.json | Bucket protection | Buckets |
-| cmode/s3ObjectStorage.json | Highlights | Bucket Overview |
-| cmode/s3ObjectStorage.json | Highlights | Bucket Overview |
-| cmode/s3ObjectStorage.json | Highlights | Top $TopResources Buckets by Used Size |
-| cmode/s3ObjectStorage.json | Highlights | Top $TopResources Buckets by Used Size |
+| ONTAP: Data Protection | Bucket protection | Buckets |
+| ONTAP: S3 Object Storage | Highlights | Bucket Overview |
+| ONTAP: S3 Object Storage | Highlights | Top $TopResources Buckets by Used Size |
 
 
 
@@ -12032,10 +12138,11 @@ Specifies the bucket logical used size up to this point. This field cannot be sp
 |--------|----------|--------|---------|
 | REST | `api/private/cli/vserver/object-store-server/bucket` | `object_count` | conf/rest/9.7.0/ontap_s3.yaml |
 
+The `ontaps3_object_count` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/s3ObjectStorage.json | Highlights | Bucket Overview |
+| ONTAP: S3 Object Storage | Highlights | Bucket Overview |
 
 
 
@@ -12047,10 +12154,11 @@ This metric provides information about OntapS3Policy
 |--------|----------|--------|---------|
 | REST | `api/private/cli/vserver/object-store-server/bucket/policy` | `Harvest generated` | conf/rest/9.7.0/ontap_s3_policy.yaml |
 
+The `ontaps3_policy_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/s3ObjectStorage.json | Highlights | Bucket Permission |
+| ONTAP: S3 Object Storage | Highlights | Bucket Permission |
 
 
 
@@ -12062,11 +12170,12 @@ Specifies the bucket size in bytes; ranges from 190MB to 62PB.
 |--------|----------|--------|---------|
 | REST | `api/protocols/s3/buckets` | `size` | conf/rest/9.7.0/ontap_s3.yaml |
 
+The `ontaps3_size` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/data_protection.json | Bucket protection | Buckets |
-| cmode/s3ObjectStorage.json | Highlights | Bucket Overview |
+| ONTAP: Data Protection | Bucket protection | Buckets |
+| ONTAP: S3 Object Storage | Highlights | Bucket Overview |
 
 
 
@@ -12255,10 +12364,11 @@ Total number of object store server connections. ontaps3_svm_connections is [ont
 | REST | `api/cluster/counter/tables/object_store_server` | `connections`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `connections`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
+The `ontaps3_svm_connections` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Requests & Connections stats |
+| ONTAP: S3 Object Storage | S3 Object Storage SVM | Requests & Connections stats |
 
 
 
@@ -12414,11 +12524,11 @@ Average latency for DELETE object operations. ontaps3_svm_delete_object_latency 
 | REST | `api/cluster/counter/tables/object_store_server` | `delete_object_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> delete_object_total | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `delete_object_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> delete_object_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
+The `ontaps3_svm_delete_object_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Latency |
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Latency |
+| ONTAP: S3 Object Storage | S3 Object Storage SVM | Top $TopResources SVMs by Latency |
 
 
 
@@ -12431,11 +12541,11 @@ Number of DELETE object operations per second. ontaps3_svm_delete_object_rate is
 | REST | `api/cluster/counter/tables/object_store_server` | `delete_object_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `delete_object_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
+The `ontaps3_svm_delete_object_rate` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Rate |
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Rate |
+| ONTAP: S3 Object Storage | S3 Object Storage SVM | Top $TopResources SVMs by Rate |
 
 
 
@@ -12503,11 +12613,11 @@ Number of DELETE object operations. ontaps3_svm_delete_object_total is [ontaps3_
 | REST | `api/cluster/counter/tables/object_store_server` | `delete_object_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `delete_object_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
+The `ontaps3_svm_delete_object_total` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Operations |
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Operations |
+| ONTAP: S3 Object Storage | S3 Object Storage SVM | Top $TopResources SVMs by Operations |
 
 
 
@@ -12575,11 +12685,11 @@ Rate of GET object data transfers per second. ontaps3_svm_get_data is [ontaps3_s
 | REST | `api/cluster/counter/tables/object_store_server` | `get_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `get_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
+The `ontaps3_svm_get_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Data Transfer |
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Data Transfer |
+| ONTAP: S3 Object Storage | S3 Object Storage SVM | Top $TopResources SVMs by Data Transfer |
 
 
 
@@ -12647,11 +12757,11 @@ Average first-byte latency for GET object operations. ontaps3_svm_get_object_lat
 | REST | `api/cluster/counter/tables/object_store_server` | `get_object_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> get_object_total | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `get_object_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> get_object_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
+The `ontaps3_svm_get_object_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Latency |
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Latency |
+| ONTAP: S3 Object Storage | S3 Object Storage SVM | Top $TopResources SVMs by Latency |
 
 
 
@@ -12664,11 +12774,11 @@ Number of GET object operations per second. ontaps3_svm_get_object_rate is [onta
 | REST | `api/cluster/counter/tables/object_store_server` | `get_object_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `get_object_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
+The `ontaps3_svm_get_object_rate` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Rate |
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Rate |
+| ONTAP: S3 Object Storage | S3 Object Storage SVM | Top $TopResources SVMs by Rate |
 
 
 
@@ -12736,11 +12846,11 @@ Number of GET object operations. ontaps3_svm_get_object_total is [ontaps3_svm_ge
 | REST | `api/cluster/counter/tables/object_store_server` | `get_object_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `get_object_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
+The `ontaps3_svm_get_object_total` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Operations |
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Operations |
+| ONTAP: S3 Object Storage | S3 Object Storage SVM | Top $TopResources SVMs by Operations |
 
 
 
@@ -12841,11 +12951,11 @@ Average latency for HEAD object operations. ontaps3_svm_head_object_latency is [
 | REST | `api/cluster/counter/tables/object_store_server` | `head_object_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> head_object_total | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `head_object_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> head_object_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
+The `ontaps3_svm_head_object_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Latency |
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Latency |
+| ONTAP: S3 Object Storage | S3 Object Storage SVM | Top $TopResources SVMs by Latency |
 
 
 
@@ -12858,11 +12968,11 @@ Number of HEAD Object operations per second. ontaps3_svm_head_object_rate is [on
 | REST | `api/cluster/counter/tables/object_store_server` | `head_object_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `head_object_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
+The `ontaps3_svm_head_object_rate` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Rate |
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Rate |
+| ONTAP: S3 Object Storage | S3 Object Storage SVM | Top $TopResources SVMs by Rate |
 
 
 
@@ -12875,11 +12985,11 @@ Number of HEAD Object operations. ontaps3_svm_head_object_total is [ontaps3_svm_
 | REST | `api/cluster/counter/tables/object_store_server` | `head_object_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `head_object_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
+The `ontaps3_svm_head_object_total` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Operations |
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Operations |
+| ONTAP: S3 Object Storage | S3 Object Storage SVM | Top $TopResources SVMs by Operations |
 
 
 
@@ -13189,10 +13299,11 @@ Maximum commands pipelined at any instance on a connection. ontaps3_svm_max_cmds
 | REST | `api/cluster/counter/tables/object_store_server` | `maximum_commands_per_connection`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `max_cmds_per_connection`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
+The `ontaps3_svm_max_cmds_per_connection` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Requests & Connections stats |
+| ONTAP: S3 Object Storage | S3 Object Storage SVM | Requests & Connections stats |
 
 
 
@@ -13205,10 +13316,11 @@ Maximum number of object store server connections established at one time. ontap
 | REST | `api/cluster/counter/tables/object_store_server` | `maximum_connected_connections`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `max_connected_connections`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
+The `ontaps3_svm_max_connected_connections` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Requests & Connections stats |
+| ONTAP: S3 Object Storage | S3 Object Storage SVM | Requests & Connections stats |
 
 
 
@@ -13221,10 +13333,11 @@ Maximum number of object store server requests in process at one time. ontaps3_s
 | REST | `api/cluster/counter/tables/object_store_server` | `maximum_requests_outstanding`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `max_requests_outstanding`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
+The `ontaps3_svm_max_requests_outstanding` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Requests & Connections stats |
+| ONTAP: S3 Object Storage | S3 Object Storage SVM | Requests & Connections stats |
 
 
 
@@ -13303,11 +13416,11 @@ Rate of PUT object data transfers per second. ontaps3_svm_put_data is [ontaps3_s
 | REST | `api/cluster/counter/tables/object_store_server` | `put_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `put_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
+The `ontaps3_svm_put_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Data Transfer |
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Data Transfer |
+| ONTAP: S3 Object Storage | S3 Object Storage SVM | Top $TopResources SVMs by Data Transfer |
 
 
 
@@ -13342,11 +13455,11 @@ Average latency for PUT object operations. ontaps3_svm_put_object_latency is [on
 | REST | `api/cluster/counter/tables/object_store_server` | `put_object_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> put_object_total | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `put_object_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> put_object_latency_base | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
+The `ontaps3_svm_put_object_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Latency |
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Latency |
+| ONTAP: S3 Object Storage | S3 Object Storage SVM | Top $TopResources SVMs by Latency |
 
 
 
@@ -13359,11 +13472,11 @@ Number of PUT object operations per second. ontaps3_svm_put_object_rate is [onta
 | REST | `api/cluster/counter/tables/object_store_server` | `put_object_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `put_object_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
+The `ontaps3_svm_put_object_rate` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Rate |
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Rate |
+| ONTAP: S3 Object Storage | S3 Object Storage SVM | Top $TopResources SVMs by Rate |
 
 
 
@@ -13431,11 +13544,11 @@ Number of PUT object operations. ontaps3_svm_put_object_total is [ontaps3_svm_pu
 | REST | `api/cluster/counter/tables/object_store_server` | `put_object_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `put_object_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
+The `ontaps3_svm_put_object_total` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Operations |
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Top $TopResources SVMs by Operations |
+| ONTAP: S3 Object Storage | S3 Object Storage SVM | Top $TopResources SVMs by Operations |
 
 
 
@@ -13459,10 +13572,11 @@ Total number of object store server requests. ontaps3_svm_requests is [ontaps3_s
 | REST | `api/cluster/counter/tables/object_store_server` | `requests`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.14.1/ontap_s3_svm.yaml |
 | ZAPI | `perf-object-get-instances object_store_server` | `requests`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/ontap_s3_svm.yaml |
 
+The `ontaps3_svm_requests` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/s3ObjectStorage.json | S3 Object Storage SVM | Requests & Connections stats |
+| ONTAP: S3 Object Storage | S3 Object Storage SVM | Requests & Connections stats |
 
 
 
@@ -13595,12 +13709,12 @@ The used_percent metric the percentage of a bucket's total capacity that is curr
 |--------|----------|--------|---------|
 | REST | `api/protocols/s3/buckets` | `logical_used_size, size` | conf/rest/9.7.0/ontap_s3.yaml |
 
+The `ontaps3_used_percent` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/s3ObjectStorage.json | Highlights | Bucket Overview |
-| cmode/s3ObjectStorage.json | Highlights | Top $TopResources Buckets by Used Size Percent |
-| cmode/s3ObjectStorage.json | Highlights | Top $TopResources Buckets by Used Size Percent |
+| ONTAP: S3 Object Storage | Highlights | Bucket Overview |
+| ONTAP: S3 Object Storage | Highlights | Top $TopResources Buckets by Used Size Percent |
 
 
 
@@ -13613,10 +13727,11 @@ The average read throughput in kilobytes per second read from the indicated targ
 | REST | `api/cluster/counter/tables/path` | `read_data`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/path.yaml |
 | ZAPI | `perf-object-get-instances path` | `read_data`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/path.yaml |
 
+The `path_read_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/mcc_cluster.json | MetroCluster FibreBridge/Array | Read Data from FibreBridge/Array WWPN |
+| ONTAP: MetroCluster | MetroCluster FibreBridge/Array | Read Data from FibreBridge/Array WWPN |
 
 
 
@@ -13629,10 +13744,11 @@ The number of I/O read operations sent from the initiator port to the indicated 
 | REST | `api/cluster/counter/tables/path` | `read_iops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/path.yaml |
 | ZAPI | `perf-object-get-instances path` | `read_iops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/path.yaml |
 
+The `path_read_iops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/mcc_cluster.json | MetroCluster FibreBridge/Array | Read IOPs from FibreBridge/Array WWPN |
+| ONTAP: MetroCluster | MetroCluster FibreBridge/Array | Read IOPs from FibreBridge/Array WWPN |
 
 
 
@@ -13645,10 +13761,11 @@ The average latency of I/O read operations sent from this controller to the indi
 | REST | `api/cluster/counter/tables/path` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_iops | conf/restperf/9.12.0/path.yaml |
 | ZAPI | `perf-object-get-instances path` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_iops | conf/zapiperf/cdot/9.8.0/path.yaml |
 
+The `path_read_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/mcc_cluster.json | MetroCluster FibreBridge/Array | Read Latency from FibreBridge/Array WWPN |
+| ONTAP: MetroCluster | MetroCluster FibreBridge/Array | Read Latency from FibreBridge/Array WWPN |
 
 
 
@@ -13683,10 +13800,11 @@ The average write throughput in kilobytes per second written to the indicated ta
 | REST | `api/cluster/counter/tables/path` | `write_data`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/path.yaml |
 | ZAPI | `perf-object-get-instances path` | `write_data`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/path.yaml |
 
+The `path_write_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/mcc_cluster.json | MetroCluster FibreBridge/Array | Write Data to FibreBridge/Array WWPN |
+| ONTAP: MetroCluster | MetroCluster FibreBridge/Array | Write Data to FibreBridge/Array WWPN |
 
 
 
@@ -13699,10 +13817,11 @@ The number of I/O write operations sent from the initiator port to the indicated
 | REST | `api/cluster/counter/tables/path` | `write_iops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/path.yaml |
 | ZAPI | `perf-object-get-instances path` | `write_iops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/path.yaml |
 
+The `path_write_iops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/mcc_cluster.json | MetroCluster FibreBridge/Array | Write IOPs to FibreBridge/Array WWPN |
+| ONTAP: MetroCluster | MetroCluster FibreBridge/Array | Write IOPs to FibreBridge/Array WWPN |
 
 
 
@@ -13715,10 +13834,11 @@ The average latency of I/O write operations sent from this controller to the ind
 | REST | `api/cluster/counter/tables/path` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_iops | conf/restperf/9.12.0/path.yaml |
 | ZAPI | `perf-object-get-instances path` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_iops | conf/zapiperf/cdot/9.8.0/path.yaml |
 
+The `path_write_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/mcc_cluster.json | MetroCluster FibreBridge/Array | Write Latency to FibreBridge/Array WWPN |
+| ONTAP: MetroCluster | MetroCluster FibreBridge/Array | Write Latency to FibreBridge/Array WWPN |
 
 
 
@@ -13731,13 +13851,11 @@ The utilization percent of the disk. plex_disk_busy is [disk_busy](#disk_busy) a
 | REST | `api/cluster/counter/tables/disk:constituent` | `disk_busy_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `disk_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
+The `plex_disk_busy` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/mcc_cluster.json | MetroCluster Disk | Top $TopResources Plexes by Disk Utilization |
-| cmode/mcc_cluster.json | MetroCluster Disk | Top $TopResources Plexes by Disk Utilization |
-| cmode/mcc_cluster.json | MetroCluster Disk | Top $TopResources Plexes by Disk Utilization |
-| cmode/mcc_cluster.json | MetroCluster Disk | Top $TopResources Plexes by Disk Utilization |
+| ONTAP: MetroCluster | MetroCluster Disk | Top $TopResources Plexes by Disk Utilization |
 
 
 
@@ -13860,11 +13978,11 @@ Average latency per block in microseconds for user read operations. plex_disk_us
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_block_count | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
+The `plex_disk_user_read_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/mcc_cluster.json | MetroCluster Disk | Top $TopResources Plexes by User Read Latency per 4KB IO |
-| cmode/mcc_cluster.json | MetroCluster Disk | Top $TopResources Plexes by User Read Latency per 4KB IO |
+| ONTAP: MetroCluster | MetroCluster Disk | Top $TopResources Plexes by User Read Latency per 4KB IO |
 
 
 
@@ -13877,11 +13995,11 @@ Number of disk read operations initiated each second for retrieving data or meta
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_read_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_reads`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
+The `plex_disk_user_reads` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/mcc_cluster.json | MetroCluster Disk | Top $TopResources Plexes by User Reads |
-| cmode/mcc_cluster.json | MetroCluster Disk | Top $TopResources Plexes by User Reads |
+| ONTAP: MetroCluster | MetroCluster Disk | Top $TopResources Plexes by User Reads |
 
 
 
@@ -13916,11 +14034,11 @@ Average latency per block in microseconds for user write operations. plex_disk_u
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_block_count | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
+The `plex_disk_user_write_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/mcc_cluster.json | MetroCluster Disk | Top $TopResources Plexes by User Write Latency per 4KB IO |
-| cmode/mcc_cluster.json | MetroCluster Disk | Top $TopResources Plexes by User Write Latency per 4KB IO |
+| ONTAP: MetroCluster | MetroCluster Disk | Top $TopResources Plexes by User Write Latency per 4KB IO |
 
 
 
@@ -13933,11 +14051,11 @@ Number of disk write operations initiated each second for storing data or metada
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_write_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_writes`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
+The `plex_disk_user_writes` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/mcc_cluster.json | MetroCluster Disk | Top $TopResources Plexes by User Writes |
-| cmode/mcc_cluster.json | MetroCluster Disk | Top $TopResources Plexes by User Writes |
+| ONTAP: MetroCluster | MetroCluster Disk | Top $TopResources Plexes by User Writes |
 
 
 
@@ -13983,11 +14101,11 @@ This is the average number of concurrent requests for the workload.
 | REST | `api/cluster/counter/tables/qos_volume` | `concurrency`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload_volume.yaml |
 | ZAPI | `perf-object-get-instances workload_volume` | `concurrency`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload_volume.yaml |
 
+The `qos_concurrency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/workload.json | Highlights | Top $TopResources Workloads by Concurrency |
-| cmode/workload.json | Highlights | Top $TopResources Workloads by Concurrency |
+| ONTAP: Workload | Highlights | Top $TopResources Workloads by Concurrency |
 
 
 
@@ -14000,15 +14118,14 @@ This is the average response time for requests that were initiated by the worklo
 | REST | `api/cluster/counter/tables/qos_volume` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> ops | conf/restperf/9.12.0/workload_volume.yaml |
 | ZAPI | `perf-object-get-instances workload_volume` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> ops | conf/zapiperf/cdot/9.8.0/workload_volume.yaml |
 
+The `qos_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | QoS Policy Group | Average QoS Latency |
-| cmode/volume.json | QoS | Top $TopResources QoS Volumes Latency |
-| cmode/volume.json | QoS | Top $TopResources QoS Volumes by Latency |
-| cmode/volume.json | QoS | Top $TopResources QoS Volumes by Latency |
-| cmode/workload.json | Highlights | Top $TopResources Workloads by Average Latency |
-| cmode/workload.json | Highlights | Top $TopResources Workloads by Average Latency |
+| ONTAP: SVM | QoS Policy Group | Average QoS Latency |
+| ONTAP: Volume | QoS | Top $TopResources QoS Volumes Latency |
+| ONTAP: Volume | QoS | Top $TopResources QoS Volumes by Latency |
+| ONTAP: Workload | Highlights | Top $TopResources Workloads by Average Latency |
 
 
 
@@ -14021,25 +14138,19 @@ This field is the workload's rate of operations that completed during the measur
 | REST | `api/cluster/counter/tables/qos_volume` | `ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload_volume.yaml |
 | ZAPI | `perf-object-get-instances workload_volume` | `ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload_volume.yaml |
 
+The `qos_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | QoS Policy Group | QoS IOPs |
-| cmode/volume.json | QoS | Top $TopResources QoS Volumes by Total IOPs |
-| cmode/volume.json | QoS | Top $TopResources QoS Volumes by Total IOPs |
-| cmode/volume.json | QoS | Top $TopResources QoS Volumes by Total IOPs |
-| cmode/workload.json | Highlights | Top $TopResources Workloads by Total IOPS |
-| cmode/workload.json | Highlights | Top $TopResources Workloads by Total IOPS |
-| cmode/workload.json | Fixed QoS Shared Policy Utilization | Top $TopResources Fixed QoS Shared Policy IOPs Utilization (%) |
-| cmode/workload.json | Fixed QoS Shared Policy Utilization | Top $TopResources Fixed QoS Shared Policy IOPs Utilization (%) |
-| cmode/workload.json | Fixed QoS Shared Policy Utilization | Fixed QoS Shared Policy IOPs Utilization (%) |
-| cmode/workload.json | Fixed QoS Workload Utilization | Top $TopResources Fixed QoS Workload IOPs Utilization (%) |
-| cmode/workload.json | Fixed QoS Workload Utilization | Top $TopResources Fixed QoS Workload IOPs Utilization (%) |
-| cmode/workload.json | Fixed QoS Workload Utilization | Fixed QoS Workload IOPs Utilization (%) |
-| cmode/workload.json | Adaptive QoS Workload Utilization | Top $TopResources Adaptive QoS Workload IOPs Utilization (%) |
-| cmode/workload.json | Adaptive QoS Workload Utilization | Top $TopResources Adaptive QoS Workload IOPs Utilization (%) |
-| cmode/workload.json | Adaptive QoS Workload Utilization | Adaptive QoS Workload IOPs Utilization (%) |
-| cmode/workload.json | Adaptive QoS Workload Utilization | Adaptive QoS Workload IOPs Utilization (%) |
+| ONTAP: SVM | QoS Policy Group | QoS IOPs |
+| ONTAP: Volume | QoS | Top $TopResources QoS Volumes by Total IOPs |
+| ONTAP: Workload | Highlights | Top $TopResources Workloads by Total IOPS |
+| ONTAP: Workload | Fixed QoS Shared Policy Utilization | Top $TopResources Fixed QoS Shared Policy IOPs Utilization (%) |
+| ONTAP: Workload | Fixed QoS Shared Policy Utilization | Fixed QoS Shared Policy IOPs Utilization (%) |
+| ONTAP: Workload | Fixed QoS Workload Utilization | Top $TopResources Fixed QoS Workload IOPs Utilization (%) |
+| ONTAP: Workload | Fixed QoS Workload Utilization | Fixed QoS Workload IOPs Utilization (%) |
+| ONTAP: Workload | Adaptive QoS Workload Utilization | Top $TopResources Adaptive QoS Workload IOPs Utilization (%) |
+| ONTAP: Workload | Adaptive QoS Workload Utilization | Adaptive QoS Workload IOPs Utilization (%) |
 
 
 
@@ -14052,13 +14163,12 @@ This is the rate of this workload's other operations that completed during the m
 | REST | `api/cluster/counter/tables/qos` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload.yaml |
 | ZAPI | `perf-object-get-instances workload_volume` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload_volume.yaml |
 
+The `qos_other_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Other IOPS |
-| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Other IOPS |
-| cmode/workload.json | Highlights | Top $TopResources Workloads by Other IOPS |
-| cmode/workload.json | Highlights | Top $TopResources Workloads by Other IOPS |
+| ONTAP: Volume | QoS | Top $TopResources Volumes by QoS Volume Other IOPS |
+| ONTAP: Workload | Highlights | Top $TopResources Workloads by Other IOPS |
 
 
 
@@ -14115,17 +14225,16 @@ This metric provides information about QosPolicyFixed
 | REST | `api/private/cli/qos/policy-group` | `Harvest generated` | conf/rest/9.12.0/qos_policy_fixed.yaml |
 | ZAPI | `qos-policy-group-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/qos_policy_fixed.yaml |
 
+The `qos_policy_fixed_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/workload.json | Fixed QoS Shared Policy Utilization | Top $TopResources Fixed QoS Shared Policy IOPs Utilization (%) |
-| cmode/workload.json | Fixed QoS Shared Policy Utilization | Top $TopResources Fixed QoS Shared Policy IOPs Utilization (%) |
-| cmode/workload.json | Fixed QoS Shared Policy Utilization | Top $TopResources Fixed QoS Shared Policy Bandwidth Utilization (%) |
-| cmode/workload.json | Fixed QoS Shared Policy Utilization | Top $TopResources Fixed QoS Shared Policy Bandwidth Utilization (%) |
-| cmode/workload.json | Fixed QoS Shared Policy Utilization | Fixed QoS Shared Policy IOPs Utilization (%) |
-| cmode/workload.json | Fixed QoS Shared Policy Utilization | Fixed QoS Shared Policy Bandwidth Utilization (%) |
-| cmode/workload.json | Fixed QoS Workload Utilization | Fixed QoS Workload IOPs Utilization (%) |
-| cmode/workload.json | Fixed QoS Workload Utilization | Fixed QoS Workload Bandwidth Utilization (%) |
+| ONTAP: Workload | Fixed QoS Shared Policy Utilization | Top $TopResources Fixed QoS Shared Policy IOPs Utilization (%) |
+| ONTAP: Workload | Fixed QoS Shared Policy Utilization | Top $TopResources Fixed QoS Shared Policy Bandwidth Utilization (%) |
+| ONTAP: Workload | Fixed QoS Shared Policy Utilization | Fixed QoS Shared Policy IOPs Utilization (%) |
+| ONTAP: Workload | Fixed QoS Shared Policy Utilization | Fixed QoS Shared Policy Bandwidth Utilization (%) |
+| ONTAP: Workload | Fixed QoS Workload Utilization | Fixed QoS Workload IOPs Utilization (%) |
+| ONTAP: Workload | Fixed QoS Workload Utilization | Fixed QoS Workload Bandwidth Utilization (%) |
 
 
 
@@ -14182,19 +14291,16 @@ This is the amount of data read per second from the filer by the workload.
 | REST | `api/cluster/counter/tables/qos_volume` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload_volume.yaml |
 | ZAPI | `perf-object-get-instances workload_volume` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload_volume.yaml |
 
+The `qos_read_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | QoS Policy Group | QoS Read Throughput |
-| cmode/svm.json | QoS Policy Group | Top $TopResources SVMs by QoS Throughput |
-| cmode/svm.json | QoS Policy Group | Top $TopResources SVMs by QoS Throughput |
-| cmode/volume.json | QoS | Top $TopResources Qos Volumes Total Throughput |
-| cmode/volume.json | QoS | Top $TopResources QoS Volumes by Average Throughput |
-| cmode/volume.json | QoS | Top $TopResources QoS Volumes by Average Throughput |
-| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Read Throughput |
-| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Read Throughput |
-| cmode/workload.json | Highlights | Top $TopResources Workloads by Read Throughput |
-| cmode/workload.json | Highlights | Top $TopResources Workloads by Read Throughput |
+| ONTAP: SVM | QoS Policy Group | QoS Read Throughput |
+| ONTAP: SVM | QoS Policy Group | Top $TopResources SVMs by QoS Throughput |
+| ONTAP: Volume | QoS | Top $TopResources Qos Volumes Total Throughput |
+| ONTAP: Volume | QoS | Top $TopResources QoS Volumes by Average Throughput |
+| ONTAP: Volume | QoS | Top $TopResources Volumes by QoS Volume Read Throughput |
+| ONTAP: Workload | Highlights | Top $TopResources Workloads by Read Throughput |
 
 
 
@@ -14207,29 +14313,20 @@ This is the percentage of read requests served from various components (such as 
 | REST | `api/cluster/counter/tables/qos_volume` | `read_io_type_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> read_io_type_base | conf/restperf/9.12.0/workload_volume.yaml |
 | ZAPI | `perf-object-get-instances workload_volume` | `read_io_type`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> read_io_type_base | conf/zapiperf/cdot/9.8.0/workload_volume.yaml |
 
+The `qos_read_io_type` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type bamboo_ssd |
-| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type bamboo_ssd |
-| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type cache |
-| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type cache |
-| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type cloud |
-| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type cloud |
-| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type cloud_s2c |
-| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type cloud_s2c |
-| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type disk |
-| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type disk |
-| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type ext_cache |
-| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type ext_cache |
-| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type fc_miss |
-| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type fc_miss |
-| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type hya_cache |
-| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type hya_cache |
-| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type hya_hdd |
-| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type hya_hdd |
-| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type hya_non_cache |
-| cmode/workload.json | Read IO Type | Top $TopResources Workloads by Read IO Type hya_non_cache |
+| ONTAP: Workload | Read IO Type | Top $TopResources Workloads by Read IO Type bamboo_ssd |
+| ONTAP: Workload | Read IO Type | Top $TopResources Workloads by Read IO Type cache |
+| ONTAP: Workload | Read IO Type | Top $TopResources Workloads by Read IO Type cloud |
+| ONTAP: Workload | Read IO Type | Top $TopResources Workloads by Read IO Type cloud_s2c |
+| ONTAP: Workload | Read IO Type | Top $TopResources Workloads by Read IO Type disk |
+| ONTAP: Workload | Read IO Type | Top $TopResources Workloads by Read IO Type ext_cache |
+| ONTAP: Workload | Read IO Type | Top $TopResources Workloads by Read IO Type fc_miss |
+| ONTAP: Workload | Read IO Type | Top $TopResources Workloads by Read IO Type hya_cache |
+| ONTAP: Workload | Read IO Type | Top $TopResources Workloads by Read IO Type hya_hdd |
+| ONTAP: Workload | Read IO Type | Top $TopResources Workloads by Read IO Type hya_non_cache |
 
 
 
@@ -14242,16 +14339,14 @@ This is the average response time for read requests that were initiated by the w
 | REST | `api/cluster/counter/tables/qos_volume` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/restperf/9.12.0/workload_volume.yaml |
 | ZAPI | `perf-object-get-instances workload_volume` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/workload_volume.yaml |
 
+The `qos_read_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | QoS Policy Group | Average QoS Read Latency |
-| cmode/svm.json | QoS Policy Group | Top $TopResources SVMs by QoS Latency |
-| cmode/svm.json | QoS Policy Group | Top $TopResources SVMs by QoS Latency |
-| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Read Latency |
-| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Read Latency |
-| cmode/workload.json | Highlights | Top $TopResources Workloads by Average Read Latency |
-| cmode/workload.json | Highlights | Top $TopResources Workloads by Average Read Latency |
+| ONTAP: SVM | QoS Policy Group | Average QoS Read Latency |
+| ONTAP: SVM | QoS Policy Group | Top $TopResources SVMs by QoS Latency |
+| ONTAP: Volume | QoS | Top $TopResources Volumes by QoS Volume Read Latency |
+| ONTAP: Workload | Highlights | Top $TopResources Workloads by Average Read Latency |
 
 
 
@@ -14264,16 +14359,14 @@ This is the rate of this workload's read operations that completed during the me
 | REST | `api/cluster/counter/tables/qos_volume` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload_volume.yaml |
 | ZAPI | `perf-object-get-instances workload_volume` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload_volume.yaml |
 
+The `qos_read_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | QoS Policy Group | QoS Read IOPs |
-| cmode/svm.json | QoS Policy Group | Top $TopResources SVMs by QoS IOPs |
-| cmode/svm.json | QoS Policy Group | Top $TopResources SVMs by QoS IOPs |
-| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Read IOPS |
-| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Read IOPS |
-| cmode/workload.json | Highlights | Top $TopResources Workloads by Read IOPS |
-| cmode/workload.json | Highlights | Top $TopResources Workloads by Read IOPS |
+| ONTAP: SVM | QoS Policy Group | QoS Read IOPs |
+| ONTAP: SVM | QoS Policy Group | Top $TopResources SVMs by QoS IOPs |
+| ONTAP: Volume | QoS | Top $TopResources Volumes by QoS Volume Read IOPS |
+| ONTAP: Workload | Highlights | Top $TopResources Workloads by Read IOPS |
 
 
 
@@ -14286,15 +14379,13 @@ This is the percentage of reads, performed on behalf of the workload, that were 
 | REST | `api/cluster/counter/tables/qos_volume` | `sequential_reads_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> sequential_reads_base | conf/restperf/9.12.0/workload_volume.yaml |
 | ZAPI | `perf-object-get-instances workload_volume` | `sequential_reads`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent,no-zero-values<br><span class="key">Base:</span> sequential_reads_base | conf/zapiperf/cdot/9.8.0/workload_volume.yaml |
 
+The `qos_sequential_reads` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | QoS Policy Group | Top $TopResources Workloads by Sequential Reads (%) |
-| cmode/svm.json | QoS Policy Group | Top $TopResources Workloads by Sequential Reads (%) |
-| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Sequential Reads |
-| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Sequential Reads |
-| cmode/workload.json | Highlights | Top $TopResources Workloads by Sequential Reads (%) |
-| cmode/workload.json | Highlights | Top $TopResources Workloads by Sequential Reads (%) |
+| ONTAP: SVM | QoS Policy Group | Top $TopResources Workloads by Sequential Reads (%) |
+| ONTAP: Volume | QoS | Top $TopResources Volumes by QoS Volume Sequential Reads |
+| ONTAP: Workload | Highlights | Top $TopResources Workloads by Sequential Reads (%) |
 
 
 
@@ -14307,15 +14398,13 @@ This is the percentage of writes, performed on behalf of the workload, that were
 | REST | `api/cluster/counter/tables/qos_volume` | `sequential_writes_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> sequential_writes_base | conf/restperf/9.12.0/workload_volume.yaml |
 | ZAPI | `perf-object-get-instances workload_volume` | `sequential_writes`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent,no-zero-values<br><span class="key">Base:</span> sequential_writes_base | conf/zapiperf/cdot/9.8.0/workload_volume.yaml |
 
+The `qos_sequential_writes` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | QoS Policy Group | Top $TopResources Workloads by Sequential Writes (%) |
-| cmode/svm.json | QoS Policy Group | Top $TopResources Workloads by Sequential Writes (%) |
-| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Sequential Writes |
-| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Sequential Writes |
-| cmode/workload.json | Highlights | Top $TopResources Workloads by Sequential Writes (%) |
-| cmode/workload.json | Highlights | Top $TopResources Workloads by Sequential Writes (%) |
+| ONTAP: SVM | QoS Policy Group | Top $TopResources Workloads by Sequential Writes (%) |
+| ONTAP: Volume | QoS | Top $TopResources Volumes by QoS Volume Sequential Writes |
+| ONTAP: Workload | Highlights | Top $TopResources Workloads by Sequential Writes (%) |
 
 
 
@@ -14328,19 +14417,16 @@ This is the total amount of data read/written per second from/to the filer by th
 | REST | `api/cluster/counter/tables/qos_volume` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload_volume.yaml |
 | ZAPI | `perf-object-get-instances workload_volume` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload_volume.yaml |
 
+The `qos_total_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/workload.json | Fixed QoS Shared Policy Utilization | Top $TopResources Fixed QoS Shared Policy Bandwidth Utilization (%) |
-| cmode/workload.json | Fixed QoS Shared Policy Utilization | Top $TopResources Fixed QoS Shared Policy Bandwidth Utilization (%) |
-| cmode/workload.json | Fixed QoS Shared Policy Utilization | Fixed QoS Shared Policy Bandwidth Utilization (%) |
-| cmode/workload.json | Fixed QoS Workload Utilization | Top $TopResources Fixed QoS Workload Bandwidth Utilization (%) |
-| cmode/workload.json | Fixed QoS Workload Utilization | Top $TopResources Fixed QoS Workload Bandwidth Utilization (%) |
-| cmode/workload.json | Fixed QoS Workload Utilization | Fixed QoS Workload Bandwidth Utilization (%) |
-| cmode/workload.json | Adaptive QoS Workload Utilization | Top $TopResources Adaptive QoS Workload Bandwidth Utilization (%) |
-| cmode/workload.json | Adaptive QoS Workload Utilization | Top $TopResources Adaptive QoS Workload Bandwidth Utilization (%) |
-| cmode/workload.json | Adaptive QoS Workload Utilization | Adaptive QoS Workload Bandwidth Utilization (%) |
-| cmode/workload.json | Adaptive QoS Workload Utilization | Adaptive QoS Workload Bandwidth Utilization (%) |
+| ONTAP: Workload | Fixed QoS Shared Policy Utilization | Top $TopResources Fixed QoS Shared Policy Bandwidth Utilization (%) |
+| ONTAP: Workload | Fixed QoS Shared Policy Utilization | Fixed QoS Shared Policy Bandwidth Utilization (%) |
+| ONTAP: Workload | Fixed QoS Workload Utilization | Top $TopResources Fixed QoS Workload Bandwidth Utilization (%) |
+| ONTAP: Workload | Fixed QoS Workload Utilization | Fixed QoS Workload Bandwidth Utilization (%) |
+| ONTAP: Workload | Adaptive QoS Workload Utilization | Top $TopResources Adaptive QoS Workload Bandwidth Utilization (%) |
+| ONTAP: Workload | Adaptive QoS Workload Utilization | Adaptive QoS Workload Bandwidth Utilization (%) |
 
 
 
@@ -14353,12 +14439,13 @@ This metric provides information about QosWorkload
 | REST | `api/private/cli/qos/workload` | `Harvest generated` | conf/rest/9.12.0/qos_workload.yaml |
 | ZAPI | `qos-workload-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/qos_workload.yaml |
 
+The `qos_workload_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/datacenter.json | Highlights | Object Count |
-| cmode/workload.json | Adaptive QoS Workload Utilization | Adaptive QoS Workload IOPs Utilization (%) |
-| cmode/workload.json | Adaptive QoS Workload Utilization | Adaptive QoS Workload Bandwidth Utilization (%) |
+| ONTAP: Datacenter | Highlights | Object Count |
+| ONTAP: Workload | Adaptive QoS Workload Utilization | Adaptive QoS Workload IOPs Utilization (%) |
+| ONTAP: Workload | Adaptive QoS Workload Utilization | Adaptive QoS Workload Bandwidth Utilization (%) |
 
 
 
@@ -14393,20 +14480,17 @@ This is the amount of data written per second to the filer by the workload.
 | REST | `api/cluster/counter/tables/qos_volume` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload_volume.yaml |
 | ZAPI | `perf-object-get-instances workload_volume` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload_volume.yaml |
 
+The `qos_write_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | QoS Policy Group | QoS Throughput |
-| cmode/svm.json | QoS Policy Group | QoS Write Throughput |
-| cmode/svm.json | QoS Policy Group | Top $TopResources SVMs by QoS Throughput |
-| cmode/svm.json | QoS Policy Group | Top $TopResources SVMs by QoS Throughput |
-| cmode/volume.json | QoS | Top $TopResources Qos Volumes Total Throughput |
-| cmode/volume.json | QoS | Top $TopResources QoS Volumes by Average Throughput |
-| cmode/volume.json | QoS | Top $TopResources QoS Volumes by Average Throughput |
-| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Write Throughput |
-| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Write Throughput |
-| cmode/workload.json | Highlights | Top $TopResources Workloads by Write Throughput |
-| cmode/workload.json | Highlights | Top $TopResources Workloads by Write Throughput |
+| ONTAP: SVM | QoS Policy Group | QoS Throughput |
+| ONTAP: SVM | QoS Policy Group | QoS Write Throughput |
+| ONTAP: SVM | QoS Policy Group | Top $TopResources SVMs by QoS Throughput |
+| ONTAP: Volume | QoS | Top $TopResources Qos Volumes Total Throughput |
+| ONTAP: Volume | QoS | Top $TopResources QoS Volumes by Average Throughput |
+| ONTAP: Volume | QoS | Top $TopResources Volumes by QoS Volume Write Throughput |
+| ONTAP: Workload | Highlights | Top $TopResources Workloads by Write Throughput |
 
 
 
@@ -14419,16 +14503,14 @@ This is the average response time for write requests that were initiated by the 
 | REST | `api/cluster/counter/tables/qos_volume` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/restperf/9.12.0/workload_volume.yaml |
 | ZAPI | `perf-object-get-instances workload_volume` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/workload_volume.yaml |
 
+The `qos_write_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | QoS Policy Group | Average QoS Write Latency |
-| cmode/svm.json | QoS Policy Group | Top $TopResources SVMs by QoS Latency |
-| cmode/svm.json | QoS Policy Group | Top $TopResources SVMs by QoS Latency |
-| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Write Latency |
-| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Write Latency |
-| cmode/workload.json | Highlights | Top $TopResources Workloads by Average Write Latency |
-| cmode/workload.json | Highlights | Top $TopResources Workloads by Average Write Latency |
+| ONTAP: SVM | QoS Policy Group | Average QoS Write Latency |
+| ONTAP: SVM | QoS Policy Group | Top $TopResources SVMs by QoS Latency |
+| ONTAP: Volume | QoS | Top $TopResources Volumes by QoS Volume Write Latency |
+| ONTAP: Workload | Highlights | Top $TopResources Workloads by Average Write Latency |
 
 
 
@@ -14441,16 +14523,14 @@ This is the workload's write operations that completed during the measurement in
 | REST | `api/cluster/counter/tables/qos_volume` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/workload_volume.yaml |
 | ZAPI | `perf-object-get-instances workload_volume` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/workload_volume.yaml |
 
+The `qos_write_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | QoS Policy Group | QoS Write IOPs |
-| cmode/svm.json | QoS Policy Group | Top $TopResources SVMs by QoS IOPs |
-| cmode/svm.json | QoS Policy Group | Top $TopResources SVMs by QoS IOPs |
-| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Write IOPS |
-| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Write IOPS |
-| cmode/workload.json | Highlights | Top $TopResources Workloads by Write IOPS |
-| cmode/workload.json | Highlights | Top $TopResources Workloads by Write IOPS |
+| ONTAP: SVM | QoS Policy Group | QoS Write IOPs |
+| ONTAP: SVM | QoS Policy Group | Top $TopResources SVMs by QoS IOPs |
+| ONTAP: Volume | QoS | Top $TopResources Volumes by QoS Volume Write IOPS |
+| ONTAP: Workload | Highlights | Top $TopResources Workloads by Write IOPS |
 
 
 
@@ -14463,11 +14543,11 @@ Number of CIFS operations per second to the qtree
 | REST | `api/cluster/counter/tables/qtree` | `cifs_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/qtree.yaml |
 | ZAPI | `perf-object-get-instances qtree` | `cifs_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/qtree.yaml |
 
+The `qtree_cifs_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/qtree.json | Highlights | Top $TopResources CIFS by IOPs |
-| cmode/qtree.json | Highlights | Top $TopResources CIFS by IOPs |
+| ONTAP: Qtree | Highlights | Top $TopResources CIFS by IOPs |
 
 
 
@@ -14490,11 +14570,11 @@ Number of internal operations generated by activites such as snapmirror and back
 | REST | `api/cluster/counter/tables/qtree` | `internal_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/qtree.yaml |
 | ZAPI | `perf-object-get-instances qtree` | `internal_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/qtree.yaml |
 
+The `qtree_internal_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/qtree.json | Highlights | Top $TopResources Qtrees by Internal IOPs |
-| cmode/qtree.json | Highlights | Top $TopResources Qtrees by Internal IOPs |
+| ONTAP: Qtree | Highlights | Top $TopResources Qtrees by Internal IOPs |
 
 
 
@@ -14507,10 +14587,11 @@ This metric provides information about Qtree
 | REST | `api/storage/qtrees` | `Harvest generated` | conf/rest/9.12.0/qtree.yaml |
 | ZAPI | `qtree-list-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/qtree.yaml |
 
+The `qtree_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/datacenter.json | Highlights | Object Count |
+| ONTAP: Datacenter | Highlights | Object Count |
 
 
 
@@ -14523,11 +14604,11 @@ Number of NFS operations per second to the qtree
 | REST | `api/cluster/counter/tables/qtree` | `nfs_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/qtree.yaml |
 | ZAPI | `perf-object-get-instances qtree` | `nfs_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/qtree.yaml |
 
+The `qtree_nfs_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/qtree.json | Highlights | Top $TopResources NFSs by IOPs |
-| cmode/qtree.json | Highlights | Top $TopResources NFSs by IOPs |
+| ONTAP: Qtree | Highlights | Top $TopResources NFSs by IOPs |
 
 
 
@@ -14591,12 +14672,12 @@ Summation of NFS ops, CIFS ops, CSS ops and internal ops
 | KeyPerf | `api/storage/qtrees` | `statistics.iops_raw.total`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/qtree.yaml |
 | ZAPI | `perf-object-get-instances qtree` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/qtree.yaml |
 
+The `qtree_total_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/qtree.json | Highlights | Top $TopResources Qtrees by IOPs |
-| cmode/qtree.json | Highlights | Top $TopResources Qtrees by IOPs |
-| cmode-details/volumeDeepDive.json | Highlights | Qtrees by IOPs |
+| ONTAP: Qtree | Highlights | Top $TopResources Qtrees by IOPs |
+| ONTAP: Volume Deep Dive | Highlights | Qtrees by IOPs |
 
 
 
@@ -14629,11 +14710,12 @@ Maximum amount of disk space, in kilobytes, allowed for the quota target (hard d
 | REST | `api/storage/quota/reports` | `space.hard_limit` | conf/rest/9.12.0/quota.yaml |
 | ZAPI | `quota-report-iter` | `disk-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
 
+The `quota_disk_limit` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/datacenter.json | Highlights | Object Count |
-| cmode/quotaReport.json | Highlights | Reports |
+| ONTAP: Datacenter | Highlights | Object Count |
+| ONTAP: Quota | Highlights | Reports |
 
 
 
@@ -14646,16 +14728,14 @@ Current amount of disk space, in kilobytes, used by the quota target.
 | REST | `api/storage/quota/reports` | `space.used.total` | conf/rest/9.12.0/quota.yaml |
 | ZAPI | `quota-report-iter` | `disk-used` | conf/zapi/cdot/9.8.0/qtree.yaml |
 
+The `quota_disk_used` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/qtree.json | Usage | Top $TopResources Qtrees by Disk Used |
-| cmode/qtree.json | Usage | Top $TopResources Qtrees by Disk Used |
-| cmode/qtree.json | Usage | Top $TopResources Qtrees by Disk Used Growth |
-| cmode/qtree.json | Usage | Top $TopResources Qtrees by Disk Used Growth |
-| cmode/quotaReport.json | Highlights | Reports |
-| cmode/quotaReport.json | Space Usage | Top $TopResources Quotas by Space Used |
-| cmode/quotaReport.json | Space Usage | Top $TopResources Quotas by Space Used |
+| ONTAP: Qtree | Usage | Top $TopResources Qtrees by Disk Used |
+| ONTAP: Qtree | Usage | Top $TopResources Qtrees by Disk Used Growth |
+| ONTAP: Quota | Highlights | Reports |
+| ONTAP: Quota | Space Usage | Top $TopResources Quotas by Space Used |
 
 
 
@@ -14668,12 +14748,12 @@ Current disk space used expressed as a percentage of hard disk limit.
 | REST | `api/storage/quota/reports` | `space.used.hard_limit_percent` | conf/rest/9.12.0/quota.yaml |
 | ZAPI | `quota-report-iter` | `disk-used-pct-disk-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
 
+The `quota_disk_used_pct_disk_limit` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/quotaReport.json | Highlights | Reports |
-| cmode/quotaReport.json | Space Usage | Top $TopResources Quotas by Space Used % |
-| cmode/quotaReport.json | Space Usage | Top $TopResources Quotas by Space Used % |
+| ONTAP: Quota | Highlights | Reports |
+| ONTAP: Quota | Space Usage | Top $TopResources Quotas by Space Used % |
 
 
 
@@ -14707,10 +14787,11 @@ Maximum number of files allowed for the quota target (hard files limit). The val
 | REST | `api/storage/quota/reports` | `files.hard_limit` | conf/rest/9.12.0/quota.yaml |
 | ZAPI | `quota-report-iter` | `file-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
 
+The `quota_file_limit` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/quotaReport.json | Highlights | Reports |
+| ONTAP: Quota | Highlights | Reports |
 
 
 
@@ -14723,14 +14804,13 @@ Current number of files used by the quota target.
 | REST | `api/storage/quota/reports` | `files.used.total` | conf/rest/9.12.0/quota.yaml |
 | ZAPI | `quota-report-iter` | `files-used` | conf/zapi/cdot/9.8.0/qtree.yaml |
 
+The `quota_files_used` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/qtree.json | Usage | Top $TopResources Qtrees by Files Used |
-| cmode/qtree.json | Usage | Top $TopResources Qtrees by Files Used |
-| cmode/quotaReport.json | Highlights | Reports |
-| cmode/quotaReport.json | Space Usage | Top $TopResources Quotas by Files Used |
-| cmode/quotaReport.json | Space Usage | Top $TopResources Quotas by Files Used |
+| ONTAP: Qtree | Usage | Top $TopResources Qtrees by Files Used |
+| ONTAP: Quota | Highlights | Reports |
+| ONTAP: Quota | Space Usage | Top $TopResources Quotas by Files Used |
 
 
 
@@ -14743,12 +14823,12 @@ Current number of files used expressed as a percentage of hard file limit.
 | REST | `api/storage/quota/reports` | `files.used.hard_limit_percent` | conf/rest/9.12.0/quota.yaml |
 | ZAPI | `quota-report-iter` | `files-used-pct-file-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
 
+The `quota_files_used_pct_file_limit` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/quotaReport.json | Highlights | Reports |
-| cmode/quotaReport.json | Space Usage | Top $TopResources Quotas by Files Used % |
-| cmode/quotaReport.json | Space Usage | Top $TopResources Quotas by Files Used % |
+| ONTAP: Quota | Highlights | Reports |
+| ONTAP: Quota | Space Usage | Top $TopResources Quotas by Files Used % |
 
 
 
@@ -14772,10 +14852,11 @@ soft disk space limit, in kilobytes, for the quota target. The value is -1 if th
 | REST | `api/storage/quota/reports` | `space.soft_limit` | conf/rest/9.12.0/quota.yaml |
 | ZAPI | `quota-report-iter` | `soft-disk-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
 
+The `quota_soft_disk_limit` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/quotaReport.json | Highlights | Reports |
+| ONTAP: Quota | Highlights | Reports |
 
 
 
@@ -14788,10 +14869,11 @@ Soft file limit, in number of files, for the quota target. The value is -1 if th
 | REST | `api/storage/quota/reports` | `files.soft_limit` | conf/rest/9.12.0/quota.yaml |
 | ZAPI | `quota-report-iter` | `soft-file-limit` | conf/zapi/cdot/9.8.0/qtree.yaml |
 
+The `quota_soft_file_limit` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/quotaReport.json | Highlights | Reports |
+| ONTAP: Quota | Highlights | Reports |
 
 
 
@@ -14815,11 +14897,11 @@ The utilization percent of the disk. raid_disk_busy is [disk_busy](#disk_busy) a
 | REST | `api/cluster/counter/tables/disk:constituent` | `disk_busy_percent`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `disk_busy`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> base_for_disk_busy | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
+The `raid_disk_busy` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/disk.json | Top Disks: Raid-level Overview | Top $TopResources Disks by Disk Busy |
-| cmode/disk.json | Top Disks: Raid-level Overview | Top $TopResources Disks by Disk Busy |
+| ONTAP: Disk | Top Disks: Raid-level Overview | Top $TopResources Disks by Disk Busy |
 
 
 
@@ -14909,11 +14991,11 @@ Total number of disk operations involving data transfer initiated per second. ra
 | REST | `api/cluster/counter/tables/disk:constituent` | `total_transfer_count`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `total_transfers`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
+The `raid_disk_total_transfers` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/disk.json | Top Disks: Raid-level Overview | Top $TopResources Disks by Total Transfers |
-| cmode/disk.json | Top Disks: Raid-level Overview | Top $TopResources Disks by Total Transfers |
+| ONTAP: Disk | Top Disks: Raid-level Overview | Top $TopResources Disks by Total Transfers |
 
 
 
@@ -14948,11 +15030,11 @@ Average latency per block in microseconds for user read operations. raid_disk_us
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_block_count | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_read_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
+The `raid_disk_user_read_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/disk.json | Top Disks: Raid-level Overview | Top $TopResources Disks by User Read Latency |
-| cmode/disk.json | Top Disks: Raid-level Overview | Top $TopResources Disks by User Read Latency |
+| ONTAP: Disk | Top Disks: Raid-level Overview | Top $TopResources Disks by User Read Latency |
 
 
 
@@ -14998,11 +15080,11 @@ Average latency per block in microseconds for user write operations. raid_disk_u
 | REST | `api/cluster/counter/tables/disk:constituent` | `user_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_block_count | conf/restperf/9.12.0/disk.yaml |
 | ZAPI | `perf-object-get-instances disk:constituent` | `user_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> user_write_blocks | conf/zapiperf/cdot/9.8.0/disk.yaml |
 
+The `raid_disk_user_write_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/disk.json | Top Disks: Raid-level Overview | Top $TopResources Disks by User Write Latency |
-| cmode/disk.json | Top Disks: Raid-level Overview | Top $TopResources Disks by User Write Latency |
+| ONTAP: Disk | Top Disks: Raid-level Overview | Top $TopResources Disks by User Write Latency |
 
 
 
@@ -15026,11 +15108,11 @@ Array of number of give-ups of CIFS ops because they rewind more than a certain 
 | REST | `api/cluster/counter/tables/rewind_context` | `cifs_give_ups`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.16.0/rwctx.yaml |
 | ZAPI | `perf-object-get-instances rw_ctx` | `cifs_giveups`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml |
 
+The `rw_ctx_cifs_giveups` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | Rewind View | Top $TopResources Metric by CIFS Giveups |
-| cmode/node.json | Rewind View | Top $TopResources Metric by CIFS Giveups |
+| ONTAP: Node | Rewind View | Top $TopResources Metric by CIFS Giveups |
 
 
 
@@ -15043,11 +15125,11 @@ Array of number of rewinds for CIFS ops based on their reasons.
 | REST | `api/cluster/counter/tables/rewind_context` | `cifs_rewinds`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.16.0/rwctx.yaml |
 | ZAPI | `perf-object-get-instances rw_ctx` | `cifs_rewinds`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml |
 
+The `rw_ctx_cifs_rewinds` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | Rewind View | Top $TopResources Metric by CIFS Rewinds |
-| cmode/node.json | Rewind View | Top $TopResources Metric by CIFS Rewinds |
+| ONTAP: Node | Rewind View | Top $TopResources Metric by CIFS Rewinds |
 
 
 
@@ -15060,11 +15142,11 @@ Array of number of give-ups of NFS ops because they rewind more than a certain t
 | REST | `api/cluster/counter/tables/rewind_context` | `nfs_give_ups`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.16.0/rwctx.yaml |
 | ZAPI | `perf-object-get-instances rw_ctx` | `nfs_giveups`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml |
 
+The `rw_ctx_nfs_giveups` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | Rewind View | Top $TopResources Metric by NFS Giveups |
-| cmode/node.json | Rewind View | Top $TopResources Metric by NFS Giveups |
+| ONTAP: Node | Rewind View | Top $TopResources Metric by NFS Giveups |
 
 
 
@@ -15077,11 +15159,11 @@ Array of number of rewinds for NFS ops based on their reasons.
 | REST | `api/cluster/counter/tables/rewind_context` | `nfs_rewinds`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.16.0/rwctx.yaml |
 | ZAPI | `perf-object-get-instances rw_ctx` | `nfs_rewinds`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml |
 
+The `rw_ctx_nfs_rewinds` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | Rewind View | Top $TopResources Metric by NFS Rewinds |
-| cmode/node.json | Rewind View | Top $TopResources Metric by NFS Rewinds |
+| ONTAP: Node | Rewind View | Top $TopResources Metric by NFS Rewinds |
 
 
 
@@ -15093,11 +15175,11 @@ The number of times QoS limiting has enabled stream flowcontrol.
 |--------|----------|--------|---------|
 | ZAPI | `perf-object-get-instances rw_ctx` | `qos_flowcontrol`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml |
 
+The `rw_ctx_qos_flowcontrol` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | Rewind View | Top $TopResources Node by QoS Flowcontrol |
-| cmode/node.json | Rewind View | Top $TopResources Node by QoS Flowcontrol |
+| ONTAP: Node | Rewind View | Top $TopResources Node by QoS Flowcontrol |
 
 
 
@@ -15109,11 +15191,11 @@ The number of restarts after a rewind because of QoS limiting.
 |--------|----------|--------|---------|
 | ZAPI | `perf-object-get-instances rw_ctx` | `qos_rewinds`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/rwctx.yaml |
 
+The `rw_ctx_qos_rewinds` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | Rewind View | Top $TopResources Node by QoS Rewinds |
-| cmode/node.json | Rewind View | Top $TopResources Node by QoS Rewinds |
+| ONTAP: Node | Rewind View | Top $TopResources Node by QoS Rewinds |
 
 
 
@@ -15126,17 +15208,13 @@ This metric provides information about SecurityAccount
 | REST | `api/security/accounts` | `Harvest generated` | conf/rest/9.12.0/security_account.yaml |
 | ZAPI | `security-login-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/security_account.yaml |
 
+The `security_account_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/security.json | Highlights | Cluster Compliant % |
-| cmode/security.json | Highlights | Cluster Compliant % |
-| cmode/security.json | Highlights | Cluster Compliant |
-| cmode/security.json | Highlights | Cluster Compliant |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| ONTAP: Security | Highlights | Cluster Compliant % |
+| ONTAP: Security | Highlights | Cluster Compliant |
+| ONTAP: Security | Cluster Compliance | Cluster Compliance |
 
 
 
@@ -15159,10 +15237,11 @@ The destination port used to forward the message.
 | REST | `api/private/cli/security/certificate` | `expiration` | conf/rest/9.12.0/security_certificate.yaml |
 | ZAPI | `security-certificate-get-iter` | `certificate-info.expiration-date` | conf/zapi/cdot/9.8.0/security_certificate.yaml |
 
+The `security_certificate_expiry_time` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/security.json | Highlights | SSL Certificates Expiration |
+| ONTAP: Security | Highlights | SSL Certificates Expiration |
 
 
 
@@ -15175,13 +15254,14 @@ This metric provides information about SecurityCert
 | REST | `api/private/cli/security/certificate` | `Harvest generated` | conf/rest/9.12.0/security_certificate.yaml |
 | ZAPI | `security-certificate-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/security_certificate.yaml |
 
+The `security_certificate_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/security.json | Highlights | Expiring in < 60 days |
-| cmode/security.json | Highlights | Expired |
-| cmode/security.json | Highlights | SSL Certificates Expiration |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| ONTAP: Security | Highlights | Expiring in < 60 days |
+| ONTAP: Security | Highlights | Expired |
+| ONTAP: Security | Highlights | SSL Certificates Expiration |
+| ONTAP: Security | Cluster Compliance | Cluster Compliance |
 
 
 
@@ -15194,21 +15274,13 @@ This metric provides information about Security
 | REST | `api/security` | `Harvest generated` | conf/rest/9.12.0/security.yaml |
 | ZAPI | `cluster-identity-get` | `Harvest generated` | conf/zapi/cdot/9.8.0/security.yaml |
 
+The `security_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/security.json | Highlights | Cluster Compliant % |
-| cmode/security.json | Highlights | Cluster Compliant % |
-| cmode/security.json | Highlights | Cluster Compliant % |
-| cmode/security.json | Highlights | Cluster Compliant % |
-| cmode/security.json | Highlights | Cluster Compliant |
-| cmode/security.json | Highlights | Cluster Compliant |
-| cmode/security.json | Highlights | Cluster Compliant |
-| cmode/security.json | Highlights | Cluster Compliant |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| ONTAP: Security | Highlights | Cluster Compliant % |
+| ONTAP: Security | Highlights | Cluster Compliant |
+| ONTAP: Security | Cluster Compliance | Cluster Compliance |
 
 
 
@@ -15221,31 +15293,16 @@ This metric provides information about SecurityLogin
 | REST | `api/security/login/messages` | `Harvest generated` | conf/rest/9.12.0/security_login.yaml |
 | ZAPI | `vserver-login-banner-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/security_login.yaml |
 
+The `security_login_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/security.json | Highlights | Cluster Compliant % |
-| cmode/security.json | Highlights | Cluster Compliant % |
-| cmode/security.json | Highlights | Cluster Compliant % |
-| cmode/security.json | Highlights | Cluster Compliant % |
-| cmode/security.json | Highlights | SVM Compliant % |
-| cmode/security.json | Highlights | SVM Compliant % |
-| cmode/security.json | Highlights | Cluster Compliant |
-| cmode/security.json | Highlights | Cluster Compliant |
-| cmode/security.json | Highlights | Cluster Compliant |
-| cmode/security.json | Highlights | Cluster Compliant |
-| cmode/security.json | Highlights | SVM Compliant |
-| cmode/security.json | Highlights | SVM Compliant |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
-| cmode/security.json | SVM Compliance | SVM Compliance |
-| cmode/security.json | SVM Compliance | SVM Compliance |
-| cmode/security.json | SVM Compliance | SVM Compliance |
-| cmode/security.json | SVM Compliance | SVM Compliance |
+| ONTAP: Security | Highlights | Cluster Compliant % |
+| ONTAP: Security | Highlights | SVM Compliant % |
+| ONTAP: Security | Highlights | Cluster Compliant |
+| ONTAP: Security | Highlights | SVM Compliant |
+| ONTAP: Security | Cluster Compliance | Cluster Compliance |
+| ONTAP: Security | SVM Compliance | SVM Compliance |
 
 
 
@@ -15257,12 +15314,13 @@ This metric provides information about SecuritySsh
 |--------|----------|--------|---------|
 | REST | `api/security/ssh` | `Harvest generated` | conf/rest/9.12.0/security_ssh.yaml |
 
+The `security_ssh_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/security.json | Highlights | Cluster Compliant % |
-| cmode/security.json | Highlights | Cluster Compliant |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| ONTAP: Security | Highlights | Cluster Compliant % |
+| ONTAP: Security | Highlights | Cluster Compliant |
+| ONTAP: Security | Cluster Compliance | Cluster Compliance |
 
 
 
@@ -15318,12 +15376,13 @@ Disk count in a shelf.
 | REST | `api/storage/shelves` | `disk_count` | conf/rest/9.12.0/shelf.yaml |
 | ZAPI | `storage-shelf-info-get-iter` | `storage-shelf-info.disk-count` | conf/zapi/cdot/9.8.0/shelf.yaml |
 
+The `shelf_disk_count` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/health.json | Shelves | Storage Shelf Issues |
-| cmode/power.json | Shelves | Storage Shelves |
-| cmode/shelf.json | Highlights | Storage Shelves |
+| ONTAP: Health | Shelves | Storage Shelf Issues |
+| ONTAP: Power | Shelves | Storage Shelves |
+| ONTAP: Shelf | Highlights | Storage Shelves |
 
 
 
@@ -15369,19 +15428,21 @@ This metric provides information about Shelf
 | REST | `api/storage/shelves` | `Harvest generated` | conf/rest/9.12.0/shelf.yaml |
 | ZAPI | `storage-shelf-info-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/shelf.yaml |
 
+The `shelf_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/datacenter.json | Highlights | Object Count |
-| cmode/datacenter.json | Power and Temperature | Total Power |
-| cmode/health.json | Shelves | Storage Shelf Issues |
-| cmode/power.json | Highlights | Total Power |
-| cmode/power.json | Highlights | Total Power Consumed |
-| cmode/power.json | Highlights | Average Power Consumption (kWh) Over Last Hour |
-| cmode/power.json | Shelves | Storage Shelves |
-| cmode/power.json | Shelves | Storage Shelves |
-| cmode/shelf.json | Highlights | Shelves |
-| cmode/shelf.json | Highlights | Storage Shelves |
+| ONTAP: Datacenter | Highlights | Object Count |
+| ONTAP: Datacenter | Power and Temperature | Total Power |
+| ONTAP: Health | Shelves | Storage Shelf Issues |
+| ONTAP: Power | Highlights | Total Power |
+| ONTAP: Power | Highlights | Average Power/Used_TB |
+| ONTAP: Power | Highlights | Average IOPs/Watt |
+| ONTAP: Power | Highlights | Total Power Consumed |
+| ONTAP: Power | Highlights | Average Power Consumption (kWh) Over Last Hour |
+| ONTAP: Power | Shelves | Storage Shelves |
+| ONTAP: Shelf | Highlights | Shelves |
+| ONTAP: Shelf | Highlights | Storage Shelves |
 
 
 
@@ -15636,10 +15697,11 @@ Average latency for SMB2_COM_CLOSE operations
 | REST | `api/cluster/counter/tables/smb2` | `close_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> close_ops | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `close_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> close_latency_base | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
+The `smb2_close_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/smb.json | SMB Performance | Other Latency |
+| ONTAP: SMB | SMB Performance | Other Latency |
 
 
 
@@ -15652,10 +15714,11 @@ Number of SMB2_COM_CLOSE operations
 | REST | `api/cluster/counter/tables/smb2` | `close_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `close_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
+The `smb2_close_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/smb.json | SMB Performance | Other IOPS |
+| ONTAP: SMB | SMB Performance | Other IOPS |
 
 
 
@@ -15668,10 +15731,11 @@ Average latency for SMB2_COM_CREATE operations
 | REST | `api/cluster/counter/tables/smb2` | `create_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> create_ops | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `create_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> create_latency_base | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
+The `smb2_create_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/smb.json | SMB Performance | Other Latency |
+| ONTAP: SMB | SMB Performance | Other Latency |
 
 
 
@@ -15684,10 +15748,11 @@ Number of SMB2_COM_CREATE operations
 | REST | `api/cluster/counter/tables/smb2` | `create_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `create_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
+The `smb2_create_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/smb.json | SMB Performance | Other IOPS |
+| ONTAP: SMB | SMB Performance | Other IOPS |
 
 
 
@@ -15700,10 +15765,11 @@ Average latency for SMB2_COM_LOCK operations
 | REST | `api/cluster/counter/tables/smb2` | `lock_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lock_ops | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `lock_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> lock_latency_base | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
+The `smb2_lock_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/smb.json | SMB Performance | Other Latency |
+| ONTAP: SMB | SMB Performance | Other Latency |
 
 
 
@@ -15716,10 +15782,11 @@ Number of SMB2_COM_LOCK operations
 | REST | `api/cluster/counter/tables/smb2` | `lock_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `lock_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
+The `smb2_lock_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/smb.json | SMB Performance | Other IOPS |
+| ONTAP: SMB | SMB Performance | Other IOPS |
 
 
 
@@ -15732,10 +15799,11 @@ Average latency for SMB2_COM_NEGOTIATE operations
 | REST | `api/cluster/counter/tables/smb2` | `negotiate_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> negotiate_ops | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `negotiate_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> negotiate_latency_base | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
+The `smb2_negotiate_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/smb.json | SMB Performance | Other Latency |
+| ONTAP: SMB | SMB Performance | Other Latency |
 
 
 
@@ -15748,10 +15816,11 @@ Number of SMB2_COM_NEGOTIATE operations
 | REST | `api/cluster/counter/tables/smb2` | `negotiate_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `negotiate_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
+The `smb2_negotiate_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/smb.json | SMB Performance | Other IOPS |
+| ONTAP: SMB | SMB Performance | Other IOPS |
 
 
 
@@ -15764,10 +15833,11 @@ Average latency for SMB2_COM_OPLOCK_BREAK operations
 | REST | `api/cluster/counter/tables/smb2` | `oplock_break_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> oplock_break_ops | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `oplock_break_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> oplock_break_latency_base | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
+The `smb2_oplock_break_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/smb.json | SMB Performance | Other Latency |
+| ONTAP: SMB | SMB Performance | Other Latency |
 
 
 
@@ -15780,10 +15850,11 @@ Number of SMB2_COM_OPLOCK_BREAK operations
 | REST | `api/cluster/counter/tables/smb2` | `oplock_break_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `oplock_break_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
+The `smb2_oplock_break_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/smb.json | SMB Performance | Other IOPS |
+| ONTAP: SMB | SMB Performance | Other IOPS |
 
 
 
@@ -15796,10 +15867,11 @@ Average latency for SMB2_COM_QUERY_DIRECTORY operations
 | REST | `api/cluster/counter/tables/smb2` | `query_directory_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> query_directory_ops | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `query_directory_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> query_directory_latency_base | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
+The `smb2_query_directory_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/smb.json | SMB Performance | Other Latency |
+| ONTAP: SMB | SMB Performance | Other Latency |
 
 
 
@@ -15812,10 +15884,11 @@ Number of SMB2_COM_QUERY_DIRECTORY operations
 | REST | `api/cluster/counter/tables/smb2` | `query_directory_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `query_directory_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
+The `smb2_query_directory_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/smb.json | SMB Performance | Other IOPS |
+| ONTAP: SMB | SMB Performance | Other IOPS |
 
 
 
@@ -15828,10 +15901,11 @@ Average latency for SMB2_COM_QUERY_INFO operations
 | REST | `api/cluster/counter/tables/smb2` | `query_info_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> query_info_ops | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `query_info_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> query_info_latency_base | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
+The `smb2_query_info_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/smb.json | SMB Performance | Other Latency |
+| ONTAP: SMB | SMB Performance | Other Latency |
 
 
 
@@ -15844,10 +15918,11 @@ Number of SMB2_COM_QUERY_INFO operations
 | REST | `api/cluster/counter/tables/smb2` | `query_info_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `query_info_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
+The `smb2_query_info_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/smb.json | SMB Performance | Other IOPS |
+| ONTAP: SMB | SMB Performance | Other IOPS |
 
 
 
@@ -15860,10 +15935,11 @@ Average latency for SMB2_COM_READ operations
 | REST | `api/cluster/counter/tables/smb2` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
+The `smb2_read_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/smb.json | SMB Performance | Read / Write Latency |
+| ONTAP: SMB | SMB Performance | Read / Write Latency |
 
 
 
@@ -15876,10 +15952,11 @@ Number of SMB2_COM_READ operations
 | REST | `api/cluster/counter/tables/smb2` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
+The `smb2_read_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/smb.json | SMB Performance | Read / Write IOPS |
+| ONTAP: SMB | SMB Performance | Read / Write IOPS |
 
 
 
@@ -15892,10 +15969,11 @@ Average latency for SMB2_COM_SESSION_SETUP operations
 | REST | `api/cluster/counter/tables/smb2` | `session_setup_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> session_setup_ops | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `session_setup_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> session_setup_latency_base | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
+The `smb2_session_setup_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/smb.json | SMB Performance | Other Latency |
+| ONTAP: SMB | SMB Performance | Other Latency |
 
 
 
@@ -15908,10 +15986,11 @@ Number of SMB2_COM_SESSION_SETUP operations
 | REST | `api/cluster/counter/tables/smb2` | `session_setup_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `session_setup_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
+The `smb2_session_setup_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/smb.json | SMB Performance | Other IOPS |
+| ONTAP: SMB | SMB Performance | Other IOPS |
 
 
 
@@ -15924,10 +16003,11 @@ Average latency for SMB2_COM_SET_INFO operations
 | REST | `api/cluster/counter/tables/smb2` | `set_info_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> set_info_ops | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `set_info_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> set_info_latency_base | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
+The `smb2_set_info_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/smb.json | SMB Performance | Other Latency |
+| ONTAP: SMB | SMB Performance | Other Latency |
 
 
 
@@ -15940,10 +16020,11 @@ Number of SMB2_COM_SET_INFO operations
 | REST | `api/cluster/counter/tables/smb2` | `set_info_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `set_info_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
+The `smb2_set_info_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/smb.json | SMB Performance | Other IOPS |
+| ONTAP: SMB | SMB Performance | Other IOPS |
 
 
 
@@ -15956,10 +16037,11 @@ Average latency for SMB2_COM_TREE_CONNECT operations
 | REST | `api/cluster/counter/tables/smb2` | `tree_connect_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> tree_connect_ops | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `tree_connect_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> tree_connect_latency_base | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
+The `smb2_tree_connect_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/smb.json | SMB Performance | Other Latency |
+| ONTAP: SMB | SMB Performance | Other Latency |
 
 
 
@@ -15972,11 +16054,11 @@ Number of SMB2_COM_TREE_CONNECT operations
 | REST | `api/cluster/counter/tables/smb2` | `tree_connect_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `tree_connect_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
+The `smb2_tree_connect_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/smb.json | SMB Performance | Other IOPS |
-| cmode/smb.json | SMB Performance | Other IOPS |
+| ONTAP: SMB | SMB Performance | Other IOPS |
 
 
 
@@ -15989,10 +16071,11 @@ Average latency for SMB2_COM_WRITE operations
 | REST | `api/cluster/counter/tables/smb2` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_latency_base | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
+The `smb2_write_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/smb.json | SMB Performance | Read / Write Latency |
+| ONTAP: SMB | SMB Performance | Read / Write Latency |
 
 
 
@@ -16005,10 +16088,11 @@ Number of SMB2_COM_WRITE operations
 | REST | `api/cluster/counter/tables/smb2` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/smb2.yaml |
 | ZAPI | `perf-object-get-instances smb2` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/smb2.yaml |
 
+The `smb2_write_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/smb.json | SMB Performance | Read / Write IOPS |
+| ONTAP: SMB | SMB Performance | Read / Write IOPS |
 
 
 
@@ -16021,10 +16105,11 @@ The number of failed SnapMirror break operations for the relationship
 | REST | `api/private/cli/snapmirror` | `break_failed_count` | conf/rest/9.12.0/snapmirror.yaml |
 | ZAPI | `snapmirror-get-iter` | `snapmirror-info.break-failed-count` | conf/zapi/cdot/9.8.0/snapmirror.yaml |
 
+The `snapmirror_break_failed_count` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/snapmirror.json | Highlights | Number of Failed SnapMirror Transfers |
+| ONTAP: SnapMirror Sources | Highlights | Number of Failed SnapMirror Transfers |
 
 
 
@@ -16037,10 +16122,11 @@ The number of successful SnapMirror break operations for the relationship
 | REST | `api/private/cli/snapmirror` | `break_successful_count` | conf/rest/9.12.0/snapmirror.yaml |
 | ZAPI | `snapmirror-get-iter` | `snapmirror-info.break-successful-count` | conf/zapi/cdot/9.8.0/snapmirror.yaml |
 
+The `snapmirror_break_successful_count` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/snapmirror.json | Highlights | Number of Successful SnapMirror Transfers |
+| ONTAP: SnapMirror Sources | Highlights | Number of Successful SnapMirror Transfers |
 
 
 
@@ -16053,40 +16139,23 @@ This metric provides information about SnapMirror
 | REST | `api/private/cli/snapmirror` | `Harvest generated` | conf/rest/9.12.0/snapmirror.yaml |
 | ZAPI | `snapmirror-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/snapmirror.yaml |
 
+The `snapmirror_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/datacenter.json | Highlights | Object Count |
-| cmode/snapmirror.json | Highlights | Unhealthy Relationships |
-| cmode/snapmirror.json | Highlights | Relationships |
-| cmode/snapmirror.json | Policy and Lag details | Relationships by Protection Policy |
-| cmode/snapmirror.json | Policy and Lag details | Relationships by Protection Policy |
-| cmode/snapmirror.json | Policy and Lag details | Relationships by Protection Policy |
-| cmode/snapmirror.json | Policy and Lag details | Relationships by Protection Policy |
-| cmode/snapmirror.json | Policy and Lag details | Relationships by Protection Policy |
-| cmode/snapmirror.json | Policy and Lag details | Relationships by Protection Policy |
-| cmode/snapmirror.json | Policy and Lag details | Relationships by Protection Policy |
-| cmode/snapmirror.json | Policy and Lag details | Protection Policy and Lag detail |
-| cmode/snapmirror_destinations.json | Highlights | Unhealthy |
-| cmode/snapmirror_destinations.json | Highlights | Relationships by Protection Policy |
-| cmode/snapmirror_destinations.json | Highlights | Relationships by Protection Policy |
-| cmode/snapmirror_destinations.json | Highlights | Relationships by Protection Policy |
-| cmode/snapmirror_destinations.json | Highlights | Relationships by Protection Policy |
-| cmode/snapmirror_destinations.json | Highlights | Relationships by Protection Policy |
-| cmode/snapmirror_destinations.json | Highlights | Relationships by Protection Policy |
-| cmode/snapmirror_destinations.json | Highlights | Relationships by Protection Policy |
-| cmode/snapmirror_destinations.json | Highlights | Healthy |
-| cmode/snapmirror_destinations.json | Highlights | Relationships |
-| cmode/snapmirror_destinations.json | Consistency Group Data Protection | Unhealthy |
-| cmode/snapmirror_destinations.json | Consistency Group Data Protection | Consistency Group relationships by relationship type |
-| cmode/snapmirror_destinations.json | Consistency Group Data Protection | Consistency Group relationships by relationship type |
-| cmode/snapmirror_destinations.json | Consistency Group Data Protection | Consistency Group relationships by relationship type |
-| cmode/snapmirror_destinations.json | Consistency Group Data Protection | Consistency Group relationships by relationship type |
-| cmode/snapmirror_destinations.json | Consistency Group Data Protection | Consistency Group relationships by relationship type |
-| cmode/snapmirror_destinations.json | Consistency Group Data Protection | Consistency Group relationships by relationship type |
-| cmode/snapmirror_destinations.json | Consistency Group Data Protection | Consistency Group relationships by relationship type |
-| cmode/snapmirror_destinations.json | Consistency Group Data Protection | Healthy |
-| cmode/snapmirror_destinations.json | Consistency Group Data Protection | Consistency Group Relationships |
+| ONTAP: Datacenter | Highlights | Object Count |
+| ONTAP: SnapMirror Sources | Highlights | Unhealthy Relationships |
+| ONTAP: SnapMirror Sources | Highlights | Relationships |
+| ONTAP: SnapMirror Sources | Policy and Lag details | Relationships by Protection Policy |
+| ONTAP: SnapMirror Sources | Policy and Lag details | Protection Policy and Lag detail |
+| ONTAP: SnapMirror Destinations | Highlights | Unhealthy |
+| ONTAP: SnapMirror Destinations | Highlights | Relationships by Protection Policy |
+| ONTAP: SnapMirror Destinations | Highlights | Healthy |
+| ONTAP: SnapMirror Destinations | Highlights | Relationships |
+| ONTAP: SnapMirror Destinations | Consistency Group Data Protection | Unhealthy |
+| ONTAP: SnapMirror Destinations | Consistency Group Data Protection | Consistency Group relationships by relationship type |
+| ONTAP: SnapMirror Destinations | Consistency Group Data Protection | Healthy |
+| ONTAP: SnapMirror Destinations | Consistency Group Data Protection | Consistency Group Relationships |
 
 
 
@@ -16099,20 +16168,16 @@ Amount of time since the last snapmirror transfer in seconds
 | REST | `api/private/cli/snapmirror` | `lag_time` | conf/rest/9.12.0/snapmirror.yaml |
 | ZAPI | `snapmirror-get-iter` | `snapmirror-info.lag-time` | conf/zapi/cdot/9.8.0/snapmirror.yaml |
 
+The `snapmirror_lag_time` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/snapmirror.json | Highlights | Relationships |
-| cmode/snapmirror.json | Highlights | Top $TopResources Relationships by Lag Time |
-| cmode/snapmirror.json | Highlights | Top $TopResources Relationships by Lag Time |
-| cmode/snapmirror.json | Policy and Lag details | Relationships by Lag time |
-| cmode/snapmirror.json | Policy and Lag details | Relationships by Lag time |
-| cmode/snapmirror.json | Policy and Lag details | Relationships by Lag time |
-| cmode/snapmirror.json | Policy and Lag details | Relationships by Lag time |
-| cmode/snapmirror.json | Policy and Lag details | Protection Policy and Lag detail |
-| cmode/snapmirror_destinations.json | Highlights | Relationships |
-| cmode/snapmirror_destinations.json | Highlights | Top $TopResources Relationships by Lag Time |
-| cmode/snapmirror_destinations.json | Highlights | Top $TopResources Relationships by Lag Time |
+| ONTAP: SnapMirror Sources | Highlights | Relationships |
+| ONTAP: SnapMirror Sources | Highlights | Top $TopResources Relationships by Lag Time |
+| ONTAP: SnapMirror Sources | Policy and Lag details | Relationships by Lag time |
+| ONTAP: SnapMirror Sources | Policy and Lag details | Protection Policy and Lag detail |
+| ONTAP: SnapMirror Destinations | Highlights | Relationships |
+| ONTAP: SnapMirror Destinations | Highlights | Top $TopResources Relationships by Lag Time |
 
 
 
@@ -16125,15 +16190,14 @@ Duration of the last SnapMirror transfer in seconds
 | REST | `api/private/cli/snapmirror` | `last_transfer_duration` | conf/rest/9.12.0/snapmirror.yaml |
 | ZAPI | `snapmirror-get-iter` | `snapmirror-info.last-transfer-duration` | conf/zapi/cdot/9.8.0/snapmirror.yaml |
 
+The `snapmirror_last_transfer_duration` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/snapmirror.json | Highlights | Relationships |
-| cmode/snapmirror.json | Highlights | Top $TopResources Relationships by Transfer Duration |
-| cmode/snapmirror.json | Highlights | Top $TopResources Relationships by Transfer Duration |
-| cmode/snapmirror_destinations.json | Highlights | Relationships |
-| cmode/snapmirror_destinations.json | Highlights | Top $TopResources Relationships by Transfer Duration |
-| cmode/snapmirror_destinations.json | Highlights | Top $TopResources Relationships by Transfer Duration |
+| ONTAP: SnapMirror Sources | Highlights | Relationships |
+| ONTAP: SnapMirror Sources | Highlights | Top $TopResources Relationships by Transfer Duration |
+| ONTAP: SnapMirror Destinations | Highlights | Relationships |
+| ONTAP: SnapMirror Destinations | Highlights | Top $TopResources Relationships by Transfer Duration |
 
 
 
@@ -16157,15 +16221,14 @@ Size in kilobytes (1024 bytes) of the last transfer
 | REST | `api/private/cli/snapmirror` | `last_transfer_size` | conf/rest/9.12.0/snapmirror.yaml |
 | ZAPI | `snapmirror-get-iter` | `snapmirror-info.last-transfer-size` | conf/zapi/cdot/9.8.0/snapmirror.yaml |
 
+The `snapmirror_last_transfer_size` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/snapmirror.json | Highlights | Relationships |
-| cmode/snapmirror.json | Highlights | Top $TopResources Relationships by Transfer Data |
-| cmode/snapmirror.json | Highlights | Top $TopResources Relationships by Transfer Data |
-| cmode/snapmirror_destinations.json | Highlights | Relationships |
-| cmode/snapmirror_destinations.json | Highlights | Top $TopResources Relationships by Transfer Data |
-| cmode/snapmirror_destinations.json | Highlights | Top $TopResources Relationships by Transfer Data |
+| ONTAP: SnapMirror Sources | Highlights | Relationships |
+| ONTAP: SnapMirror Sources | Highlights | Top $TopResources Relationships by Transfer Data |
+| ONTAP: SnapMirror Destinations | Highlights | Relationships |
+| ONTAP: SnapMirror Destinations | Highlights | Top $TopResources Relationships by Transfer Data |
 
 
 
@@ -16188,10 +16251,11 @@ This metric provides information about SnapMirrorPolicy
 |--------|----------|--------|---------|
 | REST | `api/snapmirror/policies` | `Harvest generated` | conf/rest/9.6.0/snapmirrorpolicy.yaml |
 
+The `snapmirror_policy_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/data_protection.json | Local Policy | Protection policies |
+| ONTAP: Data Protection | Local Policy | Protection policies |
 
 
 
@@ -16204,10 +16268,11 @@ The number of failed SnapMirror resync operations for the relationship
 | REST | `api/private/cli/snapmirror` | `resync_failed_count` | conf/rest/9.12.0/snapmirror.yaml |
 | ZAPI | `snapmirror-get-iter` | `snapmirror-info.resync-failed-count` | conf/zapi/cdot/9.8.0/snapmirror.yaml |
 
+The `snapmirror_resync_failed_count` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/snapmirror.json | Highlights | Number of Failed SnapMirror Transfers |
+| ONTAP: SnapMirror Sources | Highlights | Number of Failed SnapMirror Transfers |
 
 
 
@@ -16220,10 +16285,11 @@ The number of successful SnapMirror resync operations for the relationship
 | REST | `api/private/cli/snapmirror` | `resync_successful_count` | conf/rest/9.12.0/snapmirror.yaml |
 | ZAPI | `snapmirror-get-iter` | `snapmirror-info.resync-successful-count` | conf/zapi/cdot/9.8.0/snapmirror.yaml |
 
+The `snapmirror_resync_successful_count` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/snapmirror.json | Highlights | Number of Successful SnapMirror Transfers |
+| ONTAP: SnapMirror Sources | Highlights | Number of Successful SnapMirror Transfers |
 
 
 
@@ -16258,10 +16324,11 @@ The number of successful SnapMirror update operations for the relationship
 | REST | `api/private/cli/snapmirror` | `update_failed_count` | conf/rest/9.12.0/snapmirror.yaml |
 | ZAPI | `snapmirror-get-iter` | `snapmirror-info.update-failed-count` | conf/zapi/cdot/9.8.0/snapmirror.yaml |
 
+The `snapmirror_update_failed_count` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/snapmirror.json | Highlights | Number of Failed SnapMirror Transfers |
+| ONTAP: SnapMirror Sources | Highlights | Number of Failed SnapMirror Transfers |
 
 
 
@@ -16274,10 +16341,11 @@ Number of Successful Updates
 | REST | `api/private/cli/snapmirror` | `update_successful_count` | conf/rest/9.12.0/snapmirror.yaml |
 | ZAPI | `snapmirror-get-iter` | `snapmirror-info.update-successful-count` | conf/zapi/cdot/9.8.0/snapmirror.yaml |
 
+The `snapmirror_update_successful_count` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/snapmirror.json | Highlights | Number of Successful SnapMirror Transfers |
+| ONTAP: SnapMirror Sources | Highlights | Number of Successful SnapMirror Transfers |
 
 
 
@@ -16290,19 +16358,17 @@ This metric provides information about SnapshotPolicy
 | REST | `api/storage/snapshot-policies` | `Harvest generated` | conf/rest/9.12.0/snapshotpolicy.yaml |
 | ZAPI | `snapshot-policy-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/snapshotpolicy.yaml |
 
+The `snapshot_policy_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/data_protection.json | Snapshot Copies |  <10 Copies  |
-| cmode/data_protection.json | Snapshot Copies | 10-100 Copies |
-| cmode/data_protection.json | Snapshot Copies | 101-500 Copies |
-| cmode/data_protection.json | Snapshot Copies | >500 Copies |
-| cmode/data_protection.json | Snapshot Copies | Volume count by the number of Snapshot copies |
-| cmode/data_protection.json | Local Policy | Snapshot policies |
-| cmode/datacenter.json | Snapshots | Snapshot Copies |
-| cmode/datacenter.json | Snapshots | Snapshot Copies |
-| cmode/datacenter.json | Snapshots | Snapshot Copies |
-| cmode/datacenter.json | Snapshots | Snapshot Copies |
+| ONTAP: Data Protection | Snapshot Copies |  <10 Copies  |
+| ONTAP: Data Protection | Snapshot Copies | 10-100 Copies |
+| ONTAP: Data Protection | Snapshot Copies | 101-500 Copies |
+| ONTAP: Data Protection | Snapshot Copies | >500 Copies |
+| ONTAP: Data Protection | Snapshot Copies | Volume count by the number of Snapshot copies |
+| ONTAP: Data Protection | Local Policy | Snapshot policies |
+| ONTAP: Datacenter | Snapshots | Snapshot Copies |
 
 
 
@@ -16314,11 +16380,11 @@ This metric provides information about SupportAutoUpdate
 |--------|----------|--------|---------|
 | REST | `api/support/auto-update` | `Harvest generated` | conf/rest/9.12.0/support_auto_update.yaml |
 
+The `support_auto_update_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| ONTAP: Security | Cluster Compliance | Cluster Compliance |
 
 
 
@@ -16331,13 +16397,13 @@ This metric provides information about Support
 | REST | `api/support/autosupport` | `Harvest generated` | conf/rest/9.12.0/support.yaml |
 | ZAPI | `autosupport-config-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/support.yaml |
 
+The `support_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/security.json | Highlights | Cluster Compliant % |
-| cmode/security.json | Highlights | Cluster Compliant |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
+| ONTAP: Security | Highlights | Cluster Compliant % |
+| ONTAP: Security | Highlights | Cluster Compliant |
+| ONTAP: Security | Cluster Compliance | Cluster Compliance |
 
 
 
@@ -16350,10 +16416,11 @@ Number of connections
 | REST | `api/cluster/counter/tables/svm_cifs` | `connections`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_vserver.yaml |
 | ZAPI | `perf-object-get-instances cifs:vserver` | `connections`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_vserver.yaml |
 
+The `svm_cifs_connections` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | CIFS | SVM CIFS Connections and Open Files |
+| ONTAP: SVM | CIFS | SVM CIFS Connections and Open Files |
 
 
 
@@ -16377,11 +16444,12 @@ Average latency for CIFS operations
 | REST | `api/cluster/counter/tables/svm_cifs` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> latency_base | conf/restperf/9.12.0/cifs_vserver.yaml |
 | ZAPI | `perf-object-get-instances cifs:vserver` | `cifs_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cifs_latency_base | conf/zapiperf/cdot/9.8.0/cifs_vserver.yaml |
 
+The `svm_cifs_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | CIFS | SVM CIFS Average Latency |
-| cmode/svm.json | CIFS | SVM CIFS Latency |
+| ONTAP: SVM | CIFS | SVM CIFS Average Latency |
+| ONTAP: SVM | CIFS | SVM CIFS Latency |
 
 
 
@@ -16394,12 +16462,12 @@ Array of select CIFS operation counts
 | REST | `api/cluster/counter/tables/svm_cifs` | `op_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_vserver.yaml |
 | ZAPI | `perf-object-get-instances cifs:vserver` | `cifs_op_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_vserver.yaml |
 
+The `svm_cifs_op_count` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | CIFS | SVM CIFS IOPs |
-| cmode/svm.json | CIFS | SVM CIFS IOPs |
-| cmode/svm.json | CIFS | SVM CIFS IOP by Type |
+| ONTAP: SVM | CIFS | SVM CIFS IOPs |
+| ONTAP: SVM | CIFS | SVM CIFS IOP by Type |
 
 
 
@@ -16412,10 +16480,11 @@ Number of open files over SMB and SMB2
 | REST | `api/cluster/counter/tables/svm_cifs` | `open_files`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.12.0/cifs_vserver.yaml |
 | ZAPI | `perf-object-get-instances cifs:vserver` | `open_files`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_vserver.yaml |
 
+The `svm_cifs_open_files` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | CIFS | SVM CIFS Connections and Open Files |
+| ONTAP: SVM | CIFS | SVM CIFS Connections and Open Files |
 
 
 
@@ -16470,11 +16539,12 @@ Average latency for CIFS read operations
 | KeyPerf | `api/protocols/cifs/services` | `statistics.latency_raw.read`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> svm_cifs_statistics.iops_raw.read | conf/keyperf/9.15.0/cifs_vserver.yaml |
 | ZAPI | `perf-object-get-instances cifs:vserver` | `cifs_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cifs_read_ops | conf/zapiperf/cdot/9.8.0/cifs_vserver.yaml |
 
+The `svm_cifs_read_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | CIFS | SVM CIFS Average Read Latency |
-| cmode/svm.json | CIFS | SVM CIFS Latency |
+| ONTAP: SVM | CIFS | SVM CIFS Average Read Latency |
+| ONTAP: SVM | CIFS | SVM CIFS Latency |
 
 
 
@@ -16488,11 +16558,12 @@ Total number of CIFS read operations
 | KeyPerf | `api/protocols/cifs/services` | `statistics.iops_raw.read`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/cifs_vserver.yaml |
 | ZAPI | `perf-object-get-instances cifs:vserver` | `cifs_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_vserver.yaml |
 
+The `svm_cifs_read_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | CIFS | SVM CIFS Read IOPs |
-| cmode/svm.json | CIFS | SVM CIFS IOPs |
+| ONTAP: SVM | CIFS | SVM CIFS Read IOPs |
+| ONTAP: SVM | CIFS | SVM CIFS IOPs |
 
 
 
@@ -16547,11 +16618,12 @@ Average latency for CIFS write operations
 | KeyPerf | `api/protocols/cifs/services` | `statistics.latency_raw.write`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> svm_cifs_statistics.iops_raw.write | conf/keyperf/9.15.0/cifs_vserver.yaml |
 | ZAPI | `perf-object-get-instances cifs:vserver` | `cifs_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cifs_write_ops | conf/zapiperf/cdot/9.8.0/cifs_vserver.yaml |
 
+The `svm_cifs_write_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | CIFS | SVM CIFS Average Write Latency |
-| cmode/svm.json | CIFS | SVM CIFS Latency |
+| ONTAP: SVM | CIFS | SVM CIFS Average Write Latency |
+| ONTAP: SVM | CIFS | SVM CIFS Latency |
 
 
 
@@ -16565,11 +16637,12 @@ Total number of CIFS write operations
 | KeyPerf | `api/protocols/cifs/services` | `statistics.iops_raw.write`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/cifs_vserver.yaml |
 | ZAPI | `perf-object-get-instances cifs:vserver` | `cifs_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/cifs_vserver.yaml |
 
+The `svm_cifs_write_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | CIFS | SVM CIFS Write IOPs |
-| cmode/svm.json | CIFS | SVM CIFS IOPs |
+| ONTAP: SVM | CIFS | SVM CIFS Write IOPs |
+| ONTAP: SVM | CIFS | SVM CIFS IOPs |
 
 
 
@@ -16582,51 +16655,21 @@ This metric provides information about SVM
 | REST | `api/private/cli/vserver` | `Harvest generated` | conf/rest/9.9.0/svm.yaml |
 | ZAPI | `vserver-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/svm.yaml |
 
+The `svm_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/cdot.json | Capacity Metrics | Top $TopResources SVMs by Capacity Used % |
-| cmode/cdot.json | Capacity Metrics | Top $TopResources SVMs by Capacity Used % |
-| cmode/cdot.json | SVM Metrics | Top $TopResources Average Throughput by SVMs |
-| cmode/datacenter.json | Highlights | Object Count |
-| cmode/security.json | Highlights | Cluster Compliant % |
-| cmode/security.json | Highlights | Cluster Compliant % |
-| cmode/security.json | Highlights | Cluster Compliant % |
-| cmode/security.json | Highlights | Cluster Compliant % |
-| cmode/security.json | Highlights | SVM Compliant % |
-| cmode/security.json | Highlights | SVM Compliant % |
-| cmode/security.json | Highlights | SVM Compliant % |
-| cmode/security.json | Highlights | SVM Compliant % |
-| cmode/security.json | Highlights | SVM Compliant % |
-| cmode/security.json | Highlights | SVM Compliant % |
-| cmode/security.json | Highlights | SVM Anti-ransomware Status % |
-| cmode/security.json | Highlights | SVM Anti-ransomware Status % |
-| cmode/security.json | Highlights | Cluster Compliant |
-| cmode/security.json | Highlights | Cluster Compliant |
-| cmode/security.json | Highlights | Cluster Compliant |
-| cmode/security.json | Highlights | Cluster Compliant |
-| cmode/security.json | Highlights | SVM Compliant |
-| cmode/security.json | Highlights | SVM Compliant |
-| cmode/security.json | Highlights | SVM Compliant |
-| cmode/security.json | Highlights | SVM Compliant |
-| cmode/security.json | Highlights | SVM Compliant |
-| cmode/security.json | Highlights | SVM Compliant |
-| cmode/security.json | Highlights | SVM Anti-ransomware Status |
-| cmode/security.json | Highlights | SVM Anti-ransomware Status |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
-| cmode/security.json | SVM Compliance | SVM Compliance |
-| cmode/security.json | SVM Compliance | SVM Compliance |
-| cmode/security.json | SVM Compliance | SVM Compliance |
-| cmode/security.json | SVM Compliance | SVM Compliance |
-| cmode/security.json | SVM Compliance | SVM Compliance |
-| cmode/security.json | SVM Compliance | SVM Compliance |
-| cmode/security.json | SVM Compliance | SVM Compliance |
+| ONTAP: cDOT | Capacity Metrics | Top $TopResources SVMs by Capacity Used % |
+| ONTAP: cDOT | SVM Metrics | Top $TopResources Average Throughput by SVMs |
+| ONTAP: Datacenter | Highlights | Object Count |
+| ONTAP: Security | Highlights | Cluster Compliant % |
+| ONTAP: Security | Highlights | SVM Compliant % |
+| ONTAP: Security | Highlights | SVM Anti-ransomware Status % |
+| ONTAP: Security | Highlights | Cluster Compliant |
+| ONTAP: Security | Highlights | SVM Compliant |
+| ONTAP: Security | Highlights | SVM Anti-ransomware Status |
+| ONTAP: Security | Cluster Compliance | Cluster Compliance |
+| ONTAP: Security | SVM Compliance | SVM Compliance |
 
 
 
@@ -17219,13 +17262,14 @@ Average latency of NFSv3 requests. This counter keeps track of the average respo
 | ZAPI | `perf-object-get-instances nfsv4_1` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
+The `svm_nfs_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | NFSv3 | NFSv3 Avg Latency |
-| cmode/svm.json | NFSv4 | NFSv4 Avg Latency |
-| cmode/svm.json | NFSv4.1 | NFSv4.1 Avg Latency |
-| cmode/svm.json | NFSv4.2 | NFSv4.2 Avg Latency |
+| ONTAP: SVM | NFSv3 | NFSv3 Avg Latency |
+| ONTAP: SVM | NFSv4 | NFSv4 Avg Latency |
+| ONTAP: SVM | NFSv4.1 | NFSv4.1 Avg Latency |
+| ONTAP: SVM | NFSv4.2 | NFSv4.2 Avg Latency |
 
 
 
@@ -17733,21 +17777,18 @@ Total number of NFSv3 procedure requests per second.
 | ZAPI | `perf-object-get-instances nfsv4_1` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
+The `svm_nfs_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | NFSv3 | NFSv3 IOPs |
-| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by IOPs |
-| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by IOPs |
-| cmode/svm.json | NFSv4 | NFSv4 IOPs |
-| cmode/svm.json | NFSv4 | Top $TopResources NFSv4 SVMs by IOPs |
-| cmode/svm.json | NFSv4 | Top $TopResources NFSv4 SVMs by IOPs |
-| cmode/svm.json | NFSv4.1 | NFSv4.1 IOPs |
-| cmode/svm.json | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by IOPs |
-| cmode/svm.json | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by IOPs |
-| cmode/svm.json | NFSv4.2 | NFSv4.2 IOPs |
-| cmode/svm.json | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by IOPs |
-| cmode/svm.json | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by IOPs |
+| ONTAP: SVM | NFSv3 | NFSv3 IOPs |
+| ONTAP: SVM | NFSv3 | Top $TopResources NFSv3 SVMs by IOPs |
+| ONTAP: SVM | NFSv4 | NFSv4 IOPs |
+| ONTAP: SVM | NFSv4 | Top $TopResources NFSv4 SVMs by IOPs |
+| ONTAP: SVM | NFSv4.1 | NFSv4.1 IOPs |
+| ONTAP: SVM | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by IOPs |
+| ONTAP: SVM | NFSv4.2 | NFSv4.2 IOPs |
+| ONTAP: SVM | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by IOPs |
 
 
 
@@ -17905,21 +17946,18 @@ Average latency of Read procedure requests. The counter keeps track of the avera
 | ZAPI | `perf-object-get-instances nfsv4_1` | `read_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> read_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `read_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> read_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
+The `svm_nfs_read_avg_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | NFSv3 | NFSv3 Read Latency |
-| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by Read and Write Latency |
-| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by Read and Write Latency |
-| cmode/svm.json | NFSv4 | NFSv4 Read Latency |
-| cmode/svm.json | NFSv4 | Top $TopResources NFSv4 SVMs by Read and Write Latency |
-| cmode/svm.json | NFSv4 | Top $TopResources NFSv4 SVMs by Read and Write Latency |
-| cmode/svm.json | NFSv4.1 | NFSv4.1 Read Latency |
-| cmode/svm.json | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by Read and Write Latency |
-| cmode/svm.json | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by Read and Write Latency |
-| cmode/svm.json | NFSv4.2 | NFSv4.2 Read Latency |
-| cmode/svm.json | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by Read and Write Latency |
-| cmode/svm.json | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by Read and Write Latency |
+| ONTAP: SVM | NFSv3 | NFSv3 Read Latency |
+| ONTAP: SVM | NFSv3 | Top $TopResources NFSv3 SVMs by Read and Write Latency |
+| ONTAP: SVM | NFSv4 | NFSv4 Read Latency |
+| ONTAP: SVM | NFSv4 | Top $TopResources NFSv4 SVMs by Read and Write Latency |
+| ONTAP: SVM | NFSv4.1 | NFSv4.1 Read Latency |
+| ONTAP: SVM | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by Read and Write Latency |
+| ONTAP: SVM | NFSv4.2 | NFSv4.2 Read Latency |
+| ONTAP: SVM | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by Read and Write Latency |
 
 
 
@@ -17935,12 +17973,12 @@ Total observed NFSv3 read operations per second.
 | KeyPerf | `api/protocols/nfs/services` | `statistics.v41.iops_raw.read`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv3` | `nfsv3_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml |
 
+The `svm_nfs_read_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | NFSv3 | NFSv3 Read IOPs |
-| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by IOPs |
-| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by IOPs |
+| ONTAP: SVM | NFSv3 | NFSv3 Read IOPs |
+| ONTAP: SVM | NFSv3 | Top $TopResources NFSv3 SVMs by IOPs |
 
 
 
@@ -17984,21 +18022,18 @@ Rate of NFSv3 read data transfers per second.
 | ZAPI | `perf-object-get-instances nfsv4_1` | `nfs41_read_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `nfs42_read_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
+The `svm_nfs_read_throughput` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | NFSv3 | NFSv3 Read Throughput |
-| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by Throughput |
-| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by Throughput |
-| cmode/svm.json | NFSv4 | NFSv4 Read Throughput |
-| cmode/svm.json | NFSv4 | Top $TopResources NFSv4 SVMs by Throughput |
-| cmode/svm.json | NFSv4 | Top $TopResources NFSv4 SVMs by Throughput |
-| cmode/svm.json | NFSv4.1 |  NFSv4.1 Read Throughput |
-| cmode/svm.json | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by Throughput |
-| cmode/svm.json | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by Throughput |
-| cmode/svm.json | NFSv4.2 |  NFSv4.2 Read Throughput |
-| cmode/svm.json | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by Throughput |
-| cmode/svm.json | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by Throughput |
+| ONTAP: SVM | NFSv3 | NFSv3 Read Throughput |
+| ONTAP: SVM | NFSv3 | Top $TopResources NFSv3 SVMs by Throughput |
+| ONTAP: SVM | NFSv4 | NFSv4 Read Throughput |
+| ONTAP: SVM | NFSv4 | Top $TopResources NFSv4 SVMs by Throughput |
+| ONTAP: SVM | NFSv4.1 |  NFSv4.1 Read Throughput |
+| ONTAP: SVM | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by Throughput |
+| ONTAP: SVM | NFSv4.2 |  NFSv4.2 Read Throughput |
+| ONTAP: SVM | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by Throughput |
 
 
 
@@ -18017,18 +18052,16 @@ Total number Read of procedure requests. It is the total number of read success 
 | ZAPI | `perf-object-get-instances nfsv4_1` | `read_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `read_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
+The `svm_nfs_read_total` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | NFSv4 | NFSv4 Read IOPs |
-| cmode/svm.json | NFSv4 | Top $TopResources NFSv4 SVMs by IOPs |
-| cmode/svm.json | NFSv4 | Top $TopResources NFSv4 SVMs by IOPs |
-| cmode/svm.json | NFSv4.1 | NFSv4.1 Read IOPs |
-| cmode/svm.json | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by IOPs |
-| cmode/svm.json | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by IOPs |
-| cmode/svm.json | NFSv4.2 | NFSv4.2 Read IOPs |
-| cmode/svm.json | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by IOPs |
-| cmode/svm.json | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by IOPs |
+| ONTAP: SVM | NFSv4 | NFSv4 Read IOPs |
+| ONTAP: SVM | NFSv4 | Top $TopResources NFSv4 SVMs by IOPs |
+| ONTAP: SVM | NFSv4.1 | NFSv4.1 Read IOPs |
+| ONTAP: SVM | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by IOPs |
+| ONTAP: SVM | NFSv4.2 | NFSv4.2 Read IOPs |
+| ONTAP: SVM | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by IOPs |
 
 
 
@@ -18587,15 +18620,15 @@ Rate of NFSv3 data transfers per second.
 | ZAPI | `perf-object-get-instances nfsv4_1` | `nfs41_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `nfs42_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
+The `svm_nfs_throughput` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | NFSv3 | NFSv3 Throughput |
-| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by Throughput |
-| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by Throughput |
-| cmode/svm.json | NFSv4 | NFSv4 Throughput |
-| cmode/svm.json | NFSv4.1 | NFSv4.1 Throughput |
-| cmode/svm.json | NFSv4.2 | NFSv4.2 Throughput |
+| ONTAP: SVM | NFSv3 | NFSv3 Throughput |
+| ONTAP: SVM | NFSv3 | Top $TopResources NFSv3 SVMs by Throughput |
+| ONTAP: SVM | NFSv4 | NFSv4 Throughput |
+| ONTAP: SVM | NFSv4.1 | NFSv4.1 Throughput |
+| ONTAP: SVM | NFSv4.2 | NFSv4.2 Throughput |
 
 
 
@@ -18685,21 +18718,18 @@ Average latency of Write procedure requests. The counter keeps track of the aver
 | ZAPI | `perf-object-get-instances nfsv4_1` | `write_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> write_total | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `write_avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average,no-zero-values<br><span class="key">Base:</span> write_total | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
+The `svm_nfs_write_avg_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | NFSv3 | NFSv3 Write Latency |
-| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by Read and Write Latency |
-| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by Read and Write Latency |
-| cmode/svm.json | NFSv4 | NFSv4 Write Latency |
-| cmode/svm.json | NFSv4 | Top $TopResources NFSv4 SVMs by Read and Write Latency |
-| cmode/svm.json | NFSv4 | Top $TopResources NFSv4 SVMs by Read and Write Latency |
-| cmode/svm.json | NFSv4.1 | NFSv4.1 Write Latency |
-| cmode/svm.json | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by Read and Write Latency |
-| cmode/svm.json | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by Read and Write Latency |
-| cmode/svm.json | NFSv4.2 | NFSv4.2 Write Latency |
-| cmode/svm.json | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by Read and Write Latency |
-| cmode/svm.json | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by Read and Write Latency |
+| ONTAP: SVM | NFSv3 | NFSv3 Write Latency |
+| ONTAP: SVM | NFSv3 | Top $TopResources NFSv3 SVMs by Read and Write Latency |
+| ONTAP: SVM | NFSv4 | NFSv4 Write Latency |
+| ONTAP: SVM | NFSv4 | Top $TopResources NFSv4 SVMs by Read and Write Latency |
+| ONTAP: SVM | NFSv4.1 | NFSv4.1 Write Latency |
+| ONTAP: SVM | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by Read and Write Latency |
+| ONTAP: SVM | NFSv4.2 | NFSv4.2 Write Latency |
+| ONTAP: SVM | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by Read and Write Latency |
 
 
 
@@ -18715,12 +18745,12 @@ Total observed NFSv3 write operations per second.
 | KeyPerf | `api/protocols/nfs/services` | `statistics.v41.iops_raw.write`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv3` | `nfsv3_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv3.yaml |
 
+The `svm_nfs_write_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | NFSv3 | NFSv3 Write IOPs |
-| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by IOPs |
-| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by IOPs |
+| ONTAP: SVM | NFSv3 | NFSv3 Write IOPs |
+| ONTAP: SVM | NFSv3 | Top $TopResources NFSv3 SVMs by IOPs |
 
 
 
@@ -18742,21 +18772,18 @@ Rate of NFSv3 write data transfers per second.
 | ZAPI | `perf-object-get-instances nfsv4_1` | `nfs41_write_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `nfs42_write_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate,no-zero-values<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
+The `svm_nfs_write_throughput` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | NFSv3 | NFSv3 Write Throughput |
-| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by Throughput |
-| cmode/svm.json | NFSv3 | Top $TopResources NFSv3 SVMs by Throughput |
-| cmode/svm.json | NFSv4 | NFSv4 Write Throughput |
-| cmode/svm.json | NFSv4 | Top $TopResources NFSv4 SVMs by Throughput |
-| cmode/svm.json | NFSv4 | Top $TopResources NFSv4 SVMs by Throughput |
-| cmode/svm.json | NFSv4.1 |  NFSv4.1 Write Throughput |
-| cmode/svm.json | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by Throughput |
-| cmode/svm.json | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by Throughput |
-| cmode/svm.json | NFSv4.2 |  NFSv4.2 Write Throughput |
-| cmode/svm.json | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by Throughput |
-| cmode/svm.json | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by Throughput |
+| ONTAP: SVM | NFSv3 | NFSv3 Write Throughput |
+| ONTAP: SVM | NFSv3 | Top $TopResources NFSv3 SVMs by Throughput |
+| ONTAP: SVM | NFSv4 | NFSv4 Write Throughput |
+| ONTAP: SVM | NFSv4 | Top $TopResources NFSv4 SVMs by Throughput |
+| ONTAP: SVM | NFSv4.1 |  NFSv4.1 Write Throughput |
+| ONTAP: SVM | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by Throughput |
+| ONTAP: SVM | NFSv4.2 |  NFSv4.2 Write Throughput |
+| ONTAP: SVM | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by Throughput |
 
 
 
@@ -18775,18 +18802,16 @@ Total number of Write procedure requests. It is the total number of write succes
 | ZAPI | `perf-object-get-instances nfsv4_1` | `write_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nfsv4_1.yaml |
 | ZAPI | `perf-object-get-instances nfsv4_2` | `write_total`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.11.0/nfsv4_2.yaml |
 
+The `svm_nfs_write_total` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | NFSv4 | NFSv4 Write IOPs |
-| cmode/svm.json | NFSv4 | Top $TopResources NFSv4 SVMs by IOPs |
-| cmode/svm.json | NFSv4 | Top $TopResources NFSv4 SVMs by IOPs |
-| cmode/svm.json | NFSv4.1 | NFSv4.1 Write IOPs |
-| cmode/svm.json | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by IOPs |
-| cmode/svm.json | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by IOPs |
-| cmode/svm.json | NFSv4.2 | NFSv4.2 Write IOPs |
-| cmode/svm.json | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by IOPs |
-| cmode/svm.json | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by IOPs |
+| ONTAP: SVM | NFSv4 | NFSv4 Write IOPs |
+| ONTAP: SVM | NFSv4 | Top $TopResources NFSv4 SVMs by IOPs |
+| ONTAP: SVM | NFSv4.1 | NFSv4.1 Write IOPs |
+| ONTAP: SVM | NFSv4.1 | Top $TopResources NFSv4.1 SVMs by IOPs |
+| ONTAP: SVM | NFSv4.2 | NFSv4.2 Write IOPs |
+| ONTAP: SVM | NFSv4.2 | Top $TopResources NFSv4.2 SVMs by IOPs |
 
 
 
@@ -18800,14 +18825,13 @@ Average latency in microseconds for the WAFL filesystem to process all the opera
 | KeyPerf | `api/storage/volumes` | `statistics.latency_raw.total`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.total | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume:vserver` | `avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/volume_svm.yaml |
 
+The `svm_vol_avg_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/cdot.json | SVM Metrics | Top $TopResources Average Latency by SVMs |
-| cmode/cdot.json | SVM Metrics | Top $TopResources Average Latency by SVMs |
-| cmode/cluster.json | SVM Performance | Top $TopResources Latency |
-| cmode/cluster.json | SVM Performance | Top $TopResources Latency |
-| cmode/svm.json | Highlights | SVM Average Latency |
+| ONTAP: cDOT | SVM Metrics | Top $TopResources Average Latency by SVMs |
+| ONTAP: Cluster | SVM Performance | Top $TopResources Latency |
+| ONTAP: SVM | Highlights | SVM Average Latency |
 
 
 
@@ -18831,10 +18855,11 @@ Average latency in microseconds for the WAFL filesystem to process other operati
 | KeyPerf | `api/storage/volumes` | `statistics.latency_raw.other`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.other | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume:vserver` | `other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/zapiperf/cdot/9.8.0/volume_svm.yaml |
 
+The `svm_vol_other_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | Highlights | SVM Average Latency |
+| ONTAP: SVM | Highlights | SVM Average Latency |
 
 
 
@@ -18848,11 +18873,12 @@ Number of other operations per second to the volume
 | KeyPerf | `api/storage/volumes` | `statistics.iops_raw.other`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume:vserver` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_svm.yaml |
 
+The `svm_vol_other_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfsTroubleshooting.json | Highlights | SVM Performance Table |
-| cmode/svm.json | Highlights | SVM IOPs |
+| ONTAP: NFS Troubleshooting | Highlights | SVM Performance Table |
+| ONTAP: SVM | Highlights | SVM IOPs |
 
 
 
@@ -18866,16 +18892,15 @@ Bytes read per second
 | KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.read`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume:vserver` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_svm.yaml |
 
+The `svm_vol_read_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/cdot.json | SVM Metrics | Top $TopResources Average Throughput by SVMs |
-| cmode/cdot.json | SVM Metrics | Top $TopResources Average Throughput by SVMs |
-| cmode/cluster.json | SVM Performance | Top $TopResources Throughput |
-| cmode/cluster.json | SVM Performance | Top $TopResources Throughput |
-| cmode/nfsTroubleshooting.json | Highlights | SVM Performance Table |
-| cmode/svm.json | Highlights | SVM Read Throughput |
-| cmode/svm.json | Highlights | SVM Throughput |
+| ONTAP: cDOT | SVM Metrics | Top $TopResources Average Throughput by SVMs |
+| ONTAP: Cluster | SVM Performance | Top $TopResources Throughput |
+| ONTAP: NFS Troubleshooting | Highlights | SVM Performance Table |
+| ONTAP: SVM | Highlights | SVM Read Throughput |
+| ONTAP: SVM | Highlights | SVM Throughput |
 
 
 
@@ -18889,11 +18914,12 @@ Average latency in microseconds for the WAFL filesystem to process read request 
 | KeyPerf | `api/storage/volumes` | `statistics.latency_raw.read`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.read | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume:vserver` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/volume_svm.yaml |
 
+The `svm_vol_read_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | Highlights | SVM Average Read Latency |
-| cmode/svm.json | Highlights | SVM Average Latency |
+| ONTAP: SVM | Highlights | SVM Average Read Latency |
+| ONTAP: SVM | Highlights | SVM Average Latency |
 
 
 
@@ -18907,12 +18933,13 @@ Number of read operations per second from the volume
 | KeyPerf | `api/storage/volumes` | `statistics.iops_raw.read`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume:vserver` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_svm.yaml |
 
+The `svm_vol_read_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfsTroubleshooting.json | Highlights | SVM Performance Table |
-| cmode/svm.json | Highlights | SVM Read IOPs |
-| cmode/svm.json | Highlights | SVM IOPs |
+| ONTAP: NFS Troubleshooting | Highlights | SVM Performance Table |
+| ONTAP: SVM | Highlights | SVM Read IOPs |
+| ONTAP: SVM | Highlights | SVM IOPs |
 
 
 
@@ -18936,15 +18963,14 @@ Number of operations per second serviced by the volume
 | KeyPerf | `api/storage/volumes` | `statistics.iops_raw.total`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume:vserver` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_svm.yaml |
 
+The `svm_vol_total_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/cdot.json | SVM Metrics | Top $TopResources IOPs by SVMs |
-| cmode/cdot.json | SVM Metrics | Top $TopResources IOPs by SVMs |
-| cmode/cluster.json | SVM Performance | Top $TopResources IOPs |
-| cmode/cluster.json | SVM Performance | Top $TopResources IOPs |
-| cmode/nfsTroubleshooting.json | Highlights | SVM Performance Table |
-| cmode/svm.json | Highlights | SVM IOPs |
+| ONTAP: cDOT | SVM Metrics | Top $TopResources IOPs by SVMs |
+| ONTAP: Cluster | SVM Performance | Top $TopResources IOPs |
+| ONTAP: NFS Troubleshooting | Highlights | SVM Performance Table |
+| ONTAP: SVM | Highlights | SVM IOPs |
 
 
 
@@ -18958,17 +18984,15 @@ Bytes written per second
 | KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.write`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume:vserver` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_svm.yaml |
 
+The `svm_vol_write_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/cdot.json | SVM Metrics | Top $TopResources Average Throughput by SVMs |
-| cmode/cdot.json | SVM Metrics | Top $TopResources Average Throughput by SVMs |
-| cmode/cluster.json | SVM Performance | Top $TopResources Throughput |
-| cmode/cluster.json | SVM Performance | Top $TopResources Throughput |
-| cmode/nfsTroubleshooting.json | Highlights | SVM Performance Table |
-| cmode/svm.json | Highlights | SVM Throughput |
-| cmode/svm.json | Highlights | SVM Write Throughput |
-| cmode/svm.json | Highlights | SVM Throughput |
+| ONTAP: cDOT | SVM Metrics | Top $TopResources Average Throughput by SVMs |
+| ONTAP: Cluster | SVM Performance | Top $TopResources Throughput |
+| ONTAP: NFS Troubleshooting | Highlights | SVM Performance Table |
+| ONTAP: SVM | Highlights | SVM Throughput |
+| ONTAP: SVM | Highlights | SVM Write Throughput |
 
 
 
@@ -18982,11 +19006,12 @@ Average latency in microseconds for the WAFL filesystem to process write request
 | KeyPerf | `api/storage/volumes` | `statistics.latency_raw.write`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.write | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume:vserver` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/volume_svm.yaml |
 
+The `svm_vol_write_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | Highlights | SVM Average Write Latency |
-| cmode/svm.json | Highlights | SVM Average Latency |
+| ONTAP: SVM | Highlights | SVM Average Write Latency |
+| ONTAP: SVM | Highlights | SVM Average Latency |
 
 
 
@@ -19000,12 +19025,13 @@ Number of write operations per second to the volume
 | KeyPerf | `api/storage/volumes` | `statistics.iops_raw.write`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume:vserver` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_svm.yaml |
 
+The `svm_vol_write_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/nfsTroubleshooting.json | Highlights | SVM Performance Table |
-| cmode/svm.json | Highlights | SVM Write IOPs |
-| cmode/svm.json | Highlights | SVM IOPs |
+| ONTAP: NFS Troubleshooting | Highlights | SVM Performance Table |
+| ONTAP: SVM | Highlights | SVM Write IOPs |
+| ONTAP: SVM | Highlights | SVM IOPs |
 
 
 
@@ -19018,11 +19044,12 @@ Total number of current active connections
 | REST | `api/cluster/counter/tables/svm_vscan` | `connections_active`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.13.0/vscan_svm.yaml |
 | ZAPI | `perf-object-get-instances offbox_vscan` | `connections_active`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/vscan_svm.yaml |
 
+The `svm_vscan_connections_active` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | CIFS | Virus Scan Connections Active |
-| cmode/vscan.json | Highlights | Active Connections |
+| ONTAP: SVM | CIFS | Virus Scan Connections Active |
+| ONTAP: Vscan | Highlights | Active Connections |
 
 
 
@@ -19035,12 +19062,12 @@ Average dispatch latency
 | REST | `api/cluster/counter/tables/svm_vscan` | `dispatch.latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> dispatch.requests | conf/restperf/9.13.0/vscan_svm.yaml |
 | ZAPI | `perf-object-get-instances offbox_vscan` | `dispatch_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> dispatch_latency_base | conf/zapiperf/cdot/9.8.0/vscan_svm.yaml |
 
+The `svm_vscan_dispatch_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | CIFS | Virus Scan Latency |
-| cmode/vscan.json | Highlights | Top $TopResources SVM by Dispatch Latency |
-| cmode/vscan.json | Highlights | Top $TopResources SVM by Dispatch Latency |
+| ONTAP: SVM | CIFS | Virus Scan Latency |
+| ONTAP: Vscan | Highlights | Top $TopResources SVM by Dispatch Latency |
 
 
 
@@ -19053,12 +19080,12 @@ Average scan latency
 | REST | `api/cluster/counter/tables/svm_vscan` | `scan.latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> scan.requests | conf/restperf/9.13.0/vscan_svm.yaml |
 | ZAPI | `perf-object-get-instances offbox_vscan` | `scan_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> scan_latency_base | conf/zapiperf/cdot/9.8.0/vscan_svm.yaml |
 
+The `svm_vscan_scan_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | CIFS | Virus Scan Latency |
-| cmode/vscan.json | Highlights | Top $TopResources SVMs by Scan Latency |
-| cmode/vscan.json | Highlights | Top $TopResources SVMs by Scan Latency |
+| ONTAP: SVM | CIFS | Virus Scan Latency |
+| ONTAP: Vscan | Highlights | Top $TopResources SVMs by Scan Latency |
 
 
 
@@ -19071,12 +19098,12 @@ Total number of scan notifications received by the dispatcher per second
 | REST | `api/cluster/counter/tables/svm_vscan` | `scan.notification_received_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.13.0/vscan_svm.yaml |
 | ZAPI | `perf-object-get-instances offbox_vscan` | `scan_noti_received_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/vscan_svm.yaml |
 
+The `svm_vscan_scan_noti_received_rate` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | CIFS | Virus Scan Requests |
-| cmode/vscan.json | Highlights | Top $TopResources SVMs by Scan Notifications Received Throughput |
-| cmode/vscan.json | Highlights | Top $TopResources SVMs by Scan Notifications Received Throughput |
+| ONTAP: SVM | CIFS | Virus Scan Requests |
+| ONTAP: Vscan | Highlights | Top $TopResources SVMs by Scan Notifications Received Throughput |
 
 
 
@@ -19089,12 +19116,12 @@ Total number of scan requests sent to the Vscanner per second
 | REST | `api/cluster/counter/tables/svm_vscan` | `scan.request_dispatched_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.13.0/vscan_svm.yaml |
 | ZAPI | `perf-object-get-instances offbox_vscan` | `scan_request_dispatched_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/vscan_svm.yaml |
 
+The `svm_vscan_scan_request_dispatched_rate` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | CIFS | Virus Scan Requests |
-| cmode/vscan.json | Highlights | Top $TopResources SVMs by Scan Requests Sent to Vscanner Throughput |
-| cmode/vscan.json | Highlights | Top $TopResources SVMs by Scan Requests Sent to Vscanner Throughput |
+| ONTAP: SVM | CIFS | Virus Scan Requests |
+| ONTAP: Vscan | Highlights | Top $TopResources SVMs by Scan Requests Sent to Vscanner Throughput |
 
 
 
@@ -19299,25 +19326,20 @@ Average latency in microseconds for the WAFL filesystem to process all the opera
 | KeyPerf | `api/storage/volumes` | `statistics.latency_raw.total`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.total | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
+The `volume_avg_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Average Latency |
-| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Average Latency |
-| cmode/cdot.json | Volume Metrics | Top $TopResources Volumes by Average Latency |
-| cmode/cdot.json | Volume Metrics | Top $TopResources Volumes by Average Latency |
-| cmode/datacenter.json | Performance | Top $TopResources Latency by Cluster |
-| cmode/datacenter.json | Performance | Top $TopResources Latency by Cluster |
-| cmode/flexgroup.json | Highlights | Top $TopResources Constituents by Average Latency |
-| cmode/flexgroup.json | Highlights | Top $TopResources Constituents by Average Latency |
-| cmode/mcc_cluster.json | Highlights | Volume Average Latency |
-| cmode/node.json | Volume Performance | Top $TopResources Volumes by Average Latency |
-| cmode/node.json | Volume Performance | Top $TopResources Volumes by Average Latency |
-| cmode/volume.json | Highlights | Volume Average Latency |
-| cmode/volume.json | Highlights | Top $TopResources Volumes by Average Latency |
-| cmode/volume.json | Highlights | Top $TopResources Volumes by Average Latency |
-| cmode-details/volumeDeepDive.json | Highlights | Avg Latency |
-| cmode-details/volumeDeepDive.json | Highlights | Max Latency |
+| ONTAP: Aggregate | Volume Performance | Top $TopResources Volumes by Average Latency |
+| ONTAP: cDOT | Volume Metrics | Top $TopResources Volumes by Average Latency |
+| ONTAP: Datacenter | Performance | Top $TopResources Latency by Cluster |
+| ONTAP: FlexGroup | Highlights | Top $TopResources Constituents by Average Latency |
+| ONTAP: MetroCluster | Highlights | Volume Average Latency |
+| ONTAP: Node | Volume Performance | Top $TopResources Volumes by Average Latency |
+| ONTAP: Volume | Highlights | Volume Average Latency |
+| ONTAP: Volume | Highlights | Top $TopResources Volumes by Average Latency |
+| ONTAP: Volume Deep Dive | Highlights | Avg Latency |
+| ONTAP: Volume Deep Dive | Highlights | Max Latency |
 
 
 
@@ -19330,16 +19352,14 @@ This field represents the footprint of blocks written to the volume in bytes for
 | REST | `api/private/cli/volume/footprint` | `volume_blocks_footprint_bin1` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-footprint-get-iter` | `volume-blocks-footprint-bin1` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_capacity_tier_footprint` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Capacity Tier Footprint |
-| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Capacity Tier Footprint |
-| cmode/flexgroup.json | Top Volume FabricPool | Top $TopResources Volumes by Capacity Tier Footprint |
-| cmode/flexgroup.json | Top Volume FabricPool | Top $TopResources Volumes by Capacity Tier Footprint |
-| cmode/volume.json | FabricPool | Volumes Footprint |
-| cmode/volume.json | FabricPool | Top $TopResources Volumes by Capacity Tier Footprint |
-| cmode/volume.json | FabricPool | Top $TopResources Volumes by Capacity Tier Footprint |
+| ONTAP: Aggregate | Volume Capacity | Top $TopResources Volumes by Capacity Tier Footprint |
+| ONTAP: FlexGroup | Top Volume FabricPool | Top $TopResources Volumes by Capacity Tier Footprint |
+| ONTAP: Volume | FabricPool | Volumes Footprint |
+| ONTAP: Volume | FabricPool | Top $TopResources Volumes by Capacity Tier Footprint |
 
 
 
@@ -19352,15 +19372,13 @@ This field represents the footprint of blocks written to the volume in bin 1 as 
 | REST | `api/private/cli/volume/footprint` | `volume_blocks_footprint_bin1_percent` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-footprint-get-iter` | `volume-blocks-footprint-bin1-percent` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_capacity_tier_footprint_percent` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Capacity Tier Footprint % |
-| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Capacity Tier Footprint % |
-| cmode/flexgroup.json | Top Volume FabricPool | Top $TopResources Volumes by Capacity Tier Footprint % |
-| cmode/flexgroup.json | Top Volume FabricPool | Top $TopResources Volumes by Capacity Tier Footprint % |
-| cmode/volume.json | FabricPool | Top $TopResources Volumes by Capacity Tier Footprint % |
-| cmode/volume.json | FabricPool | Top $TopResources Volumes by Capacity Tier Footprint % |
+| ONTAP: Aggregate | Volume Capacity | Top $TopResources Volumes by Capacity Tier Footprint % |
+| ONTAP: FlexGroup | Top Volume FabricPool | Top $TopResources Volumes by Capacity Tier Footprint % |
+| ONTAP: Volume | FabricPool | Top $TopResources Volumes by Capacity Tier Footprint % |
 
 
 
@@ -19384,12 +19402,12 @@ This field represents the delayed free blocks footprint in bytes. This system is
 | REST | `api/private/cli/volume/footprint` | `delayed_free_footprint` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-footprint-get-iter` | `delayed-free-footprint` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_delayed_free_footprint` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/volume.json | FabricPool | Volumes Footprint |
-| cmode/volume.json | FabricPool | Top $TopResources Volumes by Delayed Free Footprint |
-| cmode/volume.json | FabricPool | Top $TopResources Volumes by Delayed Free Footprint |
+| ONTAP: Volume | FabricPool | Volumes Footprint |
+| ONTAP: Volume | FabricPool | Top $TopResources Volumes by Delayed Free Footprint |
 
 
 
@@ -19413,12 +19431,12 @@ This field represents the volume guarantee footprint in bytes. Alternatively, it
 | REST | `api/private/cli/volume/footprint` | `volume_guarantee_footprint` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-footprint-get-iter` | `volume-guarantee-footprint` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_guarantee_footprint` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/volume.json | FabricPool | Volumes Footprint |
-| cmode/volume.json | FabricPool | Top $TopResources Volumes by Capacity Tier Footprint |
-| cmode/volume.json | FabricPool | Top $TopResources Volumes by Capacity Tier Footprint |
+| ONTAP: Volume | FabricPool | Volumes Footprint |
+| ONTAP: Volume | FabricPool | Top $TopResources Volumes by Capacity Tier Footprint |
 
 
 
@@ -19431,12 +19449,12 @@ Total user-visible file (inode) count, i.e., current maximum number of user-visi
 | REST | `api/private/cli/volume` | `files` | conf/rest/9.12.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-inode-attributes.files-total` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_inode_files_total` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/volume.json | Inode | Top $TopResources Volumes by Inode Files Total |
-| cmode/volume.json | Inode | Top $TopResources Volumes by Inode Files Total |
-| cmode-details/volumeDeepDive.json | Inodes | Inode Files Total |
+| ONTAP: Volume | Inode | Top $TopResources Volumes by Inode Files Total |
+| ONTAP: Volume Deep Dive | Inodes | Inode Files Total |
 
 
 
@@ -19449,12 +19467,12 @@ Number of user-visible files (inodes) used. This field is valid only when the vo
 | REST | `api/private/cli/volume` | `files_used` | conf/rest/9.12.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-inode-attributes.files-used` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_inode_files_used` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/volume.json | Inode | Top $TopResources Volumes by Inode Files Used |
-| cmode/volume.json | Inode | Top $TopResources Volumes by Inode Files Used |
-| cmode-details/volumeDeepDive.json | Inodes | Inode Files Used |
+| ONTAP: Volume | Inode | Top $TopResources Volumes by Inode Files Used |
+| ONTAP: Volume Deep Dive | Inodes | Inode Files Used |
 
 
 
@@ -19467,12 +19485,12 @@ volume_inode_files_used / volume_inode_total
 | REST | `api/private/cli/volume` | `inode_files_used, inode_files_total` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `inode_files_used, inode_files_total` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_inode_used_percent` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/volume.json | Inode | Top $TopResources Volumes by Inode Files Used Percentage |
-| cmode/volume.json | Inode | Top $TopResources Volumes by Inode Files Used Percentage |
-| cmode-details/volumeDeepDive.json | Inodes | Inode Files Used Percentage |
+| ONTAP: Volume | Inode | Top $TopResources Volumes by Inode Files Used Percentage |
+| ONTAP: Volume Deep Dive | Inodes | Inode Files Used Percentage |
 
 
 
@@ -19485,180 +19503,129 @@ This metric provides information about Volume
 | REST | `api/private/cli/volume` | `Harvest generated` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_labels` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/cdot.json | Capacity Metrics | Top $TopResources Volumes by Capacity Used % |
-| cmode/cdot.json | Capacity Metrics | Top $TopResources Volumes by Capacity Used % |
-| cmode/data_protection.json | Highlights | Snapshot copies (local) |
-| cmode/data_protection.json | Highlights | Snapshot copies (local) |
-| cmode/data_protection.json | Highlights | SnapMirrors (local or remote) |
-| cmode/data_protection.json | Highlights | SnapMirrors (local or remote) |
-| cmode/data_protection.json | Highlights | Back up to cloud |
-| cmode/data_protection.json | Highlights | Back up to cloud |
-| cmode/data_protection.json | Highlights | Volumes |
-| cmode/data_protection.json | Snapshot Copies | Volumes not protected |
-| cmode/data_protection.json | Snapshot Copies | Volumes protected |
-| cmode/data_protection.json | Snapshot Copies | Volumes breached |
-| cmode/data_protection.json | Snapshot Copies | Volumes not breached |
-| cmode/data_protection.json | Snapshot Copies | Volumes not breached |
-| cmode/data_protection.json | Snapshot Copies | Volumes Protected With Snapshot Copies (local) |
-| cmode/data_protection.json | Snapshot Copies | Volumes Breaching Snapshot Copy Reserve Space |
-| cmode/data_protection.json | Snapshot Copies |  <10 Copies  |
-| cmode/data_protection.json | Snapshot Copies | 10-100 Copies |
-| cmode/data_protection.json | Snapshot Copies | 101-500 Copies |
-| cmode/data_protection.json | Snapshot Copies | >500 Copies |
-| cmode/data_protection.json | Snapshot Copies | Volume count by the number of Snapshot copies |
-| cmode/datacenter.json | Highlights | Object Count |
-| cmode/datacenter.json | Snapshots | Protected Status |
-| cmode/datacenter.json | Snapshots | Protected Status |
-| cmode/datacenter.json | Snapshots | Breached Status |
-| cmode/datacenter.json | Snapshots | Breached Status |
-| cmode/datacenter.json | Snapshots | Breached Status |
-| cmode/datacenter.json | Snapshots | Snapshot Copies |
-| cmode/datacenter.json | Snapshots | Snapshot Copies |
-| cmode/datacenter.json | Snapshots | Snapshot Copies |
-| cmode/datacenter.json | Snapshots | Snapshot Copies |
-| cmode/flexgroup.json | Volume Table | FlexGroup Constituents in Cluster |
-| cmode/health.json | Volume | Volumes with Ransomware Issues (9.10+ Only) |
-| cmode/health.json | Volume | Volumes Move Issues |
-| cmode/nfsTroubleshooting.json | Highlights | SVM Performance Table |
-| cmode/s3ObjectStorage.json | Highlights | Bucket Overview |
-| cmode/security.json | Highlights | Volume Encryption % |
-| cmode/security.json | Highlights | Volume Encryption % |
-| cmode/security.json | Highlights | Volume Encryption % |
-| cmode/security.json | Highlights | Volume Anti-ransomware Status % |
-| cmode/security.json | Highlights | Volume Anti-ransomware Status % |
-| cmode/security.json | Highlights | Volume Encryption |
-| cmode/security.json | Highlights | Volume Encryption |
-| cmode/security.json | Highlights | Volume Encryption |
-| cmode/security.json | Highlights | Volume Encryption |
-| cmode/security.json | Highlights | Volume Anti-ransomware Status |
-| cmode/security.json | Highlights | Volume Anti-ransomware Status |
-| cmode/security.json | Highlights | Volume Anti-ransomware Status |
-| cmode/security.json | Highlights | Volume Anti-ransomware Status |
-| cmode/security.json | Volume Encryption & Anti-ransomware Status | Volume Encryption & Anti-ransomware Status |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
-| cmode/security.json | Cluster Compliance | Cluster Compliance |
-| cmode/snapmirror.json | Highlights | Unprotected Volumes |
-| cmode/snapmirror.json | Highlights | Unprotected Volumes |
-| cmode/snapmirror.json | Highlights | Protected Volumes |
-| cmode/snapmirror.json | Highlights | Protected Volumes |
-| cmode/volume.json | Highlights | Volume Average Latency |
-| cmode/volume.json | Highlights | Top $TopResources Volumes Total Throughput |
-| cmode/volume.json | Highlights | Top $TopResources Volumes Total Throughput |
-| cmode/volume.json | Highlights | Top $TopResources Volumes by Total IOPs |
-| cmode/volume.json | Highlights | Top $TopResources Volumes by Average Latency |
-| cmode/volume.json | Highlights | Top $TopResources Volumes by Average Throughput |
-| cmode/volume.json | Highlights | Top $TopResources Volumes by Average Throughput |
-| cmode/volume.json | Highlights | Top $TopResources Volumes by Total IOPs |
-| cmode/volume.json | Volume Table | Volumes in Cluster |
-| cmode/volume.json | Volume Table | Volumes in Cluster |
-| cmode/volume.json | Volume Table | Volumes in Cluster |
-| cmode/volume.json | Volume Table | Volumes in Cluster |
-| cmode/volume.json | Volume Table | Volumes in Cluster |
-| cmode/volume.json | Volume Table | Volumes in Cluster |
-| cmode/volume.json | Volume Table | Volumes in Cluster |
-| cmode/volume.json | Volume Table | Volumes in Cluster |
-| cmode/volume.json | Volume Table | Volumes in Cluster |
-| cmode/volume.json | Volume Table | Volumes in Cluster |
-| cmode/volume.json | Volume Table | Top $TopResources Volumes by Read Latency |
-| cmode/volume.json | Volume Table | Top $TopResources Volumes by Read Throughput |
-| cmode/volume.json | Volume Table | Top $TopResources Volumes by Read IOPS |
-| cmode/volume.json | Volume Table | Top $TopResources Volumes by Write Latency |
-| cmode/volume.json | Volume Table | Top $TopResources Volumes by Write Throughput |
-| cmode/volume.json | Volume Table | Top $TopResources Volumes by Write IOPS |
-| cmode/volume.json | Performance | Top $TopResources Volumes by Read Latency |
-| cmode/volume.json | Performance | Top $TopResources Volumes by Write Latency |
-| cmode/volume.json | Performance | Top $TopResources Volumes by Other Latency |
-| cmode/volume.json | Performance | Top $TopResources Volumes by Read IOPs |
-| cmode/volume.json | Performance | Top $TopResources Volumes by Write IOPs |
-| cmode/volume.json | Performance | Top $TopResources Volumes by Other IOPs |
-| cmode/volume.json | Performance | Top $TopResources Volumes by Read Throughput |
-| cmode/volume.json | Performance | Top $TopResources Volumes by Write Throughput |
-| cmode/volume.json | QoS | Top $TopResources QoS Volumes Latency |
-| cmode/volume.json | QoS | Top $TopResources Qos Volumes Total Throughput |
-| cmode/volume.json | QoS | Top $TopResources Qos Volumes Total Throughput |
-| cmode/volume.json | QoS | Top $TopResources QoS Volumes by Total IOPs |
-| cmode/volume.json | QoS | Top $TopResources QoS Volumes by Latency |
-| cmode/volume.json | QoS | Top $TopResources QoS Volumes by Average Throughput |
-| cmode/volume.json | QoS | Top $TopResources QoS Volumes by Average Throughput |
-| cmode/volume.json | QoS | Top $TopResources QoS Volumes by Total IOPs |
-| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Read Latency |
-| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Write Latency |
-| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Read IOPS |
-| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Write IOPS |
-| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Other IOPS |
-| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Read Throughput |
-| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Write Throughput |
-| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Sequential Reads |
-| cmode/volume.json | QoS | Top $TopResources Volumes by QoS Volume Sequential Writes |
-| cmode/volume.json | I/O Density | Top $TopResources Volumes by IO Density (IOPs/TiB) |
-| cmode/volume.json | I/O Density | Top $TopResources Volumes by IO Density (IOPs/TiB) |
-| cmode/volume.json | I/O Density | Top $TopResources Volumes by IO Density (IOPs/TiB) |
-| cmode/volume.json | I/O Density | Bottom $TopResources Volumes by IO Density (IOPs/TiB) |
-| cmode/volume.json | I/O Density | Bottom $TopResources Volumes by IO Density (IOPs/TiB) |
-| cmode/volume.json | I/O Density | Bottom $TopResources Volumes by IO Density (IOPs/TiB) |
-| cmode/volume.json | I/O Density | Bottom $TopResources Volumes by IO Density (IOPs/TiB) |
-| cmode/volume.json | Capacity | Top $TopResources Volumes Per Physical Space Used |
-| cmode/volume.json | Capacity | Top $TopResources Volumes Per Logical Space Used |
-| cmode/volume.json | Capacity | Top $TopResources Volumes Per Volume Size Used |
-| cmode/volume.json | Capacity | Top $TopResources Volumes Per Volume Total Size |
-| cmode/volume.json | Capacity | Top $TopResources Volumes Per Snapshot Size Available |
-| cmode/volume.json | Capacity | Top $TopResources Volumes Per Snapshot Reserve Size |
-| cmode/volume.json | Capacity | Top $TopResources Volumes Per Snapshot Reserve Available |
-| cmode/volume.json | Capacity | Top $TopResources Volumes Per Snapshot Size Used |
-| cmode/volume.json | Capacity | Top $TopResources Volumes by Inactive Data |
-| cmode/volume.json | Capacity % | Top $TopResources Volumes Per Physical Space Used |
-| cmode/volume.json | Capacity % | Top $TopResources Volumes Per Logical Space Used |
-| cmode/volume.json | Capacity % | Top $TopResources Volumes Per Volume Size Used |
-| cmode/volume.json | Capacity % | Top $TopResources Volumes Per Snapshot Reserve |
-| cmode/volume.json | Capacity % | Top $TopResources Volumes Per Snapshot Reserve Used |
-| cmode/volume.json | Capacity % | Top $TopResources Volumes by Inactive Data |
-| cmode/volume.json | Clients | Top $TopResources Volumes Clients by Read IOPs |
-| cmode/volume.json | Clients | Top $TopResources Volumes Clients by Write IOPs |
-| cmode/volume.json | Clients | Top $TopResources Volumes Clients by Read Throughput |
-| cmode/volume.json | Clients | Top $TopResources Volumes Clients by Write Throughput |
-| cmode/volume.json | Files | Top $TopResources Volumes Files by Read IOPs |
-| cmode/volume.json | Files | Top $TopResources Volumes Files by Write IOPs |
-| cmode/volume.json | Files | Top $TopResources Volumes Files by Read Throughput |
-| cmode/volume.json | Files | Top $TopResources Volumes Files by Write Throughput |
-| cmode/volume.json | Object Storage | Top $TopResources Volumes by Object Storage GET Latency |
-| cmode/volume.json | Object Storage | Top $TopResources Volumes by Object Storage GET Request Count |
-| cmode/volume.json | Object Storage | Top $TopResources Volumes by Object Storage PUT Latency |
-| cmode/volume.json | Object Storage | Top $TopResources Volumes by Object Storage PUT Request Count |
-| cmode/volume.json | Object Storage | Top $TopResources Volumes by Object Storage Requests |
-| cmode/volume.json | FabricPool | Top $TopResources Volumes by Performance Tier Footprint |
-| cmode/volume.json | FabricPool | Top $TopResources Volumes by Performance Tier Footprint % |
-| cmode/volume.json | FabricPool | Top $TopResources Volumes by Capacity Tier Footprint |
-| cmode/volume.json | FabricPool | Top $TopResources Volumes by Capacity Tier Footprint % |
-| cmode/volume.json | FabricPool | Top $TopResources Volumes by Delayed Free Footprint |
-| cmode/volume.json | FabricPool | Top $TopResources Volumes by Metadata Footprint |
-| cmode/volume.json | FabricPool | Top $TopResources Volumes by Total Footprint |
-| cmode/volume.json | FabricPool | Top $TopResources Volumes by Total Metadata Footprint |
-| cmode/volume.json | FabricPool | Top $TopResources Volumes by Capacity Tier Footprint |
-| cmode/volume.json | Inode | Top $TopResources Volumes by Inode Files Used |
-| cmode/volume.json | Inode | Top $TopResources Volumes by Inode Files Total |
-| cmode/volume.json | Inode | Top $TopResources Volumes by Inode Files Used Percentage |
-| cmode/volume.json | Sis Stat | Top $TopResources Volumes by Number of Compress Fail % |
-| cmode/volume.json | Sis Stat | Top $TopResources Volumes by Number of Compress Fail % |
-| cmode/volume.json | Sis Stat | Top $TopResources Volumes by Number of Compress Attempts |
-| cmode/volume.json | Sis Stat | Top $TopResources Volumes by Number of Compress Fail |
-| cmode/volume.json | Growth Rate | Top $TopResources Volumes Per Growth Rate of Physical Used |
-| cmode/volume.json | Growth Rate | Top $TopResources Volumes Per Growth Rate of Logical Used |
-| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Physical Usage: Delta |
-| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Physical Usage: Delta |
-| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Physical Usage: Delta |
-| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Logical Usage: Delta |
-| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Logical Usage: Delta |
-| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Logical Usage: Delta |
-| cmode/volume.json | Forecast Volume Capacity | Top $TopResources Volumes Per Size Used Percentage Trend |
-| cmode/volume.json | Forecast Volume Capacity | Top $TopResources Volumes Per Size Used Percentage Trend |
-| cmode-details/volumeBySVM.json | Highlights | Volume Performance for $SVM (Click volume for detailed drill-down) |
-| cmode-details/volumeDeepDive.json | Highlights | Volume Performance |
-| cmode-details/volumeDeepDive.json | Volume Capacity: $Volume | Volumes in Cluster |
+| ONTAP: cDOT | Capacity Metrics | Top $TopResources Volumes by Capacity Used % |
+| ONTAP: Data Protection | Highlights | Snapshot copies (local) |
+| ONTAP: Data Protection | Highlights | SnapMirrors (local or remote) |
+| ONTAP: Data Protection | Highlights | Back up to cloud |
+| ONTAP: Data Protection | Highlights | Volumes |
+| ONTAP: Data Protection | Snapshot Copies | Volumes not protected |
+| ONTAP: Data Protection | Snapshot Copies | Volumes protected |
+| ONTAP: Data Protection | Snapshot Copies | Volumes breached |
+| ONTAP: Data Protection | Snapshot Copies | Volumes not breached |
+| ONTAP: Data Protection | Snapshot Copies | Volumes Protected With Snapshot Copies (local) |
+| ONTAP: Data Protection | Snapshot Copies | Volumes Breaching Snapshot Copy Reserve Space |
+| ONTAP: Data Protection | Snapshot Copies |  <10 Copies  |
+| ONTAP: Data Protection | Snapshot Copies | 10-100 Copies |
+| ONTAP: Data Protection | Snapshot Copies | 101-500 Copies |
+| ONTAP: Data Protection | Snapshot Copies | >500 Copies |
+| ONTAP: Data Protection | Snapshot Copies | Volume count by the number of Snapshot copies |
+| ONTAP: Datacenter | Highlights | Object Count |
+| ONTAP: Datacenter | Snapshots | Protected Status |
+| ONTAP: Datacenter | Snapshots | Breached Status |
+| ONTAP: Datacenter | Snapshots | Snapshot Copies |
+| ONTAP: FlexGroup | Volume Table | FlexGroup Constituents in Cluster |
+| ONTAP: Health | Volume | Volumes with Ransomware Issues (9.10+ Only) |
+| ONTAP: Health | Volume | Volumes Move Issues |
+| ONTAP: NFS Troubleshooting | Highlights | SVM Performance Table |
+| ONTAP: S3 Object Storage | Highlights | Bucket Overview |
+| ONTAP: Security | Highlights | Volume Encryption % |
+| ONTAP: Security | Highlights | Volume Anti-ransomware Status % |
+| ONTAP: Security | Highlights | Volume Encryption |
+| ONTAP: Security | Highlights | Volume Anti-ransomware Status |
+| ONTAP: Security | Volume Encryption & Anti-ransomware Status | Volume Encryption & Anti-ransomware Status |
+| ONTAP: Security | Cluster Compliance | Cluster Compliance |
+| ONTAP: SnapMirror Sources | Highlights | Unprotected Volumes |
+| ONTAP: SnapMirror Sources | Highlights | Protected Volumes |
+| ONTAP: Volume | Highlights | Volume Average Latency |
+| ONTAP: Volume | Highlights | Top $TopResources Volumes Total Throughput |
+| ONTAP: Volume | Highlights | Top $TopResources Volumes by Total IOPs |
+| ONTAP: Volume | Highlights | Top $TopResources Volumes by Average Latency |
+| ONTAP: Volume | Highlights | Top $TopResources Volumes by Average Throughput |
+| ONTAP: Volume | Volume Table | Volumes in Cluster |
+| ONTAP: Volume | Volume Table | Top $TopResources Volumes by Read Latency |
+| ONTAP: Volume | Volume Table | Top $TopResources Volumes by Read Throughput |
+| ONTAP: Volume | Volume Table | Top $TopResources Volumes by Read IOPS |
+| ONTAP: Volume | Volume Table | Top $TopResources Volumes by Write Latency |
+| ONTAP: Volume | Volume Table | Top $TopResources Volumes by Write Throughput |
+| ONTAP: Volume | Volume Table | Top $TopResources Volumes by Write IOPS |
+| ONTAP: Volume | Performance | Top $TopResources Volumes by Read Latency |
+| ONTAP: Volume | Performance | Top $TopResources Volumes by Write Latency |
+| ONTAP: Volume | Performance | Top $TopResources Volumes by Other Latency |
+| ONTAP: Volume | Performance | Top $TopResources Volumes by Read IOPs |
+| ONTAP: Volume | Performance | Top $TopResources Volumes by Write IOPs |
+| ONTAP: Volume | Performance | Top $TopResources Volumes by Other IOPs |
+| ONTAP: Volume | Performance | Top $TopResources Volumes by Read Throughput |
+| ONTAP: Volume | Performance | Top $TopResources Volumes by Write Throughput |
+| ONTAP: Volume | QoS | Top $TopResources QoS Volumes Latency |
+| ONTAP: Volume | QoS | Top $TopResources Qos Volumes Total Throughput |
+| ONTAP: Volume | QoS | Top $TopResources QoS Volumes by Total IOPs |
+| ONTAP: Volume | QoS | Top $TopResources QoS Volumes by Latency |
+| ONTAP: Volume | QoS | Top $TopResources QoS Volumes by Average Throughput |
+| ONTAP: Volume | QoS | Top $TopResources Volumes by QoS Volume Read Latency |
+| ONTAP: Volume | QoS | Top $TopResources Volumes by QoS Volume Write Latency |
+| ONTAP: Volume | QoS | Top $TopResources Volumes by QoS Volume Read IOPS |
+| ONTAP: Volume | QoS | Top $TopResources Volumes by QoS Volume Write IOPS |
+| ONTAP: Volume | QoS | Top $TopResources Volumes by QoS Volume Other IOPS |
+| ONTAP: Volume | QoS | Top $TopResources Volumes by QoS Volume Read Throughput |
+| ONTAP: Volume | QoS | Top $TopResources Volumes by QoS Volume Write Throughput |
+| ONTAP: Volume | QoS | Top $TopResources Volumes by QoS Volume Sequential Reads |
+| ONTAP: Volume | QoS | Top $TopResources Volumes by QoS Volume Sequential Writes |
+| ONTAP: Volume | I/O Density | Top $TopResources Volumes by IO Density (IOPs/TiB) |
+| ONTAP: Volume | I/O Density | Bottom $TopResources Volumes by IO Density (IOPs/TiB) |
+| ONTAP: Volume | Capacity | Top $TopResources Volumes Per Physical Space Used |
+| ONTAP: Volume | Capacity | Top $TopResources Volumes Per Logical Space Used |
+| ONTAP: Volume | Capacity | Top $TopResources Volumes Per Volume Size Used |
+| ONTAP: Volume | Capacity | Top $TopResources Volumes Per Volume Total Size |
+| ONTAP: Volume | Capacity | Top $TopResources Volumes Per Snapshot Size Available |
+| ONTAP: Volume | Capacity | Top $TopResources Volumes Per Snapshot Reserve Size |
+| ONTAP: Volume | Capacity | Top $TopResources Volumes Per Snapshot Reserve Available |
+| ONTAP: Volume | Capacity | Top $TopResources Volumes Per Snapshot Size Used |
+| ONTAP: Volume | Capacity | Top $TopResources Volumes by Inactive Data |
+| ONTAP: Volume | Capacity % | Top $TopResources Volumes Per Physical Space Used |
+| ONTAP: Volume | Capacity % | Top $TopResources Volumes Per Logical Space Used |
+| ONTAP: Volume | Capacity % | Top $TopResources Volumes Per Volume Size Used |
+| ONTAP: Volume | Capacity % | Top $TopResources Volumes Per Snapshot Reserve |
+| ONTAP: Volume | Capacity % | Top $TopResources Volumes Per Snapshot Reserve Used |
+| ONTAP: Volume | Capacity % | Top $TopResources Volumes by Inactive Data |
+| ONTAP: Volume | Clients | Top $TopResources Volumes Clients by Read IOPs |
+| ONTAP: Volume | Clients | Top $TopResources Volumes Clients by Write IOPs |
+| ONTAP: Volume | Clients | Top $TopResources Volumes Clients by Read Throughput |
+| ONTAP: Volume | Clients | Top $TopResources Volumes Clients by Write Throughput |
+| ONTAP: Volume | Files | Top $TopResources Volumes Files by Read IOPs |
+| ONTAP: Volume | Files | Top $TopResources Volumes Files by Write IOPs |
+| ONTAP: Volume | Files | Top $TopResources Volumes Files by Read Throughput |
+| ONTAP: Volume | Files | Top $TopResources Volumes Files by Write Throughput |
+| ONTAP: Volume | Object Storage | Top $TopResources Volumes by Object Storage GET Latency |
+| ONTAP: Volume | Object Storage | Top $TopResources Volumes by Object Storage GET Request Count |
+| ONTAP: Volume | Object Storage | Top $TopResources Volumes by Object Storage PUT Latency |
+| ONTAP: Volume | Object Storage | Top $TopResources Volumes by Object Storage PUT Request Count |
+| ONTAP: Volume | Object Storage | Top $TopResources Volumes by Object Storage Requests |
+| ONTAP: Volume | FabricPool | Top $TopResources Volumes by Performance Tier Footprint |
+| ONTAP: Volume | FabricPool | Top $TopResources Volumes by Performance Tier Footprint % |
+| ONTAP: Volume | FabricPool | Top $TopResources Volumes by Capacity Tier Footprint |
+| ONTAP: Volume | FabricPool | Top $TopResources Volumes by Capacity Tier Footprint % |
+| ONTAP: Volume | FabricPool | Top $TopResources Volumes by Delayed Free Footprint |
+| ONTAP: Volume | FabricPool | Top $TopResources Volumes by Metadata Footprint |
+| ONTAP: Volume | FabricPool | Top $TopResources Volumes by Total Footprint |
+| ONTAP: Volume | FabricPool | Top $TopResources Volumes by Total Metadata Footprint |
+| ONTAP: Volume | Inode | Top $TopResources Volumes by Inode Files Used |
+| ONTAP: Volume | Inode | Top $TopResources Volumes by Inode Files Total |
+| ONTAP: Volume | Inode | Top $TopResources Volumes by Inode Files Used Percentage |
+| ONTAP: Volume | Sis Stat | Top $TopResources Volumes by Number of Compress Fail % |
+| ONTAP: Volume | Sis Stat | Top $TopResources Volumes by Number of Compress Attempts |
+| ONTAP: Volume | Sis Stat | Top $TopResources Volumes by Number of Compress Fail |
+| ONTAP: Volume | Growth Rate | Top $TopResources Volumes Per Growth Rate of Physical Used |
+| ONTAP: Volume | Growth Rate | Top $TopResources Volumes Per Growth Rate of Logical Used |
+| ONTAP: Volume | Growth Rate | Top $TopResources Volumes by Physical Usage: Delta |
+| ONTAP: Volume | Growth Rate | Top $TopResources Volumes by Logical Usage: Delta |
+| ONTAP: Volume | Forecast Volume Capacity | Top $TopResources Volumes Per Size Used Percentage Trend |
+| ONTAP: Volume by SVM | Highlights | Volume Performance for $SVM (Click volume for detailed drill-down) |
+| ONTAP: Volume Deep Dive | Highlights | Volume Performance |
+| ONTAP: Volume Deep Dive | Volume Capacity: $Volume | Volumes in Cluster |
 
 
 
@@ -19671,12 +19638,12 @@ This field represents flexible volume or flexgroup metadata in bytes.
 | REST | `api/private/cli/volume/footprint` | `flexvol_metadata_footprint` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-footprint-get-iter` | `flexvol-metadata-footprint` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_metadata_footprint` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/volume.json | FabricPool | Volumes Footprint |
-| cmode/volume.json | FabricPool | Top $TopResources Volumes by Metadata Footprint |
-| cmode/volume.json | FabricPool | Top $TopResources Volumes by Metadata Footprint |
+| ONTAP: Volume | FabricPool | Volumes Footprint |
+| ONTAP: Volume | FabricPool | Top $TopResources Volumes by Metadata Footprint |
 
 
 
@@ -19886,13 +19853,12 @@ Number of NFS write operations per second to the volume
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume/efficiency/stat` | `num_compress_attempts` | conf/rest/9.14.0/volume.yaml |
 
+The `volume_num_compress_attempts` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/volume.json | Sis Stat | Top $TopResources Volumes by Number of Compress Fail % |
-| cmode/volume.json | Sis Stat | Top $TopResources Volumes by Number of Compress Fail % |
-| cmode/volume.json | Sis Stat | Top $TopResources Volumes by Number of Compress Attempts |
-| cmode/volume.json | Sis Stat | Top $TopResources Volumes by Number of Compress Attempts |
+| ONTAP: Volume | Sis Stat | Top $TopResources Volumes by Number of Compress Fail % |
+| ONTAP: Volume | Sis Stat | Top $TopResources Volumes by Number of Compress Attempts |
 
 
 
@@ -19904,13 +19870,12 @@ Number of NFS write operations per second to the volume
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume/efficiency/stat` | `num_compress_fail` | conf/rest/9.14.0/volume.yaml |
 
+The `volume_num_compress_fail` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/volume.json | Sis Stat | Top $TopResources Volumes by Number of Compress Fail % |
-| cmode/volume.json | Sis Stat | Top $TopResources Volumes by Number of Compress Fail % |
-| cmode/volume.json | Sis Stat | Top $TopResources Volumes by Number of Compress Fail |
-| cmode/volume.json | Sis Stat | Top $TopResources Volumes by Number of Compress Fail |
+| ONTAP: Volume | Sis Stat | Top $TopResources Volumes by Number of Compress Fail % |
+| ONTAP: Volume | Sis Stat | Top $TopResources Volumes by Number of Compress Fail |
 
 
 
@@ -19934,13 +19899,12 @@ Average latency in microseconds for the WAFL filesystem to process other operati
 | KeyPerf | `api/storage/volumes` | `statistics.latency_raw.other`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.other | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
+The `volume_other_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Other Latency |
-| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Other Latency |
-| cmode/volume.json | Performance | Top $TopResources Volumes by Other Latency |
-| cmode/volume.json | Performance | Top $TopResources Volumes by Other Latency |
+| ONTAP: FlexGroup | Volume WAFL Layer | Top $TopResources Volumes by Other Latency |
+| ONTAP: Volume | Performance | Top $TopResources Volumes by Other Latency |
 
 
 
@@ -19954,16 +19918,15 @@ Number of other operations per second to the volume
 | KeyPerf | `api/storage/volumes` | `statistics.iops_raw.other`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
+The `volume_other_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Other IOPs |
-| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Other IOPs |
-| cmode/volume.json | Performance | Top $TopResources Volumes by Other IOPs |
-| cmode/volume.json | Performance | Top $TopResources Volumes by Other IOPs |
-| cmode-details/volumeBySVM.json | Highlights | Volume Performance for $SVM (Click volume for detailed drill-down) |
-| cmode-details/volumeDeepDive.json | Highlights | Volume Performance |
-| cmode-details/volumeDeepDive.json | Highlights | Other IOPs |
+| ONTAP: FlexGroup | Volume WAFL Layer | Top $TopResources Volumes by Other IOPs |
+| ONTAP: Volume | Performance | Top $TopResources Volumes by Other IOPs |
+| ONTAP: Volume by SVM | Highlights | Volume Performance for $SVM (Click volume for detailed drill-down) |
+| ONTAP: Volume Deep Dive | Highlights | Volume Performance |
+| ONTAP: Volume Deep Dive | Highlights | Other IOPs |
 
 
 
@@ -20009,16 +19972,14 @@ This field represents the footprint of blocks written to the volume in bytes for
 | REST | `api/private/cli/volume/footprint` | `volume_blocks_footprint_bin0` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-footprint-get-iter` | `volume-blocks-footprint-bin0` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_performance_tier_footprint` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Performance Tier Footprint |
-| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Performance Tier Footprint |
-| cmode/flexgroup.json | Top Volume FabricPool | Top $TopResources Volumes by Performance Tier Footprint |
-| cmode/flexgroup.json | Top Volume FabricPool | Top $TopResources Volumes by Performance Tier Footprint |
-| cmode/volume.json | FabricPool | Volumes Footprint |
-| cmode/volume.json | FabricPool | Top $TopResources Volumes by Performance Tier Footprint |
-| cmode/volume.json | FabricPool | Top $TopResources Volumes by Performance Tier Footprint |
+| ONTAP: Aggregate | Volume Capacity | Top $TopResources Volumes by Performance Tier Footprint |
+| ONTAP: FlexGroup | Top Volume FabricPool | Top $TopResources Volumes by Performance Tier Footprint |
+| ONTAP: Volume | FabricPool | Volumes Footprint |
+| ONTAP: Volume | FabricPool | Top $TopResources Volumes by Performance Tier Footprint |
 
 
 
@@ -20031,15 +19992,13 @@ This field represents the footprint of blocks written to the volume in bin 0 as 
 | REST | `api/private/cli/volume/footprint` | `volume_blocks_footprint_bin0_percent` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-footprint-get-iter` | `volume-blocks-footprint-bin0-percent` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_performance_tier_footprint_percent` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Performance Tier Footprint % |
-| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Performance Tier Footprint % |
-| cmode/flexgroup.json | Top Volume FabricPool | Top $TopResources Volumes by Performance Tier Footprint % |
-| cmode/flexgroup.json | Top Volume FabricPool | Top $TopResources Volumes by Performance Tier Footprint % |
-| cmode/volume.json | FabricPool | Top $TopResources Volumes by Performance Tier Footprint % |
-| cmode/volume.json | FabricPool | Top $TopResources Volumes by Performance Tier Footprint % |
+| ONTAP: Aggregate | Volume Capacity | Top $TopResources Volumes by Performance Tier Footprint % |
+| ONTAP: FlexGroup | Top Volume FabricPool | Top $TopResources Volumes by Performance Tier Footprint % |
+| ONTAP: Volume | FabricPool | Top $TopResources Volumes by Performance Tier Footprint % |
 
 
 
@@ -20053,36 +20012,26 @@ Bytes read per second
 | KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.read`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
+The `volume_read_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Average Throughput |
-| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Average Throughput |
-| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Read Throughput |
-| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Read Throughput |
-| cmode/cdot.json | Volume Metrics | Top $TopResources Volumes by Average Throughput |
-| cmode/cdot.json | Volume Metrics | Top $TopResources Volumes by Average Throughput |
-| cmode/flexgroup.json | Highlights | Top $TopResources Constituents by Average Throughput |
-| cmode/flexgroup.json | Highlights | Top $TopResources Constituents by Average Throughput |
-| cmode/flexgroup.json | Volume Table | Top $TopResources Volumes by Read Throughput |
-| cmode/flexgroup.json | Volume Table | Top $TopResources Volumes by Read Throughput |
-| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Read Throughput |
-| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Read Throughput |
-| cmode/node.json | Volume Performance | Top $TopResources Volumes by Average Throughput |
-| cmode/node.json | Volume Performance | Top $TopResources Volumes by Average Throughput |
-| cmode/svm.json | Volume Performance | Top $TopResources Volumes by Read Throughput |
-| cmode/svm.json | Volume Performance | Top $TopResources Volumes by Read Throughput |
-| cmode/volume.json | Highlights | Top $TopResources Volumes Total Throughput |
-| cmode/volume.json | Highlights | Top $TopResources Volumes by Average Throughput |
-| cmode/volume.json | Highlights | Top $TopResources Volumes by Average Throughput |
-| cmode/volume.json | Volume Table | Top $TopResources Volumes by Read Throughput |
-| cmode/volume.json | Volume Table | Top $TopResources Volumes by Read Throughput |
-| cmode/volume.json | Performance | Top $TopResources Volumes by Read Throughput |
-| cmode/volume.json | Performance | Top $TopResources Volumes by Read Throughput |
-| cmode-details/volumeBySVM.json | Highlights | Volume Performance for $SVM (Click volume for detailed drill-down) |
-| cmode-details/volumeDeepDive.json | Highlights | Volume Performance |
-| cmode-details/volumeDeepDive.json | Highlights | Max Read Op Size |
-| cmode-details/volumeDeepDive.json | Highlights | Read Throughput |
+| ONTAP: Aggregate | Volume Performance | Top $TopResources Volumes by Average Throughput |
+| ONTAP: Aggregate | Volume Performance | Top $TopResources Volumes by Read Throughput |
+| ONTAP: cDOT | Volume Metrics | Top $TopResources Volumes by Average Throughput |
+| ONTAP: FlexGroup | Highlights | Top $TopResources Constituents by Average Throughput |
+| ONTAP: FlexGroup | Volume Table | Top $TopResources Volumes by Read Throughput |
+| ONTAP: FlexGroup | Volume WAFL Layer | Top $TopResources Volumes by Read Throughput |
+| ONTAP: Node | Volume Performance | Top $TopResources Volumes by Average Throughput |
+| ONTAP: SVM | Volume Performance | Top $TopResources Volumes by Read Throughput |
+| ONTAP: Volume | Highlights | Top $TopResources Volumes Total Throughput |
+| ONTAP: Volume | Highlights | Top $TopResources Volumes by Average Throughput |
+| ONTAP: Volume | Volume Table | Top $TopResources Volumes by Read Throughput |
+| ONTAP: Volume | Performance | Top $TopResources Volumes by Read Throughput |
+| ONTAP: Volume by SVM | Highlights | Volume Performance for $SVM (Click volume for detailed drill-down) |
+| ONTAP: Volume Deep Dive | Highlights | Volume Performance |
+| ONTAP: Volume Deep Dive | Highlights | Max Read Op Size |
+| ONTAP: Volume Deep Dive | Highlights | Read Throughput |
 
 
 
@@ -20096,22 +20045,17 @@ Average latency in microseconds for the WAFL filesystem to process read request 
 | KeyPerf | `api/storage/volumes` | `statistics.latency_raw.read`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.read | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
+The `volume_read_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Read Latency |
-| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Read Latency |
-| cmode/flexgroup.json | Volume Table | Top $TopResources Volumes by Read Latency |
-| cmode/flexgroup.json | Volume Table | Top $TopResources Volumes by Read Latency |
-| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Read Latency |
-| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Read Latency |
-| cmode/svm.json | Volume Performance | Top $TopResources Volumes by Read Latency |
-| cmode/svm.json | Volume Performance | Top $TopResources Volumes by Read Latency |
-| cmode/volume.json | Volume Table | Top $TopResources Volumes by Read Latency |
-| cmode/volume.json | Volume Table | Top $TopResources Volumes by Read Latency |
-| cmode/volume.json | Performance | Top $TopResources Volumes by Read Latency |
-| cmode/volume.json | Performance | Top $TopResources Volumes by Read Latency |
-| cmode-details/volumeDeepDive.json | Highlights | Read Latency |
+| ONTAP: Aggregate | Volume Performance | Top $TopResources Volumes by Read Latency |
+| ONTAP: FlexGroup | Volume Table | Top $TopResources Volumes by Read Latency |
+| ONTAP: FlexGroup | Volume WAFL Layer | Top $TopResources Volumes by Read Latency |
+| ONTAP: SVM | Volume Performance | Top $TopResources Volumes by Read Latency |
+| ONTAP: Volume | Volume Table | Top $TopResources Volumes by Read Latency |
+| ONTAP: Volume | Performance | Top $TopResources Volumes by Read Latency |
+| ONTAP: Volume Deep Dive | Highlights | Read Latency |
 
 
 
@@ -20125,25 +20069,20 @@ Number of read operations per second from the volume
 | KeyPerf | `api/storage/volumes` | `statistics.iops_raw.read`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
+The `volume_read_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Read IOPs |
-| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Read IOPs |
-| cmode/flexgroup.json | Volume Table | Top $TopResources Volumes by Read IOPS |
-| cmode/flexgroup.json | Volume Table | Top $TopResources Volumes by Read IOPS |
-| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Read IOPs |
-| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Read IOPs |
-| cmode/svm.json | Volume Performance | Top $TopResources Volumes by Read IOPs |
-| cmode/svm.json | Volume Performance | Top $TopResources Volumes by Read IOPs |
-| cmode/volume.json | Volume Table | Top $TopResources Volumes by Read IOPS |
-| cmode/volume.json | Volume Table | Top $TopResources Volumes by Read IOPS |
-| cmode/volume.json | Performance | Top $TopResources Volumes by Read IOPs |
-| cmode/volume.json | Performance | Top $TopResources Volumes by Read IOPs |
-| cmode-details/volumeBySVM.json | Highlights | Volume Performance for $SVM (Click volume for detailed drill-down) |
-| cmode-details/volumeDeepDive.json | Highlights | Volume Performance |
-| cmode-details/volumeDeepDive.json | Highlights | Max Read Op Size |
-| cmode-details/volumeDeepDive.json | Highlights | Read IOPs |
+| ONTAP: Aggregate | Volume Performance | Top $TopResources Volumes by Read IOPs |
+| ONTAP: FlexGroup | Volume Table | Top $TopResources Volumes by Read IOPS |
+| ONTAP: FlexGroup | Volume WAFL Layer | Top $TopResources Volumes by Read IOPs |
+| ONTAP: SVM | Volume Performance | Top $TopResources Volumes by Read IOPs |
+| ONTAP: Volume | Volume Table | Top $TopResources Volumes by Read IOPS |
+| ONTAP: Volume | Performance | Top $TopResources Volumes by Read IOPs |
+| ONTAP: Volume by SVM | Highlights | Volume Performance for $SVM (Click volume for detailed drill-down) |
+| ONTAP: Volume Deep Dive | Highlights | Volume Performance |
+| ONTAP: Volume Deep Dive | Highlights | Max Read Op Size |
+| ONTAP: Volume Deep Dive | Highlights | Read IOPs |
 
 
 
@@ -20156,21 +20095,16 @@ The total disk space (in bytes) that is saved by compressing blocks on the refer
 | REST | `api/private/cli/volume` | `compression_space_saved` | conf/rest/9.12.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-sis-attributes.compression-space-saved` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_sis_compress_saved` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/flexgroup.json | Volume Table | FlexGroup Constituents in Cluster |
-| cmode/flexgroup.json | Volume Table | FlexGroup Constituents in Cluster |
-| cmode/health.json | Volume | Volumes with Ransomware Issues (9.10+ Only) |
-| cmode/health.json | Volume | Volumes with Ransomware Issues (9.10+ Only) |
-| cmode/health.json | Volume | Volumes Move Issues |
-| cmode/health.json | Volume | Volumes Move Issues |
-| cmode/svm.json | Volume Capacity | Top $TopResources Volumes by Compression Savings |
-| cmode/svm.json | Volume Capacity | Top $TopResources Volumes by Compression Savings |
-| cmode/volume.json | Volume Table | Volumes in Cluster |
-| cmode/volume.json | Volume Table | Volumes in Cluster |
-| cmode-details/volumeDeepDive.json | Volume Capacity: $Volume | Volumes in Cluster |
-| cmode-details/volumeDeepDive.json | Volume Capacity: $Volume | Volumes in Cluster |
+| ONTAP: FlexGroup | Volume Table | FlexGroup Constituents in Cluster |
+| ONTAP: Health | Volume | Volumes with Ransomware Issues (9.10+ Only) |
+| ONTAP: Health | Volume | Volumes Move Issues |
+| ONTAP: SVM | Volume Capacity | Top $TopResources Volumes by Compression Savings |
+| ONTAP: Volume | Volume Table | Volumes in Cluster |
+| ONTAP: Volume Deep Dive | Volume Capacity: $Volume | Volumes in Cluster |
 
 
 
@@ -20183,13 +20117,12 @@ Percentage of the total disk space that is saved by compressing blocks on the re
 | REST | `api/private/cli/volume` | `compression_space_saved_percent` | conf/rest/9.12.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-sis-attributes.percentage-compression-space-saved` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_sis_compress_saved_percent` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/lun.json | Top Volume and LUN Capacity | Top $TopResources Volumes by Compression Percent Saved |
-| cmode/lun.json | Top Volume and LUN Capacity | Top $TopResources Volumes by Compression Percent Saved |
-| cmode/svm.json | Volume Capacity % | Top $TopResources Volumes by Compression Saved % |
-| cmode/svm.json | Volume Capacity % | Top $TopResources Volumes by Compression Saved % |
+| ONTAP: LUN | Top Volume and LUN Capacity | Top $TopResources Volumes by Compression Percent Saved |
+| ONTAP: SVM | Volume Capacity % | Top $TopResources Volumes by Compression Saved % |
 
 
 
@@ -20202,16 +20135,16 @@ The total disk space (in bytes) that is saved by deduplication and file cloning.
 | REST | `api/private/cli/volume` | `dedupe_space_saved` | conf/rest/9.12.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-sis-attributes.deduplication-space-saved` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_sis_dedup_saved` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/flexgroup.json | Volume Table | FlexGroup Constituents in Cluster |
-| cmode/health.json | Volume | Volumes with Ransomware Issues (9.10+ Only) |
-| cmode/health.json | Volume | Volumes Move Issues |
-| cmode/svm.json | Volume Capacity | Top $TopResources Volumes by Deduplication Savings |
-| cmode/svm.json | Volume Capacity | Top $TopResources Volumes by Deduplication Savings |
-| cmode/volume.json | Volume Table | Volumes in Cluster |
-| cmode-details/volumeDeepDive.json | Volume Capacity: $Volume | Volumes in Cluster |
+| ONTAP: FlexGroup | Volume Table | FlexGroup Constituents in Cluster |
+| ONTAP: Health | Volume | Volumes with Ransomware Issues (9.10+ Only) |
+| ONTAP: Health | Volume | Volumes Move Issues |
+| ONTAP: SVM | Volume Capacity | Top $TopResources Volumes by Deduplication Savings |
+| ONTAP: Volume | Volume Table | Volumes in Cluster |
+| ONTAP: Volume Deep Dive | Volume Capacity: $Volume | Volumes in Cluster |
 
 
 
@@ -20224,13 +20157,12 @@ Percentage of the total disk space that is saved by deduplication and file cloni
 | REST | `api/private/cli/volume` | `dedupe_space_saved_percent` | conf/rest/9.12.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-sis-attributes.percentage-deduplication-space-saved` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_sis_dedup_saved_percent` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/lun.json | Top Volume and LUN Capacity | Top $TopResources Volumes by Deduplication Percent Saved |
-| cmode/lun.json | Top Volume and LUN Capacity | Top $TopResources Volumes by Deduplication Percent Saved |
-| cmode/svm.json | Volume Capacity % | Top $TopResources Volumes by Deduplication Saved % |
-| cmode/svm.json | Volume Capacity % | Top $TopResources Volumes by Deduplication Saved % |
+| ONTAP: LUN | Top Volume and LUN Capacity | Top $TopResources Volumes by Deduplication Percent Saved |
+| ONTAP: SVM | Volume Capacity % | Top $TopResources Volumes by Deduplication Saved % |
 
 
 
@@ -20243,11 +20175,11 @@ Total space saved (in bytes) in the volume due to deduplication, compression, an
 | REST | `api/private/cli/volume` | `sis_space_saved` | conf/rest/9.12.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-sis-attributes.total-space-saved` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_sis_total_saved` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | Volume Capacity | Top $TopResources Volumes by Total Efficiency Savings |
-| cmode/svm.json | Volume Capacity | Top $TopResources Volumes by Total Efficiency Savings |
+| ONTAP: SVM | Volume Capacity | Top $TopResources Volumes by Total Efficiency Savings |
 
 
 
@@ -20271,18 +20203,15 @@ Physical size of the volume, in bytes. The minimum size for a FlexVol volume is 
 | REST | `api/private/cli/volume` | `size` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.size` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_size` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/fsa.json | Volume Activity | Volume Access ($Activity) History By Percent |
-| cmode/fsa.json | Volume Activity | Volume Access ($Activity) History By Percent |
-| cmode/fsa.json | Volume Activity | Volume Modify ($Activity) History By Percent |
-| cmode/fsa.json | Volume Activity | Volume Modify ($Activity) History By Percent |
-| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Volume Total Size |
-| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Volume Total Size |
-| cmode/volume.json | Capacity | Top $TopResources Volumes Per Volume Total Size |
-| cmode/volume.json | Capacity | Top $TopResources Volumes Per Volume Total Size |
-| cmode-details/volumeDeepDive.json | Per Volume Statistics | Per Volume Space Used |
+| ONTAP: File System Analytics (FSA) | Volume Activity | Volume Access ($Activity) History By Percent |
+| ONTAP: File System Analytics (FSA) | Volume Activity | Volume Modify ($Activity) History By Percent |
+| ONTAP: SVM | Volume Capacity | Top $TopResources Volumes Per Volume Total Size |
+| ONTAP: Volume | Capacity | Top $TopResources Volumes Per Volume Total Size |
+| ONTAP: Volume Deep Dive | Per Volume Statistics | Per Volume Space Used |
 
 
 
@@ -20295,10 +20224,11 @@ The size (in bytes) that is still available in the volume. This field is valid o
 | REST | `api/private/cli/volume` | `available` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.size-available` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_size_available` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/fsa.json | Highlights | Available |
+| ONTAP: File System Analytics (FSA) | Highlights | Available |
 
 
 
@@ -20311,24 +20241,19 @@ Total usable size (in bytes) of the volume, not including WAFL reserve or volume
 | REST | `api/private/cli/volume` | `total` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.size-total` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_size_total` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/cdot.json | Capacity Metrics | Top $TopResources SVMs by Capacity Used % |
-| cmode/cdot.json | Capacity Metrics | Top $TopResources SVMs by Capacity Used % |
-| cmode/cdot.json | Capacity Metrics | Top $TopResources Volumes by Capacity Used % |
-| cmode/cdot.json | Capacity Metrics | Top $TopResources Volumes by Capacity Used % |
-| cmode/cdot.json | Capacity Metrics | Top $TopResources SVMs by Capacity Used % |
-| cmode/cdot.json | Capacity Metrics | Top $TopResources SVMs by Capacity Used % |
-| cmode/cdot.json | Capacity Metrics | Top $TopResources Volumes by Capacity Used % |
-| cmode/cdot.json | Capacity Metrics | Top $TopResources Volumes by Capacity Used % |
-| cmode/flexgroup.json | Volume Table | FlexGroup Constituents in Cluster |
-| cmode/fsa.json | Highlights | Size |
-| cmode/fsa.json | Highlights | Used Percentage |
-| cmode/health.json | Volume | Volumes with Ransomware Issues (9.10+ Only) |
-| cmode/health.json | Volume | Volumes Move Issues |
-| cmode/volume.json | Volume Table | Volumes in Cluster |
-| cmode-details/volumeDeepDive.json | Volume Capacity: $Volume | Volumes in Cluster |
+| ONTAP: cDOT | Capacity Metrics | Top $TopResources SVMs by Capacity Used % |
+| ONTAP: cDOT | Capacity Metrics | Top $TopResources Volumes by Capacity Used % |
+| ONTAP: FlexGroup | Volume Table | FlexGroup Constituents in Cluster |
+| ONTAP: File System Analytics (FSA) | Highlights | Size |
+| ONTAP: File System Analytics (FSA) | Highlights | Used Percentage |
+| ONTAP: Health | Volume | Volumes with Ransomware Issues (9.10+ Only) |
+| ONTAP: Health | Volume | Volumes Move Issues |
+| ONTAP: Volume | Volume Table | Volumes in Cluster |
+| ONTAP: Volume Deep Dive | Volume Capacity: $Volume | Volumes in Cluster |
 
 
 
@@ -20341,28 +20266,19 @@ Number of bytes used in the volume.  If the volume is restricted or offline, a v
 | REST | `api/private/cli/volume` | `used` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.size-used` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_size_used` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Space Used by Aggregate |
-| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Space Used by Aggregate |
-| cmode/cdot.json | Capacity Metrics | Top $TopResources SVMs by Capacity Used % |
-| cmode/cdot.json | Capacity Metrics | Top $TopResources SVMs by Capacity Used % |
-| cmode/cdot.json | Capacity Metrics | Top $TopResources Volumes by Capacity Used % |
-| cmode/cdot.json | Capacity Metrics | Top $TopResources Volumes by Capacity Used % |
-| cmode/cdot.json | Capacity Metrics | Top $TopResources SVMs by Capacity Used % |
-| cmode/cdot.json | Capacity Metrics | Top $TopResources SVMs by Capacity Used % |
-| cmode/cdot.json | Capacity Metrics | Top $TopResources Volumes by Capacity Used % |
-| cmode/cdot.json | Capacity Metrics | Top $TopResources Volumes by Capacity Used % |
-| cmode/fsa.json | Highlights | Used |
-| cmode/fsa.json | Highlights | Used Percentage |
-| cmode/svm.json | Capacity | Top $TopResources SVMs by Volume Space Usage |
-| cmode/svm.json | Capacity | Top $TopResources SVMs by Volume Space Usage |
-| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Volume Size Used |
-| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Volume Size Used |
-| cmode/volume.json | Capacity | Top $TopResources Volumes Per Volume Size Used |
-| cmode/volume.json | Capacity | Top $TopResources Volumes Per Volume Size Used |
-| cmode-details/volumeDeepDive.json | Per Volume Statistics | Per Volume Space Used |
+| ONTAP: Aggregate | Volume Capacity | Top $TopResources Volumes by Space Used by Aggregate |
+| ONTAP: cDOT | Capacity Metrics | Top $TopResources SVMs by Capacity Used % |
+| ONTAP: cDOT | Capacity Metrics | Top $TopResources Volumes by Capacity Used % |
+| ONTAP: File System Analytics (FSA) | Highlights | Used |
+| ONTAP: File System Analytics (FSA) | Highlights | Used Percentage |
+| ONTAP: SVM | Capacity | Top $TopResources SVMs by Volume Space Usage |
+| ONTAP: SVM | Volume Capacity | Top $TopResources Volumes Per Volume Size Used |
+| ONTAP: Volume | Capacity | Top $TopResources Volumes Per Volume Size Used |
+| ONTAP: Volume Deep Dive | Per Volume Statistics | Per Volume Space Used |
 
 
 
@@ -20375,28 +20291,22 @@ percentage of utilized storage space in a volume relative to its total capacity
 | REST | `api/private/cli/volume` | `percent_used` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.percentage-size-used` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_size_used_percent` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Space Used % |
-| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Space Used % |
-| cmode/flexgroup.json | Volume Table | FlexGroup Constituents in Cluster |
-| cmode/health.json | Volume | Volumes with Ransomware Issues (9.10+ Only) |
-| cmode/health.json | Volume | Volumes Move Issues |
-| cmode/lun.json | Top Volume and LUN Capacity | Top $TopResources Volumes by Used % |
-| cmode/lun.json | Top Volume and LUN Capacity | Top $TopResources Volumes by Used % |
-| cmode/svm.json | Volume Capacity % | Top $TopResources Volumes Per Volume Size Used |
-| cmode/svm.json | Volume Capacity % | Top $TopResources Volumes Per Volume Size Used |
-| cmode/volume.json | Volume Table | Volumes in Cluster |
-| cmode/volume.json | Capacity % | Top $TopResources Volumes Per Volume Size Used |
-| cmode/volume.json | Capacity % | Top $TopResources Volumes Per Volume Size Used |
-| cmode/volume.json | Forecast Volume Capacity | Top $TopResources Volumes Per Size Used Percentage Trend |
-| cmode/volume.json | Forecast Volume Capacity | Top $TopResources Volumes Per Size Used Percentage Trend |
-| cmode/volume.json | Forecast Volume Capacity | Top $TopResources Volumes Per Size Used Percentage Trend |
-| cmode/volume.json | Forecast Volume Capacity | Top $TopResources Volumes Per Size Used Percentage Trend |
-| cmode-details/volumeDeepDive.json | Volume Capacity: $Volume | Volumes in Cluster |
-| cmode-details/volumeDeepDive.json | Per Volume Statistics | Per Volume Space Used Percent |
-| cmode-details/volumeDeepDive.json | Per Volume Statistics | Per Volume Snapshot Space Used Percent |
+| ONTAP: Aggregate | Volume Capacity | Top $TopResources Volumes by Space Used % |
+| ONTAP: FlexGroup | Volume Table | FlexGroup Constituents in Cluster |
+| ONTAP: Health | Volume | Volumes with Ransomware Issues (9.10+ Only) |
+| ONTAP: Health | Volume | Volumes Move Issues |
+| ONTAP: LUN | Top Volume and LUN Capacity | Top $TopResources Volumes by Used % |
+| ONTAP: SVM | Volume Capacity % | Top $TopResources Volumes Per Volume Size Used |
+| ONTAP: Volume | Volume Table | Volumes in Cluster |
+| ONTAP: Volume | Capacity % | Top $TopResources Volumes Per Volume Size Used |
+| ONTAP: Volume | Forecast Volume Capacity | Top $TopResources Volumes Per Size Used Percentage Trend |
+| ONTAP: Volume Deep Dive | Volume Capacity: $Volume | Volumes in Cluster |
+| ONTAP: Volume Deep Dive | Per Volume Statistics | Per Volume Space Used Percent |
+| ONTAP: Volume Deep Dive | Per Volume Statistics | Per Volume Snapshot Space Used Percent |
 
 
 
@@ -20409,24 +20319,16 @@ Number of snapshots in the volume.
 | REST | `api/private/cli/volume` | `snapshot_count` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-snapshot-attributes.snapshot-count` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_snapshot_count` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/data_protection.json | Snapshot Copies |  <10 Copies  |
-| cmode/data_protection.json | Snapshot Copies |  <10 Copies  |
-| cmode/data_protection.json | Snapshot Copies | 10-100 Copies |
-| cmode/data_protection.json | Snapshot Copies | 10-100 Copies |
-| cmode/data_protection.json | Snapshot Copies | 101-500 Copies |
-| cmode/data_protection.json | Snapshot Copies | 101-500 Copies |
-| cmode/data_protection.json | Snapshot Copies | >500 Copies |
-| cmode/data_protection.json | Snapshot Copies | Volume count by the number of Snapshot copies |
-| cmode/datacenter.json | Snapshots | Snapshot Copies |
-| cmode/datacenter.json | Snapshots | Snapshot Copies |
-| cmode/datacenter.json | Snapshots | Snapshot Copies |
-| cmode/datacenter.json | Snapshots | Snapshot Copies |
-| cmode/datacenter.json | Snapshots | Snapshot Copies |
-| cmode/datacenter.json | Snapshots | Snapshot Copies |
-| cmode/datacenter.json | Snapshots | Snapshot Copies |
+| ONTAP: Data Protection | Snapshot Copies |  <10 Copies  |
+| ONTAP: Data Protection | Snapshot Copies | 10-100 Copies |
+| ONTAP: Data Protection | Snapshot Copies | 101-500 Copies |
+| ONTAP: Data Protection | Snapshot Copies | >500 Copies |
+| ONTAP: Data Protection | Snapshot Copies | Volume count by the number of Snapshot copies |
+| ONTAP: Datacenter | Snapshots | Snapshot Copies |
 
 
 
@@ -20439,14 +20341,13 @@ The size (in bytes) that is available for Snapshot copies inside the Snapshot re
 | REST | `api/private/cli/volume` | `snapshot_reserve_available` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.snapshot-reserve-available` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_snapshot_reserve_available` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Snapshot Reserve Available |
-| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Snapshot Reserve Available |
-| cmode/volume.json | Capacity | Top $TopResources Volumes Per Snapshot Reserve Available |
-| cmode/volume.json | Capacity | Top $TopResources Volumes Per Snapshot Reserve Available |
-| cmode-details/volumeDeepDive.json | Per Volume Statistics | Per Volume Snapshot Space Used |
+| ONTAP: SVM | Volume Capacity | Top $TopResources Volumes Per Snapshot Reserve Available |
+| ONTAP: Volume | Capacity | Top $TopResources Volumes Per Snapshot Reserve Available |
+| ONTAP: Volume Deep Dive | Per Volume Statistics | Per Volume Snapshot Space Used |
 
 
 
@@ -20459,14 +20360,13 @@ The percentage of volume disk space that has been set aside as reserve for snaps
 | REST | `api/private/cli/volume` | `percent_snapshot_space` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.percentage-snapshot-reserve` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_snapshot_reserve_percent` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | Volume Capacity % | Top $TopResources Volumes Per Snapshot Reserve |
-| cmode/svm.json | Volume Capacity % | Top $TopResources Volumes Per Snapshot Reserve |
-| cmode/volume.json | Capacity % | Top $TopResources Volumes Per Snapshot Reserve |
-| cmode/volume.json | Capacity % | Top $TopResources Volumes Per Snapshot Reserve |
-| cmode-details/volumeDeepDive.json | Per Volume Statistics | Per Volume Snapshot Space Used Percent |
+| ONTAP: SVM | Volume Capacity % | Top $TopResources Volumes Per Snapshot Reserve |
+| ONTAP: Volume | Capacity % | Top $TopResources Volumes Per Snapshot Reserve |
+| ONTAP: Volume Deep Dive | Per Volume Statistics | Per Volume Snapshot Space Used Percent |
 
 
 
@@ -20479,25 +20379,17 @@ The size (in bytes) in the volume that has been set aside as reserve for snapsho
 | REST | `api/private/cli/volume` | `snapshot_reserve_size` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.snapshot-reserve-size` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_snapshot_reserve_size` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/data_protection.json | Snapshot Copies | Volumes breached |
-| cmode/data_protection.json | Snapshot Copies | Volumes breached |
-| cmode/data_protection.json | Snapshot Copies | Volumes not breached |
-| cmode/data_protection.json | Snapshot Copies | Volumes not breached |
-| cmode/data_protection.json | Snapshot Copies | Volumes not breached |
-| cmode/data_protection.json | Snapshot Copies | Volumes Breaching Snapshot Copy Reserve Space |
-| cmode/datacenter.json | Snapshots | Breached Status |
-| cmode/datacenter.json | Snapshots | Breached Status |
-| cmode/datacenter.json | Snapshots | Breached Status |
-| cmode/datacenter.json | Snapshots | Breached Status |
-| cmode/datacenter.json | Snapshots | Breached Status |
-| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Snapshot Reserve Size |
-| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Snapshot Reserve Size |
-| cmode/volume.json | Capacity | Top $TopResources Volumes Per Snapshot Reserve Size |
-| cmode/volume.json | Capacity | Top $TopResources Volumes Per Snapshot Reserve Size |
-| cmode-details/volumeDeepDive.json | Per Volume Statistics | Per Volume Snapshot Space Used |
+| ONTAP: Data Protection | Snapshot Copies | Volumes breached |
+| ONTAP: Data Protection | Snapshot Copies | Volumes not breached |
+| ONTAP: Data Protection | Snapshot Copies | Volumes Breaching Snapshot Copy Reserve Space |
+| ONTAP: Datacenter | Snapshots | Breached Status |
+| ONTAP: SVM | Volume Capacity | Top $TopResources Volumes Per Snapshot Reserve Size |
+| ONTAP: Volume | Capacity | Top $TopResources Volumes Per Snapshot Reserve Size |
+| ONTAP: Volume Deep Dive | Per Volume Statistics | Per Volume Snapshot Space Used |
 
 
 
@@ -20521,18 +20413,15 @@ Percentage of the volume reserved for snapshots that has been used. Note that in
 | REST | `api/private/cli/volume` | `snapshot_space_used` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.percentage-snapshot-reserve-used` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_snapshot_reserve_used_percent` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Snapshot Space Used % |
-| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Snapshot Space Used % |
-| cmode/lun.json | Top Volume and LUN Capacity | Top $TopResources Volumes by Snapshot Used % |
-| cmode/lun.json | Top Volume and LUN Capacity | Top $TopResources Volumes by Snapshot Used % |
-| cmode/svm.json | Volume Capacity % | Top $TopResources Volumes Per Snapshot Reserve Used |
-| cmode/svm.json | Volume Capacity % | Top $TopResources Volumes Per Snapshot Reserve Used |
-| cmode/volume.json | Capacity % | Top $TopResources Volumes Per Snapshot Reserve Used |
-| cmode/volume.json | Capacity % | Top $TopResources Volumes Per Snapshot Reserve Used |
-| cmode-details/volumeDeepDive.json | Per Volume Statistics | Per Volume Snapshot Space Used Percent |
+| ONTAP: Aggregate | Volume Capacity | Top $TopResources Volumes by Snapshot Space Used % |
+| ONTAP: LUN | Top Volume and LUN Capacity | Top $TopResources Volumes by Snapshot Used % |
+| ONTAP: SVM | Volume Capacity % | Top $TopResources Volumes Per Snapshot Reserve Used |
+| ONTAP: Volume | Capacity % | Top $TopResources Volumes Per Snapshot Reserve Used |
+| ONTAP: Volume Deep Dive | Per Volume Statistics | Per Volume Snapshot Space Used Percent |
 
 
 
@@ -20545,14 +20434,13 @@ Total free space (in bytes) available in the volume and the snapshot reserve. If
 | REST | `api/private/cli/volume` | `size_available_for_snapshots` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.size-available-for-snapshots` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_snapshots_size_available` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Snapshot Size Available |
-| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Snapshot Size Available |
-| cmode/volume.json | Capacity | Top $TopResources Volumes Per Snapshot Size Available |
-| cmode/volume.json | Capacity | Top $TopResources Volumes Per Snapshot Size Available |
-| cmode-details/volumeDeepDive.json | Per Volume Statistics | Per Volume Snapshot Space Used |
+| ONTAP: SVM | Volume Capacity | Top $TopResources Volumes Per Snapshot Size Available |
+| ONTAP: Volume | Capacity | Top $TopResources Volumes Per Snapshot Size Available |
+| ONTAP: Volume Deep Dive | Per Volume Statistics | Per Volume Snapshot Space Used |
 
 
 
@@ -20565,28 +20453,18 @@ The size (in bytes) that is used by snapshots in the volume.
 | REST | `api/private/cli/volume` | `size_used_by_snapshots` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.size-used-by-snapshots` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_snapshots_size_used` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Snapshot Space Used |
-| cmode/aggregate.json | Volume Capacity | Top $TopResources Volumes by Snapshot Space Used |
-| cmode/data_protection.json | Snapshot Copies | Volumes breached |
-| cmode/data_protection.json | Snapshot Copies | Volumes breached |
-| cmode/data_protection.json | Snapshot Copies | Volumes not breached |
-| cmode/data_protection.json | Snapshot Copies | Volumes not breached |
-| cmode/data_protection.json | Snapshot Copies | Volumes not breached |
-| cmode/data_protection.json | Snapshot Copies | Volumes Breaching Snapshot Copy Reserve Space |
-| cmode/data_protection.json | Snapshot Copies | Volumes Breaching Snapshot Copy Reserve Space |
-| cmode/datacenter.json | Snapshots | Breached Status |
-| cmode/datacenter.json | Snapshots | Breached Status |
-| cmode/datacenter.json | Snapshots | Breached Status |
-| cmode/datacenter.json | Snapshots | Breached Status |
-| cmode/datacenter.json | Snapshots | Breached Status |
-| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Snapshot Size Used |
-| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Snapshot Size Used |
-| cmode/volume.json | Capacity | Top $TopResources Volumes Per Snapshot Size Used |
-| cmode/volume.json | Capacity | Top $TopResources Volumes Per Snapshot Size Used |
-| cmode-details/volumeDeepDive.json | Per Volume Statistics | Per Volume Snapshot Space Used |
+| ONTAP: Aggregate | Volume Capacity | Top $TopResources Volumes by Snapshot Space Used |
+| ONTAP: Data Protection | Snapshot Copies | Volumes breached |
+| ONTAP: Data Protection | Snapshot Copies | Volumes not breached |
+| ONTAP: Data Protection | Snapshot Copies | Volumes Breaching Snapshot Copy Reserve Space |
+| ONTAP: Datacenter | Snapshots | Breached Status |
+| ONTAP: SVM | Volume Capacity | Top $TopResources Volumes Per Snapshot Size Used |
+| ONTAP: Volume | Capacity | Top $TopResources Volumes Per Snapshot Size Used |
+| ONTAP: Volume Deep Dive | Per Volume Statistics | Per Volume Snapshot Space Used |
 
 
 
@@ -20621,33 +20499,23 @@ The size (in bytes) that is logically used in the volume.This value includes all
 | REST | `api/private/cli/volume` | `logical_used` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.logical-used` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_space_logical_used` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/flexgroup.json | Volume Table | FlexGroup Constituents in Cluster |
-| cmode/health.json | Volume | Volumes with Ransomware Issues (9.10+ Only) |
-| cmode/health.json | Volume | Volumes Move Issues |
-| cmode/svm.json | Capacity | Top $TopResources SVMs by Logical Space Usage Across Volumes |
-| cmode/svm.json | Capacity | Top $TopResources SVMs by Logical Space Usage Across Volumes |
-| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Logical Space Used |
-| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Logical Space Used |
-| cmode/volume.json | Volume Table | Volumes in Cluster |
-| cmode/volume.json | I/O Density | Top $TopResources Volumes by IO Density (IOPs/TiB) |
-| cmode/volume.json | I/O Density | Top $TopResources Volumes by IO Density (IOPs/TiB) |
-| cmode/volume.json | I/O Density | Bottom $TopResources Volumes by IO Density (IOPs/TiB) |
-| cmode/volume.json | I/O Density | Bottom $TopResources Volumes by IO Density (IOPs/TiB) |
-| cmode/volume.json | Capacity | Top $TopResources Volumes Per Logical Space Used |
-| cmode/volume.json | Capacity | Top $TopResources Volumes Per Logical Space Used |
-| cmode/volume.json | Growth Rate | Top $TopResources Volumes Per Growth Rate of Logical Used |
-| cmode/volume.json | Growth Rate | Top $TopResources Volumes Per Growth Rate of Logical Used |
-| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Logical Usage: Delta |
-| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Logical Usage: Delta |
-| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Logical Usage: Delta |
-| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Logical Usage: Delta |
-| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Logical Usage: Delta |
-| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Logical Usage: Delta |
-| cmode-details/volumeDeepDive.json | Volume Capacity: $Volume | Volumes in Cluster |
-| cmode-details/volumeDeepDive.json | Per Volume Statistics | Per Volume Space Used |
+| ONTAP: FlexGroup | Volume Table | FlexGroup Constituents in Cluster |
+| ONTAP: Health | Volume | Volumes with Ransomware Issues (9.10+ Only) |
+| ONTAP: Health | Volume | Volumes Move Issues |
+| ONTAP: SVM | Capacity | Top $TopResources SVMs by Logical Space Usage Across Volumes |
+| ONTAP: SVM | Volume Capacity | Top $TopResources Volumes Per Logical Space Used |
+| ONTAP: Volume | Volume Table | Volumes in Cluster |
+| ONTAP: Volume | I/O Density | Top $TopResources Volumes by IO Density (IOPs/TiB) |
+| ONTAP: Volume | I/O Density | Bottom $TopResources Volumes by IO Density (IOPs/TiB) |
+| ONTAP: Volume | Capacity | Top $TopResources Volumes Per Logical Space Used |
+| ONTAP: Volume | Growth Rate | Top $TopResources Volumes Per Growth Rate of Logical Used |
+| ONTAP: Volume | Growth Rate | Top $TopResources Volumes by Logical Usage: Delta |
+| ONTAP: Volume Deep Dive | Volume Capacity: $Volume | Volumes in Cluster |
+| ONTAP: Volume Deep Dive | Per Volume Statistics | Per Volume Space Used |
 
 
 
@@ -20682,14 +20550,13 @@ Percentage of the logical used size of the volume.This parameter is not supporte
 | REST | `api/private/cli/volume` | `logical_used_percent` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.logical-used-percent` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_space_logical_used_percent` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | Volume Capacity % | Top $TopResources Volumes Per Logical Space Used |
-| cmode/svm.json | Volume Capacity % | Top $TopResources Volumes Per Logical Space Used |
-| cmode/volume.json | Capacity % | Top $TopResources Volumes Per Logical Space Used |
-| cmode/volume.json | Capacity % | Top $TopResources Volumes Per Logical Space Used |
-| cmode-details/volumeDeepDive.json | Per Volume Statistics | Per Volume Space Used Percent |
+| ONTAP: SVM | Volume Capacity % | Top $TopResources Volumes Per Logical Space Used |
+| ONTAP: Volume | Capacity % | Top $TopResources Volumes Per Logical Space Used |
+| ONTAP: Volume Deep Dive | Per Volume Statistics | Per Volume Space Used Percent |
 
 
 
@@ -20702,11 +20569,11 @@ The size that is physically used in the performance tier of the volume and has a
 | REST | `api/private/cli/volume` | `performance_tier_inactive_user_data` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.performance-tier-inactive-user-data` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_space_performance_tier_inactive_user_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/volume.json | Capacity | Top $TopResources Volumes by Inactive Data |
-| cmode/volume.json | Capacity | Top $TopResources Volumes by Inactive Data |
+| ONTAP: Volume | Capacity | Top $TopResources Volumes by Inactive Data |
 
 
 
@@ -20719,11 +20586,11 @@ The size (in percent) that is physically used in the performance tier of the vol
 | REST | `api/private/cli/volume` | `performance_tier_inactive_user_data_percent` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.performance-tier-inactive-user-data-percent` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_space_performance_tier_inactive_user_data_percent` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/volume.json | Capacity % | Top $TopResources Volumes by Inactive Data |
-| cmode/volume.json | Capacity % | Top $TopResources Volumes by Inactive Data |
+| ONTAP: Volume | Capacity % | Top $TopResources Volumes by Inactive Data |
 
 
 
@@ -20736,27 +20603,20 @@ The size (in bytes) that is physically used in the volume.This differs from 'tot
 | REST | `api/private/cli/volume` | `virtual_used` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.physical-used` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_space_physical_used` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/flexgroup.json | Volume Table | FlexGroup Constituents in Cluster |
-| cmode/health.json | Volume | Volumes with Ransomware Issues (9.10+ Only) |
-| cmode/health.json | Volume | Volumes Move Issues |
-| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Physical Space Used |
-| cmode/svm.json | Volume Capacity | Top $TopResources Volumes Per Physical Space Used |
-| cmode/volume.json | Volume Table | Volumes in Cluster |
-| cmode/volume.json | Capacity | Top $TopResources Volumes Per Physical Space Used |
-| cmode/volume.json | Capacity | Top $TopResources Volumes Per Physical Space Used |
-| cmode/volume.json | Growth Rate | Top $TopResources Volumes Per Growth Rate of Physical Used |
-| cmode/volume.json | Growth Rate | Top $TopResources Volumes Per Growth Rate of Physical Used |
-| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Physical Usage: Delta |
-| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Physical Usage: Delta |
-| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Physical Usage: Delta |
-| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Physical Usage: Delta |
-| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Physical Usage: Delta |
-| cmode/volume.json | Growth Rate | Top $TopResources Volumes by Physical Usage: Delta |
-| cmode-details/volumeDeepDive.json | Volume Capacity: $Volume | Volumes in Cluster |
-| cmode-details/volumeDeepDive.json | Per Volume Statistics | Per Volume Space Used |
+| ONTAP: FlexGroup | Volume Table | FlexGroup Constituents in Cluster |
+| ONTAP: Health | Volume | Volumes with Ransomware Issues (9.10+ Only) |
+| ONTAP: Health | Volume | Volumes Move Issues |
+| ONTAP: SVM | Volume Capacity | Top $TopResources Volumes Per Physical Space Used |
+| ONTAP: Volume | Volume Table | Volumes in Cluster |
+| ONTAP: Volume | Capacity | Top $TopResources Volumes Per Physical Space Used |
+| ONTAP: Volume | Growth Rate | Top $TopResources Volumes Per Growth Rate of Physical Used |
+| ONTAP: Volume | Growth Rate | Top $TopResources Volumes by Physical Usage: Delta |
+| ONTAP: Volume Deep Dive | Volume Capacity: $Volume | Volumes in Cluster |
+| ONTAP: Volume Deep Dive | Per Volume Statistics | Per Volume Space Used |
 
 
 
@@ -20769,14 +20629,13 @@ The size (in percent) that is physically used in the volume.The percentage is ba
 | REST | `api/private/cli/volume` | `virtual_used_percent` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-space-attributes.physical-used-percent` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_space_physical_used_percent` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/svm.json | Volume Capacity % | Top $TopResources Volumes Per Physical Space Used |
-| cmode/svm.json | Volume Capacity % | Top $TopResources Volumes Per Physical Space Used |
-| cmode/volume.json | Capacity % | Top $TopResources Volumes Per Physical Space Used |
-| cmode/volume.json | Capacity % | Top $TopResources Volumes Per Physical Space Used |
-| cmode-details/volumeDeepDive.json | Per Volume Statistics | Per Volume Space Used Percent |
+| ONTAP: SVM | Volume Capacity % | Top $TopResources Volumes Per Physical Space Used |
+| ONTAP: Volume | Capacity % | Top $TopResources Volumes Per Physical Space Used |
+| ONTAP: Volume Deep Dive | Per Volume Statistics | Per Volume Space Used Percent |
 
 
 
@@ -20888,11 +20747,11 @@ This metric represents the total amount of data that has been read from and writ
 | KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.total`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `volume` | `read_data, write_data`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
+The `volume_total_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/datacenter.json | Performance | Top $TopResources Throughput by Cluster |
-| cmode/datacenter.json | Performance | Top $TopResources Throughput by Cluster |
+| ONTAP: Datacenter | Performance | Top $TopResources Throughput by Cluster |
 
 
 
@@ -20905,12 +20764,12 @@ This field represents the total footprint in bytes.
 | REST | `api/private/cli/volume/footprint` | `total_footprint` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-footprint-get-iter` | `total-footprint` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_total_footprint` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/volume.json | FabricPool | Volumes Footprint |
-| cmode/volume.json | FabricPool | Top $TopResources Volumes by Total Footprint |
-| cmode/volume.json | FabricPool | Top $TopResources Volumes by Total Footprint |
+| ONTAP: Volume | FabricPool | Volumes Footprint |
+| ONTAP: Volume | FabricPool | Top $TopResources Volumes by Total Footprint |
 
 
 
@@ -20923,12 +20782,12 @@ This field represents the total metadata footprint in bytes.
 | REST | `api/private/cli/volume/footprint` | `total_metadata_footprint` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-footprint-get-iter` | `volume_total_metadata_footprint` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_total_metadata_footprint` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/volume.json | FabricPool | Volumes Footprint |
-| cmode/volume.json | FabricPool | Top $TopResources Volumes by Total Metadata Footprint |
-| cmode/volume.json | FabricPool | Top $TopResources Volumes by Total Metadata Footprint |
+| ONTAP: Volume | FabricPool | Volumes Footprint |
+| ONTAP: Volume | FabricPool | Top $TopResources Volumes by Total Metadata Footprint |
 
 
 
@@ -20942,29 +20801,20 @@ Number of operations per second serviced by the volume
 | KeyPerf | `api/storage/volumes` | `statistics.iops_raw.total`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
+The `volume_total_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by IOPs |
-| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by IOPs |
-| cmode/cdot.json | Volume Metrics | Top $TopResources Volumes by IOPs |
-| cmode/cdot.json | Volume Metrics | Top $TopResources Volumes by IOPs |
-| cmode/datacenter.json | Performance | Top $TopResources  IOPs by Cluster |
-| cmode/datacenter.json | Performance | Top $TopResources  IOPs by Cluster |
-| cmode/flexgroup.json | Highlights | Top $TopResources Constituents by Total IOPs |
-| cmode/flexgroup.json | Highlights | Top $TopResources Constituents by Total IOPs |
-| cmode/node.json | Volume Performance | Top $TopResources Volumes by IOPs |
-| cmode/node.json | Volume Performance | Top $TopResources Volumes by IOPs |
-| cmode/volume.json | Highlights | Top $TopResources Volumes by Total IOPs |
-| cmode/volume.json | Highlights | Top $TopResources Volumes by Total IOPs |
-| cmode/volume.json | Highlights | Top $TopResources Volumes by Total IOPs |
-| cmode/volume.json | I/O Density | Top $TopResources Volumes by IO Density (IOPs/TiB) |
-| cmode/volume.json | I/O Density | Top $TopResources Volumes by IO Density (IOPs/TiB) |
-| cmode/volume.json | I/O Density | Bottom $TopResources Volumes by IO Density (IOPs/TiB) |
-| cmode/volume.json | I/O Density | Bottom $TopResources Volumes by IO Density (IOPs/TiB) |
-| cmode/volume.json | I/O Density | Bottom $TopResources Volumes by IO Density (IOPs/TiB) |
-| cmode-details/volumeBySVM.json | Highlights | Volume Performance for $SVM (Click volume for detailed drill-down) |
-| cmode-details/volumeDeepDive.json | Highlights | Volume Performance |
+| ONTAP: Aggregate | Volume Performance | Top $TopResources Volumes by IOPs |
+| ONTAP: cDOT | Volume Metrics | Top $TopResources Volumes by IOPs |
+| ONTAP: Datacenter | Performance | Top $TopResources  IOPs by Cluster |
+| ONTAP: FlexGroup | Highlights | Top $TopResources Constituents by Total IOPs |
+| ONTAP: Node | Volume Performance | Top $TopResources Volumes by IOPs |
+| ONTAP: Volume | Highlights | Top $TopResources Volumes by Total IOPs |
+| ONTAP: Volume | I/O Density | Top $TopResources Volumes by IO Density (IOPs/TiB) |
+| ONTAP: Volume | I/O Density | Bottom $TopResources Volumes by IO Density (IOPs/TiB) |
+| ONTAP: Volume by SVM | Highlights | Volume Performance for $SVM (Click volume for detailed drill-down) |
+| ONTAP: Volume Deep Dive | Highlights | Volume Performance |
 
 
 
@@ -20978,36 +20828,26 @@ Bytes written per second
 | KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.write`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
+The `volume_write_data` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Average Throughput |
-| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Average Throughput |
-| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Write Throughput |
-| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Write Throughput |
-| cmode/cdot.json | Volume Metrics | Top $TopResources Volumes by Average Throughput |
-| cmode/cdot.json | Volume Metrics | Top $TopResources Volumes by Average Throughput |
-| cmode/flexgroup.json | Highlights | Top $TopResources Constituents by Average Throughput |
-| cmode/flexgroup.json | Highlights | Top $TopResources Constituents by Average Throughput |
-| cmode/flexgroup.json | Volume Table | Top $TopResources Volumes by Write Throughput |
-| cmode/flexgroup.json | Volume Table | Top $TopResources Volumes by Write Throughput |
-| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Write Throughput |
-| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Write Throughput |
-| cmode/node.json | Volume Performance | Top $TopResources Volumes by Average Throughput |
-| cmode/node.json | Volume Performance | Top $TopResources Volumes by Average Throughput |
-| cmode/svm.json | Volume Performance | Top $TopResources Volumes by Write Throughput |
-| cmode/svm.json | Volume Performance | Top $TopResources Volumes by Write Throughput |
-| cmode/volume.json | Highlights | Top $TopResources Volumes Total Throughput |
-| cmode/volume.json | Highlights | Top $TopResources Volumes by Average Throughput |
-| cmode/volume.json | Highlights | Top $TopResources Volumes by Average Throughput |
-| cmode/volume.json | Volume Table | Top $TopResources Volumes by Write Throughput |
-| cmode/volume.json | Volume Table | Top $TopResources Volumes by Write Throughput |
-| cmode/volume.json | Performance | Top $TopResources Volumes by Write Throughput |
-| cmode/volume.json | Performance | Top $TopResources Volumes by Write Throughput |
-| cmode-details/volumeBySVM.json | Highlights | Volume Performance for $SVM (Click volume for detailed drill-down) |
-| cmode-details/volumeDeepDive.json | Highlights | Volume Performance |
-| cmode-details/volumeDeepDive.json | Highlights | Max Write Op Size |
-| cmode-details/volumeDeepDive.json | Highlights | Write Throughput |
+| ONTAP: Aggregate | Volume Performance | Top $TopResources Volumes by Average Throughput |
+| ONTAP: Aggregate | Volume Performance | Top $TopResources Volumes by Write Throughput |
+| ONTAP: cDOT | Volume Metrics | Top $TopResources Volumes by Average Throughput |
+| ONTAP: FlexGroup | Highlights | Top $TopResources Constituents by Average Throughput |
+| ONTAP: FlexGroup | Volume Table | Top $TopResources Volumes by Write Throughput |
+| ONTAP: FlexGroup | Volume WAFL Layer | Top $TopResources Volumes by Write Throughput |
+| ONTAP: Node | Volume Performance | Top $TopResources Volumes by Average Throughput |
+| ONTAP: SVM | Volume Performance | Top $TopResources Volumes by Write Throughput |
+| ONTAP: Volume | Highlights | Top $TopResources Volumes Total Throughput |
+| ONTAP: Volume | Highlights | Top $TopResources Volumes by Average Throughput |
+| ONTAP: Volume | Volume Table | Top $TopResources Volumes by Write Throughput |
+| ONTAP: Volume | Performance | Top $TopResources Volumes by Write Throughput |
+| ONTAP: Volume by SVM | Highlights | Volume Performance for $SVM (Click volume for detailed drill-down) |
+| ONTAP: Volume Deep Dive | Highlights | Volume Performance |
+| ONTAP: Volume Deep Dive | Highlights | Max Write Op Size |
+| ONTAP: Volume Deep Dive | Highlights | Write Throughput |
 
 
 
@@ -21021,22 +20861,17 @@ Average latency in microseconds for the WAFL filesystem to process write request
 | KeyPerf | `api/storage/volumes` | `statistics.latency_raw.write`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.write | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
+The `volume_write_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Write Latency |
-| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Write Latency |
-| cmode/flexgroup.json | Volume Table | Top $TopResources Volumes by Write Latency |
-| cmode/flexgroup.json | Volume Table | Top $TopResources Volumes by Write Latency |
-| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Write Latency |
-| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Write Latency |
-| cmode/svm.json | Volume Performance | Top $TopResources Volumes by Write Latency |
-| cmode/svm.json | Volume Performance | Top $TopResources Volumes by Write Latency |
-| cmode/volume.json | Volume Table | Top $TopResources Volumes by Write Latency |
-| cmode/volume.json | Volume Table | Top $TopResources Volumes by Write Latency |
-| cmode/volume.json | Performance | Top $TopResources Volumes by Write Latency |
-| cmode/volume.json | Performance | Top $TopResources Volumes by Write Latency |
-| cmode-details/volumeDeepDive.json | Highlights | Write Latency |
+| ONTAP: Aggregate | Volume Performance | Top $TopResources Volumes by Write Latency |
+| ONTAP: FlexGroup | Volume Table | Top $TopResources Volumes by Write Latency |
+| ONTAP: FlexGroup | Volume WAFL Layer | Top $TopResources Volumes by Write Latency |
+| ONTAP: SVM | Volume Performance | Top $TopResources Volumes by Write Latency |
+| ONTAP: Volume | Volume Table | Top $TopResources Volumes by Write Latency |
+| ONTAP: Volume | Performance | Top $TopResources Volumes by Write Latency |
+| ONTAP: Volume Deep Dive | Highlights | Write Latency |
 
 
 
@@ -21050,25 +20885,20 @@ Number of write operations per second to the volume
 | KeyPerf | `api/storage/volumes` | `statistics.iops_raw.write`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
+The `volume_write_ops` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Write IOPs |
-| cmode/aggregate.json | Volume Performance | Top $TopResources Volumes by Write IOPs |
-| cmode/flexgroup.json | Volume Table | Top $TopResources Volumes by Write IOPS |
-| cmode/flexgroup.json | Volume Table | Top $TopResources Volumes by Write IOPS |
-| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Write IOPs |
-| cmode/flexgroup.json | Volume WAFL Layer | Top $TopResources Volumes by Write IOPs |
-| cmode/svm.json | Volume Performance | Top $TopResources Volumes by Write IOPs |
-| cmode/svm.json | Volume Performance | Top $TopResources Volumes by Write IOPs |
-| cmode/volume.json | Volume Table | Top $TopResources Volumes by Write IOPS |
-| cmode/volume.json | Volume Table | Top $TopResources Volumes by Write IOPS |
-| cmode/volume.json | Performance | Top $TopResources Volumes by Write IOPs |
-| cmode/volume.json | Performance | Top $TopResources Volumes by Write IOPs |
-| cmode-details/volumeBySVM.json | Highlights | Volume Performance for $SVM (Click volume for detailed drill-down) |
-| cmode-details/volumeDeepDive.json | Highlights | Volume Performance |
-| cmode-details/volumeDeepDive.json | Highlights | Max Write Op Size |
-| cmode-details/volumeDeepDive.json | Highlights | Write IOPs |
+| ONTAP: Aggregate | Volume Performance | Top $TopResources Volumes by Write IOPs |
+| ONTAP: FlexGroup | Volume Table | Top $TopResources Volumes by Write IOPS |
+| ONTAP: FlexGroup | Volume WAFL Layer | Top $TopResources Volumes by Write IOPs |
+| ONTAP: SVM | Volume Performance | Top $TopResources Volumes by Write IOPs |
+| ONTAP: Volume | Volume Table | Top $TopResources Volumes by Write IOPS |
+| ONTAP: Volume | Performance | Top $TopResources Volumes by Write IOPs |
+| ONTAP: Volume by SVM | Highlights | Volume Performance for $SVM (Click volume for detailed drill-down) |
+| ONTAP: Volume Deep Dive | Highlights | Volume Performance |
+| ONTAP: Volume Deep Dive | Highlights | Max Write Op Size |
+| ONTAP: Volume Deep Dive | Highlights | Write IOPs |
 
 
 
@@ -21091,11 +20921,11 @@ Average scan latency
 | REST | `api/cluster/counter/tables/vscan` | `scan.latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> scan.requests | conf/restperf/9.13.0/vscan.yaml |
 | ZAPI | `perf-object-get-instances offbox_vscan_server` | `scan_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> scan_latency_base | conf/zapiperf/cdot/9.8.0/vscan.yaml |
 
+The `vscan_scan_latency` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/vscan.json | Connection Status Counters | Top $TopResources Scanners by Scanner Latency |
-| cmode/vscan.json | Connection Status Counters | Top $TopResources Scanners by Scanner Latency |
+| ONTAP: Vscan | Connection Status Counters | Top $TopResources Scanners by Scanner Latency |
 
 
 
@@ -21108,11 +20938,11 @@ Total number of scan requests sent to the scanner per second
 | REST | `api/cluster/counter/tables/vscan` | `scan.request_dispatched_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.13.0/vscan.yaml |
 | ZAPI | `perf-object-get-instances offbox_vscan_server` | `scan_request_dispatched_rate`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/vscan.yaml |
 
+The `vscan_scan_request_dispatched_rate` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/vscan.json | Connection Status Counters | Top $TopResources Scanners by Scanner Requests Throughput |
-| cmode/vscan.json | Connection Status Counters | Top $TopResources Scanners by Scanner Requests Throughput |
+| ONTAP: Vscan | Connection Status Counters | Top $TopResources Scanners by Scanner Requests Throughput |
 
 
 
@@ -21125,10 +20955,11 @@ Percentage CPU utilization on scanner calculated over the last 15 seconds.
 | REST | `api/cluster/counter/tables/vscan` | `scanner.stats_percent_cpu_used`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.13.0/vscan.yaml |
 | ZAPI | `perf-object-get-instances offbox_vscan_server` | `scanner_stats_pct_cpu_used`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/vscan.yaml |
 
+The `vscan_scanner_stats_pct_cpu_used` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/vscan.json | Scanner utilization | Scanner CPU Utilization |
+| ONTAP: Vscan | Scanner utilization | Scanner CPU Utilization |
 
 
 
@@ -21141,10 +20972,11 @@ Percentage RAM utilization on scanner calculated over the last 15 seconds.
 | REST | `api/cluster/counter/tables/vscan` | `scanner.stats_percent_mem_used`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.13.0/vscan.yaml |
 | ZAPI | `perf-object-get-instances offbox_vscan_server` | `scanner_stats_pct_mem_used`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/vscan.yaml |
 
+The `vscan_scanner_stats_pct_mem_used` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/vscan.json | Scanner utilization | Scanner Mem Utilization |
+| ONTAP: Vscan | Scanner utilization | Scanner Mem Utilization |
 
 
 
@@ -21157,10 +20989,11 @@ Percentage network utilization on scanner calculated for the last 15 seconds.
 | REST | `api/cluster/counter/tables/vscan` | `scanner.stats_percent_network_used`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/restperf/9.13.0/vscan.yaml |
 | ZAPI | `perf-object-get-instances offbox_vscan_server` | `scanner_stats_pct_network_used`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/vscan.yaml |
 
+The `vscan_scanner_stats_pct_network_used` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/vscan.json | Scanner utilization | Scanner Network Utilization |
+| ONTAP: Vscan | Scanner utilization | Scanner Network Utilization |
 
 
 
@@ -21206,10 +21039,11 @@ Array of counts of different types of Consistency Points (CP).
 | REST | `api/cluster/counter/tables/wafl` | `cp_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/restperf/9.12.0/wafl.yaml |
 | ZAPI | `perf-object-get-instances wafl` | `cp_count`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/wafl.yaml |
 
+The `wafl_cp_count` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/disk.json | Disk Utilization | CP (Consistency Points) Counts |
+| ONTAP: Disk | Disk Utilization | CP (Consistency Points) Counts |
 
 
 
@@ -21222,10 +21056,11 @@ Array of percentage time spent in different phases of Consistency Point (CP).
 | REST | `api/cluster/counter/tables/wafl` | `cp_phase_times`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> total_cp_msecs | conf/restperf/9.12.0/wafl.yaml |
 | ZAPI | `perf-object-get-instances wafl` | `cp_phase_times`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> total_cp_msecs | conf/zapiperf/cdot/9.8.0/wafl.yaml |
 
+The `wafl_cp_phase_times` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | Backend | System Utilization |
+| ONTAP: Node | Backend | System Utilization |
 
 
 
@@ -21282,10 +21117,11 @@ Percentage of reads served from buffer cache, external cache, or disk.
 | REST | `api/cluster/counter/tables/wafl` | `read_io_type`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> read_io_type_base | conf/restperf/9.12.0/wafl.yaml |
 | ZAPI | `perf-object-get-instances wafl` | `read_io_type`<br><span class="key">Unit:</span> percent<br><span class="key">Type:</span> percent<br><span class="key">Base:</span> read_io_type_base | conf/zapiperf/cdot/9.8.0/wafl.yaml |
 
+The `wafl_read_io_type` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Panel |
 |--------|----------|--------|
-| cmode/node.json | Backend | Reads From |
+| ONTAP: Node | Backend | Reads From |
 
 
 

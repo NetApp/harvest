@@ -7,6 +7,10 @@ counters:
         Endpoint: api/private/cli/aggr/show-space
         ONTAPCounter: object_store_logical_used
         Template: conf/rest/9.12.0/aggr.yaml
+    Panels:
+      - Dashboard: cmode/aggregate.json
+        Row: Highlights
+        Panel: Top $TopResources Aggregates by logical space usage in Object Store
 
   - Name: aggr_object_store_physical_used
     Description: Physical space usage of aggregates in the attached object store.
@@ -15,12 +19,54 @@ counters:
         Endpoint: api/private/cli/aggr/show-space
         ONTAPCounter: object_store_physical_used
         Template: conf/rest/9.12.0/aggr.yaml
+    Panels:
+      - Dashboard: cmode/aggregate.json
+        Row: Highlights
+        Panel: Top $TopResources Aggregates by physical space usage in Object Store
 
   - Name: aggr_physical_used_wo_snapshots
     Description: Total Data Reduction Physical Used Without Snapshots
+    Panels:
+      - Dashboard: cmode/aggregate.json
+        Row: Storage Efficiency Ratios
+        Panel: Data Reduction with FlexClones
+      - Dashboard: cmode/aggregate.json
+        Row: Storage Efficiency Ratios
+        Panel: Top $TopResources Aggregates by Physical Used with FlexClones
+      - Dashboard: cmode/cluster.json
+        Row: Storage Efficiency Ratios
+        Panel: Data Reduction with FlexClones
+      - Dashboard: cmode/cluster.json
+        Row: Storage Efficiency Ratios
+        Panel: Physical Used with FlexClones
+      - Dashboard: cmode/datacenter.json
+        Row: Storage Efficiency Ratios
+        Panel: Data Reduction with FlexClones
+      - Dashboard: cmode/datacenter.json
+        Row: Storage Efficiency
+        Panel: Top $TopResources Physical Used with FlexClones by Cluster
 
   - Name: aggr_physical_used_wo_snapshots_flexclones
     Description: Total Data Reduction Physical Used without snapshots and flexclones
+    Panels:
+      - Dashboard: cmode/aggregate.json
+        Row: Storage Efficiency Ratios
+        Panel: Data Reduction
+      - Dashboard: cmode/aggregate.json
+        Row: Storage Efficiency Ratios
+        Panel: Top $TopResources Aggregates by Physical Used
+      - Dashboard: cmode/cluster.json
+        Row: Storage Efficiency Ratios
+        Panel: Data Reduction
+      - Dashboard: cmode/cluster.json
+        Row: Storage Efficiency Ratios
+        Panel: Physical Used
+      - Dashboard: cmode/datacenter.json
+        Row: Storage Efficiency Ratios
+        Panel: Data Reduction
+      - Dashboard: cmode/datacenter.json
+        Row: Storage Efficiency
+        Panel: Top $TopResources Physical Used by Cluster
 
   - Name: aggr_power
     Description: Power consumed by aggregate in Watts.

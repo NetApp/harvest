@@ -235,6 +235,11 @@ type PanelDef struct {
 	Panel     string `yaml:"Panel"`
 }
 
+type PanelData struct {
+	Panels []PanelDef
+	Keys   []string
+}
+
 func (m MetricDef) TableRow() string {
 	if strings.Contains(m.Template, "perf") {
 		unitTypeBase := `<br><span class="key">Unit:</span> ` + m.Unit +
@@ -410,24 +415,24 @@ func searchDescriptionSwagger(objName string, ontapCounterName string) string {
 }
 
 // processRestCounters parse rest and restperf templates
-func processRestCounters(dir string, client *rest.Client, metricsPanelMap map[string][]PanelDef) map[string]Counter {
+func processRestCounters(dir string, client *rest.Client, metricsPanelMap map[string]PanelData) map[string]Counter {
 
-	restPerfCounters := visitRestTemplates(filepath.Join(dir, "conf", "restperf"), client, metricsPanelMap, func(path string, client *rest.Client, metricsPanelMap map[string][]PanelDef) map[string]Counter {
+	restPerfCounters := visitRestTemplates(filepath.Join(dir, "conf", "restperf"), client, metricsPanelMap, func(path string, client *rest.Client, metricsPanelMap map[string]PanelData) map[string]Counter {
 		if _, ok := excludePerfTemplates[filepath.Base(path)]; ok {
 			return nil
 		}
 		return processRestPerfCounters(path, client, metricsPanelMap)
 	})
 
-	restCounters := visitRestTemplates(filepath.Join(dir, "conf", "rest"), client, metricsPanelMap, func(path string, client *rest.Client, metricsPanelMap map[string][]PanelDef) map[string]Counter { // revive:disable-line:unused-parameter
+	restCounters := visitRestTemplates(filepath.Join(dir, "conf", "rest"), client, metricsPanelMap, func(path string, client *rest.Client, metricsPanelMap map[string]PanelData) map[string]Counter { // revive:disable-line:unused-parameter
 		return processRestConfigCounters(path, "REST", metricsPanelMap)
 	})
 
-	keyPerfCounters := visitRestTemplates(filepath.Join(dir, "conf", "keyperf"), client, metricsPanelMap, func(path string, client *rest.Client, metricsPanelMap map[string][]PanelDef) map[string]Counter { // revive:disable-line:unused-parameter
+	keyPerfCounters := visitRestTemplates(filepath.Join(dir, "conf", "keyperf"), client, metricsPanelMap, func(path string, client *rest.Client, metricsPanelMap map[string]PanelData) map[string]Counter { // revive:disable-line:unused-parameter
 		return processRestConfigCounters(path, keyPerfAPI, metricsPanelMap)
 	})
 
-	statPerfCounters := visitRestTemplates(filepath.Join(dir, "conf", "statperf"), client, metricsPanelMap, func(path string, client *rest.Client, metricsPanelMap map[string][]PanelDef) map[string]Counter {
+	statPerfCounters := visitRestTemplates(filepath.Join(dir, "conf", "statperf"), client, metricsPanelMap, func(path string, client *rest.Client, metricsPanelMap map[string]PanelData) map[string]Counter {
 		if _, ok := includeStatPerfTemplates[filepath.Base(path)]; ok {
 			return processStatPerfCounters(path, client, metricsPanelMap)
 		}
@@ -468,11 +473,11 @@ func processRestCounters(dir string, client *rest.Client, metricsPanelMap map[st
 }
 
 // processZapiCounters parse zapi and zapiperf templates
-func processZapiCounters(dir string, client *zapi.Client, metricsPanelMap map[string][]PanelDef) map[string]Counter {
-	zapiCounters := visitZapiTemplates(filepath.Join(dir, "conf", "zapi", "cdot"), client, metricsPanelMap, func(path string, client *zapi.Client, metricsPanelMap map[string][]PanelDef) map[string]Counter { // revive:disable-line:unused-parameter
+func processZapiCounters(dir string, client *zapi.Client, metricsPanelMap map[string]PanelData) map[string]Counter {
+	zapiCounters := visitZapiTemplates(filepath.Join(dir, "conf", "zapi", "cdot"), client, metricsPanelMap, func(path string, client *zapi.Client, metricsPanelMap map[string]PanelData) map[string]Counter { // revive:disable-line:unused-parameter
 		return processZapiConfigCounters(path, metricsPanelMap)
 	})
-	zapiPerfCounters := visitZapiTemplates(filepath.Join(dir, "conf", "zapiperf", "cdot"), client, metricsPanelMap, func(path string, client *zapi.Client, metricsPanelMap map[string][]PanelDef) map[string]Counter {
+	zapiPerfCounters := visitZapiTemplates(filepath.Join(dir, "conf", "zapiperf", "cdot"), client, metricsPanelMap, func(path string, client *zapi.Client, metricsPanelMap map[string]PanelData) map[string]Counter {
 		if _, ok := excludePerfTemplates[filepath.Base(path)]; ok {
 			return nil
 		}
@@ -538,7 +543,7 @@ func handleZapiCounter(path []string, content string, object string) (string, st
 }
 
 // processRestConfigCounters process Rest config templates
-func processRestConfigCounters(path string, api string, metricsPanelMap map[string][]PanelDef) map[string]Counter {
+func processRestConfigCounters(path string, api string, metricsPanelMap map[string]PanelData) map[string]Counter {
 	var (
 		counters         = make(map[string]Counter)
 		isInstanceLabels bool
@@ -580,7 +585,7 @@ func processRestConfigCounters(path string, api string, metricsPanelMap map[stri
 						ONTAPCounter: "Harvest generated",
 					},
 				},
-				Panels: metricsPanelMap[harvestName],
+				Panels: metricsPanelMap[harvestName].Panels,
 				Labels: labels,
 			}
 		}
@@ -614,7 +619,7 @@ func processRestConfigCounters(path string, api string, metricsPanelMap map[stri
 					ONTAPCounter: metric.Source,
 				},
 			},
-			Panels: metricsPanelMap[model.Object+"_"+metric.Name],
+			Panels: metricsPanelMap[model.Object+"_"+metric.Name].Panels,
 		}
 		if model.ExportData != "false" {
 			counters[co.Name] = co
@@ -631,7 +636,7 @@ func processRestConfigCounters(path string, api string, metricsPanelMap map[stri
 	return counters
 }
 
-func processCounters(counterContents []string, model *template2.Model, path, query string, counters map[string]Counter, metricLabels []string, api string, metricsPanelMap map[string][]PanelDef) {
+func processCounters(counterContents []string, model *template2.Model, path, query string, counters map[string]Counter, metricLabels []string, api string, metricsPanelMap map[string]PanelData) {
 	var (
 		staticCounterDef keyperf.ObjectCounters
 		err              error
@@ -704,7 +709,7 @@ func processCounters(counterContents []string, model *template2.Model, path, que
 							BaseCounter:  denominator,
 						},
 					},
-					Panels: metricsPanelMap[harvestName],
+					Panels: metricsPanelMap[harvestName].Panels,
 					Labels: metricLabels,
 				}
 			} else {
@@ -720,7 +725,7 @@ func processCounters(counterContents []string, model *template2.Model, path, que
 							ONTAPCounter: name,
 						},
 					},
-					Panels: metricsPanelMap[harvestName],
+					Panels: metricsPanelMap[harvestName].Panels,
 					Labels: metricLabels,
 				}
 			}
@@ -737,7 +742,7 @@ func processCounters(counterContents []string, model *template2.Model, path, que
 }
 
 // processZAPIPerfCounters process ZapiPerf counters
-func processZAPIPerfCounters(path string, client *zapi.Client, metricsPanelMap map[string][]PanelDef) map[string]Counter {
+func processZAPIPerfCounters(path string, client *zapi.Client, metricsPanelMap map[string]PanelData) map[string]Counter {
 	var (
 		counters                = make(map[string]Counter)
 		request, response       *node.Node
@@ -828,7 +833,7 @@ func processZAPIPerfCounters(path string, client *zapi.Client, metricsPanelMap m
 					ONTAPCounter: "Harvest generated",
 				},
 			},
-			Panels: metricsPanelMap[harvestName],
+			Panels: metricsPanelMap[harvestName].Panels,
 			Labels: labels,
 		}
 	}
@@ -860,7 +865,7 @@ func processZAPIPerfCounters(path string, client *zapi.Client, metricsPanelMap m
 								BaseCounter:  zapiBaseCounterMap[name],
 							},
 						},
-						Panels: metricsPanelMap[harvestName],
+						Panels: metricsPanelMap[harvestName].Panels,
 						Labels: metricLabels,
 					}
 					if model.ExportData != "false" {
@@ -885,7 +890,7 @@ func processZAPIPerfCounters(path string, client *zapi.Client, metricsPanelMap m
 									BaseCounter:  zapiBaseCounterMap[rName],
 								},
 							},
-							Panels: metricsPanelMap[hName],
+							Panels: metricsPanelMap[hName].Panels,
 						}
 						if model.ExportData != "false" {
 							counters[hName] = ro
@@ -916,7 +921,7 @@ func processZAPIPerfCounters(path string, client *zapi.Client, metricsPanelMap m
 					ONTAPCounter: metric.Source,
 				},
 			},
-			Panels: metricsPanelMap[model.Object+"_"+metric.Name],
+			Panels: metricsPanelMap[model.Object+"_"+metric.Name].Panels,
 		}
 		counters[co.Name] = co
 	}
@@ -927,7 +932,7 @@ func processZAPIPerfCounters(path string, client *zapi.Client, metricsPanelMap m
 	return counters
 }
 
-func processZapiConfigCounters(path string, metricsPanelMap map[string][]PanelDef) map[string]Counter {
+func processZapiConfigCounters(path string, metricsPanelMap map[string]PanelData) map[string]Counter {
 	var (
 		counters         = make(map[string]Counter)
 		isInstanceLabels bool
@@ -970,7 +975,7 @@ func processZapiConfigCounters(path string, metricsPanelMap map[string][]PanelDe
 					ONTAPCounter: "Harvest generated",
 				},
 			},
-			Panels: metricsPanelMap[harvestName],
+			Panels: metricsPanelMap[harvestName].Panels,
 			Labels: labels,
 		}
 	}
@@ -993,7 +998,7 @@ func processZapiConfigCounters(path string, metricsPanelMap map[string][]PanelDe
 					ONTAPCounter: v,
 				},
 			},
-			Panels: metricsPanelMap[k],
+			Panels: metricsPanelMap[k].Panels,
 			Labels: metricLabels,
 		}
 		if model.ExportData != "false" {
@@ -1021,14 +1026,14 @@ func processZapiConfigCounters(path string, metricsPanelMap map[string][]PanelDe
 					ONTAPCounter: metric.Source,
 				},
 			},
-			Panels: metricsPanelMap[model.Object+"_"+metric.Name],
+			Panels: metricsPanelMap[model.Object+"_"+metric.Name].Panels,
 		}
 		counters[co.Name] = co
 	}
 	return counters
 }
 
-func visitRestTemplates(dir string, client *rest.Client, metricsPanelMap map[string][]PanelDef, eachTemp func(path string, client *rest.Client, metricsPanelMap map[string][]PanelDef) map[string]Counter) map[string]Counter {
+func visitRestTemplates(dir string, client *rest.Client, metricsPanelMap map[string]PanelData, eachTemp func(path string, client *rest.Client, metricsPanelMap map[string]PanelData) map[string]Counter) map[string]Counter {
 	result := make(map[string]Counter)
 	err := filepath.Walk(dir, func(path string, _ os.FileInfo, err error) error {
 		if err != nil {
@@ -1055,7 +1060,7 @@ func visitRestTemplates(dir string, client *rest.Client, metricsPanelMap map[str
 	return result
 }
 
-func visitZapiTemplates(dir string, client *zapi.Client, metricsPanelMap map[string][]PanelDef, eachTemp func(path string, client *zapi.Client, metricsPanelMap map[string][]PanelDef) map[string]Counter) map[string]Counter {
+func visitZapiTemplates(dir string, client *zapi.Client, metricsPanelMap map[string]PanelData, eachTemp func(path string, client *zapi.Client, metricsPanelMap map[string]PanelData) map[string]Counter) map[string]Counter {
 	result := make(map[string]Counter)
 	err := filepath.Walk(dir, func(path string, _ os.FileInfo, err error) error {
 		if err != nil {
@@ -1252,7 +1257,7 @@ func mergeCounters(restCounters map[string]Counter, zapiCounters map[string]Coun
 	return restCounters
 }
 
-func processRestPerfCounters(path string, client *rest.Client, metricsPanelMap map[string][]PanelDef) map[string]Counter {
+func processRestPerfCounters(path string, client *rest.Client, metricsPanelMap map[string]PanelData) map[string]Counter {
 	var (
 		records       []gjson.Result
 		counterSchema gjson.Result
@@ -1295,7 +1300,7 @@ func processRestPerfCounters(path string, client *rest.Client, metricsPanelMap m
 					ONTAPCounter: "Harvest generated",
 				},
 			},
-			Panels: metricsPanelMap[harvestName],
+			Panels: metricsPanelMap[harvestName].Panels,
 			Labels: labels,
 		}
 	}
@@ -1359,7 +1364,7 @@ func processRestPerfCounters(path string, client *rest.Client, metricsPanelMap m
 						BaseCounter:  r.Get("denominator.name").ClonedString(),
 					},
 				},
-				Panels: metricsPanelMap[v],
+				Panels: metricsPanelMap[v].Panels,
 				Labels: metricLabels,
 			}
 			if model.ExportData != "false" {
@@ -1389,7 +1394,7 @@ func processRestPerfCounters(path string, client *rest.Client, metricsPanelMap m
 					ONTAPCounter: metric.Source,
 				},
 			},
-			Panels: metricsPanelMap[model.Object+"_"+metric.Name],
+			Panels: metricsPanelMap[model.Object+"_"+metric.Name].Panels,
 		}
 		counters[co.Name] = co
 	}
@@ -1400,7 +1405,7 @@ func processRestPerfCounters(path string, client *rest.Client, metricsPanelMap m
 	return counters
 }
 
-func processStatPerfCounters(path string, client *rest.Client, metricsPanelMap map[string][]PanelDef) map[string]Counter {
+func processStatPerfCounters(path string, client *rest.Client, metricsPanelMap map[string]PanelData) map[string]Counter {
 	var (
 		records    []gjson.Result
 		counters   = make(map[string]Counter)
@@ -1443,7 +1448,7 @@ func processStatPerfCounters(path string, client *rest.Client, metricsPanelMap m
 					ONTAPCounter: "Harvest generated",
 				},
 			},
-			Panels: metricsPanelMap[harvestName],
+			Panels: metricsPanelMap[harvestName].Panels,
 			Labels: labels,
 		}
 	}
@@ -1515,7 +1520,7 @@ func processStatPerfCounters(path string, client *rest.Client, metricsPanelMap m
 						BaseCounter:  statperf.NormalizeCounterValue(p.BaseCounter),
 					},
 				},
-				Panels: metricsPanelMap[v],
+				Panels: metricsPanelMap[v].Panels,
 				Labels: metricLabels,
 			}
 			if model.ExportData != "false" {
@@ -1544,7 +1549,7 @@ func processStatPerfCounters(path string, client *rest.Client, metricsPanelMap m
 					ONTAPCounter: metric.Source,
 				},
 			},
-			Panels: metricsPanelMap[model.Object+"_"+metric.Name],
+			Panels: metricsPanelMap[model.Object+"_"+metric.Name].Panels,
 		}
 		counters[co.Name] = co
 	}
@@ -1561,7 +1566,7 @@ func specialHandlingPerfCounters(counters map[string]Counter, model template2.Mo
 	return modifiedCounters
 }
 
-func addAggregatedCounter(c *Counter, metric plugin.DerivedMetric, withPrefix string, noPrefix string, metricsPanelMap map[string][]PanelDef) {
+func addAggregatedCounter(c *Counter, metric plugin.DerivedMetric, withPrefix string, noPrefix string, metricsPanelMap map[string]PanelData) {
 	if !strings.HasSuffix(c.Description, ".") {
 		c.Description += "."
 	}
@@ -1578,7 +1583,7 @@ func addAggregatedCounter(c *Counter, metric plugin.DerivedMetric, withPrefix st
 		c.Description = fmt.Sprintf("%s %s is [%s](#%s) aggregated by `%s`.",
 			c.Description, c.Name, withPrefix, withPrefix, metric.Name)
 	}
-	c.Panels = metricsPanelMap[c.Name]
+	c.Panels = metricsPanelMap[c.Name].Panels
 }
 
 func processExternalCounters(dir string, counters map[string]Counter) map[string]Counter {
@@ -1868,7 +1873,7 @@ func getAllExportedLabels(t *node.Node, counterContents []string) ([]string, []s
 	return metricLabels, append(labels, metricLabels...), isInstanceLabels
 }
 
-func visitDashboard(dirs []string, metricsPanelMap map[string][]PanelDef, eachDash func(path string, data []byte, metricsPanelMap map[string][]PanelDef)) {
+func visitDashboard(dirs []string, metricsPanelMap map[string]PanelData, eachDash func(data []byte, metricsPanelMap map[string]PanelData)) {
 	for _, dir := range dirs {
 		err := filepath.Walk(dir, func(path string, _ os.FileInfo, err error) error {
 			if strings.Contains(path, "influxdb") {
@@ -1885,7 +1890,7 @@ func visitDashboard(dirs []string, metricsPanelMap map[string][]PanelDef, eachDa
 			if err != nil {
 				log.Fatalf("failed to read dashboards path=%s err=%v", path, err)
 			}
-			eachDash(path, data, metricsPanelMap)
+			eachDash(data, metricsPanelMap)
 			return nil
 		})
 		if err != nil {
@@ -1894,9 +1899,10 @@ func visitDashboard(dirs []string, metricsPanelMap map[string][]PanelDef, eachDa
 	}
 }
 
-func visitExpressions(path string, data []byte, metricsPanelMap map[string][]PanelDef) {
+func visitExpressions(data []byte, metricsPanelMap map[string]PanelData) {
 	// collect all expressions
 	expressions := make([]grafana.ExprP, 0)
+	dashboard := gjson.GetBytes(data, "title").String()
 	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
 		grafana.DoTarget("", "", key, value, func(path string, expr string, _ string, title string, rowTitle string) {
 			expressions = append(expressions, grafana.NewExpr(path, expr, title, rowTitle))
@@ -1924,7 +1930,10 @@ func visitExpressions(path string, data []byte, metricsPanelMap map[string][]Pan
 				continue
 			}
 
-			metricsPanelMap[m] = append(metricsPanelMap[m], PanelDef{Dashboard: grafana.ShortPath(path), Row: expr.RowTitle, Panel: expr.PanelTitle})
+			key := dashboard + expr.RowTitle + expr.PanelTitle
+			if !slices.Contains(metricsPanelMap[m].Keys, key) {
+				metricsPanelMap[m] = PanelData{Keys: append(metricsPanelMap[m].Keys, key), Panels: append(metricsPanelMap[m].Panels, PanelDef{Dashboard: dashboard, Row: expr.RowTitle, Panel: expr.PanelTitle})}
+			}
 		}
 	}
 }

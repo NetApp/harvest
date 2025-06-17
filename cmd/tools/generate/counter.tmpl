@@ -49,6 +49,7 @@ Performance related metrics also include:
 {{end}}
 
 {{- if .HasPanels}}
+The `{{ .Name }}` metric is visualized in the following Grafana dashboards:
 {{.PanelHeader -}}
 {{range .Panels}}
 {{.DashboardTableRow -}}
