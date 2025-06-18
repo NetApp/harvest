@@ -238,7 +238,7 @@
           "instant": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": " {{ le }}",
+          "legendFormat": "{{ le }}",
           "refId": "A"
         }
       ],

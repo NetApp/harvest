@@ -42,6 +42,8 @@ func doMetrics(_ *cobra.Command, _ []string) {
 type ExprP struct {
 	path       string
 	Expr       string
+	Kind       string
+	PanelID    string
 	PanelTitle string
 	RowTitle   string
 	vars       []string
@@ -51,13 +53,13 @@ func visitExpressionsAndQueries(path string, data []byte) {
 	// collect all expressions
 	expressions := make([]ExprP, 0)
 	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
-		DoTarget("", "", key, value, func(path string, expr string, _ string, title string, rowTitle string) {
-			expressions = append(expressions, NewExpr(path, expr, title, rowTitle))
+		DoTarget("", "", key, value, func(path string, expr string, kind string, id string, title string, rowTitle string) {
+			expressions = append(expressions, NewExpr(path, expr, kind, id, title, rowTitle))
 		})
 		value.Get("panels").ForEach(func(key2, value2 gjson.Result) bool {
 			pathPrefix := fmt.Sprintf("panels[%d].", key.Int())
-			DoTarget(pathPrefix, "", key2, value2, func(path string, expr string, _ string, title string, rowTitle string) {
-				expressions = append(expressions, NewExpr(path, expr, title, rowTitle))
+			DoTarget(pathPrefix, "", key2, value2, func(path string, expr string, kind string, id string, title string, rowTitle string) {
+				expressions = append(expressions, NewExpr(path, expr, kind, id, title, rowTitle))
 			})
 			return true
 		})
@@ -137,7 +139,7 @@ func allVariables(data []byte) map[string]variable {
 	return variables
 }
 
-func NewExpr(path string, expr string, title string, rowTitle string) ExprP {
+func NewExpr(path string, expr string, kind string, id string, title string, rowTitle string) ExprP {
 	allMatches := varRe.FindAllStringSubmatch(expr, -1)
 	vars := make([]string, 0, len(allMatches))
 	for _, match := range allMatches {
@@ -153,14 +155,17 @@ func NewExpr(path string, expr string, title string, rowTitle string) ExprP {
 		Expr:       expr,
 		vars:       vars,
 		PanelTitle: title,
+		Kind:       kind,
+		PanelID:    id,
 		RowTitle:   rowTitle,
 	}
 }
 
 func DoTarget(pathPrefix string, rowTitle string, key gjson.Result, value gjson.Result,
-	exprFunc func(path string, expr string, format string, title string, rowTitle string)) {
+	exprFunc func(path string, expr string, format string, id string, title string, rowTitle string)) {
 	kind := value.Get("type").ClonedString()
 	title := value.Get("title").ClonedString()
+	id := value.Get("id").ClonedString()
 	if kind == "row" {
 		return
 	}
@@ -169,7 +174,7 @@ func DoTarget(pathPrefix string, rowTitle string, key gjson.Result, value gjson.
 	for i, targetN := range targetsSlice {
 		expr := targetN.Get("expr").ClonedString()
 		pathWithTarget := path + ".targets[" + strconv.Itoa(i) + "]"
-		exprFunc(pathWithTarget, expr, kind, title, rowTitle)
+		exprFunc(pathWithTarget, expr, kind, id, title, rowTitle)
 	}
 }
 

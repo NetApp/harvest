@@ -2168,7 +2168,7 @@
           "refId": "C"
         }
       ],
-      "title": "Average  time per Collector",
+      "title": "Average time per Collector",
       "type": "timeseries"
     },
     {
@@ -2257,7 +2257,7 @@
           "refId": "C"
         }
       ],
-      "title": "Average  time per Exporter",
+      "title": "Average time per Exporter",
       "type": "timeseries"
     },
     {

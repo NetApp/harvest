@@ -232,7 +232,9 @@ type MetricDef struct {
 type PanelDef struct {
 	Dashboard string `yaml:"Dashboard"`
 	Row       string `yaml:"Row"`
+	Type      string `yaml:"Type"`
 	Panel     string `yaml:"Panel"`
+	PanelLink string `yaml:"PanelLink"`
 }
 
 type PanelData struct {
@@ -256,8 +258,11 @@ func (m MetricDef) TableRow() string {
 }
 
 func (p PanelDef) DashboardTableRow() string {
-	return fmt.Sprintf("| %s | %s | %s |", p.Dashboard, p.Row, p.Panel)
+	return fmt.Sprintf("| %s | %s | %s | [%s](%s/%s) |", p.Dashboard, p.Row, p.Type, p.Panel, "GRAFANA_HOST", p.PanelLink)
 }
+
+// [Top $TopResources Average Disk Utilization Per Aggregate](GRAFANA_HOST/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=63)
+// [p.Panel](GRAFANA_HOST/p.PanelLink)
 
 type Counter struct {
 	Object      string      `yaml:"-"`
@@ -276,8 +281,8 @@ func (c Counter) Header() string {
 
 func (c Counter) PanelHeader() string {
 	return `
-| Dashboard | Row | Panel |
-|--------|----------|--------|`
+| Dashboard | Row | Type |Panel |
+|--------|----------|--------|--------|`
 }
 
 func (c Counter) HasAPIs() bool {
@@ -1903,9 +1908,11 @@ func visitExpressions(data []byte, metricsPanelMap map[string]PanelData) {
 	// collect all expressions
 	expressions := make([]grafana.ExprP, 0)
 	dashboard := gjson.GetBytes(data, "title").String()
+	uid := gjson.GetBytes(data, "uid").String()
+	link := "d/" + uid + "/" + strings.ToLower(strings.Replace(dashboard, ": ", "3a-", 1)) + "?orgId=1&viewPanel="
 	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
-		grafana.DoTarget("", "", key, value, func(path string, expr string, _ string, title string, rowTitle string) {
-			expressions = append(expressions, grafana.NewExpr(path, expr, title, rowTitle))
+		grafana.DoTarget("", "", key, value, func(path string, expr string, kind string, id string, title string, rowTitle string) {
+			expressions = append(expressions, grafana.NewExpr(path, expr, kind, id, title, rowTitle))
 		})
 		tp := value.Get("type").String()
 		rowTitle := ""
@@ -1914,8 +1921,8 @@ func visitExpressions(data []byte, metricsPanelMap map[string]PanelData) {
 		}
 		value.Get("panels").ForEach(func(key2, value2 gjson.Result) bool {
 			pathPrefix := fmt.Sprintf("panels[%d].", key.Int())
-			grafana.DoTarget(pathPrefix, rowTitle, key2, value2, func(path string, expr string, _ string, title string, rowTitle string) {
-				expressions = append(expressions, grafana.NewExpr(path, expr, title, rowTitle))
+			grafana.DoTarget(pathPrefix, rowTitle, key2, value2, func(path string, expr string, kind string, id string, title string, rowTitle string) {
+				expressions = append(expressions, grafana.NewExpr(path, expr, kind, id, title, rowTitle))
 			})
 			return true
 		})
@@ -1932,7 +1939,7 @@ func visitExpressions(data []byte, metricsPanelMap map[string]PanelData) {
 
 			key := dashboard + expr.RowTitle + expr.PanelTitle
 			if !slices.Contains(metricsPanelMap[m].Keys, key) {
-				metricsPanelMap[m] = PanelData{Keys: append(metricsPanelMap[m].Keys, key), Panels: append(metricsPanelMap[m].Panels, PanelDef{Dashboard: dashboard, Row: expr.RowTitle, Panel: expr.PanelTitle})}
+				metricsPanelMap[m] = PanelData{Keys: append(metricsPanelMap[m].Keys, key), Panels: append(metricsPanelMap[m].Panels, PanelDef{Dashboard: dashboard, Row: expr.RowTitle, Type: expr.Kind, Panel: expr.PanelTitle, PanelLink: link + expr.PanelID})} // d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=63
 			}
 		}
 	}

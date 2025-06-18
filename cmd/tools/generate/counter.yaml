@@ -8,7 +8,7 @@ counters:
         ONTAPCounter: object_store_logical_used
         Template: conf/rest/9.12.0/aggr.yaml
     Panels:
-      - Dashboard: cmode/aggregate.json
+      - Dashboard: 'ONTAP: Aggregate'
         Row: Highlights
         Panel: Top $TopResources Aggregates by logical space usage in Object Store
 
@@ -20,51 +20,51 @@ counters:
         ONTAPCounter: object_store_physical_used
         Template: conf/rest/9.12.0/aggr.yaml
     Panels:
-      - Dashboard: cmode/aggregate.json
+      - Dashboard: 'ONTAP: Aggregate'
         Row: Highlights
         Panel: Top $TopResources Aggregates by physical space usage in Object Store
 
   - Name: aggr_physical_used_wo_snapshots
     Description: Total Data Reduction Physical Used Without Snapshots
     Panels:
-      - Dashboard: cmode/aggregate.json
+      - Dashboard: 'ONTAP: Aggregate'
         Row: Storage Efficiency Ratios
         Panel: Data Reduction with FlexClones
-      - Dashboard: cmode/aggregate.json
+      - Dashboard: 'ONTAP: Aggregate'
         Row: Storage Efficiency Ratios
         Panel: Top $TopResources Aggregates by Physical Used with FlexClones
-      - Dashboard: cmode/cluster.json
+      - Dashboard: 'ONTAP: Cluster'
         Row: Storage Efficiency Ratios
         Panel: Data Reduction with FlexClones
-      - Dashboard: cmode/cluster.json
+      - Dashboard: 'ONTAP: Cluster'
         Row: Storage Efficiency Ratios
         Panel: Physical Used with FlexClones
-      - Dashboard: cmode/datacenter.json
+      - Dashboard: 'ONTAP: Datacenter'
         Row: Storage Efficiency Ratios
         Panel: Data Reduction with FlexClones
-      - Dashboard: cmode/datacenter.json
+      - Dashboard: 'ONTAP: Datacenter'
         Row: Storage Efficiency
         Panel: Top $TopResources Physical Used with FlexClones by Cluster
 
   - Name: aggr_physical_used_wo_snapshots_flexclones
     Description: Total Data Reduction Physical Used without snapshots and flexclones
     Panels:
-      - Dashboard: cmode/aggregate.json
+      - Dashboard: 'ONTAP: Aggregate'
         Row: Storage Efficiency Ratios
         Panel: Data Reduction
-      - Dashboard: cmode/aggregate.json
+      - Dashboard: 'ONTAP: Aggregate'
         Row: Storage Efficiency Ratios
         Panel: Top $TopResources Aggregates by Physical Used
-      - Dashboard: cmode/cluster.json
+      - Dashboard: 'ONTAP: Cluster'
         Row: Storage Efficiency Ratios
         Panel: Data Reduction
-      - Dashboard: cmode/cluster.json
+      - Dashboard: 'ONTAP: Cluster'
         Row: Storage Efficiency Ratios
         Panel: Physical Used
-      - Dashboard: cmode/datacenter.json
+      - Dashboard: 'ONTAP: Datacenter'
         Row: Storage Efficiency Ratios
         Panel: Data Reduction
-      - Dashboard: cmode/datacenter.json
+      - Dashboard: 'ONTAP: Datacenter'
         Row: Storage Efficiency
         Panel: Top $TopResources Physical Used by Cluster
 
@@ -79,9 +79,38 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Power'
+        Row: Highlights
+        Panel: Top $TopResources Aggregates by Power Consumed
+      - Dashboard: 'ONTAP: Power'
+        Row: Highlights
+        Panel: Aggregates Power by Disk Type
+      - Dashboard: 'ONTAP: Power'
+        Row: Aggregate
+        Panel: Aggregates
 
   - Name: aggr_raid_disk_count
     Description: Number of disks in the aggregate.
+    Panels:
+      - Dashboard: 'ONTAP: Aggregate'
+        Row: Highlights
+        Panel: Disks
+      - Dashboard: 'ONTAP: Aggregate'
+        Row: Highlights
+        Panel: Aggregates
+      - Dashboard: 'ONTAP: Disk'
+        Row: Highlights
+        Panel: Total Disks by Aggregate(s)
+      - Dashboard: 'ONTAP: Disk'
+        Row: Highlights
+        Panel: Disk Capacity per Aggregate
+      - Dashboard: 'ONTAP: StorageGrid FabricPool'
+        Row: ONTAP
+        Panel: Disks
+      - Dashboard: 'ONTAP: StorageGrid FabricPool'
+        Row: ONTAP
+        Panel: Aggregates
 
   - Name: aggr_raid_plex_count
     Description: Number of plexes in the aggregate
@@ -89,10 +118,18 @@ counters:
   - Name: aggr_snapshot_inode_used_percent
     Description: The percentage of disk space currently in use based on user-visible
       file (inode) count on the referenced file system.
+    Panels:
+      - Dashboard: 'ONTAP: Aggregate'
+        Row: Highlights
+        Panel: Top $TopResources Aggregates by Snapshot Inodes Used %
 
   - Name: aggr_snapshot_maxfiles_possible
     Description: The largest value to which the maxfiles-available parameter can be
       increased by reconfiguration, on the referenced file system.
+    Panels:
+      - Dashboard: 'ONTAP: Aggregate'
+        Row: Highlights
+        Panel: Top $TopResources Aggregates by Snapshot MaxFiles
 
   - Name: aggr_space_reserved
     Description: The total disk space in bytes that is reserved on the referenced file
@@ -103,12 +140,54 @@ counters:
   - Name: aggr_space_used_percent
     Description: The percentage of disk space currently in use on the referenced file
       system
+    Panels:
+      - Dashboard: 'ONTAP: Aggregate'
+        Row: Highlights
+        Panel: Aggregates
+      - Dashboard: 'ONTAP: Disk'
+        Row: Highlights
+        Panel: Disk Capacity per Aggregate
+      - Dashboard: 'ONTAP: Cluster'
+        Row: Throughput
+        Panel: Average Aggregate Space Used
+      - Dashboard: 'ONTAP: StorageGrid FabricPool'
+        Row: ONTAP
+        Panel: Aggregates
 
   - Name: aggr_total_physical_used
     Description: Total Physical Used
+    Panels:
+      - Dashboard: 'ONTAP: Aggregate'
+        Row: Storage Efficiency Ratios
+        Panel: Data Reduction with Snapshots & FlexClones
+      - Dashboard: 'ONTAP: Aggregate'
+        Row: Growth Rate
+        Panel: Top $TopResources Aggregates Per Growth Rate of Physical Used
+      - Dashboard: 'ONTAP: Aggregate'
+        Row: Growth Rate
+        Panel: 'Top $TopResources Aggregates by Physical Usage: Delta Report'
+      - Dashboard: 'ONTAP: Datacenter'
+        Row: Storage Efficiency
+        Panel: Data Reduction with Snapshots & FlexClones
+      - Dashboard: 'ONTAP: Cluster'
+        Row: Storage Efficiency Ratios
+        Panel: Data Reduction with Snapshots &FlexClones
 
   - Name: aggr_volume_count
     Description: The aggregate's volume count, which includes both FlexVols and FlexGroup constituents.
+    Panels:
+      - Dashboard: 'ONTAP: StorageGrid FabricPool'
+        Row: ONTAP
+        Panel: Aggregates
+      - Dashboard: 'ONTAP: StorageGrid FabricPool'
+        Row: ONTAP
+        Panel: Volumes
+      - Dashboard: 'ONTAP: Aggregate'
+        Row: Highlights
+        Panel: Volumes
+      - Dashboard: 'ONTAP: Aggregate'
+        Row: Highlights
+        Panel: Aggregates
 
   - Name: cluster_new_status
     Description: It is an indicator of the overall health status of the cluster, with
@@ -123,15 +202,37 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/status.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Cluster'
+        Row: Nodes & Subsystems - $Cluster
+        Panel: $Cluster
+      - Dashboard: 'ONTAP: Cluster'
+        Row: Nodes & Subsystems - $Cluster
+        Panel: cluster health status
+      - Dashboard: 'ONTAP: Datacenter'
+        Row: Health
+        Panel: Cluster Health
 
   - Name: cluster_subsystem_outstanding_alerts
     Description: Number of outstanding alerts
+    Panels:
+      - Dashboard: 'ONTAP: Cluster'
+        Row: Nodes & Subsystems - $Cluster
+        Panel: subsystems
 
   - Name: cluster_subsystem_suppressed_alerts
     Description: Number of suppressed alerts
+    Panels:
+      - Dashboard: 'ONTAP: Cluster'
+        Row: Nodes & Subsystems - $Cluster
+        Panel: subsystems
 
   - Name: disk_stats_io_kbps
     Description: Total Disk Throughput in KBPS Across All Active Paths
+    Panels:
+      - Dashboard: 'ONTAP: Disk'
+        Row: List of Disks
+        Panel: Disks in Cluster
 
   - Name: disk_stats_sectors_read
     Description: Number of Sectors Read
@@ -141,6 +242,10 @@ counters:
 
   - Name: disk_uptime
     Description: Number of seconds the drive has been powered on
+    Panels:
+      - Dashboard: 'ONTAP: Disk'
+        Row: List of Disks
+        Panel: Disks in Cluster
 
   - Name: disk_usable_size
     Description: Usable size of each disk, in bytes.
@@ -156,6 +261,10 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/sensor.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Power'
+        Row: Nodes
+        Panel: Storage Nodes
 
   - Name: environment_sensor_average_fan_speed
     Description: Average fan speed for node in rpm.
@@ -168,6 +277,10 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/sensor.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Power'
+        Row: Nodes
+        Panel: Storage Nodes
 
   - Name: environment_sensor_average_temperature
     Description: Average temperature of all non-ambient sensors for node in Celsius.
@@ -180,6 +293,13 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/sensor.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Power'
+        Row: Nodes
+        Panel: Storage Nodes
+      - Dashboard: 'ONTAP: Power'
+        Row: Highlights
+        Panel: Top $TopResources Nodes by Average Temperature
 
   - Name: environment_sensor_max_fan_speed
     Description: Maximum fan speed for node in rpm.
@@ -192,6 +312,16 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/sensor.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Power'
+        Row: Nodes
+        Panel: Storage Nodes
+      - Dashboard: 'ONTAP: Power'
+        Row: Highlights
+        Panel: Max Node Fan Speed
+      - Dashboard: 'ONTAP: Datacenter'
+        Row: Power and Temperature
+        Panel: Max Node Fan Speed
 
   - Name: environment_sensor_max_temperature
     Description: Maximum temperature of all non-ambient sensors for node in Celsius.
@@ -204,6 +334,16 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/sensor.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Power'
+        Row: Nodes
+        Panel: Storage Nodes
+      - Dashboard: 'ONTAP: Power'
+        Row: Highlights
+        Panel: Max Node Temp
+      - Dashboard: 'ONTAP: Datacenter'
+        Row: Power and Temperature
+        Panel: Max Node Temp
 
   - Name: environment_sensor_min_ambient_temperature
     Description: Minimum temperature of all ambient sensors for node in Celsius.
@@ -216,6 +356,10 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/sensor.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Power'
+        Row: Nodes
+        Panel: Storage Nodes
 
   - Name: environment_sensor_min_fan_speed
     Description: Minimum fan speed for node in rpm.
@@ -228,6 +372,10 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/sensor.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Power'
+        Row: Nodes
+        Panel: Storage Nodes
 
   - Name: environment_sensor_min_temperature
     Description: Minimum temperature of all non-ambient sensors for node in Celsius.
@@ -240,6 +388,10 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/sensor.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Power'
+        Row: Nodes
+        Panel: Storage Nodes
 
   - Name: environment_sensor_power
     Description: Power consumed by a node in Watts.
@@ -252,6 +404,40 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/sensor.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Power'
+        Row: Highlights
+        Panel: Total Power
+      - Dashboard: 'ONTAP: Power'
+        Row: Highlights
+        Panel: Average Power/Used_TB
+      - Dashboard: 'ONTAP: Power'
+        Row: Highlights
+        Panel: Average IOPs/Watt
+      - Dashboard: 'ONTAP: Power'
+        Row: Highlights
+        Panel: Total Power Consumed
+      - Dashboard: 'ONTAP: Power'
+        Row: Highlights
+        Panel: Average Power Consumption (kWh) Over Last Hour
+      - Dashboard: 'ONTAP: Power'
+        Row: Highlights
+        Panel: Top $TopResources Nodes by Power Consumed
+      - Dashboard: 'ONTAP: Power'
+        Row: Nodes
+        Panel: Storage Nodes
+      - Dashboard: 'ONTAP: Datacenter'
+        Row: Power and Temperature
+        Panel: Total Power
+      - Dashboard: 'ONTAP: Datacenter'
+        Row: Power and Temperature
+        Panel: Average Power/Used_TB
+      - Dashboard: 'ONTAP: Datacenter'
+        Row: Power and Temperature
+        Panel: Average IOPs/Watt
+      - Dashboard: 'ONTAP: Datacenter'
+        Row: Power and Temperature
+        Panel: Total Power Consumed
 
   - Name: fabricpool_average_latency
     Description: This counter is deprecated.Average latencies executed during various phases of command execution. The execution-start latency represents the average time taken to start executing an operation. The request-prepare latency represent the average time taken to prepare the commplete request that needs to be sent to the server. The send latency represents the average time taken to send requests to the server. The execution-start-to-send-complete represents the average time taken to send an operation out since its execution started. The execution-start-to-first-byte-received represent the average time taken to receive the first byte of a response since the command's request execution started. These counters can be used to identify performance bottlenecks within the object store client module.
@@ -334,6 +520,10 @@ counters:
         ONTAPCounter: Harvest generated
         Template: NA
         Unit: milliseconds
+    Panels:
+      - Dashboard: 'Harvest Metadata'
+        Row: Highlights
+        Panel: Target Systems
 
   - Name: metadata_collector_api_time
     Description: amount of time to collect data from monitored cluster object
@@ -348,6 +538,10 @@ counters:
         ONTAPCounter: Harvest generated
         Template: NA
         Unit: microseconds
+    Panels:
+      - Dashboard: 'Harvest Metadata'
+        Row: Collectors
+        Panel: API Time
 
   - Name: metadata_collector_calc_time
     Description: amount of time it took to compute metrics between two successive polls, specifically using properties like raw, delta, rate, average, and percent. This metric is available for ZapiPerf/RestPerf collectors.
@@ -362,6 +556,10 @@ counters:
         ONTAPCounter: Harvest generated
         Template: NA
         Unit: microseconds
+    Panels:
+      - Dashboard: 'Harvest Metadata'
+        Row: Collectors
+        Panel: Postprocessing Time
 
   - Name: metadata_collector_instances
     Description: number of objects collected from monitored cluster
@@ -376,6 +574,13 @@ counters:
         ONTAPCounter: Harvest generated
         Template: NA
         Unit: scalar
+    Panels:
+      - Dashboard: 'Harvest Metadata'
+        Row: Collectors
+        Panel: Instances per Poll
+      - Dashboard: 'ONTAP: Security'
+        Row: Cluster Compliance
+        Panel: Cluster Compliance
 
   - Name: metadata_collector_metrics
     Description: number of counters collected from monitored cluster
@@ -390,6 +595,10 @@ counters:
         ONTAPCounter: Harvest generated
         Template: NA
         Unit: scalar
+    Panels:
+      - Dashboard: 'Harvest Metadata'
+        Row: Collectors
+        Panel: Data Points per Poll
 
   - Name: metadata_collector_parse_time
     Description: amount of time to parse XML, JSON, etc. for cluster object
@@ -404,6 +613,10 @@ counters:
         ONTAPCounter: Harvest generated
         Template: NA
         Unit: microseconds
+    Panels:
+      - Dashboard: 'Harvest Metadata'
+        Row: Collectors
+        Panel: Parse Time
 
   - Name: metadata_collector_plugin_time
     Description: amount of time for all plugins to post-process metrics
@@ -432,6 +645,16 @@ counters:
         ONTAPCounter: Harvest generated
         Template: NA
         Unit: microseconds
+    Panels:
+      - Dashboard: 'Harvest Metadata'
+        Row: Highlights
+        Panel: Average Poll time per Poller
+      - Dashboard: 'Harvest Metadata'
+        Row: Highlights
+        Panel: Average time per Collector
+      - Dashboard: 'Harvest Metadata'
+        Row: Collectors
+        Panel: Time per Data Poll
 
   - Name: metadata_collector_skips
     Description: number of metrics that were not calculated between two successive polls. This metric is available for ZapiPerf/RestPerf collectors.
@@ -474,6 +697,19 @@ counters:
         ONTAPCounter: Harvest generated
         Template: NA
         Unit: scalar
+    Panels:
+      - Dashboard: 'Harvest Metadata'
+        Row: Highlights
+        Panel: Collected/24h
+      - Dashboard: 'Harvest Metadata'
+        Row: Highlights
+        Panel: Collected/m
+      - Dashboard: 'Harvest Metadata'
+        Row: Collectors
+        Panel: Exported/m
+      - Dashboard: 'Harvest Metadata'
+        Row: Prometheus
+        Panel: Data Points per Export
 
   - Name: metadata_component_status
     Description: status of the collector - 0 means running, 1 means standby, 2 means
@@ -489,6 +725,22 @@ counters:
         ONTAPCounter: Harvest generated
         Template: NA
         Unit: enum
+    Panels:
+      - Dashboard: 'Harvest Metadata'
+        Row: Highlights
+        Panel: Total Object Count Across Collectors
+      - Dashboard: 'Harvest Metadata'
+        Row: Highlights
+        Panel: Failed Object Count Across Collectors
+      - Dashboard: 'Harvest Metadata'
+        Row: Highlights
+        Panel: Exporters
+      - Dashboard: 'Harvest Metadata'
+        Row: Highlights
+        Panel: Collectors
+      - Dashboard: 'Harvest Metadata'
+        Row: Highlights
+        Panel: Exporters
 
   - Name: metadata_exporter_count
     Description: number of metrics and labels exported
@@ -503,6 +755,10 @@ counters:
         ONTAPCounter: Harvest generated
         Template: NA
         Unit: scalar
+    Panels:
+      - Dashboard: 'Harvest Metadata'
+        Row: Prometheus
+        Panel: Data Points per Export
 
   - Name: metadata_exporter_time
     Description: amount of time it took to render, export, and serve exported data
@@ -517,6 +773,13 @@ counters:
         ONTAPCounter: Harvest generated
         Template: NA
         Unit: microseconds
+    Panels:
+      - Dashboard: 'Harvest Metadata'
+        Row: Highlights
+        Panel: Average time per Exporter
+      - Dashboard: 'Harvest Metadata'
+        Row: Prometheus
+        Panel: Average time per Export
 
   - Name: metadata_target_goroutines
     Description: number of goroutines that exist within the poller
@@ -545,6 +808,13 @@ counters:
         ONTAPCounter: Harvest generated
         Template: NA
         Unit: enum
+    Panels:
+      - Dashboard: 'Harvest Metadata'
+        Row: Highlights
+        Panel: Datacenters
+      - Dashboard: 'Harvest Metadata'
+        Row: Highlights
+        Panel: Target Systems
 
   - Name: node_cpu_busytime
     Description: The time (in hundredths of a second) that the CPU has been doing useful
@@ -561,6 +831,13 @@ counters:
         Unit: b_per_sec
       - API: ZAPI
         Unit: b_per_sec
+    Panels:
+      - Dashboard: 'ONTAP: Node'
+        Row: NFSv3 Frontend
+        Panel: NFSv3 Avg Throughput
+      - Dashboard: 'ONTAP: Node'
+        Row: NFSv3 Frontend
+        Panel: NFSv3 Read and Write Throughput
 
   - Name: node_nfs_throughput
     APIs:
@@ -568,6 +845,10 @@ counters:
         Unit: b_per_sec
       - API: ZAPI
         Unit: b_per_sec
+    Panels:
+      - Dashboard: 'ONTAP: Node'
+        Row: NFSv3 Frontend
+        Panel: NFSv3 Avg Throughput
 
   - Name: node_nfs_write_throughput
     APIs:
@@ -575,6 +856,13 @@ counters:
         Unit: b_per_sec
       - API: ZAPI
         Unit: b_per_sec
+    Panels:
+      - Dashboard: 'ONTAP: Node'
+        Row: NFSv3 Frontend
+        Panel: NFSv3 Avg Throughput
+      - Dashboard: 'ONTAP: Node'
+        Row: NFSv3 Frontend
+        Panel: NFSv3 Read and Write Throughput
 
   - Name: quota_disk_limit
     Description: Maximum amount of disk space, in kilobytes, allowed for the quota target
@@ -588,6 +876,13 @@ counters:
         Endpoint: quota-report-iter
         ONTAPCounter: disk-limit
         Template: conf/zapi/cdot/9.8.0/qtree.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Datacenter'
+        Row: Capacity
+        Panel: Object Count
+      - Dashboard: 'ONTAP: Quota'
+        Row: Highlights
+        Panel: Reports
 
   - Name: quota_disk_used
     Description: Current amount of disk space, in kilobytes, used by the quota target.
@@ -600,6 +895,19 @@ counters:
         Endpoint: quota-report-iter
         ONTAPCounter: disk-used
         Template: conf/zapi/cdot/9.8.0/qtree.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Qtree'
+        Row: Usage
+        Panel: Top $TopResources Qtrees by Disk Used
+      - Dashboard: 'ONTAP: Qtree'
+        Row: Usage
+        Panel: Top $TopResources Qtrees by Disk Used Growth
+      - Dashboard: 'ONTAP: Quota'
+        Row: Space Usage
+        Panel: Top $TopResources Quotas by Space Used
+      - Dashboard: 'ONTAP: Quota'
+        Row: Highlights
+        Panel: Reports
 
   - Name: quota_disk_used_pct_disk_limit
     Description: Current disk space used expressed as a percentage of hard disk limit.
@@ -612,6 +920,13 @@ counters:
         Endpoint: quota-report-iter
         ONTAPCounter: disk-used-pct-disk-limit
         Template: conf/zapi/cdot/9.8.0/qtree.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Quota'
+        Row: Space Usage
+        Panel: Top $TopResources Quotas by Space Used %
+      - Dashboard: 'ONTAP: Quota'
+        Row: Highlights
+        Panel: Reports
 
   - Name: quota_disk_used_pct_soft_disk_limit
     Description: Current disk space used expressed as a percentage of soft disk limit.
@@ -645,6 +960,10 @@ counters:
         Endpoint: quota-report-iter
         ONTAPCounter: file-limit
         Template: conf/zapi/cdot/9.8.0/qtree.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Quota'
+        Row: Highlights
+        Panel: Reports
 
   - Name: quota_files_used
     Description: Current number of files used by the quota target.
@@ -657,6 +976,16 @@ counters:
         Endpoint: quota-report-iter
         ONTAPCounter: files-used
         Template: conf/zapi/cdot/9.8.0/qtree.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Qtree'
+        Row: Usage
+        Panel: Top $TopResources Qtrees by Files Used
+      - Dashboard: 'ONTAP: Quota'
+        Row: Highlights
+        Panel: Reports
+      - Dashboard: 'ONTAP: Quota'
+        Row: Space Usage
+        Panel: Top $TopResources Quotas by Files Used
 
   - Name: quota_files_used_pct_file_limit
     Description: Current number of files used expressed as a percentage of hard file
@@ -670,6 +999,13 @@ counters:
         Endpoint: quota-report-iter
         ONTAPCounter: files-used-pct-file-limit
         Template: conf/zapi/cdot/9.8.0/qtree.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Quota'
+        Row: Highlights
+        Panel: Reports
+      - Dashboard: 'ONTAP: Quota'
+        Row: Space Usage
+        Panel: Top $TopResources Quotas by Files Used %
 
   - Name: quota_files_used_pct_soft_file_limit
     Description: Current number of files used expressed as a percentage of soft file
@@ -696,6 +1032,10 @@ counters:
         Endpoint: quota-report-iter
         ONTAPCounter: soft-disk-limit
         Template: conf/zapi/cdot/9.8.0/qtree.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Quota'
+        Row: Highlights
+        Panel: Reports
 
   - Name: quota_soft_file_limit
     Description: Soft file limit, in number of files, for the quota target. The value
@@ -709,6 +1049,10 @@ counters:
         Endpoint: quota-report-iter
         ONTAPCounter: soft-file-limit
         Template: conf/zapi/cdot/9.8.0/qtree.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Quota'
+        Row: Highlights
+        Panel: Reports
 
   - Name: quota_threshold
     Description: Disk space threshold, in kilobytes, for the quota target. The value
@@ -745,6 +1089,16 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Shelf'
+        Row: Power
+        Panel: Storage Shelves
+      - Dashboard: 'ONTAP: Health'
+        Row: Shelves
+        Panel: Storage Shelf Issues
+      - Dashboard: 'ONTAP: Power'
+        Row: Shelves
+        Panel: Storage Shelves
 
   - Name: shelf_average_temperature
     Description: Average temperature of all non-ambient sensors for shelf in Celsius.
@@ -757,9 +1111,35 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Shelf'
+        Row: Power
+        Panel: Storage Shelves
+      - Dashboard: 'ONTAP: Shelf'
+        Row: Power
+        Panel: Top $TopResources Shelves by Average Temperature
+      - Dashboard: 'ONTAP: Health'
+        Row: Shelves
+        Panel: Storage Shelf Issues
+      - Dashboard: 'ONTAP: Power'
+        Row: Shelves
+        Panel: Storage Shelves
+      - Dashboard: 'ONTAP: Power'
+        Row: Highlights
+        Panel: Top $TopResources Shelves by Average Temperature
 
   - Name: shelf_disk_count
     Description: Disk count in a shelf.
+    Panels:
+      - Dashboard: 'ONTAP: Shelf'
+        Row: Power
+        Panel: Storage Shelves
+      - Dashboard: 'ONTAP: Health'
+        Row: Shelves
+        Panel: Storage Shelf Issues
+      - Dashboard: 'ONTAP: Power'
+        Row: Shelves
+        Panel: Storage Shelves
 
   - Name: shelf_max_fan_speed
     Description: Maximum fan speed for shelf in rpm.
@@ -772,6 +1152,25 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Datacenter'
+        Row: Power and Temperature
+        Panel: Max Shelf Fan Speed
+      - Dashboard: 'ONTAP: Shelf'
+        Row: Power
+        Panel: Storage Shelves
+      - Dashboard: 'ONTAP: Shelf'
+        Row: Highlights
+        Panel: Max Shelf Fan Speed
+      - Dashboard: 'ONTAP: Health'
+        Row: Shelves
+        Panel: Storage Shelf Issues
+      - Dashboard: 'ONTAP: Power'
+        Row: Shelves
+        Panel: Storage Shelves
+      - Dashboard: 'ONTAP: Power'
+        Row: Highlights
+        Panel: Max Shelf Fan Speed
 
   - Name: shelf_max_temperature
     Description: Maximum temperature of all non-ambient sensors for shelf in Celsius.
@@ -784,6 +1183,25 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Datacenter'
+        Row: Power and Temperature
+        Panel: Max Shelf Temp
+      - Dashboard: 'ONTAP: Shelf'
+        Row: Power
+        Panel: Storage Shelves
+      - Dashboard: 'ONTAP: Shelf'
+        Row: Highlights
+        Panel: Max Shelf temp
+      - Dashboard: 'ONTAP: Health'
+        Row: Shelves
+        Panel: Storage Shelf Issues
+      - Dashboard: 'ONTAP: Power'
+        Row: Shelves
+        Panel: Storage Shelves
+      - Dashboard: 'ONTAP: Power'
+        Row: Highlights
+        Panel: Max Shelf Temp
 
   - Name: shelf_min_ambient_temperature
     Description: Minimum temperature of all ambient sensors for shelf in Celsius.
@@ -796,6 +1214,16 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Shelf'
+        Row: Power
+        Panel: Storage Shelves
+      - Dashboard: 'ONTAP: Health'
+        Row: Shelves
+        Panel: Storage Shelf Issues
+      - Dashboard: 'ONTAP: Power'
+        Row: Shelves
+        Panel: Storage Shelves
 
   - Name: shelf_min_fan_speed
     Description: Minimum fan speed for shelf in rpm.
@@ -808,6 +1236,16 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Shelf'
+        Row: Power
+        Panel: Storage Shelves
+      - Dashboard: 'ONTAP: Health'
+        Row: Shelves
+        Panel: Storage Shelf Issues
+      - Dashboard: 'ONTAP: Power'
+        Row: Shelves
+        Panel: Storage Shelves
 
   - Name: shelf_min_temperature
     Description: Minimum temperature of all non-ambient sensors for shelf in Celsius.
@@ -820,6 +1258,16 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Shelf'
+        Row: Power
+        Panel: Storage Shelves
+      - Dashboard: 'ONTAP: Health'
+        Row: Shelves
+        Panel: Storage Shelf Issues
+      - Dashboard: 'ONTAP: Power'
+        Row: Shelves
+        Panel: Storage Shelves
 
   - Name: shelf_power
     Description: Power consumed by shelf in Watts.
@@ -832,33 +1280,134 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Datacenter'
+        Row: Power and Temperature
+        Panel: Total Power
+      - Dashboard: 'ONTAP: Datacenter'
+        Row: Power and Temperature
+        Panel: Total Power Consumed
+      - Dashboard: 'ONTAP: Shelf'
+        Row: Highlights
+        Panel: Total Power (Shelf)
+      - Dashboard: 'ONTAP: Shelf'
+        Row: Power
+        Panel: Top $TopResources Shelves by Power Consumed
+      - Dashboard: 'ONTAP: Shelf'
+        Row: Highlights
+        Panel: Storage Shelves
+      - Dashboard: 'ONTAP: Health'
+        Row: Shelves
+        Panel: Storage Shelf Issues
+      - Dashboard: 'ONTAP: Power'
+        Row: Shelves
+        Panel: Storage Shelves
+      - Dashboard: 'ONTAP: Power'
+        Row: Highlights
+        Panel: Total Power
+      - Dashboard: 'ONTAP: Power'
+        Row: Highlights
+        Panel: Average Power/Used_TB
+      - Dashboard: 'ONTAP: Power'
+        Row: Highlights
+        Panel: Average IOPs/Watt
+      - Dashboard: 'ONTAP: Power'
+        Row: Highlights
+        Panel: Total Power Consumed
+      - Dashboard: 'ONTAP: Power'
+        Row: Highlights
+        Panel: Average Power Consumption (kWh) Over Last Hour
+      - Dashboard: 'ONTAP: Power'
+        Row: Highlights
+        Panel: Top $TopResources Shelves by Power Consumed
 
   - Name: snapmirror_break_failed_count
     Description: The number of failed SnapMirror break operations for the relationship
+    Panels:
+      - Dashboard: 'ONTAP: SnapMirror Sources'
+        Row: Highlights
+        Panel: Number of Failed SnapMirror Transfers
 
   - Name: snapmirror_break_successful_count
     Description: The number of successful SnapMirror break operations for the relationship
+    Panels:
+      - Dashboard: 'ONTAP: SnapMirror Sources'
+        Row: Highlights
+        Panel: Number of Successful SnapMirror Transfers
 
   - Name: snapmirror_lag_time
     Description: Amount of time since the last snapmirror transfer in seconds
+    Panels:
+      - Dashboard: 'ONTAP: SnapMirror Destinations'
+        Row: Highlights
+        Panel: Relationships
+      - Dashboard: 'ONTAP: SnapMirror Destinations'
+        Row: Highlights
+        Panel: Top $TopResources Relationships by Lag Time
+      - Dashboard: 'ONTAP: SnapMirror Sources'
+        Row: Highlights
+        Panel: Relationships
+      - Dashboard: 'ONTAP: SnapMirror Sources'
+        Row: Highlights
+        Panel: Top $TopResources Relationships by Lag Time
+      - Dashboard: 'ONTAP: SnapMirror Sources'
+        Row: Policy and Lag details
+        Panel: Relationships by Lag time
+      - Dashboard: 'ONTAP: SnapMirror Sources'
+        Row: Policy and Lag details
+        Panel: Protection Policy and Lag detail
 
   - Name: snapmirror_last_transfer_duration
     Description: Duration of the last SnapMirror transfer in seconds
+    Panels:
+      - Dashboard: 'ONTAP: SnapMirror Destinations'
+        Row: Highlights
+        Panel: Relationships
+      - Dashboard: 'ONTAP: SnapMirror Destinations'
+        Row: Highlights
+        Panel: Top $TopResources Relationships by Transfer Duration
+      - Dashboard: 'ONTAP: SnapMirror Sources'
+        Row: Highlights
+        Panel: Relationships
+      - Dashboard: 'ONTAP: SnapMirror Sources'
+        Row: Highlights
+        Panel: Top $TopResources Relationships by Transfer Duration
 
   - Name: snapmirror_last_transfer_end_timestamp
     Description: The Timestamp of the end of the last transfer
 
   - Name: snapmirror_last_transfer_size
     Description: Size in kilobytes (1024 bytes) of the last transfer
+    Panels:
+      - Dashboard: 'ONTAP: SnapMirror Destinations'
+        Row: Highlights
+        Panel: Relationships
+      - Dashboard: 'ONTAP: SnapMirror Destinations'
+        Row: Highlights
+        Panel: Top $TopResources Relationships by Transfer Data
+      - Dashboard: 'ONTAP: SnapMirror Sources'
+        Row: Highlights
+        Panel: Relationships
+      - Dashboard: 'ONTAP: SnapMirror Sources'
+        Row: Highlights
+        Panel: Top $TopResources Relationships by Transfer Data
 
   - Name: snapmirror_newest_snapshot_timestamp
     Description: The timestamp of the newest Snapshot copy on the destination volume
 
   - Name: snapmirror_resync_failed_count
     Description: The number of failed SnapMirror resync operations for the relationship
+    Panels:
+      - Dashboard: 'ONTAP: SnapMirror Sources'
+        Row: Highlights
+        Panel: Number of Failed SnapMirror Transfers
 
   - Name: snapmirror_resync_successful_count
     Description: The number of successful SnapMirror resync operations for the relationship
+    Panels:
+      - Dashboard: 'ONTAP: SnapMirror Sources'
+        Row: Highlights
+        Panel: Number of Successful SnapMirror Transfers
 
   - Name: snapmirror_total_transfer_bytes
     Description: Cumulative bytes transferred for the relationship
@@ -868,9 +1417,17 @@ counters:
 
   - Name: snapmirror_update_failed_count
     Description: The number of successful SnapMirror update operations for the relationship
+    Panels:
+      - Dashboard: 'ONTAP: SnapMirror Sources'
+        Row: Highlights
+        Panel: Number of Failed SnapMirror Transfers
 
   - Name: snapmirror_update_successful_count
     Description: Number of Successful Updates
+    Panels:
+      - Dashboard: 'ONTAP: SnapMirror Sources'
+        Row: Highlights
+        Panel: Number of Successful SnapMirror Transfers
 
   - Name: svm_nfs_read_throughput
     APIs:
@@ -878,6 +1435,31 @@ counters:
         Unit: b_per_sec
       - API: ZAPI
         Unit: b_per_sec
+    Panels:
+      - Dashboard: 'ONTAP: SVM'
+        Row: NFSv3
+        Panel: NFSv3 Read Throughput
+      - Dashboard: 'ONTAP: SVM'
+        Row: NFSv3
+        Panel: Top $TopResources NFSv3 SVMs by Throughput
+      - Dashboard: 'ONTAP: SVM'
+        Row: NFSv4
+        Panel: NFSv4 Read Throughput
+      - Dashboard: 'ONTAP: SVM'
+        Row: NFSv4
+        Panel: Top $TopResources NFSv4 SVMs by Throughput
+      - Dashboard: 'ONTAP: SVM'
+        Row: NFSv4.1
+        Panel: NFSv4.1 Read Throughput
+      - Dashboard: 'ONTAP: SVM'
+        Row: NFSv4.1
+        Panel: Top $TopResources NFSv4.1 SVMs by Throughput
+      - Dashboard: 'ONTAP: SVM'
+        Row: NFSv4.2
+        Panel: NFSv4.2 Read Throughput
+      - Dashboard: 'ONTAP: SVM'
+        Row: NFSv4.2
+        Panel: Top $TopResources NFSv4.2 SVMs by Throughput
 
   - Name: svm_nfs_throughput
     APIs:
@@ -885,6 +1467,22 @@ counters:
         Unit: b_per_sec
       - API: ZAPI
         Unit: b_per_sec
+    Panels:
+      - Dashboard: 'ONTAP: SVM'
+        Row: NFSv3
+        Panel: NFSv3 Throughput
+      - Dashboard: 'ONTAP: SVM'
+        Row: NFSv3
+        Panel: Top $TopResources NFSv3 SVMs by Throughput
+      - Dashboard: 'ONTAP: SVM'
+        Row: NFSv4
+        Panel: NFSv4 Throughput
+      - Dashboard: 'ONTAP: SVM'
+        Row: NFSv4.1
+        Panel: NFSv4.1 Throughput
+      - Dashboard: 'ONTAP: SVM'
+        Row: NFSv4.2
+        Panel: NFSv4.2 Throughput
 
   - Name: svm_nfs_write_throughput
     APIs:
@@ -892,6 +1490,31 @@ counters:
         Unit: b_per_sec
       - API: ZAPI
         Unit: b_per_sec
+    Panels:
+      - Dashboard: 'ONTAP: SVM'
+        Row: NFSv3
+        Panel: NFSv3 Write Throughput
+      - Dashboard: 'ONTAP: SVM'
+        Row: NFSv3
+        Panel: Top $TopResources NFSv3 SVMs by Throughput
+      - Dashboard: 'ONTAP: SVM'
+        Row: NFSv4
+        Panel: NFSv4 Write Throughput
+      - Dashboard: 'ONTAP: SVM'
+        Row: NFSv4
+        Panel: Top $TopResources NFSv4 SVMs by Throughput
+      - Dashboard: 'ONTAP: SVM'
+        Row: NFSv4.1
+        Panel: NFSv4.1 Write Throughput
+      - Dashboard: 'ONTAP: SVM'
+        Row: NFSv4.1
+        Panel: Top $TopResources NFSv4.1 SVMs by Throughput
+      - Dashboard: 'ONTAP: SVM'
+        Row: NFSv4.2
+        Panel: NFSv4.2 Write Throughput
+      - Dashboard: 'ONTAP: SVM'
+        Row: NFSv4.2
+        Panel: Top $TopResources NFSv4.2 SVMs by Throughput
 
   - Name: volume_inode_files_total
     Description: Total user-visible file (inode) count, i.e., current maximum number
@@ -901,6 +1524,13 @@ counters:
         Endpoint: api/private/cli/volume
         ONTAPCounter: files
         Template: conf/rest/9.12.0/volume.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Volume Deep Dive'
+        Row: Inodes
+        Panel: Inode Files Total
+      - Dashboard: 'ONTAP: Volume'
+        Row: Inode
+        Panel: Top $TopResources Volumes by Inode Files Total
 
   - Name: volume_inode_files_used
     Description: Number of user-visible files (inodes) used. This field is valid only
@@ -910,9 +1540,23 @@ counters:
         Endpoint: api/private/cli/volume
         ONTAPCounter: files_used
         Template: conf/rest/9.12.0/volume.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Volume Deep Dive'
+        Row: Inodes
+        Panel: Inode Files Used
+      - Dashboard: 'ONTAP: Volume'
+        Row: Inode
+        Panel: Top $TopResources Volumes by Inode Files Used
 
   - Name: volume_inode_used_percent
     Description: volume_inode_files_used / volume_inode_total
+    Panels:
+      - Dashboard: 'ONTAP: Volume Deep Dive'
+        Row: Inodes
+        Panel: Inode Files Used Percentage
+      - Dashboard: 'ONTAP: Volume'
+        Row: Inode
+        Panel: Top $TopResources Volumes by Inode Files Used Percentage
 
   - Name: volume_overwrite_reserve_available
     Description: amount of storage space that is currently available for overwrites,
@@ -927,6 +1571,25 @@ counters:
         Endpoint: api/private/cli/volume
         ONTAPCounter: compression_space_saved
         Template: conf/rest/9.12.0/volume.yaml
+    Panels:
+      - Dashboard: 'ONTAP: FlexGroup'
+        Row: Volume Table
+        Panel: FlexGroup Constituents in Cluster
+      - Dashboard: 'ONTAP: Volume Deep Dive'
+        Row: 'Volume Capacity: $Volume'
+        Panel: Volumes in Cluster
+      - Dashboard: 'ONTAP: SVM'
+        Row: Volume Capacity
+        Panel: Top $TopResources Volumes by Compression Savings
+      - Dashboard: 'ONTAP: Health'
+        Row: Volume
+        Panel: Volumes with Ransomware Issues (9.10+ Only)
+      - Dashboard: 'ONTAP: Health'
+        Row: Volume
+        Panel: Volumes Move Issues
+      - Dashboard: 'ONTAP: Volume'
+        Row: Volume Table
+        Panel: Volumes in Cluster
 
   - Name: volume_sis_compress_saved_percent
     Description: Percentage of the total disk space that is saved by compressing blocks
@@ -936,6 +1599,13 @@ counters:
         Endpoint: api/private/cli/volume
         ONTAPCounter: compression_space_saved_percent
         Template: conf/rest/9.12.0/volume.yaml
+    Panels:
+      - Dashboard: 'ONTAP: LUN'
+        Row: Top Volume and LUN Capacity
+        Panel: Top $TopResources Volumes by Compression Percent Saved
+      - Dashboard: 'ONTAP: SVM'
+        Row: Volume Capacity %
+        Panel: Top $TopResources Volumes by Compression Saved %
 
   - Name: volume_sis_dedup_saved
     Description: The total disk space (in bytes) that is saved by deduplication and
@@ -945,6 +1615,25 @@ counters:
         Endpoint: api/private/cli/volume
         ONTAPCounter: dedupe_space_saved
         Template: conf/rest/9.12.0/volume.yaml
+    Panels:
+      - Dashboard: 'ONTAP: FlexGroup'
+        Row: Volume Table
+        Panel: FlexGroup Constituents in Cluster
+      - Dashboard: 'ONTAP: Volume Deep Dive'
+        Row: 'Volume Capacity: $Volume'
+        Panel: Volumes in Cluster
+      - Dashboard: 'ONTAP: SVM'
+        Row: Volume Capacity
+        Panel: Top $TopResources Volumes by Deduplication Savings
+      - Dashboard: 'ONTAP: Health'
+        Row: Volume
+        Panel: Volumes with Ransomware Issues (9.10+ Only)
+      - Dashboard: 'ONTAP: Health'
+        Row: Volume
+        Panel: Volumes Move Issues
+      - Dashboard: 'ONTAP: Volume'
+        Row: Volume Table
+        Panel: Volumes in Cluster
 
   - Name: volume_sis_dedup_saved_percent
     Description: Percentage of the total disk space that is saved by deduplication and
@@ -954,6 +1643,13 @@ counters:
         Endpoint: api/private/cli/volume
         ONTAPCounter: dedupe_space_saved_percent
         Template: conf/rest/9.12.0/volume.yaml
+    Panels:
+      - Dashboard: 'ONTAP: LUN'
+        Row: Top Volume and LUN Capacity
+        Panel: Top $TopResources Volumes by Deduplication Percent Saved
+      - Dashboard: 'ONTAP: SVM'
+        Row: Volume Capacity %
+        Panel: Top $TopResources Volumes by Deduplication Saved %
 
   - Name: volume_sis_total_saved
     Description: Total space saved (in bytes) in the volume due to deduplication, compression,
@@ -963,6 +1659,10 @@ counters:
         Endpoint: api/private/cli/volume
         ONTAPCounter: sis_space_saved
         Template: conf/rest/9.12.0/volume.yaml
+    Panels:
+      - Dashboard: 'ONTAP: SVM'
+        Row: Volume Capacity
+        Panel: Top $TopResources Volumes by Total Efficiency Savings
 
   - Name: volume_sis_total_saved_percent
     Description: Percentage of total disk space that is saved by compressing blocks,
@@ -976,6 +1676,43 @@ counters:
   - Name: volume_size_used_percent
     Description: percentage of utilized storage space in a volume relative to its total
       capacity
+    Panels:
+      - Dashboard: 'ONTAP: FlexGroup'
+        Row: Volume Table
+        Panel: FlexGroup Constituents in Cluster
+      - Dashboard: 'ONTAP: Volume Deep Dive'
+        Row: 'Volume Capacity: $Volume'
+        Panel: Volumes in Cluster
+      - Dashboard: 'ONTAP: Volume Deep Dive'
+        Row: Per Volume Statistics
+        Panel: Per Volume Space Used Percent
+      - Dashboard: 'ONTAP: Volume Deep Dive'
+        Row: Per Volume Statistics
+        Panel: Per Volume Snapshot Space Used Percent
+      - Dashboard: 'ONTAP: SVM'
+        Row: Volume Capacity
+        Panel: Top $TopResources Volumes Per Volume Size Used
+      - Dashboard: 'ONTAP: Aggregate'
+        Row: Volume Capacity
+        Panel: Top $TopResources Volumes by Space Used %
+      - Dashboard: 'ONTAP: Health'
+        Row: Volume
+        Panel: Volumes with Ransomware Issues (9.10+ Only)
+      - Dashboard: 'ONTAP: Health'
+        Row: Volume
+        Panel: Volumes Move Issues
+      - Dashboard: 'ONTAP: LUN'
+        Row: Top Volume and LUN Capacity
+        Panel: Top $TopResources Volumes by Used %
+      - Dashboard: 'ONTAP: Volume'
+        Row: Volume Table
+        Panel: Volumes in Cluster
+      - Dashboard: 'ONTAP: Volume'
+        Row: Capacity %
+        Panel: Top $TopResources Volumes Per Volume Size Used
+      - Dashboard: 'ONTAP: Volume'
+        Row: Forecast Volume Capacity
+        Panel: Top $TopResources Volumes Per Size Used Percentage Trend
 
   - Name: volume_snapshot_reserve_used
     Description: amount of storage space currently used by a volume's snapshot reserve,
@@ -989,6 +1726,10 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.12.0/metrocluster_check.yaml
+    Panels:
+      - Dashboard: 'ONTAP: MetroCluster'
+        Row: MetroCluster Diagnostics
+        Panel: Metrocluster Cluster Diagnostics Check Details
 
   - Name: metrocluster_check_node_status
     Description: Detail of the type of diagnostic operation run for the Node with diagnostic operation result.
@@ -997,6 +1738,10 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.12.0/metrocluster_check.yaml
+    Panels:
+      - Dashboard: 'ONTAP: MetroCluster'
+        Row: MetroCluster Diagnostics
+        Panel: Metrocluster Node Diagnostics Check Details
 
   - Name: metrocluster_check_aggr_status
     Description: Detail of the type of diagnostic operation run for the Aggregate with diagnostic operation result.
@@ -1005,6 +1750,10 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.12.0/metrocluster_check.yaml
+    Panels:
+      - Dashboard: 'ONTAP: MetroCluster'
+        Row: MetroCluster Diagnostics
+        Panel: Metrocluster Aggregate Diagnostics Check Details
 
   - Name: metrocluster_check_volume_status
     Description: Detail of the type of diagnostic operation run for the Volume with diagnostic operation result.
@@ -1013,6 +1762,10 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.12.0/metrocluster_check.yaml
+    Panels:
+      - Dashboard: 'ONTAP: MetroCluster'
+        Row: MetroCluster Diagnostics
+        Panel: Metrocluster Volume Diagnostics Check Details
 
   - Name: flashpool_hya_read_hit_latency_average
     APIs:
@@ -1020,6 +1773,10 @@ counters:
         Unit: millisec
       - API: ZAPI
         Unit: millisec
+    Panels:
+      - Dashboard: 'ONTAP: Aggregate'
+        Row: Flash Pool
+        Panel: Top $TopResources Aggregates by SSD and HDD Latency
 
   - Name: flashpool_hya_read_miss_latency_average
     APIs:
@@ -1027,6 +1784,10 @@ counters:
         Unit: millisec
       - API: ZAPI
         Unit: millisec
+    Panels:
+      - Dashboard: 'ONTAP: Aggregate'
+        Row: Flash Pool
+        Panel: Top $TopResources Aggregates by SSD and HDD Latency
 
   - Name: flashpool_hya_write_hdd_latency_average
     APIs:
@@ -1048,6 +1809,13 @@ counters:
         Unit: millisec
       - API: ZAPI
         Unit: millisec
+    Panels:
+      - Dashboard: 'ONTAP: Volume'
+        Row: Object Storage
+        Panel: Top $TopResources Volumes by Object Storage GET Latency
+      - Dashboard: 'ONTAP: Volume'
+        Row: Object Storage
+        Panel: Top $TopResources Volumes by Object Storage PUT Latency
 
   - Name: volume_autosize_grow_threshold_percent
     Description: Used space threshold which triggers autogrow. When the size-used is greater than this percent of size-total, the volume will be grown. The computed value is rounded down. The default value of this element varies from 85% to 98%, depending on the volume size. It is an error for the grow threshold to be less than or equal to the shrink threshold.
@@ -1066,30 +1834,192 @@ counters:
 
   - Name: volume_size_available
     Description:  The size (in bytes) that is still available in the volume. This field is valid only when the volume is online.
+    Panels:
+      - Dashboard: 'ONTAP: File System Analytics (FSA)'
+        Row: Usage
+        Panel: Available
 
   - Name: volume_size_total
     Description: Total usable size (in bytes) of the volume, not including WAFL reserve or volume snapshot reserve.  If the volume is restricted or offline, a value of 0 is returned.
+    Panels:
+      - Dashboard: 'ONTAP: FlexGroup'
+        Row: Volume Table
+        Panel: FlexGroup Constituents in Cluster
+      - Dashboard: 'ONTAP: Volume Deep Dive'
+        Row: 'Volume Capacity: $Volume'
+        Panel: Volumes in Cluster
+      - Dashboard: 'ONTAP: File System Analytics (FSA)'
+        Row: Usage
+        Panel: Size
+      - Dashboard: 'ONTAP: File System Analytics (FSA)'
+        Row: Usage
+        Panel: Used Percentage
+      - Dashboard: 'ONTAP: cDOT'
+        Row: Capacity Metrics
+        Panel: Top $TopResources SVMs by Capacity Used %
+      - Dashboard: 'ONTAP: cDOT'
+        Row: Capacity Metrics
+        Panel: Top $TopResources Volumes by Capacity Used %
+      - Dashboard: 'ONTAP: cDOT'
+        Row: Capacity Metrics
+        Panel: Top $TopResources SVMs by Capacity Used %
+      - Dashboard: 'ONTAP: cDOT'
+        Row: Capacity Metrics
+        Panel: Top $TopResources Volumes by Capacity Used %
+      - Dashboard: 'ONTAP: Health'
+        Row: Volume
+        Panel: Volumes with Ransomware Issues (9.10+ Only)
+      - Dashboard: 'ONTAP: Health'
+        Row: Volume
+        Panel: Volumes Move Issues
+      - Dashboard: 'ONTAP: Volume'
+        Row: Volume Table
+        Panel: Volumes in Cluster
 
   - Name: volume_size_used
     Description: Number of bytes used in the volume.  If the volume is restricted or offline, a value of 0 is returned.
+    Panels:
+      - Dashboard: 'ONTAP: Volume Deep Dive'
+        Row: Per Volume Statistics
+        Panel: Per Volume Space Used
+      - Dashboard: 'ONTAP: File System Analytics (FSA)'
+        Row: Usage
+        Panel: Used
+      - Dashboard: 'ONTAP: File System Analytics (FSA)'
+        Row: Usage
+        Panel: Used Percentage
+      - Dashboard: 'ONTAP: cDOT'
+        Row: Capacity Metrics
+        Panel: Top $TopResources SVMs by Capacity Used %
+      - Dashboard: 'ONTAP: cDOT'
+        Row: Capacity Metrics
+        Panel: Top $TopResources Volumes by Capacity Used %
+      - Dashboard: 'ONTAP: cDOT'
+        Row: Capacity Metrics
+        Panel: Top $TopResources SVMs by Capacity Used %
+      - Dashboard: 'ONTAP: cDOT'
+        Row: Capacity Metrics
+        Panel: Top $TopResources Volumes by Capacity Used %
+      - Dashboard: 'ONTAP: Aggregate'
+        Row: Volume Capacity
+        Panel: Top $TopResources Volumes by Space Used by Aggregate
+      - Dashboard: 'ONTAP: Volume'
+        Row: Capacity
+        Panel: Top $TopResources Volumes Per Volume Size Used
+      - Dashboard: 'ONTAP: SVM'
+        Row: Capacity
+        Panel: Top $TopResources SVMs by Volume Space Usage
+      - Dashboard: 'ONTAP: SVM'
+        Row: Volume Capacity
+        Panel: Top $TopResources Volumes Per Volume Size Used
 
   - Name: volume_snapshot_reserve_available
     Description: The size (in bytes) that is available for Snapshot copies inside the Snapshot reserve. This value is zero if Snapshot spill is present. For 'none' guaranteed volumes, this may get reduced due to less available space in the aggregate. This parameter is not supported on Infinite Volumes.
+    Panels:
+      - Dashboard: 'ONTAP: Volume Deep Dive'
+        Row: Per Volume Statistics
+        Panel: Per Volume Snapshot Space Used
+      - Dashboard: 'ONTAP: SVM'
+        Row: Volume Capacity
+        Panel: Top $TopResources Volumes Per Snapshot Reserve Available
+      - Dashboard: 'ONTAP: Volume'
+        Row: Capacity
+        Panel: Top $TopResources Volumes Per Snapshot Reserve Available
 
   - Name: volume_snapshot_reserve_percent
     Description: The percentage of volume disk space that has been set aside as reserve for snapshot usage.
+    Panels:
+      - Dashboard: 'ONTAP: Volume Deep Dive'
+        Row: Per Volume Statistics
+        Panel: Per Volume Snapshot Space Used Percent
+      - Dashboard: 'ONTAP: SVM'
+        Row: Volume Capacity %
+        Panel: Top $TopResources Volumes Per Snapshot Reserve
+      - Dashboard: 'ONTAP: Volume'
+        Row: Capacity %
+        Panel: Top $TopResources Volumes Per Snapshot Reserve
 
   - Name: volume_snapshot_reserve_size
     Description: The size (in bytes) in the volume that has been set aside as reserve for snapshot usage.
+    Panels:
+      - Dashboard: 'ONTAP: Datacenter'
+        Row: Snapshots
+        Panel: Breached Status
+      - Dashboard: 'ONTAP: Volume Deep Dive'
+        Row: Per Volume Statistics
+        Panel: Per Volume Snapshot Space Used
+      - Dashboard: 'ONTAP: Data Protection'
+        Row: Snapshot Copies
+        Panel: Volumes breached
+      - Dashboard: 'ONTAP: Data Protection'
+        Row: Snapshot Copies
+        Panel: Volumes not breached
+      - Dashboard: 'ONTAP: Data Protection'
+        Row: Snapshot Copies
+        Panel: Volumes Breaching Snapshot Copy Reserve Space
+      - Dashboard: 'ONTAP: SVM'
+        Row: Volume Capacity
+        Panel: Top $TopResources Volumes Per Snapshot Reserve Size
+      - Dashboard: 'ONTAP: Volume'
+        Row: Capacity
+        Panel: Top $TopResources Volumes Per Snapshot Reserve Size
 
   - Name: volume_snapshot_reserve_used_percent
     Description: Percentage of the volume reserved for snapshots that has been used. Note that in some scenarios, it is possible to pass 100% of the space allocated.
+    Panels:
+      - Dashboard: 'ONTAP: Volume Deep Dive'
+        Row: Per Volume Statistics
+        Panel: Per Volume Snapshot Space Used Percent
+      - Dashboard: 'ONTAP: Aggregate'
+        Row: Volume Capacity
+        Panel: Top $TopResources Volumes by Snapshot Space Used %
+      - Dashboard: 'ONTAP: LUN'
+        Row: Top Volume and LUN Capacity
+        Panel: Top $TopResources Volumes by Snapshot Used %
+      - Dashboard: 'ONTAP: SVM'
+        Row: Volume Capacity %
+        Panel: Top $TopResources Volumes Per Snapshot Reserve Used
+      - Dashboard: 'ONTAP: Volume'
+        Row: Capacity %
+        Panel: Top $TopResources Volumes Per Snapshot Reserve Used
 
   - Name: volume_snapshots_size_available
     Description: Total free space (in bytes) available in the volume and the snapshot reserve. If this value is 0 or negative, a new snapshot cannot be created.
+    Panels:
+      - Dashboard: 'ONTAP: Volume Deep Dive'
+        Row: Per Volume Statistics
+        Panel: Per Volume Snapshot Space Used
+      - Dashboard: 'ONTAP: SVM'
+        Row: Volume Capacity
+        Panel: Top $TopResources Volumes Per Snapshot Size Available
+      - Dashboard: 'ONTAP: Volume'
+        Row: Capacity
+        Panel: Top $TopResources Volumes Per Snapshot Size Available
 
   - Name: volume_snapshots_size_used
     Description: The size (in bytes) that is used by snapshots in the volume.
+    Panels:
+      - Dashboard: 'ONTAP: Datacenter'
+        Row: Snapshots
+        Panel: Breached Status
+      - Dashboard: 'ONTAP: Volume Deep Dive'
+        Row: Per Volume Statistics
+        Panel: Per Volume Snapshot Space Used
+      - Dashboard: 'ONTAP: Data Protection'
+        Row: Snapshot Copies
+        Panel: Volumes breached
+      - Dashboard: 'ONTAP: Data Protection'
+        Row: Snapshot Copies
+        Panel: Volumes not breached
+      - Dashboard: 'ONTAP: Data Protection'
+        Row: Snapshot Copies
+        Panel: Volumes Breaching Snapshot Copy Reserve Space
+      - Dashboard: 'ONTAP: SVM'
+        Row: Volume Capacity
+        Panel: Top $TopResources Volumes Per Snapshot Size Used
+      - Dashboard: 'ONTAP: Volume'
+        Row: Capacity
+        Panel: Top $TopResources Volumes Per Snapshot Size Used
 
   - Name: volume_space_expected_available
     Description: The size (in bytes) that should be available for the volume irrespective of available size in the aggregate.This is same as size-available for 'volume' guaranteed volumes.For 'none' guaranteed volumes this value is calculated as if the aggregate has enough backing disk space to fully support the volume's size.Similar to the size-available property, this does not include Snapshot reserve.This count gets reduced if snapshots consume space above Snapshot reserve threshold.This parameter is not supported on Infinite Volumes.
@@ -1099,6 +2029,46 @@ counters:
 
   - Name: volume_space_logical_used
     Description: The size (in bytes) that is logically used in the volume.This value includes all the space saved by the storage efficiency features along with the physically used space.This does not include Snapshot reserve but does consider Snapshot spill.This parameter is not supported on FlexGroups or Infinite Volumes.
+    Panels:
+      - Dashboard: 'ONTAP: Flexgroup'
+        Row: Volume Table
+        Panel: FlexGroup Constituents in Cluster
+      - Dashboard: 'ONTAP: Volume Deep Dive'
+        Row: Per Volume Statistics
+        Panel: Per Volume Space Used
+      - Dashboard: 'ONTAP: Volume Deep Dive'
+        Row: 'Volume Capacity: $Volume'
+        Panel: Volumes in Cluster
+      - Dashboard: 'ONTAP: Health'
+        Row: Volume
+        Panel: Volumes with Ransomware Issues (9.10+ Only)
+      - Dashboard: 'ONTAP: Health'
+        Row: Volume
+        Panel: Volumes Move Issues
+      - Dashboard: 'ONTAP: SVM'
+        Row: Capacity
+        Panel: Top $TopResources SVMs by Logical Space Usage Across Volumes
+      - Dashboard: 'ONTAP: SVM'
+        Row: Volume Capacity
+        Panel: Top $TopResources Volumes Per Logical Space Used
+      - Dashboard: 'ONTAP: Volume'
+        Row: Volume Table
+        Panel: Volumes in Cluster
+      - Dashboard: 'ONTAP: Volume'
+        Row: I/O Density
+        Panel: Top $TopResources Volumes by IO Density (IOPs/TiB)
+      - Dashboard: 'ONTAP: Volume'
+        Row: I/O Density
+        Panel: Bottom $TopResources Volumes by IO Density (IOPs/TiB)
+      - Dashboard: 'ONTAP: Volume'
+        Row: Capacity
+        Panel: Top $TopResources Volumes Per Logical Space Used
+      - Dashboard: 'ONTAP: Volume'
+        Row: Growth Rate
+        Panel: Top $TopResources Volumes Per Growth Rate of Logical Used
+      - Dashboard: 'ONTAP: Volume'
+        Row: Growth Rate
+        Panel: 'Top $TopResources Volumes by Logical Usage: Delta'
 
   - Name: volume_space_logical_used_by_afs
     Description: The size (in bytes) that is logically used by the active filesystem of the volume.This value differs from 'logical-used' by the amount of Snapshot spill that exceeds Snapshot reserve.This parameter is not supported on FlexGroups or Infinite Volumes.
@@ -1108,27 +2078,101 @@ counters:
 
   - Name: volume_space_logical_used_percent
     Description: Percentage of the logical used size of the volume.This parameter is not supported on FlexGroups or Infinite Volumes.
+    Panels:
+      - Dashboard: 'ONTAP: Volume Deep Dive'
+        Row: Per Volume Statistics
+        Panel: Per Volume Space Used Percent
+      - Dashboard: 'ONTAP: SVM'
+        Row: Volume Capacity %
+        Panel: Top $TopResources Volumes Per Logical Space Used
+      - Dashboard: 'ONTAP: Volume'
+        Row: Capacity %
+        Panel: Top $TopResources Volumes Per Logical Space Used
 
   - Name: volume_space_physical_used
     Description: The size (in bytes) that is physically used in the volume.This differs from 'total-used' space by the space that is reserved for future writes.The value includes blocks in use by Snapshot copies.This field is valid only if the volume is online.
+    Panels:
+      - Dashboard: 'ONTAP: Flexgroup'
+        Row: Volume Table
+        Panel: FlexGroup Constituents in Cluster
+      - Dashboard: 'ONTAP: Volume Deep Dive'
+        Row: Per Volume Statistics
+        Panel: Per Volume Space Used
+      - Dashboard: 'ONTAP: Volume Deep Dive'
+        Row: 'Volume Capacity: $Volume'
+        Panel: Volumes in Cluster
+      - Dashboard: 'ONTAP: Health'
+        Row: Volume
+        Panel: Volumes with Ransomware Issues (9.10+ Only)
+      - Dashboard: 'ONTAP: Health'
+        Row: Volume
+        Panel: Volumes Move Issues
+      - Dashboard: 'ONTAP: SVM'
+        Row: Volume Capacity
+        Panel: Top $TopResources Volumes Per Physical Space Used
+      - Dashboard: 'ONTAP: Volume'
+        Row: Volume Table
+        Panel: Volumes in Cluster
+      - Dashboard: 'ONTAP: Volume'
+        Row: Capacity
+        Panel: Top $TopResources Volumes Per Physical Space Used
+      - Dashboard: 'ONTAP: Volume'
+        Row: Growth Rate
+        Panel: Top $TopResources Volumes Per Growth Rate of Physical Used
+      - Dashboard: 'ONTAP: Volume'
+        Row: Growth Rate
+        Panel: 'Top $TopResources Volumes by Physical Usage: Delta'
 
   - Name: volume_space_physical_used_percent
     Description: The size (in percent) that is physically used in the volume.The percentage is based on volume size including the space reserved for Snapshot copies.This field is valid only if the volume is online.
+    Panels:
+      - Dashboard: 'ONTAP: Volume Deep Dive'
+        Row: Per Volume Statistics
+        Panel: Per Volume Space Used Percent
+      - Dashboard: 'ONTAP: SVM'
+        Row: Volume Capacity %
+        Panel: Top $TopResources Volumes Per Physical Space Used
+      - Dashboard: 'ONTAP: Volume'
+        Row: Capacity %
+        Panel: Top $TopResources Volumes Per Physical Space Used
 
   - Name: aggr_space_performance_tier_used_percent
     Description: A summation of volume footprints inside the aggregate,as a percentage. A volume's footprint is the amount of space being used for the volume in the aggregate.
+    Panels:
+      - Dashboard: 'ONTAP: Aggregate'
+        Row: FabricPool
+        Panel: Top $TopResources Aggregates by Performance Tier Footprint %
 
   - Name: flexcache_miss_percent
     Description: This metric represents the percentage of block requests from a client that resulted in a "miss" in the FlexCache. A "miss" occurs when the requested data is not found in the cache and has to be retrieved from the origin volume.
+    Panels:
+      - Dashboard: 'ONTAP: FlexCache'
+        Row: Highlights
+        Panel: Top $TopResources Cache Miss percent
 
   - Name: lun_size_used_percent
     Description: This metric represents the percentage of a LUN that is currently being used.
+    Panels:
+      - Dashboard: 'ONTAP: LUN'
+        Row: Top Volume and LUN Capacity
+        Panel: Top $TopResources LUNs by Percent Most Filled
+      - Dashboard: 'ONTAP: LUN'
+        Row: Top Volume and LUN Capacity
+        Panel: Top $TopResources LUNs by Percent Least Filled
 
   - Name: namespace_size_available
     Description: This metric represents the amount of available space in a namespace.
+    Panels:
+      - Dashboard: 'ONTAP: NVMe Namespaces'
+        Row: NVMe Namespaces Table
+        Panel: NVMe Namespaces
 
   - Name: namespace_size_available_percent
     Description: This metric represents the percentage of available space in a namespace.
+    Panels:
+      - Dashboard: 'ONTAP: NVMe Namespaces'
+        Row: NVMe Namespaces Table
+        Panel: NVMe Namespaces
 
   - Name: ndmp_session_data_bytes_processed
     Description: Indicates the NDMP data bytes processed.
@@ -1138,15 +2182,30 @@ counters:
 
   - Name: ontaps3_used_percent
     Description: The used_percent metric the percentage of a bucket's total capacity that is currently being used.
+    Panels:
+      - Dashboard: 'ONTAP: S3 Object Storage'
+        Row: Bucket
+        Panel: Bucket Overview
+      - Dashboard: 'ONTAP: S3 Object Storage'
+        Row: Bucket
+        Panel: Top $TopResources Buckets by Used Size Percent
 
   - Name: volume_total_data
     Description: This metric represents the total amount of data that has been read from and written to a specific volume.
+    Panels:
+      - Dashboard: 'ONTAP: Datacenter'
+        Row: Performance
+        Panel: Top $TopResources Throughput by Cluster
 
   - Name: node_nvmf_data_sent
     Description: NVMe/FC kilobytes (KB) sent per second.
 
   - Name: node_nvmf_ops
     Description: NVMe/FC operations per second.
+    Panels:
+      - Dashboard: 'ONTAP: Node'
+        Row: Backend
+        Panel: Protocol Backend IOPs
 
   - Name: node_nvmf_data_recv
     Description: NVMe/FC kilobytes (KB) received per second.
@@ -1160,15 +2219,31 @@ counters:
 
   - Name: volume_space_performance_tier_inactive_user_data
     Description: The size that is physically used in the performance tier of the volume and has a cold temperature. This parameter is only supported if the volume is in an aggregate that is either attached to object store or could be attached to an object store.
+    Panels:
+      - Dashboard: 'ONTAP: Volume'
+        Row: Capacity
+        Panel: Top $TopResources Volumes by Inactive Data
 
   - Name: volume_space_performance_tier_inactive_user_data_percent
     Description: The size (in percent) that is physically used in the performance tier of the volume and has a cold temperature. This parameter is only supported if the volume is in an aggregate that is either attached to object store or could be attached to an object store.
+    Panels:
+      - Dashboard: 'ONTAP: Volume'
+        Row: Capacity %
+        Panel: Top $TopResources Volumes by Inactive Data
 
   - Name: aggr_object_store_logical_used
     Description: Logical space usage of aggregates in the attached object store.
+    Panels:
+      - Dashboard: 'ONTAP: Aggregate'
+        Row: Highlights
+        Panel: Top $TopResources Aggregates by logical space usage in Object Store
 
   - Name: aggr_object_store_physical_used
     Description: Physical space usage of aggregates in the attached object store.
+    Panels:
+      - Dashboard: 'ONTAP: Aggregate'
+        Row: Highlights
+        Panel: Top $TopResources Aggregates by physical space usage in Object Store
 
   - Name: volume_analytics_dir_bytes_used
     Description: The actual number of bytes used on disk by this file.
@@ -1177,6 +2252,13 @@ counters:
         Endpoint: api/storage/volumes/{volume.uuid}/files
         ONTAPCounter: analytics.bytes_used
         Template: conf/rest/9.12.0/volume_analytics.yaml
+    Panels:
+      - Dashboard: 'ONTAP: File System Analytics (FSA)'
+        Row: Usage
+        Panel: Top $TopResources Volumes by Directory Growth
+      - Dashboard: 'ONTAP: File System Analytics (FSA)'
+        Row: Usage
+        Panel: Top $TopResources Volumes by Directory Growth
 
   - Name: volume_analytics_dir_file_count
     Description: Number of files in a directory.
@@ -1185,7 +2267,13 @@ counters:
         Endpoint: api/storage/volumes/{volume.uuid}/files
         ONTAPCounter: analytics.file_count
         Template: conf/rest/9.12.0/volume_analytics.yaml
-
+    Panels:
+      - Dashboard: 'ONTAP: File System Analytics (FSA)'
+        Row: Usage
+        Panel: Top $TopResources Volumes by Directory Growth
+      - Dashboard: 'ONTAP: File System Analytics (FSA)'
+        Row: Usage
+        Panel: Files
 
   - Name: volume_analytics_dir_subdir_count
     Description: Number of sub directories in a directory.
@@ -1194,6 +2282,13 @@ counters:
         Endpoint: api/storage/volumes/{volume.uuid}/files
         ONTAPCounter: analytics.subdir_count
         Template: conf/rest/9.12.0/volume_analytics.yaml
+    Panels:
+      - Dashboard: 'ONTAP: File System Analytics (FSA)'
+        Row: Usage
+        Panel: Top $TopResources Volumes by Directory Growth
+      - Dashboard: 'ONTAP: File System Analytics (FSA)'
+        Row: Usage
+        Panel: Directories
 
   - Name: volume_analytics_dir_bytes_used
     Description: The actual number of bytes used on disk by this file.
@@ -1202,6 +2297,13 @@ counters:
         Endpoint: api/storage/volumes/{volume.uuid}/files
         ONTAPCounter: analytics.bytes_used
         Template: conf/rest/9.12.0/volume_analytics.yaml
+    Panels:
+      - Dashboard: 'ONTAP: File System Analytics (FSA)'
+        Row: Usage
+        Panel: Top $TopResources Volumes by Directory Growth
+      - Dashboard: 'ONTAP: File System Analytics (FSA)'
+        Row: Usage
+        Panel: Top $TopResources Volumes by Directory Growth
 
   - Name: volume_analytics_bytes_used_by_accessed_time
     Description: Number of bytes used on-disk, broken down by date of last access.
@@ -1210,7 +2312,10 @@ counters:
         Endpoint: api/storage/volumes/{volume.uuid}/files
         ONTAPCounter: analytics.by_accessed_time.bytes_used.values
         Template: conf/rest/9.12.0/volume_analytics.yaml
-
+    Panels:
+      - Dashboard: 'ONTAP: File System Analytics (FSA)'
+        Row: Volume Activity
+        Panel: Volume Access ($Activity) History
 
   - Name: volume_analytics_bytes_used_percent_by_accessed_time
     Description: Percent used on-disk, broken down by date of last access.
@@ -1219,6 +2324,10 @@ counters:
         Endpoint: api/storage/volumes/{volume.uuid}/files
         ONTAPCounter: analytics.by_accessed_time.bytes_used.percentages
         Template: conf/rest/9.12.0/volume_analytics.yaml
+    Panels:
+      - Dashboard: 'ONTAP: File System Analytics (FSA)'
+        Row: Volume Activity
+        Panel: Volume Access ($Activity) History By Percent
 
   - Name: volume_analytics_bytes_used_by_modified_time
     Description: Number of bytes used on-disk, broken down by date of last modification.
@@ -1227,6 +2336,10 @@ counters:
         Endpoint: api/storage/volumes/{volume.uuid}/files
         ONTAPCounter: analytics.by_modified_time.bytes_used.values
         Template: conf/rest/9.12.0/volume_analytics.yaml
+    Panels:
+      - Dashboard: 'ONTAP: File System Analytics (FSA)'
+        Row: Volume Activity
+        Panel: Volume Modify ($Activity) History
 
   - Name: volume_analytics_bytes_used_percent_by_modified_time
     Description: Percent used on-disk, broken down by date of last modification.
@@ -1235,6 +2348,10 @@ counters:
         Endpoint: api/storage/volumes/{volume.uuid}/files
         ONTAPCounter: analytics.by_modified_time.bytes_used.percentages
         Template: conf/rest/9.12.0/volume_analytics.yaml
+    Panels:
+      - Dashboard: 'ONTAP: File System Analytics (FSA)'
+        Row: Volume Activity
+        Panel: Volume Modify ($Activity) History By Percent
 
   - Name: health_disk_alerts
     Description: Provides any issues related to Disks health check if disks are broken or unassigned. Value of 1 means issue is happening and 0 means that issue is resolved.
@@ -1243,6 +2360,28 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.6.0/health.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Datacenter'
+        Row: Issues
+        Panel: Errors
+      - Dashboard: 'ONTAP: Datacenter'
+        Row: Issues
+        Panel: Warnings
+      - Dashboard: 'ONTAP: Health'
+        Row: Highlights
+        Panel: Total Errors
+      - Dashboard: 'ONTAP: Health'
+        Row: Highlights
+        Panel: Total Warnings
+      - Dashboard: 'ONTAP: Health'
+        Row: Highlights
+        Panel: Errors
+      - Dashboard: 'ONTAP: Health'
+        Row: Highlights
+        Panel: Warnings
+      - Dashboard: 'ONTAP: Health'
+        Row: Disks
+        Panel: Disks Issues
 
   - Name: health_shelf_alerts
     Description: Provides any issues related to Shelf health check. Value of 1 means issue is happening and 0 means that issue is resolved.
@@ -1251,6 +2390,28 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.6.0/health.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Datacenter'
+        Row: Issues
+        Panel: Errors
+      - Dashboard: 'ONTAP: Datacenter'
+        Row: Issues
+        Panel: Warnings
+      - Dashboard: 'ONTAP: Health'
+        Row: Highlights
+        Panel: Total Errors
+      - Dashboard: 'ONTAP: Health'
+        Row: Highlights
+        Panel: Total Warnings
+      - Dashboard: 'ONTAP: Health'
+        Row: Highlights
+        Panel: Errors
+      - Dashboard: 'ONTAP: Health'
+        Row: Highlights
+        Panel: Warnings
+      - Dashboard: 'ONTAP: Health'
+        Row: Shelves
+        Panel: Storage Shelf Issues
 
   - Name: health_support_alerts
     Description: Provides any issues related to Support health check. Value of 1 means issue is happening and 0 means that issue is resolved.
@@ -1259,6 +2420,19 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.6.0/health.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Datacenter'
+        Row: Issues
+        Panel: Warnings
+      - Dashboard: 'ONTAP: Health'
+        Row: Highlights
+        Panel: Total Warnings
+      - Dashboard: 'ONTAP: Health'
+        Row: Highlights
+        Panel: Warnings
+      - Dashboard: 'ONTAP: Health'
+        Row: System Health Alerts
+        Panel: System Alerts
 
   - Name: health_node_alerts
     Description: Provides any issues related to Node health check. Value of 1 means issue is happening and 0 means that issue is resolved.
@@ -1267,6 +2441,19 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.6.0/health.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Datacenter'
+        Row: Issues
+        Panel: Errors
+      - Dashboard: 'ONTAP: Health'
+        Row: Highlights
+        Panel: Total Errors
+      - Dashboard: 'ONTAP: Health'
+        Row: Highlights
+        Panel: Errors
+      - Dashboard: 'ONTAP: Health'
+        Row: Node
+        Panel: Node Issues
 
   - Name: health_ha_alerts
     Description: Provides any issues related to HA health check. Value of 1 means issue is happening and 0 means that issue is resolved.
@@ -1275,6 +2462,19 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.6.0/health.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Datacenter'
+        Row: Issues
+        Panel: Errors
+      - Dashboard: 'ONTAP: Health'
+        Row: Highlights
+        Panel: Total Errors
+      - Dashboard: 'ONTAP: Health'
+        Row: Highlights
+        Panel: Errors
+      - Dashboard: 'ONTAP: Health'
+        Row: HA
+        Panel: HA Issues
 
   - Name: health_network_ethernet_port_alerts
     Description: Provides any issues related to Network Ethernet Port health check. Value of 1 means issue is happening and 0 means that issue is resolved.
@@ -1283,6 +2483,19 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.6.0/health.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Datacenter'
+        Row: Issues
+        Panel: Errors
+      - Dashboard: 'ONTAP: Health'
+        Row: Highlights
+        Panel: Total Errors
+      - Dashboard: 'ONTAP: Health'
+        Row: Highlights
+        Panel: Errors
+      - Dashboard: 'ONTAP: Health'
+        Row: Network Port
+        Panel: Ethernet ports are down
 
   - Name: health_network_fc_port_alerts
     Description: Provides any issues related to Network FC Port health check. Value of 1 means issue is happening and 0 means that issue is resolved.
@@ -1291,6 +2504,19 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.6.0/health.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Datacenter'
+        Row: Issues
+        Panel: Errors
+      - Dashboard: 'ONTAP: Health'
+        Row: Highlights
+        Panel: Total Errors
+      - Dashboard: 'ONTAP: Health'
+        Row: Highlights
+        Panel: Errors
+      - Dashboard: 'ONTAP: Health'
+        Row: Network Port
+        Panel: FC ports are down
 
   - Name: health_lif_alerts
     Description: Provides any issues related to LIF health check. Value of 1 means issue is happening and 0 means that issue is resolved.
@@ -1299,6 +2525,19 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.6.0/health.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Datacenter'
+        Row: Issues
+        Panel: Warnings
+      - Dashboard: 'ONTAP: Health'
+        Row: Highlights
+        Panel: Total Warnings
+      - Dashboard: 'ONTAP: Health'
+        Row: Highlights
+        Panel: Warnings
+      - Dashboard: 'ONTAP: Health'
+        Row: LIF
+        Panel: Lif not at home port
 
   - Name: health_volume_ransomware_alerts
     Description: Provides any issues related to Volume Ransomware health check. Value of 1 means issue is happening and 0 means that issue is resolved.
@@ -1307,6 +2546,19 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.6.0/health.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Datacenter'
+        Row: Issues
+        Panel: Warnings
+      - Dashboard: 'ONTAP: Health'
+        Row: Highlights
+        Panel: Total Warnings
+      - Dashboard: 'ONTAP: Health'
+        Row: Highlights
+        Panel: Warnings
+      - Dashboard: 'ONTAP: Health'
+        Row: Volume
+        Panel: Volumes with Ransomware Issues (9.10+ Only)
 
   - Name: health_volume_move_alerts
     Description: Provides any issues related to Volume Move health check. Value of 1 means issue is happening and 0 means that issue is resolved.
@@ -1315,6 +2567,19 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.6.0/health.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Datacenter'
+        Row: Issues
+        Panel: Warnings
+      - Dashboard: 'ONTAP: Health'
+        Row: Highlights
+        Panel: Total Warnings
+      - Dashboard: 'ONTAP: Health'
+        Row: Highlights
+        Panel: Warnings
+      - Dashboard: 'ONTAP: Health'
+        Row: Volume
+        Panel: Volumes Move Issues
 
   - Name: health_license_alerts
     Description: Provides any issues related to License health check. Value of 1 means issue is happening and 0 means that issue is resolved.
@@ -1323,6 +2588,19 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.6.0/health.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Datacenter'
+        Row: Issues
+        Panel: Errors
+      - Dashboard: 'ONTAP: Health'
+        Row: Highlights
+        Panel: Total Errors
+      - Dashboard: 'ONTAP: Health'
+        Row: Highlights
+        Panel: Errors
+      - Dashboard: 'ONTAP: Health'
+        Row: License
+        Panel: Non Compliant License
 
   - Name: health_ems_alerts
     Description: The health_ems_alerts metric monitors EMS (Event Management System), providing a count based on their severity and other attributes. This metric includes labels such as node, message, source, and severity (e.g., emergency, alert, error). 
@@ -1332,6 +2610,16 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.6.0/health.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Health'
+        Row: Highlights
+        Panel: Active Emergency EMS Alerts (Last 24 Hours)
+      - Dashboard: 'ONTAP: Health'
+        Row: Highlights
+        Panel: Active Emergency EMS Alerts (Last 24 Hours)
+      - Dashboard: 'ONTAP: Health'
+        Row: Emergency EMS
+        Panel: Active Emergency EMS Alerts (Last 24 Hours)
 
   - Name: qos_policy_adaptive_absolute_min_iops
     Description: Specifies the absolute minimum IOPS that is used as an override when the expected_iops is less than this value.
@@ -1381,6 +2669,16 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/qos_policy_fixed.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Workload'
+        Row: Fixed QoS Shared Policy Utilization
+        Panel: Top $TopResources Fixed QoS Shared Policy IOPs Utilization (%)
+      - Dashboard: 'ONTAP: Workload'
+        Row: Fixed QoS Shared Policy Utilization
+        Panel: Fixed QoS Shared Policy IOPs Utilization (%)
+      - Dashboard: 'ONTAP: Workload'
+        Row: Fixed QoS Workload Utilization
+        Panel: Top $TopResources Fixed QoS Workload IOPs Utilization (%)
 
   - Name: qos_policy_fixed_max_throughput_mbps
     Description: Maximum throughput defined by this policy. It is specified in terms of Mbps. 0 means no maximum throughput is enforced.
@@ -1393,6 +2691,16 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/qos_policy_fixed.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Workload'
+        Row: Fixed QoS Shared Policy Utilization
+        Panel: Top $TopResources Fixed QoS Shared Policy Bandwidth Utilization (%)
+      - Dashboard: 'ONTAP: Workload'
+        Row: Fixed QoS Shared Policy Utilization
+        Panel: Fixed QoS Shared Policy Bandwidth Utilization (%)
+      - Dashboard: 'ONTAP: Workload'
+        Row: Fixed QoS Workload Utilization
+        Panel: Top $TopResources Fixed QoS Workload Bandwidth Utilization (%)
 
   - Name: qos_policy_fixed_min_throughput_iops
     Description: Minimum throughput defined by this policy. It is specified in terms of IOPS. 0 means no minimum throughput is enforced. These floors are not guaranteed on non-AFF platforms or when FabricPool tiering policies are set.
@@ -1429,7 +2737,13 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/qos_workload.yaml
-
+    Panels:
+      - Dashboard: 'ONTAP: Workload'
+        Row: Adaptive QoS Workload Utilization
+        Panel: Top $TopResources Adaptive QoS Workload IOPs Utilization (%)
+      - Dashboard: 'ONTAP: Workload'
+        Row: Adaptive QoS Workload Utilization
+        Panel: Adaptive QoS Workload IOPs Utilization (%)
 
   - Name: qos_workload_max_throughput_mbps
     Description: Maximum throughput Mbps allowed for the workload.
@@ -1442,6 +2756,13 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/qos_workload.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Workload'
+        Row: Adaptive QoS Workload Utilization
+        Panel: Top $TopResources Adaptive QoS Workload Bandwidth Utilization (%)
+      - Dashboard: 'ONTAP: Workload'
+        Row: Adaptive QoS Workload Utilization
+        Panel: Adaptive QoS Workload Bandwidth Utilization (%)
 
   - Name: shelf_fan_rpm
     Description: Fan Rotation Per Minute.
@@ -1454,6 +2775,13 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Shelf'
+        Row: Highlights
+        Panel: Fan RPM Avg
+      - Dashboard: 'ONTAP: Shelf'
+        Row: Temperature Sensors
+        Panel: Cooling Sensors
 
   - Name: shelf_fan_status
     Description: Fan Operational Status.
@@ -1479,6 +2807,16 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/shelf.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Health'
+        Row: Shelves
+        Panel: Storage Shelf Issues
+      - Dashboard: 'ONTAP: Shelf'
+        Row: Power
+        Panel: Storage Shelves
+      - Dashboard: 'ONTAP: Power'
+        Row: Shelves
+        Panel: Storage Shelves
 
   - Name: shelf_psu_power_drawn
     Description: Power Drawn From PSU In Watts.
@@ -1491,6 +2829,13 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Shelf'
+        Row: PSU
+        Panel: Storage Shelf PSUs
+      - Dashboard: 'ONTAP: Shelf'
+        Row: Voltage & PSU Sensors
+        Panel: Energy Drawn from PSUs
 
   - Name: shelf_psu_power_rating
     Description: Power Supply Power Ratings In Watts.
@@ -1503,6 +2848,13 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Shelf'
+        Row: PSU
+        Panel: Storage Shelf PSUs
+      - Dashboard: 'ONTAP: Shelf'
+        Row: Voltage & PSU Sensors
+        Panel: Power Rating from PSUs
 
   - Name: shelf_psu_status
     Description: Operational Status.
@@ -1527,6 +2879,13 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Shelf'
+        Row: Custom Sensors
+        Panel: Custom Sensors - Shelf
+      - Dashboard: 'ONTAP: Shelf'
+        Row: Highlights
+        Panel: Custom Sensor Avg
 
   - Name: shelf_sensor_status
     Description: Operational Status.
@@ -1551,6 +2910,13 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Shelf'
+        Row: Temperature Sensors
+        Panel: Temperature Sensors
+      - Dashboard: 'ONTAP: Shelf'
+        Row: Highlights
+        Panel: Temperature Avg
 
   - Name: shelf_temperature_status
     Description: Operational Status.
@@ -1575,6 +2941,10 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Shelf'
+        Row: Voltage & PSU Sensors
+        Panel: Voltage Sensors
 
   - Name: shelf_voltage_status
     Description: Operational Status.
@@ -1600,6 +2970,16 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/aggr.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Node'
+        Row: Highlights
+        Panel: Aggregates
+      - Dashboard: 'ONTAP: StorageGrid FabricPool'
+        Row: ONTAP
+        Panel: Aggregates
+      - Dashboard: 'ONTAP: Aggregate'
+        Row: Highlights
+        Panel: Aggregates
 
   - Name: cluster_subsystem_new_status
     Description: This metric indicates a value of 1 if the subsystem health is ok (indicating the subsystem is operational) 
@@ -1613,6 +2993,10 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/subsystem.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Cluster'
+        Row: Nodes & Subsystems - $Cluster
+        Panel: subsystems
 
   - Name: disk_new_status
     Description: This metric indicates a value of 1 if the disk is not in an outage (i.e., the outage label is empty) and a value of 0 if the shelf is in an outage.
@@ -1651,6 +3035,10 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/lun.yaml
+    Panels:
+      - Dashboard: 'ONTAP: LUN'
+        Row: LUN Table
+        Panel: LUNS in Cluster
 
   - Name: node_new_status
     Description: This metric indicates a value of 1 if the node is healthy (true or up, indicating the node is operational) and a value of 0 for any other state.
@@ -1663,6 +3051,16 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/node.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Node'
+        Row: Highlights
+        Panel: Nodes
+      - Dashboard: 'ONTAP: Cluster'
+        Row: Nodes & Subsystems - $Cluster
+        Panel: $Cluster
+      - Dashboard: 'ONTAP: Datacenter'
+        Row: Health
+        Panel: Node Health
 
   - Name: volume_new_status
     Description: This metric indicates a value of 1 if the volume state is online (indicating the volume is operational) and a value of 0 for any other state.
@@ -1675,6 +3073,22 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/volume.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Volume Deep Dive'
+        Row: 'Volume Capacity: $Volume'
+        Panel: Volumes in Cluster
+      - Dashboard: 'ONTAP: Flexgroup'
+        Row: Volume Table
+        Panel: FlexGroup Constituents in Cluster
+      - Dashboard: 'ONTAP: Health'
+        Row: Volume
+        Panel: Volumes with Ransomware Issues (9.10+ Only)
+      - Dashboard: 'ONTAP: Health'
+        Row: Volume
+        Panel: Volumes Move Issues
+      - Dashboard: 'ONTAP: Volume'
+        Row: Volume Table
+        Panel: Volumes in Cluster
 
   - Name: volume_top_clients_read_ops
     Description: This metric tracks the number of read operations performed by the top clients on a specific volume.
@@ -1687,6 +3101,10 @@ counters:
         Endpoint: api/storage/volumes/*/top-metrics/clients
         ONTAPCounter: iops.read
         Template: conf/keyperf/9.15.0/volume.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Volume'
+        Row: Clients
+        Panel: Top $TopResources Volumes Clients by Read IOPs
 
   - Name: volume_top_clients_write_ops
     Description: This metric tracks the number of write operations performed by the top clients on a specific volume.
@@ -1699,6 +3117,10 @@ counters:
         Endpoint: api/storage/volumes/*/top-metrics/clients
         ONTAPCounter: iops.write
         Template: conf/keyperf/9.15.0/volume.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Volume'
+        Row: Clients
+        Panel:  Top $TopResources Volumes Clients by Write IOPs
 
   - Name: volume_top_clients_read_data
     Description: This metric measures the amount of data read by the top clients to a specific volume.
@@ -1711,6 +3133,10 @@ counters:
         Endpoint: api/storage/volumes/*/top-metrics/clients
         ONTAPCounter: throughput.read
         Template: conf/keyperf/9.15.0/volume.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Volume'
+        Row: Clients
+        Panel: Top $TopResources Volumes Clients by Read Throughput
 
   - Name: volume_top_clients_write_data
     Description: This metric measures the amount of data written by the top clients to a specific volume.
@@ -1723,6 +3149,10 @@ counters:
         Endpoint: api/storage/volumes/*/top-metrics/files
         ONTAPCounter: throughput.write
         Template: conf/keyperf/9.15.0/volume.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Volume'
+        Row: Clients
+        Panel: Top $TopResources Volumes Clients by Write Throughput
 
   - Name: volume_top_files_read_ops
     Description: This metric tracks the number of read operations performed on the files of a specific volume.
@@ -1735,6 +3165,10 @@ counters:
         Endpoint: api/storage/volumes/*/top-metrics/files
         ONTAPCounter: iops.read
         Template: conf/keyperf/9.15.0/volume.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Volume'
+        Row: Files
+        Panel: Top $TopResources Volumes Files by Read IOPs
 
   - Name: volume_top_files_write_ops
     Description: This metric tracks the number of write operations performed on the files of a specific volume.
@@ -1747,6 +3181,10 @@ counters:
         Endpoint: api/storage/volumes/*/top-metrics/files
         ONTAPCounter: iops.write
         Template: conf/keyperf/9.15.0/volume.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Volume'
+        Row: Files
+        Panel: Top $TopResources Volumes Files by Write IOPs
 
   - Name: volume_top_files_read_data
     Description: This metric measures the amount of data read from the files of a specific volume.
@@ -1759,6 +3197,10 @@ counters:
         Endpoint: api/storage/volumes/*/top-metrics/files
         ONTAPCounter: throughput.read
         Template: conf/keyperf/9.15.0/volume.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Volume'
+        Row: Files
+        Panel: Top $TopResources Volumes Files by Read Throughput
 
   - Name: volume_top_files_write_data
     Description: This metric measures the amount of data written to the top files of a specific volume.
@@ -1771,6 +3213,10 @@ counters:
         Endpoint: api/storage/volumes/*/top-metrics/files
         ONTAPCounter: throughput.write
         Template: conf/keyperf/9.15.0/volume.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Volume'
+        Row: Files
+        Panel: Top $TopResources Volumes Files by Write Throughput
 
   - Name: volume_clone_split_estimate
     Description: Display an estimate of additional storage required in the underlying aggregate to perform a volume clone split operation.
@@ -1783,6 +3229,13 @@ counters:
         Endpoint: volume-clone-get-iter
         ONTAPCounter: split-estimate
         Template: conf/zapi/cdot/9.8.0/volume.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Volume'
+        Row: Volume Table
+        Panel: Volumes in Cluster
+      - Dashboard: 'ONTAP: Volume Deep Dive'
+        Row: 'Volume Capacity: $Volume'
+        Panel: Volumes in Cluster
 
   - Name: volume_capacity_tier_footprint
     Description: This field represents the footprint of blocks written to the volume in bytes for bin 1.
@@ -1791,6 +3244,19 @@ counters:
         Endpoint: volume-footprint-get-iter
         ONTAPCounter: volume-blocks-footprint-bin1
         Template: conf/zapi/cdot/9.8.0/volume.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Volume'
+        Row: FabricPool
+        Panel: Volumes Footprint
+      - Dashboard: 'ONTAP: Volume'
+        Row: FabricPool
+        Panel: Top $TopResources Volumes by Capacity Tier Footprint
+      - Dashboard: 'ONTAP: Flexgroup'
+        Row: Top Volume FabricPool
+        Panel: Top $TopResources Volumes by Capacity Tier Footprint
+      - Dashboard: 'ONTAP: Aggregate'
+        Row: Volume Capacity
+        Panel: Top $TopResources Volumes by Capacity Tier Footprint
 
   - Name: volume_capacity_tier_footprint_percent
     Description: This field represents the footprint of blocks written to the volume in bin 1 as a percentage of aggregate size.
@@ -1799,6 +3265,16 @@ counters:
         Endpoint: volume-footprint-get-iter
         ONTAPCounter: volume-blocks-footprint-bin1-percent
         Template: conf/zapi/cdot/9.8.0/volume.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Volume'
+        Row: FabricPool
+        Panel: Top $TopResources Volumes by Capacity Tier Footprint %
+      - Dashboard: 'ONTAP: Flexgroup'
+        Row: Top Volume FabricPool
+        Panel: Top $TopResources Volumes by Capacity Tier Footprint %
+      - Dashboard: 'ONTAP: Aggregate'
+        Row: Volume Capacity
+        Panel: Top $TopResources Volumes by Capacity Tier Footprint %
 
   - Name: volume_performance_tier_footprint
     Description: This field represents the footprint of blocks written to the volume in bytes for the performance tier (bin 0).
@@ -1807,6 +3283,19 @@ counters:
         Endpoint: volume-footprint-get-iter
         ONTAPCounter: volume-blocks-footprint-bin0
         Template: conf/zapi/cdot/9.8.0/volume.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Volume'
+        Row: FabricPool
+        Panel: Volumes Footprint
+      - Dashboard: 'ONTAP: Volume'
+        Row: FabricPool
+        Panel: Top $TopResources Volumes by Performance Tier Footprint
+      - Dashboard: 'ONTAP: Flexgroup'
+        Row: Top Volume FabricPool
+        Panel: Top $TopResources Volumes by Performance Tier Footprint
+      - Dashboard: 'ONTAP: Aggregate'
+        Row: Volume Capacity
+        Panel: Top $TopResources Volumes by Performance Tier Footprint
 
   - Name: volume_performance_tier_footprint_percent
     Description: This field represents the footprint of blocks written to the volume in bin 0 as a percentage of aggregate size.
@@ -1815,6 +3304,16 @@ counters:
         Endpoint: volume-footprint-get-iter
         ONTAPCounter: volume-blocks-footprint-bin0-percent
         Template: conf/zapi/cdot/9.8.0/volume.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Volume'
+        Row: FabricPool
+        Panel: Top $TopResources Volumes by Performance Tier Footprint %
+      - Dashboard: 'ONTAP: Flexgroup'
+        Row: Top Volume FabricPool
+        Panel: Top $TopResources Volumes by Performance Tier Footprint %
+      - Dashboard: 'ONTAP: Aggregate'
+        Row: Volume Capacity
+        Panel: Top $TopResources Volumes by Performance Tier Footprint %
 
   - Name: volume_delayed_free_footprint
     Description: This field represents the delayed free blocks footprint in bytes. This system is used to improve delete performance by batching delete requests.
@@ -1823,6 +3322,13 @@ counters:
         Endpoint: volume-footprint-get-iter
         ONTAPCounter: delayed-free-footprint
         Template: conf/zapi/cdot/9.8.0/volume.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Volume'
+        Row: FabricPool
+        Panel: Volumes Footprint
+      - Dashboard: 'ONTAP: Volume'
+        Row: FabricPool
+        Panel: Top $TopResources Volumes by Delayed Free Footprint
 
   - Name: volume_metadata_footprint
     Description: This field represents flexible volume or flexgroup metadata in bytes.
@@ -1831,6 +3337,13 @@ counters:
         Endpoint: volume-footprint-get-iter
         ONTAPCounter: flexvol-metadata-footprint
         Template: conf/zapi/cdot/9.8.0/volume.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Volume'
+        Row: FabricPool
+        Panel: Volumes Footprint
+      - Dashboard: 'ONTAP: Volume'
+        Row: FabricPool
+        Panel: Top $TopResources Volumes by Metadata Footprint
 
   - Name: volume_guarantee_footprint
     Description: This field represents the volume guarantee footprint in bytes. Alternatively, it is the space reserved for future writes in the volume.
@@ -1839,6 +3352,13 @@ counters:
         Endpoint: volume-footprint-get-iter
         ONTAPCounter: volume-guarantee-footprint
         Template: conf/zapi/cdot/9.8.0/volume.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Volume'
+        Row: FabricPool
+        Panel: Volumes Footprint
+      - Dashboard: 'ONTAP: Volume'
+        Row: FabricPool
+        Panel: Top $TopResources Volumes by Capacity Tier Footprint
 
   - Name: volume_total_footprint
     Description: This field represents the total footprint in bytes.
@@ -1847,6 +3367,13 @@ counters:
         Endpoint: volume-footprint-get-iter
         ONTAPCounter: total-footprint
         Template: conf/zapi/cdot/9.8.0/volume.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Volume'
+        Row: FabricPool
+        Panel: Volumes Footprint
+      - Dashboard: 'ONTAP: Volume'
+        Row: FabricPool
+        Panel: Top $TopResources Volumes by Total Footprint
 
   - Name: volume_total_metadata_footprint
     Description: This field represents the total metadata footprint in bytes.
@@ -1855,6 +3382,13 @@ counters:
         Endpoint: volume-footprint-get-iter
         ONTAPCounter: volume_total_metadata_footprint
         Template: conf/zapi/cdot/9.8.0/volume.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Volume'
+        Row: FabricPool
+        Panel: Volumes Footprint
+      - Dashboard: 'ONTAP: Volume'
+        Row: FabricPool
+        Panel: Top $TopResources Volumes by Total Metadata Footprint
 
   - Name: aggr_space_performance_tier_used
     APIs:
@@ -1862,6 +3396,10 @@ counters:
         Endpoint: aggr-space-get-iter
         ONTAPCounter: volume-footprints
         Template: conf/zapi/cdot/9.8.0/aggr.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Aggregate'
+        Row: FabricPool
+        Panel: Top $TopResources Aggregates by Performance Tier Footprint
 
   - Name: aggr_space_performance_tier_used_percent
     APIs:
@@ -1869,6 +3407,10 @@ counters:
         Endpoint: aggr-space-get-iter
         ONTAPCounter: volume-footprints-percent
         Template: conf/zapi/cdot/9.8.0/aggr.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Aggregate'
+        Row: FabricPool
+        Panel: Top $TopResources Aggregates by Performance Tier Footprint %
 
   - Name: node_volume_total_data
     Description: This metric represents the total amount of data that has been read from and written to volumes aggregated by node.
@@ -1882,7 +3424,6 @@ counters:
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/volume.yaml
 
-
   - Name: nic_ifgrp_rx_bytes
     Description: Link Aggregation Group (LAG) Bytes received.
     APIs:
@@ -1894,6 +3435,13 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/nic_common.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Network'
+        Row: Link Aggregation Group (LAG)
+        Panel: Link Aggregation Groups
+      - Dashboard: 'ONTAP: Network'
+        Row: Link Aggregation Group (LAG)
+        Panel: Top $TopResources LAGs by Receive Throughput
 
   - Name: nic_ifgrp_tx_bytes
     Description: Link Aggregation Group (LAG) Bytes sent.
@@ -1906,6 +3454,13 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/nic_common.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Network'
+        Row: Link Aggregation Group (LAG)
+        Panel: Link Aggregation Groups
+      - Dashboard: 'ONTAP: Network'
+        Row: Link Aggregation Group (LAG)
+        Panel: Top $TopResources LAGs by Send Throughput
 
   - Name: nic_rx_percent
     Description: Bytes received percentage.
@@ -1942,6 +3497,19 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/nic_common.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Network'
+        Row: Ethernet
+        Panel: NIC ports
+      - Dashboard: 'ONTAP: Network'
+        Row: Ethernet
+        Panel: Top $TopResources NICs by Port Utilization %
+      - Dashboard: 'ONTAP: Node'
+        Row: Network Layer
+        Panel: Top $TopResources Ethernet Ports by Utilization %
+      - Dashboard: 'ONTAP: NFS Troubleshooting'
+        Row: Network Port Table
+        Panel: Ethernet ports
 
   - Name: cluster_peer_non_encrypted
     Description: This metric indicates a value of 1 if the cluster peer encryption state is none (indicating the connection is not encrypted) 
@@ -1955,6 +3523,10 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/clusterpeer.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Security'
+        Row: Cluster Compliance
+        Panel: Cluster Compliance
 
   - Name: nic_new_status
     Description: This metric indicates a value of 1 if the NIC state is up (indicating the NIC is operational) and a value of 0 for any other state.
@@ -1967,6 +3539,13 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/nic_common.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Network'
+        Row: Ethernet
+        Panel: NIC ports
+      - Dashboard: 'ONTAP: NFS Troubleshooting'
+        Row: Network Port Table
+        Panel: Ethernet ports
 
   - Name: svm_new_status
     Description: This metric indicates a value of 1 if the SVM state is online (indicating the SVM is operational) 
@@ -1994,6 +3573,13 @@ counters:
         ONTAPCounter: Harvest generated
         Template: NA
         Unit: bytes
+    Panels:
+      - Dashboard: 'Harvest Metadata'
+        Row: Highlights
+        Panel: Pollers
+      - Dashboard: 'Harvest Metadata'
+        Row: Highlights
+        Panel: Poller RSS Memory
 
   - Name: poller_memory_percent
     Description: Indicates the percentage of memory used by the poller process relative to the total available memory.
@@ -2008,6 +3594,10 @@ counters:
         ONTAPCounter: Harvest generated
         Template: NA
         Unit: percent
+    Panels:
+      - Dashboard: 'Harvest Metadata'
+        Row: Highlights
+        Panel: % Memory Used
 
   - Name: poller_status
     Description: Indicates the operational status of the poller process, where 1 means operational and 0 means not operational.
@@ -2020,6 +3610,13 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: NA
+    Panels:
+      - Dashboard: 'Harvest Metadata'
+        Row: Highlights
+        Panel: Pollers
+      - Dashboard: 'Harvest Metadata'
+        Row: Highlights
+        Panel: Pollers
 
   - Name: ems_events
     Description: Indicates EMS events that have occurred in the ONTAP as configured in the ems.yaml.
@@ -2028,6 +3625,10 @@ counters:
         Endpoint: api/support/ems/events
         ONTAPCounter: Harvest generated
         Template: conf/ems/9.6.0/ems.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Datacenter'
+        Row: Issues
+        Panel: Active Emergency EMS
 
   - Name: net_port_status
     Description: This metric indicates a value of 1 if the port state is up and a value of 0 for any other state.
@@ -2040,6 +3641,10 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/netport.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Network'
+        Row: Ethernet
+        Panel: Ethernet ports
 
   - Name: fru_status
     Description: This metric indicates a value of 1 if the FRU status is ok and a value of 0 for any other state.
@@ -2048,6 +3653,10 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.12.0/fru.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Power'
+        Row: Field Replaceable Unit (FRU)
+        Panel: Field Replaceable Unit (FRU)
 
   - Name: cluster_tags
     Description: Displays tags at the cluster level.
@@ -2065,7 +3674,6 @@ counters:
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.12.0/volume.yaml
 
-
   - Name: cluster_software_update
     Description: Displays the software update phase with its status.
     APIs:
@@ -2073,6 +3681,10 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.6.0/clustersoftware.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Cluster'
+        Row: Software
+        Panel: Cluster Software Update
 
   - Name: cluster_software_status
     Description: Displays the software job with its status.
@@ -2081,6 +3693,10 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.6.0/clustersoftware.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Cluster'
+        Row: Software
+        Panel: Cluster Software Status
 
   - Name: cluster_software_validation
     Description: Displays the software pre-validation checks with their status.
@@ -2089,6 +3705,10 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/rest/9.6.0/clustersoftware.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Cluster'
+        Row: Software
+        Panel: Cluster Software Validation
 
   - Name: shelf_module_status
     Description: Displays the shelf module labels with their status.
@@ -2125,6 +3745,10 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Shelf'
+        Row: Module
+        Panel: Storage Shelf Modules
 
   - Name: shelf_psu_labels
     Description: This metric provides information about shelf psu.
@@ -2137,6 +3761,10 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Shelf'
+        Row: PSU
+        Panel: Storage Shelf PSUs
 
   - Name: shelf_sensor_labels
     Description: This metric provides information about shelf sensor.
@@ -2181,6 +3809,11 @@ counters:
         Endpoint: api/network/ethernet/switch/ports
         ONTAPCounter: receive_raw.discards
         Template: conf/keyperf/9.15.0/ethernet_switch_port.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Switch'
+        Row: Traffic
+        Panel: Top $TopResources Interface Drops
+
   - Name: ethernet_switch_port_receive_errors
     Description: Number of packet errors.
     APIs:
@@ -2188,6 +3821,11 @@ counters:
         Endpoint: api/network/ethernet/switch/ports
         ONTAPCounter: receive_raw.errors
         Template: conf/keyperf/9.15.0/ethernet_switch_port.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Switch'
+        Row: Traffic
+        Panel: Top $TopResources Interface Errors
+
   - Name: ethernet_switch_port_receive_packets
     Description: Total packet count.
     APIs:
@@ -2195,6 +3833,11 @@ counters:
         Endpoint: api/network/ethernet/switch/ports
         ONTAPCounter: receive_raw.packets
         Template: conf/keyperf/9.15.0/ethernet_switch_port.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Switch'
+        Row: Traffic
+        Panel: Top $TopResources Interface Receive Packets
+
   - Name: ethernet_switch_port_transmit_discards
     Description: Total number of discarded packets.
     APIs:
@@ -2202,6 +3845,11 @@ counters:
         Endpoint: api/network/ethernet/switch/ports
         ONTAPCounter: transmit_raw.discards
         Template: conf/keyperf/9.15.0/ethernet_switch_port.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Switch'
+        Row: Traffic
+        Panel: Top $TopResources Interface Drops
+
   - Name: ethernet_switch_port_transmit_errors
     Description: Number of packet errors.
     APIs:
@@ -2209,6 +3857,11 @@ counters:
         Endpoint: api/network/ethernet/switch/ports
         ONTAPCounter: transmit_raw.errors
         Template: conf/keyperf/9.15.0/ethernet_switch_port.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Switch'
+        Row: Traffic
+        Panel: Top $TopResources Interface Errors
+
   - Name: ethernet_switch_port_transmit_packets
     Description: Total packet count.
     APIs:
@@ -2216,3 +3869,7 @@ counters:
         Endpoint: api/network/ethernet/switch/ports
         ONTAPCounter: transmit_raw.packets
         Template: conf/keyperf/9.15.0/ethernet_switch_port.yaml
+    Panels:
+      - Dashboard: 'ONTAP: Switch'
+        Row: Traffic
+        Panel: Top $TopResources Interface Transmit Packets
