@@ -666,8 +666,10 @@ The `aggr_labels` metric is visualized in the following Grafana dashboards:
 | Dashboard | Row | Type |Panel |
 |--------|----------|--------|--------|
 | ONTAP: Aggregate | Highlights | stat | [Aggregates](GRAFANA_HOST/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=20) |
+| ONTAP: Aggregate | Highlights | table | [Aggregates](GRAFANA_HOST/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=2) |
 | ONTAP: Datacenter | Highlights | table | [Object Count](GRAFANA_HOST/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=660) |
 | ONTAP: StorageGrid FabricPool | Highlights | stat | [Aggregates](GRAFANA_HOST/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&viewPanel=20) |
+| ONTAP: StorageGrid FabricPool | Highlights | table | [Aggregates](GRAFANA_HOST/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&viewPanel=2) |
 
 
 
@@ -1120,6 +1122,7 @@ The `aggr_snapshot_used_percent` metric is visualized in the following Grafana d
 | Dashboard | Row | Type |Panel |
 |--------|----------|--------|--------|
 | ONTAP: Aggregate | Highlights | timeseries | [Top $TopResources Aggregates by  Space Used by Snapshots %](GRAFANA_HOST/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=32) |
+| ONTAP: Aggregate | Highlights | timeseries | [Top $TopResources Aggregates by  Space Used by Snapshots %](GRAFANA_HOST/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=819) |
 
 
 
@@ -1373,6 +1376,7 @@ The `aggr_space_total` metric is visualized in the following Grafana dashboards:
 | ONTAP: Aggregate | Highlights | table | [Aggregates](GRAFANA_HOST/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=2) |
 | ONTAP: Aggregate | Highlights | timeseries | [Top $TopResources Aggregates by Total Space](GRAFANA_HOST/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=13) |
 | ONTAP: cDOT | Capacity Metrics | table | [Top $TopResources Aggregates by Capacity Used %](GRAFANA_HOST/d/cdot-cdot/ontap3a-cdot?orgId=1&viewPanel=243) |
+| ONTAP: cDOT | Capacity Metrics | timeseries | [Top $TopResources Aggregates by Capacity Used %](GRAFANA_HOST/d/cdot-cdot/ontap3a-cdot?orgId=1&viewPanel=267) |
 | ONTAP: Cluster | Highlights | stat | [Total Space](GRAFANA_HOST/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=277) |
 | ONTAP: Cluster | Highlights | stat | [Space Used %](GRAFANA_HOST/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=281) |
 | ONTAP: Cluster | Nodes & Subsystems - $Cluster | bargauge | [Capacity used](GRAFANA_HOST/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=158) |
@@ -1404,6 +1408,7 @@ The `aggr_space_used` metric is visualized in the following Grafana dashboards:
 | ONTAP: Aggregate | Highlights | stat | [Space Used %](GRAFANA_HOST/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=26) |
 | ONTAP: Aggregate | Highlights | table | [Aggregates](GRAFANA_HOST/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=2) |
 | ONTAP: cDOT | Capacity Metrics | table | [Top $TopResources Aggregates by Capacity Used %](GRAFANA_HOST/d/cdot-cdot/ontap3a-cdot?orgId=1&viewPanel=243) |
+| ONTAP: cDOT | Capacity Metrics | timeseries | [Top $TopResources Aggregates by Capacity Used %](GRAFANA_HOST/d/cdot-cdot/ontap3a-cdot?orgId=1&viewPanel=267) |
 | ONTAP: Cluster | Highlights | stat | [Used and Reserved Space](GRAFANA_HOST/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=279) |
 | ONTAP: Cluster | Highlights | stat | [Space Used %](GRAFANA_HOST/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=281) |
 | ONTAP: Cluster | Nodes & Subsystems - $Cluster | bargauge | [Capacity used](GRAFANA_HOST/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=158) |
@@ -3059,6 +3064,7 @@ The `fcp_lif_avg_latency` metric is visualized in the following Grafana dashboar
 | ONTAP: Node | FCP Frontend | stat | [FCP Latency](GRAFANA_HOST/d/cdot-node/ontap3a-node?orgId=1&viewPanel=84) |
 | ONTAP: Node | FCP Frontend | timeseries | [FCP Average Latency by Port / LIF](GRAFANA_HOST/d/cdot-node/ontap3a-node?orgId=1&viewPanel=72) |
 | ONTAP: SVM | FCP | stat | [SVM FCP Average Latency](GRAFANA_HOST/d/cdot-svm/ontap3a-svm?orgId=1&viewPanel=111) |
+| ONTAP: SVM | FCP | timeseries | [SVM FCP Average Latency](GRAFANA_HOST/d/cdot-svm/ontap3a-svm?orgId=1&viewPanel=120) |
 
 
 
@@ -3208,6 +3214,7 @@ The `fcp_lif_write_data` metric is visualized in the following Grafana dashboard
 | ONTAP: Node | FCP Frontend | timeseries | [FCP Throughput by Port / LIF](GRAFANA_HOST/d/cdot-node/ontap3a-node?orgId=1&viewPanel=73) |
 | ONTAP: SVM | FCP | stat | [SVM FCP Throughput](GRAFANA_HOST/d/cdot-svm/ontap3a-svm?orgId=1&viewPanel=114) |
 | ONTAP: SVM | FCP | stat | [SVM FCP Write Throughput](GRAFANA_HOST/d/cdot-svm/ontap3a-svm?orgId=1&viewPanel=117) |
+| ONTAP: SVM | FCP | timeseries | [SVM FCP Throughput](GRAFANA_HOST/d/cdot-svm/ontap3a-svm?orgId=1&viewPanel=121) |
 | ONTAP: SVM | FCP | timeseries | [Top $TopResources FCP LIFs by Receive Throughput](GRAFANA_HOST/d/cdot-svm/ontap3a-svm?orgId=1&viewPanel=92) |
 | ONTAP: SVM | NVMe/FC | stat | [SVM FCP Write Throughput](GRAFANA_HOST/d/cdot-svm/ontap3a-svm?orgId=1&viewPanel=183) |
 
@@ -5604,6 +5611,7 @@ The `iscsi_lif_write_data` metric is visualized in the following Grafana dashboa
 | ONTAP: SVM | iSCSI | stat | [SVM iSCSI Throughput](GRAFANA_HOST/d/cdot-svm/ontap3a-svm?orgId=1&viewPanel=196) |
 | ONTAP: SVM | iSCSI | stat | [SVM iSCSI Write Throughput](GRAFANA_HOST/d/cdot-svm/ontap3a-svm?orgId=1&viewPanel=203) |
 | ONTAP: SVM | iSCSI | timeseries | [Top $TopResources iSCSI LIFs by Receive Throughput](GRAFANA_HOST/d/cdot-svm/ontap3a-svm?orgId=1&viewPanel=200) |
+| ONTAP: SVM | iSCSI | timeseries | [SVM iSCSI Throughput](GRAFANA_HOST/d/cdot-svm/ontap3a-svm?orgId=1&viewPanel=201) |
 
 
 
@@ -11225,8 +11233,10 @@ The `node_total_data` metric is visualized in the following Grafana dashboards:
 | Dashboard | Row | Type |Panel |
 |--------|----------|--------|--------|
 | ONTAP: Cluster | Highlights | table | [Top $TopResources Nodes by Throughput](GRAFANA_HOST/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=232) |
+| ONTAP: Cluster | Highlights | timeseries | [Top $TopResources Nodes by Throughput](GRAFANA_HOST/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=231) |
 | ONTAP: Cluster | Throughput | timeseries | [Data](GRAFANA_HOST/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=107) |
 | ONTAP: Node | Highlights | stat | [Throughput](GRAFANA_HOST/d/cdot-node/ontap3a-node?orgId=1&viewPanel=23) |
+| ONTAP: Node | Highlights | timeseries | [Throughput](GRAFANA_HOST/d/cdot-node/ontap3a-node?orgId=1&viewPanel=11) |
 
 
 
@@ -11268,6 +11278,7 @@ The `node_total_ops` metric is visualized in the following Grafana dashboards:
 |--------|----------|--------|--------|
 | ONTAP: cDOT | Cluster Metrics | timeseries | [Top $TopResources Total IOPs by Cluster](GRAFANA_HOST/d/cdot-cdot/ontap3a-cdot?orgId=1&viewPanel=240) |
 | ONTAP: Cluster | Highlights | table | [Top $TopResources Nodes by IOPs](GRAFANA_HOST/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=230) |
+| ONTAP: Cluster | Highlights | timeseries | [Top $TopResources Nodes by IOPs](GRAFANA_HOST/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=235) |
 | ONTAP: Cluster | Throughput | timeseries | [IOPs](GRAFANA_HOST/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=108) |
 | ONTAP: Datacenter | Power and Temperature | stat | [Average IOPs/Watt](GRAFANA_HOST/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=642) |
 | ONTAP: Node | Highlights | stat | [IOPs](GRAFANA_HOST/d/cdot-node/ontap3a-node?orgId=1&viewPanel=5) |
@@ -12092,6 +12103,7 @@ The `nvme_lif_avg_latency` metric is visualized in the following Grafana dashboa
 | ONTAP: Node | NVMe/FC Frontend | stat | [NVMe/FC Latency](GRAFANA_HOST/d/cdot-node/ontap3a-node?orgId=1&viewPanel=122) |
 | ONTAP: Node | NVMe/FC Frontend | timeseries | [NVMe/FC Average Latency by Port / LIF](GRAFANA_HOST/d/cdot-node/ontap3a-node?orgId=1&viewPanel=120) |
 | ONTAP: SVM | NVMe/FC | stat | [SVM NVMe/FC Average Latency](GRAFANA_HOST/d/cdot-svm/ontap3a-svm?orgId=1&viewPanel=177) |
+| ONTAP: SVM | NVMe/FC | timeseries | [SVM NVMe/FC Average Latency](GRAFANA_HOST/d/cdot-svm/ontap3a-svm?orgId=1&viewPanel=186) |
 
 
 
@@ -12234,6 +12246,7 @@ The `nvme_lif_write_data` metric is visualized in the following Grafana dashboar
 | ONTAP: Node | NVMe/FC Frontend | timeseries | [NVMe/FC Throughput by Port / LIF](GRAFANA_HOST/d/cdot-node/ontap3a-node?orgId=1&viewPanel=126) |
 | ONTAP: SVM | LIF | timeseries | [Top $TopResources NVMe/FC LIFs by Receive Throughput](GRAFANA_HOST/d/cdot-svm/ontap3a-svm?orgId=1&viewPanel=94) |
 | ONTAP: SVM | NVMe/FC | stat | [SVM NVMe/FC Throughput](GRAFANA_HOST/d/cdot-svm/ontap3a-svm?orgId=1&viewPanel=178) |
+| ONTAP: SVM | NVMe/FC | timeseries | [SVM NVMe/FC Throughput](GRAFANA_HOST/d/cdot-svm/ontap3a-svm?orgId=1&viewPanel=187) |
 | ONTAP: SVM | NVMe/FC | timeseries | [Top $TopResources SVM NVMe/FC LIFs by Receive Throughput](GRAFANA_HOST/d/cdot-svm/ontap3a-svm?orgId=1&viewPanel=190) |
 
 
@@ -14262,6 +14275,7 @@ The `plex_disk_busy` metric is visualized in the following Grafana dashboards:
 | Dashboard | Row | Type |Panel |
 |--------|----------|--------|--------|
 | ONTAP: MetroCluster | MetroCluster Disk | timeseries | [Top $TopResources Plexes by Disk Utilization](GRAFANA_HOST/d/cdot-metrocluster/ontap3a-metrocluster?orgId=1&viewPanel=17) |
+| ONTAP: MetroCluster | MetroCluster Disk | table | [Top $TopResources Plexes by Disk Utilization](GRAFANA_HOST/d/cdot-metrocluster/ontap3a-metrocluster?orgId=1&viewPanel=95) |
 
 
 
@@ -14570,6 +14584,7 @@ The `qos_ops` metric is visualized in the following Grafana dashboards:
 |--------|----------|--------|--------|
 | ONTAP: SVM | QoS Policy Group | stat | [QoS IOPs](GRAFANA_HOST/d/cdot-svm/ontap3a-svm?orgId=1&viewPanel=210) |
 | ONTAP: Volume | QoS | stat | [Top $TopResources QoS Volumes by Total IOPs](GRAFANA_HOST/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=109) |
+| ONTAP: Volume | QoS | timeseries | [Top $TopResources QoS Volumes by Total IOPs](GRAFANA_HOST/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=117) |
 | ONTAP: Workload | Highlights | timeseries | [Top $TopResources Workloads by Total IOPS](GRAFANA_HOST/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=165) |
 | ONTAP: Workload | Fixed QoS Shared Policy Utilization | timeseries | [Top $TopResources Fixed QoS Shared Policy IOPs Utilization (%)](GRAFANA_HOST/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=245) |
 | ONTAP: Workload | Fixed QoS Shared Policy Utilization | table | [Fixed QoS Shared Policy IOPs Utilization (%)](GRAFANA_HOST/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=249) |
@@ -17066,6 +17081,7 @@ The `svm_cifs_op_count` metric is visualized in the following Grafana dashboards
 | Dashboard | Row | Type |Panel |
 |--------|----------|--------|--------|
 | ONTAP: SVM | CIFS | stat | [SVM CIFS IOPs](GRAFANA_HOST/d/cdot-svm/ontap3a-svm?orgId=1&viewPanel=103) |
+| ONTAP: SVM | CIFS | timeseries | [SVM CIFS IOPs](GRAFANA_HOST/d/cdot-svm/ontap3a-svm?orgId=1&viewPanel=106) |
 | ONTAP: SVM | CIFS | timeseries | [SVM CIFS IOP by Type](GRAFANA_HOST/d/cdot-svm/ontap3a-svm?orgId=1&viewPanel=108) |
 
 
@@ -17259,6 +17275,7 @@ The `svm_labels` metric is visualized in the following Grafana dashboards:
 | Dashboard | Row | Type |Panel |
 |--------|----------|--------|--------|
 | ONTAP: cDOT | Capacity Metrics | table | [Top $TopResources SVMs by Capacity Used %](GRAFANA_HOST/d/cdot-cdot/ontap3a-cdot?orgId=1&viewPanel=233) |
+| ONTAP: cDOT | Capacity Metrics | timeseries | [Top $TopResources SVMs by Capacity Used %](GRAFANA_HOST/d/cdot-cdot/ontap3a-cdot?orgId=1&viewPanel=272) |
 | ONTAP: cDOT | SVM Metrics | timeseries | [Top $TopResources Average Throughput by SVMs](GRAFANA_HOST/d/cdot-cdot/ontap3a-cdot?orgId=1&viewPanel=269) |
 | ONTAP: Datacenter | Highlights | table | [Object Count](GRAFANA_HOST/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=660) |
 | ONTAP: Security | Highlights | stat | [Cluster Compliant %](GRAFANA_HOST/d/cdot-security/ontap3a-security?orgId=1&viewPanel=214) |
@@ -19592,6 +19609,7 @@ The `svm_vol_write_data` metric is visualized in the following Grafana dashboard
 | ONTAP: NFS Troubleshooting | Highlights | table | [SVM Performance Table](GRAFANA_HOST/d/cdot-nfs-troubleshooting/ontap3a-nfs troubleshooting?orgId=1&viewPanel=15) |
 | ONTAP: SVM | Highlights | stat | [SVM Throughput](GRAFANA_HOST/d/cdot-svm/ontap3a-svm?orgId=1&viewPanel=65) |
 | ONTAP: SVM | Highlights | stat | [SVM Write Throughput](GRAFANA_HOST/d/cdot-svm/ontap3a-svm?orgId=1&viewPanel=73) |
+| ONTAP: SVM | Highlights | timeseries | [SVM Throughput](GRAFANA_HOST/d/cdot-svm/ontap3a-svm?orgId=1&viewPanel=76) |
 
 
 
@@ -20159,6 +20177,7 @@ The `volume_labels` metric is visualized in the following Grafana dashboards:
 | Dashboard | Row | Type |Panel |
 |--------|----------|--------|--------|
 | ONTAP: cDOT | Capacity Metrics | table | [Top $TopResources Volumes by Capacity Used %](GRAFANA_HOST/d/cdot-cdot/ontap3a-cdot?orgId=1&viewPanel=242) |
+| ONTAP: cDOT | Capacity Metrics | timeseries | [Top $TopResources Volumes by Capacity Used %](GRAFANA_HOST/d/cdot-cdot/ontap3a-cdot?orgId=1&viewPanel=266) |
 | ONTAP: Data Protection | Highlights | piechart | [Snapshot copies (local)](GRAFANA_HOST/d/cdot-data-protection/ontap3a-data protection?orgId=1&viewPanel=155) |
 | ONTAP: Data Protection | Highlights | piechart | [SnapMirrors (local or remote)](GRAFANA_HOST/d/cdot-data-protection/ontap3a-data protection?orgId=1&viewPanel=157) |
 | ONTAP: Data Protection | Highlights | piechart | [Back up to cloud](GRAFANA_HOST/d/cdot-data-protection/ontap3a-data protection?orgId=1&viewPanel=156) |
@@ -20196,6 +20215,7 @@ The `volume_labels` metric is visualized in the following Grafana dashboards:
 | ONTAP: Volume | Highlights | stat | [Top $TopResources Volumes by Total IOPs](GRAFANA_HOST/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=5) |
 | ONTAP: Volume | Highlights | timeseries | [Top $TopResources Volumes by Average Latency](GRAFANA_HOST/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=10) |
 | ONTAP: Volume | Highlights | timeseries | [Top $TopResources Volumes by Average Throughput](GRAFANA_HOST/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=11) |
+| ONTAP: Volume | Highlights | timeseries | [Top $TopResources Volumes by Total IOPs](GRAFANA_HOST/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=12) |
 | ONTAP: Volume | Volume Table | table | [Volumes in Cluster](GRAFANA_HOST/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=18) |
 | ONTAP: Volume | Volume Table | table | [Top $TopResources Volumes by Read Latency](GRAFANA_HOST/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=39) |
 | ONTAP: Volume | Volume Table | table | [Top $TopResources Volumes by Read Throughput](GRAFANA_HOST/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=41) |
@@ -20216,6 +20236,7 @@ The `volume_labels` metric is visualized in the following Grafana dashboards:
 | ONTAP: Volume | QoS | stat | [Top $TopResources QoS Volumes by Total IOPs](GRAFANA_HOST/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=109) |
 | ONTAP: Volume | QoS | timeseries | [Top $TopResources QoS Volumes by Latency](GRAFANA_HOST/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=111) |
 | ONTAP: Volume | QoS | timeseries | [Top $TopResources QoS Volumes by Average Throughput](GRAFANA_HOST/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=113) |
+| ONTAP: Volume | QoS | timeseries | [Top $TopResources QoS Volumes by Total IOPs](GRAFANA_HOST/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=117) |
 | ONTAP: Volume | QoS | timeseries | [Top $TopResources Volumes by QoS Volume Read Latency](GRAFANA_HOST/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=72) |
 | ONTAP: Volume | QoS | timeseries | [Top $TopResources Volumes by QoS Volume Write Latency](GRAFANA_HOST/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=73) |
 | ONTAP: Volume | QoS | timeseries | [Top $TopResources Volumes by QoS Volume Read IOPS](GRAFANA_HOST/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=76) |
@@ -20263,6 +20284,7 @@ The `volume_labels` metric is visualized in the following Grafana dashboards:
 | ONTAP: Volume | FabricPool | timeseries | [Top $TopResources Volumes by Metadata Footprint](GRAFANA_HOST/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=181) |
 | ONTAP: Volume | FabricPool | timeseries | [Top $TopResources Volumes by Total Footprint](GRAFANA_HOST/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=180) |
 | ONTAP: Volume | FabricPool | timeseries | [Top $TopResources Volumes by Total Metadata Footprint](GRAFANA_HOST/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=183) |
+| ONTAP: Volume | FabricPool | timeseries | [Top $TopResources Volumes by Capacity Tier Footprint](GRAFANA_HOST/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=182) |
 | ONTAP: Volume | Inode | timeseries | [Top $TopResources Volumes by Inode Files Used](GRAFANA_HOST/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=100) |
 | ONTAP: Volume | Inode | timeseries | [Top $TopResources Volumes by Inode Files Total](GRAFANA_HOST/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=102) |
 | ONTAP: Volume | Inode | timeseries | [Top $TopResources Volumes by Inode Files Used Percentage](GRAFANA_HOST/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=101) |
@@ -20908,6 +20930,8 @@ The `volume_size_total` metric is visualized in the following Grafana dashboards
 |--------|----------|--------|--------|
 | ONTAP: cDOT | Capacity Metrics | table | [Top $TopResources SVMs by Capacity Used %](GRAFANA_HOST/d/cdot-cdot/ontap3a-cdot?orgId=1&viewPanel=233) |
 | ONTAP: cDOT | Capacity Metrics | table | [Top $TopResources Volumes by Capacity Used %](GRAFANA_HOST/d/cdot-cdot/ontap3a-cdot?orgId=1&viewPanel=242) |
+| ONTAP: cDOT | Capacity Metrics | timeseries | [Top $TopResources SVMs by Capacity Used %](GRAFANA_HOST/d/cdot-cdot/ontap3a-cdot?orgId=1&viewPanel=272) |
+| ONTAP: cDOT | Capacity Metrics | timeseries | [Top $TopResources Volumes by Capacity Used %](GRAFANA_HOST/d/cdot-cdot/ontap3a-cdot?orgId=1&viewPanel=266) |
 | ONTAP: FlexGroup | Volume Table | table | [FlexGroup Constituents in Cluster](GRAFANA_HOST/d/cdot-flexgroup/ontap3a-flexgroup?orgId=1&viewPanel=18) |
 | ONTAP: File System Analytics (FSA) | Highlights | stat | [Size](GRAFANA_HOST/d/cdot-fsa/ontap3a-file system analytics (fsa)?orgId=1&viewPanel=97) |
 | ONTAP: File System Analytics (FSA) | Highlights | bargauge | [Used Percentage](GRAFANA_HOST/d/cdot-fsa/ontap3a-file system analytics (fsa)?orgId=1&viewPanel=103) |
@@ -20934,6 +20958,8 @@ The `volume_size_used` metric is visualized in the following Grafana dashboards:
 | ONTAP: Aggregate | Volume Capacity | timeseries | [Top $TopResources Volumes by Space Used by Aggregate](GRAFANA_HOST/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=83) |
 | ONTAP: cDOT | Capacity Metrics | table | [Top $TopResources SVMs by Capacity Used %](GRAFANA_HOST/d/cdot-cdot/ontap3a-cdot?orgId=1&viewPanel=233) |
 | ONTAP: cDOT | Capacity Metrics | table | [Top $TopResources Volumes by Capacity Used %](GRAFANA_HOST/d/cdot-cdot/ontap3a-cdot?orgId=1&viewPanel=242) |
+| ONTAP: cDOT | Capacity Metrics | timeseries | [Top $TopResources SVMs by Capacity Used %](GRAFANA_HOST/d/cdot-cdot/ontap3a-cdot?orgId=1&viewPanel=272) |
+| ONTAP: cDOT | Capacity Metrics | timeseries | [Top $TopResources Volumes by Capacity Used %](GRAFANA_HOST/d/cdot-cdot/ontap3a-cdot?orgId=1&viewPanel=266) |
 | ONTAP: File System Analytics (FSA) | Highlights | stat | [Used](GRAFANA_HOST/d/cdot-fsa/ontap3a-file system analytics (fsa)?orgId=1&viewPanel=95) |
 | ONTAP: File System Analytics (FSA) | Highlights | bargauge | [Used Percentage](GRAFANA_HOST/d/cdot-fsa/ontap3a-file system analytics (fsa)?orgId=1&viewPanel=103) |
 | ONTAP: SVM | Capacity | timeseries | [Top $TopResources SVMs by Volume Space Usage](GRAFANA_HOST/d/cdot-svm/ontap3a-svm?orgId=1&viewPanel=631) |
@@ -21520,6 +21546,7 @@ The `volume_total_ops` metric is visualized in the following Grafana dashboards:
 | ONTAP: FlexGroup | Highlights | timeseries | [Top $TopResources Constituents by Total IOPs](GRAFANA_HOST/d/cdot-flexgroup/ontap3a-flexgroup?orgId=1&viewPanel=12) |
 | ONTAP: Node | Volume Performance | timeseries | [Top $TopResources Volumes by IOPs](GRAFANA_HOST/d/cdot-node/ontap3a-node?orgId=1&viewPanel=137) |
 | ONTAP: Volume | Highlights | stat | [Top $TopResources Volumes by Total IOPs](GRAFANA_HOST/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=5) |
+| ONTAP: Volume | Highlights | timeseries | [Top $TopResources Volumes by Total IOPs](GRAFANA_HOST/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=12) |
 | ONTAP: Volume | I/O Density | timeseries | [Top $TopResources Volumes by IO Density (IOPs/TiB)](GRAFANA_HOST/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=139) |
 | ONTAP: Volume | I/O Density | timeseries | [Bottom $TopResources Volumes by IO Density (IOPs/TiB)](GRAFANA_HOST/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=140) |
 | ONTAP: Volume by SVM | Highlights | table | [Volume Performance for $SVM (Click volume for detailed drill-down)](GRAFANA_HOST/d/cdot-volume-by-svm/ontap3a-volume by svm?orgId=1&viewPanel=2) |

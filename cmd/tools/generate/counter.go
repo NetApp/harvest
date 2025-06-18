@@ -1937,7 +1937,7 @@ func visitExpressions(data []byte, metricsPanelMap map[string]PanelData) {
 				continue
 			}
 
-			key := dashboard + expr.RowTitle + expr.PanelTitle
+			key := dashboard + expr.RowTitle + expr.Kind + expr.PanelTitle + expr.PanelID
 			if !slices.Contains(metricsPanelMap[m].Keys, key) {
 				metricsPanelMap[m] = PanelData{Keys: append(metricsPanelMap[m].Keys, key), Panels: append(metricsPanelMap[m].Panels, PanelDef{Dashboard: dashboard, Row: expr.RowTitle, Type: expr.Kind, Panel: expr.PanelTitle, PanelLink: link + expr.PanelID})} // d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=63
 			}
