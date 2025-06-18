@@ -35,6 +35,7 @@ const (
 type StatPerf struct {
 	*rest2.Rest       // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
 	perfProp          *perfProp
+	filter            string
 	archivedMetrics   map[string]*rest2.Metric // Keeps metric definitions that are not found in the counter schema. These metrics may be available in future ONTAP versions.
 	pollInstanceCalls int
 	pollDataCalls     int
@@ -101,6 +102,8 @@ func (s *StatPerf) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
+	s.filter = s.loadFilter()
+
 	if err := s.InitMatrix(); err != nil {
 		return err
 	}
@@ -114,6 +117,18 @@ func (s *StatPerf) Init(a *collector.AbstractCollector) error {
 	)
 
 	return nil
+}
+
+func (s *StatPerf) loadFilter() string {
+
+	counters := s.Params.GetChildS("counters")
+	if counters != nil {
+		if x := counters.GetChildS("filter"); x != nil {
+			filter := strings.Join(x.GetAllChildContentS(), ",")
+			return filter
+		}
+	}
+	return ""
 }
 
 func (s *StatPerf) InitMatrix() error {
@@ -458,6 +473,7 @@ func (s *StatPerf) PollData() (map[string]*matrix.Matrix, error) {
 			Object(s.Prop.Query).
 			Counters(s.sortedCounters).
 			Instances(batchInstances).
+			Filter(s.filter).
 			Build()
 		if err != nil {
 			return nil, err
@@ -940,6 +956,7 @@ func (s *StatPerf) PollInstance() (map[string]*matrix.Matrix, error) {
 		Query("statistics catalog instance show").
 		Object(s.Prop.Query).
 		Fields([]string{"instance", "instanceUUID"}).
+		Filter(s.filter).
 		Build()
 	if err != nil {
 		return nil, err

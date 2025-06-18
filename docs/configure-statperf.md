@@ -103,3 +103,19 @@ export_options:
     - svm
     - volume
 ```
+
+### Filter
+
+This guide provides instructions on how to use the `filter` feature in StatPerf. Filtering is useful when you need to query a subset of instances. For example, suppose you have a small number of high-value volumes from which you want Harvest to collect performance metrics every five seconds. Collecting data from all volumes at this frequency would be too resource-intensive. Therefore, filtering allows you to create/modify a template that includes only the high-value volumes.
+
+In StatPerf templates, you can set up filters under `counters`. Wildcards like * are useful if you don't want to specify all instances. Please note, ONTAP filtering does not support regular expressions, only wildcard matching with `*`.
+
+To filter `volume` performance instances by instance name, where the name is either `NS_svm_nvme` or contains `Test`, and the `vserver_name` is `osc`, use the following configuration in the `volume.yaml` file under the `counters` section of StatPerf:
+
+```yaml
+counters:
+  ...
+  - filter:
+     - instance_name=NS_svm_nvme|instance_name=*Test*
+     - vserver_name=osc
+```
