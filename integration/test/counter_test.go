@@ -39,7 +39,7 @@ var skipEndpoints = []string{
 	"api/support/autosupport",
 }
 
-// TestCounters extracts non-hidden counters from all of the rest and restperf templates and then invokes an HTTP GET for each api path + counters.
+// TestCounters extracts non-hidden counters from all the rest and restperf templates and then invokes an HTTP GET for each api path + counters.
 // Valid responses are status code = 200. Objects do not need to exist on the cluster, only the api path and counter names are checked.
 func TestCounters(t *testing.T) {
 	var (
