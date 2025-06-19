@@ -20,8 +20,9 @@ import (
 )
 
 const (
-	rest = "REST"
-	zapi = "ZAPI"
+	rest     = "REST"
+	zapi     = "ZAPI"
+	statperf = "StatPerf"
 )
 
 var isStringAlphabetic = regexp.MustCompile(`^[a-zA-Z0-9_]*$`).MatchString
@@ -136,6 +137,14 @@ var validateQueries = []string{
 	`volume_read_ops{style="flexgroup"}`,
 }
 
+// Validate few counters from flexcache and system_node templates
+var statPerfCounters = []string{
+	"flexcache_blocks_requested_from_client",
+	"flexcache_blocks_retrieved_from_origin",
+	"node_cpu_busy",
+	"node_total_data",
+}
+
 func TestMain(m *testing.M) {
 	cmds.SetupLogging()
 	os.Exit(m.Run())
@@ -150,6 +159,18 @@ func TestDashboardsLoad(t *testing.T) {
 		t.Fatalf("No json file found @ %s", jsonDir)
 	}
 	slog.Info("Json files", slog.Int("fileSet", len(fileSet)))
+}
+
+func validateStatPerfCounters(t *testing.T) {
+	_, exists := os.LookupEnv(cmds.TestStatPerf)
+	if exists {
+		for _, counter := range statPerfCounters {
+			query := counter + `{datacenter=~"` + statperf + `"}`
+			if !hasDataInDB(query, 0) {
+				t.Errorf("No records for Prometheus query: %s", query)
+			}
+		}
+	}
 }
 
 func TestJsonExpression(t *testing.T) {
@@ -182,6 +203,8 @@ func TestJsonExpression(t *testing.T) {
 		"Pre-check counters done",
 		slog.String("dur", time.Since(now).Round(time.Millisecond).String()),
 	)
+
+	validateStatPerfCounters(t)
 
 	for _, filePath := range fileSet {
 		dashPath := shortPath(filePath)

@@ -39,6 +39,7 @@ const (
 	Regression        = "REGRESSION"
 	UpgradeRPM        = "UPGRADE_RPM"
 	STOP              = "STOP"
+	TestStatPerf      = "TEST_STAT_PERF"
 )
 
 func Run(command string, arg ...string) (string, error) {

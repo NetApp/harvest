@@ -70,7 +70,7 @@ pipeline {
                             steps {
                                 sh '''
                                 export VERSION=$VERSION
-                                REGRESSION=1 bash $WORKSPACE/harvest/integration/test/test.sh
+                                REGRESSION=1 TEST_STAT_PERF=1 bash $WORKSPACE/harvest/integration/test/test.sh
                                 '''
                                 withCredentials([string(credentialsId: 'PROMETHEUS_URL', variable: 'PROMETHEUS_URL')]) {
                                     sh '''

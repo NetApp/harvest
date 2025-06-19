@@ -18,6 +18,7 @@ func (n *Native) Init(path string) {
 
 func (n *Native) Install() bool {
 	harvestFile := "harvest.yml"
+	limitedStatPerfFile := "/home/harvestfiles/statperf/limited.yaml"
 	harvestObj := new(Harvest)
 	tarFileName := "harvest.tar.gz"
 	cmds.RemoveSafely(tarFileName)
@@ -39,7 +40,8 @@ func (n *Native) Install() bool {
 	_, err1 := cmds.Run("cp", GetPerfFileWithQosCounters(ZapiPerfDefaultFile, "defaultZapi.yaml"), HarvestHome+"/"+ZapiPerfDefaultFile)
 	_, err2 := cmds.Run("cp", GetPerfFileWithQosCounters(RestPerfDefaultFile, "defaultRest.yaml"), HarvestHome+"/"+RestPerfDefaultFile)
 	_, err3 := cmds.Run("cp", harvestFile, HarvestHome+"/"+harvestFile)
-	err = errors.Join(err1, err2, err3)
+	_, err4 := cmds.Run("cp", limitedStatPerfFile, HarvestHome+"/"+"conf/statperf/")
+	err = errors.Join(err1, err2, err3, err4)
 	if err != nil {
 		panic(err)
 	}
