@@ -11,6 +11,7 @@ type CLIRequestBuilder struct {
 	baseSet   string
 	query     string
 	object    string
+	filter    string
 	fields    []string
 	counters  []string
 	instances []string
@@ -45,6 +46,11 @@ func (c *CLIRequestBuilder) Fields(fields []string) *CLIRequestBuilder {
 	return c
 }
 
+func (c *CLIRequestBuilder) Filter(filter string) *CLIRequestBuilder {
+	c.filter = filter
+	return c
+}
+
 func (c *CLIRequestBuilder) Counters(counters []string) *CLIRequestBuilder {
 	c.counters = counters
 	return c
@@ -64,6 +70,10 @@ func (c *CLIRequestBuilder) Build() ([]byte, error) {
 
 	if c.object != "" {
 		parts = append(parts, "-object", c.object)
+	}
+
+	if c.filter != "" {
+		parts = append(parts, "-filter", c.filter)
 	}
 
 	if len(c.fields) > 0 {
