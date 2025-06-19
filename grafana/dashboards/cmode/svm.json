@@ -8631,7 +8631,7 @@
               "refId": "Read Throughput"
             }
           ],
-          "title": "NFSv3 IOPs per Type",
+          "title": "NFSv3 IOPs Per Type",
           "transformations": [
             {
               "id": "renameByRegex",
@@ -9945,7 +9945,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "NFSv4 IOPs per Type",
+          "title": "NFSv4 IOPs Per Type",
           "transformations": [
             {
               "id": "renameByRegex",
@@ -11267,7 +11267,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "NFSv4.1 IOPs per Type",
+          "title": "NFSv4.1 IOPs Per Type",
           "transformations": [
             {
               "id": "renameByRegex",
@@ -12589,7 +12589,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "NFSv4.2 IOPs per Type",
+          "title": "NFSv4.2 IOPs Per Type",
           "transformations": [
             {
               "id": "renameByRegex",

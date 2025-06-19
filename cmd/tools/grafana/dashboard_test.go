@@ -1601,12 +1601,12 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 		"Top $TopResources Workloads by Service Time from sync_repl", "Top $TopResources Workloads by Service Time from flexcache_ral", "Top $TopResources Workloads by Service Time from flexcache_spinhi",
 		"Top $TopResources Workloads by Latency from sync_repl", "Top $TopResources Workloads by Latency from flexcache_ral", "Top $TopResources Workloads by Latency from flexcache_spinhi", "Service Latency by Resources",
 		// These are from svm
-		"NFSv3 Latency Heatmap", "NFSv3 Read Latency Heatmap", "NFSv3 Write Latency Heatmap", "NFSv3 Latency by Op Type", "NFSv3 IOPs per Type",
-		"NFSv4 Latency Heatmap", "NFSv4 Read Latency Heatmap", "NFSv4 Write Latency Heatmap", "NFSv4 Latency by Op Type", "NFSv4 IOPs per Type",
-		"NFSv4.1 Latency Heatmap", "NFSv4.1 Read Latency Heatmap", "NFSv4.1 Write Latency Heatmap", "NFSv4.1 Latency by Op Type", "NFSv4.1 IOPs per Type",
-		"NFSv4.2 Latency by Op Type", "NFSv4.2 IOPs per Type", "SVM NVMe/FC Throughput", "Copy Manager Requests",
+		"NFSv3 Latency Heatmap", "NFSv3 Read Latency Heatmap", "NFSv3 Write Latency Heatmap", "NFSv3 Latency by Op Type", "NFSv3 IOPs Per Type",
+		"NFSv4 Latency Heatmap", "NFSv4 Read Latency Heatmap", "NFSv4 Write Latency Heatmap", "NFSv4 Latency by Op Type", "NFSv4 IOPs Per Type",
+		"NFSv4.1 Latency Heatmap", "NFSv4.1 Read Latency Heatmap", "NFSv4.1 Write Latency Heatmap", "NFSv4.1 Latency by Op Type", "NFSv4.1 IOPs Per Type",
+		"NFSv4.2 Latency by Op Type", "NFSv4.2 IOPs Per Type", "SVM NVMe/FC Throughput", "Copy Manager Requests",
 		// This is from volume
-		"Top $TopResources Volumes by Number of Compress Attempts", "Top $TopResources Volumes by Number of Compress Fail", "Volume Latency by Op Type", "Volume IOPs per Type",
+		"Top $TopResources Volumes by Number of Compress Attempts", "Top $TopResources Volumes by Number of Compress Fail", "Volume Latency by Op Type", "Volume IOPs Per Type",
 		// This is from lun
 		"IO Size",
 		// This is from nfs4storePool

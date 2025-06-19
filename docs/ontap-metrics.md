@@ -50,7 +50,7 @@ The `aggr_disk_busy` metric is visualized in the following Grafana dashboards:
 
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
-| ONTAP: Aggregate | Disk Utilization | table | [Top $TopResources Average Disk Utilization per Aggregate](GRAFANA_HOST/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=61) |
+| ONTAP: Aggregate | Disk Utilization | table | [Top $TopResources Average Disk Utilization Per Aggregate](GRAFANA_HOST/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=61) |
 | ONTAP: Aggregate | Disk Utilization | timeseries | [Top $TopResources Average Disk Utilization Per Aggregate](GRAFANA_HOST/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=63) |
 | ONTAP: Cluster | Throughput | timeseries | [Average Disk Utilization by Aggregate](GRAFANA_HOST/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=136) |
 | ONTAP: Disk | Highlights | stat | [Raid Groups](GRAFANA_HOST/d/cdot-disk/ontap3a-disk?orgId=1&viewPanel=47) |
@@ -418,7 +418,7 @@ The `aggr_disk_user_reads` metric is visualized in the following Grafana dashboa
 
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
-| ONTAP: Power | Highlights | timeseries | [Top $TopResources Aggregates by IOPS per Power Consumed](GRAFANA_HOST/d/cdot-power/ontap3a-power?orgId=1&viewPanel=94) |
+| ONTAP: Power | Highlights | timeseries | [Top $TopResources Aggregates by IOPS Per Power Consumed](GRAFANA_HOST/d/cdot-power/ontap3a-power?orgId=1&viewPanel=94) |
 
 
 
@@ -468,7 +468,7 @@ The `aggr_disk_user_writes` metric is visualized in the following Grafana dashbo
 
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
-| ONTAP: Power | Highlights | timeseries | [Top $TopResources Aggregates by IOPS per Power Consumed](GRAFANA_HOST/d/cdot-power/ontap3a-power?orgId=1&viewPanel=94) |
+| ONTAP: Power | Highlights | timeseries | [Top $TopResources Aggregates by IOPS Per Power Consumed](GRAFANA_HOST/d/cdot-power/ontap3a-power?orgId=1&viewPanel=94) |
 
 
 
@@ -884,7 +884,7 @@ The `aggr_raid_disk_count` metric is visualized in the following Grafana dashboa
 | ONTAP: Aggregate | Highlights | stat | [Disks](GRAFANA_HOST/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=21) |
 | ONTAP: Aggregate | Highlights | table | [Aggregates](GRAFANA_HOST/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=2) |
 | ONTAP: Disk | Highlights | stat | [Total Disks by Aggregate(s)](GRAFANA_HOST/d/cdot-disk/ontap3a-disk?orgId=1&viewPanel=43) |
-| ONTAP: Disk | Highlights | table | [Disk Capacity per Aggregate](GRAFANA_HOST/d/cdot-disk/ontap3a-disk?orgId=1&viewPanel=53) |
+| ONTAP: Disk | Highlights | table | [Disk Capacity Per Aggregate](GRAFANA_HOST/d/cdot-disk/ontap3a-disk?orgId=1&viewPanel=53) |
 
 
 
@@ -1375,7 +1375,7 @@ The `aggr_space_total` metric is visualized in the following Grafana dashboards:
 | ONTAP: Datacenter | Highlights | stat | [Space Used %](GRAFANA_HOST/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=615) |
 | ONTAP: Datacenter | Highlights | timeseries | [Top $TopResources Total Space by Cluster](GRAFANA_HOST/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=655) |
 | ONTAP: Datacenter | Highlights | timeseries | [Top $TopResources Space Used % by Cluster](GRAFANA_HOST/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=658) |
-| ONTAP: Disk | Highlights | table | [Disk Capacity per Aggregate](GRAFANA_HOST/d/cdot-disk/ontap3a-disk?orgId=1&viewPanel=53) |
+| ONTAP: Disk | Highlights | table | [Disk Capacity Per Aggregate](GRAFANA_HOST/d/cdot-disk/ontap3a-disk?orgId=1&viewPanel=53) |
 
 
 
@@ -1424,7 +1424,7 @@ The `aggr_space_used_percent` metric is visualized in the following Grafana dash
 |--------|----------|--------|--------|
 | ONTAP: Aggregate | Highlights | table | [Aggregates](GRAFANA_HOST/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=2) |
 | ONTAP: Cluster | Throughput | timeseries | [Average Aggregate Space Used](GRAFANA_HOST/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=180) |
-| ONTAP: Disk | Highlights | table | [Disk Capacity per Aggregate](GRAFANA_HOST/d/cdot-disk/ontap3a-disk?orgId=1&viewPanel=53) |
+| ONTAP: Disk | Highlights | table | [Disk Capacity Per Aggregate](GRAFANA_HOST/d/cdot-disk/ontap3a-disk?orgId=1&viewPanel=53) |
 
 
 
@@ -2671,7 +2671,7 @@ The `external_service_op_num_not_found_responses` metric is visualized in the fo
 
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
-| ONTAP: External Service Operation | Highlights | timeseries | [Top $TopResources Number of 'Not Found' Responses per Operation](GRAFANA_HOST/d/cdot-external-service-operation/ontap3a-external service operation?orgId=1&viewPanel=83) |
+| ONTAP: External Service Operation | Highlights | timeseries | [Top $TopResources Number of 'Not Found' Responses Per Operation](GRAFANA_HOST/d/cdot-external-service-operation/ontap3a-external service operation?orgId=1&viewPanel=83) |
 
 
 
@@ -6344,7 +6344,7 @@ The `metadata_collector_instances` metric is visualized in the following Grafana
 
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
-| Harvest Metadata | Collectors | timeseries | [Instances per Poll](GRAFANA_HOST/d/cdot-metadata/harvest metadata?orgId=1&viewPanel=186) |
+| Harvest Metadata | Collectors | timeseries | [Instances Per Poll](GRAFANA_HOST/d/cdot-metadata/harvest metadata?orgId=1&viewPanel=186) |
 | ONTAP: Security | Cluster Compliance | table | [Cluster Compliance](GRAFANA_HOST/d/cdot-security/ontap3a-security?orgId=1&viewPanel=219) |
 
 
@@ -6362,7 +6362,7 @@ The `metadata_collector_metrics` metric is visualized in the following Grafana d
 
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
-| Harvest Metadata | Collectors | timeseries | [Data Points per Poll](GRAFANA_HOST/d/cdot-metadata/harvest metadata?orgId=1&viewPanel=169) |
+| Harvest Metadata | Collectors | timeseries | [Data Points Per Poll](GRAFANA_HOST/d/cdot-metadata/harvest metadata?orgId=1&viewPanel=169) |
 
 
 
@@ -6440,9 +6440,9 @@ The `metadata_collector_poll_time` metric is visualized in the following Grafana
 
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
-| Harvest Metadata | Highlights | timeseries | [Average Poll time per Poller](GRAFANA_HOST/d/cdot-metadata/harvest metadata?orgId=1&viewPanel=140) |
-| Harvest Metadata | Highlights | timeseries | [Average time per Collector](GRAFANA_HOST/d/cdot-metadata/harvest metadata?orgId=1&viewPanel=158) |
-| Harvest Metadata | Collectors | timeseries | [Time per Data Poll](GRAFANA_HOST/d/cdot-metadata/harvest metadata?orgId=1&viewPanel=63) |
+| Harvest Metadata | Highlights | timeseries | [Average Poll Time Per Poller](GRAFANA_HOST/d/cdot-metadata/harvest metadata?orgId=1&viewPanel=140) |
+| Harvest Metadata | Highlights | timeseries | [Average Time Per Collector](GRAFANA_HOST/d/cdot-metadata/harvest metadata?orgId=1&viewPanel=158) |
+| Harvest Metadata | Collectors | timeseries | [Time Per Data Poll](GRAFANA_HOST/d/cdot-metadata/harvest metadata?orgId=1&viewPanel=63) |
 
 
 
@@ -6484,7 +6484,7 @@ The `metadata_component_count` metric is visualized in the following Grafana das
 | Harvest Metadata | Highlights | stat | [Collected/24h](GRAFANA_HOST/d/cdot-metadata/harvest metadata?orgId=1&viewPanel=69) |
 | Harvest Metadata | Highlights | stat | [Collected/m](GRAFANA_HOST/d/cdot-metadata/harvest metadata?orgId=1&viewPanel=72) |
 | Harvest Metadata | Highlights | stat | [Exported/m](GRAFANA_HOST/d/cdot-metadata/harvest metadata?orgId=1&viewPanel=157) |
-| Harvest Metadata | Prometheus | timeseries | [Data Points per Export](GRAFANA_HOST/d/cdot-metadata/harvest metadata?orgId=1&viewPanel=179) |
+| Harvest Metadata | Prometheus | timeseries | [Data Points Per Export](GRAFANA_HOST/d/cdot-metadata/harvest metadata?orgId=1&viewPanel=179) |
 
 
 
@@ -6522,7 +6522,7 @@ The `metadata_exporter_count` metric is visualized in the following Grafana dash
 
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
-| Harvest Metadata | Prometheus | timeseries | [Data Points per Export](GRAFANA_HOST/d/cdot-metadata/harvest metadata?orgId=1&viewPanel=179) |
+| Harvest Metadata | Prometheus | timeseries | [Data Points Per Export](GRAFANA_HOST/d/cdot-metadata/harvest metadata?orgId=1&viewPanel=179) |
 
 
 
@@ -6539,8 +6539,8 @@ The `metadata_exporter_time` metric is visualized in the following Grafana dashb
 
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
-| Harvest Metadata | Highlights | timeseries | [Average time per Exporter](GRAFANA_HOST/d/cdot-metadata/harvest metadata?orgId=1&viewPanel=159) |
-| Harvest Metadata | Prometheus | timeseries | [Average time per Export](GRAFANA_HOST/d/cdot-metadata/harvest metadata?orgId=1&viewPanel=178) |
+| Harvest Metadata | Highlights | timeseries | [Average Time Per Exporter](GRAFANA_HOST/d/cdot-metadata/harvest metadata?orgId=1&viewPanel=159) |
+| Harvest Metadata | Prometheus | timeseries | [Average Time Per Export](GRAFANA_HOST/d/cdot-metadata/harvest metadata?orgId=1&viewPanel=178) |
 
 
 

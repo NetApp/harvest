@@ -3068,7 +3068,7 @@
               "refId": "Read Throughput"
             }
           ],
-          "title": "Volume IOPs per Type",
+          "title": "Volume IOPs Per Type",
           "transformations": [
             {
               "id": "renameByRegex",

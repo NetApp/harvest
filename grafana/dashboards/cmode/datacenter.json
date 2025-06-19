@@ -2529,7 +2529,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Average IOPs per Watt.",
+          "description": "Average IOPs Per Watt.",
           "fieldConfig": {
             "defaults": {
               "color": {

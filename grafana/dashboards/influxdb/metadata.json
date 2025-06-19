@@ -1936,7 +1936,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Poll Time per Collector",
+      "title": "Poll Time Per Collector",
       "tooltip": {
         "shared": true,
         "sort": 2,

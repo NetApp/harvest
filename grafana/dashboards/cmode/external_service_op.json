@@ -350,7 +350,7 @@
           "refId": "A"
         }
       ],
-      "title": "Top $TopResources Number of 'Not Found' Responses per Operation",
+      "title": "Top $TopResources Number of 'Not Found' Responses Per Operation",
       "type": "timeseries"
     },
     {
