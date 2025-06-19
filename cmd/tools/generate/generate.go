@@ -137,26 +137,24 @@ func doDockerCompose(cmd *cobra.Command, _ []string) {
 
 func doGenerateMetrics(cmd *cobra.Command, _ []string) {
 	addRootOptions(cmd)
-	metricsPanelMap := make(map[string]PanelData)
+	// reset metricsPanelMap map
+	metricsPanelMap = make(map[string]PanelData)
+	panelKeyMap = make(map[string]bool)
 	visitDashboard(
 		[]string{
 			"grafana/dashboards/cmode",
 			"grafana/dashboards/cmode-details",
-			"grafana/dashboards/storagegrid",
-			"grafana/dashboards/cisco",
 		},
-		metricsPanelMap,
-		func(data []byte, metricsPanelMap map[string]PanelData) {
-			visitExpressions(data, metricsPanelMap)
+		func(data []byte) {
+			visitExpressions(data)
 		})
-	counters, cluster := BuildMetrics("", "", opts.Poller, metricsPanelMap)
+	counters, cluster := BuildMetrics("", "", opts.Poller)
 	generateCounterTemplate(counters, cluster.Version)
 }
 
 func doDescription(cmd *cobra.Command, _ []string) {
 	addRootOptions(cmd)
-	metricsPanelMap := make(map[string]PanelData)
-	counters, _ := BuildMetrics("", "", opts.Poller, metricsPanelMap)
+	counters, _ := BuildMetrics("", "", opts.Poller)
 	grafana.VisitDashboards(
 		[]string{"grafana/dashboards/cmode"},
 		func(path string, data []byte) {
@@ -573,7 +571,7 @@ func writeAdminSystemd(configFp string) {
 	println(color.Colorize("✓", color.Green) + " HTTP SD file: " + harvestAdminService + " created")
 }
 
-func BuildMetrics(dir, configPath, pollerName string, metricsPanelMap map[string]PanelData) (map[string]Counter, conf.Remote) {
+func BuildMetrics(dir, configPath, pollerName string) (map[string]Counter, conf.Remote) {
 	var (
 		poller         *conf.Poller
 		err            error
@@ -613,8 +611,8 @@ func BuildMetrics(dir, configPath, pollerName string, metricsPanelMap map[string
 	}
 
 	swaggerBytes = readSwaggerJSON()
-	restCounters := processRestCounters(dir, restClient, metricsPanelMap)
-	zapiCounters := processZapiCounters(dir, zapiClient, metricsPanelMap)
+	restCounters := processRestCounters(dir, restClient)
+	zapiCounters := processZapiCounters(dir, zapiClient)
 	counters := mergeCounters(restCounters, zapiCounters)
 	counters = processExternalCounters(dir, counters)
 

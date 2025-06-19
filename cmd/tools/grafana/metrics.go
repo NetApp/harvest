@@ -16,6 +16,7 @@ import (
 
 var varRe = regexp.MustCompile(`\$(\w+)`)
 var metricRe = regexp.MustCompile(`(\w+)\{`)
+var DefaultRowTitle = "Highlights"
 
 var metricsCmd = &cobra.Command{
 	Use:   "metrics",
@@ -146,9 +147,9 @@ func NewExpr(path string, expr string, kind string, id string, title string, row
 		vars = append(vars, match[1])
 	}
 
-	// any panel's default rowTitle would be Highlights
+	// any panel's default rowTitle would be DefaultRowTitle
 	if rowTitle == "" {
-		rowTitle = "Highlights"
+		rowTitle = DefaultRowTitle
 	}
 	return ExprP{
 		path:       path,
