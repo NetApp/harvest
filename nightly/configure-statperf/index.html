@@ -1091,6 +1091,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filter
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1815,6 +1824,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filter
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1965,6 +1983,16 @@ please refer to the <a href="../configure-zapi/#metrics_1">ZapiPerf Metrics Docu
 <span class="w">  </span><span class="nt">instance_keys</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">svm</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">volume</span>
+</code></pre></div>
+<h3 id="filter">Filter<a class="headerlink" href="#filter" title="Permanent link">&para;</a></h3>
+<p>This guide provides instructions on how to use the <code>filter</code> feature in StatPerf. Filtering is useful when you need to query a subset of instances. For example, suppose you have a small number of high-value volumes from which you want Harvest to collect performance metrics every five seconds. Collecting data from all volumes at this frequency would be too resource-intensive. Therefore, filtering allows you to create/modify a template that includes only the high-value volumes.</p>
+<p>In StatPerf templates, you can set up filters under the <code>counters</code> section using the <code>filter</code> key as shown below.</p>
+<p>To filter <code>volume</code> performance instances by instance name, where the name is either <code>NS_svm_nvme</code> or contains <code>Test</code>, and the <code>vserver_name</code> is <code>osc</code>, use the following configuration in the <code>volume.yaml</code> file under the <code>counters</code> section of StatPerf:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">counters</span><span class="p">:</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">- filter</span><span class="p p-Indicator">:</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">instance_name=NS_svm_nvme|instance_name=*Test*</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vserver_name=osc</span>
 </code></pre></div>
 
 

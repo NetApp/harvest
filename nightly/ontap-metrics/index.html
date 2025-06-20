@@ -28500,7 +28500,7 @@ These can be generated on demand by running <code>bin/harvest grafana metrics</c
 <p>More information about ONTAP REST performance counters can be found <a href="https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html">here</a>.</p>
 </li>
 </ul>
-<div class="highlight"><pre><span></span><code>Creation Date : 2025-Jun-19
+<div class="highlight"><pre><span></span><code>Creation Date : 2025-Jun-20
 ONTAP Version: 9.16.1
 </code></pre></div>
 <h2 id="understanding-the-structure">Understanding the structure<a class="headerlink" href="#understanding-the-structure" title="Permanent link">&para;</a></h2>
@@ -50119,12 +50119,6 @@ ONTAP Version: 9.16.1
 <td>conf/restperf/9.12.0/system_node.yaml</td>
 </tr>
 <tr>
-<td>StatPerf</td>
-<td><code>system:node</code></td>
-<td><code>other_data</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
-<td>conf/statperf/9.8.0/system_node.yaml</td>
-</tr>
-<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances system:node</code></td>
 <td><code>other_data</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
@@ -50149,12 +50143,6 @@ ONTAP Version: 9.16.1
 <td><code>api/cluster/counter/tables/system:node</code></td>
 <td><code>other_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops</td>
 <td>conf/restperf/9.12.0/system_node.yaml</td>
-</tr>
-<tr>
-<td>StatPerf</td>
-<td><code>system:node</code></td>
-<td><code>other_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> other_ops</td>
-<td>conf/statperf/9.8.0/system_node.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -50183,12 +50171,6 @@ ONTAP Version: 9.16.1
 <td>conf/restperf/9.12.0/system_node.yaml</td>
 </tr>
 <tr>
-<td>StatPerf</td>
-<td><code>system:node</code></td>
-<td><code>other_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
-<td>conf/statperf/9.8.0/system_node.yaml</td>
-</tr>
-<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances system:node</code></td>
 <td><code>other_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
@@ -50213,12 +50195,6 @@ ONTAP Version: 9.16.1
 <td><code>api/cluster/counter/tables/system:node</code></td>
 <td><code>read_data</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/restperf/9.12.0/system_node.yaml</td>
-</tr>
-<tr>
-<td>StatPerf</td>
-<td><code>system:node</code></td>
-<td><code>read_data</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
-<td>conf/statperf/9.8.0/system_node.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -50247,12 +50223,6 @@ ONTAP Version: 9.16.1
 <td>conf/restperf/9.12.0/system_node.yaml</td>
 </tr>
 <tr>
-<td>StatPerf</td>
-<td><code>system:node</code></td>
-<td><code>read_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> read_ops</td>
-<td>conf/statperf/9.8.0/system_node.yaml</td>
-</tr>
-<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances system:node</code></td>
 <td><code>read_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops</td>
@@ -50277,12 +50247,6 @@ ONTAP Version: 9.16.1
 <td><code>api/cluster/counter/tables/system:node</code></td>
 <td><code>read_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/restperf/9.12.0/system_node.yaml</td>
-</tr>
-<tr>
-<td>StatPerf</td>
-<td><code>system:node</code></td>
-<td><code>read_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
-<td>conf/statperf/9.8.0/system_node.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
@@ -52195,12 +52159,6 @@ ONTAP Version: 9.16.1
 <td>conf/restperf/9.12.0/system_node.yaml</td>
 </tr>
 <tr>
-<td>StatPerf</td>
-<td><code>system:node</code></td>
-<td><code>write_data</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
-<td>conf/statperf/9.8.0/system_node.yaml</td>
-</tr>
-<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances system:node</code></td>
 <td><code>write_data</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
@@ -52227,12 +52185,6 @@ ONTAP Version: 9.16.1
 <td>conf/restperf/9.12.0/system_node.yaml</td>
 </tr>
 <tr>
-<td>StatPerf</td>
-<td><code>system:node</code></td>
-<td><code>write_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> write_ops</td>
-<td>conf/statperf/9.8.0/system_node.yaml</td>
-</tr>
-<tr>
 <td>ZAPI</td>
 <td><code>perf-object-get-instances system:node</code></td>
 <td><code>write_latency</code><br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops</td>
@@ -52257,12 +52209,6 @@ ONTAP Version: 9.16.1
 <td><code>api/cluster/counter/tables/system:node</code></td>
 <td><code>write_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/restperf/9.12.0/system_node.yaml</td>
-</tr>
-<tr>
-<td>StatPerf</td>
-<td><code>system:node</code></td>
-<td><code>write_ops</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
-<td>conf/statperf/9.8.0/system_node.yaml</td>
 </tr>
 <tr>
 <td>ZAPI</td>
