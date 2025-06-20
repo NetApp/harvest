@@ -756,7 +756,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Disk Capacity per Aggregate",
+      "title": "Disk Capacity Per Aggregate",
       "transformations": [
         {
           "id": "filterFieldsByName",

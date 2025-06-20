@@ -393,7 +393,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Average IOPs per Watt.",
+      "description": "Average IOPs Per Watt.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1515,7 +1515,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top $TopResources Aggregates by IOPS per Power Consumed",
+      "title": "Top $TopResources Aggregates by IOPS Per Power Consumed",
       "type": "timeseries"
     },
     {

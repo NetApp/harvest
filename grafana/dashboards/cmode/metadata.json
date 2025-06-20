@@ -2079,7 +2079,7 @@
           "refId": "C"
         }
       ],
-      "title": "Average Poll time per Poller",
+      "title": "Average Poll Time Per Poller",
       "type": "timeseries"
     },
     {
@@ -2168,7 +2168,7 @@
           "refId": "C"
         }
       ],
-      "title": "Average  time per Collector",
+      "title": "Average Time Per Collector",
       "type": "timeseries"
     },
     {
@@ -2257,7 +2257,7 @@
           "refId": "C"
         }
       ],
-      "title": "Average  time per Exporter",
+      "title": "Average Time Per Exporter",
       "type": "timeseries"
     },
     {
@@ -2443,7 +2443,7 @@
               "refId": "C"
             }
           ],
-          "title": "Time per Data Poll",
+          "title": "Time Per Data Poll",
           "type": "timeseries"
         },
         {
@@ -2535,7 +2535,7 @@
               "refId": "C"
             }
           ],
-          "title": "Instances per Poll",
+          "title": "Instances Per Poll",
           "type": "timeseries"
         },
         {
@@ -2627,7 +2627,7 @@
               "refId": "C"
             }
           ],
-          "title": "Data Points per Poll",
+          "title": "Data Points Per Poll",
           "type": "timeseries"
         },
         {
@@ -3033,7 +3033,7 @@
               "refId": "A"
             }
           ],
-          "title": "Average time per Export",
+          "title": "Average Time Per Export",
           "type": "timeseries"
         },
         {
@@ -3133,7 +3133,7 @@
               "refId": "A"
             }
           ],
-          "title": "Data Points per Export",
+          "title": "Data Points Per Export",
           "type": "timeseries"
         }
       ],

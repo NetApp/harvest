@@ -238,7 +238,7 @@
           "instant": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": " {{ le }}",
+          "legendFormat": "{{ le }}",
           "refId": "A"
         }
       ],
@@ -350,7 +350,7 @@
           "refId": "A"
         }
       ],
-      "title": "Top $TopResources Number of 'Not Found' Responses per Operation",
+      "title": "Top $TopResources Number of 'Not Found' Responses Per Operation",
       "type": "timeseries"
     },
     {

@@ -3951,7 +3951,7 @@
               "refId": "B"
             }
           ],
-          "title": "Top $TopResources Average Disk Utilization per Aggregate",
+          "title": "Top $TopResources Average Disk Utilization Per Aggregate",
           "transformations": [
             {
               "id": "filterFieldsByName",

@@ -2529,7 +2529,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Average IOPs per Watt.",
+          "description": "Average IOPs Per Watt.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3188,7 +3188,7 @@
               "expr": "count(\n      (\n          volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\",volume!~\"MDV.*\"}\n        * on (snapshot_policy) group_left ()\n          group by (snapshot_policy) (snapshot_policy_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n      )\n    * on (volume, svm, cluster)\n      (\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e 0\n        and\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003c 10\n      )\n  )\nor on ()\n  vector(0)",
               "instant": true,
               "interval": "",
-              "legendFormat": " <10 Copies ",
+              "legendFormat": "<10 Copies ",
               "refId": "A"
             },
             {
