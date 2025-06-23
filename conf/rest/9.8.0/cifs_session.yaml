@@ -18,6 +18,7 @@ counters:
   - ^smb_signing
   - ^svm.name                => svm
   - ^user
+  - ^volumes.#.name          => volumes
   - connection_count
 
 export_options:
@@ -37,3 +38,4 @@ export_options:
     - smb_signing
     - svm
     - user
+    - volumes
