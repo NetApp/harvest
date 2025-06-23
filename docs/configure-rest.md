@@ -346,32 +346,6 @@ endpoints:
       - ^nodes                                => node
       - filter:
           - is_constituent=*
-
-plugins:
-#  - VolumeTopClients:
-#      # `max_volumes` is the maximum number of volumes to consider for top client metrics. This value is capped at 50, even if a higher number is specified.
-#      # When enabled, this plugin will collect read/write operations and throughput metrics for the top clients of each volume.
-#      - schedule:
-#          - data: 1h  # This value should be a multiple of the poll duration. By default, Harvest will check once an hour to see how many volumes have activity_tracking.state set to on.
-#      - max_volumes: 5
-#      - objects:
-#          - client  # collect read/write operations and throughput metrics for the top clients.
-#          - file    # collect read/write operations and throughput metrics for the top files
-  - Aggregator:
-      # plugin will create summary/average for each object
-      # any names after the object names will be treated as label names that will be added to instances
-      - node
-      - svm<>svm_vol
-  - Volume:
-      include_constituents: false
-
-export_options:
-  instance_keys:
-    - aggr
-    - node
-    - style
-    - svm
-    - volume
 ```
 
 
