@@ -615,7 +615,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "`Space Used`: The logical size of all objects in the bucket.\n\n`Object count:`: The number of objects in the bucket.\n\n`Quota:`  The maximum amount of logical space available for the tenant’s objects. If a quota is not configured, an unlimited amount of space is available.",
+      "description": "`Space Used`: The logical size of all objects in the bucket.\n\n`Objects:`: The number of objects in the bucket.\n\n`Quota:`  The maximum amount of logical space available for the tenant’s objects. If a quota is not configured, an unlimited amount of space is available.",
       "fieldConfig": {
         "defaults": {
           "color": {
