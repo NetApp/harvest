@@ -1884,9 +1884,6 @@ func getAllExportedLabels(t *node.Node, counterContents []string) ([]string, []s
 func visitDashboard(dirs []string, eachDash func(data []byte)) {
 	for _, dir := range dirs {
 		err := filepath.Walk(dir, func(path string, _ os.FileInfo, err error) error {
-			if strings.Contains(path, "influxdb") {
-				return nil
-			}
 			if err != nil {
 				log.Fatal("failed to read directory:", err)
 			}
