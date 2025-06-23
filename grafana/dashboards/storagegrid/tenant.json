@@ -840,8 +840,8 @@
             "excludeByName": {},
             "indexByName": {
               "Value #A": 5,
-              "Value #B": 6,
-              "Value #C": 7,
+              "Value #B": 7,
+              "Value #C": 6,
               "bucket": 3,
               "cluster": 1,
               "datacenter": 0,
