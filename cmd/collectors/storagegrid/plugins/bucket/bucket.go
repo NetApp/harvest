@@ -11,6 +11,12 @@ import (
 	"log/slog"
 )
 
+var metricToJSON = map[string]string{
+	"objects":     "objectCount",
+	"bytes":       "dataBytes",
+	"quota_bytes": "quotaObjectBytes",
+}
+
 type Bucket struct {
 	*plugin.AbstractPlugin
 	client *rest.Client
@@ -40,9 +46,9 @@ func (b *Bucket) Init(remote conf.Remote) error {
 	}
 
 	b.data = matrix.New(b.Parent+".Bucket", "bucket", "bucket")
-	_, _ = b.data.NewMetricFloat64("objects")
-	_, _ = b.data.NewMetricFloat64("bytes")
-
+	for k := range metricToJSON {
+		_, _ = b.data.NewMetricFloat64(k)
+	}
 	return nil
 }
 
@@ -52,10 +58,6 @@ func (b *Bucket) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *coll
 	)
 
 	data := dataMap[b.Object]
-	metricToJSON := map[string]string{
-		"objects": "objectCount",
-		"bytes":   "dataBytes",
-	}
 	// Purge and reset data
 	b.data.PurgeInstances()
 	b.data.Reset()
@@ -106,19 +108,23 @@ func (b *Bucket) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *coll
 				for metricKey, m := range b.data.GetMetrics() {
 					jsonKey := metricToJSON[metricKey]
 					if value := bucketJSON.Get(jsonKey); value.Exists() {
-						if err = m.SetValueString(bucketInstance, value.ClonedString()); err != nil {
+						valueStr := value.ClonedString()
+						if valueStr == "" {
+							continue
+						}
+						if err = m.SetValueString(bucketInstance, valueStr); err != nil {
 							b.SLogger.Error(
 								"Unable to set float key on metric",
 								slogx.Err(err),
 								slog.String("key", metricKey),
 								slog.String("metric", m.GetName()),
-								slog.String("value", value.ClonedString()),
+								slog.String("value", valueStr),
 							)
 						} else {
 							b.SLogger.Debug(
 								"added",
 								slog.String("metricKey", metricKey),
-								slog.String("value", value.ClonedString()),
+								slog.String("value", valueStr),
 							)
 						}
 					}

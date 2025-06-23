@@ -54,11 +54,12 @@
       }
     ]
   },
+  "description": "",
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1730728741684,
+  "iteration": 1750665675376,
   "links": [],
   "panels": [
     {
@@ -614,6 +615,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
+      "description": "`Space Used`: The logical size of all objects in the bucket.\n\n`Object count:`: The number of objects in the bucket.\n\n`Quota:`  The maximum amount of logical space available for the tenant’s objects. If a quota is not configured, an unlimited amount of space is available.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -746,6 +748,18 @@
                 ]
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Quota"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decbytes"
+              }
+            ]
           }
         ]
       },
@@ -785,6 +799,16 @@
           "interval": "",
           "legendFormat": "",
           "refId": "B"
+        },
+        {
+          "exemplar": false,
+          "expr": "bucket_quota_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",tenant=~\"$Tenant\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "C"
         }
       ],
       "title": "Buckets",
@@ -797,10 +821,11 @@
                 "bucket",
                 "cluster",
                 "datacenter",
+                "region",
                 "tenant",
                 "Value #A",
                 "Value #B",
-                "region"
+                "Value #C"
               ]
             }
           }
@@ -814,16 +839,20 @@
           "options": {
             "excludeByName": {},
             "indexByName": {
-              "Value": 4,
+              "Value #A": 5,
+              "Value #B": 6,
+              "Value #C": 7,
               "bucket": 3,
               "cluster": 1,
               "datacenter": 0,
+              "region": 4,
               "tenant": 2
             },
             "renameByName": {
               "Value": "Bytes",
               "Value #A": "Space Used",
               "Value #B": "Objects",
+              "Value #C": "Quota",
               "bucket": "Bucket",
               "region": "Region"
             }
@@ -836,6 +865,7 @@
             "binary": {
               "left": "Space Used",
               "operator": "/",
+              "reducer": "sum",
               "right": "Objects"
             },
             "mode": "binary",
@@ -848,6 +878,7 @@
       "type": "table"
     }
   ],
+  "refresh": "",
   "schemaVersion": 30,
   "style": "dark",
   "tags": [
@@ -1069,5 +1100,5 @@
   "timezone": "",
   "title": "StorageGrid: Tenants",
   "uid": "storagegrid-tenants",
-  "version": 6
+  "version": 7
 }
