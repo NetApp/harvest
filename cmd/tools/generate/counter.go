@@ -260,7 +260,7 @@ func (m MetricDef) TableRow() string {
 }
 
 func (p PanelDef) DashboardTableRow() string {
-	return fmt.Sprintf("| %s | %s | %s | [%s](GRAFANA_HOST/%s) |", p.Dashboard, p.Row, p.Type, p.Panel, p.PanelLink)
+	return fmt.Sprintf("| %s | %s | %s | [%s](/%s) |", p.Dashboard, p.Row, p.Type, p.Panel, p.PanelLink)
 }
 
 // [Top $TopResources Average Disk Utilization Per Aggregate](GRAFANA_HOST/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=63)
