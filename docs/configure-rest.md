@@ -197,10 +197,14 @@ The `export_options` section allows you to define how to export these time-serie
 #### Endpoints
 
 In Harvest REST templates, `endpoints` are additional queries that enhance the data collected from the main query. The main query, identified by the `query` parameter, is the primary REST API for data collection. For example, the main query for a `disk` object is `api/storage/disks`.
-Typically `endpoints` are used to query the private CLI to add metrics that are not available via ONTAP's public REST API.
+This main query collects disk objects from the ONTAP API and converts them into a [matrix](resources/matrix.md).
 
+Typically `endpoints` are used to query the private CLI to add metrics that are not available via ONTAP's public REST API.
 Within the `endpoints` section of a Harvest REST template, you can define multiple endpoint entries. Each entry supports its own `query` and associated `counters`, allowing you to collect additional metrics or labels from various API.
-These additional metrics or labels are associated with the main dataset via a key. The key is denoted by the `^^` notation in the counters of both the main query and the `endpoints`.
+These additional metrics or labels are combined with the main matrix via a key. The key is denoted by the `^^` notation in the counters of both the main query and the `endpoints`.
+
+If the `instance_add` flag is set to `true` within an endpoint, new records will be created rather than modifying existing ones.
+This allows for the collection of additional instances without altering the existing matrix.
 
 In the example below, the `endpoints` section makes an additional query to `api/private/cli/disk`, which collects metrics such as `stats_io_kbps`, `stats_sectors_read`, and `stats_sectors_written`. The `uuid` is the key that links the data from the `api/storage/disks` and `api/private/cli/disk` API.
 The `type` label from the `api/private/cli/disk` endpoint is included as outlined in the `export_options`.
@@ -266,6 +270,84 @@ export_options:
     - shelf_bay
     - type
 ```
+
+Example with `instance_add`
+
+
+In the example below, the use of `instance_add` is necessary to collect both flexvols and their flexgroup constituents, which cannot be retrieved in a single ONTAP API call.
+Therefore, two separate API calls are required. Initially, volume data excluding flexgroups is gathered from `api/storage/volumes` and added to the `matrix`.
+The endpoint with `instance_add: true` enables the collection and addition of flexgroup constituent volumes to the matrix.
+Subsequently, the endpoint query `api/private/cli/volume` is used to add `aggr` and `node` labels to the data collected from both the main query and the first endpoint query,
+modifying the matrix with additional details.
+
+This example is from `conf/keyperf/9.15.0/volume.yaml`.
+
+```yaml
+name:                     Volume
+query:                    api/storage/volumes
+object:                   volume
+
+counters:
+  - ^^name                                    => volume
+  - ^^svm.name                                => svm
+  - ^statistics.status                        => status
+  - ^style                                    => style
+  - statistics.iops_raw.other                 => other_ops
+  - statistics.iops_raw.read                  => read_ops
+  - statistics.iops_raw.total                 => total_ops
+  - statistics.iops_raw.write                 => write_ops
+  - statistics.latency_raw.other              => other_latency
+  - statistics.latency_raw.read               => read_latency
+  - statistics.latency_raw.total              => avg_latency
+  - statistics.latency_raw.write              => write_latency
+  - statistics.throughput_raw.other           => other_data
+  - statistics.throughput_raw.read            => read_data
+  - statistics.throughput_raw.total           => total_data
+  - statistics.throughput_raw.write           => write_data
+  - statistics.timestamp(timestamp)           => timestamp
+  - hidden_fields:
+      - statistics
+  - filter:
+      - statistics.timestamp=!"-"
+      - style=!flexgroup     # collected via endpoints
+
+endpoints:
+  - query: api/storage/volumes
+    instance_add: true
+    counters:
+      - ^^name                                => volume
+      - ^^svm.name                            => svm
+      - ^statistics.status                    => status
+      - ^style                                => style
+      - statistics.iops_raw.other             => other_ops
+      - statistics.iops_raw.read              => read_ops
+      - statistics.iops_raw.total             => total_ops
+      - statistics.iops_raw.write             => write_ops
+      - statistics.latency_raw.other          => other_latency
+      - statistics.latency_raw.read           => read_latency
+      - statistics.latency_raw.total          => avg_latency
+      - statistics.latency_raw.write          => write_latency
+      - statistics.throughput_raw.other       => other_data
+      - statistics.throughput_raw.read        => read_data
+      - statistics.throughput_raw.total       => total_data
+      - statistics.throughput_raw.write       => write_data
+      - statistics.timestamp(timestamp)       => timestamp
+      - hidden_fields:
+          - statistics
+      - filter:
+          - statistics.timestamp=!"-"
+          - is_constituent=true
+
+  - query: api/private/cli/volume
+    counters:
+      - ^^volume                              => volume
+      - ^^vserver                             => svm
+      - ^aggr_list                            => aggr
+      - ^nodes                                => node
+      - filter:
+          - is_constituent=*
+```
+
 
 ## RestPerf Collector
 
