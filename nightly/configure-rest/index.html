@@ -2569,9 +2569,12 @@ histograms. The exact property of each counter is fetched from ONTAP and updated
 </ul>
 <h4 id="endpoints">Endpoints<a class="headerlink" href="#endpoints" title="Permanent link">&para;</a></h4>
 <p>In Harvest REST templates, <code>endpoints</code> are additional queries that enhance the data collected from the main query. The main query, identified by the <code>query</code> parameter, is the primary REST API for data collection. For example, the main query for a <code>disk</code> object is <code>api/storage/disks</code>.
-Typically <code>endpoints</code> are used to query the private CLI to add metrics that are not available via ONTAP's public REST API.</p>
-<p>Within the <code>endpoints</code> section of a Harvest REST template, you can define multiple endpoint entries. Each entry supports its own <code>query</code> and associated <code>counters</code>, allowing you to collect additional metrics or labels from various API.
-These additional metrics or labels are associated with the main dataset via a key. The key is denoted by the <code>^^</code> notation in the counters of both the main query and the <code>endpoints</code>.</p>
+This main query collects disk objects from the ONTAP API and converts them into a <a href="../resources/matrix/">matrix</a>.</p>
+<p>Typically <code>endpoints</code> are used to query the private CLI to add metrics that are not available via ONTAP's public REST API.
+Within the <code>endpoints</code> section of a Harvest REST template, you can define multiple endpoint entries. Each entry supports its own <code>query</code> and associated <code>counters</code>, allowing you to collect additional metrics or labels from various API.
+These additional metrics or labels are combined with the main matrix via a key. The key is denoted by the <code>^^</code> notation in the counters of both the main query and the <code>endpoints</code>.</p>
+<p>If the <code>instance_add</code> flag is set to <code>true</code> within an endpoint, new records will be created rather than modifying existing ones.
+This allows for the collection of additional instances without altering the existing matrix.</p>
 <p>In the example below, the <code>endpoints</code> section makes an additional query to <code>api/private/cli/disk</code>, which collects metrics such as <code>stats_io_kbps</code>, <code>stats_sectors_read</code>, and <code>stats_sectors_written</code>. The <code>uuid</code> is the key that links the data from the <code>api/storage/disks</code> and <code>api/private/cli/disk</code> API.
 The <code>type</code> label from the <code>api/private/cli/disk</code> endpoint is included as outlined in the <code>export_options</code>.</p>
 <div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w">             </span><span class="l l-Scalar l-Scalar-Plain">Disk</span>
@@ -2633,6 +2636,77 @@ The <code>type</code> label from the <code>api/private/cli/disk</code> endpoint 
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">shelf</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">shelf_bay</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">type</span>
+</code></pre></div>
+<p>Example with <code>instance_add</code></p>
+<p>In the example below, the use of <code>instance_add</code> is necessary to collect both flexvols and their flexgroup constituents, which cannot be retrieved in a single ONTAP API call.
+Therefore, two separate API calls are required. Initially, volume data excluding flexgroups is gathered from <code>api/storage/volumes</code> and added to the <code>matrix</code>.
+The endpoint with <code>instance_add: true</code> enables the collection and addition of flexgroup constituent volumes to the matrix.
+Subsequently, the endpoint query <code>api/private/cli/volume</code> is used to add <code>aggr</code> and <code>node</code> labels to the data collected from both the main query and the first endpoint query,
+modifying the matrix with additional details.</p>
+<p>This example is from <code>conf/keyperf/9.15.0/volume.yaml</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w">                     </span><span class="l l-Scalar l-Scalar-Plain">Volume</span>
+<span class="nt">query</span><span class="p">:</span><span class="w">                    </span><span class="l l-Scalar l-Scalar-Plain">api/storage/volumes</span>
+<span class="nt">object</span><span class="p">:</span><span class="w">                   </span><span class="l l-Scalar l-Scalar-Plain">volume</span>
+
+<span class="nt">counters</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^name                                    =&gt; volume</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^svm.name                                =&gt; svm</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^statistics.status                        =&gt; status</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^style                                    =&gt; style</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.iops_raw.other                 =&gt; other_ops</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.iops_raw.read                  =&gt; read_ops</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.iops_raw.total                 =&gt; total_ops</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.iops_raw.write                 =&gt; write_ops</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.latency_raw.other              =&gt; other_latency</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.latency_raw.read               =&gt; read_latency</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.latency_raw.total              =&gt; avg_latency</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.latency_raw.write              =&gt; write_latency</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.throughput_raw.other           =&gt; other_data</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.throughput_raw.read            =&gt; read_data</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.throughput_raw.total           =&gt; total_data</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.throughput_raw.write           =&gt; write_data</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.timestamp(timestamp)           =&gt; timestamp</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">hidden_fields</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">filter</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.timestamp=!&quot;-&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">style=!flexgroup</span><span class="w">     </span><span class="c1"># collected via endpoints</span>
+
+<span class="nt">endpoints</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api/storage/volumes</span>
+<span class="w">    </span><span class="nt">instance_add</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">counters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^name                                =&gt; volume</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^svm.name                            =&gt; svm</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^statistics.status                    =&gt; status</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^style                                =&gt; style</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.iops_raw.other             =&gt; other_ops</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.iops_raw.read              =&gt; read_ops</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.iops_raw.total             =&gt; total_ops</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.iops_raw.write             =&gt; write_ops</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.latency_raw.other          =&gt; other_latency</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.latency_raw.read           =&gt; read_latency</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.latency_raw.total          =&gt; avg_latency</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.latency_raw.write          =&gt; write_latency</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.throughput_raw.other       =&gt; other_data</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.throughput_raw.read        =&gt; read_data</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.throughput_raw.total       =&gt; total_data</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.throughput_raw.write       =&gt; write_data</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.timestamp(timestamp)       =&gt; timestamp</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">hidden_fields</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">filter</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.timestamp=!&quot;-&quot;</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">is_constituent=true</span>
+
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api/private/cli/volume</span>
+<span class="w">    </span><span class="nt">counters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^volume                              =&gt; volume</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^vserver                             =&gt; svm</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^aggr_list                            =&gt; aggr</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^nodes                                =&gt; node</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">filter</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">is_constituent=*</span>
 </code></pre></div>
 <h2 id="restperf-collector">RestPerf Collector<a class="headerlink" href="#restperf-collector" title="Permanent link">&para;</a></h2>
 <p>RestPerf collects performance metrics from ONTAP systems using the REST protocol. The collector is designed to be easily
