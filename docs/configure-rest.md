@@ -197,7 +197,7 @@ The `export_options` section allows you to define how to export these time-serie
 #### Endpoints
 
 In Harvest REST templates, `endpoints` are additional queries that enhance the data collected from the main query. The main query, identified by the `query` parameter, is the primary REST API for data collection. For example, the main query for a `disk` object is `api/storage/disks`.
-This main query collects disk objects from the ONTAP API and converts them into a [matrix](#matrix-configuration-file).
+This main query collects disk objects from the ONTAP API and converts them into a [matrix](resources/matrix.md).
 
 Typically `endpoints` are used to query the private CLI to add metrics that are not available via ONTAP's public REST API.
 Within the `endpoints` section of a Harvest REST template, you can define multiple endpoint entries. Each entry supports its own `query` and associated `counters`, allowing you to collect additional metrics or labels from various API.
