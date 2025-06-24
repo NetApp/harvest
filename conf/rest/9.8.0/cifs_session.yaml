@@ -18,7 +18,7 @@ counters:
   - ^smb_signing
   - ^svm.name                => svm
   - ^user
-  - ^volumes                 => volumes
+  - ^volumes.#.name          => volumes
   - connection_count
 
 plugins:
