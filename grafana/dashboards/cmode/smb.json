@@ -500,6 +500,28 @@
                 ]
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "volumes"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Volumes"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-volume/ontap-volume?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${SVM:queryparam}&${__url_time_range}&var-Volume=${__value.raw}"
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -546,7 +568,8 @@
                 "smb_encryption",
                 "smb_signing",
                 "svm",
-                "user"
+                "user",
+                "volumes"
               ]
             }
           }
@@ -556,20 +579,21 @@
           "options": {
             "excludeByName": {},
             "indexByName": {
-              "authentication": 4,
-              "client_ip": 5,
+              "authentication": 5,
+              "client_ip": 6,
               "cluster": 1,
-              "connection_id": 6,
+              "connection_id": 7,
               "datacenter": 0,
-              "large_mtu": 7,
-              "mapped_unix_user": 8,
+              "large_mtu": 8,
+              "mapped_unix_user": 9,
               "node": 2,
-              "protocol": 9,
-              "server_ip": 10,
-              "smb_encryption": 11,
-              "smb_signing": 12,
+              "protocol": 10,
+              "server_ip": 11,
+              "smb_encryption": 12,
+              "smb_signing": 13,
               "svm": 3,
-              "user": 13
+              "user": 14,
+              "volumes": 4
             },
             "renameByName": {
               "authentication": "Authetication",
