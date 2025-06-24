@@ -890,14 +890,14 @@ func TestTopKRange(t *testing.T) {
 func checkTopKRange(t *testing.T, path string, data []byte) {
 
 	// collect all expressions
-	expressions := make([]exprP, 0)
+	expressions := make([]ExprP, 0)
 
 	VisitAllPanels(data, func(_ string, key, value gjson.Result) {
-		doTarget("", key, value, func(path string, expr string, format string, title string) {
+		DoTarget("", "", key, value, func(path string, expr string, format string, id string, title string, rowTitle string) {
 			if format == "table" || format == "stat" {
 				return
 			}
-			expressions = append(expressions, newExpr(path, expr, title))
+			expressions = append(expressions, NewExpr(path, expr, format, id, title, rowTitle))
 		})
 	})
 
@@ -905,10 +905,10 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 	variables := allVariables(data)
 
 	for _, expr := range expressions {
-		if !strings.Contains(expr.expr, "topk") {
+		if !strings.Contains(expr.Expr, "topk") {
 			continue
 		}
-		if strings.Contains(expr.expr, "/") {
+		if strings.Contains(expr.Expr, "/") {
 			continue
 		}
 
@@ -929,9 +929,9 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 			}
 		}
 
-		problem := ensureLookBack(expr.expr)
+		problem := ensureLookBack(expr.Expr)
 		if problem != "" {
-			t.Errorf(`dashboard=%s path=%s topk got=%s %s`, ShortPath(path), expr.path, expr.expr, problem)
+			t.Errorf(`dashboard=%s path=%s topk got=%s %s`, ShortPath(path), expr.path, expr.Expr, problem)
 		}
 	}
 
@@ -1601,12 +1601,12 @@ func checkDescription(t *testing.T, path string, data []byte, count *int) {
 		"Top $TopResources Workloads by Service Time from sync_repl", "Top $TopResources Workloads by Service Time from flexcache_ral", "Top $TopResources Workloads by Service Time from flexcache_spinhi",
 		"Top $TopResources Workloads by Latency from sync_repl", "Top $TopResources Workloads by Latency from flexcache_ral", "Top $TopResources Workloads by Latency from flexcache_spinhi", "Service Latency by Resources",
 		// These are from svm
-		"NFSv3 Latency Heatmap", "NFSv3 Read Latency Heatmap", "NFSv3 Write Latency Heatmap", "NFSv3 Latency by Op Type", "NFSv3 IOPs per Type",
-		"NFSv4 Latency Heatmap", "NFSv4 Read Latency Heatmap", "NFSv4 Write Latency Heatmap", "NFSv4 Latency by Op Type", "NFSv4 IOPs per Type",
-		"NFSv4.1 Latency Heatmap", "NFSv4.1 Read Latency Heatmap", "NFSv4.1 Write Latency Heatmap", "NFSv4.1 Latency by Op Type", "NFSv4.1 IOPs per Type",
-		"NFSv4.2 Latency by Op Type", "NFSv4.2 IOPs per Type", "SVM NVMe/FC Throughput", "Copy Manager Requests",
+		"NFSv3 Latency Heatmap", "NFSv3 Read Latency Heatmap", "NFSv3 Write Latency Heatmap", "NFSv3 Latency by Op Type", "NFSv3 IOPs Per Type",
+		"NFSv4 Latency Heatmap", "NFSv4 Read Latency Heatmap", "NFSv4 Write Latency Heatmap", "NFSv4 Latency by Op Type", "NFSv4 IOPs Per Type",
+		"NFSv4.1 Latency Heatmap", "NFSv4.1 Read Latency Heatmap", "NFSv4.1 Write Latency Heatmap", "NFSv4.1 Latency by Op Type", "NFSv4.1 IOPs Per Type",
+		"NFSv4.2 Latency by Op Type", "NFSv4.2 IOPs Per Type", "SVM NVMe/FC Throughput", "Copy Manager Requests",
 		// This is from volume
-		"Top $TopResources Volumes by Number of Compress Attempts", "Top $TopResources Volumes by Number of Compress Fail", "Volume Latency by Op Type", "Volume IOPs per Type",
+		"Top $TopResources Volumes by Number of Compress Attempts", "Top $TopResources Volumes by Number of Compress Fail", "Volume Latency by Op Type", "Volume IOPs Per Type",
 		// This is from lun
 		"IO Size",
 		// This is from nfs4storePool

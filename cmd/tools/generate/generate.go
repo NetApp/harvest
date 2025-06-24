@@ -137,6 +137,17 @@ func doDockerCompose(cmd *cobra.Command, _ []string) {
 
 func doGenerateMetrics(cmd *cobra.Command, _ []string) {
 	addRootOptions(cmd)
+	// reset metricsPanelMap map
+	metricsPanelMap = make(map[string]PanelData)
+	panelKeyMap = make(map[string]bool)
+	visitDashboard(
+		[]string{
+			"grafana/dashboards/cmode",
+			"grafana/dashboards/cmode-details",
+		},
+		func(data []byte) {
+			visitExpressions(data)
+		})
 	counters, cluster := BuildMetrics("", "", opts.Poller)
 	generateCounterTemplate(counters, cluster.Version)
 }

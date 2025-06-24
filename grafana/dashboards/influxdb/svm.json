@@ -895,7 +895,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Latency per Type",
+      "title": "Latency Per Type",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -998,7 +998,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "IOPs per Type",
+      "title": "IOPs Per Type",
       "tooltip": {
         "shared": true,
         "sort": 0,

@@ -8631,7 +8631,7 @@
               "refId": "Read Throughput"
             }
           ],
-          "title": "NFSv3 IOPs per Type",
+          "title": "NFSv3 IOPs Per Type",
           "transformations": [
             {
               "id": "renameByRegex",
@@ -9945,7 +9945,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "NFSv4 IOPs per Type",
+          "title": "NFSv4 IOPs Per Type",
           "transformations": [
             {
               "id": "renameByRegex",
@@ -10446,7 +10446,7 @@
               "refId": "A"
             }
           ],
-          "title": " NFSv4.1 Read Throughput",
+          "title": "NFSv4.1 Read Throughput",
           "transformations": [
             {
               "id": "reduce",
@@ -10546,7 +10546,7 @@
               "refId": "A"
             }
           ],
-          "title": " NFSv4.1 Write Throughput",
+          "title": "NFSv4.1 Write Throughput",
           "transformations": [
             {
               "id": "reduce",
@@ -11267,7 +11267,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "NFSv4.1 IOPs per Type",
+          "title": "NFSv4.1 IOPs Per Type",
           "transformations": [
             {
               "id": "renameByRegex",
@@ -11768,7 +11768,7 @@
               "refId": "A"
             }
           ],
-          "title": " NFSv4.2 Read Throughput",
+          "title": "NFSv4.2 Read Throughput",
           "transformations": [
             {
               "id": "reduce",
@@ -11868,7 +11868,7 @@
               "refId": "A"
             }
           ],
-          "title": " NFSv4.2 Write Throughput",
+          "title": "NFSv4.2 Write Throughput",
           "transformations": [
             {
               "id": "reduce",
@@ -12589,7 +12589,7 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "NFSv4.2 IOPs per Type",
+          "title": "NFSv4.2 IOPs Per Type",
           "transformations": [
             {
               "id": "renameByRegex",

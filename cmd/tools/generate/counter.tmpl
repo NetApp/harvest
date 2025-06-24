@@ -10,6 +10,17 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 Creation Date : {{ .CounterMetaData.Date }}
 ONTAP Version: {{ .CounterMetaData.OntapVersion }}
 ```
+
+??? "Navigate to Grafana dashboards"
+
+    Add your Grafana instance to the following form and save it. When you click on dashboard links on this page, a link to your dashboard will be opened. NAbox hosts Grafana on a subdomain like so: https://localhost/grafana/
+
+    <div>
+        <label for="grafanaHost">Grafana Host</label>
+        <input type="text" id="grafanaHost" name="grafanaHost" placeholder="e.g. http://localhost:3000" style="width: 80%;margin-left:1em">
+        <button type="button" onclick="saveGrafanaHost()">Save</button>
+    </div>
+
 ## Understanding the structure
 
 Below is an <span class="key">annotated</span> example of how to interpret the structure of each of the [metrics](#metrics).
@@ -21,7 +32,7 @@ Number of I/Os queued to the disk but not yet issued <span class="key">Descripti
 * <span class="key">API</span> will be one of REST or ZAPI depending on which collector is used to collect the metric
 * <span class="key">Endpoint</span> name of the REST or ZAPI API used to collect this metric
 * <span class="key">Metric</span> name of the ONTAP metric
- <span class="key">Template</span> path of the template that collects the metric
+* <span class="key">Template</span> path of the template that collects the metric
 
 Performance related metrics also include:
 
@@ -47,4 +58,16 @@ Performance related metrics also include:
 {{.TableRow -}}
 {{end}}
 {{end}}
+
+{{- if .HasPanels}}
+The `{{ .Name }}` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+{{- .PanelHeader -}}
+{{range .Panels}}
+{{.DashboardTableRow -}}
+{{end}}
+///
+{{end}}
+
 {{end}}

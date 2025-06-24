@@ -1279,8 +1279,8 @@ counters:
         Template: conf/rest/9.6.0/health.yaml
 
   - Name: health_ems_alerts
-    Description: The health_ems_alerts metric monitors EMS (Event Management System), providing a count based on their severity and other attributes. This metric includes labels such as node, message, source, and severity (e.g., emergency, alert, error). 
-                 By default, it monitors alerts with emergency severity.
+    Description: The health_ems_alerts metric monitors EMS (Event Management System), providing a count based on their severity and other attributes. This metric includes labels such as node, message, source, and severity (e.g., emergency, alert, error).
+      By default, it monitors alerts with emergency severity.
     APIs:
       - API: REST
         Endpoint: NA
@@ -1422,8 +1422,8 @@ counters:
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
 
   - Name: shelf_new_status
-    Description: This metric indicates a value of 1 if the shelf state is online or ok (indicating the shelf is operational) 
-     and a value of 0 for any other state (indicating the shelf is not operational).
+    Description: This metric indicates a value of 1 if the shelf state is online or ok (indicating the shelf is operational)
+      and a value of 0 for any other state (indicating the shelf is not operational).
     APIs:
       - API: REST
         Endpoint: NA
@@ -1543,8 +1543,8 @@ counters:
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
 
   - Name: aggr_new_status
-    Description: This metric indicates a value of 1 if the aggregate state is online (indicating the aggregate is operational) 
-     and a value of 0 for any other state.
+    Description: This metric indicates a value of 1 if the aggregate state is online (indicating the aggregate is operational)
+      and a value of 0 for any other state.
     APIs:
       - API: REST
         Endpoint: NA
@@ -1556,8 +1556,8 @@ counters:
         Template: conf/zapi/cdot/9.8.0/aggr.yaml
 
   - Name: cluster_subsystem_new_status
-    Description: This metric indicates a value of 1 if the subsystem health is ok (indicating the subsystem is operational) 
-     and a value of 0 for any other health status.
+    Description: This metric indicates a value of 1 if the subsystem health is ok (indicating the subsystem is operational)
+      and a value of 0 for any other health status.
     APIs:
       - API: REST
         Endpoint: NA
@@ -1581,8 +1581,8 @@ counters:
         Template: conf/zapi/cdot/9.8.0/disk.yaml
 
   - Name: environment_sensor_status
-    Description: This metric indicates a value of 1 if the sensor threshold state is normal (indicating the sensor is operating within normal parameters) 
-     and a value of 0 for any other state.
+    Description: This metric indicates a value of 1 if the sensor threshold state is normal (indicating the sensor is operating within normal parameters)
+      and a value of 0 for any other state.
     APIs:
       - API: REST
         Endpoint: NA
@@ -1898,8 +1898,8 @@ counters:
         Template: conf/zapiperf/cdot/9.8.0/nic_common.yaml
 
   - Name: cluster_peer_non_encrypted
-    Description: This metric indicates a value of 1 if the cluster peer encryption state is none (indicating the connection is not encrypted) 
-     and a value of 0 for any other state.
+    Description: This metric indicates a value of 1 if the cluster peer encryption state is none (indicating the connection is not encrypted)
+      and a value of 0 for any other state.
     APIs:
       - API: REST
         Endpoint: NA
@@ -1923,8 +1923,8 @@ counters:
         Template: conf/zapiperf/cdot/9.8.0/nic_common.yaml
 
   - Name: svm_new_status
-    Description: This metric indicates a value of 1 if the SVM state is online (indicating the SVM is operational) 
-     and a value of 0 for any other state.
+    Description: This metric indicates a value of 1 if the SVM state is online (indicating the SVM is operational)
+      and a value of 0 for any other state.
     APIs:
       - API: REST
         Endpoint: NA
