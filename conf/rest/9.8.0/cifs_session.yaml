@@ -18,8 +18,11 @@ counters:
   - ^smb_signing
   - ^svm.name                => svm
   - ^user
-  - ^volumes.#.name          => volumes
+  - ^volumes                 => volumes
   - connection_count
+
+plugins:
+  - CIFSSession
 
 export_options:
   instance_keys:
