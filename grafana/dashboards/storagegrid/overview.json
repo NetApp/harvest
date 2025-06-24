@@ -778,7 +778,7 @@
                   }
                 ]
               },
-              "unit": "locale"
+              "unit": "reqps"
             },
             "overrides": []
           },
@@ -806,14 +806,14 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (\n  storagegrid_s3_operations_successful{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n)",
+              "expr": "sum by (cluster) (\n  rate(storagegrid_s3_operations_successful{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[2m])\n)",
               "interval": "",
               "legendFormat": "{{cluster}} - Successful",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (storagegrid_s3_operations_failed{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
+              "expr": "sum by (cluster) (\n  rate(storagegrid_s3_operations_failed{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[2m])\n)",
               "hide": false,
               "instant": false,
               "interval": "",
@@ -822,7 +822,7 @@
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (\n  storagegrid_s3_operations_unauthorized{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n)",
+              "expr": "sum by (cluster) (\n  rate(storagegrid_s3_operations_unauthorized{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[2m])\n)",
               "hide": false,
               "instant": false,
               "interval": "",
