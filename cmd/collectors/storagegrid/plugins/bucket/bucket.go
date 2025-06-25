@@ -5,6 +5,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
@@ -28,9 +29,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 }
 
 func (b *Bucket) Init(remote conf.Remote) error {
-
 	var err error
-
 	if err := b.InitAbc(); err != nil {
 		return err
 	}
@@ -49,12 +48,15 @@ func (b *Bucket) Init(remote conf.Remote) error {
 	for k := range metricToJSON {
 		_, _ = b.data.NewMetricFloat64(k)
 	}
+
 	return nil
 }
 
 func (b *Bucket) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	var (
-		instanceKey string
+		used, quota, usedPercent *matrix.Metric
+		err                      error
+		instanceKey              string
 	)
 
 	data := dataMap[b.Object]
@@ -65,6 +67,22 @@ func (b *Bucket) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *coll
 
 	// Set all global labels from Rest.go if already not exist
 	b.data.SetGlobalLabels(data.GetGlobalLabels())
+
+	if used = b.data.GetMetric("bytes"); used == nil {
+		return nil, nil, errs.New(errs.ErrNoMetric, "bytes")
+	}
+
+	if quota = b.data.GetMetric("quota_bytes"); quota == nil {
+		return nil, nil, errs.New(errs.ErrNoMetric, "quota_bytes")
+	}
+
+	if usedPercent = b.data.GetMetric("used_percent"); usedPercent == nil {
+		if usedPercent, err = b.data.NewMetricFloat64("used_percent"); err == nil {
+			usedPercent.SetProperty("raw")
+		} else {
+			return nil, nil, err
+		}
+	}
 
 	// request the buckets for each tenant
 	for instKey, inst := range data.GetInstances() {
@@ -89,6 +107,11 @@ func (b *Bucket) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *coll
 
 			bucketsJSON := record.Get("buckets")
 			for _, bucketJSON := range bucketsJSON.Array() {
+				var (
+					usedBytes, quotaBytes, percentage float64
+					usedOK, quotaOK                   bool
+				)
+
 				bucket := bucketJSON.Get("name").ClonedString()
 				region := bucketJSON.Get("region").ClonedString()
 
@@ -128,6 +151,16 @@ func (b *Bucket) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *coll
 							)
 						}
 					}
+				}
+
+				usedBytes, usedOK = used.GetValueFloat64(bucketInstance)
+				quotaBytes, quotaOK = quota.GetValueFloat64(bucketInstance)
+				if usedOK && quotaOK {
+					percentage = usedBytes / quotaBytes * 100
+					if quotaBytes == 0 {
+						percentage = 0
+					}
+					usedPercent.SetValueFloat64(bucketInstance, percentage)
 				}
 			}
 		}
