@@ -4482,7 +4482,7 @@
               "exemplar": false,
               "expr": "svm_cifs_connections{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}",
               "interval": "",
-              "legendFormat": "Connections",
+              "legendFormat": "Connections - {{svm}}",
               "refId": "A"
             },
             {
@@ -4490,7 +4490,7 @@
               "expr": "svm_cifs_open_files{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "Open Files",
+              "legendFormat": "Open Files - {{svm}}",
               "refId": "B"
             }
           ],
