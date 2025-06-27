@@ -2837,26 +2837,26 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
+              "expr": "sum by (cluster) (environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Node",
+              "legendFormat": "Node - {{cluster}}",
               "refId": "B"
             },
             {
               "exemplar": false,
-              "expr": "sum(shelf_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
+              "expr": "sum by (cluster) (shelf_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Shelf",
+              "legendFormat": "Shelf - {{cluster}}",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "(sum(environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) or vector(0))\n+\n  (sum(shelf_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) or vector(0))",
+              "expr": "(\n      sum by (cluster) (environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n    or\n      vector(0)\n  )\n+\n  (sum by (cluster) (shelf_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) or vector(0))",
               "hide": false,
               "interval": "",
-              "legendFormat": "Total",
+              "legendFormat": "Total - {{cluster}}",
               "refId": "C"
             }
           ],

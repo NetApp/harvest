@@ -3860,7 +3860,7 @@
               "exemplar": false,
               "expr": "lun_caw_reqs{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",lun=~\"$LUN\",svm=~\"$SVM\",volume=~\"$Volume|\"}",
               "interval": "",
-              "legendFormat": "Compare and Write",
+              "legendFormat": "Compare and Write {{svm}} / {{volume}} / {{lun}}",
               "refId": "A"
             },
             {
@@ -3868,7 +3868,7 @@
               "expr": "lun_unmap_reqs{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",lun=~\"$LUN\",svm=~\"$SVM\",volume=~\"$Volume|\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "Unmap",
+              "legendFormat": "Unmap {{svm}} / {{volume}} / {{lun}}",
               "refId": "B"
             },
             {
@@ -3876,7 +3876,7 @@
               "expr": "lun_writesame_reqs{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",lun=~\"$LUN\",svm=~\"$SVM\",volume=~\"$Volume|\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "Write Same",
+              "legendFormat": "Write Same {{svm}} / {{volume}} / {{lun}}",
               "refId": "C"
             },
             {
@@ -3884,7 +3884,7 @@
               "expr": "lun_writesame_unmap_reqs{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",lun=~\"$LUN\",svm=~\"$SVM\",volume=~\"$Volume|\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "Write Same Unmap",
+              "legendFormat": "Write Same Unmap {{svm}} / {{volume}} / {{lun}}",
               "refId": "D"
             },
             {
@@ -3892,7 +3892,7 @@
               "expr": "lun_xcopy_reqs{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",lun=~\"$LUN\",svm=~\"$SVM\",volume=~\"$Volume|\"}",
               "hide": false,
               "interval": "",
-              "legendFormat": "Xcopy",
+              "legendFormat": "Xcopy {{svm}} / {{volume}} / {{lun}}",
               "refId": "E"
             }
           ],
