@@ -701,26 +701,26 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
+          "expr": "sum by (cluster) (environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
           "hide": false,
           "interval": "",
-          "legendFormat": "Node",
+          "legendFormat": "Node - {{cluster}}",
           "refId": "B"
         },
         {
           "exemplar": false,
-          "expr": "sum(shelf_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
+          "expr": "sum by (cluster) (shelf_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
           "hide": false,
           "interval": "",
-          "legendFormat": "Shelf",
+          "legendFormat": "Shelf - {{cluster}}",
           "refId": "A"
         },
         {
           "exemplar": false,
-          "expr": "(sum(environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) or vector(0))\n+\n  (\n      sum(\n          shelf_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n        * on (datacenter, cluster, shelf)\n          shelf_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",isEmbedded=\"No\"}\n      )\n    or\n      vector(0)\n  )",
+          "expr": "(\n      sum by (cluster) (environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n    or\n      vector(0)\n  )\n+\n  (\n      sum by (cluster) (\n          shelf_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n        * on (datacenter, cluster, shelf)\n          shelf_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",isEmbedded=\"No\"}\n      )\n    or\n      vector(0)\n  )",
           "hide": false,
           "interval": "",
-          "legendFormat": "Total",
+          "legendFormat": "Total - {{cluster}}",
           "refId": "C"
         }
       ],
@@ -845,26 +845,26 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(avg_over_time(environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[1h]))",
+          "expr": "sum by (cluster) (\n  avg_over_time(environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[1h])\n)",
           "hide": false,
           "interval": "",
-          "legendFormat": "Node",
+          "legendFormat": "Node- {{cluster}}",
           "refId": "B"
         },
         {
           "exemplar": false,
-          "expr": "sum(avg_over_time(shelf_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[1h]))",
+          "expr": "sum by (cluster) (avg_over_time(shelf_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[1h]))",
           "hide": false,
           "interval": "",
-          "legendFormat": "Shelf",
+          "legendFormat": "Shelf - {{cluster}}",
           "refId": "A"
         },
         {
           "exemplar": false,
-          "expr": "sum(avg_over_time(environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[1h]))\n+\n  sum(\n      avg_over_time(shelf_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[1h])\n    * on (datacenter, cluster, shelf)\n      shelf_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",isEmbedded=\"No\"}\n  )",
+          "expr": "sum by (cluster) (\n    avg_over_time(environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[1h])\n  )\n+\n  sum by (cluster) (\n      avg_over_time(shelf_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[1h])\n    * on (datacenter, cluster, shelf)\n      shelf_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",isEmbedded=\"No\"}\n  )",
           "hide": false,
           "interval": "",
-          "legendFormat": "Total",
+          "legendFormat": "Total - {{cluster}}",
           "refId": "C"
         }
       ],

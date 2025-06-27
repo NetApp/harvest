@@ -3731,38 +3731,38 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "sum(fcp_int_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
+              "expr": "sum by (node) (\n  fcp_int_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
               "hide": false,
               "interval": "",
-              "legendFormat": "interrupts",
+              "legendFormat": "interrupts - {{node}}",
               "refId": "B"
             },
             {
-              "expr": "sum(\n  fcp_invalid_transmission_word{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
+              "expr": "sum by (node) (\n  fcp_invalid_transmission_word{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
               "hide": false,
               "interval": "",
-              "legendFormat": "invalid transmission words (blocks)",
+              "legendFormat": "invalid transmission words (blocks) - {{node}}",
               "refId": "C"
             },
             {
-              "expr": "sum(fcp_isr_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
+              "expr": "sum by (node) (\n  fcp_isr_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
               "hide": false,
               "interval": "",
-              "legendFormat": "interrupt responses",
+              "legendFormat": "interrupt responses - {{node}}",
               "refId": "D"
             },
             {
-              "expr": "sum(\n  fcp_spurious_int_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
+              "expr": "sum by (node) (\n  fcp_spurious_int_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
               "hide": false,
               "interval": "",
-              "legendFormat": "spurious interrupts",
+              "legendFormat": "spurious interrupts - {{node}}",
               "refId": "I"
             },
             {
-              "expr": "sum(fcp_invalid_crc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
+              "expr": "sum by (node) (\n  fcp_invalid_crc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
               "hide": false,
               "interval": "",
-              "legendFormat": "invalid CRCs",
+              "legendFormat": "invalid CRCs - {{node}}",
               "refId": "A"
             }
           ],
@@ -3851,44 +3851,44 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "sum(\n  fcp_discarded_frames_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
+              "expr": "sum by (node) (\n  fcp_discarded_frames_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
               "interval": "",
-              "legendFormat": "discarded frames",
+              "legendFormat": "discarded frames - {{node}}",
               "refId": "A"
             },
             {
-              "expr": "sum(fcp_loss_of_signal{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
+              "expr": "sum by (node) (\n  fcp_loss_of_signal{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
               "hide": false,
               "interval": "",
-              "legendFormat": "loss of signal",
+              "legendFormat": "loss of signal - {{node}}",
               "refId": "E"
             },
             {
-              "expr": "sum(fcp_loss_of_sync{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
+              "expr": "sum by (node) (\n  fcp_loss_of_sync{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
               "hide": false,
               "interval": "",
-              "legendFormat": "loss of sync",
+              "legendFormat": "loss of sync - {{node}}",
               "refId": "F"
             },
             {
-              "expr": "sum(fcp_prim_seq_err{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
+              "expr": "sum by (node) (\n  fcp_prim_seq_err{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
               "hide": false,
               "interval": "",
-              "legendFormat": "primitive sequence errors",
+              "legendFormat": "primitive sequence errors - {{node}}",
               "refId": "G"
             },
             {
-              "expr": "sum(fcp_queue_full{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
+              "expr": "sum by (node) (\n  fcp_queue_full{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
               "hide": false,
               "interval": "",
-              "legendFormat": "queue full",
+              "legendFormat": "queue full - {{node}}",
               "refId": "H"
             },
             {
-              "expr": "sum(fcp_threshold_full{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
+              "expr": "sum by (node) (\n  fcp_threshold_full{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
               "hide": false,
               "interval": "",
-              "legendFormat": "threshold full",
+              "legendFormat": "threshold full - {{node}}",
               "refId": "J"
             }
           ],
