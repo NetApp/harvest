@@ -1999,11 +1999,6 @@ func TestLegendFormat(t *testing.T) {
 
 func checkLegendFormat(t *testing.T, path string, data []byte) {
 	path = ShortPath(path)
-	// changes are pending - working on it
-	if strings.Contains(path, "svm.json") {
-		return
-	}
-	i := 0
 	VisitAllPanels(data, func(_ string, _, value gjson.Result) {
 		panelTitle := value.Get("title").ClonedString()
 		kind := value.Get("type").ClonedString()
@@ -2014,8 +2009,7 @@ func checkLegendFormat(t *testing.T, path string, data []byte) {
 		for _, targetN := range targetsSlice {
 			legendFormat := targetN.Get("legendFormat").ClonedString()
 			if !strings.Contains(legendFormat, "{{") {
-				t.Errorf("%d dashboard=%s panel=%s kind=%s legendFormat=%s should have {{object}} in legendFormat", i, path, panelTitle, kind, legendFormat)
-				i++
+				t.Errorf("dashboard=%s panel=%s kind=%s legendFormat=%s should have {{object}} in legendFormat", path, panelTitle, kind, legendFormat)
 			}
 		}
 	})
