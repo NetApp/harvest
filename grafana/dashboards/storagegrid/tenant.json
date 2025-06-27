@@ -760,6 +760,37 @@
                 "value": "decbytes"
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Used %"
+            },
+            "properties": [
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "match": "nan",
+                      "result": {
+                        "index": 0,
+                        "text": "-"
+                      }
+                    },
+                    "type": "special"
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -835,12 +866,32 @@
           "options": {}
         },
         {
+          "id": "calculateField",
+          "options": {
+            "alias": "Used %",
+            "binary": {
+              "left": "Value #A",
+              "operator": "/",
+              "reducer": "sum",
+              "right": "Value #C"
+            },
+            "mode": "binary",
+            "reduce": {
+              "include": [
+                "Value #A"
+              ],
+              "reducer": "sum"
+            }
+          }
+        },
+        {
           "id": "organize",
           "options": {
             "excludeByName": {},
             "indexByName": {
+              "Used %": 7,
               "Value #A": 5,
-              "Value #B": 7,
+              "Value #B": 8,
               "Value #C": 6,
               "bucket": 3,
               "cluster": 1,
@@ -853,6 +904,7 @@
               "Value #A": "Space Used",
               "Value #B": "Objects",
               "Value #C": "Quota",
+              "aa": "Used %",
               "bucket": "Bucket",
               "region": "Region"
             }

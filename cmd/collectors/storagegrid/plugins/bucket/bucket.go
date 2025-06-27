@@ -5,6 +5,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
@@ -28,9 +29,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 }
 
 func (b *Bucket) Init(remote conf.Remote) error {
-
 	var err error
-
 	if err := b.InitAbc(); err != nil {
 		return err
 	}
@@ -49,11 +48,13 @@ func (b *Bucket) Init(remote conf.Remote) error {
 	for k := range metricToJSON {
 		_, _ = b.data.NewMetricFloat64(k)
 	}
+
 	return nil
 }
 
 func (b *Bucket) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	var (
+		used, quota *matrix.Metric
 		instanceKey string
 	)
 
@@ -65,6 +66,14 @@ func (b *Bucket) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *coll
 
 	// Set all global labels from Rest.go if already not exist
 	b.data.SetGlobalLabels(data.GetGlobalLabels())
+
+	if used = b.data.GetMetric("bytes"); used == nil {
+		return nil, nil, errs.New(errs.ErrNoMetric, "bytes")
+	}
+
+	if quota = b.data.GetMetric("quota_bytes"); quota == nil {
+		return nil, nil, errs.New(errs.ErrNoMetric, "quota_bytes")
+	}
 
 	// request the buckets for each tenant
 	for instKey, inst := range data.GetInstances() {
