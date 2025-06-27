@@ -758,21 +758,6 @@
               {
                 "id": "unit",
                 "value": "decbytes"
-              },
-              {
-                "id": "mappings",
-                "value": [
-                  {
-                    "options": {
-                      "match": "null+nan",
-                      "result": {
-                        "index": 0,
-                        "text": "0 B"
-                      }
-                    },
-                    "type": "special"
-                  }
-                ]
               }
             ]
           },
@@ -783,34 +768,22 @@
             },
             "properties": [
               {
-                "id": "custom.displayMode",
-                "value": "basic"
-              },
-              {
                 "id": "decimals",
                 "value": 0
               },
               {
-                "id": "max",
-                "value": 100
-              },
-              {
                 "id": "unit",
-                "value": "percent"
-              },
-              {
-                "id": "min",
-                "value": 0
+                "value": "percentunit"
               },
               {
                 "id": "mappings",
                 "value": [
                   {
                     "options": {
-                      "match": "null+nan",
+                      "match": "nan",
                       "result": {
                         "index": 0,
-                        "text": "0%"
+                        "text": "-"
                       }
                     },
                     "type": "special"
@@ -867,16 +840,6 @@
           "interval": "",
           "legendFormat": "",
           "refId": "C"
-        },
-        {
-          "exemplar": false,
-          "expr": "bucket_used_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",tenant=~\"$Tenant\"}",
-          "format": "table",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "D"
         }
       ],
       "title": "Buckets",
@@ -893,8 +856,7 @@
                 "tenant",
                 "Value #A",
                 "Value #B",
-                "Value #C",
-                "Value #D"
+                "Value #C"
               ]
             }
           }
@@ -904,14 +866,33 @@
           "options": {}
         },
         {
+          "id": "calculateField",
+          "options": {
+            "alias": "Used %",
+            "binary": {
+              "left": "Value #A",
+              "operator": "/",
+              "reducer": "sum",
+              "right": "Value #C"
+            },
+            "mode": "binary",
+            "reduce": {
+              "include": [
+                "Value #A"
+              ],
+              "reducer": "sum"
+            }
+          }
+        },
+        {
           "id": "organize",
           "options": {
             "excludeByName": {},
             "indexByName": {
+              "Used %": 7,
               "Value #A": 5,
               "Value #B": 8,
               "Value #C": 6,
-              "Value #D": 7,
               "bucket": 3,
               "cluster": 1,
               "datacenter": 0,
@@ -923,7 +904,7 @@
               "Value #A": "Space Used",
               "Value #B": "Objects",
               "Value #C": "Quota",
-              "Value #D": "Used %",
+              "aa": "Used %",
               "bucket": "Bucket",
               "region": "Region"
             }
