@@ -54,9 +54,8 @@ func (b *Bucket) Init(remote conf.Remote) error {
 
 func (b *Bucket) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	var (
-		used, quota, usedPercent *matrix.Metric
-		err                      error
-		instanceKey              string
+		used, quota *matrix.Metric
+		instanceKey string
 	)
 
 	data := dataMap[b.Object]
@@ -74,14 +73,6 @@ func (b *Bucket) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *coll
 
 	if quota = b.data.GetMetric("quota_bytes"); quota == nil {
 		return nil, nil, errs.New(errs.ErrNoMetric, "quota_bytes")
-	}
-
-	if usedPercent = b.data.GetMetric("used_percent"); usedPercent == nil {
-		if usedPercent, err = b.data.NewMetricFloat64("used_percent"); err == nil {
-			usedPercent.SetProperty("raw")
-		} else {
-			return nil, nil, err
-		}
 	}
 
 	// request the buckets for each tenant
@@ -107,11 +98,6 @@ func (b *Bucket) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *coll
 
 			bucketsJSON := record.Get("buckets")
 			for _, bucketJSON := range bucketsJSON.Array() {
-				var (
-					usedBytes, quotaBytes, percentage float64
-					usedOK, quotaOK                   bool
-				)
-
 				bucket := bucketJSON.Get("name").ClonedString()
 				region := bucketJSON.Get("region").ClonedString()
 
@@ -151,16 +137,6 @@ func (b *Bucket) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *coll
 							)
 						}
 					}
-				}
-
-				usedBytes, usedOK = used.GetValueFloat64(bucketInstance)
-				quotaBytes, quotaOK = quota.GetValueFloat64(bucketInstance)
-				if usedOK && quotaOK {
-					percentage = usedBytes / quotaBytes * 100
-					if quotaBytes == 0 {
-						percentage = 0
-					}
-					usedPercent.SetValueFloat64(bucketInstance, percentage)
 				}
 			}
 		}

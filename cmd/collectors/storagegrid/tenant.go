@@ -25,8 +25,9 @@ func NewTenant(p *plugin.AbstractPlugin, s *StorageGrid) plugin.Plugin {
 func (t *Tenant) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 
 	var (
-		used, quota     *matrix.Metric
-		tenantNamesByID map[string]string
+		used, quota, usedPercent *matrix.Metric
+		err                      error
+		tenantNamesByID          map[string]string
 	)
 	data := dataMap[t.Object]
 	t.sg.client.Metadata.Reset()
@@ -39,8 +40,32 @@ func (t *Tenant) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *coll
 		return nil, nil, errs.New(errs.ErrNoMetric, "logical_quota")
 	}
 
+	if usedPercent = data.GetMetric("used_percent"); usedPercent == nil {
+		if usedPercent, err = data.NewMetricFloat64("used_percent"); err == nil {
+			usedPercent.SetProperty("raw")
+		} else {
+			return nil, nil, err
+		}
+	}
+
 	tenantNamesByID = make(map[string]string)
 	for _, instance := range data.GetInstances() {
+
+		var (
+			usedBytes, quotaBytes, percentage float64
+			usedOK, quotaOK                   bool
+		)
+
+		usedBytes, usedOK = used.GetValueFloat64(instance)
+		quotaBytes, quotaOK = quota.GetValueFloat64(instance)
+		if usedOK && quotaOK {
+			percentage = usedBytes / quotaBytes * 100
+			if quotaBytes == 0 {
+				percentage = 0
+			}
+			usedPercent.SetValueFloat64(instance, percentage)
+		}
+
 		id := instance.GetLabel("id")
 		name := instance.GetLabel("tenant")
 		if id != "" && name != "" {
