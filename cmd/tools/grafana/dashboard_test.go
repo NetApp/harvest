@@ -31,6 +31,51 @@ var cDotDashboards = []string{
 	"../../../grafana/dashboards/cmode-details",
 }
 
+var legendDashboardMap = map[string][]string{
+	"cisco/cisco.json":                   {"switch", "interface", "ps"},
+	"cmode/aggregate.json":               {"cluster", "node", "aggr"},
+	"cmode/metadata.json":                {"hostname", "poller", "collector", "exporter", "object", "target", "task"},
+	"cmode/cdot.json":                    {"cluster", "svm", "volume"},
+	"cmode/cluster.json":                 {"cluster", "node", "aggr"},
+	"cmode/datacenter.json":              {"cluster"},
+	"cmode/disk.json":                    {"cluster", "node", "aggr", "plex", "raid"},
+	"cmode/external_service_op.json":     {"cluster", "svm", "operation"},
+	"cmode/fsa.json":                     {"svm", "volume"},
+	"cmode/flexgroup.json":               {"aggr", "volume"},
+	"cmode/flexcache.json":               {"svm", "volume"},
+	"cmode/headroom.json":                {"node"},
+	"cmode/lun.json":                     {"svm", "volume", "lun"},
+	"cmode/mcc_cluster.json":             {"node", "aggr", "plex"},
+	"cmode/network.json":                 {"cluster", "node", "nic", "eth"},
+	"cmode/nfs4storePool.json":           {"node"},
+	"cmode/nfsTroubleshooting.json":      {"node", "metric"},
+	"cmode/node.json":                    {"cluster", "svm", "node", "volume", "metric"},
+	"cmode/namespace.json":               {"cluster", "svm", "path"},
+	"cmode/power.json":                   {"cluster", "node", "aggr", "shelf"},
+	"cmode/qtree.json":                   {"svm", "volume", "qtree"},
+	"cmode/quotaReport.json":             {"svm", "qtree", "type"},
+	"cmode/s3ObjectStorage.json":         {"svm", "bucket"},
+	"cmode/shelf.json":                   {"cluster", "shelf"},
+	"cmode/smb.json":                     {"cluster", "protocol"},
+	"cmode/snapmirror_destinations.json": {"destination_location", "source_location"},
+	"cmode/snapmirror.json":              {"destination_location", "source_location"},
+	"cmode/svm.json":                     {"cluster", "svm", "volume", "node", "port", "lif", "metric", "__name__"},
+	"cmode/switch.json":                  {"switch", "interface"},
+	"cmode/volume.json":                  {"svm", "volume", "__name__"},
+	"cmode/vscan.json":                   {"svm", "scanner"},
+	"cmode/workload.json":                {"cluster", "workload"},
+	"cmode-details/volumeDeepDive.json":  {"svm", "volume"},
+	"storagegrid/fabricpool.json":        {"node", "aggr", "policy"},
+	"storagegrid/overview.json":          {"cluster"},
+	"storagegrid/tenant.json":            {"tenant", "bucket"},
+}
+
+var exceptionList = []string{
+	"Total Power Consumed", "Average Power Consumption (kWh) Over Last Hour",
+}
+
+var legendName = regexp.MustCompile(`{{.*?}}`)
+
 var throughputPattern = regexp.MustCompile(`(throughput|read_data|write_data|total_data)`)
 var aggregationThroughputPattern = regexp.MustCompile(`(?i)(\w+)\(`)
 
@@ -1999,17 +2044,33 @@ func TestLegendFormat(t *testing.T) {
 
 func checkLegendFormat(t *testing.T, path string, data []byte) {
 	path = ShortPath(path)
+	possibleLegends := legendDashboardMap[path]
 	VisitAllPanels(data, func(_ string, _, value gjson.Result) {
 		panelTitle := value.Get("title").ClonedString()
+		if slices.Contains(exceptionList, panelTitle) {
+			return
+		}
 		kind := value.Get("type").ClonedString()
-		if kind == "row" || kind == "table" || kind == "stat" || kind == "bargauge" || kind == "piechart" || kind == "gauge" {
+		if kind == "row" || kind == "table" || kind == "stat" || kind == "bargauge" || kind == "piechart" || kind == "gauge" || kind == "heatmap" {
 			return
 		}
 		targetsSlice := value.Get("targets").Array()
 		for _, targetN := range targetsSlice {
 			legendFormat := targetN.Get("legendFormat").ClonedString()
+			legendExist := false
 			if !strings.Contains(legendFormat, "{{") {
 				t.Errorf("dashboard=%s panel=%s kind=%s legendFormat=%s should have {{object}} in legendFormat", path, panelTitle, kind, legendFormat)
+			} else {
+				matches := legendName.FindAllString(legendFormat, -1)
+				for _, match := range matches {
+					if slices.Contains(possibleLegends, match[2:len(match)-2]) {
+						legendExist = true
+						break
+					}
+				}
+				if !legendExist {
+					t.Errorf("dashboard=%s panel=%s kind=%s legendFormat=%s should have legends from %s in legendFormat", path, panelTitle, kind, legendFormat, possibleLegends)
+				}
 			}
 		}
 	})
