@@ -72,6 +72,9 @@ var legendDashboardMap = map[string][]string{
 
 var exceptionList = []string{
 	"Total Power Consumed", "Average Power Consumption (kWh) Over Last Hour",
+	"NICs Send Errors by Cluster", "NICs Receive Errors by Cluster", "FCPs Transmission interrupts", "FCPs Transmission errors",
+	"Average Latency", "Throughput", "IOPs", "System Utilization", "NFSv3 Read and Write Latency", "NFSv3 Read and Write Throughput", "NFSv3 Read and Write IOPs", "CIFS Connections", "Protocol Backend IOPs",
+	"SVM Average Latency", "SVM Throughput", "SVM IOPs", "SVM CIFS Latency", "SVM CIFS IOPs", "SVM FCP Average Latency", "SVM FCP IOPs", "SVM FCP Throughput", "SVM iSCSI Average Latency", "SVM iSCSI Throughput", "SVM NVMe/FC Average Latency", "SVM NVMe/FC Throughput", "SVM NVMe/FC IOPs", "Copy Offload Data Copied",
 }
 
 var legendName = regexp.MustCompile(`{{.*?}}`)

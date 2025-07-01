@@ -2237,23 +2237,23 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (cluster) (node_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+              "expr": "avg(node_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "interval": "",
-              "legendFormat": "Read - {{cluster}}",
+              "legendFormat": "Read",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "avg by (cluster) (node_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+              "expr": "avg(node_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "interval": "",
-              "legendFormat": "Write - {{cluster}}",
+              "legendFormat": "Write",
               "refId": "B"
             },
             {
               "exemplar": false,
-              "expr": "avg by (cluster) (node_other_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+              "expr": "avg(node_other_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "interval": "",
-              "legendFormat": "Other - {{cluster}}",
+              "legendFormat": "Other",
               "refId": "C"
             }
           ],
@@ -2342,18 +2342,18 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (node_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+              "expr": "sum(node_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "interval": "",
               "intervalFactor": 1,
-              "legendFormat": "Read - {{cluster}}",
+              "legendFormat": "Read",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (node_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+              "expr": "sum(node_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "interval": "",
               "intervalFactor": 1,
-              "legendFormat": "Write - {{cluster}}",
+              "legendFormat": "Write",
               "refId": "B"
             }
           ],
@@ -2443,23 +2443,23 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (node_read_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+              "expr": "sum(node_read_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "interval": "",
-              "legendFormat": "Read - {{cluster}}",
+              "legendFormat": "Read",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (node_write_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+              "expr": "sum(node_write_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "interval": "",
-              "legendFormat": "Write - {{cluster}}",
+              "legendFormat": "Write",
               "refId": "B"
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (node_other_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+              "expr": "sum(node_other_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "interval": "",
-              "legendFormat": "Other - {{cluster}}",
+              "legendFormat": "Other",
               "refId": "C"
             }
           ],
@@ -2555,34 +2555,34 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (cluster) (node_cpu_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+              "expr": "avg(node_cpu_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "CPU Busy - {{cluster}}",
+              "legendFormat": "CPU Busy",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "avg by (cluster) (\n  node_cpu_domain_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"kahuna\",node=~\"$Node\"}\n)",
+              "expr": "avg(\n  node_cpu_domain_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"kahuna\",node=~\"$Node\"}\n)",
               "hide": false,
               "interval": "",
-              "legendFormat": "Kahuna- {{cluster}}",
+              "legendFormat": "Kahuna",
               "refId": "C"
             },
             {
               "exemplar": false,
-              "expr": "max by (cluster) (node_disk_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+              "expr": "max(node_disk_busy{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Max Node Disk Utilization - {{cluster}}",
+              "legendFormat": "Max Node Disk Utilization",
               "refId": "B"
             },
             {
               "exemplar": false,
-              "expr": "abs(\n    avg by (cluster) (\n      wafl_cp_phase_times{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"P2_FLUSH\",node=~\"$Node\"}\n    )\n  -\n    100\n)",
+              "expr": "abs(\n    avg(\n      wafl_cp_phase_times{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"P2_FLUSH\",node=~\"$Node\"}\n    )\n  -\n    100\n)",
               "hide": false,
               "interval": "",
-              "legendFormat": "WAFL Write Cleaning - {{cluster}}",
+              "legendFormat": "WAFL Write Cleaning",
               "refId": "D"
             }
           ],
@@ -2793,41 +2793,41 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (node_cifs_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+              "expr": "sum(node_cifs_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "cifs - {{cluster}}",
+              "legendFormat": "cifs",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (node_nfs_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+              "expr": "sum(node_nfs_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "nfs - {{cluster}}",
+              "legendFormat": "nfs",
               "refId": "B"
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (node_fcp_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+              "expr": "sum(node_fcp_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "fcp - {{cluster}}",
+              "legendFormat": "fcp",
               "refId": "C"
             },
             {
-              "expr": "sum by (cluster) (node_iscsi_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+              "expr": "sum(node_iscsi_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "iscsi - {{cluster}}",
+              "legendFormat": "iscsi",
               "refId": "D"
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (node_nvmf_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+              "expr": "sum(node_nvmf_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "NVMe/FC - {{cluster}}",
+              "legendFormat": "NVMe/FC",
               "refId": "E"
             }
           ],
@@ -3377,18 +3377,18 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (cluster) (\n  node_nfs_read_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nfsv=\"v3\",node=~\"$Node\"}\n)",
+              "expr": "avg(\n  node_nfs_read_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nfsv=\"v3\",node=~\"$Node\"}\n)",
               "hide": false,
               "interval": "",
-              "legendFormat": "Read - {{cluster}}",
+              "legendFormat": "Read",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "avg by (cluster) (\n  node_nfs_write_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nfsv=\"v3\",node=~\"$Node\"}\n)",
+              "expr": "avg(\n  node_nfs_write_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nfsv=\"v3\",node=~\"$Node\"}\n)",
               "hide": false,
               "interval": "",
-              "legendFormat": "Write - {{cluster}}",
+              "legendFormat": "Write",
               "refId": "B"
             }
           ],
@@ -3473,18 +3473,18 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (\n  node_nfs_read_throughput{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nfsv=\"v3\",node=~\"$Node\"}\n)",
+              "expr": "sum(node_nfs_read_throughput{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nfsv=\"v3\",node=~\"$Node\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Read - {{cluster}}",
+              "legendFormat": "Read",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (\n  node_nfs_write_throughput{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nfsv=\"v3\",node=~\"$Node\"}\n)",
+              "expr": "sum(\n  node_nfs_write_throughput{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nfsv=\"v3\",node=~\"$Node\"}\n)",
               "hide": false,
               "interval": "",
-              "legendFormat": "Write - {{cluster}}",
+              "legendFormat": "Write",
               "refId": "B"
             }
           ],
@@ -3570,26 +3570,26 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (cluster) (\n  node_nfs_read_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nfsv=\"v3\",node=~\"$Node\"}\n)",
+              "expr": "avg(node_nfs_read_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nfsv=\"v3\",node=~\"$Node\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Read - {{cluster}}",
+              "legendFormat": "Read",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "avg by (cluster) (\n  node_nfs_write_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nfsv=\"v3\",node=~\"$Node\"}\n)",
+              "expr": "avg(node_nfs_write_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nfsv=\"v3\",node=~\"$Node\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Write - {{cluster}}",
+              "legendFormat": "Write",
               "refId": "B"
             },
             {
               "exemplar": false,
-              "expr": "avg by (cluster) (\n  node_nfs_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nfsv=\"v3\",node=~\"$Node\"}\n)",
+              "expr": "avg(node_nfs_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nfsv=\"v3\",node=~\"$Node\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Total - {{cluster}}",
+              "legendFormat": "Total",
               "refId": "C"
             }
           ],
@@ -3908,30 +3908,30 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (\n  node_cifs_connections{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n)",
+              "expr": "sum(node_cifs_connections{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "interval": "",
-              "legendFormat": "Connections - {{cluster}}",
+              "legendFormat": "Connections",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (\n  node_cifs_established_sessions{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n)",
+              "expr": "sum(node_cifs_established_sessions{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "interval": "",
-              "legendFormat": "Established Sessions - {{cluster}}",
+              "legendFormat": "Established Sessions",
               "refId": "B"
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (\n  node_cifs_signed_sessions{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n)",
+              "expr": "sum(node_cifs_signed_sessions{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "interval": "",
-              "legendFormat": "Signed Sessions - {{cluster}}",
+              "legendFormat": "Signed Sessions",
               "refId": "C"
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (node_cifs_open_files{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+              "expr": "sum(node_cifs_open_files{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "interval": "",
-              "legendFormat": "Open Files - {{cluster}}",
+              "legendFormat": "Open Files",
               "refId": "D"
             }
           ],

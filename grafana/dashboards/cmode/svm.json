@@ -729,25 +729,25 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg by (cluster) (svm_vol_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+          "expr": "avg(svm_vol_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
           "interval": "",
-          "legendFormat": "Read - {{cluster}}",
+          "legendFormat": "Read",
           "refId": "A"
         },
         {
           "exemplar": false,
-          "expr": "avg by (cluster) (svm_vol_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+          "expr": "avg(svm_vol_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
           "hide": false,
           "interval": "",
-          "legendFormat": "Write - {{cluster}}",
+          "legendFormat": "Write",
           "refId": "B"
         },
         {
           "exemplar": false,
-          "expr": "avg by (cluster) (svm_vol_other_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+          "expr": "avg(svm_vol_other_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
           "hide": false,
           "interval": "",
-          "legendFormat": "Other - {{cluster}}",
+          "legendFormat": "Other",
           "refId": "C"
         }
       ],
@@ -835,17 +835,17 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum by (cluster) (svm_vol_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+          "expr": "sum(svm_vol_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
           "interval": "",
-          "legendFormat": "Read - {{cluster}}",
+          "legendFormat": "Read",
           "refId": "A"
         },
         {
           "exemplar": false,
-          "expr": "sum by (cluster) (svm_vol_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+          "expr": "sum(svm_vol_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
           "hide": false,
           "interval": "",
-          "legendFormat": "Write - {{cluster}}",
+          "legendFormat": "Write",
           "refId": "B"
         }
       ],
@@ -934,25 +934,25 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum by (cluster) (svm_vol_read_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+          "expr": "sum(svm_vol_read_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
           "interval": "",
-          "legendFormat": "Read - {{cluster}}",
+          "legendFormat": "Read",
           "refId": "A"
         },
         {
           "exemplar": false,
-          "expr": "sum by (cluster) (svm_vol_write_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+          "expr": "sum(svm_vol_write_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
           "hide": false,
           "interval": "",
-          "legendFormat": "Write - {{cluster}}",
+          "legendFormat": "Write",
           "refId": "B"
         },
         {
           "exemplar": false,
-          "expr": "sum by (cluster) (svm_vol_other_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+          "expr": "sum(svm_vol_other_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
           "hide": false,
           "interval": "",
-          "legendFormat": "Other - {{cluster}}",
+          "legendFormat": "Other",
           "refId": "C"
         }
       ],
@@ -4827,25 +4827,25 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (cluster) (svm_cifs_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "expr": "avg(svm_cifs_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "interval": "",
-              "legendFormat": "Read - {{cluster}}",
+              "legendFormat": "Read",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "avg by (cluster) (svm_cifs_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "expr": "avg(svm_cifs_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Write - {{cluster}}",
+              "legendFormat": "Write",
               "refId": "B"
             },
             {
               "exemplar": false,
-              "expr": "avg by (cluster) (svm_cifs_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "expr": "avg(svm_cifs_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Average - {{cluster}}",
+              "legendFormat": "Average",
               "refId": "C"
             }
           ],
@@ -4935,25 +4935,25 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (svm_cifs_read_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "expr": "sum(svm_cifs_read_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Read - {{cluster}}",
+              "legendFormat": "Read",
               "refId": "B"
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (svm_cifs_write_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "expr": "sum(svm_cifs_write_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Write - {{cluster}}",
+              "legendFormat": "Write",
               "refId": "C"
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (svm_cifs_op_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "expr": "sum(svm_cifs_op_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "interval": "",
-              "legendFormat": "Total - {{cluster}}",
+              "legendFormat": "Total",
               "refId": "A"
             }
           ],
@@ -5973,33 +5973,33 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (cluster) (\n  fcp_lif_avg_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n)",
+              "expr": "avg(fcp_lif_avg_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "interval": "",
-              "legendFormat": "Read - {{cluster}}",
+              "legendFormat": "Read",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "avg by (cluster) (\n  fcp_lif_avg_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n)",
+              "expr": "avg(fcp_lif_avg_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Write - {{cluster}}",
+              "legendFormat": "Write",
               "refId": "B"
             },
             {
               "exemplar": false,
-              "expr": "avg by (cluster) (\n  fcp_lif_avg_other_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n)",
+              "expr": "avg(fcp_lif_avg_other_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Other - {{cluster}}",
+              "legendFormat": "Other",
               "refId": "C"
             },
             {
               "exemplar": false,
-              "expr": "avg by (cluster) (fcp_lif_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "expr": "avg(fcp_lif_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Average - {{cluster}}",
+              "legendFormat": "Average",
               "refId": "D"
             }
           ],
@@ -6088,17 +6088,17 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (fcp_lif_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "expr": "sum(fcp_lif_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "interval": "",
-              "legendFormat": "Read - {{cluster}}",
+              "legendFormat": "Read",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (fcp_lif_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "expr": "sum(fcp_lif_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Write - {{cluster}}",
+              "legendFormat": "Write",
               "refId": "B"
             }
           ],
@@ -6188,25 +6188,25 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (fcp_lif_read_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "expr": "sum(fcp_lif_read_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "interval": "",
-              "legendFormat": "Read - {{cluster}}",
+              "legendFormat": "Read",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (fcp_lif_write_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "expr": "sum(fcp_lif_write_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Write - {{cluster}}",
+              "legendFormat": "Write",
               "refId": "B"
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (fcp_lif_other_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "expr": "sum(fcp_lif_other_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Other - {{cluster}}",
+              "legendFormat": "Other",
               "refId": "C"
             }
           ],
@@ -7220,25 +7220,25 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (cluster) (\n  iscsi_lif_avg_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n)",
+              "expr": "avg(iscsi_lif_avg_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "interval": "",
-              "legendFormat": "Read - {{cluster}}",
+              "legendFormat": "Read",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "avg by (cluster) (\n  iscsi_lif_avg_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n)",
+              "expr": "avg(iscsi_lif_avg_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Write - {{cluster}}",
+              "legendFormat": "Write",
               "refId": "B"
             },
             {
               "exemplar": false,
-              "expr": "avg by (cluster) (\n  iscsi_lif_avg_other_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n)",
+              "expr": "avg(iscsi_lif_avg_other_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Other - {{cluster}}",
+              "legendFormat": "Other",
               "refId": "C"
             }
           ],
@@ -7327,17 +7327,17 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (iscsi_lif_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "expr": "sum(iscsi_lif_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "interval": "",
-              "legendFormat": "Read - {{cluster}}",
+              "legendFormat": "Read",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (iscsi_lif_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "expr": "sum(iscsi_lif_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Write - {{cluster}}",
+              "legendFormat": "Write",
               "refId": "B"
             }
           ],
@@ -13243,33 +13243,33 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg by (cluster) (\n  nvme_lif_avg_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n)",
+              "expr": "avg(nvme_lif_avg_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "interval": "",
-              "legendFormat": "Read - {{cluster}}",
+              "legendFormat": "Read",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "avg by (cluster) (\n  nvme_lif_avg_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n)",
+              "expr": "avg(nvme_lif_avg_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Write - {{cluster}}",
+              "legendFormat": "Write",
               "refId": "B"
             },
             {
               "exemplar": false,
-              "expr": "avg by (cluster) (\n  nvme_lif_avg_other_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n)",
+              "expr": "avg(nvme_lif_avg_other_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Other - {{cluster}}",
+              "legendFormat": "Other",
               "refId": "C"
             },
             {
               "exemplar": false,
-              "expr": "avg by (cluster) (nvme_lif_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "expr": "avg(nvme_lif_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Average - {{cluster}}",
+              "legendFormat": "Average",
               "refId": "D"
             }
           ],
@@ -13358,17 +13358,17 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (nvme_lif_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "expr": "sum(nvme_lif_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "interval": "",
-              "legendFormat": "Read - {{cluster}}",
+              "legendFormat": "Read",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (nvme_lif_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "expr": "sum(nvme_lif_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Write - {{cluster}}",
+              "legendFormat": "Write",
               "refId": "B"
             }
           ],
@@ -13458,25 +13458,25 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (nvme_lif_read_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "expr": "sum(nvme_lif_read_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "interval": "",
-              "legendFormat": "Read - {{cluster}}",
+              "legendFormat": "Read",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (nvme_lif_write_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "expr": "sum(nvme_lif_write_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Write - {{cluster}}",
+              "legendFormat": "Write",
               "refId": "B"
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (nvme_lif_other_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "expr": "sum(nvme_lif_other_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "hide": false,
               "interval": "",
-              "legendFormat": "Other - {{cluster}}",
+              "legendFormat": "Other",
               "refId": "C"
             }
           ],
@@ -13762,9 +13762,9 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (copy_manager_kb_copied{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "expr": "sum(copy_manager_kb_copied{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
               "interval": "",
-              "legendFormat": "Data Size - {{cluster}}",
+              "legendFormat": "Data Size",
               "refId": "A"
             }
           ],
