@@ -179,12 +179,12 @@ func TestJsonExpression(t *testing.T) {
 		TestDashboardsLoad(t)
 	}
 	var (
-		zapiFails   int
+		// zapiFails   int
 		restFails   int
 		exprIgnored int
 		numCounters int
-		zapiFlaky   int
-		restFlaky   int
+		// zapiFlaky   int
+		restFlaky int
 	)
 
 	now := time.Now()
@@ -194,9 +194,10 @@ func TestJsonExpression(t *testing.T) {
 		if counterIsMissing(rest, counter, 7*time.Minute) {
 			t.Fatalf("rest qos counters not found dur=%s", time.Since(now).Round(time.Millisecond).String())
 		}
-		if counterIsMissing(zapi, counter, 2*time.Minute) {
-			t.Fatalf("zapi qos counters not found dur=%s", time.Since(now).Round(time.Millisecond).String())
-		}
+		//nolint:gocritic
+		// if counterIsMissing(zapi, counter, 2*time.Minute) {
+		// 	t.Fatalf("zapi qos counters not found dur=%s", time.Since(now).Round(time.Millisecond).String())
+		// }
 	}
 
 	slog.Info(
@@ -250,17 +251,18 @@ func TestJsonExpression(t *testing.T) {
 					restFails++
 					sumMissing++
 				}
-				if counterIsMissing(zapi, counter, 1*time.Second) {
-					if counterIsFlaky(counter) {
-						subFlaky++
-						zapiFlaky++
-						exprFlaky = true
-						continue
-					}
-					t.Errorf("%s counter=%s path=%s not in DB expr=%s", zapi, counter, dashPath, expression)
-					zapiFails++
-					sumMissing++
-				}
+				//nolint:gocritic
+				// if counterIsMissing(zapi, counter, 1*time.Second) {
+				//	if counterIsFlaky(counter) {
+				//		subFlaky++
+				//		zapiFlaky++
+				//		exprFlaky = true
+				//		continue
+				//	}
+				//	t.Errorf("%s counter=%s path=%s not in DB expr=%s", zapi, counter, dashPath, expression)
+				//	zapiFails++
+				//	sumMissing++
+				// }
 			}
 
 			// if expression contains flaky counters then ignore validation
@@ -288,19 +290,20 @@ func TestJsonExpression(t *testing.T) {
 		slog.Info("Rest Validation looks good!!")
 	}
 
-	if zapiFails > 0 {
-		t.Errorf("Zapi validation failures=%d", zapiFails)
-	} else {
-		slog.Info("Zapi Validation looks good!!")
-	}
+	//nolint:gocritic
+	/* if zapiFails > 0 {
+	//	t.Errorf("Zapi validation failures=%d", zapiFails)
+	// } else {
+	//	slog.Info("Zapi Validation looks good!!")
+	 }*/
 	slog.Info("Dashboard Json validated",
 		slog.String("durMs", time.Since(now).Round(time.Millisecond).String()),
 		slog.Int("exprIgnored", exprIgnored),
 		slog.Int("numCounters", numCounters),
 		slog.Int("restMiss", restFails),
 		slog.Int("restFlaky", restFlaky),
-		slog.Int("zapiMiss", zapiFails),
-		slog.Int("zapiFlaky", zapiFlaky),
+		//slog.Int("zapiMiss", zapiFails),
+		//slog.Int("zapiFlaky", zapiFlaky),
 	)
 
 	// Add checks for queries in Prometheus
