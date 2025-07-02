@@ -989,7 +989,7 @@
                   }
                 ]
               },
-              "unit": "locale"
+              "unit": "s"
             },
             "overrides": []
           },
@@ -1037,6 +1037,22 @@
               "interval": "",
               "legendFormat": "{{cluster}} - PUT",
               "refId": "C"
+            },
+            {
+              "exemplar": false,
+              "expr": "(\n    sum by (cluster) (\n      rate(\n        storagegrid_private_load_balancer_storage_request_time{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",method=\"POST\"}[3m]\n      )\n    )\n  )\n/\n  (\n    sum by (cluster) (\n      rate(\n        storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",method=\"POST\"}[3m]\n      )\n    )\n  )",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{cluster}} - POST",
+              "refId": "D"
+            },
+            {
+              "exemplar": false,
+              "expr": "(\n    sum by (cluster) (\n      rate(\n        storagegrid_private_load_balancer_storage_request_time{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",method=\"HEAD\"}[3m]\n      )\n    )\n  )\n/\n  (\n    sum by (cluster) (\n      rate(\n        storagegrid_private_load_balancer_storage_request_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",method=\"HEAD\"}[3m]\n      )\n    )\n  )",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{cluster}} - HEAD",
+              "refId": "E"
             }
           ],
           "title": "Average request duration (non-error)",
