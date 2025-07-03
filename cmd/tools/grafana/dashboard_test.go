@@ -31,43 +31,17 @@ var cDotDashboards = []string{
 	"../../../grafana/dashboards/cmode-details",
 }
 
-var legendDashboardMap = map[string][]string{
-	"cisco/cisco.json":                   {"switch", "interface", "ps"},
-	"cmode/aggregate.json":               {"cluster", "node", "aggr"},
-	"cmode/metadata.json":                {"hostname", "poller", "collector", "exporter", "object", "target", "task"},
-	"cmode/cdot.json":                    {"cluster", "svm", "volume"},
-	"cmode/cluster.json":                 {"cluster", "node", "aggr"},
-	"cmode/datacenter.json":              {"cluster"},
-	"cmode/disk.json":                    {"cluster", "node", "aggr", "plex", "raid"},
-	"cmode/external_service_op.json":     {"cluster", "svm", "operation"},
-	"cmode/fsa.json":                     {"svm", "volume"},
-	"cmode/flexgroup.json":               {"aggr", "volume"},
-	"cmode/flexcache.json":               {"svm", "volume"},
+var exceptionLegendMap = map[string][]string{
+	"cmode/metadata.json":                {"exporter", "target"},
+	"cmode/cluster.json":                 {"node"},
 	"cmode/headroom.json":                {"node"},
-	"cmode/lun.json":                     {"svm", "volume", "lun"},
-	"cmode/mcc_cluster.json":             {"node", "aggr", "plex"},
-	"cmode/network.json":                 {"cluster", "node", "nic", "eth"},
-	"cmode/nfs4storePool.json":           {"node"},
-	"cmode/nfsTroubleshooting.json":      {"node", "metric"},
-	"cmode/node.json":                    {"cluster", "svm", "node", "volume", "metric"},
-	"cmode/namespace.json":               {"cluster", "svm", "path"},
-	"cmode/power.json":                   {"cluster", "node", "aggr", "shelf"},
-	"cmode/qtree.json":                   {"svm", "volume", "qtree"},
-	"cmode/quotaReport.json":             {"svm", "qtree", "type"},
-	"cmode/s3ObjectStorage.json":         {"svm", "bucket"},
-	"cmode/shelf.json":                   {"cluster", "shelf"},
-	"cmode/smb.json":                     {"cluster", "protocol"},
+	"cmode/node.json":                    {"metric"},
+	"cmode/power.json":                   {"node"},
+	"cmode/smb.json":                     {"protocol"},
 	"cmode/snapmirror_destinations.json": {"destination_location", "source_location"},
 	"cmode/snapmirror.json":              {"destination_location", "source_location"},
-	"cmode/svm.json":                     {"cluster", "svm", "volume", "node", "port", "lif", "metric", "__name__"},
-	"cmode/switch.json":                  {"switch", "interface"},
-	"cmode/volume.json":                  {"svm", "volume", "__name__"},
-	"cmode/vscan.json":                   {"svm", "scanner"},
-	"cmode/workload.json":                {"cluster", "workload"},
-	"cmode-details/volumeDeepDive.json":  {"svm", "volume"},
-	"storagegrid/fabricpool.json":        {"node", "aggr", "policy"},
-	"storagegrid/overview.json":          {"cluster"},
-	"storagegrid/tenant.json":            {"tenant", "bucket"},
+	"cmode/svm.json":                     {"node", "port", "lif", "metric", "__name__"},
+	"cmode/volume.json":                  {"__name__"},
 }
 
 var exceptionList = []string{
@@ -2047,7 +2021,17 @@ func TestLegendFormat(t *testing.T) {
 
 func checkLegendFormat(t *testing.T, path string, data []byte) {
 	path = ShortPath(path)
-	possibleLegends := legendDashboardMap[path]
+	possibleLegends := exceptionLegendMap[path]
+
+	gjson.GetBytes(data, "templating.list").ForEach(func(_, value gjson.Result) bool {
+		varName := strings.ToLower(value.Get("name").ClonedString())
+		if varName == "aggregate" {
+			varName = "aggr"
+		}
+		possibleLegends = append(possibleLegends, varName)
+		return true
+	})
+
 	VisitAllPanels(data, func(_ string, _, value gjson.Result) {
 		panelTitle := value.Get("title").ClonedString()
 		if slices.Contains(exceptionList, panelTitle) {
