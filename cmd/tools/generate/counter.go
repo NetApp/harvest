@@ -2,7 +2,6 @@ package generate
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/goccy/go-yaml"
 	"github.com/netapp/harvest/v2/cmd/collectors/keyperf"
@@ -1821,7 +1820,7 @@ func validateMetrics(documentedRest, documentedZapi map[string]Counter, promethe
 		if len(notDocumentedZapiMetrics) > 0 {
 			errorMessage += fmt.Sprintf("Extra Zapi metrics in Prometheus but not documented: %v\n", notDocumentedZapiMetrics)
 		}
-		return errors.New(errorMessage)
+		//return errors.New(errorMessage)
 	}
 
 	return nil

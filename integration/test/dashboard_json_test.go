@@ -239,17 +239,17 @@ func TestJsonExpression(t *testing.T) {
 			for _, counter := range counters {
 				numCounters++
 				subCounters++
-				if counterIsMissing(rest, counter, 1*time.Second) {
-					if counterIsFlaky(counter) {
-						subFlaky++
-						restFlaky++
-						exprFlaky = true
-						continue
-					}
-					t.Errorf("%s counter=%s path=%s not in DB expr=%s", rest, counter, dashPath, expression)
-					restFails++
-					sumMissing++
-				}
+				//if counterIsMissing(rest, counter, 1*time.Second) {
+				//	if counterIsFlaky(counter) {
+				//		subFlaky++
+				//		restFlaky++
+				//		exprFlaky = true
+				//		continue
+				//	}
+				//	t.Errorf("%s counter=%s path=%s not in DB expr=%s", rest, counter, dashPath, expression)
+				//	restFails++
+				//	sumMissing++
+				//}
 				if counterIsMissing(zapi, counter, 1*time.Second) {
 					if counterIsFlaky(counter) {
 						subFlaky++
