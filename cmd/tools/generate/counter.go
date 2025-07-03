@@ -1702,6 +1702,8 @@ func fetchAndCategorizePrometheusMetrics(promURL string) (map[string]bool, map[s
 
 	return restMetrics, zapiMetrics, nil
 }
+
+//nolint:unparam
 func validateMetrics(documentedRest, documentedZapi map[string]Counter, prometheusRest, prometheusZapi map[string]bool) error {
 	var documentedButMissingRestMetrics []string
 	var notDocumentedRestMetrics []string
@@ -1805,23 +1807,23 @@ func validateMetrics(documentedRest, documentedZapi map[string]Counter, promethe
 	sort.Strings(notDocumentedRestMetrics)
 	sort.Strings(documentedButMissingZapiMetrics)
 	sort.Strings(notDocumentedZapiMetrics)
-
-	if len(documentedButMissingRestMetrics) > 0 || len(notDocumentedRestMetrics) > 0 || len(documentedButMissingZapiMetrics) > 0 || len(notDocumentedZapiMetrics) > 0 {
-		errorMessage := "Validation failed:\n"
-		if len(documentedButMissingRestMetrics) > 0 {
-			errorMessage += fmt.Sprintf("Missing Rest metrics in Prometheus but documented: %v\n", documentedButMissingRestMetrics)
-		}
-		if len(notDocumentedRestMetrics) > 0 {
-			errorMessage += fmt.Sprintf("Extra Rest metrics in Prometheus but not documented: %v\n", notDocumentedRestMetrics)
-		}
-		if len(documentedButMissingZapiMetrics) > 0 {
-			errorMessage += fmt.Sprintf("Missing Zapi metrics in Prometheus but documented: %v\n", documentedButMissingZapiMetrics)
-		}
-		if len(notDocumentedZapiMetrics) > 0 {
-			errorMessage += fmt.Sprintf("Extra Zapi metrics in Prometheus but not documented: %v\n", notDocumentedZapiMetrics)
-		}
-		//return errors.New(errorMessage)
-	}
+	//nolint:gocritic
+	//if len(documentedButMissingRestMetrics) > 0 || len(notDocumentedRestMetrics) > 0 || len(documentedButMissingZapiMetrics) > 0 || len(notDocumentedZapiMetrics) > 0 {
+	//	errorMessage := "Validation failed:\n"
+	//	if len(documentedButMissingRestMetrics) > 0 {
+	//		errorMessage += fmt.Sprintf("Missing Rest metrics in Prometheus but documented: %v\n", documentedButMissingRestMetrics)
+	//	}
+	//	if len(notDocumentedRestMetrics) > 0 {
+	//		errorMessage += fmt.Sprintf("Extra Rest metrics in Prometheus but not documented: %v\n", notDocumentedRestMetrics)
+	//	}
+	//	if len(documentedButMissingZapiMetrics) > 0 {
+	//		errorMessage += fmt.Sprintf("Missing Zapi metrics in Prometheus but documented: %v\n", documentedButMissingZapiMetrics)
+	//	}
+	//	if len(notDocumentedZapiMetrics) > 0 {
+	//		errorMessage += fmt.Sprintf("Extra Zapi metrics in Prometheus but not documented: %v\n", notDocumentedZapiMetrics)
+	//	}
+	//	return errors.New(errorMessage)
+	//}
 
 	return nil
 }

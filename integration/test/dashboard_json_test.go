@@ -239,6 +239,7 @@ func TestJsonExpression(t *testing.T) {
 			for _, counter := range counters {
 				numCounters++
 				subCounters++
+				//nolint:gocritic
 				//if counterIsMissing(rest, counter, 1*time.Second) {
 				//	if counterIsFlaky(counter) {
 				//		subFlaky++
