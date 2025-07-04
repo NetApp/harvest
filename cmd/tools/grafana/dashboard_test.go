@@ -2038,7 +2038,7 @@ func checkLegendFormat(t *testing.T, path string, data []byte) {
 			return
 		}
 		kind := value.Get("type").ClonedString()
-		if kind == "row" || kind == "table" || kind == "stat" || kind == "bargauge" || kind == "piechart" || kind == "gauge" || kind == "heatmap" {
+		if kind != "barchart" && kind != "timeseries" && kind != "text" {
 			return
 		}
 		targetsSlice := value.Get("targets").Array()
