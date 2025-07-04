@@ -764,9 +764,9 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(poller_cpu_percent{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\"})",
+          "expr": "sum by (hostname) (\n  poller_cpu_percent{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\"}\n)",
           "interval": "",
-          "legendFormat": "% CPU used",
+          "legendFormat": "% CPU used - {{hostname}}",
           "refId": "A"
         }
       ],
@@ -854,10 +854,10 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(poller_memory_percent{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\"})",
+          "expr": "sum by (hostname) (\n  poller_memory_percent{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\"}\n)",
           "hide": false,
           "interval": "",
-          "legendFormat": "% Memory used",
+          "legendFormat": "% Memory used - {{hostname}}",
           "refId": "A"
         }
       ],

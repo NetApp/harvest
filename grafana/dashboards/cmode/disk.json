@@ -2758,17 +2758,17 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "sum(flashcache_hit_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+              "expr": "sum by (cluster) (\n  flashcache_hit_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n)",
               "hide": false,
               "interval": "",
-              "legendFormat": "Hit %",
+              "legendFormat": "Hit % - {{cluster}}",
               "refId": "A"
             },
             {
-              "expr": "sum(flashcache_disk_reads_replaced{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+              "expr": "sum by (cluster) (\n  flashcache_disk_reads_replaced{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n)",
               "hide": false,
               "interval": "",
-              "legendFormat": "HDD Reads Replaced",
+              "legendFormat": "HDD Reads Replaced - {{cluster}}",
               "refId": "B"
             }
           ],
@@ -2888,17 +2888,17 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "sum(\n  flashpool_read_ops_replaced_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n)",
+              "expr": "sum by (cluster) (\n  flashpool_read_ops_replaced_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n)",
               "hide": false,
               "interval": "",
-              "legendFormat": "Hit %",
+              "legendFormat": "Hit % - {{cluster}}",
               "refId": "A"
             },
             {
-              "expr": "sum(flashpool_read_ops_replaced{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+              "expr": "sum by (cluster) (\n  flashpool_read_ops_replaced{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n)",
               "hide": false,
               "interval": "",
-              "legendFormat": "HDD Reads Replaced",
+              "legendFormat": "HDD Reads Replaced - {{cluster}}",
               "refId": "B"
             }
           ],
