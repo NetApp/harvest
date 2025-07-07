@@ -1716,16 +1716,16 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (\n  nic_tx_total_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\n)",
+              "expr": "sum(nic_tx_total_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
               "interval": "",
-              "legendFormat": "TOTAL - {{cluster}}",
+              "legendFormat": "TOTAL",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (\n  nic_tx_hw_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\n)",
+              "expr": "sum(nic_tx_hw_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
               "interval": "",
-              "legendFormat": "HW - {{cluster}}",
+              "legendFormat": "HW",
               "refId": "D"
             }
           ],
@@ -1815,30 +1815,30 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (\n  nic_rx_total_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\n)",
+              "expr": "sum(nic_rx_total_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
               "interval": "",
-              "legendFormat": "TOTAL- {{cluster}}",
+              "legendFormat": "TOTAL",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (\n  nic_rx_alignment_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\n)",
+              "expr": "sum(\n  nic_rx_alignment_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\n)",
               "interval": "",
-              "legendFormat": "ALIGNMENT- {{cluster}}",
+              "legendFormat": "ALIGNMENT",
               "refId": "B"
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (\n  nic_rx_crc_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\n)",
+              "expr": "sum(nic_rx_crc_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
               "interval": "",
-              "legendFormat": "CRC- {{cluster}}",
+              "legendFormat": "CRC",
               "refId": "C"
             },
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (\n  nic_rx_length_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\n)",
+              "expr": "sum(nic_rx_length_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
               "interval": "",
-              "legendFormat": "LENGTH- {{cluster}}",
+              "legendFormat": "LENGTH",
               "refId": "D"
             }
           ],

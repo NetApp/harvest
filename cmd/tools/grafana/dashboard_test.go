@@ -31,6 +31,28 @@ var cDotDashboards = []string{
 	"../../../grafana/dashboards/cmode-details",
 }
 
+var exceptionLegendMap = map[string][]string{
+	"cmode/metadata.json":                {"exporter", "target"},
+	"cmode/cluster.json":                 {"node"},
+	"cmode/headroom.json":                {"node"},
+	"cmode/node.json":                    {"metric"},
+	"cmode/power.json":                   {"node"},
+	"cmode/smb.json":                     {"protocol"},
+	"cmode/snapmirror_destinations.json": {"destination_location", "source_location"},
+	"cmode/snapmirror.json":              {"destination_location", "source_location"},
+	"cmode/svm.json":                     {"node", "port", "lif", "metric", "__name__"},
+	"cmode/volume.json":                  {"__name__"},
+}
+
+var exceptionList = []string{
+	"Total Power Consumed", "Average Power Consumption (kWh) Over Last Hour",
+	"NICs Send Errors by Cluster", "NICs Receive Errors by Cluster", "FCPs Transmission interrupts", "FCPs Transmission errors",
+	"Average Latency", "Throughput", "IOPs", "System Utilization", "NFSv3 Read and Write Latency", "NFSv3 Read and Write Throughput", "NFSv3 Read and Write IOPs", "CIFS Connections", "Protocol Backend IOPs",
+	"SVM Average Latency", "SVM Throughput", "SVM IOPs", "SVM CIFS Latency", "SVM CIFS IOPs", "SVM FCP Average Latency", "SVM FCP IOPs", "SVM FCP Throughput", "SVM iSCSI Average Latency", "SVM iSCSI Throughput", "SVM NVMe/FC Average Latency", "SVM NVMe/FC Throughput", "SVM NVMe/FC IOPs", "Copy Offload Data Copied",
+}
+
+var legendName = regexp.MustCompile(`{{.*?}}`)
+
 var throughputPattern = regexp.MustCompile(`(throughput|read_data|write_data|total_data)`)
 var aggregationThroughputPattern = regexp.MustCompile(`(?i)(\w+)\(`)
 
@@ -1989,4 +2011,54 @@ func SkipIfMissing(t *testing.T, vars ...string) {
 	if !anyMatches {
 		t.Skipf("Set one of %s envvars to run this test", strings.Join(vars, ", "))
 	}
+}
+
+func TestLegendFormat(t *testing.T) {
+	VisitDashboards(Dashboards, func(path string, data []byte) {
+		checkLegendFormat(t, path, data)
+	})
+}
+
+func checkLegendFormat(t *testing.T, path string, data []byte) {
+	path = ShortPath(path)
+	possibleLegends := exceptionLegendMap[path]
+
+	gjson.GetBytes(data, "templating.list").ForEach(func(_, value gjson.Result) bool {
+		varName := strings.ToLower(value.Get("name").ClonedString())
+		if varName == "aggregate" {
+			varName = "aggr"
+		}
+		possibleLegends = append(possibleLegends, varName)
+		return true
+	})
+
+	VisitAllPanels(data, func(_ string, _, value gjson.Result) {
+		panelTitle := value.Get("title").ClonedString()
+		if slices.Contains(exceptionList, panelTitle) {
+			return
+		}
+		kind := value.Get("type").ClonedString()
+		if kind != "barchart" && kind != "timeseries" && kind != "text" {
+			return
+		}
+		targetsSlice := value.Get("targets").Array()
+		for _, targetN := range targetsSlice {
+			legendFormat := targetN.Get("legendFormat").ClonedString()
+			legendExist := false
+			if !strings.Contains(legendFormat, "{{") {
+				t.Errorf("dashboard=%s panel=%s kind=%s legendFormat=%s should have {{object}} in legendFormat", path, panelTitle, kind, legendFormat)
+			} else {
+				matches := legendName.FindAllString(legendFormat, -1)
+				for _, match := range matches {
+					if slices.Contains(possibleLegends, match[2:len(match)-2]) {
+						legendExist = true
+						break
+					}
+				}
+				if !legendExist {
+					t.Errorf("dashboard=%s panel=%s kind=%s legendFormat=%s should have legends from %s in legendFormat", path, panelTitle, kind, legendFormat, possibleLegends)
+				}
+			}
+		}
+	})
 }
