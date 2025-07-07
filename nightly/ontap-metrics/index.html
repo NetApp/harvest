@@ -2434,6 +2434,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#cifs_session_idle_duration" class="md-nav__link">
+    <span class="md-ellipsis">
+      cifs_session_idle_duration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#cifs_session_labels" class="md-nav__link">
     <span class="md-ellipsis">
       cifs_session_labels
@@ -16066,6 +16075,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#cifs_session_idle_duration" class="md-nav__link">
+    <span class="md-ellipsis">
+      cifs_session_idle_duration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#cifs_session_labels" class="md-nav__link">
     <span class="md-ellipsis">
       cifs_session_labels
@@ -28500,7 +28518,7 @@ These can be generated on demand by running <code>bin/harvest grafana metrics</c
 <p>More information about ONTAP REST performance counters can be found <a href="https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html">here</a>.</p>
 </li>
 </ul>
-<div class="highlight"><pre><span></span><code>Creation Date : 2025-Jun-26
+<div class="highlight"><pre><span></span><code>Creation Date : 2025-Jul-07
 ONTAP Version: 9.16.1
 </code></pre></div>
 <details>
@@ -32751,6 +32769,47 @@ ONTAP Version: 9.16.1
 <td>Highlights</td>
 <td>timeseries</td>
 <td><a href="/d/cdot-smb/ontap3a-smb?orgId=1&amp;viewPanel=101">Connection Count By SMB version</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cifs_session_idle_duration">cifs_session_idle_duration<a class="headerlink" href="#cifs_session_idle_duration" title="Permanent link">&para;</a></h3>
+<p>Specifies an ISO-8601 format of date and time used to retrieve the idle time duration in hours, minutes, and seconds format.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/protocols/cifs/sessions</code></td>
+<td><code>idle_duration</code></td>
+<td>conf/rest/9.8.0/cifs_session.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cifs_session_idle_duration</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ONTAP: SMB</td>
+<td>Highlights</td>
+<td>table</td>
+<td><a href="/d/cdot-smb/ontap3a-smb?orgId=1&amp;viewPanel=98">CIFS Sessions</a></td>
 </tr>
 </tbody>
 </table>
