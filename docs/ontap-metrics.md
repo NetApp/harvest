@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Jun-23
+Creation Date : 2025-Jul-07
 ONTAP Version: 9.16.1
 ```
 
@@ -1676,6 +1676,24 @@ The `cifs_session_connection_count` metric is visualized in the following Grafan
 |--------|----------|--------|--------|
 | ONTAP: SMB | Highlights | timeseries | [Top $TopResources Connection Count](/d/cdot-smb/ontap3a-smb?orgId=1&viewPanel=100) |
 | ONTAP: SMB | Highlights | timeseries | [Connection Count By SMB version](/d/cdot-smb/ontap3a-smb?orgId=1&viewPanel=101) |
+///
+
+
+
+### cifs_session_idle_duration
+
+Specifies an ISO-8601 format of date and time used to retrieve the idle time duration in hours, minutes, and seconds format.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/protocols/cifs/sessions` | `idle_duration` | conf/rest/9.8.0/cifs_session.yaml |
+
+The `cifs_session_idle_duration` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: SMB | Highlights | table | [CIFS Sessions](/d/cdot-smb/ontap3a-smb?orgId=1&viewPanel=98) |
 ///
 
 

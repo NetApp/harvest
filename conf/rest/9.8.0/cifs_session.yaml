@@ -20,6 +20,7 @@ counters:
   - ^user
   - ^volumes.#.name          => volumes
   - connection_count
+  - idle_duration(duration)  => idle_duration
 
 plugins:
   - CIFSSession

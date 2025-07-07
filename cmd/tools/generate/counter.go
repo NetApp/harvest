@@ -169,6 +169,7 @@ var (
 		"volume_top_clients",
 		"volume_top_files",
 		"cluster_software",
+		"cifs_session_idle_duration",
 	}
 
 	excludeDocumentedZapiMetrics = []string{
