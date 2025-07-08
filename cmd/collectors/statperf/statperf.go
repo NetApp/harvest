@@ -17,6 +17,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
+	"regexp"
 	"slices"
 	"strconv"
 	"strings"
@@ -25,6 +26,7 @@ import (
 
 const (
 	latencyIoReqd       = 10
+	defaultBatchSize    = 500
 	arrayKeyToken       = "#"
 	subLabelToken       = "."
 	timestampMetricName = "timestamp"
@@ -42,6 +44,7 @@ type StatPerf struct {
 	recordsToSave     int      // Number of records to save when using the recorder
 	instanceNames     *set.Set // required for polldata
 	sortedCounters    []string
+	batchSize         int
 }
 
 type counter struct {
@@ -103,6 +106,7 @@ func (s *StatPerf) Init(a *collector.AbstractCollector) error {
 	}
 
 	s.filter = s.loadFilter()
+	s.batchSize = s.loadParamInt("batch_size", defaultBatchSize)
 
 	if err := s.InitMatrix(); err != nil {
 		return err
@@ -399,6 +403,8 @@ func (s *StatPerf) GetOverride(counter string) string {
 	return ""
 }
 
+var retryRe = regexp.MustCompile(`retry request with less than (\d+)`)
+
 func (s *StatPerf) PollData() (map[string]*matrix.Matrix, error) {
 	var (
 		apiD, parseD time.Duration
@@ -459,9 +465,9 @@ func (s *StatPerf) PollData() (map[string]*matrix.Matrix, error) {
 	}
 
 	allInstances := s.instanceNames.Slice()
-	batchSize, _ := strconv.Atoi(s.BatchSize)
-	for i := 0; i < len(allInstances); i += batchSize {
-		end := i + batchSize
+
+	for i := 0; i < len(allInstances); i += s.batchSize {
+		end := i + s.batchSize
 		if end > len(allInstances) {
 			end = len(allInstances)
 		}
@@ -475,6 +481,7 @@ func (s *StatPerf) PollData() (map[string]*matrix.Matrix, error) {
 			Instances(batchInstances).
 			Filter(s.filter).
 			Build()
+
 		if err != nil {
 			return nil, err
 		}
@@ -486,6 +493,27 @@ func (s *StatPerf) PollData() (map[string]*matrix.Matrix, error) {
 		// Fetch results (no pagination assumed) for current batch.
 		records, err = rest.FetchPost(s.Client, "api/private/cli", cliCommand, headers)
 		if err != nil {
+			errMsg := strings.ToLower(err.Error())
+
+			// if ONTAP complains about batch size, use a smaller batch size
+			if strings.Contains(errMsg, "retry request with less than") && s.batchSize > 100 {
+				matches := retryRe.FindStringSubmatch(errMsg)
+				if len(matches) == 2 {
+					newBatchSize, err := strconv.Atoi(matches[1])
+					if err != nil {
+						s.Logger.Error("failed to parse batch size", slogx.Err(err), slog.String("errMsg", errMsg))
+					} else {
+						s.Logger.Warn(
+							"batch size too large, reducing",
+							slog.Int("currentBatchSize", s.batchSize),
+							slog.Int("newBatchSize", newBatchSize),
+						)
+						s.batchSize = newBatchSize
+					}
+				} else {
+					s.Logger.Error("failed to parse batch size from error message", slog.String("errMsg", errMsg))
+				}
+			}
 			return nil, err
 		}
 
