@@ -81,7 +81,7 @@ Additional details: [here](https://stackoverflow.com/questions/38783424/promethe
 
 Harvest container images are published to both GitHub's image registry (ghcr.io) and Docker's image registry (hub.docker.com). By default, `ghcr.io` is used for pulling images.
 
-Please note that `cr.netapp.io` is no longer being maintained. If you have been using `cr.netapp.io` to pull Harvest images, we encourage you to switch to `ghcr.io` or Docker Hub as your container image registry. Starting in 2024, we will cease publishing Harvest container images to `cr.netapp.io`.
+Please note that `cr.netapp.io` is no longer maintained. If you have been using `cr.netapp.io` to pull Harvest images, please switch to `ghcr.io` or Docker Hub as your container image registry. Starting in 2024, we will cease publishing Harvest container images to `cr.netapp.io`.
 
 ### How do I switch between image registries?
 
