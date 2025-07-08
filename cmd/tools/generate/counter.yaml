@@ -2128,6 +2128,46 @@ counters:
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
 
+  - Name: mav_request_approve_expiry_time
+    Description: Shows the deadline by which approved operations must be approved.
+    APIs:
+      - API: REST
+        Endpoint: api/security/multi-admin-verify/requests
+        ONTAPCounter: approve_expiry_time
+        Template: conf/rest/9.12.0/mav_request.yaml
+
+  - Name: mav_request_approve_time
+    Description: Shows the date and time when requests were approved.
+    APIs:
+      - API: REST
+        Endpoint: api/security/multi-admin-verify/requests
+        ONTAPCounter: approve_time
+        Template: conf/rest/9.12.0/mav_request.yaml
+
+  - Name: mav_request_create_time
+    Description: Displays the date and time each MAV request was initiated.
+    APIs:
+      - API: REST
+        Endpoint: api/security/multi-admin-verify/requests
+        ONTAPCounter: create_time
+        Template: conf/rest/9.12.0/mav_request.yaml
+
+  - Name: mav_request_execution_expiry_time
+    Description: Shows the deadline by which approved operations must be executed.
+    APIs:
+      - API: REST
+        Endpoint: api/security/multi-admin-verify/requests
+        ONTAPCounter: execution_expiry_time
+        Template: conf/rest/9.12.0/mav_request.yaml
+
+  - Name: mav_request_labels
+    Description: This metric provides information about MAV requests.
+    APIs:
+      - API: REST
+        Endpoint: api/security/multi-admin-verify/requests
+        ONTAPCounter: Harvest generated.
+        Template: conf/rest/9.12.0/mav_request.yaml
+
   - Name: ethernet_switch_port_receive_discards
     Description: Total number of discarded packets.
     APIs:

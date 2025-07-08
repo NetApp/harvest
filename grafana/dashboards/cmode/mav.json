@@ -1,0 +1,575 @@
+{
+  "__inputs": [
+    {
+      "description": "",
+      "label": "Prometheus",
+      "name": "DS_PROMETHEUS",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus",
+      "type": "datasource"
+    }
+  ],
+  "__requires": [
+    {
+      "id": "grafana",
+      "name": "Grafana",
+      "type": "grafana",
+      "version": "8.1.8"
+    },
+    {
+      "id": "prometheus",
+      "name": "Prometheus",
+      "type": "datasource",
+      "version": "1.0.0"
+    },
+    {
+      "id": "table",
+      "name": "Table",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "text",
+      "name": "Text",
+      "type": "panel",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "",
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 1,
+  "id": null,
+  "iteration": 1751889744040,
+  "links": [
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [
+        "cdot"
+      ],
+      "targetBlank": false,
+      "title": "Related Dashboards",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
+  "panels": [
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 303,
+      "panels": [],
+      "title": "Important Information",
+      "type": "row"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 305,
+      "options": {
+        "content": "<br>\n\nThis dashboard offers insights into Multi Admin Verification (MAV) operations. Since each time seriesused in this dashboard can be unique, high-frequency usage (such as thousands of MAV requests per day in ONTAP) may affect the performance of Harvest Prometheus or VictoriaMetrics due to cardinality issues. To use this dashboard, make sure the MAVRequest template is enabled. For more details, please consult the [MAV documentation](https://github.com/NetApp/harvest/discussions/3743).",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.1.8",
+      "type": "text"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "This panel provides information regarding the status and lifecycle of Multi-Admin Verification (MAV) requests within the ONTAP system.\nFor more detailed information on MAV, refer to the [ONTAP documentation](https://docs.netapp.com/us-en/ontap/multi-admin-verify/).\n\n#### Panel Columns:\n\n- **Create Date**: Displays the date and time each MAV request was initiated.\n- **Approval Date**: Shows the date and time when requests were approved.\n- **Approval Expiry Date**: Shows the deadline by which approved operations must be approved.\n- **Execute Expiry Date**: Shows the deadline by which approved operations must be executed.\n- **Operation**: Lists the specific ONTAP operations requested, such as volume or snapshot deletions.\n- **Query**: Identifies the target object(s) for each operation.\n- **State**: Reflects the current status of each request (e.g., pending, approved, vetoed, expired, executed).\n- **User Requested**: Displays the username of the individual who initiated the request.\n- **User Approved**: Shows the username(s) of administrators who approved the request.\n- **User Vetoed**: Indicates the username of any administrator who vetoed the request.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "filterable": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "locale"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Create Date"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsIso"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Create Date"
+            },
+            "properties": [
+              {
+                "id": "custom.align",
+                "value": "left"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "cluster"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Cluster"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "datacenter"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Datacenter"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Approval Date"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsIso"
+              },
+              {
+                "id": "custom.align",
+                "value": "left"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Approval Expiry Date"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsIso"
+              },
+              {
+                "id": "custom.align",
+                "value": "left"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Execute Expiry Date"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsIso"
+              },
+              {
+                "id": "custom.align",
+                "value": "left"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Query"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 184
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 16,
+        "w": 24,
+        "x": 0,
+        "y": 4
+      },
+      "id": 295,
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Create Date"
+          }
+        ]
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "label_join(\n  last_over_time(\n    mav_request_approve_expiry_time{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[$__range]\n  ),\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"operation\",\n  \"query\",\n  \"index\",\n  \"user_requested\",\n  \"seq_id\"\n)",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        },
+        {
+          "exemplar": false,
+          "expr": "label_join(\n  last_over_time(mav_request_approve_time{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[$__range]),\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"operation\",\n  \"query\",\n  \"index\",\n  \"user_requested\",\n  \"seq_id\"\n)",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "B"
+        },
+        {
+          "exemplar": false,
+          "expr": "label_join(\n  last_over_time(\n    mav_request_execution_expiry_time{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[$__range]\n  ),\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"operation\",\n  \"query\",\n  \"index\",\n  \"user_requested\",\n  \"seq_id\"\n)",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "D"
+        },
+        {
+          "exemplar": false,
+          "expr": "label_join(\n  last_over_time(mav_request_create_time{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[$__range]),\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"operation\",\n  \"query\",\n  \"index\",\n  \"user_requested\",\n  \"seq_id\"\n)",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "C"
+        },
+        {
+          "exemplar": false,
+          "expr": "label_join(\n      last_over_time(mav_request_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[$__range]),\n      \"unique_id\",\n      \"-\",\n      \"datacenter\",\n      \"cluster\",\n      \"operation\",\n      \"query\",\n      \"index\",\n      \"user_requested\",\n      \"seq_id\"\n    )\n  / on (unique_id) group_left ()\n    max by (unique_id) (\n      label_join(\n        max_over_time(mav_request_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[$__range]),\n        \"unique_id\",\n        \"-\",\n        \"datacenter\",\n        \"cluster\",\n        \"operation\",\n        \"query\",\n        \"index\",\n        \"user_requested\",\n        \"seq_id\"\n      )\n    )\n==\n  1",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "E"
+        }
+      ],
+      "title": "MAV Requests",
+      "transformations": [
+        {
+          "id": "seriesToColumns",
+          "options": {
+            "byField": "unique_id"
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "(.*) 1$",
+            "renamePattern": "$1"
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "cluster",
+                "datacenter",
+                "operation",
+                "query",
+                "user_requested",
+                "Value #B",
+                "Value #D",
+                "Value #C",
+                "approved_users",
+                "state",
+                "user_vetoed",
+                "Value #A"
+              ]
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time 2": true,
+              "Time 3": true,
+              "Value #A": false,
+              "application 2": true,
+              "approved_users 2": true,
+              "approved_users 3": true,
+              "approved_users 4": true,
+              "cluster 2": true,
+              "cluster 3": true,
+              "cluster 4": true,
+              "cluster 5": true,
+              "datacenter 2": true,
+              "datacenter 3": true,
+              "datacenter 4": true,
+              "datacenter 5": true,
+              "location 2": true,
+              "object 2": true,
+              "op 2": true,
+              "operation 2": true,
+              "operation 3": true,
+              "operation 4": true,
+              "operation 5": true,
+              "query 2": true,
+              "query 3": true,
+              "query 4": true,
+              "query 5": true,
+              "state 2": true,
+              "state 3": true,
+              "state 4": true,
+              "user 2": true,
+              "user_requested 2": true,
+              "user_requested 3": true,
+              "user_requested 4": true,
+              "user_requested 5": true,
+              "uuid 2": true,
+              "volume 2": true
+            },
+            "indexByName": {
+              "Value #A": 2,
+              "Value #B": 1,
+              "Value #C": 0,
+              "Value #D": 3,
+              "approved_users": 10,
+              "cluster": 5,
+              "cluster 2": 12,
+              "cluster 3": 17,
+              "cluster 4": 22,
+              "cluster 5": 27,
+              "datacenter": 4,
+              "datacenter 2": 13,
+              "datacenter 3": 18,
+              "datacenter 4": 23,
+              "datacenter 5": 28,
+              "operation": 6,
+              "operation 2": 14,
+              "operation 3": 19,
+              "operation 4": 24,
+              "operation 5": 29,
+              "query": 7,
+              "query 2": 15,
+              "query 3": 20,
+              "query 4": 25,
+              "query 5": 30,
+              "state": 8,
+              "user_requested": 9,
+              "user_requested 2": 16,
+              "user_requested 3": 21,
+              "user_requested 4": 26,
+              "user_requested 5": 31,
+              "user_vetoed": 11
+            },
+            "renameByName": {
+              "ClusterTime": "Cluster Time",
+              "Value #A": "Approval Expiry Date",
+              "Value #B": "Approval Date",
+              "Value #C": "Create Date",
+              "Value #D": "Execute Expiry Date",
+              "application": "Application",
+              "approved_users": "User Approved",
+              "datacenter": "",
+              "op": "OP",
+              "operation": "Operation",
+              "query": "Query",
+              "state": "State",
+              "svm": "",
+              "user": "User",
+              "user_requested": "User Requested",
+              "user_vetoed": "User Vetoed"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 30,
+  "style": "dark",
+  "tags": [
+    "harvest",
+    "ontap",
+    "cdot"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "Prometheus",
+          "value": "Prometheus"
+        },
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": false,
+        "label": "Data Source",
+        "multi": false,
+        "name": "DS_PROMETHEUS",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(cluster_new_status{system_type!=\"7mode\"},datacenter)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "Datacenter",
+        "options": [],
+        "query": {
+          "query": "label_values(cluster_new_status{system_type!=\"7mode\"},datacenter)",
+          "refId": "Prometheus-Datacenter-Variable-Query"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},cluster)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "Cluster",
+        "options": [],
+        "query": {
+          "query": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},cluster)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "",
+  "title": "ONTAP: MAV Request",
+  "uid": "cdot-mva",
+  "version": 1
+}
