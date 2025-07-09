@@ -17,8 +17,6 @@ import (
 	"time"
 )
 
-type AlertSeverity string
-
 const (
 	fieldIndex               = "index"
 	fieldQuery               = "query"
@@ -33,6 +31,7 @@ const (
 	fieldSeqID               = "seq_id"
 	fieldUserVetoed          = "user_vetoed"
 	fieldLabels              = "labels"
+	defaultDataPollDuration  = 3 * time.Minute
 )
 
 type Mav struct {
@@ -40,6 +39,7 @@ type Mav struct {
 	client                *rest.Client
 	mavData               *matrix.Matrix
 	mavDataExtendedMatrix *matrix.Matrix
+	timeFilter            time.Duration
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -61,6 +61,19 @@ func (m *Mav) Init(remote conf.Remote) error {
 		return err
 	}
 
+	dataDuration, err := collectors.GetDataInterval(m.ParentParams, defaultDataPollDuration)
+	if err != nil {
+		m.SLogger.Warn(
+			"Failed to parse duration. using default",
+			slogx.Err(err),
+			slog.String("defaultDataPollDuration", defaultDataPollDuration.String()),
+		)
+	}
+
+	// Calculate the time filter duration by doubling the data interval and subtracting one minute.
+	// This duration will be used to adjust the cluster time for filtering requests.
+	m.timeFilter = 2*dataDuration - time.Minute
+
 	return m.client.Init(5, remote)
 }
 
@@ -74,7 +87,7 @@ func newExportOptions(fields ...string) *node.Node {
 }
 
 func (m *Mav) initMatrix() {
-	// Build the first matrix
+	// Create the first matrix for MAV request metrics such as create_time,approve_time, approve_expiry_time,execution_expiry_time
 	m.mavData = matrix.New(m.Parent+".MavRequest", "mav_request", "MavRequest")
 	fieldsForMavData := []string{
 		fieldIndex,
@@ -86,7 +99,8 @@ func (m *Mav) initMatrix() {
 	exportOptions := newExportOptions(fieldsForMavData...)
 	m.mavData.SetExportOptions(exportOptions)
 
-	// Build the second matrix (with extra fields)
+	// Create the second matrix for mav_request_labels
+	// This is not achievable using the instance_labels configuration in a single matrix.
 	m.mavDataExtendedMatrix = matrix.New(m.Parent+".MavRequest2", "mav_request", "MavRequest2")
 	fieldsForMavDataLabel := []string{
 		fieldIndex,
@@ -131,9 +145,9 @@ func (m *Mav) collectMAVRequests() error {
 	if err != nil {
 		return err
 	}
-	// Subtract 5 minutes to capture the expired status and ensure the full lifecycle of the request is included.
-	// All states excluding executed reaches expired state
-	approveTimeFilter := fmt.Sprintf("%s=>=%d", fieldApproveExpiryTime, clusterTime.Add(-5*time.Minute).Unix())
+	// Subtract timeFilter from the current time to capture requests that have expired.
+	// This ensures that all states, except for those marked as executed, are included in the lifecycle analysis.
+	approveTimeFilter := fmt.Sprintf("%s=>=%d", fieldApproveExpiryTime, clusterTime.Add(-m.timeFilter).Unix())
 	filter := []string{approveTimeFilter}
 
 	approveRecords, err := m.getMAVRequests(filter)
@@ -141,7 +155,9 @@ func (m *Mav) collectMAVRequests() error {
 		return err
 	}
 
-	expiryTimeFilter := fmt.Sprintf("%s=>=%d", fieldExecutionExpiryTime, clusterTime.Add(-5*time.Minute).Unix())
+	// A second REST call is necessary because the execute expiry time might be missing for some requests.
+	// The fields query does not support an OR condition between the approve and execute expiry times.
+	expiryTimeFilter := fmt.Sprintf("%s=>=%d", fieldExecutionExpiryTime, clusterTime.Add(-m.timeFilter).Unix())
 	filter = []string{expiryTimeFilter}
 
 	records, err := m.getMAVRequests(filter)
@@ -155,6 +171,7 @@ func (m *Mav) collectMAVRequests() error {
 	matExtended := m.mavDataExtendedMatrix
 	for _, record := range records {
 		index := record.Get(fieldIndex).ClonedString()
+		// if index exists in both matrix then skip
 		if mat.GetInstance(index) != nil && matExtended.GetInstance(index) != nil {
 			continue
 		}
@@ -258,8 +275,6 @@ func (m *Mav) getMAVRequests(filter []string) ([]gjson.Result, error) {
 		MaxRecords(collectors.DefaultBatchSize).
 		Filter(filter).
 		Build()
-
-	fmt.Println(href)
 
 	return collectors.InvokeRestCall(m.client, href)
 }
