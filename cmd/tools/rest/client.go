@@ -242,10 +242,10 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 					Build()
 			}
 
-			result := gjson.GetBytes(innerBody, "error")
+			errorMsg := gjson.GetBytes(innerBody, "error")
 
 			if response.StatusCode == http.StatusForbidden {
-				message := result.Get(Message).ClonedString()
+				message := errorMsg.Get(Message).ClonedString()
 				return nil, errs.NewRest().
 					StatusCode(response.StatusCode).
 					Error(errs.ErrPermissionDenied).
@@ -254,13 +254,18 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 					Build()
 			}
 
-			if result.Exists() {
-				message := result.Get(Message).ClonedString()
-				code := result.Get(Code).Int()
-				target := result.Get(Target).ClonedString()
+			if errorMsg.Exists() {
+				message := errorMsg.Get(Message).ClonedString()
+				code := errorMsg.Get(Code).Int()
+				target := errorMsg.Get(Target).ClonedString()
+				outputMsg := gjson.GetBytes(innerBody, "output")
+
+				fullMessage := message + " " + outputMsg.ClonedString()
+				fullMessage = strings.TrimSpace(fullMessage)
+
 				return nil, errs.NewRest().
 					StatusCode(response.StatusCode).
-					Message(message).
+					Message(fullMessage).
 					Code(code).
 					Target(target).
 					API(api).

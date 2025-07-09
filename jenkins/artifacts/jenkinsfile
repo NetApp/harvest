@@ -35,8 +35,6 @@ pipeline {
         imageName = "rahulguptajss/harvest"
         ghcrImage = "ghcr.io/netapp/harvest"
         DOCKERHUB_USERNAME = "rahulguptajss"
-        jfrogImagePrefix = "netappdownloads.jfrog.io/oss-docker-harvest-production/harvest"
-        jfrogRepo = "netappdownloads.jfrog.io"
         COMMIT_ID = sh(returnStdout: true, script: 'git rev-parse HEAD')
     }
 
@@ -182,8 +180,8 @@ pipeline {
                             sh '''
                             targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
                             docker login
-                            docker build --secret id=git_token,src=${gitTokenFile} -f container/onePollerPerContainer/Dockerfile --build-arg GO_VERSION=${GO_VERSION} --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET -t ${imageName}:latest -t ${imageName}:$VERSION-$RELEASE -t ${jfrogImagePrefix}:latest -t ${jfrogImagePrefix}:$VERSION-$RELEASE -t ${ghcrImage}:latest -t ${ghcrImage}:$VERSION-$RELEASE . --no-cache
-                            docker build --secret id=git_token,src=${gitTokenFile} -f container/onePollerPerContainer/Dockerfile --build-arg GO_VERSION=${GO_VERSION} --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET --build-arg GODEBUG=fips140=on -t ${imageName}:latest-fips -t ${imageName}:$VERSION-$RELEASE-fips -t ${jfrogImagePrefix}:latest-fips -t ${jfrogImagePrefix}:$VERSION-$RELEASE-fips -t ${ghcrImage}:latest-fips -t ${ghcrImage}:$VERSION-$RELEASE-fips . --no-cache
+                            docker build --secret id=git_token,src=${gitTokenFile} -f container/onePollerPerContainer/Dockerfile --build-arg GO_VERSION=${GO_VERSION} --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET -t ${imageName}:latest -t ${imageName}:$VERSION-$RELEASE -t ${ghcrImage}:latest -t ${ghcrImage}:$VERSION-$RELEASE . --no-cache
+                            docker build --secret id=git_token,src=${gitTokenFile} -f container/onePollerPerContainer/Dockerfile --build-arg GO_VERSION=${GO_VERSION} --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET --build-arg GODEBUG=fips140=on -t ${imageName}:latest-fips -t ${imageName}:$VERSION-$RELEASE-fips -t ${ghcrImage}:latest-fips -t ${ghcrImage}:$VERSION-$RELEASE-fips . --no-cache
                             docker save -o ${targetLocation}/docker_harvest.tar ${ghcrImage}:latest
                             docker save -o ${targetLocation}/docker_harvest_fips.tar ${ghcrImage}:latest-fips
                             '''
@@ -301,22 +299,6 @@ pipeline {
                         '''
                     }
                 }
-                withCredentials([usernamePassword(credentialsId: 'Jfrog', passwordVariable: 'password', usernameVariable: 'username')]) {
-                    sh '''
-                    docker login --username=$username --password=$password ${jfrogRepo}
-                    docker push ${jfrogImagePrefix}:$VERSION-$RELEASE-fips
-                    docker push ${jfrogImagePrefix}:$VERSION-$RELEASE
-                    '''
-                    script {
-                        currentStage = 'Docker Image Publish'
-                        if (OVERWRITE_DOCKER_LATEST_TAG == 'true') {
-                            sh '''
-                            docker push ${jfrogImagePrefix}:latest-fips
-                            docker push ${jfrogImagePrefix}:latest
-                            '''
-                        }
-                    }
-                }
             }
         }
 
@@ -345,8 +327,8 @@ pipeline {
                             git push https://$GIT_TOKEN@github.com/NetApp/harvest.git --delete nightly
                         fi
                         /opt/home/gh_2.8.0_linux_386/bin/gh release create nightly $targetLocation/*.rpm $targetLocation/*.deb $targetLocation/*.gz --notes "Nightly builds may include bugs and other issues. You might want to use the stable releases instead." --title "Harvest Nightly Release" --prerelease --target main
-                        docker build --secret id=git_token,src=${gitTokenFile} -f container/onePollerPerContainer/Dockerfile --build-arg GO_VERSION=${GO_VERSION} --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET -t ${imageName}:latest -t ${imageName}:nightly -t ${jfrogImagePrefix}:latest -t ${jfrogImagePrefix}:nightly -t ${ghcrImage}:latest -t ${ghcrImage}:nightly . --no-cache
-                        docker build --secret id=git_token,src=${gitTokenFile} -f container/onePollerPerContainer/Dockerfile --build-arg GO_VERSION=${GO_VERSION} --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET --build-arg GODEBUG=fips140=on -t ${imageName}:latest-fips -t ${imageName}:nightly-fips -t ${jfrogImagePrefix}:latest-fips -t ${jfrogImagePrefix}:nightly-fips -t ${ghcrImage}:latest-fips -t ${ghcrImage}:nightly-fips . --no-cache
+                        docker build --secret id=git_token,src=${gitTokenFile} -f container/onePollerPerContainer/Dockerfile --build-arg GO_VERSION=${GO_VERSION} --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET -t ${imageName}:latest -t ${imageName}:nightly -t ${ghcrImage}:latest -t ${ghcrImage}:nightly . --no-cache
+                        docker build --secret id=git_token,src=${gitTokenFile} -f container/onePollerPerContainer/Dockerfile --build-arg GO_VERSION=${GO_VERSION} --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET --build-arg GODEBUG=fips140=on -t ${imageName}:latest-fips -t ${imageName}:nightly-fips -t ${ghcrImage}:latest-fips -t ${ghcrImage}:nightly-fips . --no-cache
                         echo $GIT_TOKEN | docker login ghcr.io -u $DOCKERHUB_USERNAME --password-stdin
                         docker push ${ghcrImage}:nightly-fips
                         docker push ${ghcrImage}:nightly
@@ -361,13 +343,6 @@ pipeline {
                             docker login
                             docker push ${imageName}:nightly-fips
                             docker push ${imageName}:nightly
-                            '''
-                        }
-                        withCredentials([usernamePassword(credentialsId: 'Jfrog', passwordVariable: 'password', usernameVariable: 'username')]) {
-                            sh '''
-                            docker login --username=$username --password=$password ${jfrogRepo}
-                            docker push ${jfrogImagePrefix}:nightly-fips
-                            docker push ${jfrogImagePrefix}:nightly
                             '''
                         }
                     }
