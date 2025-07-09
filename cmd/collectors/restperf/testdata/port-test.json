@@ -4,15 +4,19 @@
       "node": "rtp-a700s-01",
       "ifgrp": "a0a",
       "ports": [
-        "e5c",
-        "e5d"
+        "f5y",
+        "f5w",
+        "f5z",
+        "f5x"
       ]
     },
     {
       "node": "rtp-a700s-02",
       "ifgrp": "a0b",
       "ports": [
+        "e5c",
         "e5a",
+        "e5d",
         "e5b"
       ]
     }

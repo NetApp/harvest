@@ -501,7 +501,7 @@ func PopulateIfgroupMetrics(portIfgroupMap map[string]string, portDataMap map[st
 		ifgroupInstance.SetLabel("node", nodeName)
 		ifgroupInstance.SetLabel("ifgroup", ifgroupName)
 		if ifgroupInstance.GetLabel("ports") != "" {
-			portSlice := []string{ifgroupInstance.GetLabel("ports"), port}
+			portSlice := append(strings.Split(ifgroupInstance.GetLabel("ports"), ","), port)
 			// make sure ports are always in sorted order
 			sort.Strings(portSlice)
 			ifgroupInstance.SetLabel("ports", strings.Join(portSlice, ","))
