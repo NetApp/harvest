@@ -101,7 +101,7 @@
       },
       "id": 305,
       "options": {
-        "content": "<br>\n\nThis dashboard offers insights into Multi Admin Verification (MAV) operations. Since each time seriesused in this dashboard can be unique, high-frequency usage (such as thousands of MAV requests per day in ONTAP) may affect the performance of Harvest Prometheus or VictoriaMetrics due to cardinality issues. To use this dashboard, make sure the MAVRequest template is enabled. For more details, please consult the [MAV documentation](https://github.com/NetApp/harvest/discussions/3743).",
+        "content": "<br>\n\nThis dashboard offers insights into Multi Admin Verification (MAV) operations. Since each time series used in this dashboard can be unique, high-frequency usage (such as thousands of MAV requests per day in ONTAP) may affect the performance of Harvest Prometheus or VictoriaMetrics due to cardinality issues. To use this dashboard, make sure the MAVRequest template is enabled. For more details, please consult the [MAV documentation](https://github.com/NetApp/harvest/discussions/3743).",
         "mode": "markdown"
       },
       "pluginVersion": "8.1.8",

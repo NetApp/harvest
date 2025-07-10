@@ -154,7 +154,7 @@ func (m *Mav) collectMAVRequests() error {
 	}
 	// Subtract timeFilter from the current time to capture requests that have expired.
 	// This ensures that all states, except for those marked as executed, are included in the lifecycle analysis.
-	approveTimeFilter := fmt.Sprintf("%s=>=%d", fieldApproveExpiryTime, clusterTime.Add(-30*time.Minute).Unix())
+	approveTimeFilter := fmt.Sprintf("%s=>=%d", fieldApproveExpiryTime, clusterTime.Add(-m.timeFilter).Unix())
 	filter := []string{approveTimeFilter}
 
 	approveRecords, err := m.getMAVRequests(filter)
@@ -164,7 +164,7 @@ func (m *Mav) collectMAVRequests() error {
 
 	// A second REST call is necessary because the execute expiry time might be missing for some requests.
 	// The fields query does not support an OR condition between the approve and execute expiry times.
-	expiryTimeFilter := fmt.Sprintf("%s=>=%d", fieldExecutionExpiryTime, clusterTime.Add(-30*time.Minute).Unix())
+	expiryTimeFilter := fmt.Sprintf("%s=>=%d", fieldExecutionExpiryTime, clusterTime.Add(-m.timeFilter).Unix())
 	filter = []string{expiryTimeFilter}
 
 	records, err := m.getMAVRequests(filter)
