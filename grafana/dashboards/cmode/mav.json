@@ -59,7 +59,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1752043173019,
+  "iteration": 1752070231424,
   "links": [
     {
       "asDropdown": true,
@@ -109,7 +109,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel provides information regarding the status and lifecycle of Multi-Admin Verification (MAV) requests within the ONTAP system.\nFor more detailed information on MAV, refer to the [ONTAP documentation](https://docs.netapp.com/us-en/ontap/multi-admin-verify/).\n\n#### Panel Columns:\n\n- **Create Date**: Displays the date and time each MAV request was initiated.\n- **Approval Date**: Shows the date and time when requests were approved.\n- **Approval Expiry Date**: Shows the deadline by which approved operations must be approved.\n- **Execute Expiry Date**: Shows the deadline by which approved operations must be executed.\n- **Operation**: Lists the specific ONTAP operations requested, such as volume or snapshot deletions.\n- **Query**: Identifies the target object(s) for each operation.\n- **State**: Reflects the current status of each request (e.g., pending, approved, vetoed, expired, executed).\n- **User Requested**: Displays the username of the individual who initiated the request.\n- **User Approved**: Shows the username(s) of administrators who approved the request.\n- **User Vetoed**: Indicates the username of any administrator who vetoed the request.",
+      "description": "This panel provides information regarding the status and lifecycle of Multi-Admin Verification (MAV) requests within the ONTAP system.\nFor more detailed information on MAV, refer to the [ONTAP documentation](https://docs.netapp.com/us-en/ontap/multi-admin-verify/).\n\n#### Panel Columns:\n\n- **Create Date**: Displays the date and time each MAV request was initiated.\n- **State**: Reflects the current status of each request (e.g., pending, approved, vetoed, execution_expired, approval_expired, pending_expired, executed).\n  - **pending**: The request has been created and is awaiting approval.\n  - **approved**: The request has been reviewed and approved, but not yet executed.\n  - **vetoed**: The request has been vetoed by an authorized user.\n  - **approval_expired**: The request was pending and was not approved within the required timeframe.\n  - **execution_expired**: The request was approved but was not executed within the required timeframe.\n  - **executed**: The request has been successfully executed.\n- **Approval Date**: Shows the date and time when requests were approved.\n- **Approval Expiry Date**: Shows the deadline by which approved operations must be approved.\n- **Execute Expiry Date**: Shows the deadline by which approved operations must be executed.\n- **Operation**: Lists the specific ONTAP operations requested, such as volume or snapshot deletions.\n- **Query**: Identifies the target object(s) for each operation.\n- **User Requested**: Displays the username of the individual who initiated the request.\n- **User Approved**: Shows the username(s) of administrators who approved the request.\n- **User Vetoed**: Indicates the username of any administrator who vetoed the request.\n",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -323,7 +323,7 @@
         },
         {
           "exemplar": false,
-          "expr": "label_join(\n      last_over_time(mav_request_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[$__range]),\n      \"unique_id\",\n      \"-\",\n      \"datacenter\",\n      \"cluster\",\n      \"operation\",\n      \"query\",\n      \"index\",\n      \"user_requested\",\n      \"seq_id\"\n    )\n  / on (unique_id) group_left ()\n    max by (unique_id) (\n      label_join(\n        max_over_time(mav_request_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[$__range]),\n        \"unique_id\",\n        \"-\",\n        \"datacenter\",\n        \"cluster\",\n        \"operation\",\n        \"query\",\n        \"index\",\n        \"user_requested\",\n        \"seq_id\"\n      )\n    )\n==\n  1",
+          "expr": "label_join(\n      last_over_time(mav_request_details{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[$__range]),\n      \"unique_id\",\n      \"-\",\n      \"datacenter\",\n      \"cluster\",\n      \"operation\",\n      \"query\",\n      \"index\",\n      \"user_requested\",\n      \"seq_id\"\n    )\n  / on (unique_id) group_left ()\n    max by (unique_id) (\n      label_join(\n        max_over_time(mav_request_details{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[$__range]),\n        \"unique_id\",\n        \"-\",\n        \"datacenter\",\n        \"cluster\",\n        \"operation\",\n        \"query\",\n        \"index\",\n        \"user_requested\",\n        \"seq_id\"\n      )\n    )\n==\n  1",
           "format": "table",
           "hide": false,
           "instant": true,

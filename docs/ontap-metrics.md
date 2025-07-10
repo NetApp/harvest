@@ -6855,7 +6855,7 @@ The `mav_request_execution_expiry_time` metric is visualized in the following Gr
 
 
 
-### mav_request_labels
+### mav_request_details
 
 This metric provides information about MAV requests.
 
@@ -6863,7 +6863,7 @@ This metric provides information about MAV requests.
 |--------|----------|--------|---------|
 | REST | `api/security/multi-admin-verify/requests` | `Harvest generated.` | conf/rest/9.12.0/mav_request.yaml |
 
-The `mav_request_labels` metric is visualized in the following Grafana dashboards:
+The `mav_request_details` metric is visualized in the following Grafana dashboards:
     
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |

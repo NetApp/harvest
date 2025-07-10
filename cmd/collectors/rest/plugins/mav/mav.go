@@ -30,8 +30,12 @@ const (
 	fieldApproveTime         = "approve_time"
 	fieldSeqID               = "seq_id"
 	fieldUserVetoed          = "user_vetoed"
-	fieldLabels              = "labels"
+	fieldDetails             = "details"
 	defaultDataPollDuration  = 3 * time.Minute
+	stateExpired             = "expired"
+	stateExecutionExpired    = "execution_expired"
+	stateApprovalExpired     = "approval_expired"
+	stateVetoed              = "vetoed"
 )
 
 type Mav struct {
@@ -73,7 +77,10 @@ func (m *Mav) Init(remote conf.Remote) error {
 	// Calculate the time filter duration by doubling the data interval and subtracting one minute.
 	// This duration will be used to adjust the cluster time for filtering requests.
 	m.timeFilter = 2*dataDuration - time.Minute
-
+	minValue := 5 * time.Minute
+	if m.timeFilter < minValue {
+		m.timeFilter = minValue
+	}
 	return m.client.Init(5, remote)
 }
 
@@ -99,7 +106,7 @@ func (m *Mav) initMatrix() {
 	exportOptions := newExportOptions(fieldsForMavData...)
 	m.mavData.SetExportOptions(exportOptions)
 
-	// Create the second matrix for mav_request_labels
+	// Create the second matrix for metric mav_request_details
 	// This is not achievable using the instance_labels configuration in a single matrix.
 	m.mavDataExtendedMatrix = matrix.New(m.Parent+".MavRequest2", "mav_request", "MavRequest2")
 	fieldsForMavDataLabel := []string{
@@ -147,7 +154,7 @@ func (m *Mav) collectMAVRequests() error {
 	}
 	// Subtract timeFilter from the current time to capture requests that have expired.
 	// This ensures that all states, except for those marked as executed, are included in the lifecycle analysis.
-	approveTimeFilter := fmt.Sprintf("%s=>=%d", fieldApproveExpiryTime, clusterTime.Add(-m.timeFilter).Unix())
+	approveTimeFilter := fmt.Sprintf("%s=>=%d", fieldApproveExpiryTime, clusterTime.Add(-30*time.Minute).Unix())
 	filter := []string{approveTimeFilter}
 
 	approveRecords, err := m.getMAVRequests(filter)
@@ -157,7 +164,7 @@ func (m *Mav) collectMAVRequests() error {
 
 	// A second REST call is necessary because the execute expiry time might be missing for some requests.
 	// The fields query does not support an OR condition between the approve and execute expiry times.
-	expiryTimeFilter := fmt.Sprintf("%s=>=%d", fieldExecutionExpiryTime, clusterTime.Add(-m.timeFilter).Unix())
+	expiryTimeFilter := fmt.Sprintf("%s=>=%d", fieldExecutionExpiryTime, clusterTime.Add(-30*time.Minute).Unix())
 	filter = []string{expiryTimeFilter}
 
 	records, err := m.getMAVRequests(filter)
@@ -181,6 +188,10 @@ func (m *Mav) collectMAVRequests() error {
 		userRequested := record.Get(fieldUserRequested).ClonedString()
 		userVetoed := record.Get(fieldUserVetoed).ClonedString()
 		approvedUsersA := record.Get(fieldApprovedUsers)
+		createTimeStr := record.Get(fieldCreateTime).ClonedString()
+		approveExpiryTimeStr := record.Get(fieldApproveExpiryTime).ClonedString()
+		executeExpiryTimeStr := record.Get(fieldExecutionExpiryTime).ClonedString()
+		approveTimeStr := record.Get(fieldApproveTime).ClonedString()
 
 		var appUserNames []string
 		approvedUsersA.ForEach(func(_, value gjson.Result) bool {
@@ -193,28 +204,27 @@ func (m *Mav) collectMAVRequests() error {
 			m.SLogger.Warn("error while creating instance", slog.String("key", index))
 			continue
 		}
+
 		instance.SetLabel(fieldQuery, query)
 		instance.SetLabel(fieldOperation, operation)
-		instance.SetLabel(fieldState, state)
-		instance.SetLabel(fieldUserRequested, userRequested)
-		instance.SetLabel(fieldApprovedUsers, approvedUsers)
 		instance.SetLabel(fieldIndex, index)
+		instance.SetLabel(fieldUserRequested, userRequested)
 
 		var createTime, approveExpiryTime, executeExpiryTime, approveTime float64
-		if createTimeStr := record.Get(fieldCreateTime).ClonedString(); createTimeStr != "" {
+		if createTimeStr != "" {
 			createTime = collectors.HandleTimestamp(createTimeStr) * 1000
 			instance.SetLabel(fieldSeqID, strconv.Itoa(int(createTime)))
 			m.setMetric(m.mavData, instance, fieldCreateTime, createTime)
 		}
-		if approveExpiryTimeStr := record.Get(fieldApproveExpiryTime).ClonedString(); approveExpiryTimeStr != "" {
+		if approveExpiryTimeStr != "" {
 			approveExpiryTime = collectors.HandleTimestamp(approveExpiryTimeStr) * 1000
 			m.setMetric(m.mavData, instance, fieldApproveExpiryTime, approveExpiryTime)
 		}
-		if executeExpiryTimeStr := record.Get(fieldExecutionExpiryTime).ClonedString(); executeExpiryTimeStr != "" {
+		if executeExpiryTimeStr != "" {
 			executeExpiryTime = collectors.HandleTimestamp(executeExpiryTimeStr) * 1000
 			m.setMetric(m.mavData, instance, fieldExecutionExpiryTime, executeExpiryTime)
 		}
-		if approveTimeStr := record.Get(fieldApproveTime).ClonedString(); approveTimeStr != "" {
+		if approveTimeStr != "" {
 			approveTime = collectors.HandleTimestamp(approveTimeStr) * 1000
 			m.setMetric(m.mavData, instance, fieldApproveTime, approveTime)
 		}
@@ -225,6 +235,19 @@ func (m *Mav) collectMAVRequests() error {
 			m.SLogger.Warn("error while creating instance", slog.String("key", index))
 			continue
 		}
+
+		// if state is expired then depending on other fields create subclass of this state
+		if state == stateExpired {
+			switch {
+			case userVetoed != "":
+				state = stateVetoed
+			case executeExpiryTimeStr != "":
+				state = stateExecutionExpired
+			case approveExpiryTimeStr != "":
+				state = stateApprovalExpired
+			}
+		}
+
 		instanceExtended.SetLabel(fieldQuery, query)
 		instanceExtended.SetLabel(fieldOperation, operation)
 		instanceExtended.SetLabel(fieldState, state)
@@ -233,7 +256,7 @@ func (m *Mav) collectMAVRequests() error {
 		instanceExtended.SetLabel(fieldUserVetoed, userVetoed)
 		instanceExtended.SetLabel(fieldIndex, index)
 		instanceExtended.SetLabel(fieldSeqID, strconv.Itoa(int(createTime)))
-		m.setMetric(m.mavDataExtendedMatrix, instance, fieldLabels, float64(clusterTime.Unix()))
+		m.setMetric(m.mavDataExtendedMatrix, instance, fieldDetails, float64(clusterTime.Unix()))
 	}
 	return nil
 }
