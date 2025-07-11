@@ -231,16 +231,6 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "cisco_switch_labels{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
-          "format": "table",
-          "instant": true,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        },
-        {
-          "exemplar": false,
           "expr": "cisco_environment_power_mode{datacenter=~\"$Datacenter\",item=\"operational\",switch=~\"$Switch\"}",
           "format": "table",
           "instant": true,
