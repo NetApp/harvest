@@ -5278,6 +5278,51 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#mav_request_approve_expiry_time" class="md-nav__link">
+    <span class="md-ellipsis">
+      mav_request_approve_expiry_time
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mav_request_approve_time" class="md-nav__link">
+    <span class="md-ellipsis">
+      mav_request_approve_time
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mav_request_create_time" class="md-nav__link">
+    <span class="md-ellipsis">
+      mav_request_create_time
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mav_request_details" class="md-nav__link">
+    <span class="md-ellipsis">
+      mav_request_details
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mav_request_execution_expiry_time" class="md-nav__link">
+    <span class="md-ellipsis">
+      mav_request_execution_expiry_time
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#mediator_labels" class="md-nav__link">
     <span class="md-ellipsis">
       mediator_labels
@@ -18913,6 +18958,51 @@
   <a href="#lun_xcopy_reqs" class="md-nav__link">
     <span class="md-ellipsis">
       lun_xcopy_reqs
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mav_request_approve_expiry_time" class="md-nav__link">
+    <span class="md-ellipsis">
+      mav_request_approve_expiry_time
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mav_request_approve_time" class="md-nav__link">
+    <span class="md-ellipsis">
+      mav_request_approve_time
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mav_request_create_time" class="md-nav__link">
+    <span class="md-ellipsis">
+      mav_request_create_time
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mav_request_details" class="md-nav__link">
+    <span class="md-ellipsis">
+      mav_request_details
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mav_request_execution_expiry_time" class="md-nav__link">
+    <span class="md-ellipsis">
+      mav_request_execution_expiry_time
     </span>
   </a>
   
@@ -45617,6 +45707,211 @@ ONTAP Version: 9.16.1
 <td>Per LUN (Must Select Cluster/SVM/Volume/LUN)</td>
 <td>timeseries</td>
 <td><a href="/d/cdot-lun/ontap3a-lun?orgId=1&amp;viewPanel=91">vStorage Offload Operations</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="mav_request_approve_expiry_time">mav_request_approve_expiry_time<a class="headerlink" href="#mav_request_approve_expiry_time" title="Permanent link">&para;</a></h3>
+<p>Shows the deadline by which approved operations must be approved.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/security/multi-admin-verify/requests</code></td>
+<td><code>approve_expiry_time</code></td>
+<td>conf/rest/9.12.0/mav_request.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>mav_request_approve_expiry_time</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ONTAP: MAV Request</td>
+<td>Highlights</td>
+<td>table</td>
+<td><a href="/d/cdot-mva/ontap3a-mav request?orgId=1&amp;viewPanel=295">MAV Requests</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="mav_request_approve_time">mav_request_approve_time<a class="headerlink" href="#mav_request_approve_time" title="Permanent link">&para;</a></h3>
+<p>Shows the date and time when requests were approved.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/security/multi-admin-verify/requests</code></td>
+<td><code>approve_time</code></td>
+<td>conf/rest/9.12.0/mav_request.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>mav_request_approve_time</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ONTAP: MAV Request</td>
+<td>Highlights</td>
+<td>table</td>
+<td><a href="/d/cdot-mva/ontap3a-mav request?orgId=1&amp;viewPanel=295">MAV Requests</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="mav_request_create_time">mav_request_create_time<a class="headerlink" href="#mav_request_create_time" title="Permanent link">&para;</a></h3>
+<p>Displays the date and time each MAV request was initiated.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/security/multi-admin-verify/requests</code></td>
+<td><code>create_time</code></td>
+<td>conf/rest/9.12.0/mav_request.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>mav_request_create_time</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ONTAP: MAV Request</td>
+<td>Highlights</td>
+<td>table</td>
+<td><a href="/d/cdot-mva/ontap3a-mav request?orgId=1&amp;viewPanel=295">MAV Requests</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="mav_request_details">mav_request_details<a class="headerlink" href="#mav_request_details" title="Permanent link">&para;</a></h3>
+<p>This metric provides information about MAV requests.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/security/multi-admin-verify/requests</code></td>
+<td><code>Harvest generated.</code></td>
+<td>conf/rest/9.12.0/mav_request.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>mav_request_details</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ONTAP: MAV Request</td>
+<td>Highlights</td>
+<td>table</td>
+<td><a href="/d/cdot-mva/ontap3a-mav request?orgId=1&amp;viewPanel=295">MAV Requests</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="mav_request_execution_expiry_time">mav_request_execution_expiry_time<a class="headerlink" href="#mav_request_execution_expiry_time" title="Permanent link">&para;</a></h3>
+<p>Shows the deadline by which approved operations must be executed.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/security/multi-admin-verify/requests</code></td>
+<td><code>execution_expiry_time</code></td>
+<td>conf/rest/9.12.0/mav_request.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>mav_request_execution_expiry_time</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ONTAP: MAV Request</td>
+<td>Highlights</td>
+<td>table</td>
+<td><a href="/d/cdot-mva/ontap3a-mav request?orgId=1&amp;viewPanel=295">MAV Requests</a></td>
 </tr>
 </tbody>
 </table>
