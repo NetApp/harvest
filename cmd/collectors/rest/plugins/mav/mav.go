@@ -195,7 +195,7 @@ func (m *Mav) collectMAVRequests() error {
 
 		var appUserNames []string
 		approvedUsersA.ForEach(func(_, value gjson.Result) bool {
-			appUserNames = append(appUserNames, value.String())
+			appUserNames = append(appUserNames, value.ClonedString())
 			return true
 		})
 		approvedUsers := strings.Join(appUserNames, ", ")
