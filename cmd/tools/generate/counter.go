@@ -143,6 +143,7 @@ var (
 	excludeDocumentedRestMetrics = []string{
 		"ontaps3_svm_",
 		"svm_ontaps3_svm_",
+		"mav_request_",
 		"nvme_lif_",
 		"fcvi_",
 		"smb2_",
