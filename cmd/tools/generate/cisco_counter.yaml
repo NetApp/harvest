@@ -1,0 +1,111 @@
+counters:
+
+  - Name: cisco_switch_labels
+    Description: Displays configuration detail of the Cisco switch.
+    APIs:
+      - Template: conf/ciscorest/nxos/9.3.12/version.yaml
+
+  - Name: cisco_switch_uptime
+    Description: Displays uptime duration of the Cisco switch.
+    APIs:
+      - Template: conf/ciscorest/nxos/9.3.12/version.yaml
+
+  - Name: cisco_environment_fan_speed
+    Description: Displays zone speed of the fan in the Cisco switch.
+    APIs:
+      - Template: conf/ciscorest/nxos/9.3.12/environment.yaml
+
+  - Name: cisco_environment_fan_up
+    Description: Displays Present/Absent Status of the fan in the Cisco switch.
+    APIs:
+      - Template: conf/ciscorest/nxos/9.3.12/environment.yaml
+
+  - Name: cisco_environment_power_capacity
+    Description: Displays total capacity of the power supply in the Cisco switch.
+    APIs:
+      - Template: conf/ciscorest/nxos/9.3.12/environment.yaml
+
+  - Name: cisco_environment_power_in
+    Description: Displays actual input power in watts of power supply in the Cisco switch.
+    APIs:
+      - Template: conf/ciscorest/nxos/9.3.12/environment.yaml
+
+  - Name: cisco_environment_power_mode
+    Description: Displays redundant or operational Mode of power supply in the Cisco switch.
+    APIs:
+      - Template: conf/ciscorest/nxos/9.3.12/environment.yaml
+
+  - Name: cisco_environment_power_out
+    Description: Displays actual output power in watts of power supply in the Cisco switch.
+    APIs:
+      - Template: conf/ciscorest/nxos/9.3.12/environment.yaml
+
+  - Name: cisco_environment_power_up
+    Description: Displays power supply status in the Cisco switch.
+    APIs:
+      - Template: conf/ciscorest/nxos/9.3.12/environment.yaml
+
+  - Name: cisco_environment_sensor_temp
+    Description: Displays current temperature of sensor in the Cisco switch.
+    APIs:
+      - Template: conf/ciscorest/nxos/9.3.12/environment.yaml
+
+  - Name: cisco_optic_rx
+    Description: Displays rx power of the interface in the Cisco switch.
+    APIs:
+      - Template: conf/ciscorest/nxos/9.3.12/optic.yaml
+
+  - Name: cisco_optic_tx
+    Description: Displays tx power of the interface in the Cisco switch.
+    APIs:
+      - Template: conf/ciscorest/nxos/9.3.12/optic.yaml
+
+  - Name: cisco_interface_admin_up
+    Description: Displays admin state of the interface in the Cisco switch.
+    APIs:
+      - Template: conf/ciscorest/nxos/9.3.12/interface.yaml
+
+  - Name: cisco_interface_crc_errors
+    Description: Displays CRC of interface in the Cisco switch.
+    APIs:
+      - Template: conf/ciscorest/nxos/9.3.12/interface.yaml
+
+  - Name: cisco_interface_receive_bytes
+    Description: Displays bytes input of the interface in the Cisco switch.
+    APIs:
+      - Template: conf/ciscorest/nxos/9.3.12/interface.yaml
+
+  - Name: cisco_interface_receive_drops
+    Description: Displays input if-down drops of interface in the Cisco switch.
+    APIs:
+      - Template: conf/ciscorest/nxos/9.3.12/interface.yaml
+
+  - Name: cisco_interface_receive_errors
+    Description: Displays input errors of interface in the Cisco switch.
+    APIs:
+      - Template: conf/ciscorest/nxos/9.3.12/interface.yaml
+
+  - Name: cisco_interface_transmit_bytes
+    Description: Displays bytes output of interface in the Cisco switch.
+    APIs:
+      - Template: conf/ciscorest/nxos/9.3.12/interface.yaml
+
+  - Name: cisco_interface_transmit_drops
+    Description: Displays output drops of interface in the Cisco switch.
+    APIs:
+      - Template: conf/ciscorest/nxos/9.3.12/interface.yaml
+
+  - Name: cisco_interface_transmit_errors
+    Description: Displays output errors of interface in the Cisco switch.
+    APIs:
+      - Template: conf/ciscorest/nxos/9.3.12/interface.yaml
+
+  - Name: cisco_cdp_neighbor_labels
+    Description: Displays cisco discovery protocol information about neighbors in the Cisco switch.
+    APIs:
+      - Template: conf/ciscorest/nxos/9.3.12/cdp.yaml
+
+  - Name: cisco_lldp_neighbor_labels
+    Description: Displays link layer discovery protocol information about neighbours in the Cisco switch.
+    APIs:
+      - Template: conf/ciscorest/nxos/9.3.12/lldp.yaml

@@ -144,11 +144,13 @@ func doGenerateMetrics(cmd *cobra.Command, _ []string) {
 		[]string{
 			"grafana/dashboards/cmode",
 			"grafana/dashboards/cmode-details",
+			"grafana/dashboards/cisco",
 		},
 		func(data []byte) {
 			visitExpressions(data)
 		})
 	counters, cluster := BuildMetrics("", "", opts.Poller)
+	generateOntapCounterTemplate(counters, cluster.Version)
 	generateCounterTemplate(counters, cluster.Version)
 }
 
@@ -614,7 +616,7 @@ func BuildMetrics(dir, configPath, pollerName string) (map[string]Counter, conf.
 	restCounters := processRestCounters(dir, restClient)
 	zapiCounters := processZapiCounters(dir, zapiClient)
 	counters := mergeCounters(restCounters, zapiCounters)
-	counters = processExternalCounters(dir, counters)
+	counters = processExternalCounters(dir, counters, "counter.yaml")
 
 	if opts.promURL != "" {
 		prometheusRest, prometheusZapi, err := fetchAndCategorizePrometheusMetrics(opts.promURL)
