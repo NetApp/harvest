@@ -2168,6 +2168,12 @@ counters:
         ONTAPCounter: Harvest generated.
         Template: conf/rest/9.12.0/mav_request.yaml
 
+  - Name: node_total_data
+    Description: Represents the total data throughput in bytes for a node, as reported by ONTAP.
+
+  - Name: node_volume_total_data
+    Description: Represents the aggregated total data throughput in bytes across all volumes on a node. This metric is calculated by Harvest by summing the data read from and written to each volume on the node.
+
   - Name: ethernet_switch_port_receive_discards
     Description: Total number of discarded packets.
     APIs:
