@@ -44,7 +44,6 @@ type Health struct {
 	*plugin.AbstractPlugin
 	client         *rest.Client
 	data           map[string]*matrix.Matrix
-	lastFilterTime int64
 	previousData   map[string]*matrix.Matrix
 	resolutionData map[string]*matrix.Matrix
 	emsSeverity    []string
@@ -589,14 +588,7 @@ func (h *Health) collectSupportAlerts() int {
 		instance *matrix.Instance
 	)
 	supportAlertCount := 0
-	clusterTime, err := collectors.GetClusterTime(h.client, nil, h.SLogger)
-	if err != nil {
-		h.SLogger.Error("Failed to collect cluster time", slogx.Err(err))
-		return 0
-	}
-	toTime := clusterTime.Unix()
-	timeFilter := h.getTimeStampFilter(clusterTime)
-	filter := append([]string{"suppress=false"}, timeFilter)
+	filter := []string{"suppress=false"}
 
 	records, err := h.getSupportAlerts(filter)
 	if err != nil {
@@ -631,8 +623,6 @@ func (h *Health) collectSupportAlerts() int {
 
 		h.setAlertMetric(mat, instance, 1)
 	}
-	// update lastFilterTime to current cluster time
-	h.lastFilterTime = toTime
 	return supportAlertCount
 }
 
@@ -874,25 +864,6 @@ func (h *Health) getSupportAlerts(filter []string) ([]gjson.Result, error) {
 		Build()
 
 	return collectors.InvokeRestCall(h.client, href)
-}
-
-// returns time filter (clustertime - polldata duration)
-func (h *Health) getTimeStampFilter(clusterTime time.Time) string {
-	fromTime := h.lastFilterTime
-	// check if this is the first request
-	if h.lastFilterTime == 0 {
-		// if first request fetch cluster time
-		dataDuration, err := collectors.GetDataInterval(h.ParentParams, defaultDataPollDuration)
-		if err != nil {
-			h.SLogger.Warn(
-				"Failed to parse duration. using default",
-				slogx.Err(err),
-				slog.String("defaultDataPollDuration", defaultDataPollDuration.String()),
-			)
-		}
-		fromTime = clusterTime.Add(-dataDuration).Unix()
-	}
-	return fmt.Sprintf("time=>=%d", fromTime)
 }
 
 func (h *Health) setAlertMetric(mat *matrix.Matrix, instance *matrix.Instance, value float64) {

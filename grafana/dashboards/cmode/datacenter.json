@@ -77,7 +77,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1722588393410,
+  "iteration": 1752677612260,
   "links": [
     {
       "asDropdown": true,
@@ -1616,11 +1616,11 @@
             },
             {
               "exemplar": false,
-              "expr": "(\n    count(\n        last_over_time(\n          health_support_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"}[1d]\n        )\n      ==\n        1\n    )\n  or\n    vector(0)\n)",
+              "expr": "(\n    count(health_support_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"} == 1)\n  or\n    vector(0)\n)",
               "hide": false,
               "instant": true,
               "interval": "",
-              "legendFormat": "Health Monitor Alerts (last 24h)",
+              "legendFormat": "Health Monitor Alerts",
               "refId": "C"
             },
             {
@@ -2384,7 +2384,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(avg(environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) or vector(0))\n/\n  (\n          (sum(aggr_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) / 1024 / 1024 / 1024 / 1024)\n        /\n          count(sum(node_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))\n      \u003e\n        1\n    or\n      max(\n          aggr_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n        /\n          aggr_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n      )\n  )",
+              "expr": "(avg(environment_sensor_power{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) or vector(0))\n/\n  (\n          (sum(aggr_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) / 1024 / 1024 / 1024 / 1024)\n        /\n          count(sum(node_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))\n      >\n        1\n    or\n      max(\n          aggr_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n        /\n          aggr_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n      )\n  )",
               "hide": false,
               "interval": "",
               "legendFormat": "",
@@ -3083,7 +3083,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "count(\n        volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\"}\n      * on (snapshot_policy) group_left ()\n        group by (snapshot_policy) (snapshot_policy_labels)\n    * on (volume, svm, cluster) group_right ()\n      (\n            volume_snapshot_reserve_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e= 0\n          and\n            volume_snapshots_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e= 0\n        and\n            volume_snapshots_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n          \u003e\n            volume_snapshot_reserve_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n      )\n  )\nor on ()\n  vector(0)",
+              "expr": "count(\n        volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\"}\n      * on (snapshot_policy) group_left ()\n        group by (snapshot_policy) (snapshot_policy_labels)\n    * on (volume, svm, cluster) group_right ()\n      (\n            volume_snapshot_reserve_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} >= 0\n          and\n            volume_snapshots_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} >= 0\n        and\n            volume_snapshots_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n          >\n            volume_snapshot_reserve_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n      )\n  )\nor on ()\n  vector(0)",
               "instant": true,
               "interval": "",
               "legendFormat": "Volumes breached",
@@ -3091,7 +3091,7 @@
             },
             {
               "exemplar": false,
-              "expr": "(\n      count(\n          (\n              volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\"}\n            * on (snapshot_policy) group_left ()\n              group by (snapshot_policy) (snapshot_policy_labels)\n          )\n        * on (volume, svm, cluster) group_right ()\n          (\n                volume_snapshot_reserve_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e= 0\n              and\n                volume_snapshots_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e= 0\n            and\n                volume_snapshots_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n              \u003c=\n                volume_snapshot_reserve_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n          )\n      )\n    or on ()\n      vector(0)\n  )\n+\n  (\n      count(\n            volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\"}\n          * on (snapshot_policy) group_left ()\n            group by (snapshot_policy) (snapshot_policy_labels)\n        * on (volume, svm, cluster) group_right ()\n          (\n              volume_snapshot_reserve_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e= 0\n            and\n              volume_snapshots_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} == 0\n          )\n      )\n    or on ()\n      vector(0)\n  )",
+              "expr": "(\n      count(\n          (\n              volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\"}\n            * on (snapshot_policy) group_left ()\n              group by (snapshot_policy) (snapshot_policy_labels)\n          )\n        * on (volume, svm, cluster) group_right ()\n          (\n                volume_snapshot_reserve_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} >= 0\n              and\n                volume_snapshots_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} >= 0\n            and\n                volume_snapshots_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n              <=\n                volume_snapshot_reserve_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n          )\n      )\n    or on ()\n      vector(0)\n  )\n+\n  (\n      count(\n            volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\"}\n          * on (snapshot_policy) group_left ()\n            group by (snapshot_policy) (snapshot_policy_labels)\n        * on (volume, svm, cluster) group_right ()\n          (\n              volume_snapshot_reserve_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} >= 0\n            and\n              volume_snapshots_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} == 0\n          )\n      )\n    or on ()\n      vector(0)\n  )",
               "instant": true,
               "interval": "",
               "legendFormat": "Volumes not breached",
@@ -3185,7 +3185,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "count(\n      (\n          volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\",volume!~\"MDV.*\"}\n        * on (snapshot_policy) group_left ()\n          group by (snapshot_policy) (snapshot_policy_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n      )\n    * on (volume, svm, cluster)\n      (\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e 0\n        and\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003c 10\n      )\n  )\nor on ()\n  vector(0)",
+              "expr": "count(\n      (\n          volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\",volume!~\"MDV.*\"}\n        * on (snapshot_policy) group_left ()\n          group by (snapshot_policy) (snapshot_policy_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n      )\n    * on (volume, svm, cluster)\n      (\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} > 0\n        and\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} < 10\n      )\n  )\nor on ()\n  vector(0)",
               "instant": true,
               "interval": "",
               "legendFormat": "<10 Copies ",
@@ -3193,7 +3193,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count(\n      (\n          volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\",volume!~\"MDV.*\"}\n        * on (snapshot_policy) group_left ()\n          group by (snapshot_policy) (snapshot_policy_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n      )\n    * on (volume, svm, cluster)\n      (\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e= 10\n        and\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003c= 100\n      )\n  )\nor on ()\n  vector(0)",
+              "expr": "count(\n      (\n          volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\",volume!~\"MDV.*\"}\n        * on (snapshot_policy) group_left ()\n          group by (snapshot_policy) (snapshot_policy_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n      )\n    * on (volume, svm, cluster)\n      (\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} >= 10\n        and\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} <= 100\n      )\n  )\nor on ()\n  vector(0)",
               "instant": true,
               "interval": "",
               "legendFormat": "10-100 Copies",
@@ -3201,7 +3201,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count(\n      (\n          volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\",volume!~\"MDV.*\"}\n        * on (snapshot_policy) group_left ()\n          group by (snapshot_policy) (snapshot_policy_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n      )\n    * on (volume, svm, cluster)\n      (\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e 100\n        and\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003c= 500\n      )\n  )\nor on ()\n  vector(0)",
+              "expr": "count(\n      (\n          volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\",volume!~\"MDV.*\"}\n        * on (snapshot_policy) group_left ()\n          group by (snapshot_policy) (snapshot_policy_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n      )\n    * on (volume, svm, cluster)\n      (\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} > 100\n        and\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} <= 500\n      )\n  )\nor on ()\n  vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -3210,7 +3210,7 @@
             },
             {
               "exemplar": false,
-              "expr": "count(\n      (\n          volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\",volume!~\"MDV.*\"}\n        * on (snapshot_policy) group_left ()\n          group by (snapshot_policy) (snapshot_policy_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n      )\n    * on (volume, svm, cluster)\n      (volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e 500)\n  )\nor on ()\n  vector(0)",
+              "expr": "count(\n      (\n          volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\",volume!~\"MDV.*\"}\n        * on (snapshot_policy) group_left ()\n          group by (snapshot_policy) (snapshot_policy_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n      )\n    * on (volume, svm, cluster)\n      (volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} > 500)\n  )\nor on ()\n  vector(0)",
               "hide": false,
               "instant": true,
               "interval": "",
