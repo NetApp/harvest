@@ -3,109 +3,179 @@ counters:
   - Name: cisco_switch_labels
     Description: Displays configuration detail of the Cisco switch.
     APIs:
-      - Template: conf/ciscorest/nxos/9.3.12/version.yaml
+      - API: NXAPI
+        Endpoint: show version
+        CiscoCounter: bios_ver_str, chassis_id, host_name, nxos_ver_str,
+        Template: conf/ciscorest/nxos/9.3.12/version.yaml
+      - API: NXAPI
+        Endpoint: show banner motd
+        CiscoCounter: banner_msg.b_msg
+        Template: conf/ciscorest/nxos/9.3.12/version.yaml
 
   - Name: cisco_switch_uptime
     Description: Displays uptime duration of the Cisco switch.
     APIs:
-      - Template: conf/ciscorest/nxos/9.3.12/version.yaml
+      - API: NXAPI
+        Endpoint: show version
+        CiscoCounter: kern_uptm_days, kern_uptm_hrs, kern_uptm_mins, kern_uptm_secs
+        Template: conf/ciscorest/nxos/9.3.12/version.yaml
 
   - Name: cisco_environment_fan_speed
     Description: Displays zone speed of the fan in the Cisco switch.
     APIs:
-      - Template: conf/ciscorest/nxos/9.3.12/environment.yaml
+      - API: NXAPI
+        Endpoint: show environment
+        CiscoCounter: speed OR zonespeed
+        Template: conf/ciscorest/nxos/9.3.12/environment.yaml
 
   - Name: cisco_environment_fan_up
     Description: Displays Present/Absent Status of the fan in the Cisco switch.
     APIs:
-      - Template: conf/ciscorest/nxos/9.3.12/environment.yaml
+      - API: NXAPI
+        Endpoint: show environment
+        CiscoCounter: fanstatus
+        Template: conf/ciscorest/nxos/9.3.12/environment.yaml
 
   - Name: cisco_environment_power_capacity
     Description: Displays total capacity of the power supply in the Cisco switch.
     APIs:
-      - Template: conf/ciscorest/nxos/9.3.12/environment.yaml
+      - API: NXAPI
+        Endpoint: show environment
+        CiscoCounter: tot_capa
+        Template: conf/ciscorest/nxos/9.3.12/environment.yaml
 
   - Name: cisco_environment_power_in
     Description: Displays actual input power in watts of power supply in the Cisco switch.
     APIs:
-      - Template: conf/ciscorest/nxos/9.3.12/environment.yaml
+      - API: NXAPI
+        Endpoint: show environment
+        CiscoCounter: actual_input OR watts
+        Template: conf/ciscorest/nxos/9.3.12/environment.yaml
 
   - Name: cisco_environment_power_mode
     Description: Displays redundant or operational Mode of power supply in the Cisco switch.
     APIs:
-      - Template: conf/ciscorest/nxos/9.3.12/environment.yaml
+      - API: NXAPI
+        Endpoint: show environment
+        CiscoCounter: ps_redun_mode, ps_oper_mode
+        Template: conf/ciscorest/nxos/9.3.12/environment.yaml
 
   - Name: cisco_environment_power_out
     Description: Displays actual output power in watts of power supply in the Cisco switch.
     APIs:
-      - Template: conf/ciscorest/nxos/9.3.12/environment.yaml
+      - API: NXAPI
+        Endpoint: show environment
+        CiscoCounter: actual_out
+        Template: conf/ciscorest/nxos/9.3.12/environment.yaml
 
   - Name: cisco_environment_power_up
     Description: Displays power supply status in the Cisco switch.
     APIs:
-      - Template: conf/ciscorest/nxos/9.3.12/environment.yaml
+      - API: NXAPI
+        Endpoint: show environment
+        CiscoCounter: ps_status
+        Template: conf/ciscorest/nxos/9.3.12/environment.yaml
 
   - Name: cisco_environment_sensor_temp
     Description: Displays current temperature of sensor in the Cisco switch.
     APIs:
-      - Template: conf/ciscorest/nxos/9.3.12/environment.yaml
+      - API: NXAPI
+        Endpoint: show environment
+        CiscoCounter: curtemp
+        Template: conf/ciscorest/nxos/9.3.12/environment.yaml
 
   - Name: cisco_optic_rx
     Description: Displays rx power of the interface in the Cisco switch.
     APIs:
-      - Template: conf/ciscorest/nxos/9.3.12/optic.yaml
+      - API: NXAPI
+        Endpoint: show interface transceiver details
+        CiscoCounter: rx_pwr
+        Template: conf/ciscorest/nxos/9.3.12/optic.yaml
 
   - Name: cisco_optic_tx
     Description: Displays tx power of the interface in the Cisco switch.
     APIs:
-      - Template: conf/ciscorest/nxos/9.3.12/optic.yaml
+      - API: NXAPI
+        Endpoint: show interface transceiver details
+        CiscoCounter: tx_pwr
+        Template: conf/ciscorest/nxos/9.3.12/optic.yaml
 
   - Name: cisco_interface_admin_up
     Description: Displays admin state of the interface in the Cisco switch.
     APIs:
-      - Template: conf/ciscorest/nxos/9.3.12/interface.yaml
+      - API: NXAPI
+        Endpoint: show interface
+        CiscoCounter: admin_state
+        Template: conf/ciscorest/nxos/9.3.12/interface.yaml
 
   - Name: cisco_interface_crc_errors
     Description: Displays CRC of interface in the Cisco switch.
     APIs:
-      - Template: conf/ciscorest/nxos/9.3.12/interface.yaml
+      - API: NXAPI
+        Endpoint: show interface
+        CiscoCounter: eth_crc
+        Template: conf/ciscorest/nxos/9.3.12/interface.yaml
 
   - Name: cisco_interface_receive_bytes
     Description: Displays bytes input of the interface in the Cisco switch.
     APIs:
-      - Template: conf/ciscorest/nxos/9.3.12/interface.yaml
+      - API: NXAPI
+        Endpoint: show interface
+        CiscoCounter: eth_inbytes
+        Template: conf/ciscorest/nxos/9.3.12/interface.yaml
 
   - Name: cisco_interface_receive_drops
     Description: Displays input if-down drops of interface in the Cisco switch.
     APIs:
-      - Template: conf/ciscorest/nxos/9.3.12/interface.yaml
+      - API: NXAPI
+        Endpoint: show interface
+        CiscoCounter: eth_in_ifdown_drops
+        Template: conf/ciscorest/nxos/9.3.12/interface.yaml
 
   - Name: cisco_interface_receive_errors
     Description: Displays input errors of interface in the Cisco switch.
     APIs:
-      - Template: conf/ciscorest/nxos/9.3.12/interface.yaml
+      - API: NXAPI
+        Endpoint: show interface
+        CiscoCounter: eth_inerr
+        Template: conf/ciscorest/nxos/9.3.12/interface.yaml
 
   - Name: cisco_interface_transmit_bytes
     Description: Displays bytes output of interface in the Cisco switch.
     APIs:
-      - Template: conf/ciscorest/nxos/9.3.12/interface.yaml
+      - API: NXAPI
+        Endpoint: show interface
+        CiscoCounter: eth_outbytes
+        Template: conf/ciscorest/nxos/9.3.12/interface.yaml
 
   - Name: cisco_interface_transmit_drops
     Description: Displays output drops of interface in the Cisco switch.
     APIs:
-      - Template: conf/ciscorest/nxos/9.3.12/interface.yaml
+      - API: NXAPI
+        Endpoint: show interface
+        CiscoCounter: eth_out_drops
+        Template: conf/ciscorest/nxos/9.3.12/interface.yaml
 
   - Name: cisco_interface_transmit_errors
     Description: Displays output errors of interface in the Cisco switch.
     APIs:
-      - Template: conf/ciscorest/nxos/9.3.12/interface.yaml
+      - API: NXAPI
+        Endpoint: show interface
+        CiscoCounter: eth_outerr
+        Template: conf/ciscorest/nxos/9.3.12/interface.yaml
 
   - Name: cisco_cdp_neighbor_labels
     Description: Displays cisco discovery protocol information about neighbors in the Cisco switch.
     APIs:
-      - Template: conf/ciscorest/nxos/9.3.12/cdp.yaml
+      - API: NXAPI
+        Endpoint: show cdp neighbors detail
+        CiscoCounter: device_id, platform_id, port_id, ttl, version, local_intf_mac, remote_intf_mac, capability
+        Template: conf/ciscorest/nxos/9.3.12/cdp.yaml
 
   - Name: cisco_lldp_neighbor_labels
     Description: Displays link layer discovery protocol information about neighbours in the Cisco switch.
     APIs:
-      - Template: conf/ciscorest/nxos/9.3.12/lldp.yaml
+      - API: NXAPI
+        Endpoint: show lldp neighbors detail
+        CiscoCounter: sys_name, sys_desc, chassis_id, l_port_id, ttl, port_id, enabled_capability
+        Template: conf/ciscorest/nxos/9.3.12/lldp.yaml

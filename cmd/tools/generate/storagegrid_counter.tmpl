@@ -1,4 +1,4 @@
-This document describes how Harvest metrics relate to their relevant Cisco Switch, including:
+This document describes how Harvest metrics relate to their relevant StorageGrid, including:
 
 - Details about which Harvest metrics each dashboard uses.
 These can be generated on demand by running `bin/harvest grafana metrics`. See
@@ -23,18 +23,18 @@ ONTAP Version: {{ .CounterMetaData.OntapVersion }}
 
 Below is an <span class="key">annotated</span> example of how to interpret the structure of each of the [metrics](#metrics).
 
-cisco_switch_uptime <span class="key">Name of the metric exported by Harvest</span>
+storagegrid_tenant_usage_data_bytes <span class="key">Name of the metric exported by Harvest</span>
 
-Displays uptime duration of the Cisco switch. <span class="key">Description of the Cisco Switch metric</span>
+The logical size of all objects for the tenant. <span class="key">Description of the StorageGrid metric</span>
 
-* <span class="key">API</span> will be NXAPI depending on which protocol is used to collect the metric
-* <span class="key">Endpoint</span> name of the CLI used to collect this metric
-* <span class="key">Metric</span> name of the Cisco Switch metric
+* <span class="key">API</span> will be REST depending on which protocol is used to collect the metric
+* <span class="key">Endpoint</span> name of the REST api used to collect this metric
+* <span class="key">Metric</span> name of the StorageGrid metric
 * <span class="key">Template</span> path of the template that collects the metric
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-|NXAPI | `show version` | kern_uptm_days, kern_uptm_hrs, kern_uptm_mins, kern_uptm_secs | conf/ciscorest/nxos/9.3.12/version.yaml|
+|REST | `api/grid/accounts-cache` | dataBytes | conf/storagegrid/11.6.0/tenant.yaml|
 
 
 ## Metrics

@@ -140,6 +140,15 @@ var (
 		"wafl_reads_from_pmem":                                  {},
 	}
 
+	knownMappingGapsSG = map[string]struct{}{
+		"storagegrid_node_cpu_utilization_percentage":                         {},
+		"storagegrid_private_load_balancer_storage_request_body_bytes_bucket": {},
+		"storagegrid_private_load_balancer_storage_request_count":             {},
+		"storagegrid_private_load_balancer_storage_request_time":              {},
+		"storagegrid_private_load_balancer_storage_rx_bytes":                  {},
+		"storagegrid_private_load_balancer_storage_tx_bytes":                  {},
+	}
+
 	excludeDocumentedRestMetrics = []string{
 		"ontaps3_svm_",
 		"svm_ontaps3_svm_",
@@ -227,6 +236,8 @@ type MetricDef struct {
 	API          string `yaml:"API"`
 	Endpoint     string `yaml:"Endpoint"`
 	ONTAPCounter string `yaml:"ONTAPCounter"`
+	CiscoCounter string `yaml:"CiscoCounter"`
+	SGCounter    string `yaml:"SGCounter"`
 	Template     string `yaml:"Template"`
 	Unit         string `yaml:"Unit"`
 	Type         string `yaml:"Type"`
@@ -246,22 +257,24 @@ type PanelData struct {
 }
 
 func (m MetricDef) TableRow() string {
-	if strings.Contains(m.Template, "perf") {
+	switch {
+	case strings.Contains(m.Template, "perf"):
 		unitTypeBase := `<br><span class="key">Unit:</span> ` + m.Unit +
 			`<br><span class="key">Type:</span> ` + m.Type +
 			`<br><span class="key">Base:</span> ` + m.BaseCounter
 		return fmt.Sprintf("| %s | `%s` | `%s`%s | %s |",
 			m.API, m.Endpoint, m.ONTAPCounter, unitTypeBase, m.Template)
-	} else if m.Unit != "" {
+	case m.Unit != "":
 		unit := `<br><span class="key">Unit:</span> ` + m.Unit
 		return fmt.Sprintf("| %s | `%s` | `%s`%s | %s | ",
 			m.API, m.Endpoint, m.ONTAPCounter, unit, m.Template)
+	case strings.Contains(m.Template, "ciscorest"):
+		return fmt.Sprintf("| %s | `%s` | `%s` | %s |", m.API, m.Endpoint, m.CiscoCounter, m.Template)
+	case strings.Contains(m.Template, "storagegrid"):
+		return fmt.Sprintf("| %s | `%s` | `%s` | %s |", m.API, m.Endpoint, m.SGCounter, m.Template)
+	default:
+		return fmt.Sprintf("| %s | `%s` | `%s` | %s |", m.API, m.Endpoint, m.ONTAPCounter, m.Template)
 	}
-	return fmt.Sprintf("| %s | `%s` | `%s` | %s |", m.API, m.Endpoint, m.ONTAPCounter, m.Template)
-}
-
-func (m MetricDef) CiscoTableRow() string {
-	return fmt.Sprintf("| %s |", m.Template)
 }
 
 func (p PanelDef) DashboardTableRow() string {
@@ -284,12 +297,6 @@ func (c Counter) Header() string {
 	return `
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|`
-}
-
-func (c Counter) CiscoHeader() string {
-	return `
-| Template |
-|---------|`
 }
 
 func (c Counter) PanelHeader() string {
@@ -1109,10 +1116,9 @@ func updateDescription(description string) string {
 }
 
 func generateCounterTemplate(counters map[string]Counter, version string) {
-	//nolint:gocritic
-	// sgCounters := processExternalCounters("", counters, "sg_counter.yaml")
-	// generateStorageGridCounterTemplate(sgCounters, version)
-	ciscoCounters := processCiscoExternalCounters("", counters, "cisco_counter.yaml")
+	sgCounters := generateCounters("", counters, "storagegrid")
+	generateStorageGridCounterTemplate(sgCounters, version)
+	ciscoCounters := generateCounters("", counters, "cisco")
 	generateCiscoSwitchCounterTemplate(ciscoCounters, version)
 }
 
@@ -1138,7 +1144,7 @@ func generateOntapCounterTemplate(counters map[string]Counter, version string) {
 	table.SetBorder(false)
 	table.SetAutoFormatHeaders(false)
 	table.SetAutoWrapText(false)
-	table.SetHeader([]string{"Missing", "Counter", "APIs", "Endpoint", "Counter", "Template"})
+	table.SetHeader([]string{"Missing", "Counter", "APIs", "Endpoint", "ONTAPCounter", "Template"})
 
 	for _, k := range keys {
 		if k == "" {
@@ -1213,10 +1219,9 @@ func generateOntapCounterTemplate(counters map[string]Counter, version string) {
 	}
 }
 
-//nolint:unused
 func generateStorageGridCounterTemplate(counters map[string]Counter, version string) {
 	targetPath := "docs/storagegrid-metrics.md"
-	t, err := template.New("sg_counter.tmpl").ParseFiles("cmd/tools/generate/sg_counter.tmpl")
+	t, err := template.New("storagegrid_counter.tmpl").ParseFiles("cmd/tools/generate/storagegrid_counter.tmpl")
 	if err != nil {
 		panic(err)
 	}
@@ -1236,61 +1241,26 @@ func generateStorageGridCounterTemplate(counters map[string]Counter, version str
 	table.SetBorder(false)
 	table.SetAutoFormatHeaders(false)
 	table.SetAutoWrapText(false)
-	table.SetHeader([]string{"Missing", "Counter", "APIs", "Endpoint", "Counter", "Template"})
+	table.SetHeader([]string{"Missing", "Counter", "APIs", "Endpoint", "SGCounter", "Template"})
 
 	for _, k := range keys {
 		if k == "" {
 			continue
 		}
 		counter := counters[k]
+		if !strings.HasPrefix(counter.Name, "storagegrid_") {
+			continue
+		}
 
-		if counter.Description == "" {
-			for _, def := range counter.APIs {
-				if _, ok := knownDescriptionGaps[counter.Name]; !ok {
-					appendRow(table, "Description", counter, def)
-				}
+		if _, ok := knownMappingGapsSG[k]; !ok {
+			if counter.Description == "" {
+				appendRow(table, "Description", counter, MetricDef{API: ""})
 			}
 		}
+
 		values = append(values, counter)
 	}
 
-	for _, k := range keys {
-		if k == "" {
-			continue
-		}
-		counter := counters[k]
-
-		// Print such counters which are missing Rest mapping
-		if len(counter.APIs) == 1 {
-			if counter.APIs[0].API == "ZAPI" {
-				isPrint := true
-				for _, substring := range excludeLogRestCounters {
-					if strings.HasPrefix(counter.Name, substring) {
-						isPrint = false
-						break
-					}
-				}
-				// missing Rest Mapping
-				if isPrint {
-					for _, def := range counter.APIs {
-						if _, ok := knownMappingGaps[counter.Name]; !ok {
-							appendRow(table, "REST", counter, def)
-						}
-					}
-				}
-			}
-		}
-
-		for _, def := range counter.APIs {
-			if def.ONTAPCounter == "" {
-				for _, def := range counter.APIs {
-					if _, ok := knownMappingGaps[counter.Name]; !ok {
-						appendRow(table, "Mapping", counter, def)
-					}
-				}
-			}
-		}
-	}
 	table.Render()
 	c := CounterTemplate{
 		Counters: values,
@@ -1333,7 +1303,7 @@ func generateCiscoSwitchCounterTemplate(counters map[string]Counter, version str
 	table.SetBorder(false)
 	table.SetAutoFormatHeaders(false)
 	table.SetAutoWrapText(false)
-	table.SetHeader([]string{"Missing", "Counter"})
+	table.SetHeader([]string{"Missing", "Counter", "APIs", "Endpoint", "CiscoCounter", "Template"})
 
 	for _, k := range keys {
 		if k == "" {
@@ -1347,6 +1317,7 @@ func generateCiscoSwitchCounterTemplate(counters map[string]Counter, version str
 		if counter.Description == "" {
 			appendRow(table, "Description", counter, MetricDef{API: ""})
 		}
+
 		values = append(values, counter)
 	}
 
@@ -1773,8 +1744,8 @@ func addAggregatedCounter(c *Counter, metric plugin.DerivedMetric, withPrefix st
 	c.Panels = metricsPanelMap[c.Name].Panels
 }
 
-func processExternalCounters(dir string, counters map[string]Counter, counterFile string) map[string]Counter {
-	dat, err := os.ReadFile(filepath.Join(dir, "cmd", "tools", "generate", counterFile))
+func processExternalCounters(dir string, counters map[string]Counter) map[string]Counter {
+	dat, err := os.ReadFile(filepath.Join(dir, "cmd", "tools", "generate", "counter.yaml"))
 	if err != nil {
 		fmt.Printf("error while reading file %v", err)
 		return nil
@@ -1828,8 +1799,8 @@ func processExternalCounters(dir string, counters map[string]Counter, counterFil
 	return counters
 }
 
-func processCiscoExternalCounters(dir string, counters map[string]Counter, counterFile string) map[string]Counter {
-	dat, err := os.ReadFile(filepath.Join(dir, "cmd", "tools", "generate", counterFile))
+func generateCounters(dir string, counters map[string]Counter, collectorName string) map[string]Counter {
+	dat, err := os.ReadFile(filepath.Join(dir, "cmd", "tools", "generate", collectorName+"_counter.yaml"))
 	if err != nil {
 		fmt.Printf("error while reading file %v", err)
 		return nil
@@ -1843,7 +1814,7 @@ func processCiscoExternalCounters(dir string, counters map[string]Counter, count
 	}
 
 	for k, m := range metricsPanelMap {
-		if !strings.HasPrefix(k, "cisco_") {
+		if !strings.HasPrefix(k, collectorName) {
 			continue
 		}
 		if _, ok := counters[k]; !ok {

@@ -5,7 +5,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 [#1577](https://github.com/NetApp/harvest/issues/1577#issue-1471478260) for details.
 
 ```
-Creation Date : 2025-Jul-15
+Creation Date : 2025-Jul-17
 ONTAP Version: 9.16.1
 ```
 
@@ -23,16 +23,19 @@ ONTAP Version: 9.16.1
 
 Below is an <span class="key">annotated</span> example of how to interpret the structure of each of the [metrics](#metrics).
 
-cisco_switch_labels <span class="key">Name of the metric exported by Harvest</span>
+cisco_switch_uptime <span class="key">Name of the metric exported by Harvest</span>
 
-Displays detail of the Cisco switch. <span class="key">Description of the Cisco Switch metric</span>
+Displays uptime duration of the Cisco switch. <span class="key">Description of the Cisco Switch metric</span>
 
+* <span class="key">API</span> will be NXAPI depending on which protocol is used to collect the metric
+* <span class="key">Endpoint</span> name of the CLI used to collect this metric
 * <span class="key">Metric</span> name of the Cisco Switch metric
 * <span class="key">Template</span> path of the template that collects the metric
 
-| Metric | Template |
-|--------|---------|
-|`cisco_switch_labels` | conf/ciscorest/nxos/9.3.12/version.yaml |
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+|NXAPI | `show version` | kern_uptm_days, kern_uptm_hrs, kern_uptm_mins, kern_uptm_secs | conf/ciscorest/nxos/9.3.12/version.yaml|
+
 
 ## Metrics
 
@@ -42,9 +45,9 @@ Displays detail of the Cisco switch. <span class="key">Description of the Cisco 
 Displays cisco discovery protocol information about neighbors in the Cisco switch.
 
 
-| Template |
-|---------|
-| conf/ciscorest/nxos/9.3.12/cdp.yaml |
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| NXAPI | `show cdp neighbors detail` | `device_id, platform_id, port_id, ttl, version, local_intf_mac, remote_intf_mac, capability` | conf/ciscorest/nxos/9.3.12/cdp.yaml |
 
 The `cisco_cdp_neighbor_labels` metric is visualized in the following Grafana dashboards:
 
@@ -61,9 +64,9 @@ The `cisco_cdp_neighbor_labels` metric is visualized in the following Grafana da
 Displays zone speed of the fan in the Cisco switch.
 
 
-| Template |
-|---------|
-| conf/ciscorest/nxos/9.3.12/environment.yaml |
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| NXAPI | `show environment` | `speed OR zonespeed` | conf/ciscorest/nxos/9.3.12/environment.yaml |
 
 The `cisco_environment_fan_speed` metric is visualized in the following Grafana dashboards:
 
@@ -80,9 +83,9 @@ The `cisco_environment_fan_speed` metric is visualized in the following Grafana 
 Displays Present/Absent Status of the fan in the Cisco switch.
 
 
-| Template |
-|---------|
-| conf/ciscorest/nxos/9.3.12/environment.yaml |
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| NXAPI | `show environment` | `fanstatus` | conf/ciscorest/nxos/9.3.12/environment.yaml |
 
 The `cisco_environment_fan_up` metric is visualized in the following Grafana dashboards:
 
@@ -99,9 +102,9 @@ The `cisco_environment_fan_up` metric is visualized in the following Grafana das
 Displays total capacity of the power supply in the Cisco switch.
 
 
-| Template |
-|---------|
-| conf/ciscorest/nxos/9.3.12/environment.yaml |
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| NXAPI | `show environment` | `tot_capa` | conf/ciscorest/nxos/9.3.12/environment.yaml |
 
 The `cisco_environment_power_capacity` metric is visualized in the following Grafana dashboards:
 
@@ -118,9 +121,9 @@ The `cisco_environment_power_capacity` metric is visualized in the following Gra
 Displays actual input power in watts of power supply in the Cisco switch.
 
 
-| Template |
-|---------|
-| conf/ciscorest/nxos/9.3.12/environment.yaml |
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| NXAPI | `show environment` | `actual_input OR watts` | conf/ciscorest/nxos/9.3.12/environment.yaml |
 
 The `cisco_environment_power_in` metric is visualized in the following Grafana dashboards:
 
@@ -139,9 +142,9 @@ The `cisco_environment_power_in` metric is visualized in the following Grafana d
 Displays redundant or operational Mode of power supply in the Cisco switch.
 
 
-| Template |
-|---------|
-| conf/ciscorest/nxos/9.3.12/environment.yaml |
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| NXAPI | `show environment` | `ps_redun_mode, ps_oper_mode` | conf/ciscorest/nxos/9.3.12/environment.yaml |
 
 The `cisco_environment_power_mode` metric is visualized in the following Grafana dashboards:
 
@@ -158,9 +161,9 @@ The `cisco_environment_power_mode` metric is visualized in the following Grafana
 Displays actual output power in watts of power supply in the Cisco switch.
 
 
-| Template |
-|---------|
-| conf/ciscorest/nxos/9.3.12/environment.yaml |
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| NXAPI | `show environment` | `actual_out` | conf/ciscorest/nxos/9.3.12/environment.yaml |
 
 The `cisco_environment_power_out` metric is visualized in the following Grafana dashboards:
 
@@ -179,9 +182,9 @@ The `cisco_environment_power_out` metric is visualized in the following Grafana 
 Displays power supply status in the Cisco switch.
 
 
-| Template |
-|---------|
-| conf/ciscorest/nxos/9.3.12/environment.yaml |
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| NXAPI | `show environment` | `ps_status` | conf/ciscorest/nxos/9.3.12/environment.yaml |
 
 The `cisco_environment_power_up` metric is visualized in the following Grafana dashboards:
 
@@ -198,9 +201,9 @@ The `cisco_environment_power_up` metric is visualized in the following Grafana d
 Displays current temperature of sensor in the Cisco switch.
 
 
-| Template |
-|---------|
-| conf/ciscorest/nxos/9.3.12/environment.yaml |
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| NXAPI | `show environment` | `curtemp` | conf/ciscorest/nxos/9.3.12/environment.yaml |
 
 The `cisco_environment_sensor_temp` metric is visualized in the following Grafana dashboards:
 
@@ -217,9 +220,9 @@ The `cisco_environment_sensor_temp` metric is visualized in the following Grafan
 Displays admin state of the interface in the Cisco switch.
 
 
-| Template |
-|---------|
-| conf/ciscorest/nxos/9.3.12/interface.yaml |
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| NXAPI | `show interface` | `admin_state` | conf/ciscorest/nxos/9.3.12/interface.yaml |
 
 The `cisco_interface_admin_up` metric is visualized in the following Grafana dashboards:
 
@@ -238,9 +241,9 @@ The `cisco_interface_admin_up` metric is visualized in the following Grafana das
 Displays CRC of interface in the Cisco switch.
 
 
-| Template |
-|---------|
-| conf/ciscorest/nxos/9.3.12/interface.yaml |
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| NXAPI | `show interface` | `eth_crc` | conf/ciscorest/nxos/9.3.12/interface.yaml |
 
 The `cisco_interface_crc_errors` metric is visualized in the following Grafana dashboards:
 
@@ -257,9 +260,9 @@ The `cisco_interface_crc_errors` metric is visualized in the following Grafana d
 Displays bytes input of the interface in the Cisco switch.
 
 
-| Template |
-|---------|
-| conf/ciscorest/nxos/9.3.12/interface.yaml |
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| NXAPI | `show interface` | `eth_inbytes` | conf/ciscorest/nxos/9.3.12/interface.yaml |
 
 The `cisco_interface_receive_bytes` metric is visualized in the following Grafana dashboards:
 
@@ -276,9 +279,9 @@ The `cisco_interface_receive_bytes` metric is visualized in the following Grafan
 Displays input if-down drops of interface in the Cisco switch.
 
 
-| Template |
-|---------|
-| conf/ciscorest/nxos/9.3.12/interface.yaml |
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| NXAPI | `show interface` | `eth_in_ifdown_drops` | conf/ciscorest/nxos/9.3.12/interface.yaml |
 
 The `cisco_interface_receive_drops` metric is visualized in the following Grafana dashboards:
 
@@ -295,9 +298,9 @@ The `cisco_interface_receive_drops` metric is visualized in the following Grafan
 Displays input errors of interface in the Cisco switch.
 
 
-| Template |
-|---------|
-| conf/ciscorest/nxos/9.3.12/interface.yaml |
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| NXAPI | `show interface` | `eth_inerr` | conf/ciscorest/nxos/9.3.12/interface.yaml |
 
 The `cisco_interface_receive_errors` metric is visualized in the following Grafana dashboards:
 
@@ -314,9 +317,9 @@ The `cisco_interface_receive_errors` metric is visualized in the following Grafa
 Displays bytes output of interface in the Cisco switch.
 
 
-| Template |
-|---------|
-| conf/ciscorest/nxos/9.3.12/interface.yaml |
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| NXAPI | `show interface` | `eth_outbytes` | conf/ciscorest/nxos/9.3.12/interface.yaml |
 
 The `cisco_interface_transmit_bytes` metric is visualized in the following Grafana dashboards:
 
@@ -333,9 +336,9 @@ The `cisco_interface_transmit_bytes` metric is visualized in the following Grafa
 Displays output drops of interface in the Cisco switch.
 
 
-| Template |
-|---------|
-| conf/ciscorest/nxos/9.3.12/interface.yaml |
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| NXAPI | `show interface` | `eth_out_drops` | conf/ciscorest/nxos/9.3.12/interface.yaml |
 
 The `cisco_interface_transmit_drops` metric is visualized in the following Grafana dashboards:
 
@@ -352,9 +355,9 @@ The `cisco_interface_transmit_drops` metric is visualized in the following Grafa
 Displays output errors of interface in the Cisco switch.
 
 
-| Template |
-|---------|
-| conf/ciscorest/nxos/9.3.12/interface.yaml |
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| NXAPI | `show interface` | `eth_outerr` | conf/ciscorest/nxos/9.3.12/interface.yaml |
 
 The `cisco_interface_transmit_errors` metric is visualized in the following Grafana dashboards:
 
@@ -371,9 +374,9 @@ The `cisco_interface_transmit_errors` metric is visualized in the following Graf
 Displays link layer discovery protocol information about neighbours in the Cisco switch.
 
 
-| Template |
-|---------|
-| conf/ciscorest/nxos/9.3.12/lldp.yaml |
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| NXAPI | `show lldp neighbors detail` | `sys_name, sys_desc, chassis_id, l_port_id, ttl, port_id, enabled_capability` | conf/ciscorest/nxos/9.3.12/lldp.yaml |
 
 The `cisco_lldp_neighbor_labels` metric is visualized in the following Grafana dashboards:
 
@@ -390,9 +393,9 @@ The `cisco_lldp_neighbor_labels` metric is visualized in the following Grafana d
 Displays rx power of the interface in the Cisco switch.
 
 
-| Template |
-|---------|
-| conf/ciscorest/nxos/9.3.12/optic.yaml |
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| NXAPI | `show interface transceiver details` | `rx_pwr` | conf/ciscorest/nxos/9.3.12/optic.yaml |
 
 The `cisco_optic_rx` metric is visualized in the following Grafana dashboards:
 
@@ -409,9 +412,9 @@ The `cisco_optic_rx` metric is visualized in the following Grafana dashboards:
 Displays tx power of the interface in the Cisco switch.
 
 
-| Template |
-|---------|
-| conf/ciscorest/nxos/9.3.12/optic.yaml |
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| NXAPI | `show interface transceiver details` | `tx_pwr` | conf/ciscorest/nxos/9.3.12/optic.yaml |
 
 The `cisco_optic_tx` metric is visualized in the following Grafana dashboards:
 
@@ -428,9 +431,10 @@ The `cisco_optic_tx` metric is visualized in the following Grafana dashboards:
 Displays configuration detail of the Cisco switch.
 
 
-| Template |
-|---------|
-| conf/ciscorest/nxos/9.3.12/version.yaml |
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| NXAPI | `show version` | `bios_ver_str, chassis_id, host_name, nxos_ver_str,` | conf/ciscorest/nxos/9.3.12/version.yaml |
+| NXAPI | `show banner motd` | `banner_msg.b_msg` | conf/ciscorest/nxos/9.3.12/version.yaml |
 
 The `cisco_switch_labels` metric is visualized in the following Grafana dashboards:
 
@@ -447,9 +451,9 @@ The `cisco_switch_labels` metric is visualized in the following Grafana dashboar
 Displays uptime duration of the Cisco switch.
 
 
-| Template |
-|---------|
-| conf/ciscorest/nxos/9.3.12/version.yaml |
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| NXAPI | `show version` | `kern_uptm_days, kern_uptm_hrs, kern_uptm_mins, kern_uptm_secs` | conf/ciscorest/nxos/9.3.12/version.yaml |
 
 The `cisco_switch_uptime` metric is visualized in the following Grafana dashboards:
 

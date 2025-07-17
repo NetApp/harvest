@@ -145,6 +145,7 @@ func doGenerateMetrics(cmd *cobra.Command, _ []string) {
 			"grafana/dashboards/cmode",
 			"grafana/dashboards/cmode-details",
 			"grafana/dashboards/cisco",
+			"grafana/dashboards/storagegrid",
 		},
 		func(data []byte) {
 			visitExpressions(data)
@@ -616,7 +617,7 @@ func BuildMetrics(dir, configPath, pollerName string) (map[string]Counter, conf.
 	restCounters := processRestCounters(dir, restClient)
 	zapiCounters := processZapiCounters(dir, zapiClient)
 	counters := mergeCounters(restCounters, zapiCounters)
-	counters = processExternalCounters(dir, counters, "counter.yaml")
+	counters = processExternalCounters(dir, counters)
 
 	if opts.promURL != "" {
 		prometheusRest, prometheusZapi, err := fetchAndCategorizePrometheusMetrics(opts.promURL)
