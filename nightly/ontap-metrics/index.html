@@ -28608,7 +28608,7 @@ These can be generated on demand by running <code>bin/harvest grafana metrics</c
 <p>More information about ONTAP REST performance counters can be found <a href="https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html">here</a>.</p>
 </li>
 </ul>
-<div class="highlight"><pre><span></span><code>Creation Date : 2025-Jul-17
+<div class="highlight"><pre><span></span><code>Creation Date : 2025-Jul-18
 ONTAP Version: 9.16.1
 </code></pre></div>
 <details>
@@ -60416,7 +60416,7 @@ ONTAP Version: 9.16.1
 </tbody>
 </table>
 <h3 id="node_total_data">node_total_data<a class="headerlink" href="#node_total_data" title="Permanent link">&para;</a></h3>
-<p>Total throughput in bytes</p>
+<p>Represents the total data throughput in bytes for a node, as reported by ONTAP.</p>
 <table>
 <thead>
 <tr>
@@ -62271,7 +62271,7 @@ ONTAP Version: 9.16.1
 </tbody>
 </table>
 <h3 id="node_volume_total_data">node_volume_total_data<a class="headerlink" href="#node_volume_total_data" title="Permanent link">&para;</a></h3>
-<p>This metric represents the total amount of data that has been read from and written to volumes aggregated by node.</p>
+<p>Represents the aggregated total data throughput in bytes across all volumes on a node. This metric is calculated by Harvest by summing the data read from and written to each volume on the node.</p>
 <table>
 <thead>
 <tr>
