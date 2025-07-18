@@ -1,0 +1,169 @@
+counters:
+
+  - Name: storagegrid_ilm_awaiting_client_objects
+    Description: Total number of objects on this node awaiting ILM evaluation because of client operation (for example, ingest)
+    APIs:
+      - API: REST
+        Endpoint: prometheus
+        SGCounter: storagegrid_ilm_awaiting_client_objects
+        Template: conf/storagegrid/11.6.0/storagegrid_metrics.yaml
+
+  - Name: storagegrid_ilm_objects_processed
+    Description: Objects processed by ILM that actually had work done
+    APIs:
+      - API: REST
+        Endpoint: prometheus
+        SGCounter: storagegrid_ilm_objects_processed
+        Template: conf/storagegrid/11.6.0/storagegrid_metrics.yaml
+
+  - Name: storagegrid_network_received_bytes
+    Description: Total amount of data received
+    APIs:
+      - API: REST
+        Endpoint: prometheus
+        SGCounter: storagegrid_network_received_bytes
+        Template: conf/storagegrid/11.6.0/storagegrid_metrics.yaml
+
+  - Name: storagegrid_network_transmitted_bytes
+    Description: Total amount of data sent
+    APIs:
+      - API: REST
+        Endpoint: prometheus
+        SGCounter: storagegrid_network_transmitted_bytes
+        Template: conf/storagegrid/11.6.0/storagegrid_metrics.yaml
+
+  - Name: storagegrid_node_cpu_utilization_percentage
+    Description:
+    APIs:
+      - API: REST
+        Endpoint: prometheus
+        SGCounter: storagegrid_node_cpu_utilization_percentage
+        Template: conf/storagegrid/11.6.0/storagegrid_metrics.yaml
+
+  - Name: storagegrid_private_ilm_awaiting_delete_objects
+    Description: The total number of objects on this node awaiting deletion
+    APIs:
+      - API: REST
+        Endpoint: prometheus
+        SGCounter: storagegrid_private_ilm_awaiting_delete_objects
+        Template: conf/storagegrid/11.6.0/storagegrid_metrics.yaml
+
+  - Name: storagegrid_private_load_balancer_storage_request_body_bytes_bucket
+    Description:
+    APIs:
+      - API: REST
+        Endpoint: prometheus
+        SGCounter: storagegrid_private_load_balancer_storage_request_body_bytes_bucket
+        Template: conf/storagegrid/11.6.0/storagegrid_metrics.yaml
+
+  - Name: storagegrid_private_load_balancer_storage_request_count
+    Description:
+    APIs:
+      - API: REST
+        Endpoint: prometheus
+        SGCounter: storagegrid_private_load_balancer_storage_request_count
+        Template: conf/storagegrid/11.6.0/storagegrid_metrics.yaml
+
+  - Name: storagegrid_private_load_balancer_storage_request_time
+    Description:
+    APIs:
+      - API: REST
+        Endpoint: prometheus
+        SGCounter: storagegrid_private_load_balancer_storage_request_time
+        Template: conf/storagegrid/11.6.0/storagegrid_metrics.yaml
+
+  - Name: storagegrid_private_load_balancer_storage_rx_bytes
+    Description:
+    APIs:
+      - API: REST
+        Endpoint: prometheus
+        SGCounter: storagegrid_private_load_balancer_storage_rx_bytes
+        Template: conf/storagegrid/11.6.0/storagegrid_metrics.yaml
+
+  - Name: storagegrid_private_load_balancer_storage_tx_bytes
+    Description:
+    APIs:
+      - API: REST
+        Endpoint: prometheus
+        SGCounter: storagegrid_private_load_balancer_storage_tx_bytes
+        Template: conf/storagegrid/11.6.0/storagegrid_metrics.yaml
+
+  - Name: storagegrid_private_s3_total_requests
+    Description: Number of S3 requests.
+    APIs:
+      - API: REST
+        Endpoint: prometheus
+        SGCounter: storagegrid_private_s3_total_requests
+        Template: conf/storagegrid/11.6.0/storagegrid_metrics.yaml
+
+  - Name: storagegrid_s3_operations_failed
+    Description: The total number of failed S3 operations (HTTP status codes 4xx and 5xx), excluding those caused by S3 authorization failure
+    APIs:
+      - API: REST
+        Endpoint: prometheus
+        SGCounter: storagegrid_s3_operations_failed
+        Template: conf/storagegrid/11.6.0/storagegrid_metrics.yaml
+
+  - Name: storagegrid_s3_operations_successful
+    Description: The total number of successful S3 operations (HTTP status code 2xx)
+    APIs:
+      - API: REST
+        Endpoint: prometheus
+        SGCounter: storagegrid_s3_operations_successful
+        Template: conf/storagegrid/11.6.0/storagegrid_metrics.yaml
+
+  - Name: storagegrid_s3_operations_unauthorized
+    Description: The total number of failed S3 operations that are the result of an authorization failure (HTTP status codes 4xx)
+    APIs:
+      - API: REST
+        Endpoint: prometheus
+        SGCounter: storagegrid_s3_operations_unauthorized
+        Template: conf/storagegrid/11.6.0/storagegrid_metrics.yaml
+
+  - Name: storagegrid_storage_utilization_data_bytes
+    Description: An estimate of the total size of replicated and erasure coded object data on the Storage Node
+    APIs:
+      - API: REST
+        Endpoint: prometheus
+        SGCounter: storagegrid_storage_utilization_data_bytes
+        Template: conf/storagegrid/11.6.0/storagegrid_metrics.yaml
+
+  - Name: storagegrid_storage_utilization_metadata_allowed_bytes
+    Description: The total space available on storage volume 0 for object metadata
+    APIs:
+      - API: REST
+        Endpoint: prometheus
+        SGCounter: storagegrid_storage_utilization_metadata_allowed_bytes
+        Template: conf/storagegrid/11.6.0/storagegrid_metrics.yaml
+
+  - Name: storagegrid_storage_utilization_metadata_bytes
+    Description: The amount of object metadata on storage volume 0, in bytes
+    APIs:
+      - API: REST
+        Endpoint: prometheus
+        SGCounter: storagegrid_storage_utilization_metadata_bytes
+        Template: conf/storagegrid/11.6.0/storagegrid_metrics.yaml
+
+  - Name: storagegrid_storage_utilization_usable_space_bytes
+    Description: The total amount of object storage space remaining
+    APIs:
+      - API: REST
+        Endpoint: prometheus
+        SGCounter: storagegrid_storage_utilization_usable_space_bytes
+        Template: conf/storagegrid/11.6.0/storagegrid_metrics.yaml
+
+  - Name: storagegrid_tenant_usage_data_bytes
+    Description: The logical size of all objects for the tenant
+    APIs:
+      - API: REST
+        Endpoint: grid/accounts-cache
+        SGCounter: dataBytes
+        Template: conf/storagegrid/11.6.0/tenant.yaml
+
+  - Name: storagegrid_tenant_usage_quota_bytes
+    Description: The maximum amount of logical space available for the tenant's object. If a quota metric is not provided, an unlimited amount of space is available
+    APIs:
+      - API: REST
+        Endpoint: grid/accounts-cache
+        SGCounter: policy.quotaObjectBytes
+        Template: conf/storagegrid/11.6.0/tenant.yaml

@@ -61,7 +61,7 @@ go run pkg/changelog/main.go --title $RELEASE --highlights releaseHighlights_$RE
 ```bash
 bin/harvest generate metrics --poller POLLERNAME
 ```
-- [ ] Make sure docs look good and open a PR for review with `docs/ontap-metrics.md` changes
+- [ ] Make sure docs look good and open a PR for review with `docs/ontap-metrics.md`, `docs/storagegrid-metrics.md` and `docs/cisco-switch-metrics.md` changes
 
 ### The day of the release
 

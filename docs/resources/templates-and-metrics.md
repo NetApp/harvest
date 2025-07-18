@@ -1,6 +1,8 @@
 # Harvest Templates and Metrics
 
-Harvest collects ONTAP counter information, augments it, and stores it in a time-series DB. Refer [ONTAP Metrics](../ontap-metrics.md) for details about ONTAP metrics exposed by Harvest. 
+Harvest collects ONTAP counter information, augments it, and stores it in a time-series DB. Refer [ONTAP Metrics](../ontap-metrics.md) for details about ONTAP metrics exposed by Harvest.
+Harvest collects StorageGrid counter information, augments it, and stores it in a time-series DB. Refer [StorageGrid Metrics](../storagegrid-metrics.md) for details about StorageGrid metrics exposed by Harvest.
+Harvest collects Cisco Switch counter information, augments it, and stores it in a time-series DB. Refer [Cisco Switch Metrics](../cisco-switch-metrics.md) for details about Cisco Switch metrics exposed by Harvest.
 
 ```mermaid
 flowchart RL

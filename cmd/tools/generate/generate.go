@@ -144,12 +144,15 @@ func doGenerateMetrics(cmd *cobra.Command, _ []string) {
 		[]string{
 			"grafana/dashboards/cmode",
 			"grafana/dashboards/cmode-details",
+			"grafana/dashboards/cisco",
+			"grafana/dashboards/storagegrid",
 		},
 		func(data []byte) {
 			visitExpressions(data)
 		})
 	counters, cluster := BuildMetrics("", "", opts.Poller)
-	generateCounterTemplate(counters, cluster.Version)
+	generateOntapCounterTemplate(counters, cluster.Version)
+	generateCounterTemplate(counters)
 }
 
 func doDescription(cmd *cobra.Command, _ []string) {
