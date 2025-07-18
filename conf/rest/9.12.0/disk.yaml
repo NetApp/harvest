@@ -12,7 +12,7 @@ counters:
   - ^name                       => disk
   - ^node.name                  => node
   - ^node.uuid
-  - ^outage.reason              => outage
+  - ^outage.reason.message      => outage
   - ^serial_number
   - ^shelf.uid                  => shelf
   - ^state
@@ -34,6 +34,8 @@ endpoints:
 plugins:
   - Disk
   - LabelAgent:
+      replace:
+        - outage outage `"` ``
       value_to_num:
         - new_status outage - - `0` #ok_value is empty value, '-' would be converted to blank while processing.
       join:
