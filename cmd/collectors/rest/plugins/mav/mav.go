@@ -12,6 +12,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -198,6 +199,7 @@ func (m *Mav) collectMAVRequests() error {
 			appUserNames = append(appUserNames, value.ClonedString())
 			return true
 		})
+		sort.Strings(appUserNames)
 		approvedUsers := strings.Join(appUserNames, ", ")
 		instance, err = mat.NewInstance(index)
 		if err != nil {
