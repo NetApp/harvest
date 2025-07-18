@@ -85,6 +85,7 @@ func (t *Tag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collect
 			return nil, nil, err
 		}
 	}
+	t.schedule++
 
 	if len(t.volumeCache) == 0 {
 		return nil, nil, nil
@@ -93,17 +94,20 @@ func (t *Tag) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collect
 	for _, instance := range data.GetInstances() {
 		svm := instance.GetLabel("svm")
 		volume := instance.GetLabel("volume")
-		tags, exists := t.volumeCache[svm+volume]
+		tags, exists := t.volumeCache[svm+":"+volume]
 		if exists {
 			instance.SetLabel("tags", tags)
 		}
 	}
-	t.schedule++
+
 	return nil, nil, nil
 }
 
+// populateVolumeCache fetches volume tags from ONTAP's private CLI API and builds a cache.
+// The cache maps a combination of SVM (vserver) and volume names to comma-separated tags.
+// It queries the API endpoint "api/private/cli/volume" to retrieve volumes with non-empty tags.
 func (t *Tag) populateVolumeCache() error {
-	// Initialize cacheCopy to store elements that will be removed from cache
+	// Clear the existing volume cache and reinitialize it before repopulating
 	t.volumeCache = make(map[string]string)
 
 	query := "api/private/cli/volume"
@@ -139,7 +143,7 @@ func (t *Tag) populateVolumeCache() error {
 		})
 		sort.Strings(tags)
 		tag := strings.Join(tags, ",")
-		t.volumeCache[vserver+volume] = tag
+		t.volumeCache[vserver+":"+volume] = tag
 	}
 	return nil
 }
