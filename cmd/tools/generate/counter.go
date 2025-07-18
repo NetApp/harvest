@@ -42,7 +42,9 @@ import (
 )
 
 const (
-	keyPerfAPI = "KeyPerf"
+	keyPerfAPI   = "KeyPerf"
+	SgVersion    = "11.6.0"
+	CiscoVersion = "9.3.12"
 )
 
 var (
@@ -225,6 +227,8 @@ type Counters struct {
 type CounterMetaData struct {
 	Date         string
 	OntapVersion string
+	SGVersion    string
+	CiscoVersion string
 }
 
 type CounterTemplate struct {
@@ -1115,11 +1119,11 @@ func updateDescription(description string) string {
 	return s
 }
 
-func generateCounterTemplate(counters map[string]Counter, version string) {
+func generateCounterTemplate(counters map[string]Counter) {
 	sgCounters := generateCounters("", counters, "storagegrid")
-	generateStorageGridCounterTemplate(sgCounters, version)
+	generateStorageGridCounterTemplate(sgCounters, SgVersion)
 	ciscoCounters := generateCounters("", counters, "cisco")
-	generateCiscoSwitchCounterTemplate(ciscoCounters, version)
+	generateCiscoSwitchCounterTemplate(ciscoCounters, CiscoVersion)
 }
 
 func generateOntapCounterTemplate(counters map[string]Counter, version string) {
@@ -1265,8 +1269,8 @@ func generateStorageGridCounterTemplate(counters map[string]Counter, version str
 	c := CounterTemplate{
 		Counters: values,
 		CounterMetaData: CounterMetaData{
-			Date:         time.Now().Format("2006-Jan-02"),
-			OntapVersion: version,
+			Date:      time.Now().Format("2006-Jan-02"),
+			SGVersion: version,
 		},
 	}
 
@@ -1326,7 +1330,7 @@ func generateCiscoSwitchCounterTemplate(counters map[string]Counter, version str
 		Counters: values,
 		CounterMetaData: CounterMetaData{
 			Date:         time.Now().Format("2006-Jan-02"),
-			OntapVersion: version,
+			CiscoVersion: version,
 		},
 	}
 
