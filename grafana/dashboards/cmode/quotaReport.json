@@ -27,6 +27,12 @@
       "name": "Table",
       "type": "panel",
       "version": ""
+    },
+    {
+      "id": "timeseries",
+      "name": "Time series",
+      "type": "panel",
+      "version": ""
     }
   ],
   "annotations": {
@@ -54,7 +60,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1717086996579,
+  "iteration": 1752739138097,
   "links": [
     {
       "asDropdown": true,
@@ -186,6 +192,15 @@
                 "value": [
                   {
                     "options": {
+                      "-1": {
+                        "index": 2,
+                        "text": "No Hard Limit"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
                       "match": "null",
                       "result": {
                         "index": 0,
@@ -245,6 +260,15 @@
               {
                 "id": "mappings",
                 "value": [
+                  {
+                    "options": {
+                      "-1": {
+                        "index": 2,
+                        "text": "No Hard Limit"
+                      }
+                    },
+                    "type": "value"
+                  },
                   {
                     "options": {
                       "match": "null",
@@ -570,7 +594,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "label_join(\n  quota_disk_limit{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
+          "expr": "label_join(\n    quota_disk_limit{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, cluster, svm, volume) group_left (tags)\n    volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -581,7 +605,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "label_join(\n  quota_disk_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
+          "expr": "label_join(\n    quota_disk_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, cluster, svm, volume) group_left (tags)\n    volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -592,7 +616,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "label_join(\n  quota_file_limit{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
+          "expr": "label_join(\n    quota_file_limit{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, cluster, svm, volume) group_left (tags)\n    volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -603,7 +627,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "label_join(\n  quota_files_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
+          "expr": "label_join(\n    quota_files_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, cluster, svm, volume) group_left (tags)\n    volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -614,7 +638,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "label_join(\n  quota_soft_disk_limit{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
+          "expr": "label_join(\n    quota_soft_disk_limit{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, cluster, svm, volume) group_left (tags)\n    volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -625,7 +649,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "label_join(\n  quota_disk_used_pct_disk_limit{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
+          "expr": "label_join(\n    quota_disk_used_pct_disk_limit{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, cluster, svm, volume) group_left (tags)\n    volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -636,7 +660,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "label_join(\n  quota_files_used_pct_file_limit{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
+          "expr": "label_join(\n    quota_files_used_pct_file_limit{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, cluster, svm, volume) group_left (tags)\n    volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -647,7 +671,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "label_join(\n  quota_soft_file_limit{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
+          "expr": "label_join(\n    quota_soft_file_limit{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, cluster, svm, volume) group_left (tags)\n    volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -944,7 +968,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "quota_disk_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      quota_disk_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h] @ end()\n    )\n  )",
+              "expr": "quota_disk_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand\n  topk(\n    $TopResources,\n      max without (tags) (\n        avg_over_time(\n          quota_disk_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h]\n        )\n      )\n    * on (datacenter, cluster, svm, volume) group_left ()\n      volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n  )",
               "interval": "",
               "legendFormat": "{{volume}} - {{qtree}} - {{type}}",
               "refId": "A"
@@ -1010,7 +1034,30 @@
               },
               "unit": "percent"
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "-1": {
+                            "index": 0,
+                            "text": "No Hard Limit"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
           },
           "gridPos": {
             "h": 11,
@@ -1037,7 +1084,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "quota_disk_used_pct_disk_limit{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      quota_disk_used_pct_disk_limit{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h] @ end()\n    )\n  )",
+              "expr": "quota_disk_used_pct_disk_limit{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand\n  topk(\n    $TopResources,\n      max without (tags) (\n        avg_over_time(\n          quota_disk_used_pct_disk_limit{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h]\n        )\n      )\n    * on (datacenter, cluster, svm, volume) group_left ()\n      volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n  )",
               "interval": "",
               "legendFormat": "{{volume}} - {{qtree}} - {{type}}",
               "refId": "A"
@@ -1128,7 +1175,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "quota_files_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      quota_files_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h] @ end()\n    )\n  )",
+              "expr": "quota_files_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand\n  topk(\n    $TopResources,\n      max without (tags) (\n        avg_over_time(\n          quota_files_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h]\n        )\n      )\n    * on (datacenter, cluster, svm, volume) group_left ()\n      volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n  )",
               "interval": "",
               "legendFormat": "{{volume}} - {{qtree}} - {{type}}",
               "refId": "A"
@@ -1194,7 +1241,30 @@
               },
               "unit": "percent"
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "-1": {
+                            "index": 0,
+                            "text": "No Hard Limit"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
           },
           "gridPos": {
             "h": 11,
@@ -1221,7 +1291,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "quota_files_used_pct_file_limit{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      quota_files_used_pct_file_limit{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h] @ end()\n    )\n  )",
+              "expr": "quota_files_used_pct_file_limit{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand\n  topk(\n    $TopResources,\n      max without (tags) (\n        avg_over_time(\n          quota_files_used_pct_file_limit{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h]\n        )\n      )\n    * on (datacenter, cluster, svm, volume) group_left ()\n      volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n  )",
               "interval": "",
               "legendFormat": "{{volume}} - {{qtree}} - {{type}}",
               "refId": "A"
@@ -1324,7 +1394,7 @@
         "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(quota_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, svm)",
+        "definition": "label_values(svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, svm)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -1335,7 +1405,7 @@
         "name": "SVM",
         "options": [],
         "query": {
-          "query": "label_values(quota_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, svm)",
+          "query": "label_values(svm_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, svm)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -1349,7 +1419,53 @@
         "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(quota_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\"}, qtree)",
+        "definition": "label_values(volume_tags{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"},tag)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": "Volume Tag",
+        "multi": true,
+        "name": "Tag",
+        "options": [],
+        "query": {
+          "query": "label_values(volume_tags{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"},tag)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",style!=\"flexgroup_constituent\",tags=~\".*$Tag.*\"}, volume)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "Volume",
+        "options": [],
+        "query": {
+          "query": "label_values(volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\",style!=\"flexgroup_constituent\",tags=~\".*$Tag.*\"}, volume)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(quota_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\"} * on (datacenter, cluster, svm, volume) group_left(tags) volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"})",
         "description": null,
         "error": null,
         "hide": 0,
@@ -1360,12 +1476,12 @@
         "name": "Qtree",
         "options": [],
         "query": {
-          "query": "label_values(quota_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\"}, qtree)",
+          "query": "query_result(quota_disk_limit{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\"} * on (datacenter, cluster, svm, volume) group_left(tags) volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"})",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
         "refresh_on_load": false,
-        "regex": "",
+        "regex": ".*qtree=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 1,
         "type": "query"

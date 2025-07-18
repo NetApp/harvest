@@ -83,7 +83,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1751009337698,
+  "iteration": 1752657709433,
   "links": [
     {
       "asDropdown": true,
@@ -190,7 +190,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(volume_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "expr": "sum(\n    volume_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, cluster, svm, volume) group_left ()\n    volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n)",
           "hide": false,
           "instant": false,
           "interval": "",
@@ -258,7 +258,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(\n  volume_size_available{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n)",
+          "expr": "sum(\n    volume_size_available{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, cluster, svm, volume) group_left ()\n    volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n)",
           "instant": false,
           "interval": "",
           "legendFormat": "",
@@ -315,7 +315,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(volume_size_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "expr": "sum(\n    volume_size_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, cluster, svm, volume) group_left ()\n    volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n)",
           "instant": true,
           "interval": "",
           "legendFormat": "",
@@ -380,7 +380,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "(\n      sum(volume_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"})\n    *\n      100\n  )\n/\n  sum(volume_size_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "expr": "(\n      sum(\n          volume_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n        * on (datacenter, cluster, svm, volume) group_left ()\n          volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n      )\n    *\n      100\n  )\n/\n  sum(\n      volume_size_total{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n    * on (datacenter, cluster, svm, volume) group_left ()\n      volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n  )",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -437,7 +437,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(\n  volume_analytics_dir_subdir_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name=\".\",volume=~\"$Volume\"}\n)",
+          "expr": "sum(\n    volume_analytics_dir_subdir_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, cluster, svm, volume) group_left ()\n    volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n)",
           "instant": true,
           "interval": "",
           "legendFormat": "",
@@ -526,7 +526,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "volume_analytics_dir_bytes_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      volume_analytics_dir_bytes_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name!=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n    )\n  )",
+          "expr": "volume_analytics_dir_bytes_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand\n  topk(\n    $TopResources,\n      avg_over_time(\n        volume_analytics_dir_bytes_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name!=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n      )\n    * on (datacenter, cluster, svm, volume) group_left ()\n      (\n        max by (datacenter, cluster, svm, volume) (\n          volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n        )\n      )\n  )",
           "interval": "",
           "legendFormat": "{{svm}}-{{volume}}-{{dir_name}}",
           "refId": "A"
@@ -583,7 +583,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(\n  volume_analytics_dir_file_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name=\".\",volume=~\"$Volume\"}\n)",
+          "expr": "sum(\n    volume_analytics_dir_file_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, cluster, svm, volume) group_left ()\n    volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n)",
           "instant": true,
           "interval": "",
           "legendFormat": "",
@@ -758,7 +758,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "volume_analytics_dir_bytes_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      volume_analytics_dir_bytes_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name!=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n    )\n  )",
+          "expr": "volume_analytics_dir_bytes_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand\n  topk(\n    $TopResources,\n      avg_over_time(\n        volume_analytics_dir_bytes_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name!=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n      )\n    * on (datacenter, cluster, svm, volume) group_left ()\n      (\n        max by (datacenter, cluster, svm, volume) (\n          volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n        )\n      )\n  )",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -767,7 +767,7 @@
         },
         {
           "exemplar": false,
-          "expr": "volume_analytics_dir_file_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      volume_analytics_dir_bytes_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name!=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n    )\n  )",
+          "expr": "volume_analytics_dir_file_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand\n  topk(\n    $TopResources,\n      avg_over_time(\n        volume_analytics_dir_bytes_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name!=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n      )\n    * on (datacenter, cluster, svm, volume) group_left ()\n      (\n        max by (datacenter, cluster, svm, volume) (\n          volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n        )\n      )\n  )",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -777,7 +777,7 @@
         },
         {
           "exemplar": false,
-          "expr": "volume_analytics_dir_subdir_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      volume_analytics_dir_bytes_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name!=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n    )\n  )",
+          "expr": "volume_analytics_dir_subdir_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand\n  topk(\n    $TopResources,\n      avg_over_time(\n        volume_analytics_dir_bytes_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name!=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n      )\n    * on (datacenter, cluster, svm, volume) group_left ()\n      (\n        max by (datacenter, cluster, svm, volume) (\n          volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n        )\n      )\n  )",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -968,7 +968,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (time, order) (\n  volume_analytics_bytes_used_by_accessed_time{activity=~\"$Activity\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}\n)",
+              "expr": "sum by (time, order) (\n    volume_analytics_bytes_used_by_accessed_time{activity=~\"$Activity\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, cluster, svm, volume) group_left (tags)\n    volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n)",
               "instant": true,
               "interval": "",
               "legendFormat": "{{volume}}",
@@ -1132,7 +1132,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (time, order) (\n      volume_analytics_bytes_used_percent_by_accessed_time{activity=~\"$Activity\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}\n    * on (cluster, datacenter, svm, volume) group_left ()\n      volume_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  )\n/ on (cluster, datacenter, svm, volume) group_left ()\n  sum(volume_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+              "expr": "sum by (time, order) (\n      volume_analytics_bytes_used_percent_by_accessed_time{activity=~\"$Activity\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}\n    * on (cluster, datacenter, svm, volume) group_left (tags)\n      (\n          volume_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n        * on (cluster, datacenter, svm, volume) group_left (tags)\n          volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n      )\n  )\n/ on (cluster, datacenter, svm, volume) group_left ()\n  sum(\n      volume_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n    * on (cluster, datacenter, svm, volume) group_left (tags)\n      volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n  )",
               "instant": true,
               "interval": "",
               "legendFormat": "{{volume}} - {{time}}",
@@ -1296,7 +1296,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (time, order) (\n  volume_analytics_bytes_used_by_modified_time{activity=~\"$Activity\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}\n)",
+              "expr": "sum by (time, order) (\n    volume_analytics_bytes_used_by_modified_time{activity=~\"$Activity\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, cluster, svm, volume) group_left (tags)\n    volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n)",
               "instant": true,
               "interval": "",
               "legendFormat": "{{volume}}",
@@ -1460,7 +1460,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (time, order) (\n      volume_analytics_bytes_used_percent_by_modified_time{activity=~\"$Activity\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}\n    * on (cluster, datacenter, svm, volume) group_left ()\n      volume_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  )\n/ on (cluster, datacenter, svm, volume) group_left ()\n  sum(volume_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+              "expr": "sum by (time, order) (\n      volume_analytics_bytes_used_percent_by_modified_time{activity=~\"$Activity\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}\n    * on (cluster, datacenter, svm, volume) group_left (tags)\n      (\n          volume_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n        * on (cluster, datacenter, svm, volume) group_left (tags)\n          volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n      )\n  )\n/ on (cluster, datacenter, svm, volume) group_left ()\n  sum(\n      volume_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n    * on (cluster, datacenter, svm, volume) group_left (tags)\n      volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n  )",
               "instant": true,
               "interval": "",
               "legendFormat": "{{volume}}",
@@ -1649,7 +1649,30 @@
         "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}, volume)",
+        "definition": "label_values(volume_tags{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"},tag)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "Tag",
+        "options": [],
+        "query": {
+          "query": "label_values(volume_tags{datacenter=~\"$Datacenter\", cluster=~\"$Cluster\", svm=~\"$SVM\"},tag)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\"} * on (datacenter, cluster, svm, volume) group_left(tags) volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\"})",
         "description": null,
         "error": null,
         "hide": 0,
@@ -1659,11 +1682,11 @@
         "name": "Volume",
         "options": [],
         "query": {
-          "query": "label_values(volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}, volume)",
+          "query": "query_result(volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\", svm=~\"$SVM\"} * on (datacenter, cluster, svm, volume) group_left(tags) volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\"})",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
-        "regex": "",
+        "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
