@@ -1,11 +1,11 @@
-This document describes how Harvest metrics relate to their relevant StorageGrid, including:
+This document describes which StorageGRID metrics are collected and what those metrics are named in Harvest, including:
 
 - Details about which Harvest metrics each dashboard uses.
 These can be generated on demand by running `bin/harvest grafana metrics`. See
 [#1577](https://github.com/NetApp/harvest/issues/1577#issue-1471478260) for details.
 
 ```
-Creation Date : 2025-Jul-18
+Creation Date : 2025-Jul-21
 StorageGrid Version: 11.6.0
 ```
 
