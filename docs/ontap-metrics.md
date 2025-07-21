@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Jul-07
+Creation Date : 2025-Jul-17
 ONTAP Version: 9.16.1
 ```
 
@@ -1689,7 +1689,7 @@ Specifies an ISO-8601 format of date and time used to retrieve the idle time dur
 | REST | `api/protocols/cifs/sessions` | `idle_duration` | conf/rest/9.8.0/cifs_session.yaml |
 
 The `cifs_session_idle_duration` metric is visualized in the following Grafana dashboards:
-
+    
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
@@ -6779,6 +6779,96 @@ The `lun_xcopy_reqs` metric is visualized in the following Grafana dashboards:
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | ONTAP: LUN | Per LUN (Must Select Cluster/SVM/Volume/LUN) | timeseries | [vStorage Offload Operations](/d/cdot-lun/ontap3a-lun?orgId=1&viewPanel=91) |
+///
+
+
+
+### mav_request_approve_expiry_time
+
+Shows the deadline by which approved operations must be approved.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/security/multi-admin-verify/requests` | `approve_expiry_time` | conf/rest/9.12.0/mav_request.yaml |
+
+The `mav_request_approve_expiry_time` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: MAV Request | Highlights | table | [MAV Requests](/d/cdot-mva/ontap3a-mav request?orgId=1&viewPanel=295) |
+///
+
+
+
+### mav_request_approve_time
+
+Shows the date and time when requests were approved.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/security/multi-admin-verify/requests` | `approve_time` | conf/rest/9.12.0/mav_request.yaml |
+
+The `mav_request_approve_time` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: MAV Request | Highlights | table | [MAV Requests](/d/cdot-mva/ontap3a-mav request?orgId=1&viewPanel=295) |
+///
+
+
+
+### mav_request_create_time
+
+Displays the date and time each MAV request was initiated.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/security/multi-admin-verify/requests` | `create_time` | conf/rest/9.12.0/mav_request.yaml |
+
+The `mav_request_create_time` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: MAV Request | Highlights | table | [MAV Requests](/d/cdot-mva/ontap3a-mav request?orgId=1&viewPanel=295) |
+///
+
+
+
+### mav_request_details
+
+This metric provides information about MAV requests.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/security/multi-admin-verify/requests` | `Harvest generated.` | conf/rest/9.12.0/mav_request.yaml |
+
+The `mav_request_details` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: MAV Request | Highlights | table | [MAV Requests](/d/cdot-mva/ontap3a-mav request?orgId=1&viewPanel=295) |
+///
+
+
+
+### mav_request_execution_expiry_time
+
+Shows the deadline by which approved operations must be executed.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/security/multi-admin-verify/requests` | `execution_expiry_time` | conf/rest/9.12.0/mav_request.yaml |
+
+The `mav_request_execution_expiry_time` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: MAV Request | Highlights | table | [MAV Requests](/d/cdot-mva/ontap3a-mav request?orgId=1&viewPanel=295) |
 ///
 
 
@@ -11930,7 +12020,7 @@ Number of SSD Disk kilobytes (KB) written per second
 
 ### node_total_data
 
-Total throughput in bytes
+Represents the total data throughput in bytes for a node, as reported by ONTAP.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12675,7 +12765,7 @@ Number of read operations per second from the volume. node_volume_read_ops is [v
 
 ### node_volume_total_data
 
-This metric represents the total amount of data that has been read from and written to volumes aggregated by node.
+Represents the aggregated total data throughput in bytes across all volumes on a node. This metric is calculated by Harvest by summing the data read from and written to each volume on the node.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -21424,6 +21514,7 @@ The `volume_labels` metric is visualized in the following Grafana dashboards:
 | ONTAP: Volume | Object Storage | timeseries | [Top $TopResources Volumes by Object Storage PUT Latency](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=95) |
 | ONTAP: Volume | Object Storage | timeseries | [Top $TopResources Volumes by Object Storage PUT Request Count](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=96) |
 | ONTAP: Volume | Object Storage | table | [Top $TopResources Volumes by Object Storage Requests](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=90) |
+| ONTAP: Volume | FabricPool | table | [Volumes Footprint](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=185) |
 | ONTAP: Volume | FabricPool | timeseries | [Top $TopResources Volumes by Performance Tier Footprint](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=119) |
 | ONTAP: Volume | FabricPool | timeseries | [Top $TopResources Volumes by Performance Tier Footprint %](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=120) |
 | ONTAP: Volume | FabricPool | timeseries | [Top $TopResources Volumes by Capacity Tier Footprint](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=121) |

@@ -1,0 +1,12 @@
+name:                       MAVRequest
+query:                      api/cluster
+object:                     mav_request
+
+counters:
+  - ^^uuid
+  - ^name
+
+plugins:
+  - MAV
+
+export_data: false

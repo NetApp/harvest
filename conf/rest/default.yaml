@@ -30,6 +30,7 @@ objects:
 #  Lock:                        lock.yaml
   Health:                      health.yaml
   Lun:                         lun.yaml
+#  MAVRequest:                  mav_request.yaml
   MetroclusterCheck:           metrocluster_check.yaml
 #  Mediator:                    mediator.yaml
   Namespace:                   namespace.yaml

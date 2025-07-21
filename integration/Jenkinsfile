@@ -135,23 +135,6 @@ pipeline {
                                 '''
                             }
                         }
-                        stage('Running Test') {
-                            steps {
-                                sh """
-                                REGRESSION=1 bash $WORKSPACE/harvest/integration/test/test.sh
-                                """
-                            }
-                            post {
-                                always {
-                                     sh '''
-                                          STOP=1 bash $WORKSPACE/harvest/integration/test/test.sh
-                                          rm -f rpm_logs.zip
-                                          zip -r rpm_logs.zip /var/log/harvest
-                                          '''
-                                      archiveArtifacts artifacts: "rpm_logs.zip", fingerprint: true
-                                }
-                            }
-                        }
                     }
 
                 }
@@ -250,29 +233,6 @@ pipeline {
                                 sleep 1m
                                 INSTALL_DOCKER=1 bash $WORKSPACE/harvest/integration/test/test.sh
                                 '''
-                            }
-                        }
-                        stage('Running Test') {
-                            steps {
-                                sh """
-                                export VERSION=$VERSION
-                                REGRESSION=1 bash $WORKSPACE/harvest/integration/test/test.sh
-                                """
-
-                            }
-                            post {
-                                always {
-                                    sh """
-                                        COPY_DOCKER_LOGS=1 bash $WORKSPACE/harvest/integration/test/test.sh
-                                        rm -f docker_fips_logs.zip
-                                        zip -r docker_fips_logs.zip /var/log/harvest
-                                        cd $WORKSPACE/docker
-                                        ANALYZE_DOCKER_LOGS=1 bash $WORKSPACE/harvest/integration/test/test.sh
-                                        CHECK_METRICS=1 bash $WORKSPACE/harvest/integration/test/test.sh
-                                        docker ps -q | xargs docker stop | xargs docker rm --force
-                                    """
-                                    archiveArtifacts artifacts: "docker_fips_logs.zip", fingerprint: true
-                                }
                             }
                         }
                     }

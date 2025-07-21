@@ -2128,6 +2128,52 @@ counters:
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
 
+  - Name: mav_request_approve_expiry_time
+    Description: Shows the deadline by which approved operations must be approved.
+    APIs:
+      - API: REST
+        Endpoint: api/security/multi-admin-verify/requests
+        ONTAPCounter: approve_expiry_time
+        Template: conf/rest/9.12.0/mav_request.yaml
+
+  - Name: mav_request_approve_time
+    Description: Shows the date and time when requests were approved.
+    APIs:
+      - API: REST
+        Endpoint: api/security/multi-admin-verify/requests
+        ONTAPCounter: approve_time
+        Template: conf/rest/9.12.0/mav_request.yaml
+
+  - Name: mav_request_create_time
+    Description: Displays the date and time each MAV request was initiated.
+    APIs:
+      - API: REST
+        Endpoint: api/security/multi-admin-verify/requests
+        ONTAPCounter: create_time
+        Template: conf/rest/9.12.0/mav_request.yaml
+
+  - Name: mav_request_execution_expiry_time
+    Description: Shows the deadline by which approved operations must be executed.
+    APIs:
+      - API: REST
+        Endpoint: api/security/multi-admin-verify/requests
+        ONTAPCounter: execution_expiry_time
+        Template: conf/rest/9.12.0/mav_request.yaml
+
+  - Name: mav_request_details
+    Description: This metric provides information about MAV requests.
+    APIs:
+      - API: REST
+        Endpoint: api/security/multi-admin-verify/requests
+        ONTAPCounter: Harvest generated.
+        Template: conf/rest/9.12.0/mav_request.yaml
+
+  - Name: node_total_data
+    Description: Represents the total data throughput in bytes for a node, as reported by ONTAP.
+
+  - Name: node_volume_total_data
+    Description: Represents the aggregated total data throughput in bytes across all volumes on a node. This metric is calculated by Harvest by summing the data read from and written to each volume on the node.
+
   - Name: ethernet_switch_port_receive_discards
     Description: Total number of discarded packets.
     APIs:

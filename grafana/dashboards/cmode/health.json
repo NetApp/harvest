@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1730271272394,
+  "iteration": 1752677427894,
   "links": [
     {
       "asDropdown": true,
@@ -304,7 +304,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "(\n              count(health_disk_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"} == 1)\n            or\n              vector(0)\n          )\n        +\n          (\n              count(health_shelf_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"} == 1)\n            or\n              vector(0)\n          )\n      +\n        (\n            count(\n                last_over_time(\n                  health_support_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"}[1d]\n                )\n              ==\n                1\n            )\n          or\n            vector(0)\n        )\n    +\n      (\n          count(health_lif_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"} == 1)\n        or\n          vector(0)\n      )\n  +\n    (\n        count(\n          health_volume_move_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"} == 1\n        )\n      or\n        vector(0)\n    )\n+\n  (\n      count(\n        health_volume_ransomware_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"error\"} == 1\n      )\n    or\n      vector(0)\n  )",
+          "expr": "(\n              count(health_disk_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"} == 1)\n            or\n              vector(0)\n          )\n        +\n          (\n              count(health_shelf_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"} == 1)\n            or\n              vector(0)\n          )\n      +\n        (\n            count(health_support_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"} == 1)\n          or\n            vector(0)\n        )\n    +\n      (\n          count(health_lif_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"} == 1)\n        or\n          vector(0)\n      )\n  +\n    (\n        count(\n          health_volume_move_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"} == 1\n        )\n      or\n        vector(0)\n    )\n+\n  (\n      count(\n        health_volume_ransomware_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"error\"} == 1\n      )\n    or\n      vector(0)\n  )",
           "instant": true,
           "interval": "",
           "legendFormat": "",
@@ -614,11 +614,11 @@
         },
         {
           "exemplar": false,
-          "expr": "(\n    count(\n        last_over_time(\n          health_support_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"}[1d]\n        )\n      ==\n        1\n    )\n  or\n    vector(0)\n)",
+          "expr": "(\n    count(health_support_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"} == 1)\n  or\n    vector(0)\n)",
           "hide": false,
           "instant": true,
           "interval": "",
-          "legendFormat": "Health Monitor Alerts (last 24h)",
+          "legendFormat": "Health Monitor Alerts",
           "refId": "C"
         },
         {
@@ -4336,7 +4336,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "last_over_time(health_support_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[$__range])\n==\n  1",
+              "expr": "health_support_alerts{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} == 1",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -4523,5 +4523,5 @@
   "timezone": "",
   "title": "ONTAP: Health",
   "uid": "cdot-health",
-  "version": 5
+  "version": 6
 }

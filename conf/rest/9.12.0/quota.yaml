@@ -26,10 +26,16 @@ counters:
   - space.used.total              => disk_used
   - filter:
       - show_default_records=false
-      - type=tree #|user|group
+      - type=tree # |user|group
 
 plugins:
-  - Quota:
+  - Quota
+#  - Tag:                 # The Tag plugin adds a `tags` label to each quota metric, using the tags defined on its corresponding volume.
+#    - schedule:
+#        - data: 1h
+#  - LabelAgent:
+#      exclude_regex:
+#        - tags `^$`      # Exclude metrics where the 'tags' label is empty
 
 export_options:
   instance_keys:

@@ -1561,6 +1561,7 @@ func checkDashboardTime(t *testing.T, path string, data []byte) {
 		to   string
 	}{
 		"cmode/auditlog.json": {"now-24h", "now"},
+		"cmode/mav.json":      {"now-24h", "now"},
 		"default":             {"now-3h", "now"},
 	}
 

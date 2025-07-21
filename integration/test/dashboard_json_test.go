@@ -90,6 +90,7 @@ var excludeCounters = []string{
 	"health_",
 	"iw",
 	"logical_used",
+	"mav_request_",
 	"metadata_exporter_count",
 	"metadata_target_ping",
 	"metrocluster_check_",

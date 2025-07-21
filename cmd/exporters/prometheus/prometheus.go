@@ -511,7 +511,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 					if tagged != nil && !tagged.Has(prefixedName) {
 						tagged.Add(prefixedName)
 						help := "# HELP " + prefixedName + " Metric for " + data.Object
-						typeT := "# TYPE " + prefixedName + " histogram"
+						typeT := "# TYPE " + prefixedName + " gauge"
 						rendered = append(rendered, []byte(help), []byte(typeT))
 						renderedBytes += uint64(len(help)) + uint64(len(typeT))
 					}

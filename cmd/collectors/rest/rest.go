@@ -13,6 +13,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/clustersoftware"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/disk"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/health"
+	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/mav"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/metroclustercheck"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/netroute"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/ontaps3service"
@@ -25,6 +26,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/snapshotpolicy"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/svm"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/systemnode"
+	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/tag"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/volume"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/volumeanalytics"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/vscanpool"
@@ -503,6 +505,8 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return collectors.NewLif(abc)
 	case "NetRoute":
 		return netroute.New(abc)
+	case "MAV":
+		return mav.New(abc)
 	case "Quota":
 		return quota.New(abc)
 	case "Snapmirror":
@@ -523,6 +527,8 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return snapshotpolicy.New(abc)
 	case "SecurityAccount":
 		return securityaccount.New(abc)
+	case "Tag":
+		return tag.New(abc)
 	case "QosPolicyFixed":
 		return qospolicyfixed.New(abc)
 	case "QosPolicyAdaptive":
