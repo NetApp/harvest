@@ -41,11 +41,11 @@ Displays uptime duration of the Cisco switch. <span class="key">Description of t
 
     In this example, we would demonstrate invoking the `show version` CLI command via curl.
 
-    You could curl this POST call to your Cisco switch ip address as mentioned below with your required input, we have passed as `show version`.
-    You can replace the ADMIN, PASSWORD and CISCO_SWITCH_IP accordingly.
+    To do this, send a POST request to your switch’s IP address with the desired command as input.
+    Replace RO_USER, PASSWORD, and CISCO_SWITCH_IP with your actual read-only username, password, and the switch’s IP address.
 
     ```
-    curl -sk -u ADMIN:PASSWORD POST 'https://CISCO_SWITCH_IP/ins_api' -d
+    curl -sk -u RO_USER:PASSWORD POST 'https://CISCO_SWITCH_IP/ins_api' -d
     '{
     "ins_api": {
     "version": "1.0",
