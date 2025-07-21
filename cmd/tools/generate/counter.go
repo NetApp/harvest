@@ -42,7 +42,9 @@ import (
 )
 
 const (
-	keyPerfAPI = "KeyPerf"
+	keyPerfAPI   = "KeyPerf"
+	SgVersion    = "11.6.0"
+	CiscoVersion = "9.3.12"
 )
 
 var (
@@ -140,6 +142,15 @@ var (
 		"wafl_reads_from_pmem":                                  {},
 	}
 
+	knownMappingGapsSG = map[string]struct{}{
+		"storagegrid_node_cpu_utilization_percentage":                         {},
+		"storagegrid_private_load_balancer_storage_request_body_bytes_bucket": {},
+		"storagegrid_private_load_balancer_storage_request_count":             {},
+		"storagegrid_private_load_balancer_storage_request_time":              {},
+		"storagegrid_private_load_balancer_storage_rx_bytes":                  {},
+		"storagegrid_private_load_balancer_storage_tx_bytes":                  {},
+	}
+
 	excludeDocumentedRestMetrics = []string{
 		"ontaps3_svm_",
 		"svm_ontaps3_svm_",
@@ -217,6 +228,8 @@ type Counters struct {
 type CounterMetaData struct {
 	Date         string
 	OntapVersion string
+	SGVersion    string
+	CiscoVersion string
 }
 
 type CounterTemplate struct {
@@ -228,6 +241,8 @@ type MetricDef struct {
 	API          string `yaml:"API"`
 	Endpoint     string `yaml:"Endpoint"`
 	ONTAPCounter string `yaml:"ONTAPCounter"`
+	CiscoCounter string `yaml:"CiscoCounter"`
+	SGCounter    string `yaml:"SGCounter"`
 	Template     string `yaml:"Template"`
 	Unit         string `yaml:"Unit"`
 	Type         string `yaml:"Type"`
@@ -247,18 +262,24 @@ type PanelData struct {
 }
 
 func (m MetricDef) TableRow() string {
-	if strings.Contains(m.Template, "perf") {
+	switch {
+	case strings.Contains(m.Template, "perf"):
 		unitTypeBase := `<br><span class="key">Unit:</span> ` + m.Unit +
 			`<br><span class="key">Type:</span> ` + m.Type +
 			`<br><span class="key">Base:</span> ` + m.BaseCounter
 		return fmt.Sprintf("| %s | `%s` | `%s`%s | %s |",
 			m.API, m.Endpoint, m.ONTAPCounter, unitTypeBase, m.Template)
-	} else if m.Unit != "" {
+	case m.Unit != "":
 		unit := `<br><span class="key">Unit:</span> ` + m.Unit
 		return fmt.Sprintf("| %s | `%s` | `%s`%s | %s | ",
 			m.API, m.Endpoint, m.ONTAPCounter, unit, m.Template)
+	case strings.Contains(m.Template, "ciscorest"):
+		return fmt.Sprintf("| %s | `%s` | `%s` | %s |", m.API, m.Endpoint, m.CiscoCounter, m.Template)
+	case strings.Contains(m.Template, "storagegrid"):
+		return fmt.Sprintf("| %s | `%s` | `%s` | %s |", m.API, m.Endpoint, m.SGCounter, m.Template)
+	default:
+		return fmt.Sprintf("| %s | `%s` | `%s` | %s |", m.API, m.Endpoint, m.ONTAPCounter, m.Template)
 	}
-	return fmt.Sprintf("| %s | `%s` | `%s` | %s |", m.API, m.Endpoint, m.ONTAPCounter, m.Template)
 }
 
 func (p PanelDef) DashboardTableRow() string {
@@ -1099,7 +1120,14 @@ func updateDescription(description string) string {
 	return s
 }
 
-func generateCounterTemplate(counters map[string]Counter, version string) {
+func generateCounterTemplate(counters map[string]Counter) {
+	sgCounters := generateCounters("", counters, "storagegrid")
+	generateStorageGridCounterTemplate(sgCounters, SgVersion)
+	ciscoCounters := generateCounters("", counters, "cisco")
+	generateCiscoSwitchCounterTemplate(ciscoCounters, CiscoVersion)
+}
+
+func generateOntapCounterTemplate(counters map[string]Counter, version string) {
 	targetPath := "docs/ontap-metrics.md"
 	t, err := template.New("counter.tmpl").ParseFiles("cmd/tools/generate/counter.tmpl")
 	if err != nil {
@@ -1121,7 +1149,7 @@ func generateCounterTemplate(counters map[string]Counter, version string) {
 	table.SetBorder(false)
 	table.SetAutoFormatHeaders(false)
 	table.SetAutoWrapText(false)
-	table.SetHeader([]string{"Missing", "Counter", "APIs", "Endpoint", "Counter", "Template"})
+	table.SetHeader([]string{"Missing", "Counter", "APIs", "Endpoint", "ONTAPCounter", "Template"})
 
 	for _, k := range keys {
 		if k == "" {
@@ -1196,8 +1224,134 @@ func generateCounterTemplate(counters map[string]Counter, version string) {
 	}
 }
 
+func generateStorageGridCounterTemplate(counters map[string]Counter, version string) {
+	targetPath := "docs/storagegrid-metrics.md"
+	t, err := template.New("storagegrid_counter.tmpl").ParseFiles("cmd/tools/generate/storagegrid_counter.tmpl")
+	if err != nil {
+		panic(err)
+	}
+	out, err := os.Create(targetPath)
+	if err != nil {
+		panic(err)
+	}
+
+	keys := make([]string, 0, len(counters))
+	for k := range counters {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	values := make([]Counter, 0, len(keys))
+
+	table := tw.NewWriter(os.Stdout)
+	table.SetBorder(false)
+	table.SetAutoFormatHeaders(false)
+	table.SetAutoWrapText(false)
+	table.SetHeader([]string{"Missing", "Counter", "APIs", "Endpoint", "SGCounter", "Template"})
+
+	for _, k := range keys {
+		if k == "" {
+			continue
+		}
+		counter := counters[k]
+		if !strings.HasPrefix(counter.Name, "storagegrid_") {
+			continue
+		}
+
+		if _, ok := knownMappingGapsSG[k]; !ok {
+			if counter.Description == "" {
+				appendRow(table, "Description", counter, MetricDef{API: ""})
+			}
+		}
+
+		values = append(values, counter)
+	}
+
+	table.Render()
+	c := CounterTemplate{
+		Counters: values,
+		CounterMetaData: CounterMetaData{
+			Date:      time.Now().Format("2006-Jan-02"),
+			SGVersion: version,
+		},
+	}
+
+	err = t.Execute(out, c)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("Harvest metric documentation generated at %s \n", targetPath)
+
+	if table.NumLines() > 0 {
+		log.Fatalf("Issues found: refer table above")
+	}
+}
+
+func generateCiscoSwitchCounterTemplate(counters map[string]Counter, version string) {
+	targetPath := "docs/cisco-switch-metrics.md"
+	t, err := template.New("cisco_counter.tmpl").ParseFiles("cmd/tools/generate/cisco_counter.tmpl")
+	if err != nil {
+		panic(err)
+	}
+	out, err := os.Create(targetPath)
+	if err != nil {
+		panic(err)
+	}
+
+	keys := make([]string, 0, len(counters))
+	for k := range counters {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	values := make([]Counter, 0, len(keys))
+
+	table := tw.NewWriter(os.Stdout)
+	table.SetBorder(false)
+	table.SetAutoFormatHeaders(false)
+	table.SetAutoWrapText(false)
+	table.SetHeader([]string{"Missing", "Counter", "APIs", "Endpoint", "CiscoCounter", "Template"})
+
+	for _, k := range keys {
+		if k == "" {
+			continue
+		}
+		counter := counters[k]
+		if !strings.HasPrefix(counter.Name, "cisco_") {
+			continue
+		}
+
+		if counter.Description == "" {
+			appendRow(table, "Description", counter, MetricDef{API: ""})
+		}
+
+		values = append(values, counter)
+	}
+
+	table.Render()
+	c := CounterTemplate{
+		Counters: values,
+		CounterMetaData: CounterMetaData{
+			Date:         time.Now().Format("2006-Jan-02"),
+			CiscoVersion: version,
+		},
+	}
+
+	err = t.Execute(out, c)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("Harvest metric documentation generated at %s \n", targetPath)
+
+	if table.NumLines() > 0 {
+		log.Fatalf("Issues found: refer table above")
+	}
+}
+
 func appendRow(table *tw.Table, missing string, counter Counter, def MetricDef) {
-	table.Append([]string{missing, counter.Name, def.API, def.Endpoint, def.ONTAPCounter, def.Template})
+	if def.API != "" {
+		table.Append([]string{missing, counter.Name, def.API, def.Endpoint, def.ONTAPCounter, def.Template})
+	} else {
+		table.Append([]string{missing, counter.Name})
+	}
 }
 
 // Regex to match NFS version and operation
@@ -1643,6 +1797,46 @@ func processExternalCounters(dir string, counters map[string]Counter) map[string
 						}
 					}
 				}
+			}
+			counters[v.Name] = v1
+		}
+	}
+	return counters
+}
+
+func generateCounters(dir string, counters map[string]Counter, collectorName string) map[string]Counter {
+	dat, err := os.ReadFile(filepath.Join(dir, "cmd", "tools", "generate", collectorName+"_counter.yaml"))
+	if err != nil {
+		fmt.Printf("error while reading file %v", err)
+		return nil
+	}
+	var c Counters
+
+	err = yaml.Unmarshal(dat, &c)
+	if err != nil {
+		fmt.Printf("error while parsing file %v", err)
+		return nil
+	}
+
+	for k, m := range metricsPanelMap {
+		if !strings.HasPrefix(k, collectorName) {
+			continue
+		}
+		if _, ok := counters[k]; !ok {
+			counters[k] = Counter{Name: k, Panels: m.Panels}
+		}
+	}
+
+	for _, v := range c.C {
+		if v1, ok := counters[v.Name]; !ok {
+			v.Panels = metricsPanelMap[v.Name].Panels
+			counters[v.Name] = v
+		} else {
+			if v.Description != "" {
+				v1.Description = v.Description
+			}
+			if len(v.APIs) > 0 {
+				v1.APIs = v.APIs
 			}
 			counters[v.Name] = v1
 		}

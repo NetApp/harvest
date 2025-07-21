@@ -1,0 +1,141 @@
+This document describes which Cisco switch metrics are collected and what those metrics are named in Harvest, including:
+
+- Details about which Harvest metrics each dashboard uses.
+These can be generated on demand by running `bin/harvest grafana metrics`. See
+[#1577](https://github.com/NetApp/harvest/issues/1577#issue-1471478260) for details.
+
+```
+Creation Date : {{ .CounterMetaData.Date }}
+NX-OS Version: {{ .CounterMetaData.CiscoVersion }}
+```
+
+??? "Navigate to Grafana dashboards"
+
+    Add your Grafana instance to the following form and save it. When you click on dashboard links on this page, a link to your dashboard will be opened. NAbox hosts Grafana on a subdomain like so: https://localhost/grafana/
+
+    <div>
+        <label for="grafanaHost">Grafana Host</label>
+        <input type="text" id="grafanaHost" name="grafanaHost" placeholder="e.g. http://localhost:3000" style="width: 80%;margin-left:1em">
+        <button type="button" onclick="saveGrafanaHost()">Save</button>
+    </div>
+
+## Understanding the structure
+
+Below is an <span class="key">annotated</span> example of how to interpret the structure of each of the [metrics](#metrics).
+
+cisco_switch_uptime <span class="key">Name of the metric exported by Harvest</span>
+
+Displays uptime duration of the Cisco switch. <span class="key">Description of the Cisco switch metric</span>
+
+* <span class="key">API</span> Harvest uses the NXAPI protocol to collect metrics
+* <span class="key">Endpoint</span> name of the CLI used to collect this metric
+* <span class="key">Metric</span> name of the Cisco switch metric
+* <span class="key">Template</span> path of the template that collects the metric
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+|NXAPI | `show version` | kern_uptm_days, kern_uptm_hrs, kern_uptm_mins, kern_uptm_secs | conf/ciscorest/nxos/9.3.12/version.yaml|
+
+
+??? "Example to invoke CLI show commands via curl"
+
+    In this example, we would demonstrate invoking the `show version` CLI command via curl.
+
+    To do this, send a POST request to your switch’s IP address with the desired command as input.
+    Replace RO_USER, PASSWORD, and CISCO_SWITCH_IP with your actual read-only username, password, and the switch’s IP address.
+
+    ```
+    curl -sk -u RO_USER:PASSWORD POST 'https://CISCO_SWITCH_IP/ins_api' -d
+    '{
+    "ins_api": {
+    "version": "1.0",
+    "type": "cli_show",
+    "chunk": "0",
+    "sid": "1",
+    "input": "show version",
+    "output_format": "json"
+    }
+    }'
+    ```
+
+    After invoking the above Curl command, You would get this response
+    ```
+    {
+            "ins_api":      {
+                    "type": "cli_show",
+                    "version":      "1.0",
+                    "sid":  "eoc",
+                    "outputs":      {
+                            "output":       {
+                                    "input": "show version",
+                                    "msg":  "Success",
+                                    "code": "200",
+                                    "body": {
+                                            "header_str":   "Cisco Nexus Operating System (NX-OS) Software\nTAC support: http://www.cisco.com/tac\nCopyright (C) 2002-2023, Cisco and/or its affiliates.\nAll rights reserved.\nThe copyrights to certain works contained in this software are\nowned by other third parties and used and distributed under their own\nlicenses, such as open source.  This software is provided \"as is,\" and unless\notherwise stated, there is no warranty, express or implied, including but not\nlimited to warranties of merchantability and fitness for a particular purpose.\nCertain components of this software are licensed under\nthe GNU General Public License (GPL) version 2.0 or \nGNU General Public License (GPL) version 3.0  or the GNU\nLesser General Public License (LGPL) Version 2.1 or \nLesser General Public License (LGPL) Version 2.0. \nA copy of each such license is available at\nhttp://www.opensource.org/licenses/gpl-2.0.php and\nhttp://opensource.org/licenses/gpl-3.0.html and\nhttp://www.opensource.org/licenses/lgpl-2.1.php and\nhttp://www.gnu.org/licenses/old-licenses/library.txt.\n",
+                                            "bios_ver_str": "04.25",
+                                            "kickstart_ver_str":    "9.3(12)",
+                                            "nxos_ver_str": "9.3(12)",
+                                            "bios_cmpl_time":       "05/22/2019",
+                                            "kick_file_name":       "bootflash:///nxos.9.3.12.bin",
+                                            "nxos_file_name":       "bootflash:///nxos.9.3.12.bin",
+                                            "kick_cmpl_time":       "6/20/2023 12:00:00",
+                                            "nxos_cmpl_time":       "6/20/2023 12:00:00",
+                                            "kick_tmstmp":  "06/23/2023 17:33:36",
+                                            "nxos_tmstmp":  "06/23/2023 17:33:36",
+                                            "chassis_id":   "Nexus 3132QV Chassis",
+                                            "cpu_name":     "Intel(R) Core(TM) i3- CPU @ 2.50GHz",
+                                            "memory":       16399572,
+                                            "mem_type":     "kB",
+                                            "proc_board_id":        "FOC24213H5C",
+                                            "host_name":    "Switch-A1",
+                                            "bootflash_size":       15137792,
+                                            "slot0_size":   0,
+                                            "kern_uptm_days":       256,
+                                            "kern_uptm_hrs":        19,
+                                            "kern_uptm_mins":       3,
+                                            "kern_uptm_secs":       50,
+                                            "rr_usecs":     24056,
+                                            "rr_ctime":     "Wed Nov  6 14:02:05 2024",
+                                            "rr_reason":    "Reset Requested by CLI command reload",
+                                            "rr_sys_ver":   "9.3(12)",
+                                            "rr_service":   "",
+                                            "plugins":      "Core Plugin, Ethernet Plugin",
+                                            "manufacturer": "Cisco Systems, Inc.",
+                                            "TABLE_package_list":   {
+                                                    "ROW_package_list":     {
+                                                            "package_id":   ""
+                                                    }
+                                            }
+                                    }
+                            }
+                    }
+            }
+    }
+    ```
+
+
+## Metrics
+
+{{range .Counters}}
+### {{ .Name }}
+
+{{ .Description }}
+
+{{.Header -}}
+{{range .APIs}}
+{{.TableRow -}}
+{{end}}
+
+{{- if .HasPanels}}
+
+The `{{ .Name }}` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+{{- .PanelHeader -}}
+{{range .Panels}}
+{{.DashboardTableRow -}}
+{{end}}
+///
+{{end}}
+
+{{end}}

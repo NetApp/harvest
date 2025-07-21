@@ -1,0 +1,64 @@
+This document describes which StorageGRID metrics are collected and what those metrics are named in Harvest, including:
+
+- Details about which Harvest metrics each dashboard uses.
+These can be generated on demand by running `bin/harvest grafana metrics`. See
+[#1577](https://github.com/NetApp/harvest/issues/1577#issue-1471478260) for details.
+
+```
+Creation Date : {{ .CounterMetaData.Date }}
+StorageGrid Version: {{ .CounterMetaData.SGVersion }}
+```
+
+??? "Navigate to Grafana dashboards"
+
+    Add your Grafana instance to the following form and save it. When you click on dashboard links on this page, a link to your dashboard will be opened. NAbox hosts Grafana on a subdomain like so: https://localhost/grafana/
+
+    <div>
+        <label for="grafanaHost">Grafana Host</label>
+        <input type="text" id="grafanaHost" name="grafanaHost" placeholder="e.g. http://localhost:3000" style="width: 80%;margin-left:1em">
+        <button type="button" onclick="saveGrafanaHost()">Save</button>
+    </div>
+
+## Understanding the structure
+
+Below is an <span class="key">annotated</span> example of how to interpret the structure of each of the [metrics](#metrics).
+
+storagegrid_tenant_usage_data_bytes <span class="key">Name of the metric exported by Harvest</span>
+
+The logical size of all objects for the tenant. <span class="key">Description of the StorageGrid metric</span>
+
+* <span class="key">API</span> will be REST depending on which protocol is used to collect the metric
+* <span class="key">Endpoint</span> name of the REST api used to collect this metric
+* <span class="key">Metric</span> name of the StorageGrid metric
+* <span class="key">Template</span> path of the template that collects the metric
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+|REST | `api/grid/accounts-cache` | dataBytes | conf/storagegrid/11.6.0/tenant.yaml|
+
+
+## Metrics
+
+{{range .Counters}}
+### {{ .Name }}
+
+{{ .Description }}
+
+{{.Header -}}
+{{range .APIs}}
+{{.TableRow -}}
+{{end}}
+
+{{- if .HasPanels}}
+
+The `{{ .Name }}` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+{{- .PanelHeader -}}
+{{range .Panels}}
+{{.DashboardTableRow -}}
+{{end}}
+///
+{{end}}
+
+{{end}}
