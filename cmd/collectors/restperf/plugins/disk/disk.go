@@ -230,9 +230,12 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collec
 		d.powerData[a].SetGlobalLabels(data.GetGlobalLabels())
 	}
 
+	// To display only local shelves in case of Metro Config cluster.
+	filter := []string{"local=true"}
 	href := rest.NewHrefBuilder().
 		APIPath(d.query).
 		Fields([]string{"*"}).
+		Filter(filter).
 		MaxRecords(collectors.DefaultBatchSize).
 		Build()
 
