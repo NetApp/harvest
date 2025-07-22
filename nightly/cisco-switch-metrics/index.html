@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="../configure-grafana/">
+        <link rel="prev" href="../storagegrid-metrics/">
       
       
-        <link rel="next" href="../configure-rest/">
+        <link rel="next" href="../resources/power-algorithm/">
       
       
       <link rel="icon" href="../assets/harvest.svg">
@@ -20,7 +20,7 @@
     
     
       
-        <title>ZAPI - Harvest</title>
+        <title>Cisco Switch Metrics - Harvest</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#zapi-collector" class="md-skip">
+        <a href="#understanding-the-structure" class="md-skip">
           Skip to content
         </a>
       
@@ -113,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ZAPI
+              Cisco Switch Metrics
             
           </span>
         </div>
@@ -895,21 +895,19 @@
       
   
   
-    
   
   
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
         
           
           <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
@@ -923,7 +921,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_10">
             <span class="md-nav__icon md-icon"></span>
             Configure Collectors
@@ -934,28 +932,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    ZAPI
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../configure-zapi/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -964,249 +944,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#zapi-collector" class="md-nav__link">
-    <span class="md-ellipsis">
-      Zapi Collector
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Zapi Collector">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#target-system" class="md-nav__link">
-    <span class="md-ellipsis">
-      Target System
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#requirements" class="md-nav__link">
-    <span class="md-ellipsis">
-      Requirements
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#metrics" class="md-nav__link">
-    <span class="md-ellipsis">
-      Metrics
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#parameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      Parameters
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Parameters">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#collector-configuration-file" class="md-nav__link">
-    <span class="md-ellipsis">
-      Collector configuration file
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#object-configuration-file" class="md-nav__link">
-    <span class="md-ellipsis">
-      Object configuration file
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#counters" class="md-nav__link">
-    <span class="md-ellipsis">
-      Counters
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#export_options" class="md-nav__link">
-    <span class="md-ellipsis">
-      Export_options
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#zapiperf-collector" class="md-nav__link">
-    <span class="md-ellipsis">
-      ZapiPerf Collector
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#zapiperf" class="md-nav__link">
-    <span class="md-ellipsis">
-      ZapiPerf
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="ZapiPerf">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#metrics_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      Metrics
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#parameters_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      Parameters
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Parameters">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#zapiperf-configuration-file" class="md-nav__link">
-    <span class="md-ellipsis">
-      ZapiPerf configuration file
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#object-configuration-file_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      Object configuration file
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Object configuration file">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#counters_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      counters
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#export_options_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      export_options
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#filter" class="md-nav__link">
-    <span class="md-ellipsis">
-      Filter
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Filter">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#objects-excluding-workload" class="md-nav__link">
-    <span class="md-ellipsis">
-      Objects (Excluding Workload)
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#workload-templates" class="md-nav__link">
-    <span class="md-ellipsis">
-      Workload Templates
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#partial-aggregation" class="md-nav__link">
-    <span class="md-ellipsis">
-      Partial Aggregation
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1598,19 +1335,21 @@
       
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_17" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_17" checked>
         
           
           <label class="md-nav__link" for="__nav_17" id="__nav_17_label" tabindex="0">
@@ -1624,7 +1363,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_17_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_17_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_17">
             <span class="md-nav__icon md-icon"></span>
             Reference
@@ -1719,10 +1458,28 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../cisco-switch-metrics/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Cisco Switch Metrics
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -1731,6 +1488,246 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-the-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Understanding the structure
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metrics
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Metrics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cisco_cdp_neighbor_labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_cdp_neighbor_labels
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_environment_fan_speed" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_environment_fan_speed
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_environment_fan_up" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_environment_fan_up
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_environment_power_capacity" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_environment_power_capacity
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_environment_power_in" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_environment_power_in
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_environment_power_mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_environment_power_mode
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_environment_power_out" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_environment_power_out
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_environment_power_up" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_environment_power_up
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_environment_sensor_temp" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_environment_sensor_temp
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_interface_admin_up" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_admin_up
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_interface_crc_errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_crc_errors
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_interface_receive_bytes" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_receive_bytes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_interface_receive_drops" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_receive_drops
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_interface_receive_errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_receive_errors
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_interface_transmit_bytes" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_transmit_bytes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_interface_transmit_drops" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_transmit_drops
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_interface_transmit_errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_transmit_errors
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_lldp_neighbor_labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_lldp_neighbor_labels
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_optic_rx" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_optic_rx
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_optic_tx" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_optic_tx
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_switch_labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_switch_labels
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_switch_uptime" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_switch_uptime
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1980,222 +1977,219 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#zapi-collector" class="md-nav__link">
+  <a href="#understanding-the-structure" class="md-nav__link">
     <span class="md-ellipsis">
-      Zapi Collector
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Zapi Collector">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#target-system" class="md-nav__link">
-    <span class="md-ellipsis">
-      Target System
+      Understanding the structure
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#requirements" class="md-nav__link">
-    <span class="md-ellipsis">
-      Requirements
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#metrics" class="md-nav__link">
     <span class="md-ellipsis">
       Metrics
     </span>
   </a>
   
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#parameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      Parameters
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Parameters">
+    <nav class="md-nav" aria-label="Metrics">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#collector-configuration-file" class="md-nav__link">
+  <a href="#cisco_cdp_neighbor_labels" class="md-nav__link">
     <span class="md-ellipsis">
-      Collector configuration file
+      cisco_cdp_neighbor_labels
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#object-configuration-file" class="md-nav__link">
+  <a href="#cisco_environment_fan_speed" class="md-nav__link">
     <span class="md-ellipsis">
-      Object configuration file
+      cisco_environment_fan_speed
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#counters" class="md-nav__link">
+  <a href="#cisco_environment_fan_up" class="md-nav__link">
     <span class="md-ellipsis">
-      Counters
+      cisco_environment_fan_up
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#export_options" class="md-nav__link">
+  <a href="#cisco_environment_power_capacity" class="md-nav__link">
     <span class="md-ellipsis">
-      Export_options
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#zapiperf-collector" class="md-nav__link">
-    <span class="md-ellipsis">
-      ZapiPerf Collector
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#zapiperf" class="md-nav__link">
-    <span class="md-ellipsis">
-      ZapiPerf
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="ZapiPerf">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#metrics_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      Metrics
+      cisco_environment_power_capacity
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#parameters_1" class="md-nav__link">
+  <a href="#cisco_environment_power_in" class="md-nav__link">
     <span class="md-ellipsis">
-      Parameters
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Parameters">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#zapiperf-configuration-file" class="md-nav__link">
-    <span class="md-ellipsis">
-      ZapiPerf configuration file
+      cisco_environment_power_in
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#object-configuration-file_1" class="md-nav__link">
+  <a href="#cisco_environment_power_mode" class="md-nav__link">
     <span class="md-ellipsis">
-      Object configuration file
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Object configuration file">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#counters_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      counters
+      cisco_environment_power_mode
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#export_options_1" class="md-nav__link">
+  <a href="#cisco_environment_power_out" class="md-nav__link">
     <span class="md-ellipsis">
-      export_options
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#filter" class="md-nav__link">
-    <span class="md-ellipsis">
-      Filter
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Filter">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#objects-excluding-workload" class="md-nav__link">
-    <span class="md-ellipsis">
-      Objects (Excluding Workload)
+      cisco_environment_power_out
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#workload-templates" class="md-nav__link">
+  <a href="#cisco_environment_power_up" class="md-nav__link">
     <span class="md-ellipsis">
-      Workload Templates
+      cisco_environment_power_up
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#partial-aggregation" class="md-nav__link">
+  <a href="#cisco_environment_sensor_temp" class="md-nav__link">
     <span class="md-ellipsis">
-      Partial Aggregation
+      cisco_environment_sensor_temp
     </span>
   </a>
   
 </li>
         
-      </ul>
-    </nav>
+          <li class="md-nav__item">
+  <a href="#cisco_interface_admin_up" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_admin_up
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_interface_crc_errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_crc_errors
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_interface_receive_bytes" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_receive_bytes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_interface_receive_drops" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_receive_drops
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_interface_receive_errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_receive_errors
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_interface_transmit_bytes" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_transmit_bytes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_interface_transmit_drops" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_transmit_drops
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_interface_transmit_errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_interface_transmit_errors
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_lldp_neighbor_labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_lldp_neighbor_labels
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_optic_rx" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_optic_rx
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_optic_tx" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_optic_tx
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_switch_labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_switch_labels
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cisco_switch_uptime" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_switch_uptime
+    </span>
+  </a>
   
 </li>
         
@@ -2219,465 +2213,1049 @@
                   
 
 
-<div class="admonition tip">
-<p class="admonition-title">What about REST?</p>
-<p>ZAPI will reach end of availability in ONTAP  9.13.1 released Q2 2023.
-Don't worry, Harvest has you covered. Switch to Harvest's REST collectors
-and collect identical metrics. See <a href="https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-strategy.md">REST Strategy</a> for more details.</p>
+  <h1>Cisco Switch Metrics</h1>
+
+<p>This document describes which Cisco switch metrics are collected and what those metrics are named in Harvest, including:</p>
+<ul>
+<li>Details about which Harvest metrics each dashboard uses.
+These can be generated on demand by running <code>bin/harvest grafana metrics</code>. See
+<a href="https://github.com/NetApp/harvest/issues/1577#issue-1471478260">#1577</a> for details.</li>
+</ul>
+<div class="highlight"><pre><span></span><code>Creation Date : 2025-Jul-22
+NX-OS Version: 9.3.12
+</code></pre></div>
+<details>
+<summary>Navigate to Grafana dashboards</summary>
+<p>Add your Grafana instance to the following form and save it. When you click on dashboard links on this page, a link to your dashboard will be opened. NAbox hosts Grafana on a subdomain like so: https://localhost/grafana/</p>
+<p><div>
+    <label for="grafanaHost">Grafana Host</label>
+    <input type="text" id="grafanaHost" name="grafanaHost" placeholder="e.g. http://localhost:3000" style="width: 80%;margin-left:1em">
+    <button type="button" onclick="saveGrafanaHost()">Save</button>
+</div></p>
+</details>
+<h2 id="understanding-the-structure">Understanding the structure<a class="headerlink" href="#understanding-the-structure" title="Permanent link">&para;</a></h2>
+<p>Below is an <span class="key">annotated</span> example of how to interpret the structure of each of the <a href="#metrics">metrics</a>.</p>
+<p>cisco_switch_uptime <span class="key">Name of the metric exported by Harvest</span></p>
+<p>Displays uptime duration of the Cisco switch. <span class="key">Description of the Cisco switch metric</span></p>
+<ul>
+<li><span class="key">API</span> Harvest uses the NXAPI protocol to collect metrics</li>
+<li><span class="key">Endpoint</span> name of the CLI used to collect this metric</li>
+<li><span class="key">Metric</span> name of the Cisco switch metric</li>
+<li><span class="key">Template</span> path of the template that collects the metric</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show version</code></td>
+<td>kern_uptm_days, kern_uptm_hrs, kern_uptm_mins, kern_uptm_secs</td>
+<td>conf/ciscorest/nxos/9.3.12/version.yaml</td>
+</tr>
+</tbody>
+</table>
+<details>
+<summary>Example to invoke CLI show commands via curl</summary>
+<p>In this example, we would demonstrate invoking the <code>show version</code> CLI command via curl.</p>
+<p>To do this, send a POST request to your switch’s IP address with the desired command as input.
+Replace RO_USER, PASSWORD, and CISCO_SWITCH_IP with your actual read-only username, password, and the switch’s IP address.</p>
+<div class="highlight"><pre><span></span><code>curl -sk -u RO_USER:PASSWORD POST &#39;https://CISCO_SWITCH_IP/ins_api&#39; -d
+&#39;{
+&quot;ins_api&quot;: {
+&quot;version&quot;: &quot;1.0&quot;,
+&quot;type&quot;: &quot;cli_show&quot;,
+&quot;chunk&quot;: &quot;0&quot;,
+&quot;sid&quot;: &quot;1&quot;,
+&quot;input&quot;: &quot;show version&quot;,
+&quot;output_format&quot;: &quot;json&quot;
+}
+}&#39;
+</code></pre></div>
+<p>After invoking the above Curl command, You would get this response
+<div class="highlight"><pre><span></span><code>{
+        &quot;ins_api&quot;:      {
+                &quot;type&quot;: &quot;cli_show&quot;,
+                &quot;version&quot;:      &quot;1.0&quot;,
+                &quot;sid&quot;:  &quot;eoc&quot;,
+                &quot;outputs&quot;:      {
+                        &quot;output&quot;:       {
+                                &quot;input&quot;: &quot;show version&quot;,
+                                &quot;msg&quot;:  &quot;Success&quot;,
+                                &quot;code&quot;: &quot;200&quot;,
+                                &quot;body&quot;: {
+                                        &quot;header_str&quot;:   &quot;Cisco Nexus Operating System (NX-OS) Software\nTAC support: http://www.cisco.com/tac\nCopyright (C) 2002-2023, Cisco and/or its affiliates.\nAll rights reserved.\nThe copyrights to certain works contained in this software are\nowned by other third parties and used and distributed under their own\nlicenses, such as open source.  This software is provided \&quot;as is,\&quot; and unless\notherwise stated, there is no warranty, express or implied, including but not\nlimited to warranties of merchantability and fitness for a particular purpose.\nCertain components of this software are licensed under\nthe GNU General Public License (GPL) version 2.0 or \nGNU General Public License (GPL) version 3.0  or the GNU\nLesser General Public License (LGPL) Version 2.1 or \nLesser General Public License (LGPL) Version 2.0. \nA copy of each such license is available at\nhttp://www.opensource.org/licenses/gpl-2.0.php and\nhttp://opensource.org/licenses/gpl-3.0.html and\nhttp://www.opensource.org/licenses/lgpl-2.1.php and\nhttp://www.gnu.org/licenses/old-licenses/library.txt.\n&quot;,
+                                        &quot;bios_ver_str&quot;: &quot;04.25&quot;,
+                                        &quot;kickstart_ver_str&quot;:    &quot;9.3(12)&quot;,
+                                        &quot;nxos_ver_str&quot;: &quot;9.3(12)&quot;,
+                                        &quot;bios_cmpl_time&quot;:       &quot;05/22/2019&quot;,
+                                        &quot;kick_file_name&quot;:       &quot;bootflash:///nxos.9.3.12.bin&quot;,
+                                        &quot;nxos_file_name&quot;:       &quot;bootflash:///nxos.9.3.12.bin&quot;,
+                                        &quot;kick_cmpl_time&quot;:       &quot;6/20/2023 12:00:00&quot;,
+                                        &quot;nxos_cmpl_time&quot;:       &quot;6/20/2023 12:00:00&quot;,
+                                        &quot;kick_tmstmp&quot;:  &quot;06/23/2023 17:33:36&quot;,
+                                        &quot;nxos_tmstmp&quot;:  &quot;06/23/2023 17:33:36&quot;,
+                                        &quot;chassis_id&quot;:   &quot;Nexus 3132QV Chassis&quot;,
+                                        &quot;cpu_name&quot;:     &quot;Intel(R) Core(TM) i3- CPU @ 2.50GHz&quot;,
+                                        &quot;memory&quot;:       16399572,
+                                        &quot;mem_type&quot;:     &quot;kB&quot;,
+                                        &quot;proc_board_id&quot;:        &quot;FOC24213H5C&quot;,
+                                        &quot;host_name&quot;:    &quot;Switch-A1&quot;,
+                                        &quot;bootflash_size&quot;:       15137792,
+                                        &quot;slot0_size&quot;:   0,
+                                        &quot;kern_uptm_days&quot;:       256,
+                                        &quot;kern_uptm_hrs&quot;:        19,
+                                        &quot;kern_uptm_mins&quot;:       3,
+                                        &quot;kern_uptm_secs&quot;:       50,
+                                        &quot;rr_usecs&quot;:     24056,
+                                        &quot;rr_ctime&quot;:     &quot;Wed Nov  6 14:02:05 2024&quot;,
+                                        &quot;rr_reason&quot;:    &quot;Reset Requested by CLI command reload&quot;,
+                                        &quot;rr_sys_ver&quot;:   &quot;9.3(12)&quot;,
+                                        &quot;rr_service&quot;:   &quot;&quot;,
+                                        &quot;plugins&quot;:      &quot;Core Plugin, Ethernet Plugin&quot;,
+                                        &quot;manufacturer&quot;: &quot;Cisco Systems, Inc.&quot;,
+                                        &quot;TABLE_package_list&quot;:   {
+                                                &quot;ROW_package_list&quot;:     {
+                                                        &quot;package_id&quot;:   &quot;&quot;
+                                                }
+                                        }
+                                }
+                        }
+                }
+        }
+}
+</code></pre></div></p>
+</details>
+<h2 id="metrics">Metrics<a class="headerlink" href="#metrics" title="Permanent link">&para;</a></h2>
+<h3 id="cisco_cdp_neighbor_labels">cisco_cdp_neighbor_labels<a class="headerlink" href="#cisco_cdp_neighbor_labels" title="Permanent link">&para;</a></h3>
+<p>Displays cisco discovery protocol information about neighbors in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show cdp neighbors detail</code></td>
+<td><code>device_id, platform_id, port_id, ttl, version, local_intf_mac, remote_intf_mac, capability</code></td>
+<td>conf/ciscorest/nxos/9.3.12/cdp.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_cdp_neighbor_labels</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Neighbors</td>
+<td>table</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=46">Cisco Discovery Protocol</a></td>
+</tr>
+</tbody>
+</table>
 </div>
-<h2 id="zapi-collector">Zapi Collector<a class="headerlink" href="#zapi-collector" title="Permanent link">&para;</a></h2>
-<p>The Zapi collectors use the ZAPI protocol to collect data from ONTAP systems. The collector submits data as received
-from the target system, and does not perform any calculations or post-processing. Since the attributes of most APIs have
-an irregular tree structure, sometimes a plugin will be required to collect all metrics from an API.</p>
-<p>The <a href="#zapiperf-collector">ZapiPerf collector</a> is an extension of this collector, therefore, they share many parameters
-and configuration settings.</p>
-<h3 id="target-system">Target System<a class="headerlink" href="#target-system" title="Permanent link">&para;</a></h3>
-<p>Target system can be any cDot or 7Mode ONTAP system. Any version is supported, however the default configuration files
-may not completely match with older systems.</p>
-<h3 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">&para;</a></h3>
-<p>No SDK or other requirements. It is recommended to create a read-only user for Harvest on the ONTAP system (see 
-<a href="../prepare-cdot-clusters/">prepare monitored clusters</a> for details)</p>
-<h3 id="metrics">Metrics<a class="headerlink" href="#metrics" title="Permanent link">&para;</a></h3>
-<p>The collector collects a dynamic set of metrics. Since most ZAPIs have a tree structure, the collector converts that
-structure into a flat metric representation. No post-processing or calculation is performed on the collected data
-itself.</p>
-<p>As an example, the <code>aggr-get-iter</code> ZAPI provides the following partial attribute tree:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">aggr-attributes</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">aggr-raid-attributes</span><span class="p">:</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disk-count</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">aggr-snapshot-attributes</span><span class="p">:</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">files-total</span>
-</code></pre></div>
-<p>The Zapi collector will convert this tree into two "flat" metrics: <code>aggr_raid_disk_count</code>
-and <code>aggr_snapshot_files_total</code>. (The algorithm to generate a name for the metrics will attempt to keep it as simple as
-possible, but sometimes it's useful to manually set a short display name. See <a href="../configure-templates/#counters">counters</a>
-for more details.</p>
-<h3 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h3>
-<p>The parameters of the collector are distributed across three files:</p>
-<ul>
-<li><a href="../configure-harvest-basic/#pollers">Harvest configuration file</a> (default: <code>harvest.yml</code>)</li>
-<li>ZAPI configuration file (default: <code>conf/zapi/default.yaml</code>)</li>
-<li>Each object has its own configuration file (located in <code>conf/zapi/$version/</code>)</li>
-</ul>
-<p>Except for <code>addr</code> and <code>datacenter</code>, all other parameters of the ZAPI collector can be
-defined in either of these three files.
-Parameters defined in the lower-level file, override parameters in the higher-level ones.
-This allows you to configure each object individually, or use the same parameters for all
-objects.</p>
-<p>The full set of parameters are described <a href="#collector-configuration-file">below</a>.</p>
-<h4 id="collector-configuration-file">Collector configuration file<a class="headerlink" href="#collector-configuration-file" title="Permanent link">&para;</a></h4>
-<p>The parameters are similar to those of the <a href="#zapiperf-collector">ZapiPerf collector</a>.
-Parameters different from ZapiPerf:</p>
+<h3 id="cisco_environment_fan_speed">cisco_environment_fan_speed<a class="headerlink" href="#cisco_environment_fan_speed" title="Permanent link">&para;</a></h3>
+<p>Displays zone speed of the fan in the Cisco switch.</p>
 <table>
 <thead>
 <tr>
-<th>parameter</th>
-<th>type</th>
-<th>description</th>
-<th>default</th>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>jitter</code></td>
-<td>duration (Go-syntax), optional</td>
-<td>Each Harvest collector runs independently, which means that at startup, each collector may send its ZAPI queries at nearly the same time. To spread out the collector startup times over a broader period, you can use <code>jitter</code> to randomly distribute collector startup across a specified duration. For example, a <code>jitter</code> of <code>1m</code> starts each collector after a random delay between 0 and 60 seconds. For more details, refer to <a href="https://github.com/NetApp/harvest/discussions/2856">this discussion</a>.</td>
-<td></td>
-</tr>
-<tr>
-<td><code>schedule</code></td>
-<td>required</td>
-<td>same as for ZapiPerf, but only two elements: <code>instance</code> and <code>data</code> (collector does not run a <code>counter</code> poll)</td>
-<td></td>
-</tr>
-<tr>
-<td><code>no_max_records</code></td>
-<td>bool, optional</td>
-<td>don't add <code>max-records</code> to the ZAPI request</td>
-<td></td>
-</tr>
-<tr>
-<td><code>collect_only_labels</code></td>
-<td>bool, optional</td>
-<td>don't look for numeric metrics, only submit labels  (suppresses the <code>ErrNoMetrics</code> error)</td>
-<td></td>
-</tr>
-<tr>
-<td><code>only_cluster_instance</code></td>
-<td>bool, optional</td>
-<td>don't look for instance keys and assume only instance is the cluster itself</td>
-<td></td>
+<td>NXAPI</td>
+<td><code>show environment</code></td>
+<td><code>speed OR zonespeed</code></td>
+<td>conf/ciscorest/nxos/9.3.12/environment.yaml</td>
 </tr>
 </tbody>
 </table>
-<h4 id="object-configuration-file">Object configuration file<a class="headerlink" href="#object-configuration-file" title="Permanent link">&para;</a></h4>
-<p>The Zapi collector does not have the parameters <code>instance_key</code> and <code>override</code> parameters. The optional
-parameter <code>metric_type</code> allows you to override the default metric type (<code>uint64</code>). The value of this parameter should be
-one of the metric types supported by <a href="../resources/matrix/">the matrix data-structure</a>.</p>
-<p>The Object configuration file ("subtemplate") should contain the following parameters:</p>
+<p>The <code>cisco_environment_fan_speed</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
 <table>
 <thead>
 <tr>
-<th>parameter</th>
-<th>type</th>
-<th>description</th>
-<th>default</th>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>name</code></td>
-<td>string, <strong>required</strong></td>
-<td>display name of the collector that will collect this object</td>
-<td></td>
-</tr>
-<tr>
-<td><code>query</code></td>
-<td>string, <strong>required</strong></td>
-<td>REST endpoint used to issue a REST request</td>
-<td></td>
-</tr>
-<tr>
-<td><code>object</code></td>
-<td>string, <strong>required</strong></td>
-<td>short name of the object</td>
-<td></td>
-</tr>
-<tr>
-<td><code>counters</code></td>
-<td>string</td>
-<td>list of counters to collect (see notes below)</td>
-<td></td>
-</tr>
-<tr>
-<td><code>plugins</code></td>
-<td>list</td>
-<td>plugins and their parameters to run on the collected data</td>
-<td></td>
-</tr>
-<tr>
-<td><code>export_options</code></td>
-<td>list</td>
-<td>parameters to pass to exporters (see notes below)</td>
-<td></td>
+<td>Cisco: Switch</td>
+<td>Highlights</td>
+<td>table</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=5">Switch Details</a></td>
 </tr>
 </tbody>
 </table>
-<h4 id="counters">Counters<a class="headerlink" href="#counters" title="Permanent link">&para;</a></h4>
-<p>This section defines the list of counters that will be collected. These counters can be labels, numeric metrics or
-histograms. The exact property of each counter is fetched from ONTAP and updated periodically.</p>
-<p>Some counters require a "base-counter" for post-processing. If the base-counter is missing, ZapiPerf will still run, but
-the missing data won't be exported.</p>
-<p>The display name of a counter can be changed with <code>=&gt;</code> (e.g., <code>nfsv3_ops =&gt; ops</code>). There's one conversion Harvest does
-for you by default, the <code>instance_name</code> counter will be renamed to the value of <code>object</code>.</p>
-<p>Counters that are stored as labels will only be exported if they are included in the <code>export_options</code> section.</p>
-<h4 id="export_options">Export_options<a class="headerlink" href="#export_options" title="Permanent link">&para;</a></h4>
-<p>Parameters in this section tell the exporters how to handle the collected data.</p>
-<p>There are two different kinds of time-series that Harvest publishes: metrics and instance labels.</p>
-<ul>
-<li>Metrics are numeric data with associated labels (key-value pairs). E.g. <code>volume_read_ops_total{cluster="cluster1", node="node1", volume="vol1"} 123</code>. The <code>volume_read_ops_total</code> metric is exporting three labels: <code>cluster</code>, <code>node</code>, and <code>volume</code> and the metric value is <code>123</code>.</li>
-<li>Instance labels are named after their associated config object (e.g., <code>volume_labels</code>, <code>qtree_labels</code>, etc.). There will be one instance label for each object instance, and each instance label will contain a set of associated labels (key-value pairs) that are defined in the templates <code>instance_labels</code> parameter. E.g. <code>volume_labels{cluster="cluster1", node="node1", volume="vol1", svm="svm1"} 1</code>. The <code>volume_labels</code> instance label is exporting four labels: <code>cluster</code>, <code>node</code>, <code>volume</code>, and <code>svm</code>. Instance labels always export a metric value of <code>1</code>.</li>
-</ul>
-<p>The <code>export_options</code> section allows you to define how to export these time-series.</p>
-<ul>
-<li><code>instances_keys</code> (list): display names of labels to export to both metric and instance labels.
-  For example, if you list the <code>svm</code> counter under <code>instances_keys</code>,
-  that key-value will be included in all time-series metrics and all instance-labels.</li>
-<li><code>instance_labels</code> (list): display names of labels to export with the corresponding instance label config object. For example, if you want the <code>volume</code> counter to be exported with the <code>volume_labels</code> instance label, you would list <code>volume</code> in the <code>instance_labels</code> section.</li>
-<li><code>include_all_labels</code> (bool): exports all labels for all time-series metrics. If there are no metrics defined in the template, this option will do nothing. This option also overrides the previous two parameters. See also <a href="#collector-configuration-file">collect_only_labels</a>.</li>
-</ul>
-<h2 id="zapiperf-collector">ZapiPerf Collector<a class="headerlink" href="#zapiperf-collector" title="Permanent link">&para;</a></h2>
-<h1 id="zapiperf">ZapiPerf<a class="headerlink" href="#zapiperf" title="Permanent link">&para;</a></h1>
-<p>ZapiPerf collects performance metrics from ONTAP systems using the ZAPI protocol. The collector is designed to be easily
-extendable to collect new objects or to collect additional counters from already configured objects.</p>
-<p>This collector is an extension of the <a href="#zapi-collector">Zapi collector</a>. The major difference between them is that
-ZapiPerf collects only the performance (<code>perf</code>) APIs. Additionally, ZapiPerf always calculates final values from the
-deltas of two subsequent polls.</p>
-<h2 id="metrics_1">Metrics<a class="headerlink" href="#metrics_1" title="Permanent link">&para;</a></h2>
-<p>The collector collects a dynamic set of metrics. The metric values are calculated from two consecutive polls (therefore,
-no metrics are emitted after the first poll). The calculation algorithm depends on the <code>property</code> and <code>base-counter</code>
-attributes of each metric, the following properties are supported:</p>
+</div>
+<h3 id="cisco_environment_fan_up">cisco_environment_fan_up<a class="headerlink" href="#cisco_environment_fan_up" title="Permanent link">&para;</a></h3>
+<p>Displays Present/Absent Status of the fan in the Cisco switch.</p>
 <table>
 <thead>
 <tr>
-<th>property</th>
-<th>formula</th>
-<th>description</th>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>raw</td>
-<td>x = x<sub>i</sub></td>
-<td>no post-processing, value <strong>x</strong> is submitted as it is</td>
-</tr>
-<tr>
-<td>delta</td>
-<td>x = x<sub>i</sub> - x<sub>i-1</sub></td>
-<td>delta of two poll values, <strong>x<sub>i<sub></strong> and <strong>x<sub>i-1<sub></strong></td>
-</tr>
-<tr>
-<td>rate</td>
-<td>x = (x<sub>i</sub> - x<sub>i-1</sub>) / (t<sub>i</sub> - t<sub>i-1</sub>)</td>
-<td>delta divided by the interval of the two polls in seconds</td>
-</tr>
-<tr>
-<td>average</td>
-<td>x = (x<sub>i</sub> - x<sub>i-1</sub>) / (y<sub>i</sub> - y<sub>i-1</sub>)</td>
-<td>delta divided by the delta of the base counter <strong>y</strong></td>
-</tr>
-<tr>
-<td>percent</td>
-<td>x = 100 * (x<sub>i</sub> - x<sub>i-1</sub>) / (y<sub>i</sub> - y<sub>i-1</sub>)</td>
-<td>average multiplied by 100</td>
+<td>NXAPI</td>
+<td><code>show environment</code></td>
+<td><code>fanstatus</code></td>
+<td>conf/ciscorest/nxos/9.3.12/environment.yaml</td>
 </tr>
 </tbody>
 </table>
-<h2 id="parameters_1">Parameters<a class="headerlink" href="#parameters_1" title="Permanent link">&para;</a></h2>
-<p>The parameters of the collector are distributed across three files:</p>
-<ul>
-<li><a href="../configure-harvest-basic/#pollers">Harvest configuration file</a> (default: <code>harvest.yml</code>)</li>
-<li>ZapiPerf configuration file (default: <code>conf/zapiperf/default.yaml</code>)</li>
-<li>Each object has its own configuration file (located in <code>conf/zapiperf/cdot/</code> and <code>conf/zapiperf/7mode/</code> for cDot and
-  7Mode systems respectively)</li>
-</ul>
-<p>Except for <code>addr</code>, <code>datacenter</code> and <code>auth_style</code>, all other parameters of the ZapiPerf collector can be
-defined in either of these three files. 
-Parameters defined in the lower-level file, override parameters in the higher-level file. 
-This allows the user to configure each object individually, 
-or use the same parameters for all objects.</p>
-<p>The full set of parameters are described <a href="#zapiperf-configuration-file">below</a>.</p>
-<h3 id="zapiperf-configuration-file">ZapiPerf configuration file<a class="headerlink" href="#zapiperf-configuration-file" title="Permanent link">&para;</a></h3>
-<p>This configuration file (the "template") contains a list of objects that should be collected and the filenames of their
-configuration (explained in the next section).</p>
-<p>Additionally, this file contains the parameters that are applied as defaults to all objects. (As mentioned before, any
-of these parameters can be defined in the Harvest or object configuration files as well).</p>
+<p>The <code>cisco_environment_fan_up</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
 <table>
 <thead>
 <tr>
-<th>parameter</th>
-<th>type</th>
-<th>description</th>
-<th>default</th>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>use_insecure_tls</code></td>
-<td>bool, optional</td>
-<td>skip verifying TLS certificate of the target system</td>
-<td><code>false</code></td>
-</tr>
-<tr>
-<td><code>client_timeout</code></td>
-<td>duration (Go-syntax)</td>
-<td>how long to wait for server responses</td>
-<td>30s</td>
-</tr>
-<tr>
-<td><code>batch_size</code></td>
-<td>int, optional</td>
-<td>max instances per API request</td>
-<td><code>500</code></td>
-</tr>
-<tr>
-<td><code>latency_io_reqd</code></td>
-<td>int, optional</td>
-<td>threshold of IOPs for calculating latency metrics (latencies based on very few IOPs are unreliable)</td>
-<td><code>10</code></td>
-</tr>
-<tr>
-<td><code>jitter</code></td>
-<td>duration (Go-syntax), optional</td>
-<td>Each Harvest collector runs independently, which means that at startup, each collector may send its ZAPI queries at nearly the same time. To spread out the collector startup times over a broader period, you can use <code>jitter</code> to randomly distribute collector startup across a specified duration. For example, a <code>jitter</code> of <code>1m</code> starts each collector after a random delay between 0 and 60 seconds. For more details, refer to <a href="https://github.com/NetApp/harvest/discussions/2856">this discussion</a>.</td>
-<td></td>
-</tr>
-<tr>
-<td><code>schedule</code></td>
-<td>list, required</td>
-<td>the poll frequencies of the collector/object, should include exactly these three elements in the exact same other:</td>
-<td></td>
-</tr>
-<tr>
-<td>- <code>counter</code></td>
-<td>duration (Go-syntax)</td>
-<td>poll frequency of updating the counter metadata cache (example value: <code>20m</code>)</td>
-<td></td>
-</tr>
-<tr>
-<td>- <code>instance</code></td>
-<td>duration (Go-syntax)</td>
-<td>poll frequency of updating the instance cache (example value: <code>10m</code>)</td>
-<td></td>
-</tr>
-<tr>
-<td>- <code>data</code></td>
-<td>duration (Go-syntax)</td>
-<td>poll frequency of updating the data cache (example value: <code>1m</code>)<br /><br /><strong>Note</strong> Harvest allows defining poll intervals on sub-second level (e.g. <code>1ms</code>), however keep in mind the following:<br /><ul><li>API response of an ONTAP system can take several seconds, so the collector is likely to enter failed state if the poll interval is less than <code>client_timeout</code>.</li><li>Small poll intervals will create significant workload on the ONTAP system, as many counters are aggregated on-demand.</li><li>Some metric values become less significant if they are calculated for very short intervals (e.g. latencies)</li></ul></td>
-<td></td>
+<td>Cisco: Switch</td>
+<td>Temperature and Fan</td>
+<td>table</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=18">Fan Details</a></td>
 </tr>
 </tbody>
 </table>
-<p>The template should define objects in the <code>objects</code> section. Example:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">objects</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">SystemNode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">system_node.yaml</span>
-<span class="w">  </span><span class="nt">HostAdapter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hostadapter.yaml</span>
-</code></pre></div>
-<p>Note that for each object we only define the filename of the object configuration file. The object configuration files
-are located in subdirectories matching to the ONTAP version that was used to create these files. It is possible to have
-multiple version-subdirectories for multiple ONTAP versions. At runtime, the collector will select the object
-configuration file that closest matches to the version of the target ONTAP system. (A mismatch is tolerated since
-ZapiPerf will fetch and validate counter metadata from the system.)</p>
-<h3 id="object-configuration-file_1">Object configuration file<a class="headerlink" href="#object-configuration-file_1" title="Permanent link">&para;</a></h3>
-<p>The Object configuration file ("subtemplate") should contain the following parameters:</p>
+</div>
+<h3 id="cisco_environment_power_capacity">cisco_environment_power_capacity<a class="headerlink" href="#cisco_environment_power_capacity" title="Permanent link">&para;</a></h3>
+<p>Displays total capacity of the power supply in the Cisco switch.</p>
 <table>
 <thead>
 <tr>
-<th>parameter</th>
-<th>type</th>
-<th>description</th>
-<th>default</th>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>name</code></td>
-<td>string</td>
-<td>display name of the collector that will collect this object</td>
-<td></td>
-</tr>
-<tr>
-<td><code>object</code></td>
-<td>string</td>
-<td>short name of the object</td>
-<td></td>
-</tr>
-<tr>
-<td><code>query</code></td>
-<td>string</td>
-<td>raw object name used to issue a ZAPI request</td>
-<td></td>
-</tr>
-<tr>
-<td><code>counters</code></td>
-<td>list</td>
-<td>list of counters to collect (see notes below)</td>
-<td></td>
-</tr>
-<tr>
-<td><code>instance_key</code></td>
-<td>string</td>
-<td>label to use as instance key (either <code>name</code> or <code>uuid</code>)</td>
-<td></td>
-</tr>
-<tr>
-<td><code>override</code></td>
-<td>list of key-value pairs</td>
-<td>override counter properties that we get from ONTAP (allows circumventing ZAPI bugs)</td>
-<td></td>
-</tr>
-<tr>
-<td><code>plugins</code></td>
-<td>list</td>
-<td>plugins and their parameters to run on the collected data</td>
-<td></td>
-</tr>
-<tr>
-<td><code>export_options</code></td>
-<td>list</td>
-<td>parameters to pass to exporters (see notes below)</td>
-<td></td>
+<td>NXAPI</td>
+<td><code>show environment</code></td>
+<td><code>tot_capa</code></td>
+<td>conf/ciscorest/nxos/9.3.12/environment.yaml</td>
 </tr>
 </tbody>
 </table>
-<h4 id="counters_1"><code>counters</code><a class="headerlink" href="#counters_1" title="Permanent link">&para;</a></h4>
-<p>This section defines the list of counters that will be collected. These counters can be labels, numeric metrics or
-histograms. The exact property of each counter is fetched from ONTAP and updated periodically.</p>
-<p>Some counters require a "base-counter" for post-processing. If the base-counter is missing, ZapiPerf will still run, but
-the missing data won't be exported.</p>
-<p>The display name of a counter can be changed with <code>=&gt;</code> (e.g., <code>nfsv3_ops =&gt; ops</code>). There's one conversion Harvest does
-for you by default, the <code>instance_name</code> counter will be renamed to the value of <code>object</code>.</p>
-<p>Counters that are stored as labels will only be exported if they are included in the <code>export_options</code> section.</p>
-<h4 id="export_options_1"><code>export_options</code><a class="headerlink" href="#export_options_1" title="Permanent link">&para;</a></h4>
-<p>Parameters in this section tell the exporters how to handle the collected data.</p>
-<p>There are two different kinds of time-series that Harvest publishes: metrics and instance labels.</p>
-<ul>
-<li>Metrics are numeric data with associated labels (key-value pairs). E.g. <code>volume_read_ops_total{cluster="cluster1", node="node1", volume="vol1"} 123</code>. The <code>volume_read_ops_total</code> metric is exporting three labels: <code>cluster</code>, <code>node</code>, and <code>volume</code> and the metric value is <code>123</code>.</li>
-<li>Instance labels are named after their associated config object (e.g., <code>volume_labels</code>, <code>nic_labels</code>, etc.).
-  There will be one instance label for each object instance, 
-  and each instance label will contain a set of associated labels
-  (key-value pairs) that are defined in the templates <code>instance_labels</code> parameter.
-  E.g. <code>volume_labels{cluster="cluster1", node="node1", volume="vol1", svm="svm1"} 1</code>. 
-  The <code>volume_labels</code> instance label is exporting four labels:
-  <code>cluster</code>, <code>node</code>, <code>volume</code>, and <code>svm</code>.
-  Instance labels always export a metric value of <code>1</code>.</li>
-</ul>
-<details class="tip">
-<summary>Instance labels are rarely used with ZapiPerf templates</summary>
-<p>They can be useful for exporting labels that are not associated with a metric value.</p>
-</details>
-<p>The <code>export_options</code> section allows you to define how to export these time-series.</p>
-<ul>
-<li><code>instances_keys</code> (list): display names of labels to export to both metric and instance labels.
-  For example, if you list the <code>svm</code> counter under <code>instances_keys</code>,
-  that key-value will be included in all time-series metrics and all instance-labels.</li>
-<li><code>instance_labels</code> (list): display names of labels to export with the corresponding instance label config object. For example, if you want the <code>volume</code> counter to be exported with the <code>volume_labels</code> instance label, you would list <code>volume</code> in the <code>instance_labels</code> section.</li>
-</ul>
-<h3 id="filter">Filter<a class="headerlink" href="#filter" title="Permanent link">&para;</a></h3>
-<p>This guide provides instructions on how to use the <code>filter</code> feature in ZapiPerf. Filtering is useful when you need to query a subset of instances. For example, suppose you have a small number of high-value volumes from which you want Harvest to collect performance metrics every five seconds. Collecting data from all volumes at this frequency would be too resource-intensive. Therefore, filtering allows you to create/modify a template that includes only the high-value volumes.</p>
-<h4 id="objects-excluding-workload">Objects (Excluding Workload)<a class="headerlink" href="#objects-excluding-workload" title="Permanent link">&para;</a></h4>
-<p>In ZapiPerf templates, you can set up filters under <code>counters</code>. Wildcards like * are useful if you don't want to specify all instances. Please note, ONTAP Zapi filtering does not support regular expressions, only wildcard matching with <code>*</code>.</p>
-<p>For instance, to filter <code>volume</code> performance instances by instance name where the name is <code>NS_svm_nvme</code> or contains <code>Test</code>, use the following configuration in ZapiPerf <code>volume.yaml</code> under <code>counters</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">counters</span><span class="p">:</span>
-<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span>
-<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">- filter</span><span class="p p-Indicator">:</span>
-<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">instance_name=NS_svm_nvme|instance_name=*Test*</span>
-</code></pre></div>
-<p>You can define multiple values within the filter array. These will be interpreted as <code>AND</code> conditions by ONTAP. Alternatively, you can specify a complete expression within a single array element, as described in the ONTAP filtering section below.</p>
-<details class="info">
-<summary>ONTAP Filtering Details</summary>
-<p>For a better understanding of ONTAP's filtering mechanism, it allows the use of <code>filter-data</code> for the <code>perf-object-instance-list-info-iter</code> Zapi.</p>
-<p>The <code>filter-data</code> is a string that signifies filter data, adhering to the format: <code>counter_name=counter_value</code>. You can define multiple pairs, separated by either a comma (",") or a pipe ("|").</p>
-<p>Here's the interpretation:</p>
-<ul>
-<li>A comma (",") signifies an AND operation.</li>
-<li>A pipe ("|") signifies an OR operation.</li>
-<li>The precedence order is AND first, followed by OR.</li>
-</ul>
-<p>For instance, the filter string <code>instance_name=volA,vserver_name=vs1|vserver_name=vs2</code> translates to <code>(instance_name=volA &amp;&amp; vserver_name=vs1) || (vserver_name=vs2)</code>.</p>
-<p>This filter will return instances on Vserver <code>vs1</code> named <code>volA</code>, and all instances on Vserver <code>vs2</code>.</p>
-</details>
-<h4 id="workload-templates">Workload Templates<a class="headerlink" href="#workload-templates" title="Permanent link">&para;</a></h4>
-<p>Performance workload templates require a different syntax because instances are retrieved from the <code>qos-workload-get-iter</code> ZAPI instead of <code>perf-object-instance-list-info-iter</code>.</p>
-<p>The <code>qos-workload-get-iter</code> ZAPI supports filtering on the following fields:</p>
-<ul>
-<li>workload-uuid</li>
-<li>workload-name</li>
-<li>workload-class</li>
-<li>wid</li>
-<li>category</li>
-<li>policy-group</li>
-<li>vserver</li>
-<li>volume</li>
-<li>lun</li>
-<li>file</li>
-<li>qtree</li>
-<li>read-ahead</li>
-<li>max-throughput</li>
-<li>min-throughput</li>
-<li>is-adaptive</li>
-<li>is-constituent</li>
-</ul>
-<p>You can include these fields under the <code>filter</code> parameter. For example, to filter Workload performance instances by <code>workload-name</code> where the name contains <code>NS</code> or <code>Test</code> and <code>vserver</code> is <code>vs1</code>, use the following configuration in ZapiPerf <code>workload.yaml</code> under <code>counters</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">counters</span><span class="p">:</span>
-<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span>
-<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">- filter</span><span class="p p-Indicator">:</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">workload-name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*NS*|*Test*&quot;</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">vserver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vs1</span>
-</code></pre></div>
-<h3 id="partial-aggregation">Partial Aggregation<a class="headerlink" href="#partial-aggregation" title="Permanent link">&para;</a></h3>
-<p>There are instances when ONTAP may report partial aggregate results for certain objects (for example, during a node outage). In such cases, the ZapiPerf Collector will skip the reporting of performance counters for the affected objects.</p>
-<p>To determine whether partial aggregation affects an object, check the <code>numPartials</code> entry in the Harvest logs. If <code>numPartials</code> is greater than zero, it indicates that partial aggregations have occurred for that object. e.g. <code>Collected Poller=aff-251 collector=ZapiPerf:NFSv4 instances=56 numPartials=15</code></p>
+<p>The <code>cisco_environment_power_capacity</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Power</td>
+<td>table</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=35">PSU Details</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_environment_power_in">cisco_environment_power_in<a class="headerlink" href="#cisco_environment_power_in" title="Permanent link">&para;</a></h3>
+<p>Displays actual input power in watts of power supply in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show environment</code></td>
+<td><code>actual_input OR watts</code></td>
+<td>conf/ciscorest/nxos/9.3.12/environment.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_environment_power_in</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Power</td>
+<td>stat</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=33">Total Power</a></td>
+</tr>
+<tr>
+<td>Cisco: Switch</td>
+<td>Power</td>
+<td>stat</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=9">PSU Efficiency</a></td>
+</tr>
+<tr>
+<td>Cisco: Switch</td>
+<td>Power</td>
+<td>timeseries</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=8">Top $TopResources Power Consumption</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_environment_power_mode">cisco_environment_power_mode<a class="headerlink" href="#cisco_environment_power_mode" title="Permanent link">&para;</a></h3>
+<p>Displays redundant or operational Mode of power supply in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show environment</code></td>
+<td><code>ps_redun_mode, ps_oper_mode</code></td>
+<td>conf/ciscorest/nxos/9.3.12/environment.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_environment_power_mode</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Highlights</td>
+<td>table</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=5">Switch Details</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_environment_power_out">cisco_environment_power_out<a class="headerlink" href="#cisco_environment_power_out" title="Permanent link">&para;</a></h3>
+<p>Displays actual output power in watts of power supply in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show environment</code></td>
+<td><code>actual_out</code></td>
+<td>conf/ciscorest/nxos/9.3.12/environment.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_environment_power_out</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Power</td>
+<td>stat</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=9">PSU Efficiency</a></td>
+</tr>
+<tr>
+<td>Cisco: Switch</td>
+<td>Power</td>
+<td>timeseries</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=8">Top $TopResources Power Consumption</a></td>
+</tr>
+<tr>
+<td>Cisco: Switch</td>
+<td>Power</td>
+<td>table</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=35">PSU Details</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_environment_power_up">cisco_environment_power_up<a class="headerlink" href="#cisco_environment_power_up" title="Permanent link">&para;</a></h3>
+<p>Displays power supply status in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show environment</code></td>
+<td><code>ps_status</code></td>
+<td>conf/ciscorest/nxos/9.3.12/environment.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_environment_power_up</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Power</td>
+<td>table</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=35">PSU Details</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_environment_sensor_temp">cisco_environment_sensor_temp<a class="headerlink" href="#cisco_environment_sensor_temp" title="Permanent link">&para;</a></h3>
+<p>Displays current temperature of sensor in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show environment</code></td>
+<td><code>curtemp</code></td>
+<td>conf/ciscorest/nxos/9.3.12/environment.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_environment_sensor_temp</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Temperature and Fan</td>
+<td>timeseries</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=10">Top $TopResources Sensor Temperatures</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_interface_admin_up">cisco_interface_admin_up<a class="headerlink" href="#cisco_interface_admin_up" title="Permanent link">&para;</a></h3>
+<p>Displays admin state of the interface in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show interface</code></td>
+<td><code>admin_state</code></td>
+<td>conf/ciscorest/nxos/9.3.12/interface.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_interface_admin_up</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Interfaces</td>
+<td>stat</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=37">Down (Last 24h)</a></td>
+</tr>
+<tr>
+<td>Cisco: Switch</td>
+<td>Interfaces</td>
+<td>table</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=39">Down (Last 24h)</a></td>
+</tr>
+<tr>
+<td>Cisco: Switch</td>
+<td>Interfaces</td>
+<td>timeseries</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=40">Down (Last 24h)</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_interface_crc_errors">cisco_interface_crc_errors<a class="headerlink" href="#cisco_interface_crc_errors" title="Permanent link">&para;</a></h3>
+<p>Displays CRC of interface in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show interface</code></td>
+<td><code>eth_crc</code></td>
+<td>conf/ciscorest/nxos/9.3.12/interface.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_interface_crc_errors</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Traffic</td>
+<td>timeseries</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=34">Top $TopResources Interface CRC error</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_interface_receive_bytes">cisco_interface_receive_bytes<a class="headerlink" href="#cisco_interface_receive_bytes" title="Permanent link">&para;</a></h3>
+<p>Displays bytes input of the interface in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show interface</code></td>
+<td><code>eth_inbytes</code></td>
+<td>conf/ciscorest/nxos/9.3.12/interface.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_interface_receive_bytes</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Traffic</td>
+<td>timeseries</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=29">Top $TopResources Interface Receive Traffic</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_interface_receive_drops">cisco_interface_receive_drops<a class="headerlink" href="#cisco_interface_receive_drops" title="Permanent link">&para;</a></h3>
+<p>Displays input if-down drops of interface in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show interface</code></td>
+<td><code>eth_in_ifdown_drops</code></td>
+<td>conf/ciscorest/nxos/9.3.12/interface.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_interface_receive_drops</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Traffic</td>
+<td>timeseries</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=31">Top $TopResources Interface Receive Drops</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_interface_receive_errors">cisco_interface_receive_errors<a class="headerlink" href="#cisco_interface_receive_errors" title="Permanent link">&para;</a></h3>
+<p>Displays input errors of interface in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show interface</code></td>
+<td><code>eth_inerr</code></td>
+<td>conf/ciscorest/nxos/9.3.12/interface.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_interface_receive_errors</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Traffic</td>
+<td>timeseries</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=32">Top $TopResources Interface Errors</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_interface_transmit_bytes">cisco_interface_transmit_bytes<a class="headerlink" href="#cisco_interface_transmit_bytes" title="Permanent link">&para;</a></h3>
+<p>Displays bytes output of interface in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show interface</code></td>
+<td><code>eth_outbytes</code></td>
+<td>conf/ciscorest/nxos/9.3.12/interface.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_interface_transmit_bytes</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Traffic</td>
+<td>timeseries</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=28">Top $TopResources Interface Transmit Traffic</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_interface_transmit_drops">cisco_interface_transmit_drops<a class="headerlink" href="#cisco_interface_transmit_drops" title="Permanent link">&para;</a></h3>
+<p>Displays output drops of interface in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show interface</code></td>
+<td><code>eth_out_drops</code></td>
+<td>conf/ciscorest/nxos/9.3.12/interface.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_interface_transmit_drops</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Traffic</td>
+<td>timeseries</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=31">Top $TopResources Interface Receive Drops</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_interface_transmit_errors">cisco_interface_transmit_errors<a class="headerlink" href="#cisco_interface_transmit_errors" title="Permanent link">&para;</a></h3>
+<p>Displays output errors of interface in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show interface</code></td>
+<td><code>eth_outerr</code></td>
+<td>conf/ciscorest/nxos/9.3.12/interface.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_interface_transmit_errors</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Traffic</td>
+<td>timeseries</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=32">Top $TopResources Interface Errors</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_lldp_neighbor_labels">cisco_lldp_neighbor_labels<a class="headerlink" href="#cisco_lldp_neighbor_labels" title="Permanent link">&para;</a></h3>
+<p>Displays link layer discovery protocol information about neighbours in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show lldp neighbors detail</code></td>
+<td><code>sys_name, sys_desc, chassis_id, l_port_id, ttl, port_id, enabled_capability</code></td>
+<td>conf/ciscorest/nxos/9.3.12/lldp.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_lldp_neighbor_labels</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Neighbors</td>
+<td>table</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=44">Link Layer Discovery Protocol</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_optic_rx">cisco_optic_rx<a class="headerlink" href="#cisco_optic_rx" title="Permanent link">&para;</a></h3>
+<p>Displays rx power of the interface in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show interface transceiver details</code></td>
+<td><code>rx_pwr</code></td>
+<td>conf/ciscorest/nxos/9.3.12/optic.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_optic_rx</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Transceiver</td>
+<td>timeseries</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=21">Top $TopResources Transceiver RX Power</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_optic_tx">cisco_optic_tx<a class="headerlink" href="#cisco_optic_tx" title="Permanent link">&para;</a></h3>
+<p>Displays tx power of the interface in the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show interface transceiver details</code></td>
+<td><code>tx_pwr</code></td>
+<td>conf/ciscorest/nxos/9.3.12/optic.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_optic_tx</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Transceiver</td>
+<td>timeseries</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=23">Top $TopResources Transceiver TX Power</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_switch_labels">cisco_switch_labels<a class="headerlink" href="#cisco_switch_labels" title="Permanent link">&para;</a></h3>
+<p>Displays configuration detail of the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show version</code></td>
+<td><code>bios_ver_str, chassis_id, host_name, nxos_ver_str,</code></td>
+<td>conf/ciscorest/nxos/9.3.12/version.yaml</td>
+</tr>
+<tr>
+<td>NXAPI</td>
+<td><code>show banner motd</code></td>
+<td><code>banner_msg.b_msg</code></td>
+<td>conf/ciscorest/nxos/9.3.12/version.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="cisco_switch_uptime">cisco_switch_uptime<a class="headerlink" href="#cisco_switch_uptime" title="Permanent link">&para;</a></h3>
+<p>Displays uptime duration of the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show version</code></td>
+<td><code>kern_uptm_days, kern_uptm_hrs, kern_uptm_mins, kern_uptm_secs</code></td>
+<td>conf/ciscorest/nxos/9.3.12/version.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_switch_uptime</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Highlights</td>
+<td>table</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=5">Switch Details</a></td>
+</tr>
+</tbody>
+</table>
+</div>
 
 
 

@@ -1440,6 +1440,48 @@
   
   
     <li class="md-nav__item">
+      <a href="../../storagegrid-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StorageGrid Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cisco-switch-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cisco Switch Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../power-algorithm/" class="md-nav__link">
         
   
@@ -1938,7 +1980,9 @@
 
 
 <h1 id="harvest-templates-and-metrics">Harvest Templates and Metrics<a class="headerlink" href="#harvest-templates-and-metrics" title="Permanent link">&para;</a></h1>
-<p>Harvest collects ONTAP counter information, augments it, and stores it in a time-series DB. Refer <a href="../../ontap-metrics/">ONTAP Metrics</a> for details about ONTAP metrics exposed by Harvest. </p>
+<p>Harvest collects ONTAP counter information, augments it, and stores it in a time-series DB. Refer <a href="../../ontap-metrics/">ONTAP Metrics</a> for details about ONTAP metrics exposed by Harvest.
+Harvest collects StorageGrid counter information, augments it, and stores it in a time-series DB. Refer <a href="../../storagegrid-metrics/">StorageGrid Metrics</a> for details about StorageGrid metrics exposed by Harvest.
+Harvest collects Cisco Switch counter information, augments it, and stores it in a time-series DB. Refer <a href="../../cisco-switch-metrics/">Cisco Switch Metrics</a> for details about Cisco Switch metrics exposed by Harvest.</p>
 <pre class="mermaid"><code>flowchart RL
     Harvest[Harvest&lt;br&gt;Get &amp; Augment] -- REST&lt;br&gt;ZAPI --&gt; ONTAP
     id1[(Prometheus&lt;br&gt;Store)] -- Scrape --&gt; Harvest</code></pre>

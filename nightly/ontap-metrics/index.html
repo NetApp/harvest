@@ -12,7 +12,7 @@
         <link rel="prev" href="../resources/matrix/">
       
       
-        <link rel="next" href="../resources/power-algorithm/">
+        <link rel="next" href="../storagegrid-metrics/">
       
       
       <link rel="icon" href="../assets/harvest.svg">
@@ -14910,6 +14910,48 @@
   
   
     <li class="md-nav__item">
+      <a href="../storagegrid-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StorageGrid Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cisco-switch-metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cisco Switch Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../resources/power-algorithm/" class="md-nav__link">
         
   
@@ -28608,7 +28650,7 @@ These can be generated on demand by running <code>bin/harvest grafana metrics</c
 <p>More information about ONTAP REST performance counters can be found <a href="https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html">here</a>.</p>
 </li>
 </ul>
-<div class="highlight"><pre><span></span><code>Creation Date : 2025-Jul-21
+<div class="highlight"><pre><span></span><code>Creation Date : 2025-Jul-22
 ONTAP Version: 9.16.1
 </code></pre></div>
 <details>
@@ -30277,6 +30319,18 @@ ONTAP Version: 9.16.1
 <td>table</td>
 <td><a href="/d/cdot-datacenter/ontap3a-datacenter?orgId=1&amp;viewPanel=660">Object Count</a></td>
 </tr>
+<tr>
+<td>ONTAP: StorageGrid FabricPool</td>
+<td>Highlights</td>
+<td>stat</td>
+<td><a href="/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&amp;viewPanel=20">Aggregates</a></td>
+</tr>
+<tr>
+<td>ONTAP: StorageGrid FabricPool</td>
+<td>Highlights</td>
+<td>table</td>
+<td><a href="/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&amp;viewPanel=2">Aggregates</a></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -30483,6 +30537,12 @@ ONTAP Version: 9.16.1
 <td>Highlights</td>
 <td>stat</td>
 <td><a href="/d/cdot-node/ontap3a-node?orgId=1&amp;viewPanel=16">Aggregates</a></td>
+</tr>
+<tr>
+<td>ONTAP: StorageGrid FabricPool</td>
+<td>Highlights</td>
+<td>table</td>
+<td><a href="/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&amp;viewPanel=2">Aggregates</a></td>
 </tr>
 </tbody>
 </table>
@@ -30923,6 +30983,18 @@ ONTAP Version: 9.16.1
 <td>Highlights</td>
 <td>table</td>
 <td><a href="/d/cdot-disk/ontap3a-disk?orgId=1&amp;viewPanel=53">Disk Capacity Per Aggregate</a></td>
+</tr>
+<tr>
+<td>ONTAP: StorageGrid FabricPool</td>
+<td>Highlights</td>
+<td>stat</td>
+<td><a href="/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&amp;viewPanel=21">Disks</a></td>
+</tr>
+<tr>
+<td>ONTAP: StorageGrid FabricPool</td>
+<td>Highlights</td>
+<td>table</td>
+<td><a href="/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&amp;viewPanel=2">Aggregates</a></td>
 </tr>
 </tbody>
 </table>
@@ -31609,6 +31681,18 @@ ONTAP Version: 9.16.1
 <td>timeseries</td>
 <td><a href="/d/cdot-datacenter/ontap3a-datacenter?orgId=1&amp;viewPanel=657">Top $TopResources Available Space by Cluster</a></td>
 </tr>
+<tr>
+<td>ONTAP: StorageGrid FabricPool</td>
+<td>Highlights</td>
+<td>stat</td>
+<td><a href="/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&amp;viewPanel=25">Available Space</a></td>
+</tr>
+<tr>
+<td>ONTAP: StorageGrid FabricPool</td>
+<td>Highlights</td>
+<td>timeseries</td>
+<td><a href="/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&amp;viewPanel=14">Space Available</a></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -31661,6 +31745,12 @@ ONTAP Version: 9.16.1
 <td>FabricPool</td>
 <td>timeseries</td>
 <td><a href="/d/cdot-aggregate/ontap3a-aggregate?orgId=1&amp;viewPanel=199">Top $TopResources Aggregates by Capacity Tier Footprint</a></td>
+</tr>
+<tr>
+<td>ONTAP: StorageGrid FabricPool</td>
+<td>Highlights</td>
+<td>timeseries</td>
+<td><a href="/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&amp;viewPanel=15">Capacity Tier Used</a></td>
 </tr>
 </tbody>
 </table>
@@ -31993,6 +32083,12 @@ ONTAP Version: 9.16.1
 <td>timeseries</td>
 <td><a href="/d/cdot-datacenter/ontap3a-datacenter?orgId=1&amp;viewPanel=194">Top $TopResources Physical Used with Snapshots &amp; FlexClones by Cluster</a></td>
 </tr>
+<tr>
+<td>ONTAP: StorageGrid FabricPool</td>
+<td>Highlights</td>
+<td>timeseries</td>
+<td><a href="/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&amp;viewPanel=13">Physical Space Used</a></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -32290,6 +32386,24 @@ ONTAP Version: 9.16.1
 <td>table</td>
 <td><a href="/d/cdot-disk/ontap3a-disk?orgId=1&amp;viewPanel=53">Disk Capacity Per Aggregate</a></td>
 </tr>
+<tr>
+<td>ONTAP: StorageGrid FabricPool</td>
+<td>Highlights</td>
+<td>stat</td>
+<td><a href="/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&amp;viewPanel=24">Total Space</a></td>
+</tr>
+<tr>
+<td>ONTAP: StorageGrid FabricPool</td>
+<td>Highlights</td>
+<td>stat</td>
+<td><a href="/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&amp;viewPanel=26">Space Used %</a></td>
+</tr>
+<tr>
+<td>ONTAP: StorageGrid FabricPool</td>
+<td>Highlights</td>
+<td>table</td>
+<td><a href="/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&amp;viewPanel=2">Aggregates</a></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -32415,6 +32529,18 @@ ONTAP Version: 9.16.1
 <td>stat</td>
 <td><a href="/d/cdot-power/ontap3a-power?orgId=1&amp;viewPanel=71">Average Power/Used_TB</a></td>
 </tr>
+<tr>
+<td>ONTAP: StorageGrid FabricPool</td>
+<td>Highlights</td>
+<td>stat</td>
+<td><a href="/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&amp;viewPanel=26">Space Used %</a></td>
+</tr>
+<tr>
+<td>ONTAP: StorageGrid FabricPool</td>
+<td>Highlights</td>
+<td>table</td>
+<td><a href="/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&amp;viewPanel=2">Aggregates</a></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -32473,6 +32599,12 @@ ONTAP Version: 9.16.1
 <td>Highlights</td>
 <td>table</td>
 <td><a href="/d/cdot-disk/ontap3a-disk?orgId=1&amp;viewPanel=53">Disk Capacity Per Aggregate</a></td>
+</tr>
+<tr>
+<td>ONTAP: StorageGrid FabricPool</td>
+<td>Highlights</td>
+<td>table</td>
+<td><a href="/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&amp;viewPanel=2">Aggregates</a></td>
 </tr>
 </tbody>
 </table>
@@ -32746,6 +32878,18 @@ ONTAP Version: 9.16.1
 <td>Highlights</td>
 <td>table</td>
 <td><a href="/d/cdot-aggregate/ontap3a-aggregate?orgId=1&amp;viewPanel=2">Aggregates</a></td>
+</tr>
+<tr>
+<td>ONTAP: StorageGrid FabricPool</td>
+<td>Highlights</td>
+<td>stat</td>
+<td><a href="/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&amp;viewPanel=22">Volumes</a></td>
+</tr>
+<tr>
+<td>ONTAP: StorageGrid FabricPool</td>
+<td>Highlights</td>
+<td>table</td>
+<td><a href="/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&amp;viewPanel=2">Aggregates</a></td>
 </tr>
 </tbody>
 </table>
