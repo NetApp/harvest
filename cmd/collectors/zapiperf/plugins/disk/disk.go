@@ -263,6 +263,10 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collec
 	}
 
 	request := node.NewXMLS(d.query)
+	// Fetching only local shelves
+	query := request.NewChildS("query", "")
+	storageShelfInfo := query.NewChildS("storage-shelf-info", "")
+	storageShelfInfo.NewChildS("is-local-attach", "true")
 	if d.client.IsClustered() {
 		request.NewChildS("max-records", d.batchSize)
 	}
