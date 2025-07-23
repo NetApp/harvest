@@ -587,8 +587,7 @@ func (p *Poller) Run() {
 
 				if msg != "" {
 					if instance := p.metadata.GetInstance(key); instance != nil {
-						// replace quotes with empty, in case of rest error may have quotes around endpoint which fails prometheus discovery
-						instance.SetLabel("reason", strings.ReplaceAll(msg, "\"", ""))
+						instance.SetLabel("reason", p.truncateReason(msg))
 					}
 				}
 			}
@@ -619,7 +618,7 @@ func (p *Poller) Run() {
 
 				if msg != "" {
 					if instance := p.metadata.GetInstance(key); instance != nil {
-						instance.SetLabel("reason", msg)
+						instance.SetLabel("reason", p.truncateReason(msg))
 					}
 				}
 			}
@@ -1548,6 +1547,15 @@ func (p *Poller) CollectorHasVersion(cols []conf.Collector) bool {
 	}
 
 	return hasVersion
+}
+
+func (p *Poller) truncateReason(msg string) string {
+	// truncate the reason so it is not too long. This will turn
+	// "failed to fetch data: error making request connection error Get https://xxx/api/private/cl"
+	// into "failed to fetch data"
+	msg, _, _ = strings.Cut(msg, ":")
+	// replace quotes with empty, in case of rest error may have quotes around endpoint which fails prometheus discovery
+	return strings.ReplaceAll(msg, "\"", "")
 }
 
 func startPoller(_ *cobra.Command, _ []string) {
