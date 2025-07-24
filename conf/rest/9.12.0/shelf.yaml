@@ -5,6 +5,7 @@ object:             shelf
 
 counters:
   - ^^serial_number       => serial_number
+  - ^local                => local
   - ^manufacturer.name    => vendor_name
   - ^model                => model
   - ^module_type          => module_type
@@ -12,6 +13,8 @@ counters:
   - ^state                => state
   - ^uid                  => uuid
   - disk_count            => disk_count
+  - filter:
+      - local=true
 
 endpoints:
   - query: api/private/cli/storage/shelf
