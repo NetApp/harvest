@@ -99,11 +99,10 @@
       },
       "id": 611,
       "options": {
-        "content": "\nThis dashboard requires ZapiPerf Collector. It is currently not available via Rest.",
+        "content": "\nThis dashboard requires ZapiPerf Collector. It is currently not available via RestPerf.",
         "mode": "markdown"
       },
       "pluginVersion": "8.1.8",
-      "title": " ",
       "type": "text"
     },
     {
