@@ -1,0 +1,23 @@
+name:                     FPolicyServer
+query:                    fpolicy_server
+object:                   fpolicy_server
+
+counters:
+  - cancelled_requests           => cancelled_requests
+  - failed_requests              => failed_requests
+  - instance_name                => instance
+  - max_request_latency          => max_request_latency
+  - outstanding_requests         => outstanding_requests
+  - processed_requests           => processed_requests
+  - request_latency              => request_latency
+
+plugins:
+  LabelAgent:
+    split:
+      - instance `:` svm,server
+
+export_options:
+  instance_keys:
+    - server
+    - svm
+

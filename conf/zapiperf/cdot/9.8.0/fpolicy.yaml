@@ -1,0 +1,24 @@
+
+name:                     FPolicy
+query:                    fpolicy_policy
+object:                   fpolicy
+
+counters:
+  - aborted_requests             => aborted_requests
+  - denied_requests              => denied_requests
+  - instance_name                => instance
+  - io_processing_latency        => io_processing_latency
+  - io_thread_wait_latency       => io_thread_wait_latency
+  - policy_processing_latency    => processing_latency
+  - processed_requests           => processed_requests
+
+plugins:
+  LabelAgent:
+    split:
+      - instance `:` svm,policy
+
+export_options:
+  instance_keys:
+    - policy
+    - svm
+

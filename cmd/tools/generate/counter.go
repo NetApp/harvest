@@ -112,34 +112,14 @@ var (
 	}
 
 	knownMappingGaps = map[string]struct{}{
-		"aggr_snapshot_inode_used_percent":                      {},
-		"aggr_space_reserved":                                   {},
-		"flexcache_blocks_requested_from_client":                {},
-		"flexcache_blocks_retrieved_from_origin":                {},
-		"flexcache_evict_rw_cache_skipped_reason_disconnected":  {},
-		"flexcache_evict_skipped_reason_config_noent":           {},
-		"flexcache_evict_skipped_reason_disconnected":           {},
-		"flexcache_evict_skipped_reason_offline":                {},
-		"flexcache_invalidate_skipped_reason_config_noent":      {},
-		"flexcache_invalidate_skipped_reason_disconnected":      {},
-		"flexcache_invalidate_skipped_reason_offline":           {},
-		"flexcache_miss_percent":                                {},
-		"flexcache_nix_retry_skipped_reason_initiator_retrieve": {},
-		"flexcache_nix_skipped_reason_config_noent":             {},
-		"flexcache_nix_skipped_reason_disconnected":             {},
-		"flexcache_nix_skipped_reason_in_progress":              {},
-		"flexcache_nix_skipped_reason_offline":                  {},
-		"flexcache_reconciled_data_entries":                     {},
-		"flexcache_reconciled_lock_entries":                     {},
-		"quota_disk_used_pct_threshold":                         {},
-		"rw_ctx_cifs_giveups":                                   {},
-		"rw_ctx_cifs_rewinds":                                   {},
-		"rw_ctx_nfs_giveups":                                    {},
-		"rw_ctx_nfs_rewinds":                                    {},
-		"rw_ctx_qos_flowcontrol":                                {},
-		"rw_ctx_qos_rewinds":                                    {},
-		"security_audit_destination_port":                       {},
-		"wafl_reads_from_pmem":                                  {},
+		"aggr_snapshot_inode_used_percent": {},
+		"aggr_space_reserved":              {},
+		"flexcache_":                       {},
+		"fpolicy_":                         {},
+		"quota_disk_used_pct_threshold":    {},
+		"rw_ctx_":                          {},
+		"security_audit_destination_port":  {},
+		"wafl_reads_from_pmem":             {},
 	}
 
 	knownMappingGapsSG = map[string]struct{}{
@@ -191,6 +171,7 @@ var (
 		"flexcache_",
 		"quota_disk_used_pct_threshold",
 		"ems_events",
+		"fpolicy_svm_failedop_notifications",
 	}
 
 	// Exclude extra metrics for REST
@@ -1186,7 +1167,14 @@ func generateOntapCounterTemplate(counters map[string]Counter, version string) {
 				// missing Rest Mapping
 				if isPrint {
 					for _, def := range counter.APIs {
-						if _, ok := knownMappingGaps[counter.Name]; !ok {
+						hasPrefix := false
+						for prefix := range knownMappingGaps {
+							if strings.HasPrefix(counter.Name, prefix) {
+								hasPrefix = true
+								break
+							}
+						}
+						if !hasPrefix {
 							appendRow(table, "REST", counter, def)
 						}
 					}
@@ -1197,7 +1185,14 @@ func generateOntapCounterTemplate(counters map[string]Counter, version string) {
 		for _, def := range counter.APIs {
 			if def.ONTAPCounter == "" {
 				for _, def := range counter.APIs {
-					if _, ok := knownMappingGaps[counter.Name]; !ok {
+					hasPrefix := false
+					for prefix := range knownMappingGaps {
+						if strings.HasPrefix(counter.Name, prefix) {
+							hasPrefix = true
+							break
+						}
+					}
+					if !hasPrefix {
 						appendRow(table, "Mapping", counter, def)
 					}
 				}

@@ -1,0 +1,17 @@
+
+name:                     FPolicySVM
+query:                    fpolicy
+object:                   fpolicy_svm
+
+counters:
+  - aborted_requests             => aborted_requests
+  - cifs_requests                => cifs_requests
+  - failedop_notifications       => failedop_notifications
+  - instance_name                => svm
+  - io_processing_latency        => io_processing_latency
+  - io_thread_wait_latency       => io_thread_wait_latency
+
+export_options:
+  instance_keys:
+    - svm
+
