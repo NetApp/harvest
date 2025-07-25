@@ -44,6 +44,9 @@ objects:
   CopyManager:              copy_manager.yaml
 #  ExternalServiceOperation: external_service_operation.yaml
   FcpLif:                   fcp_lif.yaml
+  FPolicy:                  fpolicy.yaml
+  FPolicyServer:            fpolicy_server.yaml
+  FPolicySVM:               fpolicy_svm.yaml
   ISCSI:                    iscsi_lif.yaml
   LIF:                      lif.yaml
   Lun:                      lun.yaml
