@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Jul-17
+Creation Date : 2025-Jul-22
 ONTAP Version: 9.16.1
 ```
 
@@ -708,6 +708,8 @@ The `aggr_labels` metric is visualized in the following Grafana dashboards:
 | ONTAP: Aggregate | Highlights | stat | [Aggregates](/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=20) |
 | ONTAP: Aggregate | Highlights | table | [Aggregates](/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=2) |
 | ONTAP: Datacenter | Highlights | table | [Object Count](/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=660) |
+| ONTAP: StorageGrid FabricPool | Highlights | stat | [Aggregates](/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&viewPanel=20) |
+| ONTAP: StorageGrid FabricPool | Highlights | table | [Aggregates](/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&viewPanel=2) |
 ///
 
 
@@ -776,6 +778,7 @@ The `aggr_new_status` metric is visualized in the following Grafana dashboards:
 |--------|----------|--------|--------|
 | ONTAP: Aggregate | Highlights | table | [Aggregates](/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=2) |
 | ONTAP: Node | Highlights | stat | [Aggregates](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=16) |
+| ONTAP: StorageGrid FabricPool | Highlights | table | [Aggregates](/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&viewPanel=2) |
 ///
 
 
@@ -943,6 +946,8 @@ The `aggr_raid_disk_count` metric is visualized in the following Grafana dashboa
 | ONTAP: Aggregate | Highlights | table | [Aggregates](/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=2) |
 | ONTAP: Disk | Highlights | stat | [Total Disks by Aggregate(s)](/d/cdot-disk/ontap3a-disk?orgId=1&viewPanel=43) |
 | ONTAP: Disk | Highlights | table | [Disk Capacity Per Aggregate](/d/cdot-disk/ontap3a-disk?orgId=1&viewPanel=53) |
+| ONTAP: StorageGrid FabricPool | Highlights | stat | [Disks](/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&viewPanel=21) |
+| ONTAP: StorageGrid FabricPool | Highlights | table | [Aggregates](/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&viewPanel=2) |
 ///
 
 
@@ -1220,6 +1225,8 @@ The `aggr_space_available` metric is visualized in the following Grafana dashboa
 | ONTAP: Cluster | Highlights | stat | [Available Space](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=278) |
 | ONTAP: Datacenter | Highlights | stat | [Available Space](/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=613) |
 | ONTAP: Datacenter | Highlights | timeseries | [Top $TopResources Available Space by Cluster](/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=657) |
+| ONTAP: StorageGrid FabricPool | Highlights | stat | [Available Space](/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&viewPanel=25) |
+| ONTAP: StorageGrid FabricPool | Highlights | timeseries | [Space Available](/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&viewPanel=14) |
 ///
 
 
@@ -1240,6 +1247,7 @@ The `aggr_space_capacity_tier_used` metric is visualized in the following Grafan
 |--------|----------|--------|--------|
 | ONTAP: Aggregate | Highlights | timeseries | [Top $TopResources Aggregates by  Capacity Tier Used](/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=15) |
 | ONTAP: Aggregate | FabricPool | timeseries | [Top $TopResources Aggregates by Capacity Tier Footprint](/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=199) |
+| ONTAP: StorageGrid FabricPool | Highlights | timeseries | [Capacity Tier Used](/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&viewPanel=15) |
 ///
 
 
@@ -1371,6 +1379,7 @@ The `aggr_space_physical_used` metric is visualized in the following Grafana das
 | ONTAP: Aggregate | Storage Efficiency Ratios | timeseries | [Top $TopResources Aggregates by Physical Used with Snapshots & FlexClones](/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=49) |
 | ONTAP: Cluster | Storage Efficiency Ratios | timeseries | [Physical Used with Snapshots & FlexClones](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=194) |
 | ONTAP: Datacenter | Storage Efficiency | timeseries | [Top $TopResources Physical Used with Snapshots & FlexClones by Cluster](/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=194) |
+| ONTAP: StorageGrid FabricPool | Highlights | timeseries | [Physical Space Used](/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&viewPanel=13) |
 ///
 
 
@@ -1474,6 +1483,9 @@ The `aggr_space_total` metric is visualized in the following Grafana dashboards:
 | ONTAP: Datacenter | Highlights | timeseries | [Top $TopResources Total Space by Cluster](/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=655) |
 | ONTAP: Datacenter | Highlights | timeseries | [Top $TopResources Space Used % by Cluster](/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=658) |
 | ONTAP: Disk | Highlights | table | [Disk Capacity Per Aggregate](/d/cdot-disk/ontap3a-disk?orgId=1&viewPanel=53) |
+| ONTAP: StorageGrid FabricPool | Highlights | stat | [Total Space](/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&viewPanel=24) |
+| ONTAP: StorageGrid FabricPool | Highlights | stat | [Space Used %](/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&viewPanel=26) |
+| ONTAP: StorageGrid FabricPool | Highlights | table | [Aggregates](/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&viewPanel=2) |
 ///
 
 
@@ -1506,6 +1518,8 @@ The `aggr_space_used` metric is visualized in the following Grafana dashboards:
 | ONTAP: Datacenter | Highlights | timeseries | [Top $TopResources Space Used % by Cluster](/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=658) |
 | ONTAP: Datacenter | Power and Temperature | stat | [Average Power/Used_TB](/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=640) |
 | ONTAP: Power | Highlights | stat | [Average Power/Used_TB](/d/cdot-power/ontap3a-power?orgId=1&viewPanel=71) |
+| ONTAP: StorageGrid FabricPool | Highlights | stat | [Space Used %](/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&viewPanel=26) |
+| ONTAP: StorageGrid FabricPool | Highlights | table | [Aggregates](/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&viewPanel=2) |
 ///
 
 
@@ -1527,6 +1541,7 @@ The `aggr_space_used_percent` metric is visualized in the following Grafana dash
 | ONTAP: Aggregate | Highlights | table | [Aggregates](/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=2) |
 | ONTAP: Cluster | Throughput | timeseries | [Average Aggregate Space Used](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=180) |
 | ONTAP: Disk | Highlights | table | [Disk Capacity Per Aggregate](/d/cdot-disk/ontap3a-disk?orgId=1&viewPanel=53) |
+| ONTAP: StorageGrid FabricPool | Highlights | table | [Aggregates](/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&viewPanel=2) |
 ///
 
 
@@ -1626,6 +1641,8 @@ The `aggr_volume_count` metric is visualized in the following Grafana dashboards
 |--------|----------|--------|--------|
 | ONTAP: Aggregate | Highlights | stat | [Volumes](/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=22) |
 | ONTAP: Aggregate | Highlights | table | [Aggregates](/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=2) |
+| ONTAP: StorageGrid FabricPool | Highlights | stat | [Volumes](/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&viewPanel=22) |
+| ONTAP: StorageGrid FabricPool | Highlights | table | [Aggregates](/d/cdot-storagegrid-fabricpool/ontap3a-storagegrid fabricpool?orgId=1&viewPanel=2) |
 ///
 
 
@@ -5159,6 +5176,312 @@ The `flexcache_size` metric is visualized in the following Grafana dashboards:
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | ONTAP: FlexCache | Highlights | table | [FlexCache Details](/d/cdot-flexcache/ontap3a-flexcache?orgId=1&viewPanel=112) |
+///
+
+
+
+### fpolicy_aborted_requests
+
+Number of screen requests aborted
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances fpolicy_policy` | `aborted_requests`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fpolicy.yaml |
+
+The `fpolicy_aborted_requests` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: FPolicy | Highlights | timeseries | [Top $TopResources Policy by Aborted Requests](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=588) |
+///
+
+
+
+### fpolicy_denied_requests
+
+Number of screen requests for which deny is received from fpolicy server
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances fpolicy_policy` | `denied_requests`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fpolicy.yaml |
+
+The `fpolicy_denied_requests` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: FPolicy | Highlights | timeseries | [Top $TopResources Policy by Denied Requests](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=589) |
+///
+
+
+
+### fpolicy_io_processing_latency
+
+Average IO processing latency for screen request
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances fpolicy_policy` | `io_processing_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> io_processing_latency_base | conf/zapiperf/cdot/9.8.0/fpolicy.yaml |
+
+The `fpolicy_io_processing_latency` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: FPolicy | Highlights | timeseries | [Top $TopResources Policy by IO processing Latency](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=442) |
+///
+
+
+
+### fpolicy_io_thread_wait_latency
+
+Average IO thread wait latency for the screen request
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances fpolicy_policy` | `io_thread_wait_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> io_thread_wait_latency_base | conf/zapiperf/cdot/9.8.0/fpolicy.yaml |
+
+The `fpolicy_io_thread_wait_latency` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: FPolicy | Highlights | timeseries | [Top $TopResources Policy by IO thread wait Latency](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=586) |
+///
+
+
+
+### fpolicy_processed_requests
+
+Number of screen requests went through fpolicy processing
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances fpolicy_policy` | `processed_requests`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fpolicy.yaml |
+
+The `fpolicy_processed_requests` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: FPolicy | Highlights | timeseries | [Top $TopResources Policy by Processed Requests](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=590) |
+///
+
+
+
+### fpolicy_processing_latency
+
+Average policy processing latency for screen request
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances fpolicy_policy` | `policy_processing_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> policy_processing_latency_base | conf/zapiperf/cdot/9.8.0/fpolicy.yaml |
+
+The `fpolicy_processing_latency` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: FPolicy | Highlights | timeseries | [Top $TopResources Policy by Processing Latency](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=587) |
+///
+
+
+
+### fpolicy_server_cancelled_requests
+
+Number of screen requests whose processing was cancelled (cancel timeout)
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances fpolicy_server` | `cancelled_requests`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fpolicy_server.yaml |
+
+The `fpolicy_server_cancelled_requests` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: FPolicy | Server | timeseries | [Top $TopResources Servers by Cancelled Requests](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=606) |
+///
+
+
+
+### fpolicy_server_failed_requests
+
+Number of screen requests the node failed to send to fpolicy server
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances fpolicy_server` | `failed_requests`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fpolicy_server.yaml |
+
+The `fpolicy_server_failed_requests` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: FPolicy | Server | timeseries | [Top $TopResources Servers by Failed Requests](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=607) |
+///
+
+
+
+### fpolicy_server_max_request_latency
+
+Maximum latency for a screen request
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances fpolicy_server` | `max_request_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fpolicy_server.yaml |
+
+The `fpolicy_server_max_request_latency` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: FPolicy | Server | timeseries | [Top $TopResources Servers by Max Request Latency](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=603) |
+///
+
+
+
+### fpolicy_server_outstanding_requests
+
+Total number of screen requests waiting for response
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances fpolicy_server` | `outstanding_requests`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fpolicy_server.yaml |
+
+The `fpolicy_server_outstanding_requests` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: FPolicy | Server | timeseries | [Top $TopResources Servers by Outstanding Requests](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=608) |
+///
+
+
+
+### fpolicy_server_processed_requests
+
+Total number of screen requests processed(sync and async)
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances fpolicy_server` | `processed_requests`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fpolicy_server.yaml |
+
+The `fpolicy_server_processed_requests` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: FPolicy | Server | timeseries | [Top $TopResources Servers by Processed Requests](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=609) |
+///
+
+
+
+### fpolicy_server_request_latency
+
+Average latency for screen request
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances fpolicy_server` | `request_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> request_latency_base | conf/zapiperf/cdot/9.8.0/fpolicy_server.yaml |
+
+The `fpolicy_server_request_latency` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: FPolicy | Server | timeseries | [Top $TopResources Servers by Max Request Latency](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=604) |
+///
+
+
+
+### fpolicy_svm_aborted_requests
+
+Number of screen requests aborted
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances fpolicy` | `aborted_requests`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fpolicy_svm.yaml |
+
+The `fpolicy_svm_aborted_requests` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: FPolicy | SVM | timeseries | [Top $TopResources SVM by Aborted Requests](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=597) |
+///
+
+
+
+### fpolicy_svm_cifs_requests
+
+Number of cifs screen requests sent to fpolicy server
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances fpolicy` | `cifs_requests`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fpolicy_svm.yaml |
+
+The `fpolicy_svm_cifs_requests` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: FPolicy | SVM | timeseries | [Top $TopResources SVM by Cifs Requests](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=598) |
+///
+
+
+
+### fpolicy_svm_failedop_notifications
+
+Number of failed file operation notifications sent to fpolicy server
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances fpolicy` | `failedop_notifications`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> delta<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fpolicy_svm.yaml |
+
+The `fpolicy_svm_failedop_notifications` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: FPolicy | SVM | timeseries | [Top $TopResources SVM by Failed File Operation](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=599) |
+///
+
+
+
+### fpolicy_svm_io_processing_latency
+
+Average IO processing latency for screen request
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances fpolicy` | `io_processing_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> io_processing_latency_base | conf/zapiperf/cdot/9.8.0/fpolicy_svm.yaml |
+
+The `fpolicy_svm_io_processing_latency` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: FPolicy | SVM | timeseries | [Top $TopResources SVM by IO processing Latency](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=594) |
+///
+
+
+
+### fpolicy_svm_io_thread_wait_latency
+
+Average IO thread wait latency for screen request
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances fpolicy` | `io_thread_wait_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> io_thread_wait_latency_base | conf/zapiperf/cdot/9.8.0/fpolicy_svm.yaml |
+
+The `fpolicy_svm_io_thread_wait_latency` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: FPolicy | SVM | timeseries | [Top $TopResources SVM by IO thread wait Latency](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=595) |
 ///
 
 
@@ -21436,9 +21759,26 @@ The `volume_labels` metric is visualized in the following Grafana dashboards:
 | ONTAP: Datacenter | Snapshots | piechart | [Breached Status](/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=631) |
 | ONTAP: Datacenter | Snapshots | piechart | [Snapshot Copies](/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=632) |
 | ONTAP: FlexGroup | Volume Table | table | [FlexGroup Constituents in Cluster](/d/cdot-flexgroup/ontap3a-flexgroup?orgId=1&viewPanel=18) |
+| ONTAP: File System Analytics (FSA) | Highlights | stat | [Used](/d/cdot-fsa/ontap3a-file system analytics (fsa)?orgId=1&viewPanel=95) |
+| ONTAP: File System Analytics (FSA) | Highlights | stat | [Available](/d/cdot-fsa/ontap3a-file system analytics (fsa)?orgId=1&viewPanel=96) |
+| ONTAP: File System Analytics (FSA) | Highlights | stat | [Size](/d/cdot-fsa/ontap3a-file system analytics (fsa)?orgId=1&viewPanel=97) |
+| ONTAP: File System Analytics (FSA) | Highlights | bargauge | [Used Percentage](/d/cdot-fsa/ontap3a-file system analytics (fsa)?orgId=1&viewPanel=103) |
+| ONTAP: File System Analytics (FSA) | Highlights | stat | [Directories](/d/cdot-fsa/ontap3a-file system analytics (fsa)?orgId=1&viewPanel=22) |
+| ONTAP: File System Analytics (FSA) | Highlights | timeseries | [Top $TopResources Volumes by Directory Growth](/d/cdot-fsa/ontap3a-file system analytics (fsa)?orgId=1&viewPanel=86) |
+| ONTAP: File System Analytics (FSA) | Highlights | stat | [Files](/d/cdot-fsa/ontap3a-file system analytics (fsa)?orgId=1&viewPanel=23) |
+| ONTAP: File System Analytics (FSA) | Highlights | table | [Top $TopResources Volumes by Directory Growth](/d/cdot-fsa/ontap3a-file system analytics (fsa)?orgId=1&viewPanel=25) |
+| ONTAP: File System Analytics (FSA) | Volume Activity | barchart | [Volume Access ($Activity) History](/d/cdot-fsa/ontap3a-file system analytics (fsa)?orgId=1&viewPanel=88) |
+| ONTAP: File System Analytics (FSA) | Volume Activity | barchart | [Volume Access ($Activity) History By Percent](/d/cdot-fsa/ontap3a-file system analytics (fsa)?orgId=1&viewPanel=92) |
+| ONTAP: File System Analytics (FSA) | Volume Activity | barchart | [Volume Modify ($Activity) History](/d/cdot-fsa/ontap3a-file system analytics (fsa)?orgId=1&viewPanel=91) |
+| ONTAP: File System Analytics (FSA) | Volume Activity | barchart | [Volume Modify ($Activity) History By Percent](/d/cdot-fsa/ontap3a-file system analytics (fsa)?orgId=1&viewPanel=93) |
 | ONTAP: Health | Volume | table | [Volumes with Ransomware Issues (9.10+ Only)](/d/cdot-health/ontap3a-health?orgId=1&viewPanel=264) |
 | ONTAP: Health | Volume | table | [Volumes Move Issues](/d/cdot-health/ontap3a-health?orgId=1&viewPanel=271) |
 | ONTAP: NFS Troubleshooting | Highlights | table | [SVM Performance Table](/d/cdot-nfs-troubleshooting/ontap3a-nfs troubleshooting?orgId=1&viewPanel=15) |
+| ONTAP: Quota | Highlights | table | [Reports](/d/cdot-quota/ontap3a-quota?orgId=1&viewPanel=5) |
+| ONTAP: Quota | Space Usage | timeseries | [Top $TopResources Quotas by Space Used](/d/cdot-quota/ontap3a-quota?orgId=1&viewPanel=7) |
+| ONTAP: Quota | Space Usage | timeseries | [Top $TopResources Quotas by Space Used %](/d/cdot-quota/ontap3a-quota?orgId=1&viewPanel=8) |
+| ONTAP: Quota | Space Usage | timeseries | [Top $TopResources Quotas by Files Used](/d/cdot-quota/ontap3a-quota?orgId=1&viewPanel=9) |
+| ONTAP: Quota | Space Usage | timeseries | [Top $TopResources Quotas by Files Used %](/d/cdot-quota/ontap3a-quota?orgId=1&viewPanel=10) |
 | ONTAP: S3 Object Storage | Highlights | table | [Bucket Overview](/d/cdot-s3-object-storage/ontap3a-s3 object storage?orgId=1&viewPanel=5) |
 | ONTAP: Security | Highlights | stat | [Volume Encryption %](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=207) |
 | ONTAP: Security | Highlights | stat | [Volume Anti-ransomware Status %](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=208) |
