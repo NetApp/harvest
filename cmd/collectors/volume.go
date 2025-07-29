@@ -7,9 +7,11 @@ import (
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
 	"maps"
+	"math"
 	"regexp"
 	"sort"
 	"strings"
+	"time"
 )
 
 var flexgroupRegex = regexp.MustCompile(`^(.*)__(\d{4})$`)
@@ -29,7 +31,13 @@ var footprintMetrics = map[string]struct{}{
 
 }
 
-func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string, includeConstituents bool, opsKeyPrefix string, volumesMap map[string]string, enableVolumeAggrMatrix bool) ([]*matrix.Matrix, *collector.Metadata, error) {
+type OpsData struct {
+	TotalOps       float64
+	Timestamp      float64
+	priorTimestamp float64
+}
+
+func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string, includeConstituents bool, opsKeyPrefix string, volumesMap map[string]string, enableVolumeAggrMatrix bool, zombieVolumeMatrix *matrix.Matrix, volumePastOpsMap map[string]OpsData, zombieMetricName string) ([]*matrix.Matrix, *collector.Metadata, error) {
 	var err error
 
 	if volumesMap == nil {
@@ -43,6 +51,7 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 	metricName := "labels"
 	volumeAggrMatrix := matrix.New(".Volume", "volume_aggr", "volume_aggr")
 	volumeAggrMatrix.SetGlobalLabels(data.GetGlobalLabels())
+	zombieVolumeMatrix.SetGlobalLabels(data.GetGlobalLabels())
 
 	metric, err := volumeAggrMatrix.NewMetricFloat64(metricName)
 	if err != nil {
@@ -80,6 +89,16 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 				flexgroupAggrsMap[key] = set.New()
 				metric.SetValueFloat64(flexgroupInstance, 1)
 			}
+			//nolint:gocritic
+			//if zombieVolumeMatrix.GetInstance(key) == nil {
+			//	zombieFlexgroupInstance, _ := zombieVolumeMatrix.NewInstance(key)
+			//	zombieFlexgroupInstance.SetLabels(maps.Clone(i.GetLabels()))
+			//	zombieFlexgroupInstance.SetLabel("volume", match[1])
+			//	zombieFlexgroupInstance.SetLabel("node", "")
+			//	zombieFlexgroupInstance.SetLabel("uuid", "")
+			//	zombieFlexgroupInstance.SetLabel(style, "flexgroup")
+			//	//metric.SetValueFloat64(zombieFlexgroupInstance, 1)
+			//}
 			fgAggrMap[key].Add(i.GetLabel("aggr"))
 			flexgroupAggrsMap[key].Add(i.GetLabel("aggr"))
 			i.SetLabel(style, "flexgroup_constituent")
@@ -95,6 +114,23 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 			flexvolInstance.SetLabels(maps.Clone(i.GetLabels()))
 			flexvolInstance.SetLabel(style, "flexvol")
 			metric.SetValueFloat64(flexvolInstance, 1)
+			zombieFlexvolInstance, err := zombieVolumeMatrix.NewInstance(key)
+			if err != nil {
+				logger.Error("Failed to create new instance", slogx.Err(err), slog.String("key", key))
+				continue
+			}
+			zombieFlexvolInstance.SetLabels(maps.Clone(i.GetLabels()))
+			zombieFlexvolInstance.SetLabel(style, "flexvol")
+			totalOps := data.GetMetric("total_ops")
+			totalOpsVal, _ := totalOps.GetValueFloat64(i)
+			zombieMetric := zombieVolumeMatrix.GetMetric(zombieMetricName)
+			if volumePastOpsMap[key].Timestamp > 0.0 && (math.Abs(volumePastOpsMap[key].priorTimestamp-float64(time.Now().UnixMicro())) > float64(time.Minute.Microseconds()) && math.Abs(volumePastOpsMap[key].TotalOps-totalOpsVal) < 10.0) {
+				zombieMetric.SetValueFloat64(zombieFlexvolInstance, 1)
+				volumePastOpsMap[key] = OpsData{TotalOps: totalOpsVal, Timestamp: float64(time.Now().UnixMicro())}
+			} else {
+				zombieMetric.SetValueFloat64(zombieFlexvolInstance, 0)
+				volumePastOpsMap[key] = OpsData{TotalOps: totalOpsVal, Timestamp: float64(time.Now().UnixMicro()), priorTimestamp: float64(time.Now().UnixMicro())}
+			}
 		}
 	}
 
@@ -222,9 +258,9 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 	}
 
 	if enableVolumeAggrMatrix {
-		return []*matrix.Matrix{cache, volumeAggrMatrix}, nil, nil
+		return []*matrix.Matrix{cache, volumeAggrMatrix, zombieVolumeMatrix}, nil, nil
 	}
-	return []*matrix.Matrix{cache}, nil, nil
+	return []*matrix.Matrix{cache, zombieVolumeMatrix}, nil, nil
 }
 
 func ProcessFlexGroupFootPrint(data *matrix.Matrix, logger *slog.Logger) *matrix.Matrix {

@@ -6,9 +6,11 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/volume"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
 	"strconv"
 	"testing"
+	"time"
 
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
@@ -24,6 +26,7 @@ func runVolumeTest(t *testing.T, createVolume func(params *node.Node) plugin.Plu
 	params.NewChildS("include_constituents", includeConstituents)
 	v := createVolume(params)
 	volumesMap := make(map[string]string)
+	volumePastOpsMap := map[string]collectors.OpsData{}
 
 	// Initialize the plugin
 	if err := v.Init(conf.Remote{}); err != nil {
@@ -56,6 +59,7 @@ func runVolumeTest(t *testing.T, createVolume func(params *node.Node) plugin.Plu
 	simpleInstance.SetLabel("svm", "svm1")
 	simpleInstance.SetLabel("aggr", "aggr4")
 	volumesMap["svm1"+"SimpleVolume"] = "flexvol"
+	volumePastOpsMap["svm1"+"SimpleVolume"] = collectors.OpsData{TotalOps: 100.0, Timestamp: float64(time.Now().UnixMicro())}
 
 	// Create latency and ops metrics
 	latencyMetric, _ := data.NewMetricFloat64("read_latency")
@@ -64,6 +68,8 @@ func runVolumeTest(t *testing.T, createVolume func(params *node.Node) plugin.Plu
 
 	opsMetric, _ := data.NewMetricFloat64("read_ops")
 	opsMetric.SetProperty("rate")
+
+	totalOpsMetric, _ := data.NewMetricFloat64("total_ops")
 
 	// Set metric values for the instances
 	latencyMetric.SetValueFloat64(instance1, 20)
@@ -74,6 +80,7 @@ func runVolumeTest(t *testing.T, createVolume func(params *node.Node) plugin.Plu
 
 	latencyMetric.SetValueFloat64(instance3, 40)
 	opsMetric.SetValueFloat64(instance3, 10)
+	totalOpsMetric.SetValueFloat64(simpleInstance, 80)
 
 	// Optionally set one metric value to NaN
 	if setMetricNaN {
@@ -85,16 +92,24 @@ func runVolumeTest(t *testing.T, createVolume func(params *node.Node) plugin.Plu
 	latencyMetric.SetValueFloat64(simpleInstance, 50)
 	opsMetric.SetValueFloat64(simpleInstance, 5)
 
+	zombieVolumeMatrix := matrix.New(".Volume", "volume_zombie", "volume_zombie")
+	metricName := "exist"
+	_, err := zombieVolumeMatrix.NewMetricFloat64(metricName)
+	if err != nil {
+		t.Error("add metric", slogx.Err(err), slog.String("key", metricName))
+		return
+	}
+
 	// Run the plugin
 	boolValue, _ := strconv.ParseBool(includeConstituents)
-	output, _, err := collectors.ProcessFlexGroupData(slog.Default(), data, StyleType, boolValue, OpsKeyPrefix, volumesMap, true)
+	output, _, err := collectors.ProcessFlexGroupData(slog.Default(), data, StyleType, boolValue, OpsKeyPrefix, volumesMap, true, zombieVolumeMatrix, volumePastOpsMap, "exist")
 	if err != nil {
 		t.Fatalf("Run method failed: %v", err)
 	}
 
 	// Verify the output
-	if len(output) != 2 {
-		t.Fatalf("expected 2 output matrices, got %d", len(output))
+	if len(output) != 3 {
+		t.Fatalf("expected 3 output matrices, got %d", len(output))
 	}
 
 	cache := output[0]

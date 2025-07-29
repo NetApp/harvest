@@ -7,6 +7,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
 	"time"
 )
@@ -18,6 +19,8 @@ type Volume struct {
 	includeConstituents bool
 	client              *rest.Client
 	volumesMap          map[string]string // volume-name -> volume-extended-style map
+	zombieVolumeMatrix  *matrix.Matrix
+	volumePastOpsMap    map[string]collectors.OpsData
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -37,6 +40,7 @@ func (v *Volume) Init(remote conf.Remote) error {
 	}
 
 	v.volumesMap = make(map[string]string)
+	v.volumePastOpsMap = make(map[string]collectors.OpsData)
 
 	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
 	v.currentVal = v.SetPluginInterval()
@@ -55,10 +59,21 @@ func (v *Volume) Init(remote conf.Remote) error {
 		return err
 	}
 
+	v.zombieVolumeMatrix = matrix.New(".Volume", "volume_zombie", "volume_zombie")
+	metricName := "exist"
+	_, err = v.zombieVolumeMatrix.NewMetricFloat64(metricName)
+	if err != nil {
+		v.SLogger.Error("add metric", slogx.Err(err), slog.String("key", metricName))
+		return err
+	}
+
 	return v.client.Init(5, remote)
 }
 
 func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
+	// update
+	v.updateMatrix(time.Now())
+
 	data := dataMap[v.Object]
 	style := v.styleType
 	opsKeyPrefix := "temp_"
@@ -75,7 +90,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *coll
 	}
 
 	v.currentVal++
-	return collectors.ProcessFlexGroupData(v.SLogger, data, style, v.includeConstituents, opsKeyPrefix, v.volumesMap, true)
+	return collectors.ProcessFlexGroupData(v.SLogger, data, style, v.includeConstituents, opsKeyPrefix, v.volumesMap, true, v.zombieVolumeMatrix, v.volumePastOpsMap, "exist")
 }
 
 func (v *Volume) fetchVolumes() (map[string]string, error) {
@@ -110,4 +125,13 @@ func (v *Volume) fetchVolumes() (map[string]string, error) {
 	}
 
 	return volumesMap, nil
+}
+
+func (v *Volume) updateMatrix(begin time.Time) {
+	for key, pastOps := range v.volumePastOpsMap {
+		if collectors.IsTimestampOlderThanDuration(begin, pastOps.Timestamp, 14*24*time.Hour) {
+			delete(v.volumePastOpsMap, key)
+		}
+	}
+	v.zombieVolumeMatrix.PurgeInstances()
 }
