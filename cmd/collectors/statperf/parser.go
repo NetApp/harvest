@@ -323,7 +323,7 @@ func (s *StatPerf) parseRows(input string) ([]map[string]any, error) {
 			}
 
 			// Check for duplicate counters
-			// The object `object_store_server` has a different table format where multiple node
+			// The object `object_store_server` and `smb2` has a different table format where multiple node
 			// counters are present in the same table, leading to duplicate counters.
 			// StatPerf does not handle this situation and prints warning messages.
 			// So far, we have observed this issue only with this object.
