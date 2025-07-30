@@ -1254,7 +1254,7 @@ func TestJoinExpressions(t *testing.T) {
 
 func checkJoinExpressions(t *testing.T, path string, data []byte) {
 	dashPath := ShortPath(path)
-	expectedRegex := "(.*) 1$"
+	expectedRegexes := []string{"(.*) 1$", "(.*) 2$"}
 	VisitAllPanels(data, func(_ string, key, value gjson.Result) {
 		panelType := value.Get("type").ClonedString()
 		if panelType == "table" {
@@ -1269,8 +1269,13 @@ func checkJoinExpressions(t *testing.T, path string, data []byte) {
 						for _, transformationN := range transformationsSlice {
 							if transformationN.Get("id").ClonedString() == "renameByRegex" {
 								regex := transformationN.Get("options.regex").ClonedString()
-								if regex == expectedRegex {
-									regexUsed = true
+								for _, expectedRegex := range expectedRegexes {
+									if regex == expectedRegex {
+										regexUsed = true
+										break
+									}
+								}
+								if regexUsed {
 									break
 								}
 							}
