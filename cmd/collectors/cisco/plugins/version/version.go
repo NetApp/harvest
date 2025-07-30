@@ -9,7 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
-	"regexp"
+	"strings"
 	"time"
 )
 
@@ -126,13 +126,6 @@ func (v *Version) parseVersionAndBanner(output gjson.Result, versionMat *matrix.
 
 	bannerMsg := bannerOutput.Get("banner_msg.b_msg").ClonedString()
 	anRCF := parseRCF(bannerMsg)
-	if anRCF.Filename == "" {
-		v.SLogger.Warn("Failed to parse RCF filename", slog.String("banner", bannerOutput.Raw))
-	}
-
-	if anRCF.Version == "" {
-		v.SLogger.Warn("Failed to parse RCF version", slog.String("banner", bannerOutput.Raw))
-	}
 
 	instance.SetLabel("biosVersion", biosVersion)
 	instance.SetLabel("chassis", chassis)
@@ -145,14 +138,6 @@ func (v *Version) parseVersionAndBanner(output gjson.Result, versionMat *matrix.
 	versionMat.GetMetric(uptime).SetValueFloat64(instance, uptimeSeconds)
 }
 
-var filenameRegex = regexp.MustCompile(`(?m)Filename\s+:\s+(.*?)$`)
-var generatorRegex = regexp.MustCompile(`Generator:\s+([^\s_]+)`)
-var versionRegexes = []*regexp.Regexp{
-	regexp.MustCompile(`Version\s+:\s+(.*?)$`),
-	regexp.MustCompile(`Generator version:\s+([^\s_]+)`),
-	regexp.MustCompile(`version\s+(.*?)\s+`),
-}
-
 type rcf struct {
 	Filename string
 	Version  string
@@ -160,33 +145,40 @@ type rcf struct {
 
 func parseRCF(banner string) rcf {
 
-	var anRCF rcf
+	var r rcf
 
-	parseFilename(banner, &anRCF)
-	parseVersion(banner, &anRCF)
-
-	return anRCF
-}
-
-func parseVersion(banner string, r *rcf) {
-	matches := generatorRegex.FindStringSubmatch(banner)
-	if len(matches) == 2 {
-		r.Version = matches[1]
-		return
+	fields := strings.Fields(banner)
+	if len(fields) == 0 {
+		return r
 	}
+	for i, field := range fields {
+		if r.Filename == "" {
+			if strings.EqualFold(field, "Filename") && i+2 < len(fields) && fields[i+1] == ":" {
+				r.Filename = strings.TrimSpace(fields[i+2])
+			}
+		}
 
-	for _, regex := range versionRegexes {
-		matches = regex.FindStringSubmatch(banner)
-		if len(matches) == 2 {
-			r.Version = matches[1]
-			break
+		if r.Version == "" {
+			if strings.EqualFold(field, "Generator") && i+2 < len(fields) && fields[i+1] == ":" {
+				r.Version = strings.TrimSpace(fields[i+2])
+			}
+			if strings.EqualFold(field, "Generator:") && i+1 < len(fields) {
+				r.Version = strings.TrimSpace(fields[i+1])
+			}
+			if strings.EqualFold(field, "Version") {
+				if i+2 < len(fields) && fields[i+1] == ":" {
+					r.Version = strings.TrimSpace(fields[i+2])
+				} else if i+1 < len(fields) {
+					r.Version = strings.TrimSpace(fields[i+1])
+				}
+			}
+			if strings.EqualFold(field, "Version:") && i+1 < len(fields) {
+				r.Version = strings.TrimSpace(fields[i+1])
+			}
 		}
 	}
-}
 
-func parseFilename(banner string, r *rcf) {
-	matches := filenameRegex.FindStringSubmatch(banner)
-	if len(matches) == 2 {
-		r.Filename = matches[1]
-	}
+	r.Version = strings.TrimSuffix(r.Version, ",")
+
+	return r
 }

@@ -1,5 +1,5 @@
 name:               Environment
-query:              "show environment"
+query:              "show environment ; show environment fan detail"
 object:             cisco_environment
 
 plugins:
