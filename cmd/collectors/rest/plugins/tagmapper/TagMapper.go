@@ -50,7 +50,6 @@ func (t *TagMapper) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *c
 		return nil, nil, nil
 	}
 	for _, instance := range data.GetInstances() {
-		volume := instance.GetLabel("volume")
 		tags := instance.GetLabel("tags")
 		if tags != "" {
 			tagMap := t.parseTagsToMap(tags)
@@ -62,7 +61,7 @@ func (t *TagMapper) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *c
 						t.SLogger.Warn("label already exists",
 							slog.String("label", key),
 							slog.String("value", value),
-							slog.String("volume", volume),
+							slog.String("volume", instance.GetLabel("volume")),
 						)
 					}
 				}
