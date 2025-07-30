@@ -472,6 +472,8 @@ func NewFanModel(output gjson.Result, logger *slog.Logger) FanModel {
 		infoQuery       string
 		trayQuery       string
 	)
+	var fans []*FanData //nolint:prealloc
+
 	// Check if the output is from a 3000 or 9000 switch
 	is3K := output.Get("fandetails_3k").Exists()
 
@@ -517,8 +519,6 @@ func NewFanModel(output gjson.Result, logger *slog.Logger) FanModel {
 
 		return true
 	})
-
-	fans := make([]*FanData, 0, len(fanInfoToModel))
 
 	// Parse fan tray rows and add each fan to the fans slice.
 	rows = output.Get(trayQuery)

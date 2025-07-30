@@ -1405,7 +1405,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "rate(cisco_interface_transmit_bytes{datacenter=~\"$Datacenter\",switch=~\"$Switch\",description!=\"\"}[4m])",
+              "expr": "rate(\n  cisco_interface_transmit_bytes{datacenter=~\"$Datacenter\",description!=\"\",switch=~\"$Switch\"}[4m]\n)",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1414,7 +1414,7 @@
             },
             {
               "exemplar": false,
-              "expr": "rate(cisco_interface_receive_bytes{datacenter=~\"$Datacenter\",switch=~\"$Switch\",description!=\"\"}[4m])",
+              "expr": "rate(cisco_interface_receive_bytes{datacenter=~\"$Datacenter\",description!=\"\",switch=~\"$Switch\"}[4m])",
               "format": "table",
               "hide": false,
               "instant": true,
