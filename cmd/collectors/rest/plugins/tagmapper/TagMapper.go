@@ -59,7 +59,11 @@ func (t *TagMapper) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *c
 					if instance.GetLabel(key) == "" {
 						instance.SetLabel(key, value)
 					} else {
-						t.SLogger.Warn("label already exists", slog.String("label", key), slog.String("value", volume))
+						t.SLogger.Warn("label already exists",
+							slog.String("label", key),
+							slog.String("value", value),
+							slog.String("volume", volume),
+						)
 					}
 				}
 			}
