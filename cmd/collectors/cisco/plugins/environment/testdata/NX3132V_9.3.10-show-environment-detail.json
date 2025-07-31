@@ -1,0 +1,101 @@
+{
+  "fandetails":	{
+    "fan_filter_status":	"NotSupported",
+    "TABLE_fantray":	{
+      "ROW_fantray":	[{
+        "fanname":	"Fan1(sys_fan1)",
+        "trayfannum":	"fan1",
+        "fandir":	"back-to-front",
+        "fanperc":	"83",
+        "fanrpm":	"9981"
+      }, {
+        "fanname":	"Fan1(sys_fan1)",
+        "trayfannum":	"fan2",
+        "fandir":	"back-to-front",
+        "fanperc":	"64",
+        "fanrpm":	"7171"
+      }, {
+        "fanname":	"Fan2(sys_fan2)",
+        "trayfannum":	"fan1",
+        "fandir":	"back-to-front",
+        "fanperc":	"84",
+        "fanrpm":	"10093"
+      }, {
+        "fanname":	"Fan2(sys_fan2)",
+        "trayfannum":	"fan2",
+        "fandir":	"back-to-front",
+        "fanperc":	"64",
+        "fanrpm":	"7171"
+      }, {
+        "fanname":	"Fan3(sys_fan3)",
+        "trayfannum":	"fan1",
+        "fandir":	"back-to-front",
+        "fanperc":	"88",
+        "fanrpm":	"10629"
+      }, {
+        "fanname":	"Fan3(sys_fan3)",
+        "trayfannum":	"fan2",
+        "fandir":	"back-to-front",
+        "fanperc":	"62",
+        "fanrpm":	"7003"
+      }, {
+        "fanname":	"Fan4(sys_fan4)",
+        "trayfannum":	"fan1",
+        "fandir":	"back-to-front",
+        "fanperc":	"83",
+        "fanrpm":	"10074"
+      }, {
+        "fanname":	"Fan4(sys_fan4)",
+        "trayfannum":	"fan2",
+        "fandir":	"back-to-front",
+        "fanperc":	"63",
+        "fanrpm":	"7142"
+      }]
+    },
+    "TABLE_faninfo":	{
+      "ROW_faninfo":	[{
+        "fanname":	"Fan1(sys_fan1)",
+        "fanmodel":	"NXA-FAN-30CFM-F",
+        "fanhwver":	"--",
+        "fandir":	"back-to-front",
+        "fanstatus":	"Ok"
+      }, {
+        "fanname":	"Fan2(sys_fan2)",
+        "fanmodel":	"NXA-FAN-30CFM-F",
+        "fanhwver":	"--",
+        "fandir":	"back-to-front",
+        "fanstatus":	"Ok"
+      }, {
+        "fanname":	"Fan3(sys_fan3)",
+        "fanmodel":	"NXA-FAN-30CFM-F",
+        "fanhwver":	"--",
+        "fandir":	"back-to-front",
+        "fanstatus":	"Ok"
+      }, {
+        "fanname":	"Fan4(sys_fan4)",
+        "fanmodel":	"NXA-FAN-30CFM-F",
+        "fanhwver":	"--",
+        "fandir":	"back-to-front",
+        "fanstatus":	"Ok"
+      }, {
+        "fanname":	"Fan_in_PS1",
+        "fanmodel":	"--",
+        "fanhwver":	"--",
+        "fandir":	"back-to-front",
+        "fanstatus":	"Ok"
+      }, {
+        "fanname":	"Fan_in_PS2",
+        "fanmodel":	"--",
+        "fanhwver":	"--",
+        "fandir":	"back-to-front",
+        "fanstatus":	"Shutdown"
+      }]
+    },
+    "TABLE_fan_zone_speed":	{
+      "ROW_fan_zone_speed":	{
+        "zone":	"1",
+        "zonespeed":	"0x9a"
+      }
+    }
+  }
+}

@@ -20,12 +20,20 @@ counters:
         CiscoCounter: kern_uptm_days, kern_uptm_hrs, kern_uptm_mins, kern_uptm_secs
         Template: conf/ciscorest/nxos/9.3.12/version.yaml
 
-  - Name: cisco_environment_fan_speed
-    Description: Displays zone speed of the fan in the Cisco switch.
+  - Name: cisco_environment_fan_zone_speed
+    Description: Displays the zone fan speed of the Cisco switch.
     APIs:
       - API: NXAPI
-        Endpoint: show environment
-        CiscoCounter: speed OR zonespeed
+        Endpoint: show environment fan detail
+        CiscoCounter: zonespeed
+        Template: conf/ciscorest/nxos/9.3.12/environment.yaml
+
+  - Name: cisco_environment_fan_speed
+    Description: Displays fan speed.
+    APIs:
+      - API: NXAPI
+        Endpoint: show environment fan detail
+        CiscoCounter: speed
         Template: conf/ciscorest/nxos/9.3.12/environment.yaml
 
   - Name: cisco_environment_fan_up

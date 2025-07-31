@@ -27,6 +27,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/svm"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/systemnode"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/tag"
+	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/tagmapper"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/volume"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/volumeanalytics"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/vscanpool"
@@ -529,6 +530,8 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return securityaccount.New(abc)
 	case "Tag":
 		return tag.New(abc)
+	case "TagMapper":
+		return tagmapper.New(abc)
 	case "QosPolicyFixed":
 		return qospolicyfixed.New(abc)
 	case "QosPolicyAdaptive":

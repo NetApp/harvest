@@ -5,7 +5,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 [#1577](https://github.com/NetApp/harvest/issues/1577#issue-1471478260) for details.
 
 ```
-Creation Date : 2025-Jul-22
+Creation Date : 2025-Jul-30
 NX-OS Version: 9.3.12
 ```
 
@@ -138,19 +138,19 @@ The `cisco_cdp_neighbor_labels` metric is visualized in the following Grafana da
 
 ### cisco_environment_fan_speed
 
-Displays zone speed of the fan in the Cisco switch.
+Displays fan speed.
 
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| NXAPI | `show environment` | `speed OR zonespeed` | conf/ciscorest/nxos/9.3.12/environment.yaml |
+| NXAPI | `show environment fan detail` | `speed` | conf/ciscorest/nxos/9.3.12/environment.yaml |
 
 The `cisco_environment_fan_speed` metric is visualized in the following Grafana dashboards:
 
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
-| Cisco: Switch | Highlights | table | [Switch Details](/d/cisco-switch/cisco3a-switch?orgId=1&viewPanel=5) |
+| Cisco: Switch | Temperature and Fan | table | [Fan Details](/d/cisco-switch/cisco3a-switch?orgId=1&viewPanel=18) |
 ///
 
 
@@ -170,6 +170,25 @@ The `cisco_environment_fan_up` metric is visualized in the following Grafana das
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | Cisco: Switch | Temperature and Fan | table | [Fan Details](/d/cisco-switch/cisco3a-switch?orgId=1&viewPanel=18) |
+///
+
+
+
+### cisco_environment_fan_zone_speed
+
+Displays the zone fan speed of the Cisco switch.
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| NXAPI | `show environment fan detail` | `zonespeed` | conf/ciscorest/nxos/9.3.12/environment.yaml |
+
+The `cisco_environment_fan_zone_speed` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| Cisco: Switch | Highlights | table | [Switch Details](/d/cisco-switch/cisco3a-switch?orgId=1&viewPanel=5) |
 ///
 
 
@@ -346,7 +365,8 @@ The `cisco_interface_receive_bytes` metric is visualized in the following Grafan
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
-| Cisco: Switch | Traffic | timeseries | [Top $TopResources Interface Receive Traffic](/d/cisco-switch/cisco3a-switch?orgId=1&viewPanel=29) |
+| Cisco: Switch | Traffic | table | [Traffic on Switch](/d/cisco-switch/cisco3a-switch?orgId=1&viewPanel=48) |
+| Cisco: Switch | Traffic | timeseries | [Top $TopResources Interface Receive Throughput](/d/cisco-switch/cisco3a-switch?orgId=1&viewPanel=29) |
 ///
 
 
@@ -403,7 +423,8 @@ The `cisco_interface_transmit_bytes` metric is visualized in the following Grafa
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
-| Cisco: Switch | Traffic | timeseries | [Top $TopResources Interface Transmit Traffic](/d/cisco-switch/cisco3a-switch?orgId=1&viewPanel=28) |
+| Cisco: Switch | Traffic | table | [Traffic on Switch](/d/cisco-switch/cisco3a-switch?orgId=1&viewPanel=48) |
+| Cisco: Switch | Traffic | timeseries | [Top $TopResources Interface Send Throughput](/d/cisco-switch/cisco3a-switch?orgId=1&viewPanel=28) |
 ///
 
 

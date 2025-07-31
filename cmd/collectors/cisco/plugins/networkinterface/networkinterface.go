@@ -9,6 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
+	"strings"
 	"time"
 )
 
@@ -159,6 +160,11 @@ func (i *Interface) parseInterface(output gjson.Result, envMat *matrix.Matrix) {
 
 		instance.SetLabel("interface", interfaceName)
 		instance.SetLabel("mac", macAddr)
+
+		desc = strings.TrimPrefix(desc, `"`)
+		desc = strings.TrimSuffix(desc, `"`)
+		desc = strings.TrimSpace(desc)
+
 		instance.SetLabel("description", desc)
 		instance.SetLabel("speed", ethSpeed)
 
