@@ -29,7 +29,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &LLDP{AbstractPlugin: p}
 }
 
-func (l *LLDP) Init(_ conf.Remote) error {
+func (l *LLDP) Init(remote conf.Remote) error {
 	var (
 		client *rest.Client
 		err    error
@@ -43,6 +43,10 @@ func (l *LLDP) Init(_ conf.Remote) error {
 
 	if client, err = rest.New(conf.ZapiPoller(l.ParentParams), timeout, l.Auth); err != nil {
 		return fmt.Errorf("error creating new client: %w", err)
+	}
+
+	if err := client.Init(2, remote); err != nil {
+		return err
 	}
 
 	l.client = client
@@ -109,10 +113,6 @@ func (l *LLDP) parseLLDP(output gjson.Result, mat *matrix.Matrix) {
 
 	rows.ForEach(func(_, value gjson.Result) bool {
 		lldpModel := NewLLDPModel(value)
-		// Skip empty models
-		if lldpModel.DeviceID == "" {
-			return true
-		}
 		models = append(models, lldpModel)
 		return true
 	})
@@ -125,12 +125,13 @@ func (l *LLDP) parseLLDP(output gjson.Result, mat *matrix.Matrix) {
 			continue
 		}
 
-		instance.SetLabel("device_id", model.DeviceID)
-		instance.SetLabel("description", model.Description)
+		instance.SetLabel("remote_name", model.RemoteName)
+		instance.SetLabel("remote_platform", model.RemotePlatform)
 		instance.SetLabel("chassis", model.ChassisID)
-		instance.SetLabel("local_interface", model.LocalInterface)
-		instance.SetLabel("port_id", model.PortID)
+		instance.SetLabel("local_port", model.LocalPort)
+		instance.SetLabel("remote_port", model.RemotePort)
 		instance.SetLabel("capabilities", strings.Join(model.Capabilities, ","))
+		instance.SetLabel("local_platform", l.client.Remote().Serial)
 
 		mat.GetMetric(labels).SetValueFloat64(instance, 1.0)
 	}
@@ -139,10 +140,11 @@ func (l *LLDP) parseLLDP(output gjson.Result, mat *matrix.Matrix) {
 type Model struct {
 	Capabilities   []string
 	ChassisID      string
-	Description    string
-	DeviceID       string
-	LocalInterface string
-	PortID         string
+	RemotePlatform string
+	RemoteName     string
+	LocalPort      string
+	RemotePort     string
+	RemoteDesc     string
 	TTL            int64
 }
 
@@ -150,13 +152,24 @@ func NewLLDPModel(output gjson.Result) Model {
 
 	var m Model
 
-	m.DeviceID = output.Get("sys_name").ClonedString()
-	m.Description = output.Get("sys_desc").ClonedString()
+	m.RemoteName = output.Get("sys_name").ClonedString()
+	m.RemotePlatform = output.Get("sys_desc").ClonedString()
 	m.ChassisID = output.Get("chassis_id").ClonedString()
-	m.LocalInterface = output.Get("l_port_id").ClonedString()
+	m.LocalPort = output.Get("l_port_id").ClonedString()
 	m.TTL = output.Get("ttl").Int()
-	m.PortID = output.Get("port_id").ClonedString()
+	m.RemotePort = output.Get("port_id").ClonedString()
+	m.RemoteDesc = output.Get("port_desc").ClonedString()
 	m.Capabilities = lldpCapabilities(output.Get("enabled_capability").String())
+
+	if m.RemotePlatform == "null" {
+		m.RemotePlatform = ""
+	}
+	if m.RemoteName == "null" {
+		m.RemoteName = ""
+	}
+	if m.RemoteDesc == "null" {
+		m.RemoteDesc = ""
+	}
 
 	return m
 }

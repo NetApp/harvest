@@ -10,6 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
+	"math"
 	"strconv"
 	"strings"
 	"time"
@@ -18,6 +19,7 @@ import (
 var metrics = []string{
 	"fan_up",
 	"fan_speed",
+	"fan_zone_speed",
 	"power_capacity",
 	"power_in",
 	"power_mode",
@@ -76,13 +78,17 @@ func (e *Environment) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 	data.Reset()
 
 	command := e.ParentParams.GetChildContentS("query")
-	output, err := e.client.CLIShowArray(command)
+	output, err := e.client.CLIShow(command)
 
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to fetch data: %w", err)
 	}
 
-	e.parseEnvironment(output, envMat)
+	envOutput := output.Get("output.0.body")
+	fanDetailsOutput := output.Get("output.1.body")
+
+	e.parseEnvironment(envOutput, envMat)
+	e.parseFanDetails(fanDetailsOutput, envMat)
 
 	e.client.Metadata.NumCalls = 1
 	e.client.Metadata.BytesRx = uint64(len(output.Raw))
@@ -104,11 +110,10 @@ func (e *Environment) initMatrix(name string) (*matrix.Matrix, error) {
 	return mat, nil
 }
 
-func (e *Environment) parseEnvironment(output gjson.Result, envMat *matrix.Matrix) {
-	content := output.Get("output.body")
+func (e *Environment) parseEnvironment(content gjson.Result, envMat *matrix.Matrix) {
 	e.parseTemperature(content, envMat)
 	e.parsePower(content, envMat)
-	e.parseFan(content, envMat)
+	e.parseFanZoneSpeed(content, envMat)
 }
 
 func (e *Environment) parseTemperature(output gjson.Result, envMat *matrix.Matrix) {
@@ -149,26 +154,32 @@ func (e *Environment) parseTemperature(output gjson.Result, envMat *matrix.Matri
 	})
 }
 
-func (e *Environment) parseFan(output gjson.Result, envMat *matrix.Matrix) {
-	model := NewFanModel(output, e.SLogger)
+var hexReplacer = strings.NewReplacer("0x", "", "0X", "")
 
-	for _, f := range model.fans {
-		instanceKey := f.name
-		instance, err := envMat.NewInstance(instanceKey)
-		if err != nil {
-			e.SLogger.Warn("Failed to create instance", slog.String("key", instanceKey))
-			continue
-		}
+func (e *Environment) parseFanZoneSpeed(output gjson.Result, envMat *matrix.Matrix) {
 
-		instance.SetLabel("status", f.status)
-		instance.SetLabel("name", f.name)
+	const (
+		query3k = "fandetails_3k.TABLE_fan_zone_speed.ROW_fan_zone_speed.speed"
+		query9k = "fandetails.TABLE_fan_zone_speed.ROW_fan_zone_speed.zonespeed"
+	)
 
-		fanUpMetric := envMat.GetMetric("fan_up")
-		if f.status == "Ok" {
-			fanUpMetric.SetValueFloat64(instance, 1)
-		} else {
-			fanUpMetric.SetValueFloat64(instance, 0)
-		}
+	query := query3k
+	fanSpeed := output.Get(query)
+	if !fanSpeed.Exists() {
+		query = query9k
+		fanSpeed = output.Get(query)
+	}
+	if !fanSpeed.Exists() {
+		e.SLogger.Warn("Unable to parse fan speed because rows are missing", slog.String("query", query))
+		return
+	}
+
+	speed := hexReplacer.Replace(fanSpeed.String())
+	zoneSpeed, err := strconv.ParseInt(speed, 16, 64)
+
+	if err != nil {
+		e.SLogger.Warn("error parsing fan_zone_speed", slog.Any("err", err), slog.String("zoneSpeed", speed))
+		return
 	}
 
 	instanceKey := ""
@@ -177,7 +188,11 @@ func (e *Environment) parseFan(output gjson.Result, envMat *matrix.Matrix) {
 		e.SLogger.Warn("Failed to create instance", slog.String("key", instanceKey))
 		return
 	}
-	envMat.GetMetric("fan_speed").SetValueFloat64(instance, float64(model.speed))
+
+	// Calculate the fan zone speed as a percentage
+	fanZonePerc := math.Round(float64(zoneSpeed) / 255 * 100)
+
+	envMat.GetMetric("fan_zone_speed").SetValueFloat64(instance, fanZonePerc)
 }
 
 func (e *Environment) parsePower(output gjson.Result, envMat *matrix.Matrix) {
@@ -228,6 +243,38 @@ func (e *Environment) setRedundancyMode(key string, mode string, envMat *matrix.
 	envMat.GetMetric("power_mode").SetValueFloat64(instance, 1.0)
 }
 
+func (e *Environment) parseFanDetails(output gjson.Result, envMat *matrix.Matrix) {
+	model := NewFanModel(output, e.SLogger)
+
+	for _, f := range model.Fans {
+		instanceKey := f.Name + "-" + f.TrayFanNum
+		instance, err := envMat.NewInstance(instanceKey)
+		if err != nil {
+			e.SLogger.Warn("Failed to create instance", slog.String("key", instanceKey))
+			continue
+		}
+
+		instance.SetLabel("name", f.Name)
+		instance.SetLabel("model", f.Model)
+		instance.SetLabel("status", strings.ToLower(f.Status))
+		instance.SetLabel("fan_num", f.TrayFanNum)
+
+		fanUpMetric := envMat.GetMetric("fan_up")
+		if f.Status == "ok" {
+			fanUpMetric.SetValueFloat64(instance, 1)
+		} else {
+			fanUpMetric.SetValueFloat64(instance, 0)
+		}
+
+		if f.Speed < 0 {
+			continue
+		}
+
+		fanSpeedMetric := envMat.GetMetric("fan_speed")
+		fanSpeedMetric.SetValueFloat64(instance, float64(f.Speed))
+	}
+}
+
 // PowerModel represents the power metrics of the device and is needed
 // to normalize the differences we see between Cisco 3000 and 9000 switches.
 // Cisco 3K switches include total power but do not include power for individual power supplies.
@@ -241,13 +288,15 @@ type PowerModel struct {
 }
 
 type FanModel struct {
-	fans  []FanData
-	speed int64
+	Fans []*FanData
 }
 
 type FanData struct {
-	name   string
-	status string
+	Name       string
+	Model      string
+	Speed      int    // Speed is a percentage value from 0 to 100. Default to -1 to indicate not set
+	TrayFanNum string // TrayFanNum is the fan number in the tray, e.g. "fan1" or "fan2"
+	Status     string
 }
 
 type PowerSupply struct {
@@ -379,89 +428,138 @@ func newPowerModel3K(output gjson.Result, logger *slog.Logger) PowerModel {
 	return powerModel
 }
 
+// NewFanModel creates a new FanModel from the provided output and logger.
+// It parses the fan information and fan tray information to populate the FanModel.
+// It supports both Cisco 3000 and 9000 series switches by checking the output structure
+// and using the appropriate queries for each series.
+// The FanModel contains a slice of FanData, which includes the fan name, status, model, and speed.
+// If the output does not contain the expected data, it logs a warning and returns an empty FanModel.
+// A quirk about the NX-API response is that the number of returned fan_info and fan_tray objects do not match.
+// This is because the fan_info objects show a summary, while the fan_tray objects are for individual fans.
+// e.g.
+// show environment fan detail
+// Fan:
+// ---------------------------------------------------------------------------
+// Fan             Model                Hw     Direction       Status
+// ---------------------------------------------------------------------------
+// Fan1(sys_fan1)  NXA-FAN-30CFM-F      --     back-to-front   Ok
+// Fan2(sys_fan2)  NXA-FAN-30CFM-F      --     back-to-front   Ok
+// Fan3(sys_fan3)  NXA-FAN-30CFM-F      --     back-to-front   Ok
+// Fan4(sys_fan4)  NXA-FAN-30CFM-F      --     back-to-front   Ok
+// Fan_in_PS1      --                   --     back-to-front   Ok
+// Fan_in_PS2      --                   --     back-to-front   Ok
+// Fan Zone Speed: Zone 1: 0x9a
+// Fan Air Filter : NotSupported
+// Fan:
+// ------------------------------------------------------------------
+// Fan Name          Fan Num   Fan Direction   Speed(%)  Speed(RPM)
+// ------------------------------------------------------------------
+// Fan1(sys_fan1)      fan1    back-to-front    85        10305
+// Fan1(sys_fan1)      fan2    back-to-front    64        7219
+// Fan2(sys_fan2)      fan1    back-to-front    86        10364
+// Fan2(sys_fan2)      fan2    back-to-front    64        7277
+// Fan3(sys_fan3)      fan1    back-to-front    84        10188
+// Fan3(sys_fan3)      fan2    back-to-front    64        7200
+// Fan4(sys_fan4)      fan1    back-to-front    83        10055
+// Fan4(sys_fan4)      fan2    back-to-front    64        7190
+
 func NewFanModel(output gjson.Result, logger *slog.Logger) FanModel {
-	var fanModel FanModel
+	var (
+		fanModel        FanModel
+		fanInfoToModel  = make(map[string]*FanData) // Map to hold fan data by name, e.g. Fan1(sys_fan1) => FanData
+		fanInfoCount    = make(map[string]int)
+		fanAddedToModel = make(map[string]bool)
+		infoQuery       string
+		trayQuery       string
+	)
+	var fans []*FanData //nolint:prealloc
+
 	// Check if the output is from a 3000 or 9000 switch
 	is3K := output.Get("fandetails_3k").Exists()
+
+	const (
+		fanInfoQuery3K = "fandetails_3k.TABLE_faninfo.ROW_faninfo"
+		fanTrayQuery3K = "fandetails_3k.TABLE_fantray.ROW_fantray"
+		fanInfoQuery9K = "fandetails.TABLE_faninfo.ROW_faninfo"
+		fanTrayQuery9K = "fandetails.TABLE_fantray.ROW_fantray"
+	)
+
 	if is3K {
-		fanModel = newFanModel3K(output, logger)
+		infoQuery = fanInfoQuery3K
+		trayQuery = fanTrayQuery3K
 	} else {
-		fanModel = newFanModel9K(output, logger)
+		infoQuery = fanInfoQuery9K
+		trayQuery = fanTrayQuery9K
 	}
-	return fanModel
-}
 
-func newFanModel9K(output gjson.Result, logger *slog.Logger) FanModel {
-	var fans []FanData
-	var err error
-	fanModel := FanModel{}
-	rowQuery := "fandetails.TABLE_faninfo.ROW_faninfo"
-	rows := output.Get(rowQuery)
+	fanModel = FanModel{}
 
+	// Parse fan info rows first to build map of FanData
+
+	rows := output.Get(infoQuery)
 	if !rows.Exists() {
-		logger.Warn("Unable to parse power because rows are missing", slog.String("query", rowQuery))
+		logger.Warn("Unable to parse fan because rows are missing", slog.String("query", infoQuery))
 		return fanModel
 	}
 
 	rows.ForEach(func(_, value gjson.Result) bool {
 		fanName := value.Get("fanname").ClonedString()
-		fanStatus := value.Get("fanstatus").ClonedString()
-		f := FanData{
-			name:   fanName,
-			status: fanStatus,
+		fanStatus := strings.ToLower(value.Get("fanstatus").ClonedString())
+		model := value.Get("fanmodel").ClonedString()
+
+		newFan := FanData{
+			Name:   fanName,
+			Status: fanStatus,
+			Model:  model,
+			Speed:  -1, // Default speed to -1 to indicate not set
 		}
-		fans = append(fans, f)
+
+		fanInfoToModel[fanName] = &newFan
+		fanAddedToModel[fanName] = false
+
 		return true
 	})
 
-	fanModel.fans = fans
-
-	fanSpeedQuery := "fandetails.TABLE_fan_zone_speed.ROW_fan_zone_speed.zonespeed"
-	fanSpeeds := output.Get(fanSpeedQuery)
-
-	if !fanSpeeds.Exists() {
-		logger.Warn("Unable to parse fan speed because rows are missing", slog.String("query", fanSpeedQuery))
-		return fanModel
-	}
-
-	fanSpeed := fanSpeeds.String()
-	speed := strings.ReplaceAll(strings.ReplaceAll(fanSpeed, "0x", ""), "0X", "")
-	fanModel.speed, err = strconv.ParseInt(speed, 16, 64)
-	if err != nil {
-		logger.Warn("error parsing version", slog.Any("err", err))
-	}
-
-	return fanModel
-}
-
-func newFanModel3K(output gjson.Result, logger *slog.Logger) FanModel {
-	var fans []FanData
-	var err error
-	fanModel := FanModel{}
-	rowQuery := "fandetails_3k.TABLE_faninfo.ROW_faninfo"
-	rows := output.Get(rowQuery)
-
+	// Parse fan tray rows and add each fan to the fans slice.
+	rows = output.Get(trayQuery)
 	if !rows.Exists() {
-		logger.Warn("Unable to parse fan because rows are missing", slog.String("query", rowQuery))
+		logger.Warn("Unable to parse fan tray because rows are missing", slog.String("query", trayQuery))
 		return fanModel
 	}
 
 	rows.ForEach(func(_, value gjson.Result) bool {
 		fanName := value.Get("fanname").ClonedString()
-		fanStatus := value.Get("fanstatus").ClonedString()
-		f := FanData{
-			name:   fanName,
-			status: fanStatus,
+		fanSpeed := value.Get("fanperc").Int()
+
+		fanInfoCount[fanName]++
+
+		// If the fan already exists in the fanInfoToModel map, update its speed
+		if existingFan, exists := fanInfoToModel[fanName]; exists {
+			fanAddedToModel[fanName] = true
+			clone := *existingFan
+			clone.Speed = int(fanSpeed)
+			clone.TrayFanNum = "fan" + strconv.Itoa(fanInfoCount[fanName]) // e.g. "fan1", "fan2"
+			fans = append(fans, &clone)
+		} else {
+			// If the fan does not exist, we will create a new FanData instance below
+			logger.Warn("Fan not found in fanInfoToModel", slog.String("fanName", fanName))
+			return true
 		}
-		fans = append(fans, f)
+
 		return true
 	})
-	fanModel.fans = fans
-	fanSpeed := output.Get("fandetails_3k.TABLE_fan_zone_speed.ROW_fan_zone_speed.0.speed").String()
-	speed := strings.ReplaceAll(strings.ReplaceAll(fanSpeed, "0x", ""), "0X", "")
-	fanModel.speed, err = strconv.ParseInt(speed, 16, 64)
-	if err != nil {
-		logger.Warn("error parsing version", slog.Any("err", err))
+
+	// Include all the fans from the fanInfoToModel map that were not added yet
+	for fanName, fanData := range fanInfoToModel {
+		if fanAddedToModel[fanName] {
+			continue
+		}
+
+		fans = append(fans, fanData)
+		fanAddedToModel[fanName] = true
 	}
+
+	fanModel.Fans = fans
+
 	return fanModel
 }
