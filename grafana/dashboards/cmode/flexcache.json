@@ -107,7 +107,7 @@
       },
       "id": 105,
       "options": {
-        "content": "\nThis dashboard requires Zapi/ZapiPerf Collector. It is currently not available via Rest Collector.",
+        "content": "\nThis dashboard requires either the Zapi/ZapiPerf or the Rest/StatPerf Collector.",
         "mode": "markdown"
       },
       "pluginVersion": "8.1.8",
