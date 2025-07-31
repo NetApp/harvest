@@ -1549,6 +1549,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#cisco_environment_fan_zone_speed" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_environment_fan_zone_speed
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#cisco_environment_power_capacity" class="md-nav__link">
     <span class="md-ellipsis">
       cisco_environment_power_capacity
@@ -2023,6 +2032,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#cisco_environment_fan_zone_speed" class="md-nav__link">
+    <span class="md-ellipsis">
+      cisco_environment_fan_zone_speed
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#cisco_environment_power_capacity" class="md-nav__link">
     <span class="md-ellipsis">
       cisco_environment_power_capacity
@@ -2375,7 +2393,7 @@ Replace RO_USER, PASSWORD, and CISCO_SWITCH_IP with your actual read-only userna
 </table>
 </div>
 <h3 id="cisco_environment_fan_speed">cisco_environment_fan_speed<a class="headerlink" href="#cisco_environment_fan_speed" title="Permanent link">&para;</a></h3>
-<p>Displays zone speed of the fan in the Cisco switch.</p>
+<p>Displays fan speed.</p>
 <table>
 <thead>
 <tr>
@@ -2388,8 +2406,8 @@ Replace RO_USER, PASSWORD, and CISCO_SWITCH_IP with your actual read-only userna
 <tbody>
 <tr>
 <td>NXAPI</td>
-<td><code>show environment</code></td>
-<td><code>speed OR zonespeed</code></td>
+<td><code>show environment fan detail</code></td>
+<td><code>speed</code></td>
 <td>conf/ciscorest/nxos/9.3.12/environment.yaml</td>
 </tr>
 </tbody>
@@ -2408,9 +2426,9 @@ Replace RO_USER, PASSWORD, and CISCO_SWITCH_IP with your actual read-only userna
 <tbody>
 <tr>
 <td>Cisco: Switch</td>
-<td>Highlights</td>
+<td>Temperature and Fan</td>
 <td>table</td>
-<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=5">Switch Details</a></td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=18">Fan Details</a></td>
 </tr>
 </tbody>
 </table>
@@ -2452,6 +2470,47 @@ Replace RO_USER, PASSWORD, and CISCO_SWITCH_IP with your actual read-only userna
 <td>Temperature and Fan</td>
 <td>table</td>
 <td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=18">Fan Details</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="cisco_environment_fan_zone_speed">cisco_environment_fan_zone_speed<a class="headerlink" href="#cisco_environment_fan_zone_speed" title="Permanent link">&para;</a></h3>
+<p>Displays the zone fan speed of the Cisco switch.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NXAPI</td>
+<td><code>show environment fan detail</code></td>
+<td><code>zonespeed</code></td>
+<td>conf/ciscorest/nxos/9.3.12/environment.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>cisco_environment_fan_zone_speed</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cisco: Switch</td>
+<td>Highlights</td>
+<td>table</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=5">Switch Details</a></td>
 </tr>
 </tbody>
 </table>
@@ -2855,8 +2914,14 @@ Replace RO_USER, PASSWORD, and CISCO_SWITCH_IP with your actual read-only userna
 <tr>
 <td>Cisco: Switch</td>
 <td>Traffic</td>
+<td>table</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=48">Traffic on Switch</a></td>
+</tr>
+<tr>
+<td>Cisco: Switch</td>
+<td>Traffic</td>
 <td>timeseries</td>
-<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=29">Top $TopResources Interface Receive Traffic</a></td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=29">Top $TopResources Interface Receive Throughput</a></td>
 </tr>
 </tbody>
 </table>
@@ -2978,8 +3043,14 @@ Replace RO_USER, PASSWORD, and CISCO_SWITCH_IP with your actual read-only userna
 <tr>
 <td>Cisco: Switch</td>
 <td>Traffic</td>
+<td>table</td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=48">Traffic on Switch</a></td>
+</tr>
+<tr>
+<td>Cisco: Switch</td>
+<td>Traffic</td>
 <td>timeseries</td>
-<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=28">Top $TopResources Interface Transmit Traffic</a></td>
+<td><a href="/d/cisco-switch/cisco3a-switch?orgId=1&amp;viewPanel=28">Top $TopResources Interface Send Throughput</a></td>
 </tr>
 </tbody>
 </table>
