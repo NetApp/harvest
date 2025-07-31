@@ -1,10 +1,12 @@
 package environment
 
 import (
-	"github.com/google/go-cmp/cmp"
+	"cmp"
+	diff "github.com/google/go-cmp/cmp"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"os"
+	"slices"
 	"testing"
 )
 
@@ -49,7 +51,7 @@ func TestNewPowerModel(t *testing.T) {
 				t.Errorf("failed to read %s file: %v", tt.input, err)
 			}
 			got := NewPowerModel(gjson.ParseBytes(data), slog.Default())
-			diff1 := cmp.Diff(tt.want, got)
+			diff1 := diff.Diff(tt.want, got)
 			if diff1 != "" {
 				t.Errorf("Mismatch (-got +want):\n%s", diff1)
 			}
@@ -91,10 +93,22 @@ func TestFanSpeed(t *testing.T) {
 				t.Errorf("failed to read %s file: %v", tt.input, err)
 			}
 			got := NewFanModel(gjson.ParseBytes(data), slog.Default())
-			diff1 := cmp.Diff(tt.want, got)
+			sortFans(got.Fans)
+			sortFans(tt.want.Fans)
+			diff1 := diff.Diff(tt.want, got)
 			if diff1 != "" {
 				t.Errorf("Mismatch (-got +want):\n%s", diff1)
 			}
 		})
 	}
+}
+
+// SortFans sorts the fans slice by Name and TrayFanNum
+func sortFans(fans []*FanData) {
+	slices.SortFunc(fans, func(a, b *FanData) int {
+		if a.Name == b.Name {
+			return cmp.Compare(a.TrayFanNum, b.TrayFanNum)
+		}
+		return cmp.Compare(a.Name, b.Name)
+	})
 }
