@@ -5,6 +5,7 @@ import (
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"os"
+	"sort"
 	"testing"
 )
 
@@ -91,10 +92,22 @@ func TestFanSpeed(t *testing.T) {
 				t.Errorf("failed to read %s file: %v", tt.input, err)
 			}
 			got := NewFanModel(gjson.ParseBytes(data), slog.Default())
+			sortFans(got.Fans)
+			sortFans(tt.want.Fans)
 			diff1 := cmp.Diff(tt.want, got)
 			if diff1 != "" {
 				t.Errorf("Mismatch (-got +want):\n%s", diff1)
 			}
 		})
 	}
+}
+
+// SortFans sorts the fans slice by Name and TrayFanNum
+func sortFans(fans []*FanData) {
+	sort.Slice(fans, func(i, j int) bool {
+		if fans[i].Name == fans[j].Name {
+			return fans[i].TrayFanNum < fans[j].TrayFanNum
+		}
+		return fans[i].Name < fans[j].Name
+	})
 }
