@@ -11,7 +11,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"log/slog"
 )
@@ -25,8 +24,6 @@ type Volume struct {
 	includeConstituents bool
 	client              *zapi.Client
 	volumesMap          map[string]string // volume-name -> volume-extended-style map
-	zombieVolumeMatrix  *matrix.Matrix
-	volumePastOpsMap    map[string]collectors.OpsData
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -62,14 +59,6 @@ func (v *Volume) Init(remote conf.Remote) error {
 		return err
 	}
 
-	v.zombieVolumeMatrix = matrix.New(".Volume", "volume_zombie", "volume_zombie")
-	metricName := "exist"
-	_, err = v.zombieVolumeMatrix.NewMetricFloat64(metricName)
-	if err != nil {
-		v.SLogger.Error("add metric", slogx.Err(err), slog.String("key", metricName))
-		return err
-	}
-
 	return v.client.Init(5, remote)
 }
 
@@ -90,7 +79,7 @@ func (v *Volume) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *coll
 	}
 
 	v.currentVal++
-	return collectors.ProcessFlexGroupData(v.SLogger, data, style, v.includeConstituents, opsKeyPrefix, v.volumesMap, true, v.zombieVolumeMatrix, v.volumePastOpsMap, "exist")
+	return collectors.ProcessFlexGroupData(v.SLogger, data, style, v.includeConstituents, opsKeyPrefix, v.volumesMap, true)
 }
 
 func (v *Volume) fetchVolumes() (map[string]string, error) {
