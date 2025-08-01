@@ -32,3 +32,11 @@ var IsONTAPCollector = map[string]struct{}{
 	"KeyPerf":  {},
 	"Ems":      {},
 }
+
+func IsPingableCollector(collector string) bool {
+	switch collector {
+	case "Simple", "Unix":
+		return false
+	}
+	return true
+}
