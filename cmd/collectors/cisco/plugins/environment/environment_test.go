@@ -1,7 +1,7 @@
 package environment
 
 import (
-	"github.com/google/go-cmp/cmp"
+	diff "github.com/google/go-cmp/cmp"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"os"
@@ -49,7 +49,7 @@ func TestNewPowerModel(t *testing.T) {
 				t.Errorf("failed to read %s file: %v", tt.input, err)
 			}
 			got := NewPowerModel(gjson.ParseBytes(data), slog.Default())
-			diff1 := cmp.Diff(tt.want, got)
+			diff1 := diff.Diff(tt.want, got)
 			if diff1 != "" {
 				t.Errorf("Mismatch (-got +want):\n%s", diff1)
 			}
@@ -91,7 +91,7 @@ func TestFanSpeed(t *testing.T) {
 				t.Errorf("failed to read %s file: %v", tt.input, err)
 			}
 			got := NewFanModel(gjson.ParseBytes(data), slog.Default())
-			diff1 := cmp.Diff(tt.want, got)
+			diff1 := diff.Diff(got, tt.want)
 			if diff1 != "" {
 				t.Errorf("Mismatch (-got +want):\n%s", diff1)
 			}

@@ -100,7 +100,6 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 	data := dataMap[v.Object]
 	v.client.Metadata.Reset()
 
-	cluster := data.GetGlobalLabels()["cluster"]
 	clusterVersion := v.client.Remote().Version
 	ontapVersion, err := goversion.NewVersion(clusterVersion)
 	if err != nil {
@@ -145,7 +144,7 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 			}
 		} else {
 			explorerMatrix := v.data[explorer]
-			for index, record := range records {
+			for _, record := range records {
 				name := record.Get("name").ClonedString()
 				fileCount := record.Get("analytics.file_count").ClonedString()
 				bytesUsed := record.Get("analytics.bytes_used").ClonedString()
@@ -164,7 +163,6 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 					continue
 				}
 				instance.SetLabel("dir_name", name)
-				instance.SetLabel("index", cluster+"_"+strconv.Itoa(index))
 				// copy all labels
 				for k1, v1 := range dataInstance.GetLabels() {
 					instance.SetLabel(k1, v1)
