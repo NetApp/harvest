@@ -15,7 +15,8 @@ import (
 // as labels on matrix instances for configured tag keys.
 type TagMapper struct {
 	*plugin.AbstractPlugin
-	tags *set.Set
+	tags           *set.Set
+	exportedLabels *set.Set // Track what's already in export_options
 }
 
 // New creates a new TagMapper plugin instance.
@@ -29,14 +30,23 @@ func (t *TagMapper) Init(_ conf.Remote) error {
 	}
 	tagMapper := t.Params.GetChildren()
 	t.tags = set.New()
+	t.exportedLabels = set.New()
 	for _, tag := range tagMapper {
 		t.tags.Add(tag.GetContentS())
 	}
 	exportOption := t.ParentParams.GetChildS("export_options")
 	if exportOption != nil {
 		if exportedLabels := exportOption.GetChildS("instance_labels"); exportedLabels != nil {
+			// Add existing labels to our tracking set
+			for _, label := range exportedLabels.GetChildren() {
+				t.exportedLabels.Add(label.GetContentS())
+			}
+
 			for _, label := range t.tags.Values() {
-				exportedLabels.NewChildS("", label)
+				if !t.exportedLabels.Has(label) {
+					exportedLabels.NewChildS("", label)
+					t.exportedLabels.Add(label)
+				}
 			}
 		}
 	}
@@ -45,18 +55,22 @@ func (t *TagMapper) Init(_ conf.Remote) error {
 
 func (t *TagMapper) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[t.Object]
-	if t.tags.IsEmpty() {
-		t.SLogger.Warn("No tags are configured in plugin")
-		return nil, nil, nil
-	}
 	for _, instance := range data.GetInstances() {
 		tags := instance.GetLabel("tags")
 		if tags != "" {
 			tagMap := t.parseTagsToMap(tags)
 			for key, value := range tagMap {
-				if t.tags.Has(key) {
+				// If no tags are configured, set all parsed tags as labels
+				// If tags are configured, only set labels for configured tags
+				if t.tags.IsEmpty() || t.tags.Has(key) {
 					if instance.GetLabel(key) == "" {
 						instance.SetLabel(key, value)
+
+						// If tags is empty, add to export_options instance_labels if not already present
+						if t.tags.IsEmpty() && !t.exportedLabels.Has(key) {
+							t.addToExportOptions(key)
+							t.exportedLabels.Add(key) // Track that we've added it
+						}
 					} else {
 						t.SLogger.Warn("label already exists",
 							slog.String("label", key),
@@ -69,6 +83,21 @@ func (t *TagMapper) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *c
 		}
 	}
 	return nil, nil, nil
+}
+
+func (t *TagMapper) addToExportOptions(labelKey string) {
+	exportOption := t.ParentParams.GetChildS("export_options")
+	if exportOption == nil {
+		exportOption = t.ParentParams.NewChildS("export_options", "")
+	}
+
+	instanceLabels := exportOption.GetChildS("instance_labels")
+	if instanceLabels == nil {
+		instanceLabels = exportOption.NewChildS("instance_labels", "")
+	}
+
+	// No need to check if exists - we already track this in memory
+	instanceLabels.NewChildS("", labelKey)
 }
 
 func (t *TagMapper) parseTagsToMap(tags string) map[string]string {

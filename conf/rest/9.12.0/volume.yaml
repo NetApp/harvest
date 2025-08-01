@@ -117,6 +117,7 @@ plugins:
         - volume `MDV_CRS_.+`
         - volume `MDV_aud_.+`
 #  - ChangeLog
+#  - TagMapper
 
 export_options:
   instance_keys:
