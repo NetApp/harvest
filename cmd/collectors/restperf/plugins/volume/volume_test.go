@@ -5,14 +5,14 @@ import (
 	volume2 "github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/volume"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/volume"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
+	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"log/slog"
 	"strconv"
 	"testing"
-
-	"github.com/netapp/harvest/v2/cmd/poller/plugin"
-	"github.com/netapp/harvest/v2/pkg/matrix"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
 )
 
 const OpsKeyPrefix = "temp_"
@@ -65,6 +65,8 @@ func runVolumeTest(t *testing.T, createVolume func(params *node.Node) plugin.Plu
 	opsMetric, _ := data.NewMetricFloat64("read_ops")
 	opsMetric.SetProperty("rate")
 
+	totalOpsMetric, _ := data.NewMetricFloat64("total_ops")
+
 	// Set metric values for the instances
 	latencyMetric.SetValueFloat64(instance1, 20)
 	opsMetric.SetValueFloat64(instance1, 4)
@@ -74,6 +76,7 @@ func runVolumeTest(t *testing.T, createVolume func(params *node.Node) plugin.Plu
 
 	latencyMetric.SetValueFloat64(instance3, 40)
 	opsMetric.SetValueFloat64(instance3, 10)
+	totalOpsMetric.SetValueFloat64(simpleInstance, 80)
 
 	// Optionally set one metric value to NaN
 	if setMetricNaN {
@@ -84,6 +87,14 @@ func runVolumeTest(t *testing.T, createVolume func(params *node.Node) plugin.Plu
 	// Set metric values for the simple volume instance
 	latencyMetric.SetValueFloat64(simpleInstance, 50)
 	opsMetric.SetValueFloat64(simpleInstance, 5)
+
+	zombieVolumeMatrix := matrix.New(".Volume", "volume_zombie", "volume_zombie")
+	metricName := "exist"
+	_, err := zombieVolumeMatrix.NewMetricFloat64(metricName)
+	if err != nil {
+		t.Error("add metric", slogx.Err(err), slog.String("key", metricName))
+		return
+	}
 
 	// Run the plugin
 	boolValue, _ := strconv.ParseBool(includeConstituents)

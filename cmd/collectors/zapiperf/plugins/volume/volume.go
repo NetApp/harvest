@@ -58,6 +58,7 @@ func (v *Volume) Init(remote conf.Remote) error {
 		v.SLogger.Error("connecting", slog.Any("err", err))
 		return err
 	}
+
 	return v.client.Init(5, remote)
 }
 
