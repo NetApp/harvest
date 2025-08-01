@@ -542,6 +542,9 @@ func (p *Poller) Run() {
 	upCollectors := 0
 	upExporters := 0
 
+	// warm-up ping to avoid cold start effects of first ping
+	_, _ = p.ping()
+
 	for {
 		if task.IsDue() {
 			task.Start()
