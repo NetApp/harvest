@@ -465,12 +465,10 @@ func newPowerModel3K(output gjson.Result, logger *slog.Logger) PowerModel {
 
 func NewFanModel(output gjson.Result, logger *slog.Logger) FanModel {
 	var (
-		fanModel        FanModel
-		fanInfoToModel  = make(map[string]*FanData) // Map to hold fan data by name, e.g. Fan1(sys_fan1) => FanData
-		fanInfoCount    = make(map[string]int)
-		fanAddedToModel = make(map[string]bool)
-		infoQuery       string
-		trayQuery       string
+		fanModel       FanModel
+		fanInfoToModel = make(map[string][]*FanData) // Map to hold a slice of fan data by name, e.g. Fan1(sys_fan1) => []*FanData{FanData1, FanData2}
+		infoQuery      string
+		trayQuery      string
 	)
 	var fans []*FanData //nolint:prealloc
 
@@ -494,34 +492,11 @@ func NewFanModel(output gjson.Result, logger *slog.Logger) FanModel {
 
 	fanModel = FanModel{}
 
-	// Parse fan info rows first to build map of FanData
+	// Parse the trays, add each fan to the fans slice, and the map of slices.
+	// Then parse the fan info rows to update the fan with model and status.
+	// Finally, add the missing rows that were not in the trays.
 
-	rows := output.Get(infoQuery)
-	if !rows.Exists() {
-		logger.Warn("Unable to parse fan because rows are missing", slog.String("query", infoQuery))
-		return fanModel
-	}
-
-	rows.ForEach(func(_, value gjson.Result) bool {
-		fanName := value.Get("fanname").ClonedString()
-		fanStatus := strings.ToLower(value.Get("fanstatus").ClonedString())
-		model := value.Get("fanmodel").ClonedString()
-
-		newFan := FanData{
-			Name:   fanName,
-			Status: fanStatus,
-			Model:  model,
-			Speed:  -1, // Default speed to -1 to indicate not set
-		}
-
-		fanInfoToModel[fanName] = &newFan
-		fanAddedToModel[fanName] = false
-
-		return true
-	})
-
-	// Parse fan tray rows and add each fan to the fans slice.
-	rows = output.Get(trayQuery)
+	rows := output.Get(trayQuery)
 	if !rows.Exists() {
 		logger.Warn("Unable to parse fan tray because rows are missing", slog.String("query", trayQuery))
 		return fanModel
@@ -530,34 +505,50 @@ func NewFanModel(output gjson.Result, logger *slog.Logger) FanModel {
 	rows.ForEach(func(_, value gjson.Result) bool {
 		fanName := value.Get("fanname").ClonedString()
 		fanSpeed := value.Get("fanperc").Int()
+		numFans := len(fanInfoToModel[fanName]) + 1
 
-		fanInfoCount[fanName]++
-
-		// If the fan already exists in the fanInfoToModel map, update its speed
-		if existingFan, exists := fanInfoToModel[fanName]; exists {
-			fanAddedToModel[fanName] = true
-			clone := *existingFan
-			clone.Speed = int(fanSpeed)
-			clone.TrayFanNum = "fan" + strconv.Itoa(fanInfoCount[fanName]) // e.g. "fan1", "fan2"
-			fans = append(fans, &clone)
-		} else {
-			// If the fan does not exist, we will create a new FanData instance below
-			logger.Warn("Fan not found in fanInfoToModel", slog.String("fanName", fanName))
-			return true
+		newFan := FanData{
+			Name:       fanName,
+			Speed:      int(fanSpeed),
+			TrayFanNum: "fan" + strconv.Itoa(numFans), // e.g. "fan1", "fan2"
 		}
+
+		fanInfoToModel[fanName] = append(fanInfoToModel[fanName], &newFan)
+		fans = append(fans, &newFan)
 
 		return true
 	})
 
-	// Include all the fans from the fanInfoToModel map that were not added yet
-	for fanName, fanData := range fanInfoToModel {
-		if fanAddedToModel[fanName] {
-			continue
+	// Parse the info table and add each fan to the fans slice.
+	rows = output.Get(infoQuery)
+	if !rows.Exists() {
+		logger.Warn("Unable to parse fan info because rows are missing", slog.String("query", infoQuery))
+		return fanModel
+	}
+
+	rows.ForEach(func(_, value gjson.Result) bool {
+		fanName := value.Get("fanname").ClonedString()
+		fanStatus := strings.ToLower(value.Get("fanstatus").ClonedString())
+		model := value.Get("fanmodel").ClonedString()
+
+		// If fans already exists in the fanInfoToModel map, update their status and model
+		if existingFans, exists := fanInfoToModel[fanName]; exists {
+			for _, fan := range existingFans {
+				fan.Status = fanStatus
+				fan.Model = model
+			}
+		} else {
+			newFan := FanData{
+				Name:   fanName,
+				Speed:  -1,
+				Model:  model,
+				Status: fanStatus,
+			}
+			fans = append(fans, &newFan)
 		}
 
-		fans = append(fans, fanData)
-		fanAddedToModel[fanName] = true
-	}
+		return true
+	})
 
 	fanModel.Fans = fans
 
