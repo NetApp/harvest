@@ -59,7 +59,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1743756496809,
+  "iteration": 1753980542589,
   "links": [
     {
       "asDropdown": true,
@@ -351,7 +351,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (node_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    sum by (cluster) (\n      avg_over_time(node_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+              "expr": "sum by (cluster) (\n    volume_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\"}\n  )\nand\n  topk(\n    $TopResources,\n    sum by (cluster) (\n      avg_over_time(\n        volume_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\"}[3h] @ end()\n      )\n    )\n  )",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -633,7 +633,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "max by (cluster) (node_total_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    max by (cluster) (\n      avg_over_time(node_total_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+              "expr": "max by (cluster) (node_volume_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    max by (cluster) (\n      avg_over_time(node_volume_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"

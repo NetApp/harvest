@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1744119002662,
+  "iteration": 1753980290928,
   "links": [
     {
       "asDropdown": true,
@@ -446,7 +446,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "topk($TopResources, sum by (node) (node_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
+          "expr": "topk(\n  $TopResources,\n  sum by (node) (node_volume_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n)",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -590,7 +590,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "topk($TopResources, sum by (node) (node_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
+          "expr": "topk(\n  $TopResources,\n  sum by (node) (node_volume_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n)",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -710,7 +710,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "sum by (node) (\n    (node_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n  and\n    topk(\n      5,\n      (avg_over_time(node_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node!=\"\"}[3h] @ end()))\n    )\n)",
+          "expr": "sum by (node) (\n    (\n        node_volume_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n      +\n        node_volume_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n    )\n  and\n    topk(\n      5,\n      (\n          avg_over_time(\n            node_volume_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node!=\"\"}[3h] @ end()\n          )\n        +\n          avg_over_time(\n            node_volume_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node!=\"\"}[3h] @ end()\n          )\n      )\n    )\n)",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -830,7 +830,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "sum by (node) (node_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    sum by (node) (\n      avg_over_time(node_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node!=\"\"}[3h])\n    )\n  )",
+          "expr": "sum by (node) (node_volume_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    sum by (node) (\n      avg_over_time(node_volume_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node!=\"\"}[3h])\n    )\n  )",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -1235,7 +1235,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "sum by (node) (node_total_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    sum by (node) (\n      avg_over_time(node_total_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node!=\"\"}[3h])\n    )\n  )",
+          "expr": "sum by (node) (node_volume_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    sum by (node) (\n      avg_over_time(node_volume_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node!=\"\"}[3h])\n    )\n  )",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -1327,7 +1327,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "sum by (node) (\n    (node_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n  and\n    topk(\n      5,\n      (avg_over_time(node_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node!=\"\"}[3h] @ end()))\n    )\n)",
+          "expr": "sum by (node) (\n    (\n        node_volume_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n      +\n        node_volume_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n    )\n  and\n    topk(\n      5,\n      (\n          avg_over_time(\n            node_volume_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node!=\"\"}[3h] @ end()\n          )\n        +\n          avg_over_time(\n            node_volume_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node!=\"\"}[3h] @ end()\n          )\n      )\n    )\n)",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -1420,7 +1420,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "sum by (node) (node_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    sum by (node) (\n      avg_over_time(node_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node!=\"\"}[3h])\n    )\n  )",
+          "expr": "sum by (node) (node_volume_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    sum by (node) (\n      avg_over_time(node_volume_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node!=\"\"}[3h])\n    )\n  )",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -2778,7 +2778,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 35
+        "y": 38
       },
       "id": 97,
       "panels": [
@@ -2842,7 +2842,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 36
+            "y": 39
           },
           "id": 106,
           "options": {
@@ -2863,7 +2863,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "max by (cluster) (node_total_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
+              "expr": "max by (cluster) (\n  volume_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\"}\n)",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -2934,7 +2934,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 36
+            "y": 39
           },
           "id": 107,
           "options": {
@@ -2955,7 +2955,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (node_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
+              "expr": "sum by (cluster) (\n  volume_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\"}\n)",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -3027,7 +3027,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 36
+            "y": 39
           },
           "id": 108,
           "options": {
@@ -3048,7 +3048,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (cluster) (node_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
+              "expr": "sum by (cluster) (\n  volume_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\"}\n)",
               "interval": "",
               "legendFormat": "{{cluster}}",
               "refId": "A"
@@ -3121,7 +3121,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 44
+            "y": 47
           },
           "id": 136,
           "options": {
@@ -3215,7 +3215,7 @@
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 44
+            "y": 47
           },
           "id": 180,
           "options": {
@@ -3309,7 +3309,7 @@
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 44
+            "y": 47
           },
           "id": 2,
           "options": {
@@ -3403,7 +3403,7 @@
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 53
+            "y": 56
           },
           "id": 241,
           "options": {
@@ -3446,7 +3446,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 36
+        "y": 39
       },
       "id": 184,
       "panels": [
@@ -4133,7 +4133,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 37
+        "y": 40
       },
       "id": 214,
       "panels": [
@@ -4411,7 +4411,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 38
+        "y": 41
       },
       "id": 482,
       "panels": [

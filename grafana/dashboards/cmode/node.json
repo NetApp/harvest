@@ -77,7 +77,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1744117699632,
+  "iteration": 1753980389710,
   "links": [
     {
       "asDropdown": true,
@@ -309,7 +309,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(node_total_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+          "expr": "avg(node_volume_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -365,7 +365,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(node_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+          "expr": "sum(node_volume_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -421,7 +421,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(node_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+          "expr": "sum(node_volume_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -567,7 +567,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg by (node) (node_total_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+          "expr": "avg by (node) (node_volume_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -658,7 +658,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum by (node) (node_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+          "expr": "sum by (node) (node_volume_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})\n+\n  sum by (node) (node_volume_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -750,7 +750,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum by (node) (node_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+          "expr": "sum by (node) (node_volume_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "{{node}}",
           "refId": "A"
@@ -2237,21 +2237,21 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "avg(node_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+              "expr": "avg(node_volume_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "Read",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "avg(node_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+              "expr": "avg(node_volume_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "Write",
               "refId": "B"
             },
             {
               "exemplar": false,
-              "expr": "avg(node_other_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+              "expr": "avg(node_volume_other_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "Other",
               "refId": "C"
@@ -2342,7 +2342,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(node_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+              "expr": "sum(node_volume_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "interval": "",
               "intervalFactor": 1,
               "legendFormat": "Read",
@@ -2350,7 +2350,7 @@
             },
             {
               "exemplar": false,
-              "expr": "sum(node_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+              "expr": "sum(node_volume_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "interval": "",
               "intervalFactor": 1,
               "legendFormat": "Write",
@@ -2443,21 +2443,21 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(node_read_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+              "expr": "sum(node_volume_read_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "Read",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "sum(node_write_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+              "expr": "sum(node_volume_write_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "Write",
               "refId": "B"
             },
             {
               "exemplar": false,
-              "expr": "sum(node_other_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
+              "expr": "sum(node_volume_other_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "Other",
               "refId": "C"
