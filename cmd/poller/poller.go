@@ -679,9 +679,9 @@ func (p *Poller) handleSignals(signalChannel chan os.Signal) {
 	}
 }
 
-// If the target is available, return the ping time in milliseconds and true
-// If the target is not available, return 0 and false
-// If the target is not pingable, return 0 and true
+// If the target is available, return the TCP connection time in milliseconds and true.
+// If the target is not available, return 0 and false.
+// If the target is not eligible for a TCP connection check, return 0 and true.
 func (p *Poller) ping() (float32, bool) {
 
 	isPingable := false
@@ -698,7 +698,7 @@ func (p *Poller) ping() (float32, bool) {
 
 	// If the host includes a port, use that port, otherwise use portsToTry
 	target := p.target
-	portsToTry := []int{443, 80}
+	portsToTry := []int{443}
 
 	// Extract host and port. This also handles IPv6
 	if host, port, err := net.SplitHostPort(target); err == nil {
