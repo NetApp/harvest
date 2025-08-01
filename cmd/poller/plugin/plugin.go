@@ -155,8 +155,8 @@ func (p *AbstractPlugin) Run(map[string]*matrix.Matrix) ([]*matrix.Matrix, *coll
 }
 
 func (p *AbstractPlugin) SetPluginInterval() int {
-	pollInterval := GetInterval(p.ParentParams, DefaultPollInterval)
-	pluginInterval := GetInterval(p.Params, DefaultPluginInterval)
+	pollInterval := p.GetInterval(p.ParentParams, DefaultPollInterval)
+	pluginInterval := p.GetInterval(p.Params, DefaultPluginInterval)
 	p.PluginInvocationRate = int(pluginInterval / pollInterval)
 	p.SLogger.Debug(
 		"SetPluginInterval",
@@ -167,7 +167,7 @@ func (p *AbstractPlugin) SetPluginInterval() int {
 	return p.PluginInvocationRate
 }
 
-func GetInterval(param *node.Node, defaultInterval time.Duration) float64 {
+func (p *AbstractPlugin) GetInterval(param *node.Node, defaultInterval time.Duration) float64 {
 	if param != nil {
 		schedule := param.GetChildS("schedule")
 		if schedule != nil {

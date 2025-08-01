@@ -1,0 +1,33 @@
+name:                     VolumeUnused
+query:                    api/private/cli/volume
+object:                   volume
+
+schedule:
+  - data:      1h  # should be 1h, 1d, 1m, 1w, 1y
+
+counters:
+  - ^^volume
+  - ^^vserver                                     => svm
+  - ^aggr_list                                    => aggr
+  - ^nodes                                        => node
+  - ^uuid                                         => uuid
+  - filter:
+      - vsroot=false
+      - type=!dp
+
+plugins:
+  - VolumeUnused:
+#      schedule:
+#        - data: 1h  # should be 1h, 1d, 1m, 1w, 1y
+  - LabelAgent:
+      # Ignore transient volumes, e.g. SnapProtect, SnapManager, SnapCenter, CommVault, Clone, and Metadata volumes
+      exclude_regex:
+        - volume `.+_CVclone`
+        - volume `.+(0[1-9]|[12][0-9]|3[01])(0[1-9]|1[012])\d\d[0-9]{6}`
+        - volume `cl_.+_(19|20)\d\d(0[1-9]|1[012])( 0[1-9]|[12][0-9]|3[01])[0-9]{6}`
+        - volume `sdw_cl_.+`
+        - volume `MDV_CRS_.+`
+        - volume `MDV_aud_.+`
+
+
+export_data: false
