@@ -59,7 +59,6 @@ var zapiCounterMap = map[string]struct{}{
 	"volume_total_metadata_footprint": {},
 	// Skip fpolicy_svm_failedop_notifications as it is not available in 9.9
 	"fpolicy_svm_failedop_notifications": {},
-	"volume_unused_labels":               {},
 }
 
 // restCounterMap are additional counters, above and beyond the ones from counterMap, which should be excluded from Rest
@@ -130,6 +129,7 @@ var excludeCounters = []string{
 	"qtree_nfs_",
 	"qtree_total_",
 	"qtree_internal_",
+	"volume_unused_labels",
 }
 
 var flakyCounters = []string{

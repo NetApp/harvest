@@ -2217,7 +2217,7 @@ counters:
         ONTAPCounter: transmit_raw.packets
         Template: conf/keyperf/9.15.0/ethernet_switch_port.yaml
 
-  - Name: volume_unused
+  - Name: volume_unused_labels
     Description: Displays the list of volumes which are not been used in past user specified interval.
     APIs:
       - API: REST
