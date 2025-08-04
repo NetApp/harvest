@@ -68,12 +68,11 @@ import (
 	"io"
 	"log/slog"
 	"math"
+	"net"
 	"net/http"
 	_ "net/http/pprof" // #nosec since pprof is off by default
 	"os"
-	"os/exec"
 	"os/signal"
-	"regexp"
 	"runtime"
 	"slices"
 	"strconv"
@@ -111,8 +110,6 @@ var SIGNALS = []os.Signal{
 var deprecatedCollectors = map[string]string{
 	"psutil": "Unix",
 }
-
-var pingRegex = regexp.MustCompile(` = (.*?)/`)
 
 // Poller is the instance that starts and monitors a
 // group of collectors and exporters as a single UNIX process
@@ -545,6 +542,9 @@ func (p *Poller) Run() {
 	upCollectors := 0
 	upExporters := 0
 
+	// warm-up ping to avoid cold start effects of first ping
+	_, _ = p.ping()
+
 	for {
 		if task.IsDue() {
 			task.Start()
@@ -682,27 +682,52 @@ func (p *Poller) handleSignals(signalChannel chan os.Signal) {
 	}
 }
 
-// ping target system, report if it's available or not
-// and if available, response time
+// If the target is available, return the TCP connection time in milliseconds and true.
+// If the target is not available, return 0 and false.
+// If the target is not eligible for a TCP connection check, return 0 and true.
 func (p *Poller) ping() (float32, bool) {
 
-	cmd := exec.Command("ping", p.target, "-W", "5", "-c", "1", "-q") //nolint:gosec
-	output, err := cmd.Output()
-	if err != nil {
-		return 0, false
-	}
-	return p.parsePing(string(output))
-}
-
-func (p *Poller) parsePing(out string) (float32, bool) {
-	if strings.Contains(out, "min/avg/max") {
-		match := pingRegex.FindStringSubmatch(out)
-		if len(match) > 0 {
-			if p, err := strconv.ParseFloat(match[1], 32); err == nil {
-				return float32(p), true
-			}
+	isPingable := false
+	for _, col := range p.collectors {
+		if conf.IsPingableCollector(col.GetName()) {
+			isPingable = true
+			break
 		}
 	}
+
+	if !isPingable {
+		return 0, true
+	}
+
+	// If the host includes a port, use that port, otherwise use portsToTry
+	target := p.target
+	portsToTry := []int{443}
+
+	// Extract host and port. This also handles IPv6
+	if host, port, err := net.SplitHostPort(target); err == nil {
+		if parsedPort, err := strconv.Atoi(port); err == nil && parsedPort > 0 && parsedPort <= 65535 {
+			portsToTry = []int{parsedPort}
+			target = host
+		} else {
+			logger.Error("invalid port in target", slog.String("target", p.target), slog.String("port", port))
+			return 0, false
+		}
+	}
+
+	// Attempt to connect to each port, returning after the first successful connection
+	for _, port := range portsToTry {
+		address := net.JoinHostPort(target, strconv.Itoa(port))
+		start := time.Now()
+		conn, err := net.DialTimeout("tcp", address, 5*time.Second)
+		if err != nil {
+			logger.Error("ping failed", slog.String("address", address), slogx.Err(err))
+			continue
+		}
+		elapsed := time.Since(start)
+		_ = conn.Close()
+		return float32(elapsed) / float32(time.Millisecond), true
+	}
+
 	return 0, false
 }
 
