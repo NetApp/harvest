@@ -109,7 +109,6 @@ func (v *VolumeUnused) getHistoryData(data *matrix.Matrix) {
 			Build()
 
 		if result, err = collectors.InvokeRestCall(v.client, href); err != nil {
-			v.SLogger.Warn("Failed to collect volume history data", slog.String("href", href), slog.String("uuid", uuid), slog.String("vol", vol))
 			continue
 		}
 
