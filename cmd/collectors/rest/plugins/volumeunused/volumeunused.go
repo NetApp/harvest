@@ -17,6 +17,7 @@ import (
 
 type VolumeUnused struct {
 	*plugin.AbstractPlugin
+	currentVal    int
 	client        *rest.Client
 	volHistoryMap map[string]volHistory // volume-key -> volHistory map
 	unused        *matrix.Matrix
@@ -24,6 +25,7 @@ type VolumeUnused struct {
 
 type volHistory struct {
 	svm      string
+	node     string
 	volume   string
 	totalOps []float64
 }
@@ -42,6 +44,9 @@ func (v *VolumeUnused) Init(remote conf.Remote) error {
 
 	v.volHistoryMap = make(map[string]volHistory)
 
+	// Assigned the value to currentVal so that plugin would be invoked first time to populate cache.
+	v.currentVal = v.SetPluginInterval()
+
 	if v.Options.IsTest {
 		return nil
 	}
@@ -56,13 +61,14 @@ func (v *VolumeUnused) Init(remote conf.Remote) error {
 		return err
 	}
 
-	v.unused = matrix.New(v.Parent+".Volume", "volume", "volume")
+	v.unused = matrix.New(v.Parent+".VolumeUnused", "volume_unused", "volume_unused")
 	exportOptions := node.NewS("export_options")
 	instanceKeys := exportOptions.NewChildS("instance_keys", "")
 	instanceKeys.NewChildS("", "svm")
+	instanceKeys.NewChildS("", "node")
 	instanceKeys.NewChildS("", "volume")
 	v.unused.SetExportOptions(exportOptions)
-	_, err = v.unused.NewMetricFloat64("unused", "unused")
+	_, err = v.unused.NewMetricFloat64("labels", "labels")
 	if err != nil {
 		v.SLogger.Error("add metric", slogx.Err(err))
 		return err
@@ -74,8 +80,12 @@ func (v *VolumeUnused) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix,
 	data := dataMap[v.Object]
 	v.client.Metadata.Reset()
 
-	// invoke volume history data
-	v.getHistoryData(data)
+	if v.currentVal >= v.PluginInvocationRate {
+		v.currentVal = 0
+
+		// invoke volume history data
+		v.getHistoryData(data)
+	}
 	// Based on the unused volumes in volHistoryMap, volume_unused instances/metrics would be created
 	v.handleUnusedVolumes(data.GetGlobalLabels())
 
@@ -89,6 +99,7 @@ func (v *VolumeUnused) getHistoryData(data *matrix.Matrix) {
 		href           string
 		uuid           string
 		svm            string
+		nodeName       string
 		vol            string
 		err            error
 	)
@@ -99,8 +110,9 @@ func (v *VolumeUnused) getHistoryData(data *matrix.Matrix) {
 	for key, volume := range data.GetInstances() {
 		uuid = volume.GetLabel("uuid")
 		svm = volume.GetLabel("svm")
+		nodeName = volume.GetLabel("node")
 		vol = volume.GetLabel("volume")
-		fields := []string{"svm.name", "timestamp", "duration", "iops.total"}
+		fields := []string{"timestamp", "duration", "iops.total"}
 		query := "api/storage/volumes/" + uuid + "/metrics"
 		href = rest.NewHrefBuilder().
 			APIPath(query).
@@ -117,7 +129,7 @@ func (v *VolumeUnused) getHistoryData(data *matrix.Matrix) {
 			totalIops := volumeHistory.Get("iops.total").Float()
 			totalIopsSlice = append(totalIopsSlice, totalIops)
 		}
-		v.volHistoryMap[key] = volHistory{svm: svm, volume: vol, totalOps: totalIopsSlice}
+		v.volHistoryMap[key] = volHistory{svm: svm, node: nodeName, volume: vol, totalOps: totalIopsSlice}
 	}
 }
 
@@ -151,7 +163,8 @@ func (v *VolumeUnused) handleUnusedVolumes(globalLabels map[string]string) {
 
 		unusedInstance.SetLabel("volume", volumeHistories.volume)
 		unusedInstance.SetLabel("svm", volumeHistories.svm)
-		m := v.unused.GetMetric("unused")
+		unusedInstance.SetLabel("node", volumeHistories.node)
+		m := v.unused.GetMetric("labels")
 		// populate numeric data
 		m.SetValueFloat64(unusedInstance, 1.0)
 	}

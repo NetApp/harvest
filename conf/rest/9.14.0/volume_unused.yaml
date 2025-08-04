@@ -1,9 +1,6 @@
 name:                     VolumeUnused
 query:                    api/private/cli/volume
-object:                   volume
-
-schedule:
-  - data:      1h  # should be 1h, 1d, 1m, 1w, 1y
+object:                   volume_unused
 
 counters:
   - ^^volume
@@ -17,8 +14,8 @@ counters:
 
 plugins:
   - VolumeUnused:
-#      schedule:
-#        - data: 1h  # should be 1h, 1d, 1m, 1w, 1y
+      schedule:
+        - data: 1h  # should be 1h, 1d, 1m, 1w, 1y
   - LabelAgent:
       # Ignore transient volumes, e.g. SnapProtect, SnapManager, SnapCenter, CommVault, Clone, and Metadata volumes
       exclude_regex:
