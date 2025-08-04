@@ -149,7 +149,7 @@ func (v *VolumeUnused) handleUnusedVolumes(globalLabels map[string]string) {
 	for key, volumeHistories := range v.volHistoryMap {
 		maxValue := slices.Max(volumeHistories.totalOps)
 		minValue := slices.Min(volumeHistories.totalOps)
-		if (maxValue - minValue) > 1 {
+		if (maxValue - minValue) > 10 {
 			continue
 		}
 		if unusedInstance, err = v.unused.NewInstance(key); err != nil {
