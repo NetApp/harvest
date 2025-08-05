@@ -723,3 +723,13 @@ events:
       - parameters.fileid      => fileid
       - parameters.vol         => vol
       - parameters.volident   => volident
+
+  - name: callhome.sfo.personality
+    exports:
+      - parameters.subject      => subject
+
+  - name: wafl.mount.transient.error
+    exports:
+      - parameters.vvolname      => volume_name
+      - parameters.uuid          => uuid
+      - parameters.reason        => reason
