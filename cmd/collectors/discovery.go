@@ -153,7 +153,7 @@ func checkStorageGrid(pollerName string, cred *auth.Credentials) (conf.Remote, e
 		return conf.Remote{}, err
 	}
 
-	timeout, _ := time.ParseDuration(ciscorest.DefaultTimeout)
+	timeout, _ := time.ParseDuration(sgrest.DefaultTimeout)
 	client, err = sgrest.New(poller, timeout, cred)
 	if err != nil {
 		return conf.Remote{}, err
