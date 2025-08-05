@@ -9,6 +9,7 @@ counters:
   - ^clone_parent_name                            => clone_parent_volume
   - ^clone_parent_vserver                         => clone_parent_svm
   - ^clone_volume                                 => is_flexclone
+  - ^comment                                      => comment
   - ^is_encrypted                                 => isEncrypted
   - ^is_sis_volume                                => is_sis_volume
   - ^is_space_enforcement_logical                 => is_space_enforcement_logical
@@ -132,6 +133,7 @@ export_options:
     - clone_parent_snapshot
     - clone_parent_svm
     - clone_parent_volume
+    - comment
     - isDestinationCloud
     - isDestinationOntap
     - isEncrypted
