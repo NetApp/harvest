@@ -276,7 +276,7 @@ func (c *Client) Init(retries int, remote conf.Remote) error {
 
 	c.Remote = remote
 
-	if !remote.IsZero() {
+	if !remote.IsZero() && c.APIPath != "" {
 		return nil
 	}
 

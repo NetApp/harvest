@@ -3,28 +3,29 @@ package collectors
 import (
 	"errors"
 	ciscorest "github.com/netapp/harvest/v2/cmd/collectors/cisco/rest"
+	sgrest "github.com/netapp/harvest/v2/cmd/collectors/storagegrid/rest"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
 	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"net/http"
-	"strings"
 	"time"
 )
 
-func GatherClusterInfo(pollerName string, cred *auth.Credentials, cols []conf.Collector) (conf.Remote, error) {
-
-	for _, col := range cols {
-		if strings.HasPrefix(col.Name, "Cisco") {
-			return checkCiscoRest(pollerName, cred)
-		}
-	}
-
+func GatherClusterInfo(pollerName string, cred *auth.Credentials) (conf.Remote, error) {
 	remoteZapi, errZapi := checkZapi(pollerName, cred)
 	remoteRest, errRest := checkRest(pollerName, cred)
 
 	return MergeRemotes(remoteZapi, remoteRest, errZapi, errRest)
+}
+
+func GatherCiscoSwitchInfo(pollerName string, cred *auth.Credentials) (conf.Remote, error) {
+	return checkCiscoRest(pollerName, cred)
+}
+
+func GatherStorageGridInfo(pollerName string, cred *auth.Credentials) (conf.Remote, error) {
+	return checkStorageGrid(pollerName, cred)
 }
 
 func MergeRemotes(remoteZapi conf.Remote, remoteRest conf.Remote, errZapi error, errRest error) (conf.Remote, error) {
@@ -138,4 +139,29 @@ func checkCiscoRest(pollerName string, cred *auth.Credentials) (conf.Remote, err
 	}
 
 	return client.Remote(), nil
+}
+
+func checkStorageGrid(pollerName string, cred *auth.Credentials) (conf.Remote, error) {
+
+	var (
+		poller *conf.Poller
+		client *sgrest.Client
+		err    error
+	)
+
+	if poller, err = conf.PollerNamed(pollerName); err != nil {
+		return conf.Remote{}, err
+	}
+
+	timeout, _ := time.ParseDuration(sgrest.DefaultTimeout)
+	client, err = sgrest.New(poller, timeout, cred)
+	if err != nil {
+		return conf.Remote{}, err
+	}
+
+	if err := client.Init(1, conf.Remote{}); err != nil {
+		return conf.Remote{}, err
+	}
+
+	return client.Remote, nil
 }

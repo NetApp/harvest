@@ -32,6 +32,22 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"log/slog"
+	"math"
+	"net"
+	"net/http"
+	_ "net/http/pprof" // #nosec since pprof is off by default
+	"os"
+	"os/signal"
+	"runtime"
+	"slices"
+	"strconv"
+	"strings"
+	"sync"
+	"syscall"
+	"time"
+
 	"github.com/goccy/go-yaml"
 	"github.com/goccy/go-yaml/ast"
 	"github.com/goccy/go-yaml/parser"
@@ -65,21 +81,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	goversion "github.com/netapp/harvest/v2/third_party/go-version"
 	"github.com/spf13/cobra"
-	"io"
-	"log/slog"
-	"math"
-	"net"
-	"net/http"
-	_ "net/http/pprof" // #nosec since pprof is off by default
-	"os"
-	"os/signal"
-	"runtime"
-	"slices"
-	"strconv"
-	"strings"
-	"sync"
-	"syscall"
-	"time"
 )
 
 // default params
@@ -303,7 +304,7 @@ func (p *Poller) Init() error {
 		return errs.New(errs.ErrNoCollector, "no collectors")
 	}
 
-	p.negotiateONTAPAPI(filteredCollectors)
+	filteredCollectors = p.negotiateAPI(filteredCollectors)
 
 	objectsToCollectors := make(map[string][]objectCollector)
 	for _, c := range filteredCollectors {
@@ -1541,37 +1542,121 @@ func (p *Poller) sendHarvestVersion() error {
 	return nil
 }
 
-func (p *Poller) negotiateONTAPAPI(cols []conf.Collector) {
-	if !p.CollectorHasVersion(cols) {
-		return
+func (p *Poller) negotiateAPI(cols []conf.Collector) []conf.Collector {
+	ontapCols := p.filterONTAPCollectors(cols)
+	ciscoCols := p.filterCiscoCollectors(cols)
+	sgCols := p.filterStorageGridCollectors(cols)
+	otherCols := p.filterOtherCollectors(cols)
+
+	var validCollectors []conf.Collector
+
+	if len(ontapCols) > 0 {
+		if p.negotiateConnection("ONTAP") {
+			validCollectors = append(validCollectors, ontapCols...)
+		} else {
+			logger.Warn("ONTAP connection failed, skipping ONTAP collectors")
+		}
 	}
 
-	remote, err := collectors.GatherClusterInfo(opts.Poller, p.auth, cols)
+	if len(ciscoCols) > 0 {
+		if p.negotiateConnection("Cisco") {
+			validCollectors = append(validCollectors, ciscoCols...)
+		} else {
+			logger.Warn("Cisco connection failed, skipping Cisco collectors")
+		}
+	}
+
+	if len(sgCols) > 0 {
+		if p.negotiateConnection("StorageGrid") {
+			validCollectors = append(validCollectors, sgCols...)
+		} else {
+			logger.Warn("Storage Grid connection failed, skipping StorageGrid collectors")
+		}
+	}
+
+	// Include other collectors without connection validation
+	if len(otherCols) > 0 {
+		validCollectors = append(validCollectors, otherCols...)
+		logger.Debug("including other collectors", slog.Int("count", len(otherCols)))
+	}
+
+	return validCollectors
+}
+
+func (p *Poller) filterOtherCollectors(cols []conf.Collector) []conf.Collector {
+	otherCollectors := make([]conf.Collector, 0, len(cols))
+	for _, c := range cols {
+		if _, ok := conf.IsONTAPCollector[c.Name]; ok {
+			continue
+		}
+		if c.Name == "CiscoRest" || c.Name == "StorageGrid" {
+			continue
+		}
+		// Include everything else
+		otherCollectors = append(otherCollectors, c)
+	}
+	return otherCollectors
+}
+
+func (p *Poller) negotiateConnection(connectionType string) bool {
+	var remote conf.Remote
+	var err error
+
+	switch connectionType {
+	case "ONTAP":
+		remote, err = collectors.GatherClusterInfo(opts.Poller, p.auth)
+	case "Cisco":
+		remote, err = collectors.GatherCiscoSwitchInfo(opts.Poller, p.auth)
+	case "StorageGrid":
+		remote, err = collectors.GatherStorageGridInfo(opts.Poller, p.auth)
+	default:
+		logger.Warn("unknown connection type", slog.String("type", connectionType))
+		return false
+	}
+
 	if err != nil {
-		logger.Warn("gather cluster info", slog.Any("remote", remote), slog.Any("remoteErr", err))
+		logger.Warn("gather remote info failed",
+			slog.String("connectionType", connectionType),
+			slog.Any("remote", remote),
+			slogx.Err(err))
+		return false
 	}
 
 	p.remote = remote
-
 	if remote.Version != "" {
 		slog.Info("Cluster info", slog.Any("remote", remote))
 	}
+	return true
 }
 
-func (p *Poller) CollectorHasVersion(cols []conf.Collector) bool {
-	hasVersion := false
+func (p *Poller) filterONTAPCollectors(cols []conf.Collector) []conf.Collector {
+	var ontapCollectors []conf.Collector
 	for _, c := range cols {
 		if _, ok := conf.IsONTAPCollector[c.Name]; ok {
-			hasVersion = true
-			break
-		}
-		if c.Name == "CiscoRest" {
-			hasVersion = true
-			break
+			ontapCollectors = append(ontapCollectors, c)
 		}
 	}
+	return ontapCollectors
+}
 
-	return hasVersion
+func (p *Poller) filterCiscoCollectors(cols []conf.Collector) []conf.Collector {
+	var ciscoCollectors []conf.Collector
+	for _, c := range cols {
+		if c.Name == "CiscoRest" {
+			ciscoCollectors = append(ciscoCollectors, c)
+		}
+	}
+	return ciscoCollectors
+}
+
+func (p *Poller) filterStorageGridCollectors(cols []conf.Collector) []conf.Collector {
+	var sgCollectors []conf.Collector
+	for _, c := range cols {
+		if c.Name == "StorageGrid" {
+			sgCollectors = append(sgCollectors, c)
+		}
+	}
+	return sgCollectors
 }
 
 func (p *Poller) truncateReason(msg string) string {
