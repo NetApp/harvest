@@ -1600,18 +1600,14 @@ func (p *Poller) filterOtherCollectors(cols []conf.Collector) []conf.Collector {
 func (p *Poller) negotiateConnection(connectionType string) bool {
 	var remote conf.Remote
 	var err error
-	var logMsg string
 
 	switch connectionType {
 	case "ONTAP":
 		remote, err = collectors.GatherClusterInfo(opts.Poller, p.auth)
-		logMsg = "Cluster info"
 	case "Cisco":
 		remote, err = collectors.GatherCiscoSwitchInfo(opts.Poller, p.auth)
-		logMsg = "Cisco switch info"
 	case "StorageGrid":
 		remote, err = collectors.GatherStorageGridInfo(opts.Poller, p.auth)
-		logMsg = "gather Storage Grid info"
 	default:
 		logger.Warn("unknown connection type", slog.String("type", connectionType))
 		return false
@@ -1627,7 +1623,7 @@ func (p *Poller) negotiateConnection(connectionType string) bool {
 
 	p.remote = remote
 	if remote.Version != "" {
-		slog.Info(logMsg, slog.Any("remote", remote))
+		slog.Info("Cluster info", slog.Any("remote", remote))
 	}
 	return true
 }
