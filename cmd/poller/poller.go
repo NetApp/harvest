@@ -32,6 +32,22 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"log/slog"
+	"math"
+	"net"
+	"net/http"
+	_ "net/http/pprof" // #nosec since pprof is off by default
+	"os"
+	"os/signal"
+	"runtime"
+	"slices"
+	"strconv"
+	"strings"
+	"sync"
+	"syscall"
+	"time"
+
 	"github.com/goccy/go-yaml"
 	"github.com/goccy/go-yaml/ast"
 	"github.com/goccy/go-yaml/parser"
@@ -65,21 +81,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	goversion "github.com/netapp/harvest/v2/third_party/go-version"
 	"github.com/spf13/cobra"
-	"io"
-	"log/slog"
-	"math"
-	"net"
-	"net/http"
-	_ "net/http/pprof" // #nosec since pprof is off by default
-	"os"
-	"os/signal"
-	"runtime"
-	"slices"
-	"strconv"
-	"strings"
-	"sync"
-	"syscall"
-	"time"
 )
 
 // default params
@@ -1614,10 +1615,10 @@ func (p *Poller) negotiateConnection(connectionType string) bool {
 	}
 
 	if err != nil {
-		logger.Warn("gather poller info failed",
+		logger.Warn("gather remote info failed",
 			slog.String("connectionType", connectionType),
 			slog.Any("remote", remote),
-			slog.Any("err", err))
+			slogx.Err(err))
 		return false
 	}
 
