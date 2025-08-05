@@ -1372,7 +1372,7 @@
           "exemplar": false,
           "expr": "aggr_space_physical_used_percent{aggr=~\"$Aggregate\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      aggr_space_physical_used_percent{aggr=~\"$Aggregate\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[3h] @ end()\n    )\n  )",
           "interval": "",
-          "legendFormat": "{{node}} - {{aggr}} - DATA COMPACTION",
+          "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
         }
       ],
@@ -1645,9 +1645,9 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "aggr_space_physical_used_percent{aggr=~\"$Aggregate\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      aggr_space_physical_used_percent{aggr=~\"$Aggregate\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[3h] @ end()\n    )\n  )",
+          "expr": "aggr_space_performance_tier_inactive_user_data_percent{aggr=~\"$Aggregate\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      aggr_space_performance_tier_inactive_user_data_percent{aggr=~\"$Aggregate\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[3h] @ end()\n    )\n  )",
           "interval": "",
-          "legendFormat": "{{node}} - {{aggr}} - DATA COMPACTION",
+          "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
         }
       ],
