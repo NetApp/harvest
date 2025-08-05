@@ -2,13 +2,14 @@ package vscan
 
 import (
 	"encoding/json"
+	"log/slog"
+	"os"
+	"testing"
+
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"log/slog"
-	"os"
-	"testing"
 )
 
 type VscanRecords struct {
@@ -24,6 +25,9 @@ func runTest(t *testing.T, createRestVscan func(params *node.Node) plugin.Plugin
 	params.NewChildS("metricsPerScanner", metricsPerScanner)
 	v := createRestVscan(params)
 	data := readTestFile(testFile)
+	if data == nil {
+		t.Fatalf("failed to read test file %s", testFile)
+	}
 
 	dataMap := map[string]*matrix.Matrix{
 		data.Object: data,
