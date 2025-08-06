@@ -12,12 +12,13 @@ package matrix
 
 import (
 	"fmt"
-	"github.com/netapp/harvest/v2/pkg/errs"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"log/slog"
 	"maps"
 	"slices"
 	"strings"
+
+	"github.com/netapp/harvest/v2/pkg/errs"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 )
 
 type Matrix struct {
@@ -367,6 +368,9 @@ func (m *Matrix) Delta(metricKey string, prevMat *Matrix, cachedData *Matrix, lo
 	prevMetric := prevMat.GetMetric(metricKey)
 	curMetric := m.GetMetric(metricKey)
 	cachedMetric := cachedData.GetMetric(metricKey)
+	if prevMetric == nil || curMetric == nil {
+		return 0, errs.New(errs.ErrMissingMetric, metricKey)
+	}
 	prevRaw := prevMetric.values
 	prevRecord := prevMetric.GetRecords()
 	for key, currInstance := range m.GetInstances() {
@@ -428,7 +432,13 @@ func (m *Matrix) Delta(metricKey string, prevMat *Matrix, cachedData *Matrix, lo
 func (m *Matrix) Divide(metricKey string, baseKey string) (int, error) {
 	var skips int
 	metric := m.GetMetric(metricKey)
+	if metric == nil {
+		return 0, errs.New(errs.ErrMissingMetric, metricKey)
+	}
 	base := m.GetMetric(baseKey)
+	if base == nil {
+		return 0, errs.New(errs.ErrMissingMetric, baseKey)
+	}
 	sValues := base.values
 	sRecord := base.GetRecords()
 	if len(metric.values) != len(sValues) {
@@ -461,11 +471,23 @@ func (m *Matrix) DivideWithThreshold(metricKey string, baseKey string, threshold
 	var skips int
 	x := float64(threshold)
 	curRawMetric := curRawMat.GetMetric(metricKey)
-	curBaseRawMetric := curRawMat.GetMetric(baseKey)
 	prevRawMetric := prevRawMat.GetMetric(metricKey)
+	if curRawMetric == nil || prevRawMetric == nil {
+		return 0, errs.New(errs.ErrMissingMetric, metricKey)
+	}
+	curBaseRawMetric := curRawMat.GetMetric(baseKey)
 	prevBaseRawMetric := prevRawMat.GetMetric(baseKey)
+	if curBaseRawMetric == nil || prevBaseRawMetric == nil {
+		return 0, errs.New(errs.ErrMissingMetric, baseKey)
+	}
 	metric := m.GetMetric(metricKey)
+	if metric == nil {
+		return 0, errs.New(errs.ErrMissingMetric, metricKey)
+	}
 	base := m.GetMetric(baseKey)
+	if base == nil {
+		return 0, errs.New(errs.ErrMissingMetric, baseKey)
+	}
 	time := m.GetMetric(timestampMetricName)
 	var tValues []float64
 	if time != nil {
@@ -528,6 +550,9 @@ func (m *Matrix) MultiplyByScalar(metricKey string, s uint) (int, error) {
 	var skips int
 	x := float64(s)
 	metric := m.GetMetric(metricKey)
+	if metric == nil {
+		return 0, errs.New(errs.ErrMissingMetric, metricKey)
+	}
 	for i := range len(metric.values) {
 		if metric.record[i] {
 			// if current is <= 0
