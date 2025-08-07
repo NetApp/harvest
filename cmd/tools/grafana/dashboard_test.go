@@ -1046,6 +1046,7 @@ func TestOnlyHighlightsExpanded(t *testing.T) {
 		"cmode/health.json":             2,
 		"cmode/nfsTroubleshooting.json": 3,
 		"cmode/power.json":              2,
+		"cmode/quotaReport.json":        2,
 		"cmode/shelf.json":              2,
 		"cmode/smb.json":                2,
 		"cmode/switch.json":             2,

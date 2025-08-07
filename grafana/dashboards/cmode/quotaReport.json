@@ -29,6 +29,12 @@
       "version": ""
     },
     {
+      "id": "text",
+      "name": "Text",
+      "type": "panel",
+      "version": ""
+    },
+    {
       "id": "timeseries",
       "name": "Time series",
       "type": "panel",
@@ -60,7 +66,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1752839303594,
+  "iteration": 1754555692014,
   "links": [
     {
       "asDropdown": true,
@@ -86,6 +92,36 @@
         "w": 24,
         "x": 0,
         "y": 0
+      },
+      "id": 130,
+      "panels": [],
+      "title": "Important Information",
+      "type": "row"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 132,
+      "options": {
+        "content": "<br>By default, only `tree` type quotas are collected via Harvest. If you wish to collect user and group quotas as well, please follow the steps outlined at [GitHub discussion #2911](https://github.com/NetApp/harvest/discussions/2911).",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.1.8",
+      "type": "text"
+    },
+    {
+      "collapsed": false,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 3
       },
       "id": 121,
       "panels": [],
@@ -570,7 +606,7 @@
         "h": 16,
         "w": 24,
         "x": 0,
-        "y": 1
+        "y": 4
       },
       "id": 5,
       "options": {
@@ -883,7 +919,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 17
+        "y": 20
       },
       "id": 128,
       "panels": [
