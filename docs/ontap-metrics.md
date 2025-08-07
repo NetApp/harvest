@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Jul-22
+Creation Date : 2025-Aug-07
 ONTAP Version: 9.16.1
 ```
 
@@ -1321,6 +1321,14 @@ The percentage of inactive user data in the block storage. This property is only
 | REST | `api/storage/aggregates` | `space.block_storage.inactive_user_data_percent` | conf/rest/9.12.0/aggr.yaml |
 | ZAPI | `aggr-get-iter` | `aggr-attributes.aggr-space-attributes.performance-tier-inactive-user-data-percent` | conf/zapi/cdot/9.8.0/aggr.yaml |
 
+The `aggr_space_performance_tier_inactive_user_data_percent` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Aggregate | Highlights | timeseries | [Top $TopResources Aggregates by  Inactive Data %](/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=821) |
+///
+
 
 
 ### aggr_space_performance_tier_used
@@ -1399,7 +1407,6 @@ The `aggr_space_physical_used_percent` metric is visualized in the following Gra
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | ONTAP: Aggregate | Highlights | timeseries | [Top $TopResources Aggregates by  Physical Space Used %](/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=18) |
-| ONTAP: Aggregate | Highlights | timeseries | [Top $TopResources Aggregates by  Inactive Data %](/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=821) |
 ///
 
 
@@ -5229,7 +5236,7 @@ The `fpolicy_io_processing_latency` metric is visualized in the following Grafan
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
-| ONTAP: FPolicy | Highlights | timeseries | [Top $TopResources Policy by IO processing Latency](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=442) |
+| ONTAP: FPolicy | Highlights | timeseries | [Top $TopResources Policy by IO Processing Latency](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=442) |
 ///
 
 
@@ -5247,7 +5254,7 @@ The `fpolicy_io_thread_wait_latency` metric is visualized in the following Grafa
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
-| ONTAP: FPolicy | Highlights | timeseries | [Top $TopResources Policy by IO thread wait Latency](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=586) |
+| ONTAP: FPolicy | Highlights | timeseries | [Top $TopResources Policy by IO Thread Wait Latency](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=586) |
 ///
 
 
@@ -5391,7 +5398,7 @@ The `fpolicy_server_request_latency` metric is visualized in the following Grafa
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
-| ONTAP: FPolicy | Server | timeseries | [Top $TopResources Servers by Max Request Latency](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=604) |
+| ONTAP: FPolicy | Server | timeseries | [Top $TopResources Servers by Request Latency](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=604) |
 ///
 
 
@@ -5463,7 +5470,7 @@ The `fpolicy_svm_io_processing_latency` metric is visualized in the following Gr
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
-| ONTAP: FPolicy | SVM | timeseries | [Top $TopResources SVM by IO processing Latency](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=594) |
+| ONTAP: FPolicy | SVM | timeseries | [Top $TopResources SVM by IO Processing Latency](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=594) |
 ///
 
 
@@ -5481,7 +5488,7 @@ The `fpolicy_svm_io_thread_wait_latency` metric is visualized in the following G
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
-| ONTAP: FPolicy | SVM | timeseries | [Top $TopResources SVM by IO thread wait Latency](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=595) |
+| ONTAP: FPolicy | SVM | timeseries | [Top $TopResources SVM by IO Thread Wait Latency](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=595) |
 ///
 
 
@@ -12230,14 +12237,6 @@ Average latency for all other operations in the system in microseconds
 | REST | `api/cluster/counter/tables/system:node` | `other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/restperf/9.12.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
-The `node_other_latency` metric is visualized in the following Grafana dashboards:
-    
-/// html | div.grafana-table
-| Dashboard | Row | Type | Panel |
-|--------|----------|--------|--------|
-| ONTAP: Node | Backend | timeseries | [Average Latency](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=30) |
-///
-
 
 
 ### node_other_ops
@@ -12248,14 +12247,6 @@ All other operations per second
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
-
-The `node_other_ops` metric is visualized in the following Grafana dashboards:
-    
-/// html | div.grafana-table
-| Dashboard | Row | Type | Panel |
-|--------|----------|--------|--------|
-| ONTAP: Node | Backend | timeseries | [IOPs](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=32) |
-///
 
 
 
@@ -12268,14 +12259,6 @@ Read throughput
 | REST | `api/cluster/counter/tables/system:node` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
-The `node_read_data` metric is visualized in the following Grafana dashboards:
-    
-/// html | div.grafana-table
-| Dashboard | Row | Type | Panel |
-|--------|----------|--------|--------|
-| ONTAP: Node | Backend | timeseries | [Throughput](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=31) |
-///
-
 
 
 ### node_read_latency
@@ -12287,15 +12270,6 @@ Average latency for all read operations in the system in microseconds
 | REST | `api/cluster/counter/tables/system:node` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/restperf/9.12.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
-The `node_read_latency` metric is visualized in the following Grafana dashboards:
-    
-/// html | div.grafana-table
-| Dashboard | Row | Type | Panel |
-|--------|----------|--------|--------|
-| ONTAP: Cluster | Highlights | table | [Top $TopResources Nodes by Read Latency](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=238) |
-| ONTAP: Node | Backend | timeseries | [Average Latency](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=30) |
-///
-
 
 
 ### node_read_ops
@@ -12306,14 +12280,6 @@ Read operations per second
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
-
-The `node_read_ops` metric is visualized in the following Grafana dashboards:
-    
-/// html | div.grafana-table
-| Dashboard | Row | Type | Panel |
-|--------|----------|--------|--------|
-| ONTAP: Node | Backend | timeseries | [IOPs](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=32) |
-///
 
 
 
@@ -12351,18 +12317,6 @@ Represents the total data throughput in bytes for a node, as reported by ONTAP.
 | StatPerf | `system:node` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `total_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
-The `node_total_data` metric is visualized in the following Grafana dashboards:
-    
-/// html | div.grafana-table
-| Dashboard | Row | Type | Panel |
-|--------|----------|--------|--------|
-| ONTAP: Cluster | Highlights | table | [Top $TopResources Nodes by Throughput](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=232) |
-| ONTAP: Cluster | Highlights | timeseries | [Top $TopResources Nodes by Throughput](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=231) |
-| ONTAP: Cluster | Throughput | timeseries | [Data](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=107) |
-| ONTAP: Node | Highlights | stat | [Throughput](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=23) |
-| ONTAP: Node | Highlights | timeseries | [Throughput](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=11) |
-///
-
 
 
 ### node_total_latency
@@ -12374,18 +12328,6 @@ Average latency for all operations in the system in microseconds
 | REST | `api/cluster/counter/tables/system:node` | `total_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/restperf/9.12.0/system_node.yaml |
 | StatPerf | `system:node` | `total_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> total_ops | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `total_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/system_node.yaml |
-
-The `node_total_latency` metric is visualized in the following Grafana dashboards:
-    
-/// html | div.grafana-table
-| Dashboard | Row | Type | Panel |
-|--------|----------|--------|--------|
-| ONTAP: cDOT | Cluster Metrics | timeseries | [Top $TopResources Clusters by Max Node Latency](/d/cdot-cdot/ontap3a-cdot?orgId=1&viewPanel=234) |
-| ONTAP: Cluster | Highlights | timeseries | [Top $TopResources Nodes by Latency](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=234) |
-| ONTAP: Cluster | Throughput | timeseries | [Max Latency](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=106) |
-| ONTAP: Node | Highlights | stat | [Average Latency](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=4) |
-| ONTAP: Node | Highlights | timeseries | [Latency](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=10) |
-///
 
 
 
@@ -12404,13 +12346,7 @@ The `node_total_ops` metric is visualized in the following Grafana dashboards:
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
-| ONTAP: cDOT | Cluster Metrics | timeseries | [Top $TopResources Total IOPs by Cluster](/d/cdot-cdot/ontap3a-cdot?orgId=1&viewPanel=240) |
-| ONTAP: Cluster | Highlights | table | [Top $TopResources Nodes by IOPs](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=230) |
-| ONTAP: Cluster | Highlights | timeseries | [Top $TopResources Nodes by IOPs](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=235) |
-| ONTAP: Cluster | Throughput | timeseries | [IOPs](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=108) |
 | ONTAP: Datacenter | Power and Temperature | stat | [Average IOPs/Watt](/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=642) |
-| ONTAP: Node | Highlights | stat | [IOPs](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=5) |
-| ONTAP: Node | Highlights | timeseries | [Top Average IOPs](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=12) |
 | ONTAP: Power | Highlights | stat | [Average IOPs/Watt](/d/cdot-power/ontap3a-power?orgId=1&viewPanel=96) |
 ///
 
@@ -12827,6 +12763,17 @@ Average latency in microseconds for the WAFL filesystem to process all the opera
 | KeyPerf | `api/storage/volumes` | `statistics.latency_raw.total`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.total | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
+The `node_volume_avg_latency` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: cDOT | Cluster Metrics | timeseries | [Top $TopResources Clusters by Max Node Latency](/d/cdot-cdot/ontap3a-cdot?orgId=1&viewPanel=234) |
+| ONTAP: Cluster | Highlights | timeseries | [Top $TopResources Nodes by Latency](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=234) |
+| ONTAP: Node | Highlights | stat | [Average Latency](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=4) |
+| ONTAP: Node | Highlights | timeseries | [Latency](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=10) |
+///
+
 
 
 ### node_volume_nfs_access_latency
@@ -13036,6 +12983,14 @@ Average latency in microseconds for the WAFL filesystem to process other operati
 | KeyPerf | `api/storage/volumes` | `statistics.latency_raw.other`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.other | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
+The `node_volume_other_latency` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Node | Backend | timeseries | [Average Latency](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=30) |
+///
+
 
 
 ### node_volume_other_ops
@@ -13047,6 +13002,14 @@ Number of other operations per second to the volume. node_volume_other_ops is [v
 | REST | `api/cluster/counter/tables/volume` | `total_other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.iops_raw.other`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
+
+The `node_volume_other_ops` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Node | Backend | timeseries | [IOPs](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=32) |
+///
 
 
 
@@ -13060,6 +13023,17 @@ Bytes read per second. node_volume_read_data is [volume_read_data](#volume_read_
 | KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.read`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
+The `node_volume_read_data` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Cluster | Highlights | table | [Top $TopResources Nodes by Throughput](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=232) |
+| ONTAP: Cluster | Highlights | timeseries | [Top $TopResources Nodes by Throughput](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=231) |
+| ONTAP: Node | Highlights | timeseries | [Throughput](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=11) |
+| ONTAP: Node | Backend | timeseries | [Throughput](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=31) |
+///
+
 
 
 ### node_volume_read_latency
@@ -13071,6 +13045,15 @@ Average latency in microseconds for the WAFL filesystem to process read request 
 | REST | `api/cluster/counter/tables/volume` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_read_ops | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.latency_raw.read`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.read | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
+
+The `node_volume_read_latency` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Cluster | Highlights | table | [Top $TopResources Nodes by Read Latency](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=238) |
+| ONTAP: Node | Backend | timeseries | [Average Latency](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=30) |
+///
 
 
 
@@ -13084,6 +13067,14 @@ Number of read operations per second from the volume. node_volume_read_ops is [v
 | KeyPerf | `api/storage/volumes` | `statistics.iops_raw.read`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
+The `node_volume_read_ops` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Node | Backend | timeseries | [IOPs](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=32) |
+///
+
 
 
 ### node_volume_total_data
@@ -13095,6 +13086,14 @@ Represents the aggregated total data throughput in bytes across all volumes on a
 | KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.total`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
+
+The `node_volume_total_data` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Node | Highlights | stat | [Throughput](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=23) |
+///
 
 
 
@@ -13108,6 +13107,17 @@ Number of operations per second serviced by the volume. node_volume_total_ops is
 | KeyPerf | `api/storage/volumes` | `statistics.iops_raw.total`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
+The `node_volume_total_ops` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Cluster | Highlights | table | [Top $TopResources Nodes by IOPs](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=230) |
+| ONTAP: Cluster | Highlights | timeseries | [Top $TopResources Nodes by IOPs](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=235) |
+| ONTAP: Node | Highlights | stat | [IOPs](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=5) |
+| ONTAP: Node | Highlights | timeseries | [Top Average IOPs](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=12) |
+///
+
 
 
 ### node_volume_write_data
@@ -13119,6 +13129,17 @@ Bytes written per second. node_volume_write_data is [volume_write_data](#volume_
 | REST | `api/cluster/counter/tables/volume` | `bytes_written`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.write`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
+
+The `node_volume_write_data` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Cluster | Highlights | table | [Top $TopResources Nodes by Throughput](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=232) |
+| ONTAP: Cluster | Highlights | timeseries | [Top $TopResources Nodes by Throughput](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=231) |
+| ONTAP: Node | Highlights | timeseries | [Throughput](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=11) |
+| ONTAP: Node | Backend | timeseries | [Throughput](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=31) |
+///
 
 
 
@@ -13132,6 +13153,15 @@ Average latency in microseconds for the WAFL filesystem to process write request
 | KeyPerf | `api/storage/volumes` | `statistics.latency_raw.write`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.write | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
+The `node_volume_write_latency` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Cluster | Highlights | table | [Top $TopResources Nodes by Write Latency](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=233) |
+| ONTAP: Node | Backend | timeseries | [Average Latency](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=30) |
+///
+
 
 
 ### node_volume_write_ops
@@ -13144,6 +13174,14 @@ Number of write operations per second to the volume. node_volume_write_ops is [v
 | KeyPerf | `api/storage/volumes` | `statistics.iops_raw.write`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
+The `node_volume_write_ops` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Node | Backend | timeseries | [IOPs](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=32) |
+///
+
 
 
 ### node_write_data
@@ -13154,14 +13192,6 @@ Write throughput
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
-
-The `node_write_data` metric is visualized in the following Grafana dashboards:
-    
-/// html | div.grafana-table
-| Dashboard | Row | Type | Panel |
-|--------|----------|--------|--------|
-| ONTAP: Node | Backend | timeseries | [Throughput](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=31) |
-///
 
 
 
@@ -13174,15 +13204,6 @@ Average latency for all write operations in the system in microseconds
 | REST | `api/cluster/counter/tables/system:node` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/restperf/9.12.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
-The `node_write_latency` metric is visualized in the following Grafana dashboards:
-    
-/// html | div.grafana-table
-| Dashboard | Row | Type | Panel |
-|--------|----------|--------|--------|
-| ONTAP: Cluster | Highlights | table | [Top $TopResources Nodes by Write Latency](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=233) |
-| ONTAP: Node | Backend | timeseries | [Average Latency](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=30) |
-///
-
 
 
 ### node_write_ops
@@ -13193,14 +13214,6 @@ Write operations per second
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
-
-The `node_write_ops` metric is visualized in the following Grafana dashboards:
-    
-/// html | div.grafana-table
-| Dashboard | Row | Type | Panel |
-|--------|----------|--------|--------|
-| ONTAP: Node | Backend | timeseries | [IOPs](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=32) |
-///
 
 
 
@@ -21537,6 +21550,7 @@ The `volume_avg_latency` metric is visualized in the following Grafana dashboard
 |--------|----------|--------|--------|
 | ONTAP: Aggregate | Volume Performance | timeseries | [Top $TopResources Volumes by Average Latency](/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=813) |
 | ONTAP: cDOT | Volume Metrics | timeseries | [Top $TopResources Volumes by Average Latency](/d/cdot-cdot/ontap3a-cdot?orgId=1&viewPanel=258) |
+| ONTAP: Cluster | Throughput | timeseries | [Max Latency](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=106) |
 | ONTAP: Datacenter | Performance | timeseries | [Top $TopResources Latency by Cluster](/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=106) |
 | ONTAP: FlexGroup | Highlights | timeseries | [Top $TopResources Constituents by Average Latency](/d/cdot-flexgroup/ontap3a-flexgroup?orgId=1&viewPanel=125) |
 | ONTAP: MetroCluster | Highlights | stat | [Volume Average Latency](/d/cdot-metrocluster/ontap3a-metrocluster?orgId=1&viewPanel=24) |
@@ -23151,6 +23165,7 @@ The `volume_total_data` metric is visualized in the following Grafana dashboards
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
+| ONTAP: Cluster | Throughput | timeseries | [Data](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=107) |
 | ONTAP: Datacenter | Performance | timeseries | [Top $TopResources Throughput by Cluster](/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=107) |
 ///
 
@@ -23212,7 +23227,9 @@ The `volume_total_ops` metric is visualized in the following Grafana dashboards:
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | ONTAP: Aggregate | Volume Performance | timeseries | [Top $TopResources Volumes by IOPs](/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=817) |
+| ONTAP: cDOT | Cluster Metrics | timeseries | [Top $TopResources Total IOPs by Cluster](/d/cdot-cdot/ontap3a-cdot?orgId=1&viewPanel=240) |
 | ONTAP: cDOT | Volume Metrics | timeseries | [Top $TopResources Volumes by IOPs](/d/cdot-cdot/ontap3a-cdot?orgId=1&viewPanel=262) |
+| ONTAP: Cluster | Throughput | timeseries | [IOPs](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=108) |
 | ONTAP: Datacenter | Performance | timeseries | [Top $TopResources  IOPs by Cluster](/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=108) |
 | ONTAP: FlexGroup | Highlights | timeseries | [Top $TopResources Constituents by Total IOPs](/d/cdot-flexgroup/ontap3a-flexgroup?orgId=1&viewPanel=12) |
 | ONTAP: Node | Volume Performance | timeseries | [Top $TopResources Volumes by IOPs](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=137) |
