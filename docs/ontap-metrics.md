@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Jul-22
+Creation Date : 2025-Aug-04
 ONTAP Version: 9.16.1
 ```
 
@@ -5229,7 +5229,7 @@ The `fpolicy_io_processing_latency` metric is visualized in the following Grafan
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
-| ONTAP: FPolicy | Highlights | timeseries | [Top $TopResources Policy by IO processing Latency](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=442) |
+| ONTAP: FPolicy | Highlights | timeseries | [Top $TopResources Policy by IO Processing Latency](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=442) |
 ///
 
 
@@ -5247,7 +5247,7 @@ The `fpolicy_io_thread_wait_latency` metric is visualized in the following Grafa
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
-| ONTAP: FPolicy | Highlights | timeseries | [Top $TopResources Policy by IO thread wait Latency](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=586) |
+| ONTAP: FPolicy | Highlights | timeseries | [Top $TopResources Policy by IO Thread Wait Latency](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=586) |
 ///
 
 
@@ -5391,7 +5391,7 @@ The `fpolicy_server_request_latency` metric is visualized in the following Grafa
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
-| ONTAP: FPolicy | Server | timeseries | [Top $TopResources Servers by Max Request Latency](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=604) |
+| ONTAP: FPolicy | Server | timeseries | [Top $TopResources Servers by Request Latency](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=604) |
 ///
 
 
@@ -5463,7 +5463,7 @@ The `fpolicy_svm_io_processing_latency` metric is visualized in the following Gr
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
-| ONTAP: FPolicy | SVM | timeseries | [Top $TopResources SVM by IO processing Latency](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=594) |
+| ONTAP: FPolicy | SVM | timeseries | [Top $TopResources SVM by IO Processing Latency](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=594) |
 ///
 
 
@@ -5481,7 +5481,7 @@ The `fpolicy_svm_io_thread_wait_latency` metric is visualized in the following G
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
-| ONTAP: FPolicy | SVM | timeseries | [Top $TopResources SVM by IO thread wait Latency](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=595) |
+| ONTAP: FPolicy | SVM | timeseries | [Top $TopResources SVM by IO Thread Wait Latency](/d/cdot-fpolicy/ontap3a-fpolicy?orgId=1&viewPanel=595) |
 ///
 
 
@@ -17109,6 +17109,16 @@ The `security_login_labels` metric is visualized in the following Grafana dashbo
 
 
 
+### security_session_by_application_labels
+
+This metric provides information about SecuritySessionByApplication
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/security/session/request-statistics/show-by-application` | `Harvest generated` | conf/rest/9.6.0/security_session_by_application.yaml |
+
+
+
 ### security_ssh_labels
 
 This metric provides information about SecuritySsh
@@ -21875,6 +21885,7 @@ The `volume_labels` metric is visualized in the following Grafana dashboards:
 | ONTAP: Volume | Growth Rate | table | [Top $TopResources Volumes by Physical Usage: Delta](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=177) |
 | ONTAP: Volume | Growth Rate | table | [Top $TopResources Volumes by Logical Usage: Delta](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=178) |
 | ONTAP: Volume | Forecast Volume Capacity | table | [Top $TopResources Volumes Per Size Used Percentage Trend](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=149) |
+| ONTAP: Volume | Unused Volumes | table | [Top $TopResources Unused Volumes](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=152) |
 | ONTAP: Volume by SVM | Highlights | table | [Volume Performance for $SVM (Click volume for detailed drill-down)](/d/cdot-volume-by-svm/ontap3a-volume by svm?orgId=1&viewPanel=2) |
 | ONTAP: Volume Deep Dive | Highlights | table | [Volume Performance](/d/cdot-volume-deep-dive/ontap3a-volume deep dive?orgId=1&viewPanel=6) |
 | ONTAP: Volume Deep Dive | Volume Capacity: $Volume | table | [Volumes in Cluster](/d/cdot-volume-deep-dive/ontap3a-volume deep dive?orgId=1&viewPanel=22) |
@@ -23223,6 +23234,16 @@ The `volume_total_ops` metric is visualized in the following Grafana dashboards:
 | ONTAP: Volume by SVM | Highlights | table | [Volume Performance for $SVM (Click volume for detailed drill-down)](/d/cdot-volume-by-svm/ontap3a-volume by svm?orgId=1&viewPanel=2) |
 | ONTAP: Volume Deep Dive | Highlights | table | [Volume Performance](/d/cdot-volume-deep-dive/ontap3a-volume deep dive?orgId=1&viewPanel=6) |
 ///
+
+
+
+### volume_unused
+
+Displays the list of volumes which are not been used in past user specified interval.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.14.0/volume_unused.yaml |
 
 
 

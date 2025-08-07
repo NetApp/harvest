@@ -129,6 +129,7 @@ var excludeCounters = []string{
 	"qtree_nfs_",
 	"qtree_total_",
 	"qtree_internal_",
+	"volume_unused_labels",
 }
 
 var flakyCounters = []string{
