@@ -1,0 +1,4137 @@
+{
+  "__inputs": [
+    {
+      "description": "",
+      "label": "Prometheus",
+      "name": "DS_PROMETHEUS",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus",
+      "type": "datasource"
+    }
+  ],
+  "__requires": [
+    {
+      "id": "grafana",
+      "name": "Grafana",
+      "type": "grafana",
+      "version": "8.1.8"
+    },
+    {
+      "id": "piechart",
+      "name": "Pie chart",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "prometheus",
+      "name": "Prometheus",
+      "type": "datasource",
+      "version": "1.0.0"
+    },
+    {
+      "id": "stat",
+      "name": "Stat",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "table",
+      "name": "Table",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "text",
+      "name": "Text",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "timeseries",
+      "name": "Time series",
+      "type": "panel",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations \u0026 Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "",
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 1,
+  "id": null,
+  "iteration": 1722588393410,
+  "links": [
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [
+        "cdot"
+      ],
+      "targetBlank": false,
+      "title": "Related Dashboards",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
+  "panels": [
+    {
+      "collapsed": false,
+      "datasource": "prometheus",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 552,
+      "panels": [],
+      "title": "Capacity",
+      "type": "row"
+    },
+    {
+      "datasource": "prometheus",
+      "description": "Total usable space in bytes, not including WAFL reserve and aggregate Snapshot copy reserve.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgb(21, 118, 171)",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 9,
+        "x": 0,
+        "y": 1
+      },
+      "id": 576,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "sum(aggr_space_total{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Total Space",
+      "type": "stat"
+    },
+    {
+      "datasource": "prometheus",
+      "description": "Percent of space used.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 2,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgb(21, 118, 171)",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 9,
+        "y": 1
+      },
+      "id": 615,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "100 * sum(aggr_space_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n/\n  sum(aggr_space_total{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Space Used %",
+      "type": "stat"
+    },
+    {
+      "datasource": "prometheus",
+      "description": "Object Count.\n\nNote: The REST and ZAPI collectors return a different number of volumes depending on whether you have set up object store servers on your cluster. \n\nFor more details, visit the [ZAPI and REST Gaps](https://netapp.github.io/harvest/latest/zapi-and-rest-gap.md).",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "filterable": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "locale"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 16,
+        "w": 7,
+        "x": 17,
+        "y": 1
+      },
+      "id": 660,
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Object"
+          }
+        ]
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "sum(count by (netapp_cluster) (node_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Nodes",
+          "refId": "A"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(count by (netapp_cluster) (svm_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "SVMs",
+          "refId": "B"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(count by (netapp_cluster) (aggr_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Aggregates",
+          "refId": "C"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(count by (netapp_cluster) (lun_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Luns",
+          "refId": "D"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(count by (netapp_cluster) (volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Volumes",
+          "refId": "E"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(count by (netapp_cluster) (namespace_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Namespaces",
+          "refId": "F"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(count by (netapp_cluster) (ontaps3_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "S3 Buckets",
+          "refId": "G"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(count by (netapp_cluster) (disk_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Disks",
+          "refId": "H"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(count by (netapp_cluster) (snapmirror_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Snapmirrrors",
+          "refId": "I"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(count by (netapp_cluster) (lif_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "LIFs",
+          "refId": "J"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(count by (netapp_cluster) (fcp_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "FC Ports",
+          "refId": "K"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(count by (netapp_cluster) (qtree_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Qtree",
+          "refId": "L"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(count by (netapp_cluster) (quota_disk_limit{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Quotas",
+          "refId": "M"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(count by (netapp_cluster) (qos_workload_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Workloads",
+          "refId": "N"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum(count by (netapp_cluster) (shelf_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Shelves",
+          "refId": "O"
+        }
+      ],
+      "title": "Object Count",
+      "transformations": [
+        {
+          "id": "reduce",
+          "options": {
+            "reducers": [
+              "lastNotNull"
+            ]
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Field": "Object",
+              "Last *": "Count"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": "prometheus",
+      "description": "Available space.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgb(21, 118, 171)",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 9,
+        "x": 0,
+        "y": 9
+      },
+      "id": 613,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "sum(aggr_space_available{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Available Space",
+      "type": "stat"
+    },
+    {
+      "datasource": "prometheus",
+      "description": "Space used or reserved in bytes. Includes volume guarantees and aggregate metadata.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgb(21, 118, 171)",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 9,
+        "y": 9
+      },
+      "id": 611,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "sum(aggr_space_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Used and Reserved Space",
+      "type": "stat"
+    },
+    {
+      "datasource": "prometheus",
+      "description": "Total usable space in bytes, not including WAFL reserve and aggregate Snapshot copy reserve.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 17
+      },
+      "id": 655,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "sum by (netapp_cluster) (aggr_space_total{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    sum by (netapp_cluster) (\n      avg_over_time(aggr_space_total{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+          "interval": "",
+          "legendFormat": "{{netapp_cluster}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Top $TopResources Total Space by Cluster",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "prometheus",
+      "description": "Space used or reserved in bytes. Includes volume guarantees and aggregate metadata.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 17
+      },
+      "id": 656,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "sum by (netapp_cluster) (aggr_space_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    sum by (netapp_cluster) (\n      avg_over_time(aggr_space_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+          "interval": "",
+          "legendFormat": "{{netapp_cluster}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Top $TopResources Used and Reserved Space by Cluster",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "prometheus",
+      "description": "Available space.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 27
+      },
+      "id": 657,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "sum by (netapp_cluster) (aggr_space_available{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    sum by (netapp_cluster) (\n      avg_over_time(aggr_space_available{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+          "interval": "",
+          "legendFormat": "{{netapp_cluster}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Top $TopResources Available Space by Cluster",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "prometheus",
+      "description": "Percent of space used.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 2,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 27
+      },
+      "id": 658,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "(\n      100 * sum by (datacenter, netapp_cluster) (aggr_space_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n    / on (datacenter, netapp_cluster)\n      sum by (datacenter, netapp_cluster) (aggr_space_total{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n  )\nand on (datacenter, netapp_cluster)\n  topk(\n    $TopResources,\n    (\n          100\n        *\n          sum by (datacenter, netapp_cluster) (\n            avg_over_time(aggr_space_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n          )\n      / on (datacenter, netapp_cluster)\n        sum by (datacenter, netapp_cluster) (\n          avg_over_time(aggr_space_total{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n        )\n    )\n  )",
+          "interval": "",
+          "legendFormat": "{{netapp_cluster}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Top $TopResources Space Used % by Cluster",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": true,
+      "datasource": "prometheus",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 37
+      },
+      "id": 482,
+      "panels": [
+        {
+          "datasource": "prometheus",
+          "description": "Cluster Health Details.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "0": {
+                            "color": "red",
+                            "index": 1,
+                            "text": "Not Healthy"
+                          },
+                          "1": {
+                            "color": "green",
+                            "index": 0,
+                            "text": "OK"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "Health"
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "netapp_cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1\u0026${Datacenter:queryparam}\u0026${__url_time_range}\u0026var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1\u0026${__url_time_range}\u0026var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 7,
+            "w": 8,
+            "x": 0,
+            "y": 38
+          },
+          "id": 480,
+          "options": {
+            "showHeader": true
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "cluster_new_status{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Cluster Health",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "netapp_cluster",
+                    "datacenter",
+                    "Value"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "datacenter": 0,
+                  "netapp_cluster": 1,
+                  "status": 2
+                },
+                "renameByName": {
+                  "cluster": "Cluster",
+                  "datacenter": "Datacenter",
+                  "netapp_cluster": "Cluster",
+                  "status": ""
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "Node details.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "rgba(217, 91, 91, 0.74)",
+                    "value": null
+                  },
+                  {
+                    "color": "rgb(101, 201, 87)",
+                    "value": 1
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #B"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "0": {
+                            "color": "red",
+                            "index": 1,
+                            "text": "not healthy"
+                          },
+                          "1": {
+                            "color": "green",
+                            "index": 0,
+                            "text": "OK"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-background"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "health"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": null
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "node"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Node"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-node/ontap-node?orgId=1\u0026${Datacenter:queryparam}\u0026${Cluster:queryparam}\u0026${__url_time_range}\u0026var-Node=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "serial"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": null
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "version"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": null
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "model"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": null
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "netapp_cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1\u0026${Datacenter:queryparam}\u0026${__url_time_range}\u0026var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1\u0026${__url_time_range}\u0026var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 7,
+            "w": 16,
+            "x": 8,
+            "y": 38
+          },
+          "id": 528,
+          "interval": "",
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "node_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "node_new_status{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "B"
+            }
+          ],
+          "title": "Node Health",
+          "transformations": [
+            {
+              "id": "seriesToColumns",
+              "options": {
+                "byField": "serial"
+              }
+            },
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "serial",
+                    "cluster 1",
+                    "cpu_firmware_release",
+                    "model",
+                    "version",
+                    "Value #B",
+                    "datacenter 1"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "Value #B": 6,
+                  "cpu_firmware_release": 3,
+                  "datacenter 1": 0,
+                  "model": 4,
+                  "netapp_cluster 1": 1,
+                  "serial": 2,
+                  "version": 5
+                },
+                "renameByName": {
+                  "Value #B": "Health",
+                  "cluster 1": "Cluster",
+                  "cpu_firmware_release": "CPU Firmware Release",
+                  "datacenter 1": "Datacenter",
+                  "model": "Model",
+                  "serial": "Serial",
+                  "version": "Version"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Health",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "prometheus",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 38
+      },
+      "id": 617,
+      "panels": [
+        {
+          "datasource": "prometheus",
+          "gridPos": {
+            "h": 4,
+            "w": 24,
+            "x": 0,
+            "y": 39
+          },
+          "id": 619,
+          "options": {
+            "content": "\u003cbr\u003eThese panels require ONTAP 9.6+ and the REST collector. Two actions are required to use this dashboard: \u003cbr\u003e1. Enable the REST collector in your harvest.yml config\u003cbr\u003e2. Enable the EMS collector in your harvest.yml config for EMS events\u003cbr\u003e\nFor more information on the issues, please check the `ONTAP: Health` dashboard.",
+            "mode": "markdown"
+          },
+          "pluginVersion": "8.1.8",
+          "type": "text"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "This panel displays error detail of disk, shelf, node, network port, license compliance, HA down and sensor failure alerts.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "unit": "locale"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 16,
+            "w": 8,
+            "x": 0,
+            "y": 43
+          },
+          "id": 621,
+          "options": {
+            "displayLabels": [
+              "value"
+            ],
+            "legend": {
+              "displayMode": "table",
+              "placement": "bottom",
+              "values": [
+                "value"
+              ]
+            },
+            "pieType": "donut",
+            "reduceOptions": {
+              "calcs": [
+                "last"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.2",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "count(health_disk_alerts{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"error\"} == 1)\nor\n  vector(0)",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "Broken Disk",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "count(health_shelf_alerts{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"error\"} == 1)\nor\n  vector(0)",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "Shelf Error",
+              "refId": "B"
+            },
+            {
+              "exemplar": false,
+              "expr": "count(health_node_alerts{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"error\"} == 1)\nor\n  vector(0)",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "Node Down",
+              "refId": "D"
+            },
+            {
+              "exemplar": false,
+              "expr": "(\n      count(\n        health_network_fc_port_alerts{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"error\"} == 1\n      )\n    or\n      vector(0)\n  )\n+\n  (\n      count(\n          health_network_ethernet_port_alerts{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"error\"}\n        ==\n          1\n      )\n    or\n      vector(0)\n  )",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "Network Port Down",
+              "refId": "E"
+            },
+            {
+              "exemplar": false,
+              "expr": "count(health_license_alerts{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"error\"} == 1)\nor\n  vector(0)",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "License Non Compliant",
+              "refId": "C"
+            },
+            {
+              "exemplar": false,
+              "expr": "count(health_ha_alerts{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"error\"} == 1)\nor\n  vector(0)",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "HA Down",
+              "refId": "F"
+            },
+            {
+              "exemplar": false,
+              "expr": "count(\n      environment_sensor_threshold_value{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",threshold_state!=\"normal\"}\n    ==\n      1\n  )\nor\n  vector(0)",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "Sensor Failures",
+              "refId": "G"
+            }
+          ],
+          "title": "Errors",
+          "transformations": [],
+          "type": "piechart"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "This panel displays warning detail of disk, shelf, health monitor, lif, volume move and volume anti-ransomware alerts.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "unit": "locale"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Volumes protected"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "green",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Volumes not protected"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "yellow",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 16,
+            "w": 8,
+            "x": 8,
+            "y": 43
+          },
+          "id": 623,
+          "options": {
+            "displayLabels": [
+              "value"
+            ],
+            "legend": {
+              "displayMode": "table",
+              "placement": "bottom",
+              "values": [
+                "value"
+              ]
+            },
+            "pieType": "donut",
+            "reduceOptions": {
+              "calcs": [
+                "last"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.2",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "count(health_disk_alerts{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"} == 1)\nor\n  vector(0)",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "Unassigned Disk",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "count(health_shelf_alerts{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"} == 1)\nor\n  vector(0)",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "Shelf Warning",
+              "refId": "B"
+            },
+            {
+              "exemplar": false,
+              "expr": "(\n    count(\n        last_over_time(\n          health_support_alerts{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"}[1d]\n        )\n      ==\n        1\n    )\n  or\n    vector(0)\n)",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "Health Monitor Alerts (last 24h)",
+              "refId": "C"
+            },
+            {
+              "exemplar": false,
+              "expr": "count(health_lif_alerts{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"} == 1)\nor\n  vector(0)",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "Lif are not at home port",
+              "refId": "D"
+            },
+            {
+              "exemplar": false,
+              "expr": "count(\n    health_volume_move_alerts{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"} == 1\n  )\nor\n  vector(0)",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "Volume Move Alerts",
+              "refId": "E"
+            },
+            {
+              "exemplar": false,
+              "expr": "count(\n    health_volume_ransomware_alerts{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"error\"} == 1\n  )\nor\n  vector(0)",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "Volume Ransomware (9.10+)",
+              "refId": "F"
+            }
+          ],
+          "title": "Warnings",
+          "transformations": [],
+          "type": "piechart"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "$EMSDescription",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "locale"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Volumes protected"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "green",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Volumes not protected"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "yellow",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 16,
+            "w": 8,
+            "x": 16,
+            "y": 43
+          },
+          "id": 625,
+          "options": {
+            "showHeader": true
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "count by (message) (\n    last_over_time(\n      ems_events{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"emergency\"}[$__range]\n    )\n  ==\n    1\n)",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Active Emergency EMS",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true
+                },
+                "indexByName": {},
+                "renameByName": {
+                  "Value": "Count",
+                  "message": "EMS"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Issues",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "prometheus",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 39
+      },
+      "id": 97,
+      "panels": [
+        {
+          "datasource": "prometheus",
+          "description": "Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 30,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "µs"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 0,
+            "y": 3
+          },
+          "id": 106,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "7.5.4",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "max by (netapp_cluster) (volume_avg_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    max by (netapp_cluster) (\n      avg_over_time(volume_avg_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Latency by Cluster",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "Cluster throughput.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 30,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "links": [],
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "Bps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 8,
+            "y": 3
+          },
+          "id": 107,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "7.5.4",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (volume_total_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    sum by (netapp_cluster) (\n      avg_over_time(volume_total_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Throughput by Cluster",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "Number of operations per second serviced by the cluster.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 30,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "links": [],
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "iops"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 16,
+            "y": 3
+          },
+          "id": 108,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "7.5.4",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (volume_total_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    sum by (netapp_cluster) (\n      avg_over_time(volume_total_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources  IOPs by Cluster",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "$CPU_BUSY",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "links": [],
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 8,
+            "x": 0,
+            "y": 11
+          },
+          "id": 241,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "7.5.4",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "avg by (netapp_cluster) (node_cpu_busy{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    avg by (netapp_cluster) (\n      avg_over_time(node_cpu_busy{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} ",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources CPU Busy by Cluster",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "Average processor utilization across all processors in the system.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "links": [],
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 8,
+            "x": 8,
+            "y": 11
+          },
+          "id": 2,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "7.5.4",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "avg by (netapp_cluster) (node_avg_processor_busy{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    avg by (netapp_cluster) (\n      avg_over_time(node_avg_processor_busy{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Average CPU Utilization by Cluster",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Performance",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "prometheus",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 40
+      },
+      "id": 634,
+      "panels": [
+        {
+          "datasource": "prometheus",
+          "gridPos": {
+            "h": 4,
+            "w": 24,
+            "x": 0,
+            "y": 16
+          },
+          "id": 636,
+          "options": {
+            "content": "\u003cbr\u003eThese panels require ONTAP 9.6+ and REST private CLI.\n\nSee \u003ca target='blank' href='https://netapp.github.io/harvest/latest/power-algorithm'\u003epower algorithm\u003c/a\u003e for more details.\u003cbr\u003e\nFor more information, please check the `ONTAP: Power` dashboard.",
+            "mode": "markdown"
+          },
+          "pluginVersion": "8.1.8",
+          "type": "text"
+        },
+        {
+          "cacheTimeout": null,
+          "datasource": "prometheus",
+          "description": "This panel displays total power of nodes and shelves.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "blue",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "watt"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 9,
+            "x": 0,
+            "y": 20
+          },
+          "id": 638,
+          "links": [],
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "center",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "(sum(environment_sensor_power{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) or vector(0))\n+\n  (\n      sum(\n          shelf_power{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n        * on (datacenter, netapp_cluster, shelf)\n          shelf_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",isEmbedded=\"No\"}\n      )\n    or\n      vector(0)\n  )",
+              "format": "time_series",
+              "hide": false,
+              "instant": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Total Power",
+          "type": "stat"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "Average Power per used TB.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "decimals": 2,
+              "mappings": [],
+              "noValue": "0",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "blue",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "Watts/TB"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 7,
+            "x": 9,
+            "y": 20
+          },
+          "id": 640,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "(avg(environment_sensor_power{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) or vector(0))\n/\n  (\n          (sum(aggr_space_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) / 1024 / 1024 / 1024 / 1024)\n        /\n          count(sum(node_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))\n      \u003e\n        1\n    or\n      max(\n          aggr_space_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n        /\n          aggr_space_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n      )\n  )",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Average Power/Used_TB",
+          "type": "stat"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "Maximum temperature of all non-ambient sensors for node in Celsius.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "decimals": 1,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "transparent",
+                    "value": null
+                  },
+                  {
+                    "color": "rgb(84, 184, 45)",
+                    "value": 5
+                  },
+                  {
+                    "color": "semi-dark-yellow",
+                    "value": 45
+                  },
+                  {
+                    "color": "semi-dark-orange",
+                    "value": 65
+                  },
+                  {
+                    "color": "dark-red",
+                    "value": 75
+                  }
+                ]
+              },
+              "unit": "celsius"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 4,
+            "x": 16,
+            "y": 20
+          },
+          "id": 644,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "max(environment_sensor_max_temperature{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
+              "format": "time_series",
+              "instant": false,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Max Node Temp",
+          "type": "stat"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "Maximum fan speed for shelf in rpm.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "blue",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "rotrpm"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 4,
+            "x": 20,
+            "y": 20
+          },
+          "id": 648,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "max(shelf_max_fan_speed{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Max Shelf Fan Speed",
+          "type": "stat"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "Average IOPs per Watt.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "decimals": 2,
+              "mappings": [],
+              "noValue": "0",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "blue",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "IOPs/Watt"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 7,
+            "x": 9,
+            "y": 25
+          },
+          "id": 642,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "avg(node_total_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n/\n  (avg(environment_sensor_power{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) or vector(1))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Average IOPs/Watt",
+          "type": "stat"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "Maximum temperature of all non-ambient sensors for shelf in Celsius.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "decimals": 1,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "transparent",
+                    "value": null
+                  },
+                  {
+                    "color": "rgb(84, 184, 45)",
+                    "value": 5
+                  },
+                  {
+                    "color": "semi-dark-yellow",
+                    "value": 45
+                  },
+                  {
+                    "color": "semi-dark-orange",
+                    "value": 65
+                  },
+                  {
+                    "color": "dark-red",
+                    "value": 75
+                  }
+                ]
+              },
+              "unit": "celsius"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 4,
+            "x": 16,
+            "y": 25
+          },
+          "id": 646,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "max(shelf_max_temperature{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
+              "format": "time_series",
+              "instant": false,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Max Shelf Temp",
+          "type": "stat"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "Maximum fan speed for node in rpm.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "noValue": "0",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "blue",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "rotrpm"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 4,
+            "x": 20,
+            "y": 25
+          },
+          "id": 650,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "max(environment_sensor_max_fan_speed{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Max Node Fan Speed",
+          "type": "stat"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "This panel displays detail of power consumed by a node/shelf/total in Watts.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "watt"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Node"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "watt"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Shelf"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "watt"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Total"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "watt"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 24,
+            "x": 0,
+            "y": 30
+          },
+          "id": 652,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.2",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum(environment_sensor_power{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "Node",
+              "refId": "B"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum(shelf_power{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "Shelf",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "(sum(environment_sensor_power{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) or vector(0))\n+\n  (sum(shelf_power{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) or vector(0))",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "Total",
+              "refId": "C"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Total Power Consumed",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Power and Temperature",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "prometheus",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 41
+      },
+      "id": 627,
+      "panels": [
+        {
+          "datasource": "prometheus",
+          "gridPos": {
+            "h": 2,
+            "w": 24,
+            "x": 0,
+            "y": 6
+          },
+          "id": 653,
+          "options": {
+            "content": "\u003cbr\u003eFor more information, please check the `ONTAP: Data Protection Snapshots` dashboard.",
+            "mode": "markdown"
+          },
+          "pluginVersion": "8.1.8",
+          "type": "text"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "Volumes Protected With Snapshot Copies (local). For more information, please check the `ONTAP: Data Protection Snapshots` dashboard.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                }
+              },
+              "decimals": 0,
+              "mappings": []
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Volumes protected"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "green",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Volumes not protected"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "yellow",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 8,
+            "x": 0,
+            "y": 8
+          },
+          "id": 629,
+          "options": {
+            "displayLabels": [],
+            "legend": {
+              "displayMode": "table",
+              "placement": "right",
+              "values": [
+                "value"
+              ]
+            },
+            "pieType": "donut",
+            "reduceOptions": {
+              "calcs": [
+                "last"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "8.1.2",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "count(\n      volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\",volume!~\"MDV.*\"}\n    * on (snapshot_policy) group_left ()\n      group by (snapshot_policy) (snapshot_policy_labels)\n  )\nor on ()\n  vector(0)",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "Volumes protected",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "count(\n    (\n        volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy=~\"none.*\",volume!~\"MDV.*\"}\n      * on (snapshot_policy) group_left ()\n        group by (snapshot_policy) (snapshot_policy_labels)\n    )\n  )\nor on ()\n  vector(0)",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "Volumes not protected",
+              "refId": "B"
+            }
+          ],
+          "title": "Protected Status",
+          "transformations": [],
+          "type": "piechart"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "Volumes Breaching Snapshot Copy Reserve Space.For more information, please check the `ONTAP: Data Protection Snapshots` dashboard.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                }
+              },
+              "decimals": 0,
+              "mappings": []
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Volumes breached"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "super-light-red",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Volumes not breached"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "green",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 8,
+            "x": 8,
+            "y": 8
+          },
+          "id": 631,
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right",
+              "values": [
+                "value"
+              ]
+            },
+            "pieType": "donut",
+            "reduceOptions": {
+              "calcs": [
+                "last"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "8.1.2",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "count(\n        volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\"}\n      * on (snapshot_policy) group_left ()\n        group by (snapshot_policy) (snapshot_policy_labels)\n    * on (volume, svm, netapp_cluster) group_right ()\n      (\n            volume_snapshot_reserve_size{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e= 0\n          and\n            volume_snapshots_size_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e= 0\n        and\n            volume_snapshots_size_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n          \u003e\n            volume_snapshot_reserve_size{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n      )\n  )\nor on ()\n  vector(0)",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "Volumes breached",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "(\n      count(\n          (\n              volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\"}\n            * on (snapshot_policy) group_left ()\n              group by (snapshot_policy) (snapshot_policy_labels)\n          )\n        * on (volume, svm, netapp_cluster) group_right ()\n          (\n                volume_snapshot_reserve_size{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e= 0\n              and\n                volume_snapshots_size_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e= 0\n            and\n                volume_snapshots_size_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n              \u003c=\n                volume_snapshot_reserve_size{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n          )\n      )\n    or on ()\n      vector(0)\n  )\n+\n  (\n      count(\n            volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\"}\n          * on (snapshot_policy) group_left ()\n            group by (snapshot_policy) (snapshot_policy_labels)\n        * on (volume, svm, netapp_cluster) group_right ()\n          (\n              volume_snapshot_reserve_size{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e= 0\n            and\n              volume_snapshots_size_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} == 0\n          )\n      )\n    or on ()\n      vector(0)\n  )",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "Volumes not breached",
+              "refId": "B"
+            }
+          ],
+          "title": "Breached Status",
+          "transformations": [],
+          "type": "piechart"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "For more information, please check the `ONTAP: Data Protection Snapshots` dashboard.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                }
+              },
+              "decimals": 0,
+              "mappings": []
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Volumes breached"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "super-light-red",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Volumes not breached"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "green",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 8,
+            "x": 16,
+            "y": 8
+          },
+          "id": 632,
+          "options": {
+            "legend": {
+              "displayMode": "table",
+              "placement": "right",
+              "values": [
+                "value"
+              ]
+            },
+            "pieType": "donut",
+            "reduceOptions": {
+              "calcs": [
+                "last"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "8.1.2",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "count(\n      (\n          volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\",volume!~\"MDV.*\"}\n        * on (snapshot_policy) group_left ()\n          group by (snapshot_policy) (snapshot_policy_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n      )\n    * on (volume, svm, netapp_cluster)\n      (\n          volume_snapshot_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e 0\n        and\n          volume_snapshot_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003c 10\n      )\n  )\nor on ()\n  vector(0)",
+              "instant": true,
+              "interval": "",
+              "legendFormat": " \u003c10 Copies ",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "count(\n      (\n          volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\",volume!~\"MDV.*\"}\n        * on (snapshot_policy) group_left ()\n          group by (snapshot_policy) (snapshot_policy_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n      )\n    * on (volume, svm, netapp_cluster)\n      (\n          volume_snapshot_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e= 10\n        and\n          volume_snapshot_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003c= 100\n      )\n  )\nor on ()\n  vector(0)",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "10-100 Copies",
+              "refId": "B"
+            },
+            {
+              "exemplar": false,
+              "expr": "count(\n      (\n          volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\",volume!~\"MDV.*\"}\n        * on (snapshot_policy) group_left ()\n          group by (snapshot_policy) (snapshot_policy_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n      )\n    * on (volume, svm, netapp_cluster)\n      (\n          volume_snapshot_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e 100\n        and\n          volume_snapshot_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003c= 500\n      )\n  )\nor on ()\n  vector(0)",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "101-500 Copies",
+              "refId": "C"
+            },
+            {
+              "exemplar": false,
+              "expr": "count(\n      (\n          volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\",volume!~\"MDV.*\"}\n        * on (snapshot_policy) group_left ()\n          group by (snapshot_policy) (snapshot_policy_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n      )\n    * on (volume, svm, netapp_cluster)\n      (volume_snapshot_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e 500)\n  )\nor on ()\n  vector(0)",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "\u003e500 Copies",
+              "refId": "D"
+            }
+          ],
+          "title": "Snapshot Copies",
+          "transformations": [],
+          "type": "piechart"
+        }
+      ],
+      "title": "Snapshots",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "prometheus",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 42
+      },
+      "id": 184,
+      "panels": [
+        {
+          "datasource": "prometheus",
+          "description": "Storage efficiency ratio.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 8,
+            "x": 0,
+            "y": 59
+          },
+          "id": 188,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum(aggr_logical_used_wo_snapshots_flexclones{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n/\n  sum(aggr_physical_used_wo_snapshots_flexclones{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Data Reduction",
+          "type": "stat"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "Storage efficiency ratio with FlexClones.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 8,
+            "x": 8,
+            "y": 59
+          },
+          "id": 189,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum(aggr_logical_used_wo_snapshots{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n/\n  sum(aggr_physical_used_wo_snapshots{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Data Reduction with FlexClones",
+          "type": "stat"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "Storage efficiency ratio of total space used.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 8,
+            "x": 16,
+            "y": 59
+          },
+          "id": 187,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum(aggr_total_logical_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n/\n  sum(aggr_total_physical_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Data Reduction with Snapshots \u0026 FlexClones",
+          "type": "stat"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "Logical used.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 63
+          },
+          "id": 195,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (\n    aggr_logical_used_wo_snapshots_flexclones{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n  )\nand\n  topk(\n    $TopResources,\n    sum by (netapp_cluster) (\n      avg_over_time(\n        aggr_logical_used_wo_snapshots_flexclones{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Logical Used by Cluster",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "Total data reduction physical used.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 63
+          },
+          "id": 192,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (\n    aggr_physical_used_wo_snapshots_flexclones{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n  )\nand\n  topk(\n    $TopResources,\n    sum by (netapp_cluster) (\n      avg_over_time(\n        aggr_physical_used_wo_snapshots_flexclones{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Physical Used by Cluster",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "Logical used with flexclones.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 71
+          },
+          "id": 193,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (aggr_logical_used_wo_snapshots{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    sum by (netapp_cluster) (\n      avg_over_time(\n        aggr_logical_used_wo_snapshots{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Logical Used with FlexClones by Cluster",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "Total Data Reduction Physical Used with FlexClones.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 71
+          },
+          "id": 196,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (aggr_physical_used_wo_snapshots{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    sum by (netapp_cluster) (\n      avg_over_time(\n        aggr_physical_used_wo_snapshots{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Physical Used with FlexClones by Cluster",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "Logical used with snapshots \u0026 flexclones.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 79
+          },
+          "id": 191,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (aggr_total_logical_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    sum by (netapp_cluster) (\n      avg_over_time(aggr_total_logical_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Logical Used with Snapshots \u0026 FlexClones by Cluster",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "Physical Used with snapshots \u0026 flexclones.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 79
+          },
+          "id": 194,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (aggr_space_physical_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\nand\n  topk(\n    $TopResources,\n    sum by (netapp_cluster) (\n      avg_over_time(aggr_space_physical_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Physical Used with Snapshots \u0026 FlexClones by Cluster",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Storage Efficiency",
+      "type": "row"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 30,
+  "style": "dark",
+  "tags": [
+    "harvest",
+    "ontap",
+    "cdot",
+    "fsx"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "Prometheus",
+          "value": "Prometheus"
+        },
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": false,
+        "label": "Data Source",
+        "multi": false,
+        "name": "DS_PROMETHEUS",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": "prometheus",
+        "definition": "label_values(cluster_new_status{system_type!=\"7mode\"},datacenter)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "Datacenter",
+        "options": [],
+        "query": {
+          "query": "label_values(cluster_new_status{system_type!=\"7mode\"},datacenter)",
+          "refId": "Prometheus-Datacenter-Variable-Query"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": "prometheus",
+        "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},netapp_cluster)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "Cluster",
+        "options": [],
+        "query": {
+          "query": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},netapp_cluster)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "5",
+          "value": "5"
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "TopResources",
+        "options": [
+          {
+            "selected": false,
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "selected": false,
+            "text": "2",
+            "value": "2"
+          },
+          {
+            "selected": false,
+            "text": "3",
+            "value": "3"
+          },
+          {
+            "selected": false,
+            "text": "4",
+            "value": "4"
+          },
+          {
+            "selected": true,
+            "text": "5",
+            "value": "5"
+          },
+          {
+            "selected": false,
+            "text": "6",
+            "value": "6"
+          },
+          {
+            "selected": false,
+            "text": "8",
+            "value": "8"
+          },
+          {
+            "selected": false,
+            "text": "10",
+            "value": "10"
+          },
+          {
+            "selected": false,
+            "text": "15",
+            "value": "15"
+          },
+          {
+            "selected": false,
+            "text": "25",
+            "value": "25"
+          },
+          {
+            "selected": false,
+            "text": "50",
+            "value": "50"
+          },
+          {
+            "selected": false,
+            "text": "100",
+            "value": "100"
+          },
+          {
+            "selected": false,
+            "text": "250",
+            "value": "250"
+          },
+          {
+            "selected": false,
+            "text": "500",
+            "value": "500"
+          }
+        ],
+        "query": "1,2,3,4,5,6,8,10,15,25,50,100,250,500",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "System CPU resource utilization is a computed percentage that indicates how busy the system is based on a combination of the most heavily utilized domain and idle CPU cycles. This metric determines the amount of available CPU and will vary based on domains reaching their limits OR exhausting all idle CPU cycles, whichever comes first.",
+          "value": "System CPU resource utilization is a computed percentage that indicates how busy the system is based on a combination of the most heavily utilized domain and idle CPU cycles. This metric determines the amount of available CPU and will vary based on domains reaching their limits OR exhausting all idle CPU cycles, whichever comes first."
+        },
+        "description": "",
+        "error": null,
+        "hide": 2,
+        "label": null,
+        "name": "CPU_BUSY",
+        "options": [
+          {
+            "selected": true,
+            "text": "System CPU resource utilization is a computed percentage that indicates how busy the system is based on a combination of the most heavily utilized domain and idle CPU cycles. This metric determines the amount of available CPU and will vary based on domains reaching their limits OR exhausting all idle CPU cycles, whichever comes first.",
+            "value": "System CPU resource utilization is a computed percentage that indicates how busy the system is based on a combination of the most heavily utilized domain and idle CPU cycles. This metric determines the amount of available CPU and will vary based on domains reaching their limits OR exhausting all idle CPU cycles, whichever comes first."
+          }
+        ],
+        "query": "System CPU resource utilization is a computed percentage that indicates how busy the system is based on a combination of the most heavily utilized domain and idle CPU cycles. This metric determines the amount of available CPU and will vary based on domains reaching their limits OR exhausting all idle CPU cycles, whichever comes first.",
+        "skipUrlSync": false,
+        "type": "textbox"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-3h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "",
+  "title": "ONTAP: Datacenter",
+  "uid": "cdot-datacenter",
+  "version": 3
+}

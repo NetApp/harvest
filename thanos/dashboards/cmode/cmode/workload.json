@@ -1,0 +1,4782 @@
+{
+  "__inputs": [
+    {
+      "description": "",
+      "label": "Prometheus",
+      "name": "DS_PROMETHEUS",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus",
+      "type": "datasource"
+    }
+  ],
+  "__requires": [
+    {
+      "id": "grafana",
+      "name": "Grafana",
+      "type": "grafana",
+      "version": "8.1.8"
+    },
+    {
+      "id": "prometheus",
+      "name": "Prometheus",
+      "type": "datasource",
+      "version": "1.0.0"
+    },
+    {
+      "id": "table",
+      "name": "Table",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "text",
+      "name": "Text",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "timeseries",
+      "name": "Time series",
+      "type": "panel",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations \u0026 Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "",
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 1,
+  "id": null,
+  "iteration": 1737111356359,
+  "links": [
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [
+        "cdot"
+      ],
+      "targetBlank": false,
+      "title": "Related Dashboards",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
+  "panels": [
+    {
+      "collapsed": false,
+      "datasource": "prometheus",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 125,
+      "panels": [],
+      "title": "Important Information",
+      "type": "row"
+    },
+    {
+      "datasource": "prometheus",
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 107,
+      "options": {
+        "content": "This dashboard requires Workload/QOS counter templates. \u003cbr\u003eMore information about [ONTAP Performance Guide](https://kb.netapp.com/Advice_and_Troubleshooting/Data_Storage_Software/ONTAP_OS/ONTAP_9_Performance_-_Resolution_Guide) and [Details in ONTAP Performance KB article](https://kb.netapp.com/on-prem/ontap/Perf/Perf-KBs/What_is_the_difference_in_latency_of_the_same_volume_between_statistics_volume_show_and_qos_statistics_volume_latency_show_commands).",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.1.8",
+      "type": "text"
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 6
+      },
+      "id": 161,
+      "panels": [],
+      "title": "Highlights",
+      "type": "row"
+    },
+    {
+      "datasource": "prometheus",
+      "description": "This is the rate of this workload's read operations that completed during the measurement interval.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "iops"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 7
+      },
+      "id": 163,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "qos_read_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_read_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
+          "interval": "",
+          "legendFormat": "{{netapp_cluster}} - {{workload}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top $TopResources Workloads by Read IOPS",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "prometheus",
+      "description": "This is the workload's write operations that completed during the measurement interval; measured per second.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "iops"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 7
+      },
+      "id": 164,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "qos_write_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_write_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
+          "interval": "",
+          "legendFormat": "{{netapp_cluster}} - {{workload}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top $TopResources Workloads by Write IOPS",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "prometheus",
+      "description": "This is the workload's other operations that completed during the measurement interval measured per second.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "iops"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 17
+      },
+      "id": 166,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "qos_other_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_other_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
+          "interval": "",
+          "legendFormat": "{{netapp_cluster}} - {{workload}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top $TopResources Workloads by Other IOPS",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "prometheus",
+      "description": "Workload operations executed per second.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "iops"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 17
+      },
+      "id": 165,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "qos_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
+          "interval": "",
+          "legendFormat": "{{netapp_cluster}} - {{workload}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top $TopResources Workloads by Total IOPS",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "prometheus",
+      "description": "This is the amount of data read per second from the filer by the workload.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "Bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 27
+      },
+      "id": 167,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "qos_read_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_read_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
+          "interval": "",
+          "legendFormat": "{{netapp_cluster}} - {{workload}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top $TopResources Workloads by Read Throughput",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "prometheus",
+      "description": "This is the amount of data written per second to the filer by the workload.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "Bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 27
+      },
+      "id": 168,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "qos_write_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_write_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
+          "interval": "",
+          "legendFormat": "{{netapp_cluster}} - {{workload}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top $TopResources Workloads by Write Throughput",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "prometheus",
+      "description": "This is the average response time for read requests that were initiated by the workload.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "µs"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 37
+      },
+      "id": 169,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "qos_read_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_read_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
+          "interval": "",
+          "legendFormat": "{{netapp_cluster}} - {{workload}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top $TopResources Workloads by Average Read Latency",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "prometheus",
+      "description": "This is the average response time for write requests that were initiated by the workload.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "µs"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 37
+      },
+      "id": 171,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "qos_write_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_write_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
+          "interval": "",
+          "legendFormat": "{{netapp_cluster}} - {{workload}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top $TopResources Workloads by Average Write Latency",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "prometheus",
+      "description": "This is the average response time for requests that were initiated by the workload.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "µs"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 47
+      },
+      "id": 170,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "qos_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
+          "interval": "",
+          "legendFormat": "{{netapp_cluster}} - {{workload}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top $TopResources Workloads by Average Latency",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "prometheus",
+      "description": "This is the average number of concurrent requests for the workload.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "locale"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 47
+      },
+      "id": 173,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "qos_concurrency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_concurrency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
+          "interval": "",
+          "legendFormat": "{{netapp_cluster}} - {{workload}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top $TopResources Workloads by Concurrency",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "prometheus",
+      "description": "This is the percentage of reads, performed on behalf of the workload, that were sequential.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 2,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 12,
+        "x": 0,
+        "y": 57
+      },
+      "id": 253,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "qos_sequential_reads{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_sequential_reads{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
+          "interval": "",
+          "legendFormat": "{{netapp_cluster}} - {{workload}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top $TopResources Workloads by Sequential Reads (%)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "prometheus",
+      "description": "This is the percentage of writes, performed on behalf of the workload, that were sequential.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 2,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 12,
+        "x": 12,
+        "y": 57
+      },
+      "id": 254,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "qos_sequential_writes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_sequential_writes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
+          "interval": "",
+          "legendFormat": "{{netapp_cluster}} - {{workload}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top $TopResources Workloads by Sequential Writes (%)",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 68
+      },
+      "id": 243,
+      "panels": [
+        {
+          "datasource": "prometheus",
+          "description": "This panel represents the proportion of the allocated Input/Output Operations Per Second (IOPs) that is currently being used in a policy, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current IOPs usage by the total available IOPs, and then multiplying the result by 100.\n\n**Important Note:** This panel only covers policies that are shared across workloads.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 70
+          },
+          "id": 245,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "clamp_max(\n    sum by (netapp_cluster, datacenter, policy_group) (\n        (\n            qos_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload!~\".*__[0-9]{4}-.*\"} * 100\n          / on (datacenter, netapp_cluster, policy_group) group_left ()\n            label_replace(\n              qos_policy_fixed_max_throughput_iops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n              \"policy_group\",\n              \"$1\",\n              \"name\",\n              \"(.*)\"\n            )\n        )\n      * on (datacenter, netapp_cluster, policy_group) group_left (capacity_shared)\n        label_replace(\n          qos_policy_fixed_labels{capacity_shared=\"true\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",max_throughput_iops!=\"\"},\n          \"policy_group\",\n          \"$1\",\n          \"name\",\n          \"(.*)\"\n        )\n    ),\n    100\n  )\nand\n  topk(\n    $TopResources,\n    sum by (netapp_cluster, datacenter, policy_group) (\n      (\n          avg_over_time(\n            qos_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload!~\".*__[0-9]{4}-.*\"}[3h] @ end()\n          )\n        / on (datacenter, netapp_cluster, policy_group) group_left ()\n          avg_over_time(\n            (\n                label_replace(\n                  qos_policy_fixed_max_throughput_iops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n                  \"policy_group\",\n                  \"$1\",\n                  \"name\",\n                  \"(.*)\"\n                )\n              * on (datacenter, netapp_cluster, policy_group) group_left (capacity_shared)\n                label_replace(\n                  qos_policy_fixed_labels{capacity_shared=\"true\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",max_throughput_iops!=\"\"},\n                  \"policy_group\",\n                  \"$1\",\n                  \"name\",\n                  \"(.*)\"\n                )\n            )[3h:] @ end()\n          )\n      )\n    )\n  )",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - {{policy_group}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Fixed QoS Shared Policy IOPs Utilization (%)",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "This panel represents the proportion of the allocated bandwidth that is currently being used in a policy, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current bandwidth usage (in MB/s) by the total available bandwidth (also in MB/s), and then multiplying the result by 100.\n\n**Important Note:** This panel specifically covers policies that are shared across workloads.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 70
+          },
+          "id": 247,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "clamp_max(\n    sum by (netapp_cluster, datacenter, policy_group) (\n        (\n              qos_total_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload!~\".*__[0-9]{4}-.*\"} * 100\n            /\n              (1000 * 1000)\n          / on (datacenter, netapp_cluster, policy_group) group_left ()\n            label_replace(\n              qos_policy_fixed_max_throughput_mbps{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n              \"policy_group\",\n              \"$1\",\n              \"name\",\n              \"(.*)\"\n            )\n        )\n      * on (datacenter, netapp_cluster, policy_group) group_left (capacity_shared)\n        label_replace(\n          qos_policy_fixed_labels{capacity_shared=\"true\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",max_throughput_mbps!=\"\"},\n          \"policy_group\",\n          \"$1\",\n          \"name\",\n          \"(.*)\"\n        )\n    ),\n    100\n  )\nand\n  topk(\n    $TopResources,\n    sum by (netapp_cluster, datacenter, policy_group) (\n      (\n          avg_over_time(\n            qos_total_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload!~\".*__[0-9]{4}-.*\"}[3h] @ end()\n          )\n        / on (datacenter, netapp_cluster, policy_group) group_left ()\n          avg_over_time(\n            (\n                label_replace(\n                  qos_policy_fixed_max_throughput_mbps{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n                  \"policy_group\",\n                  \"$1\",\n                  \"name\",\n                  \"(.*)\"\n                )\n              * on (datacenter, netapp_cluster, policy_group) group_left (capacity_shared)\n                label_replace(\n                  qos_policy_fixed_labels{capacity_shared=\"true\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",max_throughput_mbps!=\"\"},\n                  \"policy_group\",\n                  \"$1\",\n                  \"name\",\n                  \"(.*)\"\n                )\n            )[3h:] @ end()\n          )\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - {{policy_group}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Fixed QoS Shared Policy Bandwidth Utilization (%)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "This panel represents the proportion of the allocated Input/Output Operations Per Second (IOPs) that is currently being used in a policy, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current IOPs usage by the total available IOPs, and then multiplying the result by 100.\n\n**Important Note:** This panel only covers policies that are shared across workloads.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "QOS Used %"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "percent"
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
+                  },
+                  {
+                    "id": "max",
+                    "value": 100
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 2
+                  },
+                  {
+                    "id": "min",
+                    "value": 0
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Max IOPS"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "iops"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "netapp_cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1\u0026${Datacenter:queryparam}\u0026${__url_time_range}\u0026var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1\u0026${__url_time_range}\u0026var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 80
+          },
+          "id": 249,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": true,
+                "displayName": "QOS Used %"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "avg_over_time(\n  clamp_max(\n    sum by (netapp_cluster, datacenter, policy_group, object_count, max_throughput_iops, max_throughput_mbps, min_throughput_iops, min_throughput_mbps) (\n        (\n            qos_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload!~\".*__[0-9]{4}-.*\"} * 100\n          / on (datacenter, netapp_cluster, policy_group) group_left ()\n            label_replace(\n              qos_policy_fixed_max_throughput_iops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n              \"policy_group\",\n              \"$1\",\n              \"name\",\n              \"(.*)\"\n            )\n        )\n      * on (datacenter, netapp_cluster, policy_group) group_left (capacity_shared, object_count, max_throughput_iops, max_throughput_mbps, min_throughput_iops, min_throughput_mbps)\n        label_replace(\n          qos_policy_fixed_labels{capacity_shared=\"true\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",max_throughput_iops!=\"\"},\n          \"policy_group\",\n          \"$1\",\n          \"name\",\n          \"(.*)\"\n        )\n    ),\n    100\n  )[3h:]\n)",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Fixed QoS Shared Policy IOPs Utilization (%)",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "netapp_cluster",
+                    "datacenter",
+                    "max_throughput_iops",
+                    "object_count",
+                    "policy_group",
+                    "Value"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "Value": 3,
+                  "datacenter": 0,
+                  "max_throughput_iops": 5,
+                  "max_throughput_mbps": 6,
+                  "netapp_cluster": 1,
+                  "object_count": 4,
+                  "policy_group": 2
+                },
+                "renameByName": {
+                  "Value": "QOS Used %",
+                  "cluster": "",
+                  "datacenter": "",
+                  "max_throughput_iops": "Max IOPS",
+                  "netapp_cluster": "",
+                  "object_count": "Num Workloads",
+                  "policy_group": "Policy"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "This panel represents the proportion of the allocated bandwidth that is currently being used in a policy, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current bandwidth usage (in MB/s) by the total available bandwidth (also in MB/s), and then multiplying the result by 100.\n\n**Important Note:** This panel specifically covers policies that are shared across workloads.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "QOS Used %"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "percent"
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
+                  },
+                  {
+                    "id": "max",
+                    "value": 100
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 2
+                  },
+                  {
+                    "id": "min",
+                    "value": 0
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Max Throughput"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "MBs"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1\u0026${__url_time_range}\u0026var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "netapp_cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1\u0026${Datacenter:queryparam}\u0026${__url_time_range}\u0026var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 89
+          },
+          "id": 251,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": true,
+                "displayName": "QOS Used %"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "avg_over_time(\n  clamp_max(\n    sum by (netapp_cluster, datacenter, policy_group, object_count, max_throughput_iops, max_throughput_mbps, min_throughput_iops, min_throughput_mbps) (\n        (\n              qos_total_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload!~\".*__[0-9]{4}-.*\"} * 100\n            /\n              (1000 * 1000)\n          / on (datacenter, netapp_cluster, policy_group) group_left ()\n            label_replace(\n              qos_policy_fixed_max_throughput_mbps{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n              \"policy_group\",\n              \"$1\",\n              \"name\",\n              \"(.*)\"\n            )\n        )\n      * on (datacenter, netapp_cluster, policy_group) group_left (capacity_shared, object_count, max_throughput_iops, max_throughput_mbps, min_throughput_iops, min_throughput_mbps)\n        label_replace(\n          qos_policy_fixed_labels{capacity_shared=\"true\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",max_throughput_mbps!=\"\"},\n          \"policy_group\",\n          \"$1\",\n          \"name\",\n          \"(.*)\"\n        )\n    ),\n    100\n  )[3h:]\n)",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Fixed QoS Shared Policy Bandwidth Utilization (%)",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "netapp_cluster",
+                    "datacenter",
+                    "max_throughput_mbps",
+                    "object_count",
+                    "policy_group",
+                    "Value"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "object_count": false
+                },
+                "indexByName": {
+                  "Value": 3,
+                  "datacenter": 0,
+                  "max_throughput_mbps": 5,
+                  "netapp_cluster": 1,
+                  "object_count": 4,
+                  "policy_group": 2
+                },
+                "renameByName": {
+                  "Value": "QOS Used %",
+                  "cluster": "",
+                  "datacenter": "",
+                  "max_throughput_mbps": "Max Throughput",
+                  "netapp_cluster": "",
+                  "object_count": "Num Workloads",
+                  "policy_group": "Policy"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Fixed QoS Shared Policy Utilization",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 69
+      },
+      "id": 217,
+      "panels": [
+        {
+          "datasource": "prometheus",
+          "description": "This panel represents the proportion of the allocated Input/Output Operations Per Second (IOPs) that is currently being used by Workload, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current IOPs usage by the total available IOPs, and then multiplying the result by 100.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 99
+          },
+          "id": 219,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "clamp_max(\n    (\n        (\n            qos_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}\n          / on (datacenter, netapp_cluster, policy_group) group_left ()\n            label_replace(\n              qos_policy_fixed_max_throughput_iops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n              \"policy_group\",\n              \"$1\",\n              \"name\",\n              \"(.*)\"\n            )\n        )\n      *\n        100\n    ),\n    100\n  )\nand\n  topk(\n    $TopResources,\n    (\n        avg_over_time(\n          qos_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n        )\n      / on (datacenter, netapp_cluster, policy_group) group_left ()\n        avg_over_time(\n          label_replace(\n            qos_policy_fixed_max_throughput_iops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n            \"policy_group\",\n            \"$1\",\n            \"name\",\n            \"(.*)\"\n          )[3h:] @ end()\n        )\n    )\n  )",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - {{policy_group}} - {{workload}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Fixed QoS Workload IOPs Utilization (%)",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "This panel represents the proportion of the allocated bandwidth that is currently being used by Workload, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current bandwidth usage (in MB/s) by the total available bandwidth (also in MB/s), and then multiplying the result by 100.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 99
+          },
+          "id": 221,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "clamp_max(\n    (\n      (\n          (\n              qos_total_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"} * 100\n            /\n              (1000 * 1000)\n          )\n        / on (datacenter, netapp_cluster, policy_group) group_left ()\n          label_replace(\n            qos_policy_fixed_max_throughput_mbps{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n            \"policy_group\",\n            \"$1\",\n            \"name\",\n            \"(.*)\"\n          )\n      )\n    ),\n    100\n  )\nand\n  topk(\n    $TopResources,\n    (\n        avg_over_time(\n          qos_total_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n        )\n      / on (datacenter, netapp_cluster, policy_group) group_left ()\n        avg_over_time(\n          label_replace(\n            qos_policy_fixed_max_throughput_mbps{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n            \"policy_group\",\n            \"$1\",\n            \"name\",\n            \"(.*)\"\n          )[3h:] @ end()\n        )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - {{policy_group}} - {{workload}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Fixed QoS Workload Bandwidth Utilization (%)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "This panel represents the proportion of the allocated Input/Output Operations Per Second (IOPs) that is currently being used by Workload, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current IOPs usage by the total available IOPs, and then multiplying the result by 100.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "QOS Used %"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "percent"
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
+                  },
+                  {
+                    "id": "max",
+                    "value": 100
+                  },
+                  {
+                    "id": "min",
+                    "value": 0
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 2
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "IOPs"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "iops"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Max IOPS"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "iops"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "netapp_cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1\u0026${Datacenter:queryparam}\u0026${__url_time_range}\u0026var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1\u0026${__url_time_range}\u0026var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "svm"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "SVM"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-svm/ontap-svm?orgId=1\u0026${Datacenter:queryparam}\u0026${Cluster:queryparam}\u0026${__url_time_range}\u0026var-SVM=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "volume"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Volume"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-volume/ontap-volume?orgId=1\u0026${Datacenter:queryparam}\u0026${Cluster:queryparam}\u0026${SVM:queryparam}\u0026${__url_time_range}\u0026var-Volume=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "lun"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "LUN"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-lun/ontap-lun?orgId=1\u0026${Datacenter:queryparam}\u0026${Cluster:queryparam}\u0026${SVM:queryparam}\u0026${Volume:queryparam}\u0026${__url_time_range}\u0026var-LUN=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "workload"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Workload"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-workload/ontap-workload?orgId=1\u0026${Datacenter:queryparam}\u0026${Cluster:queryparam}\u0026${__url_time_range}\u0026var-Workload=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Shared"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "false": {
+                            "index": 1,
+                            "text": "No"
+                          },
+                          "true": {
+                            "index": 0,
+                            "text": "Yes"
+                          }
+                        },
+                        "type": "value"
+                      },
+                      {
+                        "options": {
+                          "match": "empty",
+                          "result": {
+                            "index": 2,
+                            "text": "No"
+                          }
+                        },
+                        "type": "special"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 109
+          },
+          "id": 223,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": true,
+                "displayName": "QOS Used %"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "avg_over_time(qos_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h])\n* on (datacenter, netapp_cluster, policy_group) group_left (max_throughput_iops, max_throughput_mbps, min_throughput_iops, min_throughput_mbps, capacity_shared)\n  label_replace(\n    qos_policy_fixed_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",max_throughput_iops!=\"\"},\n    \"policy_group\",\n    \"$1\",\n    \"name\",\n    \"(.*)\"\n  )",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Fixed QoS Workload IOPs Utilization (%)",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "netapp_cluster",
+                    "datacenter",
+                    "max_throughput_iops",
+                    "policy_group",
+                    "svm",
+                    "volume",
+                    "workload",
+                    "Value",
+                    "capacity_shared"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "calculateField",
+              "options": {
+                "binary": {
+                  "left": "Value",
+                  "operator": "/",
+                  "reducer": "sum",
+                  "right": "max_throughput_iops"
+                },
+                "mode": "binary",
+                "reduce": {
+                  "reducer": "sum"
+                }
+              }
+            },
+            {
+              "id": "calculateField",
+              "options": {
+                "alias": "QOS Used %",
+                "binary": {
+                  "left": "Value / max_throughput_iops",
+                  "operator": "*",
+                  "reducer": "sum",
+                  "right": "100"
+                },
+                "mode": "binary",
+                "reduce": {
+                  "reducer": "sum"
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Value / max_throughput_iops": true
+                },
+                "indexByName": {
+                  "QOS Used %": 5,
+                  "Value": 8,
+                  "Value / max_throughput_iops": 10,
+                  "capacity_shared": 7,
+                  "datacenter": 0,
+                  "max_throughput_iops": 9,
+                  "netapp_cluster": 1,
+                  "policy_group": 6,
+                  "svm": 2,
+                  "volume": 3,
+                  "workload": 4
+                },
+                "renameByName": {
+                  "Value": "IOPs",
+                  "capacity_shared": "Shared",
+                  "file": "File",
+                  "max_throughput_iops": "Max IOPS",
+                  "policy_group": "Policy"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "This panel represents the proportion of the allocated bandwidth that is currently being used by Workload, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current bandwidth usage (in MB/s) by the total available bandwidth (also in MB/s), and then multiplying the result by 100.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "QOS Used %"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "percent"
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
+                  },
+                  {
+                    "id": "max",
+                    "value": 100
+                  },
+                  {
+                    "id": "min",
+                    "value": 0
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 2
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Max Throughput"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "MBs"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Throughput"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "Bps"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "netapp_cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1\u0026${Datacenter:queryparam}\u0026${__url_time_range}\u0026var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1\u0026${__url_time_range}\u0026var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "svm"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "SVM"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-svm/ontap-svm?orgId=1\u0026${Datacenter:queryparam}\u0026${Cluster:queryparam}\u0026${__url_time_range}\u0026var-SVM=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "volume"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Volume"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-volume/ontap-volume?orgId=1\u0026${Datacenter:queryparam}\u0026${Cluster:queryparam}\u0026${SVM:queryparam}\u0026${__url_time_range}\u0026var-Volume=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "lun"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "LUN"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-lun/ontap-lun?orgId=1\u0026${Datacenter:queryparam}\u0026${Cluster:queryparam}\u0026${SVM:queryparam}\u0026${Volume:queryparam}\u0026${__url_time_range}\u0026var-LUN=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "workload"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Workload"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-workload/ontap-workload?orgId=1\u0026${Datacenter:queryparam}\u0026${Cluster:queryparam}\u0026${__url_time_range}\u0026var-Workload=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Shared"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "false": {
+                            "index": 1,
+                            "text": "No"
+                          },
+                          "true": {
+                            "index": 0,
+                            "text": "Yes"
+                          }
+                        },
+                        "type": "value"
+                      },
+                      {
+                        "options": {
+                          "match": "empty",
+                          "result": {
+                            "index": 2,
+                            "text": "No"
+                          }
+                        },
+                        "type": "special"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 118
+          },
+          "id": 224,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": true,
+                "displayName": "QOS Used %"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "avg_over_time(\n    qos_total_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h]\n  )\n* on (datacenter, netapp_cluster, policy_group) group_left (max_throughput_iops, max_throughput_mbps, min_throughput_iops, min_throughput_mbps, capacity_shared)\n  label_replace(\n    qos_policy_fixed_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",max_throughput_mbps!=\"\"},\n    \"policy_group\",\n    \"$1\",\n    \"name\",\n    \"(.*)\"\n  )",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Fixed QoS Workload Bandwidth Utilization (%)",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "netapp_cluster",
+                    "datacenter",
+                    "max_throughput_mbps",
+                    "policy_group",
+                    "svm",
+                    "volume",
+                    "workload",
+                    "Value",
+                    "capacity_shared"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "calculateField",
+              "options": {
+                "alias": "MValue",
+                "binary": {
+                  "left": "Value",
+                  "operator": "*",
+                  "reducer": "sum",
+                  "right": ".000001"
+                },
+                "mode": "binary",
+                "reduce": {
+                  "reducer": "sum"
+                },
+                "replaceFields": false
+              }
+            },
+            {
+              "id": "calculateField",
+              "options": {
+                "binary": {
+                  "left": "MValue",
+                  "operator": "/",
+                  "reducer": "sum",
+                  "right": "max_throughput_mbps"
+                },
+                "mode": "binary",
+                "reduce": {
+                  "reducer": "sum"
+                }
+              }
+            },
+            {
+              "id": "calculateField",
+              "options": {
+                "alias": "QOS Used %",
+                "binary": {
+                  "left": "MValue / max_throughput_mbps",
+                  "operator": "*",
+                  "reducer": "sum",
+                  "right": "100"
+                },
+                "mode": "binary",
+                "reduce": {
+                  "reducer": "sum"
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "BValue": true,
+                  "KValue": true,
+                  "MValue": true,
+                  "MValue / max_throughput_mbps": true,
+                  "Value / max_throughput_iops": true,
+                  "Value / max_throughput_mbps": true
+                },
+                "indexByName": {
+                  "MValue": 10,
+                  "MValue / max_throughput_mbps": 11,
+                  "QOS Used %": 5,
+                  "Value": 8,
+                  "capacity_shared": 7,
+                  "datacenter": 0,
+                  "max_throughput_mbps": 9,
+                  "netapp_cluster": 1,
+                  "policy_group": 6,
+                  "svm": 2,
+                  "volume": 3,
+                  "workload": 4
+                },
+                "renameByName": {
+                  "Value": "Throughput",
+                  "capacity_shared": "Shared",
+                  "file": "File",
+                  "max_throughput_iops": "Max IOPS",
+                  "max_throughput_mbps": "Max Throughput",
+                  "policy_group": "Policy"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Fixed QoS Workload Utilization",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 70
+      },
+      "id": 226,
+      "panels": [
+        {
+          "datasource": "prometheus",
+          "description": "This panel displays the percentage of Input/Output Operations Per Second (IOPs) currently in use relative to the dynamically adjusted IOPs threshold, which is set by an adaptive QoS policy. Unlike fixed QoS settings, adaptive QoS policies allow the IOPs threshold to fluctuate based on predefined criteria and workload demands. The utilization percentage is determined by taking the current IOPs usage, dividing it by the adaptive IOPs threshold at that moment, and then multiplying by 100 to get a percentage.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 100
+          },
+          "id": 228,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "clamp_max(\n    (\n        (qos_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"} * 100)\n      / on (datacenter, netapp_cluster, workload, policy_group, volume, lun, svm, qtree, file, wid)\n        qos_workload_max_throughput_iops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}\n    ),\n    100\n  )\nand\n  topk(\n    $TopResources,\n    (\n        avg_over_time(\n          qos_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n        )\n      / on (datacenter, netapp_cluster, workload, policy_group, volume, lun, svm, qtree, file, wid)\n        avg_over_time(\n          qos_workload_max_throughput_iops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}[3h] @ end()\n        )\n    )\n  )",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - {{policy_group}} - {{workload}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Adaptive QoS Workload IOPs Utilization (%)",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "This panel displays the current usage of throughput as a percentage of the adaptive threshold set by an adaptive Quality of Service (QoS) policy. This metric is calculated by dividing the current throughput usage by the adaptive threshold and multiplying by 100. The panel shows data only if the block size is not set to `any`.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 100
+          },
+          "id": 229,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "clamp_max(\n    (\n        (\n            (qos_total_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"} * 100)\n          /\n            (1000 * 1000)\n        )\n      / on (datacenter, netapp_cluster, workload, policy_group, volume, lun, svm, qtree, file, wid)\n        qos_workload_max_throughput_mbps{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}\n    ),\n    100\n  )\nand\n  topk(\n    $TopResources,\n    (\n        avg_over_time(\n          qos_total_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}[3h] @ end()\n        )\n      / on (datacenter, netapp_cluster, workload, policy_group, volume, lun, svm, qtree, file, wid)\n        avg_over_time(\n          qos_workload_max_throughput_mbps{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}[3h] @ end()\n        )\n    )\n  )",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - {{policy_group}} - {{workload}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Adaptive QoS Workload Bandwidth Utilization (%)",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "This panel displays the percentage of Input/Output Operations Per Second (IOPs) currently in use relative to the dynamically adjusted IOPs threshold, which is set by an adaptive QoS policy. Unlike fixed QoS settings, adaptive QoS policies allow the IOPs threshold to fluctuate based on predefined criteria and workload demands. The utilization percentage is determined by taking the current IOPs usage, dividing it by the adaptive IOPs threshold at that moment, and then multiplying by 100 to get a percentage.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Used %"
+                },
+                "properties": [
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
+                  },
+                  {
+                    "id": "unit",
+                    "value": "percent"
+                  },
+                  {
+                    "id": "max",
+                    "value": 100
+                  },
+                  {
+                    "id": "min",
+                    "value": 0
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 2
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "IOPs"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "iops"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Max IOPs"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "iops"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "netapp_cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1\u0026${Datacenter:queryparam}\u0026${__url_time_range}\u0026var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1\u0026${__url_time_range}\u0026var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "svm"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "SVM"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-svm/ontap-svm?orgId=1\u0026${Datacenter:queryparam}\u0026${Cluster:queryparam}\u0026${__url_time_range}\u0026var-SVM=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "volume"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Volume"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-volume/ontap-volume?orgId=1\u0026${Datacenter:queryparam}\u0026${Cluster:queryparam}\u0026${SVM:queryparam}\u0026${__url_time_range}\u0026var-Volume=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "lun"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "LUN"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-lun/ontap-lun?orgId=1\u0026${Datacenter:queryparam}\u0026${Cluster:queryparam}\u0026${SVM:queryparam}\u0026${Volume:queryparam}\u0026${__url_time_range}\u0026var-LUN=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "workload"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Workload"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-workload/ontap-workload?orgId=1\u0026${Datacenter:queryparam}\u0026${Cluster:queryparam}\u0026${__url_time_range}\u0026var-Workload=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 110
+          },
+          "id": 239,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": true,
+                "displayName": "Used %"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "avg_over_time(\n  label_join(\n    clamp_max(\n      (\n          (qos_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"} * 100)\n        / on (datacenter, netapp_cluster, workload, policy_group, volume, lun, svm, qtree, file, wid)\n          qos_workload_max_throughput_iops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}\n      ),\n      100\n    ),\n    \"unique_id\",\n    \"-\",\n    \"datacenter\",\n    \"netapp_cluster\",\n    \"workload\"\n  )[3h:]\n)",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "label_join(\n  (\n      qos_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}\n    * on (datacenter, netapp_cluster, workload, policy_group, volume, lun, svm, qtree, file, wid)\n      (\n          qos_workload_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}\n        and\n          qos_workload_max_throughput_iops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}\n      )\n  ),\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"workload\"\n)",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "B"
+            },
+            {
+              "exemplar": false,
+              "expr": "label_join(\n  qos_workload_max_throughput_iops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"workload\"\n)",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "C"
+            }
+          ],
+          "title": "Adaptive QoS Workload IOPs Utilization (%)",
+          "transformations": [
+            {
+              "id": "seriesToColumns",
+              "options": {
+                "byField": "unique_id"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "(.*) 1$",
+                "renamePattern": "$1"
+              }
+            },
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "pattern": ""
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Time 2": true,
+                  "Time 3": true,
+                  "Value #C": false,
+                  "__name__": true,
+                  "class": true,
+                  "datacenter 2": true,
+                  "datacenter 3": true,
+                  "file 2": true,
+                  "file 3": true,
+                  "instance": true,
+                  "is_adaptive": true,
+                  "job": true,
+                  "lun 2": true,
+                  "lun 3": true,
+                  "netapp_cluster 2": true,
+                  "netapp_cluster 3": true,
+                  "policy_group 2": true,
+                  "policy_group 3": true,
+                  "svm 2": true,
+                  "svm 3": true,
+                  "unique_id": true,
+                  "volume 2": true,
+                  "volume 3": true,
+                  "wid": true,
+                  "wid 2": true,
+                  "wid 3": true,
+                  "workload 2": true,
+                  "workload 3": true
+                },
+                "indexByName": {
+                  "Time": 1,
+                  "Value #A": 9,
+                  "Value #B": 11,
+                  "Value #C": 12,
+                  "__name__": 13,
+                  "class": 14,
+                  "datacenter": 2,
+                  "file": 6,
+                  "instance": 16,
+                  "is_adaptive": 17,
+                  "job": 18,
+                  "lun": 7,
+                  "netapp_cluster": 3,
+                  "policy_group": 10,
+                  "svm": 4,
+                  "unique_id": 0,
+                  "volume": 5,
+                  "wid": 15,
+                  "workload": 8
+                },
+                "renameByName": {
+                  "Value #A": "Used %",
+                  "Value #B": "IOPs",
+                  "Value #C": "Max IOPs",
+                  "file": "File",
+                  "policy_group": "Policy"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "This panel displays the current usage of throughput as a percentage of the adaptive threshold set by an adaptive Quality of Service (QoS) policy. This metric is calculated by dividing the current throughput usage by the adaptive threshold and multiplying by 100. The panel shows data only if the block size is not set to `any`.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Used %"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "percent"
+                  },
+                  {
+                    "id": "max",
+                    "value": 100
+                  },
+                  {
+                    "id": "min",
+                    "value": 0
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 2
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Throughput"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "Bps"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Max Throughput"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "MBs"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "netapp_cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1\u0026${Datacenter:queryparam}\u0026${__url_time_range}\u0026var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1\u0026${__url_time_range}\u0026var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "svm"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "SVM"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-svm/ontap-svm?orgId=1\u0026${Datacenter:queryparam}\u0026${Cluster:queryparam}\u0026${__url_time_range}\u0026var-SVM=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "volume"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Volume"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-volume/ontap-volume?orgId=1\u0026${Datacenter:queryparam}\u0026${Cluster:queryparam}\u0026${SVM:queryparam}\u0026${__url_time_range}\u0026var-Volume=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "lun"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "LUN"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-lun/ontap-lun?orgId=1\u0026${Datacenter:queryparam}\u0026${Cluster:queryparam}\u0026${SVM:queryparam}\u0026${Volume:queryparam}\u0026${__url_time_range}\u0026var-LUN=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "workload"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Workload"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-workload/ontap-workload?orgId=1\u0026${Datacenter:queryparam}\u0026${Cluster:queryparam}\u0026${__url_time_range}\u0026var-Workload=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 119
+          },
+          "id": 241,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": true,
+                "displayName": "Used %"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "avg_over_time(\n  label_join(\n    clamp_max(\n      (\n          (\n              (qos_total_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"} * 100)\n            /\n              (1000 * 1000)\n          )\n        / on (datacenter, netapp_cluster, workload, policy_group, volume, lun, svm, qtree, file, wid)\n          qos_workload_max_throughput_mbps{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}\n      ),\n      100\n    ),\n    \"unique_id\",\n    \"-\",\n    \"datacenter\",\n    \"netapp_cluster\",\n    \"workload\"\n  )[3h:]\n)",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "avg_over_time(\n  label_join(\n    (\n        qos_total_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"}\n      * on (datacenter, netapp_cluster, workload, policy_group, volume, lun, svm, qtree, file, wid)\n        (\n            qos_workload_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}\n          and\n            qos_workload_max_throughput_mbps{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}\n        )\n    ),\n    \"unique_id\",\n    \"-\",\n    \"datacenter\",\n    \"netapp_cluster\",\n    \"workload\"\n  )[3h:]\n)",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "B"
+            },
+            {
+              "exemplar": false,
+              "expr": "label_join(\n  qos_workload_max_throughput_mbps{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"workload\"\n)",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "C"
+            }
+          ],
+          "title": "Adaptive QoS Workload Bandwidth Utilization (%)",
+          "transformations": [
+            {
+              "id": "seriesToColumns",
+              "options": {
+                "byField": "unique_id"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "(.*) 1$",
+                "renamePattern": "$1"
+              }
+            },
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "pattern": ""
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Time 2": true,
+                  "Time 3": true,
+                  "__name__": true,
+                  "class": true,
+                  "datacenter 2": true,
+                  "datacenter 3": true,
+                  "file 2": true,
+                  "file 3": true,
+                  "instance": true,
+                  "is_adaptive": true,
+                  "job": true,
+                  "lun 2": true,
+                  "lun 3": true,
+                  "netapp_cluster 2": true,
+                  "netapp_cluster 3": true,
+                  "policy_group 2": true,
+                  "policy_group 3": true,
+                  "svm 2": true,
+                  "svm 3": true,
+                  "unique_id": true,
+                  "volume 2": true,
+                  "volume 3": true,
+                  "wid": true,
+                  "wid 2": true,
+                  "wid 3": true,
+                  "workload 2": true,
+                  "workload 3": true
+                },
+                "indexByName": {
+                  "Time": 1,
+                  "Value #A": 10,
+                  "Value #B": 12,
+                  "Value #C": 13,
+                  "__name__": 14,
+                  "class": 15,
+                  "datacenter": 2,
+                  "file": 6,
+                  "instance": 16,
+                  "is_adaptive": 17,
+                  "job": 18,
+                  "lun": 7,
+                  "netapp_cluster": 3,
+                  "policy_group": 11,
+                  "svm": 4,
+                  "unique_id": 0,
+                  "volume": 5,
+                  "wid": 9,
+                  "workload": 8
+                },
+                "renameByName": {
+                  "Value #A": "Used %",
+                  "Value #B": "Throughput",
+                  "Value #C": "Max Throughput",
+                  "file": "File",
+                  "policy_group": "Policy"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Adaptive QoS Workload Utilization",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 71
+      },
+      "id": 175,
+      "panels": [
+        {
+          "datasource": "prometheus",
+          "description": "This is the percentage of read requests served from bamboo_ssd component.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 61
+          },
+          "id": 172,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "qos_read_io_type{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"bamboo_ssd\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_read_io_type{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"bamboo_ssd\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - {{workload}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Workloads by Read IO Type bamboo_ssd",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "This is the percentage of read requests served from cache.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 61
+          },
+          "id": 176,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "qos_read_io_type{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"cache\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_read_io_type{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"cache\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - {{workload}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Workloads by Read IO Type cache",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "This is the percentage of read requests served from cloud.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 71
+          },
+          "id": 177,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "qos_read_io_type{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"cloud\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_read_io_type{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"cloud\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - {{workload}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Workloads by Read IO Type cloud",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "This is the percentage of read requests served from cloud_s2c.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 71
+          },
+          "id": 178,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "qos_read_io_type{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"cloud_s2c\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_read_io_type{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"cloud_s2c\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - {{workload}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Workloads by Read IO Type cloud_s2c",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "This is the percentage of read requests served from disk.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 81
+          },
+          "id": 179,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "qos_read_io_type{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"disk\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_read_io_type{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"disk\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - {{workload}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Workloads by Read IO Type disk",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "This is the percentage of read requests served from ext_cache.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 81
+          },
+          "id": 180,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "qos_read_io_type{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"ext_cache\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_read_io_type{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"ext_cache\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - {{workload}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Workloads by Read IO Type ext_cache",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "This is the percentage of read requests served from fc_miss.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 91
+          },
+          "id": 181,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "qos_read_io_type{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"fc_miss\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_read_io_type{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"fc_miss\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - {{workload}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Workloads by Read IO Type fc_miss",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "This is the percentage of read requests served from hya_cache.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 91
+          },
+          "id": 182,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "qos_read_io_type{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"hya_cache\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_read_io_type{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"hya_cache\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - {{workload}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Workloads by Read IO Type hya_cache",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "This is the percentage of read requests served from hya_hdd.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 101
+          },
+          "id": 183,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "qos_read_io_type{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"hya_hdd\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_read_io_type{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"hya_hdd\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - {{workload}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Workloads by Read IO Type hya_hdd",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "This is the percentage of read requests served from hya_non_cache.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 101
+          },
+          "id": 184,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "qos_read_io_type{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"hya_non_cache\",workload=~\"$Workload\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      qos_read_io_type{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",metric=\"hya_non_cache\",workload=~\"$Workload\"}[3h] @ end()\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - {{workload}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Workloads by Read IO Type hya_non_cache",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Read IO Type",
+      "type": "row"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 30,
+  "style": "dark",
+  "tags": [
+    "harvest",
+    "ontap",
+    "cdot"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "Prometheus",
+          "value": "Prometheus"
+        },
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": false,
+        "label": "Data Source",
+        "multi": false,
+        "name": "DS_PROMETHEUS",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": "prometheus",
+        "definition": "label_values(cluster_new_status{system_type!=\"7mode\"}, datacenter)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "Datacenter",
+        "options": [],
+        "query": {
+          "query": "label_values(cluster_new_status{system_type!=\"7mode\"}, datacenter)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": "prometheus",
+        "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, netapp_cluster)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "Cluster",
+        "options": [],
+        "query": {
+          "query": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, netapp_cluster)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": "Workload Class",
+        "multi": true,
+        "name": "WorkloadClass",
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "selected": false,
+            "text": "user_defined",
+            "value": "user_defined"
+          },
+          {
+            "selected": false,
+            "text": "system_defined",
+            "value": "system_defined"
+          },
+          {
+            "selected": false,
+            "text": "autovolume",
+            "value": "autovolume"
+          }
+        ],
+        "query": "user_defined,system_defined,autovolume",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "allValue": "",
+        "current": {},
+        "datasource": "prometheus",
+        "definition": "label_values(qos_workload_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\", class=~\"$WorkloadClass\"}, workload)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "Workload",
+        "options": [],
+        "query": {
+          "query": "label_values(qos_workload_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\", class=~\"$WorkloadClass\"}, workload)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "5",
+          "value": "5"
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "TopResources",
+        "options": [
+          {
+            "selected": false,
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "selected": false,
+            "text": "2",
+            "value": "2"
+          },
+          {
+            "selected": false,
+            "text": "3",
+            "value": "3"
+          },
+          {
+            "selected": false,
+            "text": "4",
+            "value": "4"
+          },
+          {
+            "selected": true,
+            "text": "5",
+            "value": "5"
+          },
+          {
+            "selected": false,
+            "text": "6",
+            "value": "6"
+          },
+          {
+            "selected": false,
+            "text": "8",
+            "value": "8"
+          },
+          {
+            "selected": false,
+            "text": "10",
+            "value": "10"
+          },
+          {
+            "selected": false,
+            "text": "15",
+            "value": "15"
+          },
+          {
+            "selected": false,
+            "text": "25",
+            "value": "25"
+          },
+          {
+            "selected": false,
+            "text": "50",
+            "value": "50"
+          },
+          {
+            "selected": false,
+            "text": "100",
+            "value": "100"
+          },
+          {
+            "selected": false,
+            "text": "250",
+            "value": "250"
+          },
+          {
+            "selected": false,
+            "text": "500",
+            "value": "500"
+          }
+        ],
+        "query": "1,2,3,4,5,6,8,10,15,25,50,100,250,500",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-3h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "",
+  "title": "ONTAP: Workload",
+  "uid": "cdot-workload",
+  "version": 15
+}
