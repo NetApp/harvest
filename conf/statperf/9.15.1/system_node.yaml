@@ -3,6 +3,8 @@ name:                     SystemNode
 query:                    system:node
 object:                   node
 
+allow_partial_aggregation: true
+
 counters:
   - ^^instance_uuid
   - ^instance_name                   => node

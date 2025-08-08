@@ -3,6 +3,8 @@ name:                     CIFSNode
 query:                    cifs:node
 object:                   node_cifs
 
+allow_partial_aggregation: true
+
 counters:
   - ^^instance_uuid
   - ^instance_name           => node

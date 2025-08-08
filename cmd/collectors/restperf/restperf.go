@@ -976,10 +976,18 @@ func (r *RestPerf) processPerfRecords(perfRecords []rest.PerfRecord, curMat *mat
 
 			// check for partial aggregation
 			if instanceData.Get("aggregation.complete").ClonedString() == "false" {
-				instance.SetPartial(true)
-				instance.SetExportable(false)
-				numPartials++
+				if r.AllowPartialAggregation {
+					// Partial aggregation detected but allowed processing - mark as complete and exportable
+					instance.SetPartial(false)
+					instance.SetExportable(true)
+				} else {
+					// Partial aggregation detected and not allowed processing - mark instance as partial and non-exportable
+					instance.SetPartial(true)
+					instance.SetExportable(false)
+					numPartials++
+				}
 			} else {
+				// Aggregation is complete - mark as complete and exportable
 				instance.SetPartial(false)
 				instance.SetExportable(true)
 			}
@@ -1229,7 +1237,7 @@ func (r *RestPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (
 
 	// Calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
-	if _, err = curMat.Delta("timestamp", prevMat, cachedData, r.Logger); err != nil {
+	if _, err = curMat.Delta("timestamp", prevMat, cachedData, r.AllowPartialAggregation, r.Logger); err != nil {
 		r.Logger.Error("(timestamp) calculate delta:", slogx.Err(err))
 	}
 
@@ -1259,7 +1267,7 @@ func (r *RestPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (
 		}
 
 		// all other properties - first calculate delta
-		if skips, err = curMat.Delta(key, prevMat, cachedData, r.Logger); err != nil {
+		if skips, err = curMat.Delta(key, prevMat, cachedData, r.AllowPartialAggregation, r.Logger); err != nil {
 			r.Logger.Error("Calculate delta:", slogx.Err(err), slog.String("key", key))
 			continue
 		}

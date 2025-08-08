@@ -106,6 +106,34 @@ func TestStatPerf_pollData(t *testing.T) {
 			sum:           90,
 			record:        true,
 		},
+		{
+			object:        "lun",
+			path:          "lun.yaml",
+			name:          "read_ops",
+			counter:       "read_ops",
+			pollCounters:  "testdata/array/lun_counters.txt",
+			pollInstance:  "testdata/array/lun_instances.txt",
+			pollDataPath1: "testdata/partialAggregation/data_1.txt",
+			pollDataPath2: "testdata/partialAggregation/data_2.txt",
+			numInstances:  0,
+			numMetrics:    195,
+			sum:           10000,
+			record:        false,
+		},
+		{
+			object:        "node",
+			path:          "system_node.yaml",
+			name:          "cpu_busy",
+			counter:       "cpu_busy",
+			pollCounters:  "testdata/allowPartialAggregation/counters.txt",
+			pollInstance:  "testdata/allowPartialAggregation/instances.txt",
+			pollDataPath1: "testdata/allowPartialAggregation/data_1.txt",
+			pollDataPath2: "testdata/allowPartialAggregation/data_2.txt",
+			numInstances:  3,
+			numMetrics:    150,
+			sum:           26,
+			record:        true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -227,9 +255,6 @@ func newStatPerf(object string, path string) *StatPerf {
 	homePath := "../../../"
 	conf.TestLoadHarvestConfig("testdata/config.yml")
 	opts := options.New(options.WithConfPath(homePath + "/conf"))
-	if path == "lun.yaml" {
-		opts = options.New(options.WithConfPath("testdata/conf"))
-	}
 	opts.Poller = pollerName
 	opts.HomePath = "testdata"
 	opts.IsTest = true

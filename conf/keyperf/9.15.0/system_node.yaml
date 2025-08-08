@@ -2,6 +2,8 @@ name:                     SystemNode
 query:                    api/cluster/nodes
 object:                   node
 
+allow_partial_aggregation: true
+
 counters:
   - ^^uuid                                                                                => uuid
   - ^name                                                                                 => node
