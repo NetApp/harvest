@@ -277,7 +277,7 @@ func TestPollCounter(t *testing.T) {
 	)
 	r := newRestPerf("Workload", "workload.yaml")
 
-	counters := jsonToPerfRecords("testdata/partialAggregation/qos-counters.json")
+	counters := jsonToPerfRecords("testdata/partialAggregation/counters.json")
 	_, err = r.pollCounter(counters[0].Records.Array(), 0)
 	if err != nil {
 		t.Fatalf("Failed to fetch poll counter %v", err)
@@ -288,66 +288,75 @@ func TestPollCounter(t *testing.T) {
 	}
 }
 
+type partialAggTestCase struct {
+	name                    string
+	dataFile                string
+	expectedExportedInst    int
+	expectedExportedMetrics int
+}
+
+func runPartialAggregationTests(t *testing.T, r *RestPerf, testDataDir string, cases []partialAggTestCase) {
+	for _, tc := range cases {
+		t.Log("Running " + tc.name)
+		r.testPollInstanceAndDataWithMetrics(t, testDataDir+tc.dataFile, tc.expectedExportedInst, tc.expectedExportedMetrics)
+		if t.Failed() {
+			t.Fatal(tc.name + " failed")
+		}
+	}
+}
+
 func TestPartialAggregationSequence(t *testing.T) {
-	var (
-		err error
-	)
 	conf.TestLoadHarvestConfig("testdata/config.yml")
 	r := newRestPerf("Workload", "workload.yaml")
 
-	counters := jsonToPerfRecords("testdata/partialAggregation/qos-counters.json")
-	_, err = r.pollCounter(counters[0].Records.Array(), 0)
+	counters := jsonToPerfRecords("testdata/partialAggregation/counters.json")
+	_, err := r.pollCounter(counters[0].Records.Array(), 0)
 	if err != nil {
 		t.Fatalf("Failed to fetch poll counter %v", err)
 	}
-	pollInstance := jsonToPerfRecords("testdata/partialAggregation/qos-poll-instance.json")
+	pollInstance := jsonToPerfRecords("testdata/partialAggregation/poll-instance.json")
 	_, err = r.pollInstance(r.Matrix[r.Object], perfToJSON(pollInstance), 0)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	// First Poll
-	pollData := jsonToPerfRecords("testdata/partialAggregation/qos-poll-data-1.json")
-	now := time.Now().Truncate(time.Second)
-	pollData[0].Timestamp = now.UnixNano()
-	t.Log("Running First Poll")
-	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-1.json", 0, 0)
+	cases := []partialAggTestCase{
+		{"First Poll", "poll-data-1.json", 0, 0},
+		{"Complete Poll", "poll-data-1.json", 2, 48},
+		{"Partial Poll", "poll-data-2.json", 0, 0},
+		{"Partial Poll 2", "poll-data-2.json", 0, 0},
+		{"First Complete Poll After Partial", "poll-data-1.json", 2, 0},
+		{"Second Complete Poll After Partial", "poll-data-1.json", 2, 48},
+		{"Partial Poll 3", "poll-data-2.json", 0, 0},
+	}
+	runPartialAggregationTests(t, r, "testdata/partialAggregation/", cases)
+}
 
-	// Complete Poll
-	t.Log("Running Complete Poll")
-	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-1.json", 2, 48)
+func TestAllowPartialAggregationSequence(t *testing.T) {
+	conf.TestLoadHarvestConfig("testdata/config.yml")
+	r := newRestPerf("SystemNode", "system_node.yaml")
 
-	// Partial Poll
-	t.Log("Running Partial Poll")
-	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-2.json", 0, 0)
-
-	// Partial Poll 2
-	t.Log("Running Partial Poll 2")
-	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-2.json", 0, 0)
-	if t.Failed() {
-		t.Fatal("Partial Poll 2 failed")
+	counters := jsonToPerfRecords("testdata/allowPartialAggregation/counters.json")
+	_, err := r.pollCounter(counters[0].Records.Array(), 0)
+	if err != nil {
+		t.Fatalf("Failed to fetch poll counter %v", err)
+	}
+	pollInstance := jsonToPerfRecords("testdata/allowPartialAggregation/poll-instance.json")
+	_, err = r.pollInstance(r.Matrix[r.Object], perfToJSON(pollInstance), 0)
+	if err != nil {
+		t.Fatal(err)
 	}
 
-	// First Complete Poll After Partial
-	t.Log("Running First Complete Poll After Partial")
-	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-1.json", 2, 0)
-	if t.Failed() {
-		t.Fatal("First Complete Poll After Partial failed")
+	cases := []partialAggTestCase{
+		{"First Poll", "poll-data-1.json", 0, 0},
+		{"Complete Poll", "poll-data-1.json", 4, 8},
+		{"Partial Poll", "poll-data-2.json", 4, 6},
+		{"Partial Poll 2", "poll-data-2.json", 4, 6},
+		{"First Complete Poll After Partial", "poll-data-1.json", 4, 6},
+		{"Second Complete Poll After Partial", "poll-data-1.json", 4, 8},
+		{"Partial Poll 3", "poll-data-2.json", 4, 6},
 	}
-
-	// Second Complete Poll After Partial
-	t.Log("Running Second Complete Poll After Partial")
-	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-1.json", 2, 48)
-	if t.Failed() {
-		t.Fatal("Second Complete Poll After Partial failed")
-	}
-
-	// Partial Poll 3
-	t.Log("Running Partial Poll 3")
-	r.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/qos-poll-data-2.json", 0, 0)
-	if t.Failed() {
-		t.Fatal("Partial Poll 3 failed")
-	}
+	runPartialAggregationTests(t, r, "testdata/allowPartialAggregation/", cases)
 }
 
 func newRestPerf(object string, path string) *RestPerf {

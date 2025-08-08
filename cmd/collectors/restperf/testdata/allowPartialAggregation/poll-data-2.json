@@ -1,0 +1,199 @@
+{
+  "records": [
+    {
+      "counter_table": {
+        "name": "system:node"
+      },
+      "id": "sti78-vsim-ucs188i:7c6a514e-6928-11f0-8e46-005056ac300b",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "sti78-vsim-ucs188i"
+        },
+        {
+          "name": "system_model",
+          "value": "SIMBOX"
+        },
+        {
+          "name": "ontap_version",
+          "value": "NetApp Release devN_250724_0200: Thu Jul 24 03:16:03 EDT 2025 "
+        },
+        {
+          "name": "compile_flags",
+          "value": "1"
+        },
+        {
+          "name": "serial_no",
+          "value": "4086632-51-8"
+        },
+        {
+          "name": "system_id",
+          "value": "4086632518"
+        },
+        {
+          "name": "hostname",
+          "value": "sti78-vsim-ucs188i"
+        },
+        {
+          "name": "name",
+          "value": "sti78-vsim-ucs188i"
+        },
+        {
+          "name": "uuid",
+          "value": "7c6a514e-6928-11f0-8e46-005056ac300b"
+        }
+      ],
+      "counters": [
+        {
+          "name": "cpu_busy",
+          "value": 75318374288
+        },
+        {
+          "name": "cpu_elapsed_time",
+          "value": 868581876513
+        }
+      ],
+      "aggregation": {
+        "count": 3,
+        "complete": false
+      },
+      "_links": {
+        "self": {
+          "href": "/api/cluster/counter/tables/system:node/rows/sti78-vsim-ucs188i%3A7c6a514e-6928-11f0-8e46-005056ac300b"
+        }
+      }
+    },
+    {
+      "counter_table": {
+        "name": "system:node"
+      },
+      "id": "sti78-vsim-ucs188j:7c5019b4-6928-11f0-b592-005056acdcde",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "sti78-vsim-ucs188j"
+        },
+        {
+          "name": "system_model",
+          "value": "SIMBOX"
+        },
+        {
+          "name": "ontap_version",
+          "value": "NetApp Release devN_250724_0200: Thu Jul 24 03:16:03 EDT 2025 "
+        },
+        {
+          "name": "compile_flags",
+          "value": "1"
+        },
+        {
+          "name": "serial_no",
+          "value": "4086632-52-0"
+        },
+        {
+          "name": "system_id",
+          "value": "4086632520"
+        },
+        {
+          "name": "hostname",
+          "value": "sti78-vsim-ucs188j"
+        },
+        {
+          "name": "name",
+          "value": "sti78-vsim-ucs188j"
+        },
+        {
+          "name": "uuid",
+          "value": "7c5019b4-6928-11f0-b592-005056acdcde"
+        }
+      ],
+      "counters": [
+        {
+          "name": "cpu_busy",
+          "value": 72875166227
+        },
+        {
+          "name": "cpu_elapsed_time",
+          "value": 868581851919
+        }
+      ],
+      "aggregation": {
+        "count": 3,
+        "complete": false
+      },
+      "_links": {
+        "self": {
+          "href": "/api/cluster/counter/tables/system:node/rows/sti78-vsim-ucs188j%3A7c5019b4-6928-11f0-b592-005056acdcde"
+        }
+      }
+    },
+    {
+      "counter_table": {
+        "name": "system:node"
+      },
+      "id": "sti78-vsim-ucs188l:7c7a5bb1-6928-11f0-92d9-005056ac567f",
+      "properties": [
+        {
+          "name": "node.name",
+          "value": "sti78-vsim-ucs188l"
+        },
+        {
+          "name": "system_model",
+          "value": "SIMBOX"
+        },
+        {
+          "name": "ontap_version",
+          "value": "NetApp Release devN_250724_0200: Thu Jul 24 03:16:03 EDT 2025 "
+        },
+        {
+          "name": "compile_flags",
+          "value": "1"
+        },
+        {
+          "name": "serial_no",
+          "value": "4086632-51-9"
+        },
+        {
+          "name": "system_id",
+          "value": "4086632519"
+        },
+        {
+          "name": "hostname",
+          "value": "sti78-vsim-ucs188l"
+        },
+        {
+          "name": "name",
+          "value": "sti78-vsim-ucs188l"
+        },
+        {
+          "name": "uuid",
+          "value": "7c7a5bb1-6928-11f0-92d9-005056ac567f"
+        }
+      ],
+      "counters": [
+        {
+          "name": "cpu_busy",
+          "value": 71235398428
+        },
+        {
+          "name": "cpu_elapsed_time",
+          "value": 868581781811
+        }
+      ],
+      "aggregation": {
+        "count": 3,
+        "complete": false
+      },
+      "_links": {
+        "self": {
+          "href": "/api/cluster/counter/tables/system:node/rows/sti78-vsim-ucs188l%3A7c7a5bb1-6928-11f0-92d9-005056ac567f"
+        }
+      }
+    }
+  ],
+  "num_records": 3,
+  "_links": {
+    "self": {
+      "href": "/api/cluster/counter/tables/system:node/rows?fields=*&counters.name=cpu_busy|cpu_elapsed_time"
+    }
+  }
+}

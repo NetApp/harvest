@@ -60,48 +60,70 @@ func TestSkipsSequence(t *testing.T) {
 	}
 }
 
-func TestPartialAggregationSequence(t *testing.T) {
+func TestPartialAndAllowPartialAggregationSequence(t *testing.T) {
+	cases := []struct {
+		name      string
+		object    string
+		yaml      string
+		pollFiles []struct {
+			label                   string
+			file                    string
+			expectedExportedInst    int
+			expectedExportedMetrics int
+		}
+	}{
+		{
+			name:   "PartialAggregationSequence",
+			object: "Volume",
+			yaml:   "volume.yaml",
+			pollFiles: []struct {
+				label                   string
+				file                    string
+				expectedExportedInst    int
+				expectedExportedMetrics int
+			}{
+				{"First Poll", "testdata/partialAggregation/poll-1.json", 0, 0},
+				{"Complete Poll", "testdata/partialAggregation/poll-2.json", 4, 48},
+				{"Partial Poll", "testdata/partialAggregation/poll-partial.json", 3, 36},
+				{"Partial Poll 2", "testdata/partialAggregation/poll-partial.json", 3, 36},
+				{"First Complete Poll After Partial", "testdata/partialAggregation/poll-3.json", 4, 36},
+				{"Second Complete Poll After Partial", "testdata/partialAggregation/poll-3.json", 4, 48},
+				{"Partial Poll 3", "testdata/partialAggregation/poll-partial-2.json", 3, 36},
+			},
+		},
+		{
+			name:   "AllowPartialAggregationSequence",
+			object: "SystemNode",
+			yaml:   "system_node.yaml",
+			pollFiles: []struct {
+				label                   string
+				file                    string
+				expectedExportedInst    int
+				expectedExportedMetrics int
+			}{
+				{"First Poll", "testdata/allowPartialAggregation/poll-1.json", 0, 0},
+				{"Complete Poll", "testdata/allowPartialAggregation/poll-2.json", 4, 4},
+				{"Partial Poll", "testdata/allowPartialAggregation/poll-partial.json", 4, 3},
+				{"Partial Poll 2", "testdata/allowPartialAggregation/poll-partial.json", 4, 3},
+				{"First Complete Poll After Partial", "testdata/allowPartialAggregation/poll-3.json", 4, 3},
+				{"Second Complete Poll After Partial", "testdata/allowPartialAggregation/poll-3.json", 4, 4},
+				{"Partial Poll 3", "testdata/allowPartialAggregation/poll-partial-2.json", 4, 3},
+			},
+		},
+	}
+
 	conf.TestLoadHarvestConfig("testdata/config.yml")
-	kp := newKeyPerf("Volume", "volume.yaml")
-
-	// First Poll
-	t.Log("Running First Poll")
-	kp.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/volume-poll-1.json", 0, 0)
-
-	// Complete Poll
-	t.Log("Running Complete Poll")
-	kp.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/volume-poll-2.json", 4, 48)
-
-	// Partial Poll
-	t.Log("Running Partial Poll")
-	kp.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/volume-poll-partial.json", 3, 36)
-
-	// Partial Poll 2
-	t.Log("Running Partial Poll 2")
-	kp.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/volume-poll-partial.json", 3, 36)
-	if t.Failed() {
-		t.Fatal("Partial Poll 2 failed")
-	}
-
-	// First Complete Poll After Partial
-	t.Log("Running First Complete Poll After Partial")
-	kp.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/volume-poll-3.json", 4, 36)
-	if t.Failed() {
-		t.Fatal("First Complete Poll After Partial failed")
-	}
-
-	// Second Complete Poll After Partial
-	t.Log("Running Second Complete Poll After Partial")
-	kp.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/volume-poll-3.json", 4, 48)
-	if t.Failed() {
-		t.Fatal("Second Complete Poll After Partial failed")
-	}
-
-	// Partial Poll 3
-	t.Log("Running Partial Poll 3")
-	kp.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/volume-poll-partial-2.json", 3, 36)
-	if t.Failed() {
-		t.Fatal("Partial Poll 3 failed")
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			kp := newKeyPerf(tc.object, tc.yaml)
+			for _, pf := range tc.pollFiles {
+				t.Log("Running " + pf.label)
+				kp.testPollInstanceAndDataWithMetrics(t, pf.file, pf.expectedExportedInst, pf.expectedExportedMetrics)
+				if t.Failed() {
+					t.Fatalf("%s failed", pf.label)
+				}
+			}
+		})
 	}
 }
 
@@ -247,7 +269,12 @@ func TestKeyPerf_pollData(t *testing.T) {
 
 func newKeyPerf(object string, path string) *KeyPerf {
 	var err error
-	opts := options.New(options.WithConfPath("testdata/conf"))
+	homePath := "../../../"
+	opts := options.New(options.WithConfPath(homePath + "/conf"))
+	// An additional histogram metric is being tested, so load the data from the test dataset.
+	if path == "volume.yaml" {
+		opts = options.New(options.WithConfPath("testdata/conf"))
+	}
 	opts.Poller = pollerName
 	opts.HomePath = "testdata"
 	opts.IsTest = true

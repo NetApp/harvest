@@ -15,6 +15,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -160,8 +161,18 @@ func (kp *KeyPerf) LoadPlugin(kind string, p *plugin.AbstractPlugin) plugin.Plug
 	return nil
 }
 
+func findStaticCounterDefPath() string {
+	prodPath := "conf/keyperf/static_counter_definitions.yaml"
+	testPath := "../../../conf/keyperf/static_counter_definitions.yaml"
+
+	if _, err := os.Stat(prodPath); err == nil {
+		return prodPath
+	}
+	return testPath
+}
+
 func (kp *KeyPerf) buildCounters() {
-	staticCounterDef, err := LoadStaticCounterDefinitions(kp.Prop.Object, "conf/keyperf/static_counter_definitions.yaml", kp.Logger)
+	staticCounterDef, err := LoadStaticCounterDefinitions(kp.Prop.Object, findStaticCounterDefPath(), kp.Logger)
 	if err != nil {
 		// It's acceptable to continue even if there are errors, as the remaining counters will still be processed.
 		// Any counters that require counter metadata will be skipped.
@@ -477,7 +488,7 @@ func (kp *KeyPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (
 		}
 
 		// all other properties - first calculate delta
-		if skips, err = curMat.Delta(key, prevMat, cachedData, kp.Logger); err != nil {
+		if skips, err = curMat.Delta(key, prevMat, cachedData, kp.AllowPartialAggregation, kp.Logger); err != nil {
 			kp.Logger.Error("Calculate delta", slogx.Err(err), slog.String("key", key))
 			continue
 		}

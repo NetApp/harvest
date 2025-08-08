@@ -73,6 +73,11 @@ func (r *Rest) InitCache() error {
 		r.BatchSize = collectors.DefaultBatchSize
 	}
 
+	allowPartialAggregation := r.Params.GetChildContentS("allow_partial_aggregation")
+	if allowPartialAggregation == "true" {
+		r.AllowPartialAggregation = true
+	}
+
 	// Private end points do not support * as fields. We need to pass fields in endpoint
 	query := r.Params.GetChildS("query")
 	r.Prop.IsPublic = true

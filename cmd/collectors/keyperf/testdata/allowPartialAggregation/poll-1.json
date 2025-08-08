@@ -1,0 +1,70 @@
+{
+  "records": [
+    {
+      "uuid": "7c5019b4-6928-11f0-b592-005056acdcde",
+      "name": "sti78-vsim-ucs188j",
+      "statistics": {
+        "timestamp": "2025-08-04T09:00:16Z",
+        "status": "ok",
+        "processor_utilization_raw": 72783121422,
+        "processor_utilization_base": 870126038488
+      },
+      "_links": {
+        "self": {
+          "href": "/api/cluster/nodes/7c5019b4-6928-11f0-b592-005056acdcde"
+        }
+      }
+    },
+    {
+      "uuid": "7c52cb2f-6928-11f0-882e-005056ac3c95",
+      "name": "sti78-vsim-ucs188k",
+      "statistics": {
+        "timestamp": "2025-08-04T09:00:16Z",
+        "status": "ok",
+        "processor_utilization_raw": 75233922560,
+        "processor_utilization_base": 870124830601
+      },
+      "_links": {
+        "self": {
+          "href": "/api/cluster/nodes/7c52cb2f-6928-11f0-882e-005056ac3c95"
+        }
+      }
+    },
+    {
+      "uuid": "7c6a514e-6928-11f0-8e46-005056ac300b",
+      "name": "sti78-vsim-ucs188i",
+      "statistics": {
+        "timestamp": "2025-08-04T09:00:16Z",
+        "status": "ok",
+        "processor_utilization_raw": 75233922560,
+        "processor_utilization_base": 870124830601
+      },
+      "_links": {
+        "self": {
+          "href": "/api/cluster/nodes/7c6a514e-6928-11f0-8e46-005056ac300b"
+        }
+      }
+    },
+    {
+      "uuid": "7c7a5bb1-6928-11f0-92d9-005056ac567f",
+      "name": "sti78-vsim-ucs188l",
+      "statistics": {
+        "timestamp": "2025-08-04T09:00:16Z",
+        "status": "ok",
+        "processor_utilization_raw": 71147098519,
+        "processor_utilization_base": 870125967727
+      },
+      "_links": {
+        "self": {
+          "href": "/api/cluster/nodes/7c7a5bb1-6928-11f0-92d9-005056ac567f"
+        }
+      }
+    }
+  ],
+  "num_records": 4,
+  "_links": {
+    "self": {
+      "href": "/api/cluster/nodes?fields=uuid,name,statistics"
+    }
+  }
+}

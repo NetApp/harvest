@@ -1,0 +1,21 @@
+<results status="passed">
+    <attributes-list>
+        <instance-info>
+            <name>sti78-vsim-ucs188i</name>
+            <uuid>7c6a514e-6928-11f0-8e46-005056ac300b</uuid>
+        </instance-info>
+        <instance-info>
+            <name>sti78-vsim-ucs188j</name>
+            <uuid>7c5019b4-6928-11f0-b592-005056acdcde</uuid>
+        </instance-info>
+        <instance-info>
+            <name>sti78-vsim-ucs188l</name>
+            <uuid>7c7a5bb1-6928-11f0-92d9-005056ac567f</uuid>
+        </instance-info>
+        <instance-info>
+            <name>sti78-vsim-ucs188k</name>
+            <uuid>9c7a5bb1-6928-11f0-92d9-005056ac577f</uuid>
+        </instance-info>
+    </attributes-list>
+    <num-records>4</num-records>
+</results>

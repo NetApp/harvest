@@ -124,9 +124,25 @@ func TestSkipsSequence(t *testing.T) {
 	}
 }
 
+type testCase struct {
+	name                    string
+	dataFile                string
+	expectedExportedInst    int
+	expectedExportedMetrics int
+}
+
+func testPartialAggregationHelper(t *testing.T, z *ZapiPerf, testDataDir string, cases []testCase) {
+	for _, tc := range cases {
+		t.Log("Running " + tc.name)
+		z.testPollInstanceAndDataWithMetrics(t, testDataDir+tc.dataFile, tc.expectedExportedInst, tc.expectedExportedMetrics)
+		if t.Failed() {
+			t.Fatal(tc.name + " failed")
+		}
+	}
+}
+
 func TestPartialAggregationSequence(t *testing.T) {
 	z := NewZapiPerf("Workload", "workload.yaml")
-
 	z.testFilePath = "testdata/partialAggregation/pollCounter.xml"
 	if _, err := z.PollCounter(); err != nil {
 		t.Fatalf("Failed to fetch poll counter %v", err)
@@ -135,55 +151,36 @@ func TestPartialAggregationSequence(t *testing.T) {
 	if _, err := z.PollInstance(); err != nil {
 		t.Fatalf("Failed to fetch poll instance %v", err)
 	}
+	testPartialAggregationHelper(t, z, "testdata/partialAggregation/", []testCase{
+		{"First Poll", "pollData1.xml", 0, 0},
+		{"Complete Poll", "pollData1.xml", 2, 48},
+		{"Partial Poll", "pollData2.xml", 0, 0},
+		{"Partial Poll 2", "pollData2.xml", 0, 0},
+		{"First Complete Poll After Partial", "pollData1.xml", 2, 0},
+		{"Second Complete Poll After Partial", "pollData1.xml", 2, 48},
+		{"Partial Poll 3", "pollData2.xml", 0, 0},
+	})
+}
 
-	// First Poll
-	t.Log("Running First Poll")
-	z.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/pollData1.xml", 0, 0)
-	if t.Failed() {
-		t.Fatal("First Poll failed")
+func TestAllowPartialAggregationSequence(t *testing.T) {
+	z := NewZapiPerf("SystemNode", "system_node.yaml")
+	z.testFilePath = "testdata/allowPartialAggregation/pollCounter.xml"
+	if _, err := z.PollCounter(); err != nil {
+		t.Fatalf("Failed to fetch poll counter %v", err)
 	}
-
-	// Complete Poll
-	t.Log("Running Complete Poll")
-	z.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/pollData1.xml", 2, 48)
-	if t.Failed() {
-		t.Fatal("Complete Poll failed")
+	z.testFilePath = "testdata/allowPartialAggregation/pollInstance1.xml"
+	if _, err := z.PollInstance(); err != nil {
+		t.Fatalf("Failed to fetch poll instance %v", err)
 	}
-
-	// Partial Poll
-	t.Log("Running Partial Poll")
-	z.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/pollData2.xml", 0, 0)
-	if t.Failed() {
-		t.Fatal("Partial Poll failed")
-	}
-
-	// Partial Poll 2
-	t.Log("Running Partial Poll 2")
-	z.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/pollData2.xml", 0, 0)
-	if t.Failed() {
-		t.Fatal("Partial Poll 2 failed")
-	}
-
-	// First Complete Poll After Partial
-	t.Log("Running First Complete Poll After Partial")
-	z.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/pollData1.xml", 2, 0)
-	if t.Failed() {
-		t.Fatal("First Complete Poll After Partial failed")
-	}
-
-	// Second Complete Poll After Partial
-	t.Log("Running Second Complete Poll After Partial")
-	z.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/pollData1.xml", 2, 48)
-	if t.Failed() {
-		t.Fatal("Second Complete Poll After Partial failed")
-	}
-
-	// Partial Poll 3
-	t.Log("Running Partial Poll 3")
-	z.testPollInstanceAndDataWithMetrics(t, "testdata/partialAggregation/pollData2.xml", 0, 0)
-	if t.Failed() {
-		t.Fatal("Partial Poll 3 failed")
-	}
+	testPartialAggregationHelper(t, z, "testdata/allowPartialAggregation/", []testCase{
+		{"First Poll", "pollData1.xml", 0, 0},
+		{"Complete Poll", "pollData1.xml", 4, 8},
+		{"Partial Poll", "pollData2.xml", 3, 6},
+		{"Partial Poll 2", "pollData2.xml", 3, 6},
+		{"First Complete Poll After Partial", "pollData1.xml", 4, 6},
+		{"Second Complete Poll After Partial", "pollData1.xml", 4, 8},
+		{"Partial Poll 3", "pollData2.xml", 3, 6},
+	})
 }
 
 // New method specifically for TestPartialAggregation

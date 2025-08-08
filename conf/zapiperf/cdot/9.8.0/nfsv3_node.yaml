@@ -6,6 +6,8 @@ object:                   node_nfs
 global_labels:
   - nfsv: v3
 
+allow_partial_aggregation: true
+
 counters:
   - access_avg_latency
   - access_total

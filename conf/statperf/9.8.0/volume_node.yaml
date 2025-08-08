@@ -3,6 +3,8 @@ name:                     VolumeNode
 query:                    volume:node
 object:                   node_vol
 
+allow_partial_aggregation: true
+
 counters:
   - ^^instance_uuid
   - ^instance_name           => node

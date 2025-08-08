@@ -363,7 +363,7 @@ func CreateMetric(key string, data *Matrix) error {
 }
 
 // Delta vector arithmetics
-func (m *Matrix) Delta(metricKey string, prevMat *Matrix, cachedData *Matrix, logger *slog.Logger) (int, error) {
+func (m *Matrix) Delta(metricKey string, prevMat *Matrix, cachedData *Matrix, allowPartialAggregation bool, logger *slog.Logger) (int, error) {
 	var skips int
 	prevMetric := prevMat.GetMetric(metricKey)
 	curMetric := m.GetMetric(metricKey)
@@ -391,8 +391,11 @@ func (m *Matrix) Delta(metricKey string, prevMat *Matrix, cachedData *Matrix, lo
 				isNegative := curCooked < 0
 
 				// Check for partial Aggregation
-				ppaOk := prevInstance.IsPartial()
-				cpaOk := currInstance.IsPartial()
+				var ppaOk, cpaOk bool
+				if !allowPartialAggregation {
+					ppaOk = prevInstance.IsPartial()
+					cpaOk = currInstance.IsPartial()
+				}
 
 				if isInvalidZero || isNegative || ppaOk || cpaOk {
 					curMetric.record[currIndex] = false

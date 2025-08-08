@@ -1,0 +1,64 @@
+{
+  "records": [
+    {
+      "uuid": "7c5019b4-6928-11f0-b592-005056acdcde",
+      "name": "sti78-vsim-ucs188j",
+      "statistics": {
+        "timestamp": "2025-08-04T09:28:21Z",
+        "status": "partial_no_response",
+        "processor_utilization_raw": 72926986579,
+        "processor_utilization_base": 871811365671
+      },
+      "_links": {
+        "self": {
+          "href": "/api/cluster/nodes/7c5019b4-6928-11f0-b592-005056acdcde"
+        }
+      }
+    },
+    {
+      "uuid": "7c52cb2f-6928-11f0-882e-005056ac3c95",
+      "name": "sti78-vsim-ucs188k",
+      "_links": {
+        "self": {
+          "href": "/api/cluster/nodes/7c52cb2f-6928-11f0-882e-005056ac3c95"
+        }
+      }
+    },
+    {
+      "uuid": "7c6a514e-6928-11f0-8e46-005056ac300b",
+      "name": "sti78-vsim-ucs188i",
+      "statistics": {
+        "timestamp": "2025-08-04T09:28:21Z",
+        "status": "partial_no_response",
+        "processor_utilization_raw": 75384526594,
+        "processor_utilization_base": 871811388352
+      },
+      "_links": {
+        "self": {
+          "href": "/api/cluster/nodes/7c6a514e-6928-11f0-8e46-005056ac300b"
+        }
+      }
+    },
+    {
+      "uuid": "7c7a5bb1-6928-11f0-92d9-005056ac567f",
+      "name": "sti78-vsim-ucs188l",
+      "statistics": {
+        "timestamp": "2025-08-04T09:28:21Z",
+        "status": "partial_no_response",
+        "processor_utilization_raw": 71289347555,
+        "processor_utilization_base": 871811294288
+      },
+      "_links": {
+        "self": {
+          "href": "/api/cluster/nodes/7c7a5bb1-6928-11f0-92d9-005056ac567f"
+        }
+      }
+    }
+  ],
+  "num_records": 4,
+  "_links": {
+    "self": {
+      "href": "/api/cluster/nodes?fields=uuid,name,statistics"
+    }
+  }
+}

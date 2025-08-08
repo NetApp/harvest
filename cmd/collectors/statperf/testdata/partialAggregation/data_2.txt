@@ -1,0 +1,264 @@
+
+
+
+Object: lun
+Instance: /vol/osc_iscsi_vol01/osc_iscsi_vol01
+Start-time: 6/11/2025 18:51:00
+End-time: 6/11/2025 18:51:00
+Scope: osc
+Number of Constituents: 2 (partial_aggregation)
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    avg_read_latency                                     1079359114us
+    avg_write_latency                                   23154949795us
+    avg_xcopy_latency                                             0us
+    caw_reqs                                                  1406714
+    enospc                                                          0
+    instance_name                     /vol/osc_iscsi_vol01/osc_iscsi_
+                                                                vol01
+    instance_uuid                            d32abf06-0327-4d06-bb9d-
+                                                         1c19c8eeea01
+    queue_full                                                      0
+    read_align_histo                                                -
+                                   0                          4152382
+                                   1                                0
+                                   2                            70069
+                                   3                                0
+                                   4                               68
+                                   5                                0
+                                   6                               57
+                                   7                                1
+    read_data                                            130994372608
+    read_ops                                                  3489276
+    read_ops_sent                                             4428447
+    read_partial_blocks                                       198745%
+    remote_bytes                                         315786057728
+    remote_ops                                               15542391
+    unmap_reqs                                                      0
+    vserver_name                                                  osc
+    write_align_histo                                               -
+                                   0                         23023621
+                                   1                             4108
+                                   2                             4115
+                                   3                             3918
+                                   4                             4085
+                                   5                             3974
+                                   6                             4011
+                                   7                             4053
+    write_data                                           273672586752
+    write_ops                                                23022282
+    write_ops_sent                                           23637606
+    write_partial_blocks                                      588763%
+    writesame_reqs                                                706
+    writesame_unmap_reqs                                            0
+    xcopy_reqs                                                      0
+
+Object: lun
+Instance: /vol/ostackvol1/volume-47f67be4-94c5-4c13-af88-b56b5829ec28
+Start-time: 6/11/2025 18:51:00
+End-time: 6/11/2025 18:51:00
+Scope: ostack-iscsi-dnd
+Number of Constituents: 2 (partial_aggregation)
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    avg_read_latency                                              0us
+    avg_write_latency                                             0us
+    avg_xcopy_latency                                             0us
+    caw_reqs                                                        0
+    enospc                                                          0
+    instance_name                    /vol/ostackvol1/volume-47f67be4-
+                                          94c5-4c13-af88-b56b5829ec28
+    instance_uuid                            5284f98e-6fea-4746-b2af-
+                                                         3a55d667673e
+    queue_full                                                      0
+    read_align_histo                                                -
+                                   0                                0
+                                   1                                0
+                                   2                                0
+                                   3                                0
+                                   4                                0
+                                   5                                0
+                                   6                                0
+                                   7                                0
+    read_data                                                       0
+    read_ops                                                        0
+    read_ops_sent                                                   0
+    read_partial_blocks                                            0%
+    remote_bytes                                                    0
+    remote_ops                                                      0
+    unmap_reqs                                                      0
+    vserver_name                                     ostack-iscsi-dnd
+    write_align_histo                                               -
+                                   0                                0
+                                   1                                0
+                                   2                                0
+                                   3                                0
+                                   4                                0
+                                   5                                0
+                                   6                                0
+                                   7                                0
+    write_data                                                      0
+    write_ops                                                       0
+    write_ops_sent                                                  0
+    write_partial_blocks                                           0%
+    writesame_reqs                                                  0
+    writesame_unmap_reqs                                            0
+    xcopy_reqs                                                      0
+
+Object: lun
+Instance: /vol/ostackvol1/volume-8136f932-9d94-4620-bbfb-a5f7c4f58bd3
+Start-time: 6/11/2025 18:51:00
+End-time: 6/11/2025 18:51:00
+Scope: ostack-iscsi-dnd
+Number of Constituents: 2 (partial_aggregation)
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    avg_read_latency                                              0us
+    avg_write_latency                                             0us
+    avg_xcopy_latency                                             0us
+    caw_reqs                                                        0
+    enospc                                                          0
+    instance_name                    /vol/ostackvol1/volume-8136f932-
+                                          9d94-4620-bbfb-a5f7c4f58bd3
+    instance_uuid                            98ba5831-06a3-44cb-ac9b-
+                                                         b9cc631cf850
+    queue_full                                                      0
+    read_align_histo                                                -
+                                   0                                0
+                                   1                                0
+                                   2                                0
+                                   3                                0
+                                   4                                0
+                                   5                                0
+                                   6                                0
+                                   7                                0
+    read_data                                                       0
+    read_ops                                                        0
+    read_ops_sent                                                   0
+    read_partial_blocks                                            0%
+    remote_bytes                                                    0
+    remote_ops                                                      0
+    unmap_reqs                                                      0
+    vserver_name                                     ostack-iscsi-dnd
+    write_align_histo                                               -
+                                   0                                0
+                                   1                                0
+                                   2                                0
+                                   3                                0
+                                   4                                0
+                                   5                                0
+                                   6                                0
+                                   7                                0
+    write_data                                                      0
+    write_ops                                                       0
+    write_ops_sent                                                  0
+    write_partial_blocks                                           0%
+    writesame_reqs                                                  0
+    writesame_unmap_reqs                                            0
+    xcopy_reqs                                                      0
+
+Object: lun
+Instance: /vol/ostackvol1/volume-8bdaa5b4-6bbd-4c96-9af6-892d869dfeaa
+Start-time: 6/11/2025 18:51:00
+End-time: 6/11/2025 18:51:00
+Scope: ostack-iscsi-dnd
+Number of Constituents: 2 (partial_aggregation)
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    avg_read_latency                                              0us
+    avg_write_latency                                             0us
+    avg_xcopy_latency                                             0us
+    caw_reqs                                                        0
+    enospc                                                          0
+    instance_name                    /vol/ostackvol1/volume-8bdaa5b4-
+                                          6bbd-4c96-9af6-892d869dfeaa
+    instance_uuid                            2555ea74-0b40-4a9e-beb1-
+                                                         a4f26d2e0652
+    queue_full                                                      0
+    read_align_histo                                                -
+                                   0                                0
+                                   1                                0
+                                   2                                0
+                                   3                                0
+                                   4                                0
+                                   5                                0
+                                   6                                0
+                                   7                                0
+    read_data                                                       0
+    read_ops                                                        0
+    read_ops_sent                                                   0
+    read_partial_blocks                                            0%
+    remote_bytes                                                    0
+    remote_ops                                                      0
+    unmap_reqs                                                      0
+    vserver_name                                     ostack-iscsi-dnd
+    write_align_histo                                               -
+                                   0                                0
+                                   1                                0
+                                   2                                0
+                                   3                                0
+                                   4                                0
+                                   5                                0
+                                   6                                0
+                                   7                                0
+    write_data                                                      0
+    write_ops                                                       0
+    write_ops_sent                                                  0
+    write_partial_blocks                                           0%
+    writesame_reqs                                                  0
+    writesame_unmap_reqs                                            0
+    xcopy_reqs                                                      0
+
+Object: lun
+Instance: /vol/ostackvol1/volume-9454cc64-b4d1-4bfb-9a6b-8f1b39349421
+Start-time: 6/11/2025 18:51:00
+End-time: 6/11/2025 18:51:00
+Scope: ostack-iscsi-dnd
+Number of Constituents: 2 (partial_aggregation)
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    avg_read_latency                                              0us
+    avg_write_latency                                             0us
+    avg_xcopy_latency                                             0us
+    caw_reqs                                                        0
+    enospc                                                          0
+    instance_name                    /vol/ostackvol1/volume-9454cc64-
+                                          b4d1-4bfb-9a6b-8f1b39349421
+    instance_uuid                            25a5cdbc-58d8-4b49-9979-
+                                                         4ff7f563c626
+    queue_full                                                      0
+    read_align_histo                                                -
+                                   0                                0
+                                   1                                0
+                                   2                                0
+                                   3                                0
+                                   4                                0
+                                   5                                0
+                                   6                                0
+                                   7                                0
+    read_data                                                       0
+    read_ops                                                        0
+    read_ops_sent                                                   0
+    read_partial_blocks                                            0%
+    remote_bytes                                                    0
+    remote_ops                                                      0
+    unmap_reqs                                                      0
+    vserver_name                                     ostack-iscsi-dnd
+    write_align_histo                                               -
+                                   0                                0
+                                   1                                0
+                                   2                                0
+                                   3                                0
+                                   4                                0
+                                   5                                0
+                                   6                                0
+                                   7                                0
+    write_data                                                      0
+    write_ops                                                       0
+    write_ops_sent                                                  0
+    write_partial_blocks                                           0%
+    writesame_reqs                                                  0
+    writesame_unmap_reqs                                            0
+    xcopy_reqs                                                      0
+125 entries were displayed.
+
