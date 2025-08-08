@@ -96,7 +96,7 @@
   ],
   "panels": [
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 2,
         "w": 24,
@@ -119,7 +119,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -132,7 +132,7 @@
       "type": "row"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Number of unhealhty snapmirrors.",
       "fieldConfig": {
         "defaults": {
@@ -182,7 +182,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "editorMode": "code",
           "exemplar": false,
           "expr": "count(\n    snapmirror_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",destination_location=~\".*$ConsistencyGroup\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\",healthy=\"false\",relationship_id!=\"\"}\n  )\nor\n  vector(0)",
@@ -199,7 +199,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This panel displays volume relationship count based on the relationship type.",
       "fieldConfig": {
         "defaults": {
@@ -251,7 +251,7 @@
       "pluginVersion": "8.1.2",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "editorMode": "code",
           "exemplar": false,
           "expr": "count(\n    snapmirror_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",derived_relationship_type=\"extended_data_protection\",destination_location=~\".*$ConsistencyGroup\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\",relationship_id!=\"\"}\n  )\nor\n  vector(0)",
@@ -261,7 +261,7 @@
           "refId": "A"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "editorMode": "code",
           "exemplar": false,
           "expr": "count(\n    snapmirror_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",derived_relationship_type=\"mirror_vault\",destination_location=~\".*$ConsistencyGroup\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\",relationship_id!=\"\"}\n  )\nor\n  vector(0)",
@@ -272,7 +272,7 @@
           "refId": "B"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "editorMode": "code",
           "exemplar": false,
           "expr": "count(\n    snapmirror_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",derived_relationship_type=\"vault\",destination_location=~\".*$ConsistencyGroup\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\",relationship_id!=\"\"}\n  )\nor\n  vector(0)",
@@ -283,7 +283,7 @@
           "refId": "C"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "editorMode": "code",
           "exemplar": false,
           "expr": "count(\n    snapmirror_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",derived_relationship_type=\"sync_mirror_strict\",destination_location=~\".*$ConsistencyGroup\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\",relationship_id!=\"\"}\n  )\nor\n  vector(0)",
@@ -294,7 +294,7 @@
           "refId": "D"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "editorMode": "code",
           "exemplar": false,
           "expr": "count(\n    snapmirror_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",derived_relationship_type=\"sync_mirror\",destination_location=~\".*$ConsistencyGroup\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\",relationship_id!=\"\"}\n  )\nor\n  vector(0)",
@@ -305,7 +305,7 @@
           "refId": "E"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "editorMode": "code",
           "exemplar": false,
           "expr": "count(\n    snapmirror_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",derived_relationship_type=\"automated_failover\",destination_location=~\".*$ConsistencyGroup\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\",relationship_id!=\"\"}\n  )\nor\n  vector(0)",
@@ -316,7 +316,7 @@
           "refId": "F"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "editorMode": "code",
           "exemplar": false,
           "expr": "count(\n    snapmirror_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",derived_relationship_type=\"automated_failover_duplex\",destination_location=~\".*$ConsistencyGroup\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\",relationship_id!=\"\"}\n  )\nor\n  vector(0)",
@@ -332,7 +332,7 @@
       "type": "piechart"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Number of healhty snapmirrors.",
       "fieldConfig": {
         "defaults": {
@@ -382,7 +382,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "editorMode": "code",
           "exemplar": false,
           "expr": "count(\n    snapmirror_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",destination_location=~\".*$ConsistencyGroup\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\",healthy=\"true\",relationship_id!=\"\"}\n  )\nor\n  vector(0)",
@@ -399,7 +399,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This panel displays detail of all the snapmirror relationships from destination side of view.",
       "fieldConfig": {
         "defaults": {
@@ -718,7 +718,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "editorMode": "code",
           "expr": "snapmirror_last_transfer_duration{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",destination_location=~\".*$ConsistencyGroup\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\",relationship_id!=\"\"}",
           "format": "table",
@@ -729,7 +729,7 @@
           "refId": "C"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "editorMode": "code",
           "exemplar": false,
           "expr": "snapmirror_last_transfer_size{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",destination_location=~\".*$ConsistencyGroup\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\",relationship_id!=\"\"}",
@@ -741,7 +741,7 @@
           "refId": "A"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "editorMode": "code",
           "expr": "snapmirror_lag_time{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",destination_location=~\".*$ConsistencyGroup\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\",relationship_id!=\"\"}",
           "format": "table",
@@ -752,7 +752,7 @@
           "refId": "B"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "editorMode": "code",
           "exemplar": false,
           "expr": "snapmirror_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",derived_relationship_type!=\"load_sharing\",destination_location=~\".*$ConsistencyGroup\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\",relationship_id!=\"\"}",
@@ -851,7 +851,7 @@
       "type": "table"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This panel displays duration of the last SnapMirror transfer in seconds.",
       "fieldConfig": {
         "defaults": {
@@ -935,7 +935,7 @@
       "repeatDirection": "h",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "editorMode": "code",
           "exemplar": false,
           "expr": "snapmirror_last_transfer_duration{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",destination_location=~\".*$ConsistencyGroup\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      snapmirror_last_transfer_duration{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",destination_location=~\".*$ConsistencyGroup\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\"}[3h] @ end()\n    )\n  )",
@@ -952,7 +952,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This panel displays amount of time since the last snapmirror transfer in seconds.",
       "fieldConfig": {
         "defaults": {
@@ -1037,7 +1037,7 @@
       "repeatDirection": "h",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "editorMode": "code",
           "exemplar": false,
           "expr": "snapmirror_lag_time{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",destination_location=~\".*$ConsistencyGroup\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      snapmirror_lag_time{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",destination_location=~\".*$ConsistencyGroup\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\"}[3h] @ end()\n    )\n  )",
@@ -1054,7 +1054,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This panel displays size in kilobytes (1024 bytes) of the last transfer.",
       "fieldConfig": {
         "defaults": {
@@ -1138,7 +1138,7 @@
       "repeatDirection": "h",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "editorMode": "code",
           "exemplar": false,
           "expr": "snapmirror_last_transfer_size{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",destination_location=~\".*$ConsistencyGroup\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      snapmirror_last_transfer_size{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",destination_location=~\".*$ConsistencyGroup\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\"}[3h] @ end()\n    )\n  )",
@@ -1156,7 +1156,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1166,7 +1166,7 @@
       "id": 43,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Number of unhealhty snapmirrors.",
           "fieldConfig": {
             "defaults": {
@@ -1216,7 +1216,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "editorMode": "code",
               "exemplar": false,
               "expr": "count(\n    snapmirror_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",destination_cg_name=~\"$ConsistencyGroup\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\",group_type=\"consistencygroup\",healthy=\"false\",relationship_id=\"\"}\n  )\nor\n  vector(0)",
@@ -1233,7 +1233,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays consistency group relationship count based on the relationship type.",
           "fieldConfig": {
             "defaults": {
@@ -1285,7 +1285,7 @@
           "pluginVersion": "8.1.2",
           "targets": [
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "exemplar": false,
               "expr": "count(\n    snapmirror_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",derived_relationship_type=\"extended_data_protection\",destination_cg_name=~\"$ConsistencyGroup\",destination_volume=~\"$Volume\",destination_vserver=~\"$SVM\",group_type=\"consistencygroup\",relationship_id=\"\"}\n  )\nor\n  vector(0)",
               "instant": true,
@@ -1294,7 +1294,7 @@
               "refId": "A"
             },
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "exemplar": false,
               "expr": "count(\n    snapmirror_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",derived_relationship_type=\"mirror_vault\",destination_cg_name=~\"$ConsistencyGroup\",destination_volume=~\"$Volume\",destination_vserver=~\"$SVM\",group_type=\"consistencygroup\",relationship_id=\"\"}\n  )\nor\n  vector(0)",
               "hide": false,
@@ -1304,7 +1304,7 @@
               "refId": "B"
             },
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "exemplar": false,
               "expr": "count(\n    snapmirror_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",derived_relationship_type=\"vault\",destination_cg_name=~\"$ConsistencyGroup\",destination_volume=~\"$Volume\",destination_vserver=~\"$SVM\",group_type=\"consistencygroup\",relationship_id=\"\"}\n  )\nor\n  vector(0)",
               "hide": false,
@@ -1314,7 +1314,7 @@
               "refId": "C"
             },
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "exemplar": false,
               "expr": "count(\n    snapmirror_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",derived_relationship_type=\"sync_mirror_strict\",destination_cg_name=~\"$ConsistencyGroup\",destination_volume=~\"$Volume\",destination_vserver=~\"$SVM\",group_type=\"consistencygroup\",relationship_id=\"\"}\n  )\nor\n  vector(0)",
               "hide": false,
@@ -1324,7 +1324,7 @@
               "refId": "D"
             },
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "exemplar": false,
               "expr": "count(\n    snapmirror_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",derived_relationship_type=\"sync_mirror\",destination_cg_name=~\"$ConsistencyGroup\",destination_volume=~\"$Volume\",destination_vserver=~\"$SVM\",group_type=\"consistencygroup\",relationship_id=\"\"}\n  )\nor\n  vector(0)",
               "hide": false,
@@ -1334,7 +1334,7 @@
               "refId": "E"
             },
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "exemplar": false,
               "expr": "count(\n    snapmirror_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",derived_relationship_type=\"automated_failover\",destination_cg_name=~\"$ConsistencyGroup\",destination_volume=~\"$Volume\",destination_vserver=~\"$SVM\",group_type=\"consistencygroup\",relationship_id=\"\"}\n  )\nor\n  vector(0)",
               "hide": false,
@@ -1344,7 +1344,7 @@
               "refId": "F"
             },
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "exemplar": false,
               "expr": "count(\n    snapmirror_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",derived_relationship_type=\"automated_failover_duplex\",destination_cg_name=~\"$ConsistencyGroup\",destination_volume=~\"$Volume\",destination_vserver=~\"$SVM\",group_type=\"consistencygroup\",relationship_id=\"\"}\n  )\nor\n  vector(0)",
               "hide": false,
@@ -1359,7 +1359,7 @@
           "type": "piechart"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Number of healthy snapmirrors.",
           "fieldConfig": {
             "defaults": {
@@ -1409,7 +1409,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "editorMode": "code",
               "exemplar": false,
               "expr": "count(\n    snapmirror_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",destination_cg_name=~\"$ConsistencyGroup\",destination_volume=~\".*$Volume.*\",destination_vserver=~\"$SVM\",group_type=\"consistencygroup\",healthy=\"true\",relationship_id=\"\"}\n  )\nor\n  vector(0)",
@@ -1426,7 +1426,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays detail of all Consistency Group relationships from destination side of view.",
           "fieldConfig": {
             "defaults": {
@@ -1668,7 +1668,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "editorMode": "code",
               "exemplar": false,
               "expr": "snapmirror_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",destination_cg_name=~\"$ConsistencyGroup\",destination_volume=~\"$Volume\",destination_vserver=~\"$SVM\",group_type=\"consistencygroup\",relationship_id=\"\"}",
@@ -1778,7 +1778,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"},datacenter)",
         "description": "Select all the datacenters that contain the ONTAP clusters acting as source for SnapMirror relationships.",
         "error": null,
@@ -1804,7 +1804,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "query_result(snapmirror_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"})",
         "description": null,
         "error": null,
@@ -1831,7 +1831,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(snapmirror_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\"}, destination_vserver)",
         "description": null,
         "error": null,
@@ -1857,7 +1857,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(snapmirror_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\",destination_vserver=~\"$SVM\"}, destination_volume)",
         "description": null,
         "error": null,
@@ -1883,7 +1883,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(snapmirror_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\", destination_vserver=~\"$SVM\"}, source_cg_name)",
         "description": null,
         "error": null,

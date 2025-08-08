@@ -79,7 +79,7 @@
   "panels": [
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -89,7 +89,7 @@
       "id": 225,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Number of CIFS operations per second.",
           "fieldConfig": {
             "defaults": {
@@ -180,7 +180,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Number of NFS operations per second.",
           "fieldConfig": {
             "defaults": {
@@ -271,7 +271,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Total number of operations per second serviced by the node.",
           "fieldConfig": {
             "defaults": {
@@ -362,7 +362,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average processor utilization across all processors in the system.",
           "fieldConfig": {
             "defaults": {
@@ -457,7 +457,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "System CPU resource utilization is a computed percentage that indicates how busy the system is based on a combination of the most heavily utilized domain and idle CPU cycles. This metric determines the amount of available CPU and will vary based on domains reaching their limits OR exhausting all idle CPU cycles, whichever comes first.",
           "fieldConfig": {
             "defaults": {
@@ -552,7 +552,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Maximum node latency across the cluster.",
           "fieldConfig": {
             "defaults": {
@@ -648,7 +648,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -658,7 +658,7 @@
       "id": 226,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "SVM space used percent.",
           "fieldConfig": {
             "defaults": {
@@ -823,7 +823,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Volume space used percent.",
           "fieldConfig": {
             "defaults": {
@@ -988,7 +988,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Aggregate space used percent.",
           "fieldConfig": {
             "defaults": {
@@ -1162,7 +1162,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "SVM space used percent.",
           "fieldConfig": {
             "defaults": {
@@ -1254,7 +1254,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Volume space used percent.",
           "fieldConfig": {
             "defaults": {
@@ -1346,7 +1346,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Aggregate space used percent.",
           "fieldConfig": {
             "defaults": {
@@ -1443,7 +1443,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1453,7 +1453,7 @@
       "id": 256,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
@@ -1542,7 +1542,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "SVM total throughput.",
           "fieldConfig": {
             "defaults": {
@@ -1631,7 +1631,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Number of operations per second serviced by the volume.",
           "fieldConfig": {
             "defaults": {
@@ -1726,7 +1726,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1736,7 +1736,7 @@
       "id": 264,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
@@ -1814,7 +1814,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "exemplar": false,
               "expr": "volume_avg_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand on (datacenter, netapp_cluster, svm, volume)\n  topk(\n    $TopResources,\n    avg_over_time(\n      volume_avg_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n    )\n  )",
               "interval": "",
@@ -1827,7 +1827,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Volume total throughput.",
           "fieldConfig": {
             "defaults": {
@@ -1905,7 +1905,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "exemplar": false,
               "expr": "(\n      volume_read_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n    +\n      volume_write_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  )\nand on (datacenter, netapp_cluster, svm, volume)\n  topk(\n    $TopResources,\n    (\n        avg_over_time(\n          volume_read_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n        )\n      +\n        avg_over_time(\n          volume_write_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n        )\n    )\n  )",
               "interval": "",
@@ -1918,7 +1918,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Number of operations per second serviced by the volume.",
           "fieldConfig": {
             "defaults": {
@@ -1997,7 +1997,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "exemplar": false,
               "expr": "volume_total_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand on (datacenter, netapp_cluster, svm, volume)\n  topk(\n    $TopResources,\n    avg_over_time(\n      volume_total_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n    )\n  )",
               "interval": "",
@@ -2048,7 +2048,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"},datacenter)",
         "description": null,
         "error": null,
@@ -2074,7 +2074,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},netapp_cluster)",
         "description": null,
         "error": null,
@@ -2100,7 +2100,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(svm_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\"},svm)",
         "description": null,
         "error": null,
@@ -2126,7 +2126,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(volume_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\",svm=~\"$SVM\"},volume)",
         "description": null,
         "error": null,

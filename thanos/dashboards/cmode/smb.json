@@ -91,7 +91,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -104,7 +104,7 @@
       "type": "row"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 2,
         "w": 24,
@@ -121,7 +121,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -134,7 +134,7 @@
       "type": "row"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "The number of CIFS connections associated with the CIFS session.",
       "fieldConfig": {
         "defaults": {
@@ -221,7 +221,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "The number of CIFS connections associated with SMB version.",
       "fieldConfig": {
         "defaults": {
@@ -333,7 +333,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Detail of CIFS sessions.",
       "fieldConfig": {
         "defaults": {
@@ -590,7 +590,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -600,7 +600,7 @@
       "id": 68,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel includes sum of read and write SMB OP’s /sec.",
           "fieldConfig": {
             "defaults": {
@@ -695,7 +695,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel includes average SMB read and write latency.",
           "fieldConfig": {
             "defaults": {
@@ -789,7 +789,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel includes SMB OP’s /sec average broken down by other SMB operations.",
           "fieldConfig": {
             "defaults": {
@@ -956,7 +956,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel includes SMB latency broken down by other SMB operations.",
           "fieldConfig": {
             "defaults": {
@@ -1119,7 +1119,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1129,7 +1129,7 @@
       "id": 99,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "",
           "gridPos": {
             "h": 3,
@@ -1163,7 +1163,7 @@
             "mode": "spectrum"
           },
           "dataFormat": "tsbuckets",
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel tracks histograms for Session Setups and gives good indication of Client Authentication Latency Breakdown.",
           "gridPos": {
             "h": 8,
@@ -1232,7 +1232,7 @@
             "mode": "spectrum"
           },
           "dataFormat": "tsbuckets",
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel tracks histograms for file opens and creates.",
           "gridPos": {
             "h": 8,
@@ -1301,7 +1301,7 @@
             "mode": "spectrum"
           },
           "dataFormat": "tsbuckets",
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel tracks histograms for file closes.",
           "gridPos": {
             "h": 8,
@@ -1370,7 +1370,7 @@
             "mode": "spectrum"
           },
           "dataFormat": "tsbuckets",
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel tracks histograms for file locks.",
           "gridPos": {
             "h": 8,
@@ -1439,7 +1439,7 @@
             "mode": "spectrum"
           },
           "dataFormat": "tsbuckets",
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel tracks histograms for readdir.",
           "gridPos": {
             "h": 8,
@@ -1508,7 +1508,7 @@
             "mode": "spectrum"
           },
           "dataFormat": "tsbuckets",
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel tracks histograms for getattr.",
           "gridPos": {
             "h": 8,
@@ -1577,7 +1577,7 @@
             "mode": "spectrum"
           },
           "dataFormat": "tsbuckets",
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel tracks histograms for setattr.",
           "gridPos": {
             "h": 8,
@@ -1646,7 +1646,7 @@
             "mode": "spectrum"
           },
           "dataFormat": "tsbuckets",
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel tracks histograms for oplock breaks.",
           "gridPos": {
             "h": 8,
@@ -1740,7 +1740,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"}, datacenter)",
         "description": null,
         "error": null,
@@ -1766,7 +1766,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, netapp_cluster)",
         "description": null,
         "error": null,
@@ -1792,7 +1792,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(volume_labels{netapp_cluster=~\"$Cluster\"}, svm)",
         "description": null,
         "error": null,

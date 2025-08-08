@@ -70,7 +70,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -83,7 +83,7 @@
       "type": "row"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 4,
         "w": 24,
@@ -100,7 +100,7 @@
       "type": "text"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -327,7 +327,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -340,7 +340,7 @@
       "type": "row"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "○ Performance Capacity Used (‘current utilization’ / 'optimal point utilization') \n- Performance Capacity Used provides CPU usage as a fraction of the 'optimal point utilization'\n\n   - ‘optimal point utilization’ takes into account the anticipated point where a latency spike will be encountered\n \n○ Headroom calculation\n- 'current utilization' subtracted from ‘optimal point utilization’.",
       "fieldConfig": {
         "defaults": {
@@ -640,7 +640,7 @@
       "type": "table"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Headroom (optimal point utilization – current utilization) calculated by daily exponential weighted moving average (EWMA).",
       "fieldConfig": {
         "defaults": {
@@ -726,7 +726,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Headroom (optimal point utilization – current utilization) calculated by weekly exponential weighted moving average (EWMA).",
       "fieldConfig": {
         "defaults": {
@@ -813,7 +813,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -826,7 +826,7 @@
       "type": "row"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This panel displays SVM performance detail.",
       "fieldConfig": {
         "defaults": {
@@ -1172,7 +1172,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1182,7 +1182,7 @@
       "id": 17,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Ethernet port details.",
           "fieldConfig": {
             "defaults": {
@@ -1701,7 +1701,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"}, datacenter)",
         "description": null,
         "error": null,
@@ -1724,7 +1724,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},netapp_cluster)",
         "description": null,
         "error": null,
@@ -1747,7 +1747,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(node_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\", netapp_cluster=~\"$Cluster\"},node)",
         "description": null,
         "error": null,
@@ -1770,7 +1770,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(volume_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\"}, svm)",
         "description": null,
         "error": null,
@@ -1793,7 +1793,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(nic_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\",node=~\"$Node\"},nic)",
         "description": null,
         "error": null,

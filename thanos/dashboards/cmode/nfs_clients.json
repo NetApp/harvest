@@ -90,7 +90,7 @@
   ],
   "panels": [
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 3,
         "w": 24,
@@ -107,7 +107,7 @@
       "type": "text"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This panel requires a cluster with ONTAP 9.7+ and the Harvest REST collector.",
       "fieldConfig": {
         "defaults": {
@@ -167,7 +167,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This panel requires a cluster with ONTAP 9.7+ and the Harvest REST collector.",
       "fieldConfig": {
         "defaults": {
@@ -297,7 +297,7 @@
       "type": "piechart"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This panel requires a cluster with ONTAP 9.7+ and the Harvest REST collector.",
       "fieldConfig": {
         "defaults": {
@@ -471,7 +471,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "nfs_clients_idle_duration{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}",
           "format": "table",
@@ -564,7 +564,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"}, datacenter)",
         "description": null,
         "error": null,
@@ -590,7 +590,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, netapp_cluster)",
         "description": null,
         "error": null,
@@ -616,7 +616,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(volume_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\"}, svm)",
         "description": null,
         "error": null,
@@ -642,7 +642,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(volume_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\",svm=~\"$SVM\"}, volume)",
         "description": null,
         "error": null,

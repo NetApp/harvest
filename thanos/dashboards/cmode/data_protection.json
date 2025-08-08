@@ -91,7 +91,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -104,7 +104,7 @@
       "type": "row"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This panel displays volume protection by Snapshot copies.",
       "fieldConfig": {
         "defaults": {
@@ -189,7 +189,7 @@
       "pluginVersion": "8.1.2",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "count(volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",state!=\"\",type=\"rw\"}) or vector(1)",
           "instant": true,
@@ -198,7 +198,7 @@
           "refId": "A"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "count(\n    volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy=~\"none.*\",state!=\"\",type=\"rw\",volume!~\"MDV.*\"}\n  )\nor on ()\n  vector(0)",
           "hide": false,
@@ -242,7 +242,7 @@
       "type": "piechart"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This panel displays volume protection by SnapMirror relationship.",
       "fieldConfig": {
         "defaults": {
@@ -327,7 +327,7 @@
       "pluginVersion": "8.1.2",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "count(volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",state!=\"\",type=\"rw\"}) or vector(1)",
           "instant": true,
@@ -336,7 +336,7 @@
           "refId": "A"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "count(\n    volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",isDestinationOntap=\"true\",isProtected=\"true\",state!=\"\",svm_root=\"false\",type=\"rw\"}\n  )\nor\n  vector(0)",
           "hide": false,
@@ -380,7 +380,7 @@
       "type": "piechart"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This panel displays volume protection by backed up to cloud bucket.",
       "fieldConfig": {
         "defaults": {
@@ -465,7 +465,7 @@
       "pluginVersion": "8.1.2",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "count(volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",state!=\"\"}) or vector(1)",
           "instant": true,
@@ -474,7 +474,7 @@
           "refId": "A"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "count(\n    volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",isDestinationCloud=\"true\",isProtected=\"true\",state!=\"\",svm_root=\"false\"}\n  )\nor\n  vector(0)",
           "hide": false,
@@ -518,7 +518,7 @@
       "type": "piechart"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This panel displays volume protection detail via Snapshot, SnapMirror or Bucket.",
       "fieldConfig": {
         "defaults": {
@@ -860,7 +860,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -870,7 +870,7 @@
       "id": 24,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Number of total buckets.",
           "fieldConfig": {
             "defaults": {
@@ -920,7 +920,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "editorMode": "code",
               "exemplar": false,
               "expr": "count(ontaps3_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
@@ -937,7 +937,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Number of buckets which are not protected.",
           "fieldConfig": {
             "defaults": {
@@ -987,7 +987,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "editorMode": "code",
               "exemplar": false,
               "expr": "count(ontaps3_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_protected=\"false\"})",
@@ -1004,7 +1004,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Number of buckets which are not backed up to cloud.",
           "fieldConfig": {
             "defaults": {
@@ -1054,7 +1054,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "editorMode": "code",
               "exemplar": false,
               "expr": "count(ontaps3_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",protected_in_cloud=\"false\"})",
@@ -1071,7 +1071,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays bucket detail.",
           "fieldConfig": {
             "defaults": {
@@ -1469,7 +1469,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1479,7 +1479,7 @@
       "id": 45,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Total number of volumes that are not protected.",
           "fieldConfig": {
             "defaults": {
@@ -1553,7 +1553,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Total number of volumes that are protected.",
           "fieldConfig": {
             "defaults": {
@@ -1616,7 +1616,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Total number of volumes whose snapshot size used is breached the snapshot reserve size.",
           "fieldConfig": {
             "defaults": {
@@ -1679,7 +1679,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Total number of volumes whose snapshot size used is not breached the snapshot reserve size.",
           "fieldConfig": {
             "defaults": {
@@ -1753,7 +1753,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays volumes detail with protected status and snapshot policy.",
           "fieldConfig": {
             "defaults": {
@@ -1899,7 +1899,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Volumes details of snapshot copy reserve space.",
           "fieldConfig": {
             "defaults": {
@@ -2157,7 +2157,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Total number of volumes whose snapshot count is \u003c 10.",
           "fieldConfig": {
             "defaults": {
@@ -2220,7 +2220,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Total number of volumes whose snapshot count is between 10 to 100.",
           "fieldConfig": {
             "defaults": {
@@ -2283,7 +2283,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Total number of volumes whose snapshot count is between 101 to 500.",
           "fieldConfig": {
             "defaults": {
@@ -2346,7 +2346,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Total number of volumes whose snapshot count is \u003e 500.",
           "fieldConfig": {
             "defaults": {
@@ -2409,7 +2409,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays volumes detail with snapshot count.",
           "fieldConfig": {
             "defaults": {
@@ -2650,7 +2650,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2660,7 +2660,7 @@
       "id": 23,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays protection policy detail.",
           "fieldConfig": {
             "defaults": {
@@ -2866,7 +2866,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays Snapshot policy detail.",
           "fieldConfig": {
             "defaults": {
@@ -3080,7 +3080,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays cluster schedules detail.",
           "fieldConfig": {
             "defaults": {
@@ -3293,7 +3293,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"},datacenter)",
         "description": null,
         "error": null,
@@ -3319,7 +3319,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},netapp_cluster)",
         "description": null,
         "error": null,

@@ -91,7 +91,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -104,7 +104,7 @@
       "type": "row"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Displays detail of the Switches.",
       "fieldConfig": {
         "defaults": {
@@ -330,7 +330,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -340,7 +340,7 @@
       "id": 7,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays total power of all switches.",
           "fieldConfig": {
             "defaults": {
@@ -387,7 +387,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "exemplar": false,
               "expr": "sum(cisco_environment_power_in{datacenter=~\"$Datacenter\",switch=~\"$Switch\"})",
               "format": "time_series",
@@ -402,7 +402,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays PSU efficiency.",
           "fieldConfig": {
             "defaults": {
@@ -449,7 +449,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "expr": "sum(cisco_environment_power_out{datacenter=~\"$Datacenter\",switch=~\"$Switch\"})\n/\n  sum(cisco_environment_power_in{datacenter=~\"$Datacenter\",switch=~\"$Switch\"})",
               "hide": false,
               "legendFormat": "PSU efficiency",
@@ -460,7 +460,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Displays power consumption detail.",
           "fieldConfig": {
             "defaults": {
@@ -573,7 +573,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Displays detail of the PSUs. `power_out / power_capacity` would be the usage % of that PSU.",
           "fieldConfig": {
             "defaults": {
@@ -800,7 +800,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -810,7 +810,7 @@
       "id": 11,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Displays detail of the temperature.",
           "fieldConfig": {
             "defaults": {
@@ -902,7 +902,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Displays detail of the Fans.",
           "fieldConfig": {
             "defaults": {
@@ -1065,7 +1065,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1075,7 +1075,7 @@
       "id": 22,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Displays power of Transceiver RX.",
           "fieldConfig": {
             "defaults": {
@@ -1166,7 +1166,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Displays power of Transceiver TX.",
           "fieldConfig": {
             "defaults": {
@@ -1262,7 +1262,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1272,7 +1272,7 @@
       "id": 30,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Displays total transmit traffic per interface per second.",
           "fieldConfig": {
             "defaults": {
@@ -1364,7 +1364,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Displays total receive traffic per interface per second.",
           "fieldConfig": {
             "defaults": {
@@ -1456,7 +1456,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Displays drop packets per interface per second.",
           "fieldConfig": {
             "defaults": {
@@ -1555,7 +1555,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Displays errors per interface per second.",
           "fieldConfig": {
             "defaults": {
@@ -1654,7 +1654,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Displays CRC error per interface.",
           "fieldConfig": {
             "defaults": {
@@ -1751,7 +1751,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1761,7 +1761,7 @@
       "id": 42,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Displays Link Layer Discovery Protocol (LLDP) neighbors.",
           "fieldConfig": {
             "defaults": {
@@ -1861,7 +1861,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Displays Cisco Discovery Protocol (CDP) neighbors.",
           "fieldConfig": {
             "defaults": {
@@ -1969,7 +1969,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1979,7 +1979,7 @@
       "id": 25,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Total interfaces count which are down once or more times in past 24 hours duration.",
           "fieldConfig": {
             "defaults": {
@@ -2055,7 +2055,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "These interfaces are down once or more times in past 24 hours duration.",
           "fieldConfig": {
             "defaults": {
@@ -2173,7 +2173,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "These interfaces are down once or more times in past 24 hours duration.",
           "fieldConfig": {
             "defaults": {
@@ -2338,7 +2338,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cisco_switch_labels{}, datacenter)",
         "description": null,
         "error": null,
@@ -2364,7 +2364,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cisco_switch_labels{datacenter=~\"$Datacenter\"}, switch)",
         "description": null,
         "error": null,
@@ -2390,7 +2390,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cisco_interface_admin_up{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}, interface)",
         "description": null,
         "error": null,

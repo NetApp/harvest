@@ -73,7 +73,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -86,7 +86,7 @@
       "type": "row"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Total number of current active connections.",
       "fieldConfig": {
         "defaults": {
@@ -163,7 +163,7 @@
       "pluginVersion": "8.3.4",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "svm_vscan_connections_active{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}",
           "interval": "",
@@ -175,7 +175,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Average scan latency.",
       "fieldConfig": {
         "defaults": {
@@ -252,7 +252,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "avg by (netapp_cluster, svm) (\n    svm_vscan_scan_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (netapp_cluster, svm) (\n      avg_over_time(svm_vscan_scan_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h])\n    )\n  )",
           "interval": "",
@@ -264,7 +264,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Average dispatch latency.",
       "fieldConfig": {
         "defaults": {
@@ -341,7 +341,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "avg by (netapp_cluster, svm) (\n    svm_vscan_dispatch_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (netapp_cluster, svm) (\n      avg_over_time(\n        svm_vscan_dispatch_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h]\n      )\n    )\n  )",
           "interval": "",
@@ -353,7 +353,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Total number of scan requests sent to the Vscanner per second.",
       "fieldConfig": {
         "defaults": {
@@ -455,7 +455,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "sum by (netapp_cluster, svm) (\n    rate(\n      svm_vscan_scan_request_dispatched_rate{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[4m]\n    )\n  )\nand\n  topk(\n    $TopResources,\n    avg by (netapp_cluster, svm) (\n      avg_over_time(\n        svm_vscan_scan_request_dispatched_rate{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h]\n      )\n    )\n  )",
           "interval": "",
@@ -467,7 +467,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Total number of scan notifications received by the dispatcher per second.",
       "fieldConfig": {
         "defaults": {
@@ -569,7 +569,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "sum by (netapp_cluster, svm) (\n    rate(\n      svm_vscan_scan_noti_received_rate{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[4m]\n    )\n  )\nand\n  topk(\n    $TopResources,\n    avg by (netapp_cluster, svm) (\n      avg_over_time(\n        svm_vscan_scan_noti_received_rate{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h]\n      )\n    )\n  )",
           "interval": "",
@@ -582,7 +582,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -592,7 +592,7 @@
       "id": 68,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average scan latency.",
           "fieldConfig": {
             "defaults": {
@@ -669,7 +669,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "exemplar": false,
               "expr": "avg by (netapp_cluster, svm, scanner) (\n    vscan_scan_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",scanner=~\"$Scanner\",svm=~\"$SVM\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (netapp_cluster, svm, scanner) (\n      avg_over_time(\n        vscan_scan_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",scanner=~\"$Scanner\",svm=~\"$SVM\"}[3h]\n      )\n    )\n  )",
               "interval": "",
@@ -681,7 +681,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Total number of scan requests sent to the scanner per second.",
           "fieldConfig": {
             "defaults": {
@@ -783,7 +783,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "exemplar": false,
               "expr": "sum by (netapp_cluster, scanner, svm) (\n    rate(\n      vscan_scan_request_dispatched_rate{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",scanner=~\"$Scanner\"}[4m]\n    )\n  )\nand\n  topk(\n    $TopResources,\n    avg by (netapp_cluster, scanner, svm) (\n      avg_over_time(\n        vscan_scan_request_dispatched_rate{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",scanner=~\"$Scanner\"}[3h]\n      )\n    )\n  )",
               "interval": "",
@@ -800,7 +800,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -810,7 +810,7 @@
       "id": 79,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Percentage CPU utilization on scanner calculated over the last 15 seconds.",
           "fieldConfig": {
             "defaults": {
@@ -890,7 +890,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "exemplar": false,
               "expr": "vscan_scanner_stats_pct_cpu_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",scanner=~\"$Scanner\",svm=~\"$SVM\"}",
               "interval": "",
@@ -902,7 +902,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Percentage RAM utilization on scanner calculated over the last 15 seconds.",
           "fieldConfig": {
             "defaults": {
@@ -982,7 +982,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "exemplar": false,
               "expr": "vscan_scanner_stats_pct_mem_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",scanner=~\"$Scanner\",svm=~\"$SVM\"}",
               "interval": "",
@@ -994,7 +994,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Percentage network utilization on scanner calculated for the last 15 seconds.",
           "fieldConfig": {
             "defaults": {
@@ -1074,7 +1074,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "exemplar": false,
               "expr": "vscan_scanner_stats_pct_network_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",scanner=~\"$Scanner\",svm=~\"$SVM\"}",
               "interval": "",
@@ -1091,7 +1091,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1101,7 +1101,7 @@
       "id": 80,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Displays disconnected vscan servers.",
           "fieldConfig": {
             "defaults": {
@@ -1297,7 +1297,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"}, datacenter)",
         "description": null,
         "error": null,
@@ -1323,7 +1323,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, netapp_cluster)",
         "description": null,
         "error": null,
@@ -1349,7 +1349,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(svm_vscan_scan_latency{system_type!=\"7mode\",datacenter=~\"$Datacenter\", netapp_cluster=~\"$Cluster\"}, svm)",
         "description": null,
         "error": null,
@@ -1372,7 +1372,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(vscan_scanner_stats_pct_cpu_used{system_type!=\"7mode\",datacenter=~\"$Datacenter\", netapp_cluster=~\"$Cluster\"}, scanner)",
         "description": null,
         "error": null,

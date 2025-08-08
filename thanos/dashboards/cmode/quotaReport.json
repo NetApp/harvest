@@ -74,7 +74,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -87,7 +87,7 @@
       "type": "row"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Only tree quotas are shown by default. To collect user/group quotas, enable them in the qtree.yaml template.",
       "fieldConfig": {
         "defaults": {
@@ -568,7 +568,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "label_join(\n  quota_disk_limit{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
           "format": "table",
@@ -579,7 +579,7 @@
           "refId": "A"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "label_join(\n  quota_disk_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
           "format": "table",
@@ -590,7 +590,7 @@
           "refId": "B"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "label_join(\n  quota_file_limit{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
           "format": "table",
@@ -601,7 +601,7 @@
           "refId": "C"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "label_join(\n  quota_files_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
           "format": "table",
@@ -612,7 +612,7 @@
           "refId": "D"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "label_join(\n  quota_soft_disk_limit{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
           "format": "table",
@@ -623,7 +623,7 @@
           "refId": "E"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "label_join(\n  quota_disk_used_pct_disk_limit{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
           "format": "table",
@@ -634,7 +634,7 @@
           "refId": "F"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "label_join(\n  quota_files_used_pct_file_limit{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
           "format": "table",
@@ -645,7 +645,7 @@
           "refId": "G"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "label_join(\n  quota_soft_file_limit{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
           "format": "table",
@@ -855,7 +855,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -865,7 +865,7 @@
       "id": 128,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "The amount of space used in qtree.",
           "fieldConfig": {
             "defaults": {
@@ -956,7 +956,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "The amount of space used % in qtree.",
           "fieldConfig": {
             "defaults": {
@@ -1049,7 +1049,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "The number of files used in qtree.",
           "fieldConfig": {
             "defaults": {
@@ -1140,7 +1140,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "The number of files used % in qtree.",
           "fieldConfig": {
             "defaults": {
@@ -1271,7 +1271,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"}, datacenter)",
         "description": null,
         "error": null,
@@ -1298,7 +1298,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, netapp_cluster)",
         "description": null,
         "error": null,
@@ -1323,7 +1323,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(quota_disk_limit{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\"}, svm)",
         "description": null,
         "error": null,
@@ -1348,7 +1348,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(quota_disk_limit{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\", svm=~\"$SVM\"}, qtree)",
         "description": null,
         "error": null,

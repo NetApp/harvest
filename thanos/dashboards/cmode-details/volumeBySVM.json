@@ -58,7 +58,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -72,7 +72,7 @@
       "type": "row"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This panel displays volume performance detail.",
       "fieldConfig": {
         "defaults": {
@@ -445,7 +445,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"}, datacenter)",
         "description": null,
         "error": null,
@@ -468,7 +468,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},netapp_cluster)",
         "description": null,
         "error": null,
@@ -491,7 +491,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(volume_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\"}, svm)",
         "description": null,
         "error": null,
@@ -514,7 +514,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(volume_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\",svm=~\"$SVM\"}, volume)",
         "description": null,
         "error": null,

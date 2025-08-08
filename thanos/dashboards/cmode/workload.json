@@ -85,7 +85,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -98,7 +98,7 @@
       "type": "row"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 2,
         "w": 24,
@@ -128,7 +128,7 @@
       "type": "row"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This is the rate of this workload's read operations that completed during the measurement interval.",
       "fieldConfig": {
         "defaults": {
@@ -216,7 +216,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This is the workload's write operations that completed during the measurement interval; measured per second.",
       "fieldConfig": {
         "defaults": {
@@ -304,7 +304,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This is the workload's other operations that completed during the measurement interval measured per second.",
       "fieldConfig": {
         "defaults": {
@@ -392,7 +392,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Workload operations executed per second.",
       "fieldConfig": {
         "defaults": {
@@ -480,7 +480,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This is the amount of data read per second from the filer by the workload.",
       "fieldConfig": {
         "defaults": {
@@ -567,7 +567,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This is the amount of data written per second to the filer by the workload.",
       "fieldConfig": {
         "defaults": {
@@ -654,7 +654,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This is the average response time for read requests that were initiated by the workload.",
       "fieldConfig": {
         "defaults": {
@@ -741,7 +741,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This is the average response time for write requests that were initiated by the workload.",
       "fieldConfig": {
         "defaults": {
@@ -828,7 +828,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This is the average response time for requests that were initiated by the workload.",
       "fieldConfig": {
         "defaults": {
@@ -915,7 +915,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This is the average number of concurrent requests for the workload.",
       "fieldConfig": {
         "defaults": {
@@ -1002,7 +1002,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This is the percentage of reads, performed on behalf of the workload, that were sequential.",
       "fieldConfig": {
         "defaults": {
@@ -1095,7 +1095,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This is the percentage of writes, performed on behalf of the workload, that were sequential.",
       "fieldConfig": {
         "defaults": {
@@ -1199,7 +1199,7 @@
       "id": 243,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel represents the proportion of the allocated Input/Output Operations Per Second (IOPs) that is currently being used in a policy, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current IOPs usage by the total available IOPs, and then multiplying the result by 100.\n\n**Important Note:** This panel only covers policies that are shared across workloads.",
           "fieldConfig": {
             "defaults": {
@@ -1291,7 +1291,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel represents the proportion of the allocated bandwidth that is currently being used in a policy, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current bandwidth usage (in MB/s) by the total available bandwidth (also in MB/s), and then multiplying the result by 100.\n\n**Important Note:** This panel specifically covers policies that are shared across workloads.",
           "fieldConfig": {
             "defaults": {
@@ -1381,7 +1381,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel represents the proportion of the allocated Input/Output Operations Per Second (IOPs) that is currently being used in a policy, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current IOPs usage by the total available IOPs, and then multiplying the result by 100.\n\n**Important Note:** This panel only covers policies that are shared across workloads.",
           "fieldConfig": {
             "defaults": {
@@ -1568,7 +1568,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel represents the proportion of the allocated bandwidth that is currently being used in a policy, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current bandwidth usage (in MB/s) by the total available bandwidth (also in MB/s), and then multiplying the result by 100.\n\n**Important Note:** This panel specifically covers policies that are shared across workloads.",
           "fieldConfig": {
             "defaults": {
@@ -1771,7 +1771,7 @@
       "id": 217,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel represents the proportion of the allocated Input/Output Operations Per Second (IOPs) that is currently being used by Workload, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current IOPs usage by the total available IOPs, and then multiplying the result by 100.",
           "fieldConfig": {
             "defaults": {
@@ -1863,7 +1863,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel represents the proportion of the allocated bandwidth that is currently being used by Workload, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current bandwidth usage (in MB/s) by the total available bandwidth (also in MB/s), and then multiplying the result by 100.",
           "fieldConfig": {
             "defaults": {
@@ -1953,7 +1953,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel represents the proportion of the allocated Input/Output Operations Per Second (IOPs) that is currently being used by Workload, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current IOPs usage by the total available IOPs, and then multiplying the result by 100.",
           "fieldConfig": {
             "defaults": {
@@ -2314,7 +2314,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel represents the proportion of the allocated bandwidth that is currently being used by Workload, under a fixed Quality of Service (QoS) setting. The percentage is calculated by dividing the current bandwidth usage (in MB/s) by the total available bandwidth (also in MB/s), and then multiplying the result by 100.",
           "fieldConfig": {
             "defaults": {
@@ -2714,7 +2714,7 @@
       "id": 226,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays the percentage of Input/Output Operations Per Second (IOPs) currently in use relative to the dynamically adjusted IOPs threshold, which is set by an adaptive QoS policy. Unlike fixed QoS settings, adaptive QoS policies allow the IOPs threshold to fluctuate based on predefined criteria and workload demands. The utilization percentage is determined by taking the current IOPs usage, dividing it by the adaptive IOPs threshold at that moment, and then multiplying by 100 to get a percentage.",
           "fieldConfig": {
             "defaults": {
@@ -2806,7 +2806,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays the current usage of throughput as a percentage of the adaptive threshold set by an adaptive Quality of Service (QoS) policy. This metric is calculated by dividing the current throughput usage by the adaptive threshold and multiplying by 100. The panel shows data only if the block size is not set to `any`.",
           "fieldConfig": {
             "defaults": {
@@ -2898,7 +2898,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays the percentage of Input/Output Operations Per Second (IOPs) currently in use relative to the dynamically adjusted IOPs threshold, which is set by an adaptive QoS policy. Unlike fixed QoS settings, adaptive QoS policies allow the IOPs threshold to fluctuate based on predefined criteria and workload demands. The utilization percentage is determined by taking the current IOPs usage, dividing it by the adaptive IOPs threshold at that moment, and then multiplying by 100 to get a percentage.",
           "fieldConfig": {
             "defaults": {
@@ -3251,7 +3251,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays the current usage of throughput as a percentage of the adaptive threshold set by an adaptive Quality of Service (QoS) policy. This metric is calculated by dividing the current throughput usage by the adaptive threshold and multiplying by 100. The panel shows data only if the block size is not set to `any`.",
           "fieldConfig": {
             "defaults": {
@@ -3618,7 +3618,7 @@
       "id": 175,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This is the percentage of read requests served from bamboo_ssd component.",
           "fieldConfig": {
             "defaults": {
@@ -3707,7 +3707,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This is the percentage of read requests served from cache.",
           "fieldConfig": {
             "defaults": {
@@ -3796,7 +3796,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This is the percentage of read requests served from cloud.",
           "fieldConfig": {
             "defaults": {
@@ -3885,7 +3885,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This is the percentage of read requests served from cloud_s2c.",
           "fieldConfig": {
             "defaults": {
@@ -3974,7 +3974,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This is the percentage of read requests served from disk.",
           "fieldConfig": {
             "defaults": {
@@ -4063,7 +4063,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This is the percentage of read requests served from ext_cache.",
           "fieldConfig": {
             "defaults": {
@@ -4152,7 +4152,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This is the percentage of read requests served from fc_miss.",
           "fieldConfig": {
             "defaults": {
@@ -4241,7 +4241,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This is the percentage of read requests served from hya_cache.",
           "fieldConfig": {
             "defaults": {
@@ -4330,7 +4330,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This is the percentage of read requests served from hya_hdd.",
           "fieldConfig": {
             "defaults": {
@@ -4419,7 +4419,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This is the percentage of read requests served from hya_non_cache.",
           "fieldConfig": {
             "defaults": {
@@ -4545,7 +4545,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"}, datacenter)",
         "description": null,
         "error": null,
@@ -4571,7 +4571,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, netapp_cluster)",
         "description": null,
         "error": null,
@@ -4642,7 +4642,7 @@
       {
         "allValue": "",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(qos_workload_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\", class=~\"$WorkloadClass\"}, workload)",
         "description": null,
         "error": null,

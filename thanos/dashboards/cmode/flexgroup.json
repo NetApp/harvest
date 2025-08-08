@@ -84,7 +84,7 @@
   ],
   "panels": [
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 2,
         "w": 24,
@@ -115,7 +115,7 @@
       "type": "row"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time.",
       "fieldConfig": {
         "defaults": {
@@ -206,7 +206,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Volume total throughput.",
       "fieldConfig": {
         "defaults": {
@@ -297,7 +297,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Number of operations per second serviced by the volume.",
       "fieldConfig": {
         "defaults": {
@@ -390,7 +390,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -400,7 +400,7 @@
       "id": 37,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "FlexGroup constituents details.",
           "fieldConfig": {
             "defaults": {
@@ -831,7 +831,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency in microseconds for the WAFL filesystem to process read request to the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
@@ -995,7 +995,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Bytes read per second.",
           "fieldConfig": {
             "defaults": {
@@ -1127,7 +1127,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Number of read operations per second from the volume.",
           "fieldConfig": {
             "defaults": {
@@ -1259,7 +1259,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency in microseconds for the WAFL filesystem to process write request to the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
@@ -1424,7 +1424,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Bytes written per second.",
           "fieldConfig": {
             "defaults": {
@@ -1557,7 +1557,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Number of write operations per second to the volume.",
           "fieldConfig": {
             "defaults": {
@@ -1695,7 +1695,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1705,7 +1705,7 @@
       "id": 99,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Footprint of blocks written to the volume in bytes for the performance tier (bin 0).",
           "fieldConfig": {
             "defaults": {
@@ -1799,7 +1799,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Footprint of blocks written to the volume in performance tier (bin 0) as a percentage of aggregate size.",
           "fieldConfig": {
             "defaults": {
@@ -1895,7 +1895,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Footprint of blocks written to the volume in bytes for capacity tier (bin 1).",
           "fieldConfig": {
             "defaults": {
@@ -1989,7 +1989,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Footprint of blocks written to the volume in capacity tier (bin 1) as a percentage of aggregate size.",
           "fieldConfig": {
             "defaults": {
@@ -2090,7 +2090,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2100,7 +2100,7 @@
       "id": 28,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency in microseconds for the WAFL filesystem to process read request to the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
@@ -2191,7 +2191,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency in microseconds for the WAFL filesystem to process write request to the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
@@ -2282,7 +2282,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency in microseconds for the WAFL filesystem to process other operations to the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
@@ -2373,7 +2373,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Number of read operations per second from the volume.",
           "fieldConfig": {
             "defaults": {
@@ -2465,7 +2465,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Number of write operations per second to the volume.",
           "fieldConfig": {
             "defaults": {
@@ -2557,7 +2557,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Number of other operations per second to the volume.",
           "fieldConfig": {
             "defaults": {
@@ -2649,7 +2649,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Bytes read per second.",
           "fieldConfig": {
             "defaults": {
@@ -2741,7 +2741,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Bytes written per second.",
           "fieldConfig": {
             "defaults": {
@@ -2870,7 +2870,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"}, datacenter)",
         "description": null,
         "error": null,
@@ -2896,7 +2896,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, netapp_cluster)",
         "description": null,
         "error": null,
@@ -2922,7 +2922,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(volume_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\"}, aggr)",
         "description": null,
         "error": null,
@@ -2948,7 +2948,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(volume_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\",aggr=~\"$Aggregate\",style=\"flexgroup\"}, volume)",
         "description": null,
         "error": null,
@@ -2974,7 +2974,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(volume_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\",aggr=~\"$Aggregate\",style=\"flexgroup_constituent\",volume=~\"$FlexGroup.*\"}, volume)",
         "description": null,
         "error": null,

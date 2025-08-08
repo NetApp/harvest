@@ -90,7 +90,7 @@
   ],
   "panels": [
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 3,
         "w": 24,
@@ -108,7 +108,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -121,7 +121,7 @@
       "type": "row"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Average Latency of top $TopResources volumes.",
       "fieldConfig": {
         "defaults": {
@@ -185,7 +185,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Throughput of top $TopResources volumes.",
       "fieldConfig": {
         "defaults": {
@@ -244,7 +244,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "IOPs of top $TopResources volumes.",
       "fieldConfig": {
         "defaults": {
@@ -301,7 +301,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time.",
       "fieldConfig": {
         "defaults": {
@@ -392,7 +392,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Total throughput.",
       "fieldConfig": {
         "defaults": {
@@ -483,7 +483,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Number of operations per second serviced by the volume.",
       "fieldConfig": {
         "defaults": {
@@ -576,7 +576,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -586,7 +586,7 @@
       "id": 37,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Volume details.",
           "fieldConfig": {
             "defaults": {
@@ -1125,7 +1125,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency in microseconds for the WAFL filesystem to process read request to the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
@@ -1313,7 +1313,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Bytes read per second from the volume.",
           "fieldConfig": {
             "defaults": {
@@ -1469,7 +1469,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Number of reads per second from the volume.",
           "fieldConfig": {
             "defaults": {
@@ -1626,7 +1626,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency in microseconds for the WAFL filesystem to process write request to the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
@@ -1813,7 +1813,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Bytes written per second to the volume.",
           "fieldConfig": {
             "defaults": {
@@ -1969,7 +1969,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Number of writes per second to the volume.",
           "fieldConfig": {
             "defaults": {
@@ -2131,7 +2131,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2141,7 +2141,7 @@
       "id": 28,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "gridPos": {
             "h": 2,
             "w": 24,
@@ -2157,7 +2157,7 @@
           "type": "text"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency in microseconds for the WAFL filesystem to process read request to the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
@@ -2248,7 +2248,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency in microseconds for the WAFL filesystem to process write request to the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
@@ -2339,7 +2339,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency in microseconds for the WAFL filesystem to process other operations to the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
@@ -2430,7 +2430,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Number of reads per second from the volume.",
           "fieldConfig": {
             "defaults": {
@@ -2522,7 +2522,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Number of writes per second to the volume.",
           "fieldConfig": {
             "defaults": {
@@ -2614,7 +2614,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Number of other operations per second to the volume.",
           "fieldConfig": {
             "defaults": {
@@ -2706,7 +2706,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Bytes read per second from the volume.",
           "fieldConfig": {
             "defaults": {
@@ -2798,7 +2798,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Bytes written per second to the volume.",
           "fieldConfig": {
             "defaults": {
@@ -2889,7 +2889,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -2985,7 +2985,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -3086,7 +3086,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -3096,7 +3096,7 @@
       "id": 66,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Latency of top $TopResources QoS volumes.",
           "fieldConfig": {
             "defaults": {
@@ -3160,7 +3160,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Throughput of top $TopResources QoS volumes.",
           "fieldConfig": {
             "defaults": {
@@ -3219,7 +3219,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "IOPs of top $TopResources QoS volumes.",
           "fieldConfig": {
             "defaults": {
@@ -3276,7 +3276,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This is the average response time for requests that were initiated by the workload.",
           "fieldConfig": {
             "defaults": {
@@ -3367,7 +3367,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This is the total throughput of data read/write per second from the filer by the workload.",
           "fieldConfig": {
             "defaults": {
@@ -3458,7 +3458,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This field is the workload's rate of operations that completed during the measurement interval; measured per second.",
           "fieldConfig": {
             "defaults": {
@@ -3550,7 +3550,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This is the average response time for read requests that were initiated by the workload.",
           "fieldConfig": {
             "defaults": {
@@ -3641,7 +3641,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This is the average response time for write requests that were initiated by the workload.",
           "fieldConfig": {
             "defaults": {
@@ -3732,7 +3732,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This is the rate of this workload\u0026apos;s read operations that completed during the measurement interval.",
           "fieldConfig": {
             "defaults": {
@@ -3824,7 +3824,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This is the workload\u0026apos;s write operations that completed during the measurement interval; measured per second.",
           "fieldConfig": {
             "defaults": {
@@ -3916,7 +3916,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This is the rate of this workload\u0026apos;s other operations that completed during the measurement interval.",
           "fieldConfig": {
             "defaults": {
@@ -4008,7 +4008,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This is the amount of data read per second from the filer by the workload.",
           "fieldConfig": {
             "defaults": {
@@ -4099,7 +4099,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This is the amount of data written per second to the filer by the workload.",
           "fieldConfig": {
             "defaults": {
@@ -4190,7 +4190,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This is the percentage of reads, performed on behalf of the workload, that were sequential.",
           "fieldConfig": {
             "defaults": {
@@ -4283,7 +4283,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This is the percentage of writes, performed on behalf of the workload, that were sequential. This counter is only available on platforms with more than 4GB of NVRAM.",
           "fieldConfig": {
             "defaults": {
@@ -4381,7 +4381,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -4391,7 +4391,7 @@
       "id": 142,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays the top k volumes with the highest I/O density within the selected time range. I/O density is calculated as the average number of I/O operations (IOPS) per terabyte of logical used space. Volumes with high I/O density are typically more active and may be critical for performance-sensitive applications.",
           "fieldConfig": {
             "defaults": {
@@ -4483,7 +4483,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays the bottom k volumes with the lowest I/O density over the selected time range, excluding any volumes with average IOPS below 50. I/O density is calculated as the average IOPS per terabyte of logical used space. These volumes are active but have relatively low I/O activity compared to their used capacity.",
           "fieldConfig": {
             "defaults": {
@@ -4580,7 +4580,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -4590,7 +4590,7 @@
       "id": 70,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Size that is physically used in the volume, in bytes.",
           "fieldConfig": {
             "defaults": {
@@ -4679,7 +4679,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Sum of (physical-used, shared_refs, compression_saved_in_plane0, vbn_zero, future_blk_cnt), in bytes.",
           "fieldConfig": {
             "defaults": {
@@ -4768,7 +4768,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "The virtual space used (includes volume reserves) before storage efficiency, in bytes.",
           "fieldConfig": {
             "defaults": {
@@ -4857,7 +4857,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Physical size of the volume, in bytes.",
           "fieldConfig": {
             "defaults": {
@@ -4946,7 +4946,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Available space for Snapshot copies from snap-reserve, in bytes.",
           "fieldConfig": {
             "defaults": {
@@ -5039,7 +5039,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Size in the volume that has been set aside as a reserve for Snapshot copy usage, in bytes.",
           "fieldConfig": {
             "defaults": {
@@ -5132,7 +5132,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Size available for Snapshot copies within the Snapshot copy reserve, in bytes.",
           "fieldConfig": {
             "defaults": {
@@ -5225,7 +5225,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "The total space used by Snapshot copies in the volume, in bytes.",
           "fieldConfig": {
             "defaults": {
@@ -5318,7 +5318,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "The size that is physically used in the performance tier of the volume and has a cold temperature. This parameter is only supported if the volume is in an aggregate that is either attached to an object store or could be attached to an object store.",
           "fieldConfig": {
             "defaults": {
@@ -5416,7 +5416,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -5426,7 +5426,7 @@
       "id": 71,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Size that is physically used in the volume, as a percentage.",
           "fieldConfig": {
             "defaults": {
@@ -5521,7 +5521,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Sum of (physical-used, shared_refs, compression_saved_in_plane0, vbn_zero, future_blk_cnt), as a percentage.",
           "fieldConfig": {
             "defaults": {
@@ -5616,7 +5616,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "percentage of utilized storage space in a volume relative to its total capacity.",
           "fieldConfig": {
             "defaults": {
@@ -5711,7 +5711,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "The space that has been set aside as a reserve for Snapshot copy usage, in percent.",
           "fieldConfig": {
             "defaults": {
@@ -5806,7 +5806,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Percentage of snapshot reserve size that has been used.",
           "fieldConfig": {
             "defaults": {
@@ -5900,7 +5900,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "The size (in percent) that is physically used in the performance tier of the volume and has a cold temperature. This parameter is only supported if the volume is in an aggregate that is either attached to an object store or could be attached to an object store.",
           "fieldConfig": {
             "defaults": {
@@ -6010,7 +6010,7 @@
       "id": 153,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "gridPos": {
             "h": 3,
             "w": 24,
@@ -6026,7 +6026,7 @@
           "type": "text"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays the top $TopResources volume clients based on their Read IOPs.",
           "fieldConfig": {
             "defaults": {
@@ -6118,7 +6118,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays the top $TopResources volume clients based on their Write IOPs.",
           "fieldConfig": {
             "defaults": {
@@ -6210,7 +6210,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays the top $TopResources volume clients based on their read throughput.",
           "fieldConfig": {
             "defaults": {
@@ -6302,7 +6302,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays the top $TopResources volume clients based on their write throughput.",
           "fieldConfig": {
             "defaults": {
@@ -6409,7 +6409,7 @@
       "id": 165,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "gridPos": {
             "h": 3,
             "w": 24,
@@ -6425,7 +6425,7 @@
           "type": "text"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays the top $TopResources volume files based on their Read IOPs.",
           "fieldConfig": {
             "defaults": {
@@ -6517,7 +6517,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays the top $TopResources volume files based on their Write IOPs.",
           "fieldConfig": {
             "defaults": {
@@ -6609,7 +6609,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays the top $TopResources volume files based on their read throughput.",
           "fieldConfig": {
             "defaults": {
@@ -6701,7 +6701,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays the top $TopResources volume files based on their write throughput.",
           "fieldConfig": {
             "defaults": {
@@ -6798,7 +6798,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -6808,7 +6808,7 @@
       "id": 92,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency per GET operation to object storage.",
           "fieldConfig": {
             "defaults": {
@@ -6901,7 +6901,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Total GET request count, per volume, in the collection interval to object storage.  Not scaled per second, but a cumulative count (delta) since the previous poll.",
           "fieldConfig": {
             "defaults": {
@@ -6994,7 +6994,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency per PUT operation to object storage.",
           "fieldConfig": {
             "defaults": {
@@ -7087,7 +7087,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Total PUT request count, per volume, in the collection interval to object storage.  Not scaled per second, but a cumulative count (delta) since the previous poll.",
           "fieldConfig": {
             "defaults": {
@@ -7180,7 +7180,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average request count, per volume, in the chosen time window, to object storage.  Not scaled per second, but a cumulative count (delta) since the previous poll.",
           "fieldConfig": {
             "defaults": {
@@ -7292,7 +7292,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -7302,7 +7302,7 @@
       "id": 99,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Display a list of volumes and metadata footprints in their associated aggregate.",
           "fieldConfig": {
             "defaults": {
@@ -7665,7 +7665,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Footprint of blocks written to the volume in bytes for the performance tier (bin 0).",
           "fieldConfig": {
             "defaults": {
@@ -7759,7 +7759,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Footprint of blocks written to the volume in performance tier (bin 0) as a percentage of aggregate size.",
           "fieldConfig": {
             "defaults": {
@@ -7855,7 +7855,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Footprint of blocks written to the volume in bytes for capacity tier (bin 1).",
           "fieldConfig": {
             "defaults": {
@@ -7949,7 +7949,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Footprint of blocks written to the volume in capacity tier (bin 1) as a percentage of aggregate size.",
           "fieldConfig": {
             "defaults": {
@@ -8045,7 +8045,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This field represents the delayed free blocks footprint. This is used to improve delete performance by batching delete requests.",
           "fieldConfig": {
             "defaults": {
@@ -8139,7 +8139,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This represents flexible metadata for a volume.",
           "fieldConfig": {
             "defaults": {
@@ -8233,7 +8233,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Volume total footprint.",
           "fieldConfig": {
             "defaults": {
@@ -8327,7 +8327,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Total metadata footprint for a volume.",
           "fieldConfig": {
             "defaults": {
@@ -8421,7 +8421,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This field represents the volume guarantee footprint. Alternatively, it is the space reserved for future writes in the volume.",
           "fieldConfig": {
             "defaults": {
@@ -8520,7 +8520,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -8530,7 +8530,7 @@
       "id": 98,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Number of user-visible files (inodes) used. This field is valid only when the volume is online.",
           "fieldConfig": {
             "defaults": {
@@ -8618,7 +8618,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Total user-visible file (inode) count, i.e., current maximum number of user-visible files (inodes) that this volume can currently hold.",
           "fieldConfig": {
             "defaults": {
@@ -8705,7 +8705,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "volume_inode_files_used / volume_inode_total.",
           "fieldConfig": {
             "defaults": {
@@ -8800,7 +8800,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -8810,7 +8810,7 @@
       "id": 105,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "gridPos": {
             "h": 2,
             "w": 24,
@@ -8826,7 +8826,7 @@
           "type": "text"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Percent of compress fail.",
           "fieldConfig": {
             "defaults": {
@@ -8920,7 +8920,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -9012,7 +9012,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -9109,7 +9109,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -9119,7 +9119,7 @@
       "id": 135,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Physical space used growth rate per second in the volume.",
           "fieldConfig": {
             "defaults": {
@@ -9203,7 +9203,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "editorMode": "code",
               "exemplar": false,
               "expr": "deriv(\n    volume_space_physical_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}[4m]\n  )\nand on (datacenter, netapp_cluster, svm, volume)\n  topk(\n    $TopResources,\n    (\n        avg_over_time(\n          volume_space_physical_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n        )\n      * on (datacenter, netapp_cluster, svm, volume) group_left (node)\n        (\n          max by (datacenter, netapp_cluster, svm, volume, node) (\n            volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n          )\n        )\n    )\n  )",
@@ -9219,7 +9219,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Logical space used growth rate per second in the volume.",
           "fieldConfig": {
             "defaults": {
@@ -9303,7 +9303,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "editorMode": "code",
               "exemplar": false,
               "expr": "deriv(\n    volume_space_logical_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}[4m]\n  )\nand on (datacenter, netapp_cluster, svm, volume)\n  topk(\n    $TopResources,\n    (\n        avg_over_time(\n          volume_space_logical_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n        )\n      * on (datacenter, netapp_cluster, svm, volume) group_left (node)\n        (\n          max by (datacenter, netapp_cluster, svm, volume, node) (\n            volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n          )\n        )\n    )\n  )",
@@ -9319,7 +9319,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel tracks changes in the physical usage space of the top $TopResources volumes by physical space. It includes the following delta columns:\n\n- **1-Day Delta:** This column shows the change in physical usage space over the past 24 hours. \n  \n- **7-Day Delta:** This column displays the change in physical usage space over the past 7 days.\n  \n- **Time Range Delta:** This column reflects the change in physical usage space over the selected time range in the Grafana dashboard.\n",
           "fieldConfig": {
             "defaults": {
@@ -9608,7 +9608,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel tracks changes in the logical usage space of the top $TopResources volumes by logical space. It includes the following delta columns:\n\n- **1-Day Delta:** This column shows the change in logical usage space over the past 24 hours. \n  \n- **7-Day Delta:** This column displays the change in logical usage space over the past 7 days.\n  \n- **Time Range Delta:** This column reflects the change in logical usage space over the selected time range in the Grafana dashboard.\n",
           "fieldConfig": {
             "defaults": {
@@ -9899,7 +9899,7 @@
       ],
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "refId": "A"
         }
       ],
@@ -9908,7 +9908,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -9918,7 +9918,7 @@
       "id": 136,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This table would show 15 day predicted value of size used percentage for top volumes.",
           "fieldConfig": {
             "defaults": {
@@ -10200,7 +10200,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "editorMode": "code",
               "exemplar": false,
               "expr": "predict_linear(\n    volume_size_used_percent{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}[3d],\n    15 * 24 * 3600\n  )\nand on (datacenter, netapp_cluster, svm, volume)\n  topk(\n    $TopResources,\n    (\n        avg_over_time(\n          volume_size_used_percent{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n        )\n      * on (datacenter, netapp_cluster, svm, volume) group_left (node)\n        (\n          max by (datacenter, netapp_cluster, svm, volume, node) (\n            volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n          )\n        )\n    )\n  )",
@@ -10213,7 +10213,7 @@
               "refId": "A"
             },
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "editorMode": "code",
               "exemplar": false,
               "expr": "volume_size_used_percent{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand on (datacenter, netapp_cluster, svm, volume)\n  topk(\n    $TopResources,\n    (\n        avg_over_time(\n          volume_size_used_percent{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n        )\n      * on (datacenter, netapp_cluster, svm, volume) group_left (node)\n        (\n          max by (datacenter, netapp_cluster, svm, volume, node) (\n            volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n          )\n        )\n    )\n  )",
@@ -10288,7 +10288,7 @@
       ],
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "refId": "A"
         }
       ],
@@ -10330,7 +10330,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"}, datacenter)",
         "description": null,
         "error": null,
@@ -10356,7 +10356,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, netapp_cluster)",
         "description": null,
         "error": null,
@@ -10382,7 +10382,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(volume_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\"}, svm)",
         "description": null,
         "error": null,
@@ -10408,7 +10408,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(volume_tags{datacenter=~\"$Datacenter\", netapp_cluster=~\"$Cluster\", svm=~\"$SVM\"},tag)",
         "description": null,
         "error": null,
@@ -10434,7 +10434,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(volume_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\",svm=~\"$SVM\",style!=\"flexgroup_constituent\",tags=~\".*$Tag.*\"}, volume)",
         "description": null,
         "error": null,

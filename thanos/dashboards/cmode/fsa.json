@@ -103,7 +103,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -116,7 +116,7 @@
       "type": "row"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 4,
         "w": 24,
@@ -133,7 +133,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -146,7 +146,7 @@
       "type": "row"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "The virtual space used (includes volume reserves) before storage efficiency, in bytes.",
       "fieldConfig": {
         "defaults": {
@@ -214,7 +214,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "The available space, in bytes.",
       "fieldConfig": {
         "defaults": {
@@ -271,7 +271,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Total size of AFS, excluding snap-reserve, in bytes.",
       "fieldConfig": {
         "defaults": {
@@ -328,7 +328,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Volume space used percent.",
       "fieldConfig": {
         "defaults": {
@@ -390,7 +390,7 @@
       "type": "bargauge"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Total directory count including the root and children directories.",
       "fieldConfig": {
         "defaults": {
@@ -448,7 +448,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "The actual number of bytes used on disk by this file. If byte_offset and length parameters are specified, this will return the bytes used by the file within the given range.",
       "fieldConfig": {
         "defaults": {
@@ -536,7 +536,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Total number of files in root and child directories.",
       "fieldConfig": {
         "defaults": {
@@ -594,7 +594,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Shows Top 100 directories per volume.",
       "fieldConfig": {
         "defaults": {
@@ -868,7 +868,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -878,7 +878,7 @@
       "id": 90,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -1029,7 +1029,7 @@
           "type": "barchart"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -1182,7 +1182,7 @@
           "type": "barchart"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -1333,7 +1333,7 @@
           "type": "barchart"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -1522,7 +1522,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"}, datacenter)",
         "description": null,
         "error": null,
@@ -1548,7 +1548,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, netapp_cluster)",
         "description": null,
         "error": null,
@@ -1574,7 +1574,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\"}, svm)",
         "description": null,
         "error": null,
@@ -1600,7 +1600,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\",svm=~\"$SVM\"}, volume)",
         "description": null,
         "error": null,

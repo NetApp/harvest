@@ -85,7 +85,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -98,7 +98,7 @@
       "type": "row"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Average Latency of top $TopResources volumes.",
       "fieldConfig": {
         "defaults": {
@@ -162,7 +162,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Average Latency of top $TopResources volumes.",
       "fieldConfig": {
         "defaults": {
@@ -226,7 +226,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Throughput of top $TopResources volumes.",
       "fieldConfig": {
         "defaults": {
@@ -282,7 +282,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Throughput of top $TopResources volumes.",
       "fieldConfig": {
         "defaults": {
@@ -338,7 +338,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "IOPs of top $TopResources volumes.",
       "fieldConfig": {
         "defaults": {
@@ -395,7 +395,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "IOPs of top $TopResources volumes.",
       "fieldConfig": {
         "defaults": {
@@ -453,7 +453,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -463,7 +463,7 @@
       "id": 40,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average read latency in microseconds for all operations on the LUN.",
           "fieldConfig": {
             "defaults": {
@@ -674,7 +674,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Read bytes.",
           "fieldConfig": {
             "defaults": {
@@ -846,7 +846,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Number of read operations.",
           "fieldConfig": {
             "defaults": {
@@ -1018,7 +1018,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average write latency in microseconds for all operations on the LUN.",
           "fieldConfig": {
             "defaults": {
@@ -1222,7 +1222,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Write bytes.",
           "fieldConfig": {
             "defaults": {
@@ -1394,7 +1394,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Number of write operations.",
           "fieldConfig": {
             "defaults": {
@@ -1566,7 +1566,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "LUN details.",
           "fieldConfig": {
             "defaults": {
@@ -1910,7 +1910,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1920,7 +1920,7 @@
       "id": 28,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average read latency in microseconds for all operations on the LUN.",
           "fieldConfig": {
             "defaults": {
@@ -2011,7 +2011,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Read bytes.",
           "fieldConfig": {
             "defaults": {
@@ -2103,7 +2103,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Number of read operations.",
           "fieldConfig": {
             "defaults": {
@@ -2195,7 +2195,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average write latency in microseconds for all operations on the LUN.",
           "fieldConfig": {
             "defaults": {
@@ -2286,7 +2286,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Write bytes.",
           "fieldConfig": {
             "defaults": {
@@ -2378,7 +2378,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Number of write operations.",
           "fieldConfig": {
             "defaults": {
@@ -2475,7 +2475,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2485,7 +2485,7 @@
       "id": 55,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Histogram of WAFL write alignment (number of sectors off WAFL block start).",
           "fieldConfig": {
             "defaults": {
@@ -2588,7 +2588,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Histogram of WAFL read alignment (number sectors off WAFL block start).",
           "fieldConfig": {
             "defaults": {
@@ -2691,7 +2691,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Number of operations received by a storage system that does not own the LUN targeted by the operations.",
           "fieldConfig": {
             "defaults": {
@@ -2800,7 +2800,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2810,7 +2810,7 @@
       "id": 75,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "percentage of utilized storage space in a volume relative to its total capacity.",
           "fieldConfig": {
             "defaults": {
@@ -2903,7 +2903,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Percentage of snapshot reserve size that has been used.",
           "fieldConfig": {
             "defaults": {
@@ -2996,7 +2996,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Percentage of the total disk space that is saved by deduplication and file cloning.",
           "fieldConfig": {
             "defaults": {
@@ -3089,7 +3089,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Percentage of the total disk space that is saved by compressing blocks on the referenced file system.",
           "fieldConfig": {
             "defaults": {
@@ -3182,7 +3182,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "LUN used percent.",
           "fieldConfig": {
             "defaults": {
@@ -3277,7 +3277,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "LUN used percent.",
           "fieldConfig": {
             "defaults": {
@@ -3377,7 +3377,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -3387,7 +3387,7 @@
       "id": 85,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panels displays average read/write latency in microseconds for all operations on the LUN.",
           "fieldConfig": {
             "defaults": {
@@ -3482,7 +3482,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays Read/Write bytes data.",
           "fieldConfig": {
             "defaults": {
@@ -3577,7 +3577,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays number of read/write operations.",
           "fieldConfig": {
             "defaults": {
@@ -3673,7 +3673,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays detail of I/O to or from a LUN which is not owned by the storage system handling the I/O and number of operations received by a storage system that does not own the LUN targeted by the operations.",
           "fieldConfig": {
             "defaults": {
@@ -3781,7 +3781,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays detail of number of compare and write requests, number of unmap command requests, number of write same command requests, number of write same commands requests with unmap bit set and total number of xcopy operations on the LUN.",
           "fieldConfig": {
             "defaults": {
@@ -3918,7 +3918,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4051,7 +4051,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"}, datacenter)",
         "description": null,
         "error": null,
@@ -4077,7 +4077,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, netapp_cluster)",
         "description": null,
         "error": null,
@@ -4103,7 +4103,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(lun_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\"}, svm)",
         "description": null,
         "error": null,
@@ -4129,7 +4129,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(lun_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\",svm=~\"$SVM\"}, volume)",
         "description": null,
         "error": null,
@@ -4155,7 +4155,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(lun_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\",svm=~\"$SVM\", volume=~\"$Volume|\"},lun)",
         "description": null,
         "error": null,

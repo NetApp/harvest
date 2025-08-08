@@ -91,7 +91,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -104,7 +104,7 @@
       "type": "row"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Bytes sent.",
       "fieldConfig": {
         "defaults": {
@@ -161,7 +161,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This panel displays detail of total number of FC-NVMe/FCP operations and amount of FC-NVMe/FCP traffic to and from the storage system.",
       "fieldConfig": {
         "defaults": {
@@ -254,7 +254,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Bytes received.",
       "fieldConfig": {
         "defaults": {
@@ -310,7 +310,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Bytes sent.",
       "fieldConfig": {
         "defaults": {
@@ -366,7 +366,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This panel displays detail of number of FC-NVMe/FC read operations and amount of data read from the storage system (FC-NVMe/FC).",
       "fieldConfig": {
         "defaults": {
@@ -459,7 +459,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This panel displays detail of Number of FC-NVMe/FC write operations and amount of data written to the storage system (FC-NVMe/FC).",
       "fieldConfig": {
         "defaults": {
@@ -553,7 +553,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -563,7 +563,7 @@
       "id": 32,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Ethernet port details.",
           "fieldConfig": {
             "defaults": {
@@ -794,7 +794,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "editorMode": "code",
               "expr": "net_port_status{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$Eth\"}",
               "format": "table",
@@ -805,7 +805,7 @@
               "refId": "A"
             },
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "editorMode": "code",
               "exemplar": false,
               "expr": "net_port_mtu{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$Eth\"}",
@@ -893,7 +893,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "NIC port details.",
           "fieldConfig": {
             "defaults": {
@@ -1232,7 +1232,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "exemplar": false,
               "expr": "nic_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
               "format": "table",
@@ -1242,7 +1242,7 @@
               "refId": "A"
             },
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "expr": "nic_new_status{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
               "format": "table",
               "hide": false,
@@ -1252,7 +1252,7 @@
               "refId": "B"
             },
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "expr": "nic_util_percent{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
               "format": "table",
               "hide": false,
@@ -1262,7 +1262,7 @@
               "refId": "C"
             },
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "expr": "nic_tx_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
               "format": "table",
               "hide": false,
@@ -1272,7 +1272,7 @@
               "refId": "D"
             },
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "expr": "nic_rx_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
               "format": "table",
               "hide": false,
@@ -1346,7 +1346,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Bytes sent.",
           "fieldConfig": {
             "defaults": {
@@ -1439,7 +1439,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Bytes received.",
           "fieldConfig": {
             "defaults": {
@@ -1531,7 +1531,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Percentage of bytes transferred.",
           "fieldConfig": {
             "defaults": {
@@ -1625,7 +1625,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Summarized on Cluster or Node level. Select Eth to show for a specific Ethernet Port.",
           "fieldConfig": {
             "defaults": {
@@ -1722,7 +1722,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Summarized on Cluster or Node level. Select Eth to show for a specific Ethernet Port.",
           "fieldConfig": {
             "defaults": {
@@ -1831,7 +1831,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Ethernet port errors.",
           "fieldConfig": {
             "defaults": {
@@ -2171,7 +2171,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2181,7 +2181,7 @@
       "id": 33,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Detail of interface group, also known as a Link Aggregation Group (LAG), created by combining two or more physical ports on the same node into a single logical port.",
           "fieldConfig": {
             "defaults": {
@@ -2427,7 +2427,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Bytes sent.",
           "fieldConfig": {
             "defaults": {
@@ -2526,7 +2526,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Bytes received.",
           "fieldConfig": {
             "defaults": {
@@ -2627,7 +2627,7 @@
       ],
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "refId": "A"
         }
       ],
@@ -2636,7 +2636,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2646,7 +2646,7 @@
       "id": 80,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "FC port details.",
           "fieldConfig": {
             "defaults": {
@@ -2963,7 +2963,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "gridPos": {
             "h": 2,
             "w": 24,
@@ -2979,7 +2979,7 @@
           "type": "text"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "FC ports with fabric details.",
           "fieldConfig": {
             "defaults": {
@@ -3265,7 +3265,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Amount of data read from the storage system.",
           "fieldConfig": {
             "defaults": {
@@ -3358,7 +3358,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Amount of data written to the storage system.",
           "fieldConfig": {
             "defaults": {
@@ -3450,7 +3450,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency for read operations.",
           "fieldConfig": {
             "defaults": {
@@ -3543,7 +3543,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency for write operations.",
           "fieldConfig": {
             "defaults": {
@@ -3636,7 +3636,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Summarized on Cluster or Node level. Select FCP to show for a specific FibreChannel Port.",
           "fieldConfig": {
             "defaults": {
@@ -3756,7 +3756,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Summarized on Cluster or Node level. Select FCP to show for a specific FibreChannel Port.",
           "fieldConfig": {
             "defaults": {
@@ -3882,7 +3882,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Number of times the Fibre Channel link was lost.",
           "fieldConfig": {
             "defaults": {
@@ -3974,7 +3974,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Number of link failures.",
           "fieldConfig": {
             "defaults": {
@@ -4071,7 +4071,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -4081,7 +4081,7 @@
       "id": 96,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "NVMe/FC port details.",
           "fieldConfig": {
             "defaults": {
@@ -4332,7 +4332,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Amount of data read from the storage system (FC-NVMe).",
           "fieldConfig": {
             "defaults": {
@@ -4425,7 +4425,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Amount of data written to the storage system (FC-NVMe).",
           "fieldConfig": {
             "defaults": {
@@ -4517,7 +4517,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency for read operations (FC-NVMe).",
           "fieldConfig": {
             "defaults": {
@@ -4610,7 +4610,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency for write operations (FC-NVMe).",
           "fieldConfig": {
             "defaults": {
@@ -4708,7 +4708,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -4718,7 +4718,7 @@
       "id": 110,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "",
           "gridPos": {
             "h": 2,
@@ -4735,7 +4735,7 @@
           "type": "text"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Detail of network routes.",
           "fieldConfig": {
             "defaults": {
@@ -4936,7 +4936,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"}, datacenter)",
         "description": null,
         "error": null,
@@ -4962,7 +4962,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, netapp_cluster)",
         "description": null,
         "error": null,
@@ -4988,7 +4988,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(node_labels{system_type!=\"7mode\",netapp_cluster=~\"$Cluster\"}, node)",
         "description": null,
         "error": null,
@@ -5014,7 +5014,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(nic_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\",node=~\"$Node\"}, nic)",
         "description": null,
         "error": null,
@@ -5040,7 +5040,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(fcp_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\",node=~\"$Node\"}, port)",
         "description": null,
         "error": null,

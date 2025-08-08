@@ -97,7 +97,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -110,7 +110,7 @@
       "type": "row"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Total usable space in bytes, not including WAFL reserve and aggregate Snapshot copy reserve.",
       "fieldConfig": {
         "defaults": {
@@ -168,7 +168,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Percent of space used.",
       "fieldConfig": {
         "defaults": {
@@ -228,7 +228,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Object Count.\n\nNote: The REST and ZAPI collectors return a different number of volumes depending on whether you have set up object store servers on your cluster. \n\nFor more details, visit the [ZAPI and REST Gaps](https://netapp.github.io/harvest/latest/zapi-and-rest-gap.md).",
       "fieldConfig": {
         "defaults": {
@@ -446,7 +446,7 @@
       "type": "table"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Available space.",
       "fieldConfig": {
         "defaults": {
@@ -504,7 +504,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Space used or reserved in bytes. Includes volume guarantees and aggregate metadata.",
       "fieldConfig": {
         "defaults": {
@@ -562,7 +562,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Total usable space in bytes, not including WAFL reserve and aggregate Snapshot copy reserve.",
       "fieldConfig": {
         "defaults": {
@@ -650,7 +650,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Space used or reserved in bytes. Includes volume guarantees and aggregate metadata.",
       "fieldConfig": {
         "defaults": {
@@ -738,7 +738,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Available space.",
       "fieldConfig": {
         "defaults": {
@@ -826,7 +826,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Percent of space used.",
       "fieldConfig": {
         "defaults": {
@@ -917,7 +917,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -927,7 +927,7 @@
       "id": 482,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Cluster Health Details.",
           "fieldConfig": {
             "defaults": {
@@ -1094,7 +1094,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Node details.",
           "fieldConfig": {
             "defaults": {
@@ -1369,7 +1369,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1379,7 +1379,7 @@
       "id": 617,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "gridPos": {
             "h": 4,
             "w": 24,
@@ -1395,7 +1395,7 @@
           "type": "text"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays error detail of disk, shelf, node, network port, license compliance, HA down and sensor failure alerts.",
           "fieldConfig": {
             "defaults": {
@@ -1515,7 +1515,7 @@
           "type": "piechart"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays warning detail of disk, shelf, health monitor, lif, volume move and volume anti-ransomware alerts.",
           "fieldConfig": {
             "defaults": {
@@ -1657,7 +1657,7 @@
           "type": "piechart"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "$EMSDescription",
           "fieldConfig": {
             "defaults": {
@@ -1765,7 +1765,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1775,7 +1775,7 @@
       "id": 97,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
@@ -1867,7 +1867,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Cluster throughput.",
           "fieldConfig": {
             "defaults": {
@@ -1959,7 +1959,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Number of operations per second serviced by the cluster.",
           "fieldConfig": {
             "defaults": {
@@ -2052,7 +2052,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "$CPU_BUSY",
           "fieldConfig": {
             "defaults": {
@@ -2146,7 +2146,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average processor utilization across all processors in the system.",
           "fieldConfig": {
             "defaults": {
@@ -2245,7 +2245,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2255,7 +2255,7 @@
       "id": 634,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "gridPos": {
             "h": 4,
             "w": 24,
@@ -2272,7 +2272,7 @@
         },
         {
           "cacheTimeout": null,
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays total power of nodes and shelves.",
           "fieldConfig": {
             "defaults": {
@@ -2336,7 +2336,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average Power per used TB.",
           "fieldConfig": {
             "defaults": {
@@ -2396,7 +2396,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Maximum temperature of all non-ambient sensors for node in Celsius.",
           "fieldConfig": {
             "defaults": {
@@ -2472,7 +2472,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Maximum fan speed for shelf in rpm.",
           "fieldConfig": {
             "defaults": {
@@ -2529,7 +2529,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average IOPs per Watt.",
           "fieldConfig": {
             "defaults": {
@@ -2589,7 +2589,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Maximum temperature of all non-ambient sensors for shelf in Celsius.",
           "fieldConfig": {
             "defaults": {
@@ -2665,7 +2665,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Maximum fan speed for node in rpm.",
           "fieldConfig": {
             "defaults": {
@@ -2723,7 +2723,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays detail of power consumed by a node/shelf/total in Watts.",
           "fieldConfig": {
             "defaults": {
@@ -2872,7 +2872,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2882,7 +2882,7 @@
       "id": 627,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "gridPos": {
             "h": 2,
             "w": 24,
@@ -2898,7 +2898,7 @@
           "type": "text"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Volumes Protected With Snapshot Copies (local). For more information, please check the `ONTAP: Data Protection Snapshots` dashboard.",
           "fieldConfig": {
             "defaults": {
@@ -3002,7 +3002,7 @@
           "type": "piechart"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Volumes Breaching Snapshot Copy Reserve Space.For more information, please check the `ONTAP: Data Protection Snapshots` dashboard.",
           "fieldConfig": {
             "defaults": {
@@ -3104,7 +3104,7 @@
           "type": "piechart"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "For more information, please check the `ONTAP: Data Protection Snapshots` dashboard.",
           "fieldConfig": {
             "defaults": {
@@ -3229,7 +3229,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -3239,7 +3239,7 @@
       "id": 184,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Storage efficiency ratio.",
           "fieldConfig": {
             "defaults": {
@@ -3295,7 +3295,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Storage efficiency ratio with FlexClones.",
           "fieldConfig": {
             "defaults": {
@@ -3351,7 +3351,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Storage efficiency ratio of total space used.",
           "fieldConfig": {
             "defaults": {
@@ -3407,7 +3407,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Logical used.",
           "fieldConfig": {
             "defaults": {
@@ -3491,7 +3491,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Total data reduction physical used.",
           "fieldConfig": {
             "defaults": {
@@ -3575,7 +3575,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Logical used with flexclones.",
           "fieldConfig": {
             "defaults": {
@@ -3659,7 +3659,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Total Data Reduction Physical Used with FlexClones.",
           "fieldConfig": {
             "defaults": {
@@ -3743,7 +3743,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Logical used with snapshots \u0026 flexclones.",
           "fieldConfig": {
             "defaults": {
@@ -3827,7 +3827,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Physical Used with snapshots \u0026 flexclones.",
           "fieldConfig": {
             "defaults": {
@@ -3949,7 +3949,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"},datacenter)",
         "description": null,
         "error": null,
@@ -3975,7 +3975,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},netapp_cluster)",
         "description": null,
         "error": null,

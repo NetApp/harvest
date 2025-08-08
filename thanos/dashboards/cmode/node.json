@@ -97,7 +97,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -111,7 +111,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Number of nodes.",
       "fieldConfig": {
         "defaults": {
@@ -184,7 +184,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Number of aggregates.",
       "fieldConfig": {
         "defaults": {
@@ -256,7 +256,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Average Latency for all operations in the system.",
       "fieldConfig": {
         "defaults": {
@@ -321,7 +321,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Total throughput.",
       "fieldConfig": {
         "defaults": {
@@ -377,7 +377,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Number of operations per second.",
       "fieldConfig": {
         "defaults": {
@@ -433,7 +433,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "System CPU resource utilization is a computed percentage that indicates how busy the system is based on a combination of the most heavily utilized domain and idle CPU cycles. This metric determines the amount of available CPU and will vary based on domains reaching their limits OR exhausting all idle CPU cycles, whichever comes first.",
       "fieldConfig": {
         "defaults": {
@@ -489,7 +489,7 @@
       "type": "bargauge"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Latency for all operations in the system.",
       "fieldConfig": {
         "defaults": {
@@ -580,7 +580,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Total throughput.",
       "fieldConfig": {
         "defaults": {
@@ -671,7 +671,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Number of operations per second.",
       "fieldConfig": {
         "defaults": {
@@ -763,7 +763,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Average processor utilization across all processors in the system.",
       "fieldConfig": {
         "defaults": {
@@ -820,7 +820,7 @@
       "type": "bargauge"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "The utilization percent of the disk. node_disk_max_busy is the maximum of [disk_busy](#disk_busy) for label `node`.",
       "fieldConfig": {
         "defaults": {
@@ -876,7 +876,7 @@
       "type": "bargauge"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "`Uptime:` This represents the total uptime of the node, formatted as duration (d hh:mm:ss)\n\n`Fan Status:` If there are chasis fans failure then it shows `Check Fans` else `OK`\n\n`Power Status:` If there are Power supply unit failures then it shows `Check Power` else `OK`\n\n`Healthy:` If Node is not healthy then it shows `No` else `Yes`.",
       "fieldConfig": {
         "defaults": {
@@ -1250,7 +1250,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1260,7 +1260,7 @@
       "id": 131,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
@@ -1338,7 +1338,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "exemplar": false,
               "expr": "volume_avg_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      volume_avg_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[3h] @ end()\n    )\n  )",
               "interval": "",
@@ -1351,7 +1351,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Volume total throughput.",
           "fieldConfig": {
             "defaults": {
@@ -1429,7 +1429,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "exemplar": false,
               "expr": "(\n      volume_read_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    +\n      volume_write_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n  )\nand\n  topk(\n    $TopResources,\n    (\n        avg_over_time(\n          volume_read_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[3h] @ end()\n        )\n      +\n        avg_over_time(\n          volume_write_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[3h] @ end()\n        )\n    )\n  )",
               "interval": "",
@@ -1442,7 +1442,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Number of operations per second serviced by the volume.",
           "fieldConfig": {
             "defaults": {
@@ -1521,7 +1521,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "prometheus",
+              "datasource": "thanos",
               "exemplar": false,
               "expr": "volume_total_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      volume_total_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[3h] @ end()\n    )\n  )",
               "interval": "",
@@ -1539,7 +1539,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1549,7 +1549,7 @@
       "id": 57,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average processor utilization across all processors in the system.",
           "fieldConfig": {
             "defaults": {
@@ -1648,7 +1648,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Array of processor time in percentage spent in various domains.",
           "fieldConfig": {
             "defaults": {
@@ -1772,7 +1772,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1782,7 +1782,7 @@
       "id": 107,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Percentage of bytes transferred.",
           "fieldConfig": {
             "defaults": {
@@ -1875,7 +1875,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Percent of data access from the storage system.",
           "fieldConfig": {
             "defaults": {
@@ -1968,7 +1968,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays total bytes received \u0026 sent in ethernet ports.",
           "fieldConfig": {
             "defaults": {
@@ -2058,7 +2058,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays detail of amount of data read from the storage system/written to the storage system in FC ports.",
           "fieldConfig": {
             "defaults": {
@@ -2153,7 +2153,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2163,7 +2163,7 @@
       "id": 28,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays detail of Average latency for the WAFL filesystem to process read/write/other request to the volume and aggregated to node level.",
           "fieldConfig": {
             "defaults": {
@@ -2264,7 +2264,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays detail of bytes read/written per second and aggregated at node level.",
           "fieldConfig": {
             "defaults": {
@@ -2364,7 +2364,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays detail of Number of read/write/other operations per second from the volume and aggregated at node level.",
           "fieldConfig": {
             "defaults": {
@@ -2470,7 +2470,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays detail of system utilization based on cpu busy, cpu domain busy, disk busy and array of percentage time spent in different phases of Consistency Point (CP).",
           "fieldConfig": {
             "defaults": {
@@ -2593,7 +2593,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Percent of reads on node that are supplied from, and had to wait on, various media types.",
           "fieldConfig": {
             "defaults": {
@@ -2713,7 +2713,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays detail of CIFS/NFS/FCP/ISCSI/NVMF operation per second.",
           "fieldConfig": {
             "defaults": {
@@ -2850,7 +2850,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2860,7 +2860,7 @@
       "id": 88,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency of Read procedure requests. The counter keeps track of the average response time of Read requests.",
           "fieldConfig": {
             "defaults": {
@@ -2925,7 +2925,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency of requests. This counter keeps track of the average response time of requests.",
           "fieldConfig": {
             "defaults": {
@@ -2990,7 +2990,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency of Write procedure requests. The counter keeps track of the average response time of Write requests.",
           "fieldConfig": {
             "defaults": {
@@ -3055,7 +3055,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays detail of rate of NFSv3 total/write/read data transfers per second.",
           "fieldConfig": {
             "defaults": {
@@ -3171,7 +3171,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays number of NFS total/other/write/read operations per second.",
           "fieldConfig": {
             "defaults": {
@@ -3300,7 +3300,7 @@
           "type": "table"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays detail of average latency of read/write procedure requests.",
           "fieldConfig": {
             "defaults": {
@@ -3396,7 +3396,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays detail of rate of NFSv3 read/write data transfers per second.",
           "fieldConfig": {
             "defaults": {
@@ -3492,7 +3492,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays detail of total observed NFSv3 total/read/write operations per second.",
           "fieldConfig": {
             "defaults": {
@@ -3602,7 +3602,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -3612,7 +3612,7 @@
       "id": 59,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency for CIFS operations.",
           "fieldConfig": {
             "defaults": {
@@ -3679,7 +3679,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Number of CIFS operations per second.",
           "fieldConfig": {
             "defaults": {
@@ -3738,7 +3738,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Array of select CIFS operation counts.",
           "fieldConfig": {
             "defaults": {
@@ -3830,7 +3830,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays CIFS connection detail.",
           "fieldConfig": {
             "defaults": {
@@ -3947,7 +3947,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -3957,7 +3957,7 @@
       "id": 67,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency for FCP operations.",
           "fieldConfig": {
             "defaults": {
@@ -4023,7 +4023,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Total number of operations.",
           "fieldConfig": {
             "defaults": {
@@ -4080,7 +4080,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency for FCP operations.",
           "fieldConfig": {
             "defaults": {
@@ -4172,7 +4172,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays detail of amount of data read from the storage system/written to the storage system.",
           "fieldConfig": {
             "defaults": {
@@ -4264,7 +4264,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Total number of operations.",
           "fieldConfig": {
             "defaults": {
@@ -4362,7 +4362,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -4372,7 +4372,7 @@
       "id": 118,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency for NVMF operations.",
           "fieldConfig": {
             "defaults": {
@@ -4439,7 +4439,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Total number of operations.",
           "fieldConfig": {
             "defaults": {
@@ -4497,7 +4497,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency for NVMF operations.",
           "fieldConfig": {
             "defaults": {
@@ -4589,7 +4589,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays detail of amount of data read from the storage system/written to the storage system in NVMe/FC.",
           "fieldConfig": {
             "defaults": {
@@ -4681,7 +4681,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Total number of operations.",
           "fieldConfig": {
             "defaults": {
@@ -4779,7 +4779,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -4789,7 +4789,7 @@
       "id": 76,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency for iSCSI operations.",
           "fieldConfig": {
             "defaults": {
@@ -4855,7 +4855,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays detail of iSCSI read/write/other operations per second on this logical interface (LIF).",
           "fieldConfig": {
             "defaults": {
@@ -4912,7 +4912,7 @@
           "type": "stat"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency for iSCSI operations.",
           "fieldConfig": {
             "defaults": {
@@ -5004,7 +5004,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays detail of amount of data read from the storage system/written to the storage system in bytes.",
           "fieldConfig": {
             "defaults": {
@@ -5096,7 +5096,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays detail of iSCSI read/write/other operations per second on this logical interface (LIF).",
           "fieldConfig": {
             "defaults": {
@@ -5194,7 +5194,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -5204,7 +5204,7 @@
       "id": 38,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "gridPos": {
             "h": 2,
             "w": 24,
@@ -5220,7 +5220,7 @@
           "type": "text"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Array of number of rewinds for nfs ops based on their reasons.",
           "fieldConfig": {
             "defaults": {
@@ -5311,7 +5311,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Array of number of given-ups of nfs ops because they rewind more than a certain threshold, categorized by their rewind reasons.",
           "fieldConfig": {
             "defaults": {
@@ -5403,7 +5403,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Array of number of rewinds for cifs ops based on their reasons.",
           "fieldConfig": {
             "defaults": {
@@ -5494,7 +5494,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Array of number of given-ups of cifs ops because they rewind more than a certain threshold, categorized by their rewind reasons.",
           "fieldConfig": {
             "defaults": {
@@ -5586,7 +5586,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "The number of restarts after a rewind because of QoS limiting.",
           "fieldConfig": {
             "defaults": {
@@ -5678,7 +5678,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "The number of times QoS limiting has enabled stream flowcontrol.",
           "fieldConfig": {
             "defaults": {
@@ -5807,7 +5807,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"}, datacenter)",
         "description": null,
         "error": null,
@@ -5833,7 +5833,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, netapp_cluster)",
         "description": null,
         "error": null,
@@ -5859,7 +5859,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(node_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\", netapp_cluster=~\"$Cluster\"}, node)",
         "description": null,
         "error": null,

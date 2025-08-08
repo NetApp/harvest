@@ -90,7 +90,7 @@
   ],
   "panels": [
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "",
       "gridPos": {
         "h": 2,
@@ -109,7 +109,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -122,7 +122,7 @@
       "type": "row"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Percentage of clusters which are compliant.",
       "fieldConfig": {
         "defaults": {
@@ -210,7 +210,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "count(\n    group by (datacenter, netapp_cluster) (\n                                support_labels{asup_enabled=\"true\",asup_https_configured!=\"https\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n                              or\n                                security_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",telnet_enabled=\"true\"}\n                            or\n                              security_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",rsh_enabled=\"true\"}\n                          or\n                              group by (datacenter, netapp_cluster) (\n                                security_account_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",hash_algorithm=\"md5\"}\n                              )\n                            \u003e\n                              0\n                        or\n                          netapp_cluster_peer_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",encryption_state=\"\"}\n                      or\n                        netapp_cluster_peer_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",encryption_state=\"none\"}\n                    or\n                        group by (datacenter, netapp_cluster) (\n                          security_account_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",locked=\"false\"}\n                        )\n                      \u003e\n                        0\n                  or\n                    security_login_labels{banner=\"\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",scope=\"netapp_cluster\"}\n                or\n                  security_login_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$Cluster\"}\n              or\n                count by (datacenter, netapp_cluster) (ntpserver_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) \u003c 1\n            or\n              security_audit_destination_status{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",protocol!=\"tcp_encrypted\"}\n          or\n            security_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",fips_enabled=\"false\"}\n        or\n          svm_labels{ciphers=~\".*_cbc.*\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",type=\"admin\"}\n      or\n        group by (datacenter, netapp_cluster) (\n                (\n                    svm_labels{cifs_protocol_enabled=\"true\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n                  or\n                      svm_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nfs_protocol_enabled=\"true\",svm=~\"$SVM\"}\n                    and\n                      svm_labels{audit_protocol_enabled=\"false\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n                )\n              or\n                security_ssh_labels{ciphers=~\".*_cbc.*\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n            or\n              security_login_labels{banner=\"\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",scope=\"svm\"}\n          or\n            security_login_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n        )\n    )\n  )\nor\n  vector(0)",
           "instant": true,
@@ -219,7 +219,7 @@
           "refId": "A"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "count(security_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) or vector(1)",
           "hide": false,
@@ -284,7 +284,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Percentage of SVMs which are compliant.",
       "fieldConfig": {
         "defaults": {
@@ -372,7 +372,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "count(\n    group by (datacenter, netapp_cluster, svm) (\n            (\n                svm_labels{cifs_protocol_enabled=\"true\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n              or\n                  svm_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nfs_protocol_enabled=\"true\",svm=~\"$SVM\"}\n                and\n                  svm_labels{audit_protocol_enabled=\"false\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n            )\n          or\n            svm_labels{ciphers=~\".*_cbc.*\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n        or\n          security_login_labels{banner=\"\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",scope=\"svm\",svm=~\"$SVM\"}\n      or\n        (\n            svm_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n          unless on (svm)\n            security_login_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm!=\"$Cluster\",svm=~\"$SVM\"}\n        )\n    )\n  )\nor\n  vector(0)",
           "instant": true,
@@ -381,7 +381,7 @@
           "refId": "A"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "count(svm_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}) or vector(1)",
           "hide": false,
@@ -447,7 +447,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Percentage of volumes which are encrypted.",
       "fieldConfig": {
         "defaults": {
@@ -493,7 +493,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "(\n      count(\n        volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",isEncrypted=\"true\",root_volume=\"No\",svm=~\"$SVM\"}\n      )\n    or\n      vector(0)\n  )\n+\n  (\n      count(\n        volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",isHardwareEncrypted=\"true\",root_volume=\"No\",svm=~\"$SVM\"}\n      )\n    or\n      vector(0)\n  )",
           "instant": true,
@@ -502,7 +502,7 @@
           "refId": "A"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "(\n    count(volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",root_volume=\"No\",svm=~\"$SVM\"})\n  or\n    vector(1)\n)",
           "hide": false,
@@ -550,7 +550,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Percentage of volumes which are anti-ransomware enabled.",
       "fieldConfig": {
         "defaults": {
@@ -596,7 +596,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "(\n      (\n          count(\n            volume_labels{antiRansomwareState!=\"\",antiRansomwareState=~\"enabled|dry_run\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",root_volume=\"No\",svm=~\"$SVM\"}\n          )\n        or\n          vector(0)\n      )\n    /\n      (\n          count(\n            volume_labels{antiRansomwareState!=\"\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",root_volume=\"No\",svm=~\"$SVM\"}\n          )\n        or\n          vector(1)\n      )\n  )\n*\n  100",
           "instant": true,
@@ -643,7 +643,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Percentage of SVMs which are anti-ransomware enabled.",
       "fieldConfig": {
         "defaults": {
@@ -689,7 +689,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "(\n      (\n          count(\n            svm_labels{anti_ransomware_state!=\"\",anti_ransomware_state=~\"enabled|dry_run\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n          )\n        or\n          vector(0)\n      )\n    /\n      (\n          count(\n            svm_labels{anti_ransomware_state!=\"\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n          )\n        or\n          vector(1)\n      )\n  )\n*\n  100",
           "instant": true,
@@ -736,7 +736,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This panel displays cluster compliant detail.",
       "fieldConfig": {
         "defaults": {
@@ -866,7 +866,7 @@
       "pluginVersion": "8.1.2",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "count(security_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) or vector(0)",
           "hide": false,
@@ -876,7 +876,7 @@
           "refId": "A"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "count(\n    group by (datacenter, netapp_cluster) (\n                                support_labels{asup_enabled=\"true\",asup_https_configured!=\"https\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n                              or\n                                security_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",telnet_enabled=\"true\"}\n                            or\n                              security_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",rsh_enabled=\"true\"}\n                          or\n                              group by (datacenter, netapp_cluster) (\n                                security_account_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",hash_algorithm=\"md5\"}\n                              )\n                            \u003e\n                              0\n                        or\n                          netapp_cluster_peer_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",encryption_state=\"\"}\n                      or\n                        netapp_cluster_peer_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",encryption_state=\"none\"}\n                    or\n                        group by (datacenter, netapp_cluster) (\n                          security_account_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",locked=\"false\"}\n                        )\n                      \u003e\n                        0\n                  or\n                    security_login_labels{banner=\"\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",scope=\"netapp_cluster\"}\n                or\n                  security_login_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$Cluster\"}\n              or\n                count by (datacenter, netapp_cluster) (ntpserver_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) \u003c 1\n            or\n              security_audit_destination_status{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",protocol!=\"tcp_encrypted\"}\n          or\n            security_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",fips_enabled=\"false\"}\n        or\n          svm_labels{ciphers=~\".*_cbc.*\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",type=\"admin\"}\n      or\n        group by (datacenter, netapp_cluster) (\n                (\n                    svm_labels{cifs_protocol_enabled=\"true\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n                  or\n                      svm_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nfs_protocol_enabled=\"true\",svm=~\"$SVM\"}\n                    and\n                      svm_labels{audit_protocol_enabled=\"false\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n                )\n              or\n                security_ssh_labels{ciphers=~\".*_cbc.*\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n            or\n              security_login_labels{banner=\"\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",scope=\"svm\"}\n          or\n            security_login_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n        )\n    )\n  )\nor\n  vector(0)",
           "hide": false,
@@ -920,7 +920,7 @@
       "type": "piechart"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This panel displays SVM compliant detail.",
       "fieldConfig": {
         "defaults": {
@@ -1035,7 +1035,7 @@
       "pluginVersion": "8.1.2",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "count(svm_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}) or vector(1)",
           "instant": true,
@@ -1044,7 +1044,7 @@
           "refId": "A"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "count(\n  group by (datacenter, netapp_cluster, svm) (\n          (\n              svm_labels{cifs_protocol_enabled=\"true\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n            or\n                svm_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nfs_protocol_enabled=\"true\",svm=~\"$SVM\"}\n              and\n                svm_labels{audit_protocol_enabled=\"false\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n          )\n        or\n          svm_labels{ciphers=~\".*_cbc.*\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n      or\n        security_login_labels{banner=\"\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",scope=\"svm\",svm=~\"$SVM\"}\n    or\n      (\n          svm_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n        unless on (svm)\n          security_login_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm!=\"$Cluster\",svm=~\"$SVM\"}\n      )\n  )\n)",
           "hide": false,
@@ -1088,7 +1088,7 @@
       "type": "piechart"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This panel displays volume encryption detail.",
       "fieldConfig": {
         "defaults": {
@@ -1142,7 +1142,7 @@
       "pluginVersion": "8.1.2",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "count(\n    volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",isEncrypted=\"true\",root_volume=\"No\",svm=~\"$SVM\"}\n  )\nor\n  vector(0)",
           "instant": true,
@@ -1151,7 +1151,7 @@
           "refId": "A"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "count(\n    volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",isHardwareEncrypted=\"true\",root_volume=\"No\",svm=~\"$SVM\"}\n  )\nor\n  vector(0)",
           "hide": false,
@@ -1161,7 +1161,7 @@
           "refId": "B"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "count(\n    volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",isEncrypted=\"true\",isHardwareEncrypted=\"true\",root_volume=\"No\",svm=~\"$SVM\"}\n  )\nor\n  vector(0)",
           "hide": false,
@@ -1171,7 +1171,7 @@
           "refId": "D"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "count(\n    volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",isEncrypted=\"false\",isHardwareEncrypted=\"false\",root_volume=\"No\",svm=~\"$SVM\"}\n  )\nor\n  vector(0)",
           "hide": false,
@@ -1186,7 +1186,7 @@
       "type": "piechart"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This panel requires the Harvest REST collector and an ONTAP 9.10+ cluster with autonomous ransomware protection enabled.\n\u003cbr\u003e\n\nSee \u003ca target='blank' href='https://docs.netapp.com/us-en/ontap/anti-ransomware/enable-task.html'\u003eEnable ARP\u003c/a\u003e for more details\u003cbr\u003e.",
       "fieldConfig": {
         "defaults": {
@@ -1240,7 +1240,7 @@
       "pluginVersion": "8.1.2",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "count(\n    volume_labels{antiRansomwareState!=\"\",antiRansomwareState=\"enabled\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",root_volume=\"No\",svm=~\"$SVM\"}\n  )\nor\n  vector(0)",
           "instant": true,
@@ -1249,7 +1249,7 @@
           "refId": "A"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "count(\n    volume_labels{antiRansomwareState!=\"\",antiRansomwareState=\"dry_run\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",root_volume=\"No\",svm=~\"$SVM\"}\n  )\nor\n  vector(0)",
           "hide": false,
@@ -1259,7 +1259,7 @@
           "refId": "B"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "count(\n    volume_labels{antiRansomwareState!=\"\",antiRansomwareState=~\".*paused.*\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",root_volume=\"No\",svm=~\"$SVM\"}\n  )\nor\n  vector(0)",
           "hide": false,
@@ -1269,7 +1269,7 @@
           "refId": "D"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "count(\n    volume_labels{antiRansomwareState!=\"\",antiRansomwareState=~\"disabled\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",root_volume=\"No\",svm=~\"$SVM\"}\n  )\nor\n  vector(0)",
           "hide": false,
@@ -1284,7 +1284,7 @@
       "type": "piechart"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This panel displays SVM anti ransomware detail.",
       "fieldConfig": {
         "defaults": {
@@ -1338,7 +1338,7 @@
       "pluginVersion": "8.1.2",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "count(\n    svm_labels{anti_ransomware_state!=\"\",anti_ransomware_state=~\"enabled|dry_run\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n  )\nor\n  vector(0)",
           "instant": true,
@@ -1347,7 +1347,7 @@
           "refId": "A"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "count(\n    svm_labels{anti_ransomware_state!=\"\",anti_ransomware_state=~\"disabled\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n  )\nor\n  vector(0)",
           "hide": false,
@@ -1361,7 +1361,7 @@
       "type": "piechart"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "",
       "gridPos": {
         "h": 1,
@@ -1379,7 +1379,7 @@
       "type": "text"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "",
       "gridPos": {
         "h": 1,
@@ -1397,7 +1397,7 @@
       "type": "text"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "",
       "gridPos": {
         "h": 1,
@@ -1415,7 +1415,7 @@
       "type": "text"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Number of SAML authentication.",
       "fieldConfig": {
         "defaults": {
@@ -1497,7 +1497,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Number of AD \u0026 LDAP authentication.",
       "fieldConfig": {
         "defaults": {
@@ -1579,7 +1579,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Number of certificate authentication.",
       "fieldConfig": {
         "defaults": {
@@ -1661,7 +1661,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Number of password authentication.",
       "fieldConfig": {
         "defaults": {
@@ -1743,7 +1743,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Number of certificates expiring within 60 days.",
       "fieldConfig": {
         "defaults": {
@@ -1791,7 +1791,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "count(\n  security_certificate_labels{certificateExpiryStatus=\"expiring\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n)",
           "format": "time_series",
@@ -1825,7 +1825,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Number of certificates expired.",
       "fieldConfig": {
         "defaults": {
@@ -1907,7 +1907,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "This panel displays SSL Certificate expiration time.",
       "fieldConfig": {
         "defaults": {
@@ -2106,7 +2106,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "editorMode": "code",
           "exemplar": false,
           "expr": "security_certificate_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",expiry_time!=\"\"}",
@@ -2118,7 +2118,7 @@
           "refId": "A"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "exemplar": false,
           "expr": "security_certificate_expiry_time{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} - time()",
           "format": "table",
@@ -2208,7 +2208,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2218,7 +2218,7 @@
       "id": 12,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Volume encryption \u0026 anti-ransomware status.",
           "fieldConfig": {
             "defaults": {
@@ -2591,7 +2591,7 @@
       "id": 223,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "❌  means this attribute is non-compliant. \n\n|  Column  | Compliant When  |  \n|---|---|\n| `Snapshot Policy` | All volumes have applied Snapshot policy |  \n| `Snapshot Autodelete` | All volumes have enabled Snapshot autodelete |\n| `ARW Protection for SVMs` | All SVMs have enabled ARW protection |\n|`ARW Protection for Volumes`| All volumes have enabled ARW protection|\n| `Cluster Certificate Validity` | Cluster has active certificate(s) |\n| `Global FIPS`| Cluster has global FIPS enabled |\n| `Telnet` | Cluster has telnet disabled |\n| `Autosupport Https Transport` | Cluster uses HTTPS for autosupport |\n| `Default Admin User` | Default admin user is locked |\n| `Remote Shell` | Cluster's remote shell is disabled |\n| `MD5 in use` | Cluster does not use MD5 algorithm |\n| `Insecure SSH Settings` | Cluster has strong SSH server ciphers |\n| `Login Banner` | Cluster has enabled login banner |\n| `Log Forwarding Encrypted` | Cluster has encrypted protocol for log forwarding |\n| `Network Time Protocol` | Cluster has configured three NTP servers |\n| `Cluster Peering` | Cluster peers use encryption |\n| `Notification Configured` | Cluster has configured destinations for notifications |\n| `Automatic Updates Configured`| Cluster has enabled automatic updates |.",
           "fieldConfig": {
             "defaults": {
@@ -4168,7 +4168,7 @@
       "id": 227,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "❌  means this attribute is non-compliant.",
           "fieldConfig": {
             "defaults": {
@@ -5065,7 +5065,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"},datacenter)",
         "description": null,
         "error": null,
@@ -5091,7 +5091,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},netapp_cluster)",
         "description": null,
         "error": null,
@@ -5117,7 +5117,7 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(svm_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\",root_svm=\"No\"},svm)",
         "description": "Displaying only the data SVMs and omitting root SVMs",
         "error": null,

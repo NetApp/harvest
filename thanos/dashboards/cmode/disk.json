@@ -85,7 +85,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -99,7 +99,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Number of disks.",
       "fieldConfig": {
         "defaults": {
@@ -171,7 +171,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Number of failed disks.",
       "fieldConfig": {
         "defaults": {
@@ -243,7 +243,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "The utilization percent of the disk. aggr_disk_busy is [disk_busy](#disk_busy) aggregated by `aggr`.",
       "fieldConfig": {
         "defaults": {
@@ -315,7 +315,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "The utilization percent of the disk. aggr_disk_busy is [disk_busy](#disk_busy) aggregated by `aggr`.",
       "fieldConfig": {
         "defaults": {
@@ -387,7 +387,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Number of disks in the aggregate.",
       "fieldConfig": {
         "defaults": {
@@ -458,7 +458,7 @@
       "type": "stat"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Disk capacity per aggregate detail.",
       "fieldConfig": {
         "defaults": {
@@ -780,7 +780,7 @@
       "type": "table"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Highest Disk Utilization per Aggregate for latest record (independent of time range selected).",
       "fieldConfig": {
         "defaults": {
@@ -1033,7 +1033,7 @@
       "type": "table"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Highest Disk Utilization per Aggregate in the selected time range.",
       "fieldConfig": {
         "defaults": {
@@ -1126,7 +1126,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Total number of disk operations involving data transfer initiated per second\n.",
       "fieldConfig": {
         "defaults": {
@@ -1216,7 +1216,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Average number of blocks transferred in each user read operation. aggr_disk_max_user_read_chain is the maximum of [disk_user_read_chain](#disk_user_read_chain) for label `aggr`.",
       "fieldConfig": {
         "defaults": {
@@ -1308,7 +1308,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "description": "Average number of blocks transferred in each user write operation. aggr_disk_max_user_write_chain is the maximum of [disk_user_write_chain](#disk_user_write_chain) for label `aggr`.",
       "fieldConfig": {
         "defaults": {
@@ -1405,7 +1405,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1415,7 +1415,7 @@
       "id": 21,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency per block in microseconds for user read operations.",
           "fieldConfig": {
             "defaults": {
@@ -1507,7 +1507,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Average latency per block in microseconds for user write operations.",
           "fieldConfig": {
             "defaults": {
@@ -1599,7 +1599,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Total number of disk operations involving data transfer initiated per second.",
           "fieldConfig": {
             "defaults": {
@@ -1691,7 +1691,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "The utilization percent of the disk in the selected time range.",
           "fieldConfig": {
             "defaults": {
@@ -1790,7 +1790,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1800,7 +1800,7 @@
       "id": 22,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "Some Clusters don't report average latency, so the values might be 0s.",
           "fieldConfig": {
             "defaults": {
@@ -2344,7 +2344,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "prometheus",
+      "datasource": "thanos",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2354,7 +2354,7 @@
       "id": 28,
       "panels": [
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays detail of number of disk kilobytes (KB) read/written per second.",
           "fieldConfig": {
             "defaults": {
@@ -2452,7 +2452,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays detail of bytes written/read through a host adapter.",
           "fieldConfig": {
             "defaults": {
@@ -2550,7 +2550,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays detail of bytes written/read through a host adapter.",
           "fieldConfig": {
             "defaults": {
@@ -2650,7 +2650,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays detail of external cache hit rate and estimated number of disk reads per second replaced by cache.",
           "fieldConfig": {
             "defaults": {
@@ -2780,7 +2780,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays detail of percentage of HDD read operations replace by SSD and number of HDD read operations replaced by SSD reads per second.",
           "fieldConfig": {
             "defaults": {
@@ -2910,7 +2910,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays details of the counts of two types of Consistency Points (CP).\n\n- **Back-to-Back CP (back_to_back_CP)**: For more information, see [Write Performance Impacted by Back to Back Consistency Points](https://kb.netapp.com/on-prem/ontap/Perf/Perf-KBs/Write_Performance_Impacted_by_Back_to_Back_Consistency_Points).\n- **Deferred Back-to-Back CP (deferred_back_to_back_CP)**: For more information, see [What are the different Consistency Point types and how are they measured](https://kb.netapp.com/on-prem/ontap/Perf/Perf-KBs/What_are_the_different_Consistency_Point_types_and_how_are_they_measured).",
           "fieldConfig": {
             "defaults": {
@@ -3019,7 +3019,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "prometheus",
+          "datasource": "thanos",
           "description": "This panel displays details of the average latency in microseconds for the WAFL filesystem to process write requests to the volume.",
           "fieldConfig": {
             "defaults": {
@@ -3165,7 +3165,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"},datacenter)",
         "description": null,
         "error": null,
@@ -3191,7 +3191,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},netapp_cluster)",
         "description": null,
         "error": null,
@@ -3217,7 +3217,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(disk_labels{system_type!=\"7mode\",netapp_cluster=~\"$Cluster\"}, node)",
         "description": null,
         "error": null,
@@ -3243,7 +3243,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(aggr_disk_busy{netapp_cluster=~\"$Cluster\",node=~\"$Node\"}, aggr)",
         "description": null,
         "error": null,
@@ -3269,7 +3269,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(aggr_disk_busy{netapp_cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\"}, plex)",
         "description": null,
         "error": null,
@@ -3295,7 +3295,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(aggr_disk_busy{netapp_cluster=~\"$Cluster\",node=~\"$Node\",aggr=~\"$Aggregate\",plex=~\"$Plex\"}, raid)",
         "description": null,
         "error": null,
@@ -3321,7 +3321,7 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": "prometheus",
+        "datasource": "thanos",
         "definition": "label_values(hostadapter_bytes_read{system_type!=\"7mode\",netapp_cluster=~\"$Cluster\",node=~\"$Node\"}, hostadapter)",
         "description": null,
         "error": null,
