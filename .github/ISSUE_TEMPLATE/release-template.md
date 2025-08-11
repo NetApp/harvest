@@ -42,6 +42,7 @@ git push origin release/$RELEASE
 - [ ] Use the release [issue burn down list](https://github.com/NetApp/harvest/issues?q=is%3Aissue%20label%3Astatus%2Ftestme%2Cstatus%2Fopen%20-label%3Astatus%2Fdone%20sort%3Acreated-asc%20) to verify issues are fixed. Move `status/testme` issues to `status/open` or `status/done`
 - [ ] Ensure that the release is validated against NABox.
 - [ ] Ensure that the release is validated against FSX.
+- [ ] Ensure that the release is validated against [ASA.r2](https://netapp.github.io/harvest/nightly/asar2/).
 - [ ] Use [Jenkins](https://github.com/NetApp/harvest-private/wiki/Release-Checklist#jenkins) to create release artifacts for test machines
 - [ ] Create changelog
   - [ ] [Draft a new release](https://github.com/NetApp/harvest/releases). Use `v$RELEASE` for the tag and pick the release/$RELEASE branch. Click the `Generate release notes` button and double check, at the bottom of the release notes, that the commits are across the correct range. For example: `https://github.com/NetApp/harvest/compare/v22.11.1...v23.02.0`

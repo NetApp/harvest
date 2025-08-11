@@ -8,3 +8,4 @@ schedule:
 
 objects:
   FlexCache:                flexcache.yaml
+  SystemNode:               system_node.yaml
