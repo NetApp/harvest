@@ -32,7 +32,7 @@ import (
 
 const (
 	clientTimeout                 = 5
-	DefaultDataSource             = "prometheus"
+	DefaultDataSource             = "${DS_PROMETHEUS}"
 	GPerm             os.FileMode = 0644
 )
 
@@ -75,6 +75,7 @@ type options struct {
 	varDefaults         string
 	defaultDropdownMap  map[string][]string
 	isDebug             bool
+	showDatasource      bool // show datasource variable in the dashboard
 }
 
 type Folder struct {
@@ -642,6 +643,11 @@ func importFiles(dir string, folder *Folder) {
 		for i := len(opts.labels) - 1; i >= 0; i-- {
 			data = addLabel(data, opts.labels[i], labelMap)
 		}
+
+		if opts.showDatasource {
+			data, _ = sjson.SetBytes(data, "templating.list.0.hide", 0)
+		}
+
 		if err = json.Unmarshal(data, &dashboard); err != nil {
 			fmt.Printf("error parsing file [%s] %+v\n", file.Name(), err)
 			fmt.Println("-------------------------------")
@@ -1193,6 +1199,10 @@ func refuseRedirect(req *http.Request, _ []*http.Request) error {
 }
 
 func isValidDatasource(result map[string]any) bool {
+	// If opts.datasource contains a $ we assume it's a variable and skip the check
+	if strings.Contains(opts.datasource, "$") {
+		return true
+	}
 	if result == nil {
 		fmt.Printf("warning: result is null.")
 		return false
@@ -1214,7 +1224,7 @@ func isValidDatasource(result map[string]any) bool {
 			fmt.Printf("warning: dsType is missing for %s\n", dsName)
 			continue
 		}
-		if dsType.(string) == DefaultDataSource && strings.EqualFold(dsName, opts.datasource) {
+		if strings.EqualFold(dsType.(string), "prometheus") && strings.EqualFold(dsName, opts.datasource) {
 			// overwrite datasource name with the one from Grafana when the names differ by case
 			opts.datasource = dsName
 			return true
@@ -1554,6 +1564,8 @@ func addImportCustomizeFlags(commands ...*cobra.Command) {
 			"Import even if the datasource name is not defined in Grafana")
 		cmd.PersistentFlags().StringVar(&opts.customCluster, "cluster-label", "",
 			"Rewrite all panel expressions to use the specified cluster label instead of the default 'cluster'")
+		cmd.PersistentFlags().BoolVar(&opts.showDatasource, "show-datasource", false,
+			"Show datasource variable dropdown in dashboards, useful for multi-datasource setups")
 
 		_ = cmd.PersistentFlags().MarkHidden("multi")
 		_ = cmd.PersistentFlags().MarkHidden("force")
