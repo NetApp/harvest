@@ -256,8 +256,8 @@ func TestIsValidDatasource(t *testing.T) {
 		{name: "empty", result: nil, dsArg: "", want: false},
 		{name: "nil datasource", result: noDS, dsArg: "", want: false},
 		{name: "non prometheus datasource", result: nonPrometheusDS, dsArg: "influxdb", want: false},
-		{name: "valid prometheus datasource", result: defaultPrometheusDS, dsArg: DefaultDataSource, want: true},
-		{name: "legacy valid prometheus datasource", result: legacyPrometheusDS, dsArg: DefaultDataSource, want: true},
+		{name: "valid prometheus datasource", result: defaultPrometheusDS, dsArg: prometheusDS, want: true},
+		{name: "legacy valid prometheus datasource", result: legacyPrometheusDS, dsArg: "Prometheus", want: true},
 		{name: "multiple prometheus datasource with same datasource given", result: multiPrometheusDSWithSameDS, dsArg: "NetProm", want: true},
 		{name: "multiple prometheus datasource with different datasource given", result: multiPrometheusDSWithOtherDS, dsArg: "UpdateProm", want: false},
 	}
