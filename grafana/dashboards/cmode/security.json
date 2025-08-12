@@ -2519,7 +2519,8 @@
                     "svm",
                     "volume",
                     "datacenter",
-                    "cluster"
+                    "cluster",
+                    "antiRansomwareState"
                   ]
                 }
               }
