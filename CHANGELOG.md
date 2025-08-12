@@ -20,7 +20,7 @@
 - :star:
    - Quota and FSA dashboards now support filtering by volume tags.
    - Added a Junction Path variable in the Volume dashboard.
-   - Added bucket quotas in StoargeGrid Tenant dashboard.
+   - Added bucket quotas in StorageGrid Tenant dashboard.
    - Added Volume column in the SMB Dashboard's CIFS sessions table
    - Added Used% in the bucket table within Tenant dashboard
 
