@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Aug-07
+Creation Date : 2025-Aug-12
 ONTAP Version: 9.16.1
 ```
 
@@ -12224,6 +12224,7 @@ Other throughput
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `other_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `other_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `other_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -12235,6 +12236,7 @@ Average latency for all other operations in the system in microseconds
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> other_ops | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -12246,6 +12248,7 @@ All other operations per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -12257,6 +12260,7 @@ Read throughput
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -12268,6 +12272,7 @@ Average latency for all read operations in the system in microseconds
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> read_ops | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -12279,6 +12284,7 @@ Read operations per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -13191,6 +13197,7 @@ Write throughput
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -13202,6 +13209,7 @@ Average latency for all write operations in the system in microseconds
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> <br><span class="key">Base:</span> write_ops | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -13213,6 +13221,7 @@ Write operations per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.8.0/system_node.yaml |
 | ZAPI | `perf-object-get-instances system:node` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 

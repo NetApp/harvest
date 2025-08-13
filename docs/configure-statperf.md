@@ -8,7 +8,7 @@ statistics show -raw -object $object
 
 This collector is designed for performance metrics collection in environments where the ZapiPerf/RestPerf/KeyPerf collectors can not be used.
 
-**Note:** The StatPerf collector requires additional ONTAP permissions. Please refer to the [StatPerf Collector Permissions](prepare-cdot-clusters.md#statperf-collector-permissions) section for details.
+**Note:** The StatPerf collector requires additional ONTAP permissions. Please refer to the [StatPerf Collector Permissions](prepare-cdot-clusters.md#statperf-least-privilege-role) section for details.
 If you are using multi-admin verification in your cluster, you need to allow diagnostic mode queries in the MAV rules for the StatPerf collector to run. For more details, refer to the [Multi-Admin Verification documentation](https://docs.netapp.com/us-en/ontap/multi-admin-verify/).
 
 ## Metrics

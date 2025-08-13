@@ -6,5 +6,14 @@ Most capacity metrics collected via the REST collector are available in ASA r2 m
 
 Harvest automatically detects ASA r2 systems and replaces any `ZapiPerf` or `RestPerf` collectors with the `KeyPerf` collector. 
 
-Performance metrics with the API name `KeyPerf` in the [ONTAP metrics documentation](ontap-metrics.md) are supported in ASA r2 systems.
+We also recommend enabling the [StatPerf](configure-statperf.md) collector for ASA r2 systems to collect performance metrics that are not available via the `KeyPerf` collector. You need to make sure the `StatPerf` collector is listed first in your list of collectors. e.g. 
+
+```yaml
+collectors:
+    - StatPerf
+    - Rest
+    - RestPerf
+```
+
+Performance metrics with the API name `KeyPerf` or `StatPerf` in the [ONTAP metrics documentation](ontap-metrics.md) are supported in ASA r2 systems.
 As a result, some panels in the dashboards may be missing information. 
