@@ -1,7 +1,7 @@
 # Change Log
 ## [Releases](https://github.com/NetApp/harvest/releases)
 
-## 25.08.0 / 2025-08-12 Release
+## 25.08.0 / 2025-08-13 Release
 :pushpin: Highlights of this major release include:
 ## :star: New Features
 
