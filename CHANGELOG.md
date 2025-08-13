@@ -8,9 +8,10 @@
 - [StatPerf](https://netapp.github.io/harvest/latest/configure-statperf/) Collector
   - This collector is designed for environments where ZapiPerf, RestPerf, or KeyPerf collectors can not be used and uses the well known ONTAP statistics CLI command to gather performance statistics.
 
-- :gem: Two new dashboards:
+- :gem: Three new dashboards:
     - Multi-admin verification (MAV) Dashboard provides a real-time overview of Multi-Admin Verification requests, tracking their status, approvals, and pending actions for enhanced security and operational visibility.
     - FPolicy dashboard for monitoring FPolicy performance metrics at the policy, SVM, and server levels.
+    - ONTAP:Switch dashboard that provides details about switches connected to ONTAP.
 
 - Cisco switch dashboard updates: :100: Thanks to @roybatty2019 for raising this issue and providing valuable guidance and examples.
     - Individual fan speeds are now displayed separately from zone speeds.
@@ -21,8 +22,8 @@
    - Quota and FSA dashboards now support filtering by volume tags.
    - Added a Junction Path variable in the Volume dashboard.
    - Added bucket quotas in StorageGrid Tenant dashboard.
-   - Added Volume column in the SMB Dashboard's CIFS sessions table
-   - Added Used% in the bucket table within Tenant dashboard
+   - Added "Volume" and "Idle Timeout" columns to the CIFS sessions table in the SMB Dashboard.
+   - Added Used% in the bucket table within Tenant dashboard.
 
 - :closed_book: Documentation additions
    - Navigate to your local Grafana dashboards from the metrics documentation by linking to your Grafana instance.
