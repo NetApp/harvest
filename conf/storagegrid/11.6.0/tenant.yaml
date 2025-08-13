@@ -6,6 +6,7 @@ api:                        v3
 
 counters:
   - ^^id                    => id
+  - ^description            => description
   - ^name                   => tenant
   - dataBytes               => logical_used
   - objectCount             => objects
@@ -20,4 +21,5 @@ export_options:
     - id
     - tenant
   instance_labels:
+    - description
     - tenant

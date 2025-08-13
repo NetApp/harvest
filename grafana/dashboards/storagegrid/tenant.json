@@ -543,7 +543,8 @@
                 "Value #B",
                 "Value #C",
                 "Value #D",
-                "Value #E"
+                "Value #E",
+                "description"
               ]
             }
           }
@@ -566,31 +567,33 @@
               "tenant 5": true
             },
             "indexByName": {
-              "Value #B": 3,
-              "Value #C": 4,
-              "Value #D": 5,
-              "Value #E": 6,
+              "Value #B": 4,
+              "Value #C": 5,
+              "Value #D": 6,
+              "Value #E": 7,
               "cluster 1": 1,
-              "cluster 2": 7,
-              "cluster 3": 10,
-              "cluster 4": 13,
-              "cluster 5": 16,
+              "cluster 2": 8,
+              "cluster 3": 11,
+              "cluster 4": 14,
+              "cluster 5": 17,
               "datacenter 1": 0,
-              "datacenter 2": 8,
-              "datacenter 3": 11,
-              "datacenter 4": 14,
-              "datacenter 5": 17,
+              "datacenter 2": 9,
+              "datacenter 3": 12,
+              "datacenter 4": 15,
+              "datacenter 5": 18,
+              "description": 3,
               "tenant 1": 2,
-              "tenant 2": 9,
-              "tenant 3": 12,
-              "tenant 4": 15,
-              "tenant 5": 18
+              "tenant 2": 10,
+              "tenant 3": 13,
+              "tenant 4": 16,
+              "tenant 5": 19
             },
             "renameByName": {
               "Value #B": "Logical Used",
               "Value #C": "Quota",
               "Value #D": "Used %",
-              "Value #E": "Objects"
+              "Value #E": "Objects",
+              "description": "Description"
             }
           }
         },
@@ -791,6 +794,36 @@
                 ]
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Versioning Enabled"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "false": {
+                        "index": 1,
+                        "text": "False"
+                      },
+                      "true": {
+                        "index": 0,
+                        "text": "True"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "custom.width",
+                "value": 170
+              }
+            ]
           }
         ]
       },
@@ -840,6 +873,16 @@
           "interval": "",
           "legendFormat": "",
           "refId": "C"
+        },
+        {
+          "exemplar": false,
+          "expr": "bucket_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",tenantID=~\"$ID\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "D"
         }
       ],
       "title": "Buckets",
@@ -854,6 +897,7 @@
                 "datacenter",
                 "region",
                 "tenant",
+                "versioningEnabled",
                 "Value #A",
                 "Value #B",
                 "Value #C"
@@ -889,15 +933,16 @@
           "options": {
             "excludeByName": {},
             "indexByName": {
-              "Used %": 7,
-              "Value #A": 5,
-              "Value #B": 8,
-              "Value #C": 6,
+              "Used %": 8,
+              "Value #A": 6,
+              "Value #B": 9,
+              "Value #C": 7,
               "bucket": 3,
               "cluster": 1,
               "datacenter": 0,
               "region": 4,
-              "tenant": 2
+              "tenant": 2,
+              "versioningEnabled": 5
             },
             "renameByName": {
               "Value": "Bytes",
@@ -906,7 +951,8 @@
               "Value #C": "Quota",
               "aa": "Used %",
               "bucket": "Bucket",
-              "region": "Region"
+              "region": "Region",
+              "versioningEnabled": "Versioning Enabled"
             }
           }
         },
@@ -1152,5 +1198,5 @@
   "timezone": "",
   "title": "StorageGrid: Tenants",
   "uid": "storagegrid-tenants",
-  "version": 7
+  "version": 8
 }
