@@ -21,10 +21,12 @@ import (
 	"golang.org/x/text/language"
 	"io"
 	"log/slog"
+	"maps"
 	"net/http"
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -75,6 +77,7 @@ type options struct {
 	varDefaults         string
 	defaultDropdownMap  map[string][]string
 	isDebug             bool
+	showDatasource      bool // show datasource variable in the dashboard
 }
 
 type Folder struct {
@@ -642,6 +645,11 @@ func importFiles(dir string, folder *Folder) {
 		for i := len(opts.labels) - 1; i >= 0; i-- {
 			data = addLabel(data, opts.labels[i], labelMap)
 		}
+
+		if opts.showDatasource {
+			data, _ = sjson.SetBytes(data, "templating.list.0.hide", 0)
+		}
+
 		if err = json.Unmarshal(data, &dashboard); err != nil {
 			fmt.Printf("error parsing file [%s] %+v\n", file.Name(), err)
 			fmt.Println("-------------------------------")
@@ -1193,6 +1201,10 @@ func refuseRedirect(req *http.Request, _ []*http.Request) error {
 }
 
 func isValidDatasource(result map[string]any) bool {
+	// If opts.datasource contains a $ we assume it's a variable and skip the check
+	if strings.Contains(opts.datasource, "$") {
+		return true
+	}
 	if result == nil {
 		fmt.Printf("warning: result is null.")
 		return false
@@ -1203,7 +1215,11 @@ func isValidDatasource(result map[string]any) bool {
 		return false
 	}
 
-	for dsName, dsInfo := range datasourcesInfo.(map[string]any) {
+	// iterate in deterministic order over datasources
+	dsNames := slices.Sorted(maps.Keys(datasourcesInfo.(map[string]any)))
+
+	for _, dsName := range dsNames {
+		dsInfo := datasourcesInfo.(map[string]any)[dsName]
 		if dsInfo == nil {
 			fmt.Printf("warning: dsInfo is missing for %s\n", dsName)
 			continue
@@ -1214,7 +1230,7 @@ func isValidDatasource(result map[string]any) bool {
 			fmt.Printf("warning: dsType is missing for %s\n", dsName)
 			continue
 		}
-		if dsType.(string) == DefaultDataSource && strings.EqualFold(dsName, opts.datasource) {
+		if strings.EqualFold(dsType.(string), "prometheus") && strings.EqualFold(dsName, opts.datasource) {
 			// overwrite datasource name with the one from Grafana when the names differ by case
 			opts.datasource = dsName
 			return true
@@ -1554,6 +1570,8 @@ func addImportCustomizeFlags(commands ...*cobra.Command) {
 			"Import even if the datasource name is not defined in Grafana")
 		cmd.PersistentFlags().StringVar(&opts.customCluster, "cluster-label", "",
 			"Rewrite all panel expressions to use the specified cluster label instead of the default 'cluster'")
+		cmd.PersistentFlags().BoolVar(&opts.showDatasource, "show-datasource", false,
+			"Show datasource variable dropdown in dashboards, useful for multi-datasource setups")
 
 		_ = cmd.PersistentFlags().MarkHidden("multi")
 		_ = cmd.PersistentFlags().MarkHidden("force")
@@ -1565,7 +1583,7 @@ func addCommonFlags(commands ...*cobra.Command) {
 		cmd.PersistentFlags().StringVar(&opts.config, "config", "./harvest.yml", "harvest config file path")
 		cmd.PersistentFlags().StringVar(&opts.svmRegex, "svm-variable-regex", "", "SVM variable regex to filter SVM query results")
 		cmd.PersistentFlags().StringVarP(&opts.prefix, "prefix", "p", "", "Use global metric prefix in queries")
-		cmd.PersistentFlags().StringVarP(&opts.datasource, "datasource", "s", DefaultDataSource, "Name of your Prometheus datasource used by the imported dashboards")
+		cmd.PersistentFlags().StringVarP(&opts.datasource, "datasource", "s", DefaultDataSource, "Name of your Prometheus datasource used by the imported dashboards. Use '${DS_PROMETHEUS}' to include multiple Prometheus datasources.")
 		cmd.PersistentFlags().BoolVarP(&opts.variable, "variable", "v", false, "Use datasource as variable, overrides: --datasource")
 		cmd.PersistentFlags().StringVarP(&opts.dir, "directory", "d", "", "When importing, import dashboards from this local directory.\nWhen exporting, local directory to write dashboards to")
 		cmd.PersistentFlags().BoolVar(&opts.isDebug, "debug", false, "Enable debug logging")
