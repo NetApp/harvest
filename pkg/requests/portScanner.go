@@ -1,14 +1,14 @@
 package requests
 
 import (
-	"fmt"
 	"net"
+	"strconv"
 	"time"
 )
 
 func worker(address string, ports, results chan int) {
 	for p := range ports {
-		address := fmt.Sprintf("%s:%d", address, p)
+		address := net.JoinHostPort(address, strconv.Itoa(p))
 		conn, err := net.DialTimeout("tcp", address, 1*time.Second)
 		if err != nil {
 			results <- p
