@@ -893,15 +893,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#reference" class="md-nav__link">
-    <span class="md-ellipsis">
-      Reference
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -2190,15 +2181,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#reference" class="md-nav__link">
-    <span class="md-ellipsis">
-      Reference
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -2426,6 +2408,9 @@ security<span class="w"> </span>login<span class="w"> </span>rest-role<span clas
 security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-rest-role<span class="w"> </span>-access<span class="w"> </span>read_create<span class="w"> </span>-api<span class="w"> </span>/api/private/cli
 security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>ssh<span class="w"> </span>-authentication-method<span class="w"> </span>password<span class="w"> </span>-role<span class="w"> </span>harvest2-role
 security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-authentication-method<span class="w"> </span>password<span class="w"> </span>-role<span class="w"> </span>harvest2-rest-role
+</code></pre></div>
+<p><strong>Note:</strong> If you are monitoring an FSx system with the <code>fsxadmin</code> role, you only need to give the following permission for StatPerf to work:</p>
+<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>fsxadmin<span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system node run&quot;</span>
 </code></pre></div>
 <h4 id="7-mode-cli">7-Mode CLI<a class="headerlink" href="#7-mode-cli" title="Permanent link">&para;</a></h4>
 <p>Login to the CLI of your 7-Mode ONTAP system (e.g., using SSH).
@@ -2724,6 +2709,7 @@ curl --cacert umeng-aff300-05-06.crt --key cert/cgrindst-mac-0.key --cert cert/c
         }
       }
     }
+  ]
 }
 </code></pre></div>
 <hr />
@@ -2777,10 +2763,6 @@ The<span class="w"> </span>installed<span class="w"> </span>certificate<span cla
 cluster):</p>
 <div class="highlight"><pre><span></span><code>security<span class="w"> </span>ssl<span class="w"> </span>modify<span class="w"> </span>-client-enabled<span class="w"> </span><span class="nb">true</span><span class="w"> </span>-vserver<span class="w"> </span>CLUSTER
 </code></pre></div>
-<h2 id="reference">Reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
-<ul>
-<li>https://github.com/jcbsmpsn/golang-https-example</li>
-</ul>
 
 
 

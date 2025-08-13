@@ -1900,7 +1900,7 @@
 <div class="highlight"><pre><span></span><code>statistics<span class="w"> </span>show<span class="w"> </span>-raw<span class="w"> </span>-object<span class="w"> </span><span class="nv">$object</span>
 </code></pre></div>
 <p>This collector is designed for performance metrics collection in environments where the ZapiPerf/RestPerf/KeyPerf collectors can not be used.</p>
-<p><strong>Note:</strong> The StatPerf collector requires additional ONTAP permissions. Please refer to the <a href="../prepare-cdot-clusters/#statperf-collector-permissions">StatPerf Collector Permissions</a> section for details.
+<p><strong>Note:</strong> The StatPerf collector requires additional ONTAP permissions. Please refer to the <a href="../prepare-cdot-clusters/#statperf-least-privilege-role">StatPerf Collector Permissions</a> section for details.
 If you are using multi-admin verification in your cluster, you need to allow diagnostic mode queries in the MAV rules for the StatPerf collector to run. For more details, refer to the <a href="https://docs.netapp.com/us-en/ontap/multi-admin-verify/">Multi-Admin Verification documentation</a>.</p>
 <h2 id="metrics">Metrics<a class="headerlink" href="#metrics" title="Permanent link">&para;</a></h2>
 <p>StatPerf metrics are calculated similar to those in ZapiPerf. For details on how performance metrics are processed and calculated,
