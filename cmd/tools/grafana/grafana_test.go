@@ -190,6 +190,8 @@ func TestIsValidDatasource(t *testing.T) {
 		want   bool
 	}
 
+	const prometheusDS = "prometheus"
+
 	noDS := map[string]any{
 		"datasources": nil,
 	}
@@ -208,8 +210,8 @@ func TestIsValidDatasource(t *testing.T) {
 			"Influx": map[string]any{
 				"type": "influxdb",
 			},
-			DefaultDataSource: map[string]any{
-				"type": DefaultDataSource,
+			prometheusDS: map[string]any{
+				"type": prometheusDS,
 			},
 		},
 	}
@@ -219,7 +221,7 @@ func TestIsValidDatasource(t *testing.T) {
 				"type": "influxdb",
 			},
 			"Prometheus": map[string]any{
-				"type": DefaultDataSource,
+				"type": prometheusDS,
 			},
 		},
 	}
@@ -228,11 +230,11 @@ func TestIsValidDatasource(t *testing.T) {
 			"Influx": map[string]any{
 				"type": "influxdb",
 			},
-			DefaultDataSource: map[string]any{
-				"type": DefaultDataSource,
+			prometheusDS: map[string]any{
+				"type": prometheusDS,
 			},
 			"NetProm": map[string]any{
-				"type": DefaultDataSource,
+				"type": prometheusDS,
 			},
 		},
 	}
@@ -241,21 +243,21 @@ func TestIsValidDatasource(t *testing.T) {
 			"Influx": map[string]any{
 				"type": "influxdb",
 			},
-			DefaultDataSource: map[string]any{
-				"type": DefaultDataSource,
+			prometheusDS: map[string]any{
+				"type": prometheusDS,
 			},
 			"NetProm": map[string]any{
-				"type": DefaultDataSource,
+				"type": prometheusDS,
 			},
 		},
 	}
 
 	tests := []test{
-		{name: "empty", result: nil, dsArg: DefaultDataSource, want: false},
-		{name: "nil datasource", result: noDS, dsArg: DefaultDataSource, want: false},
-		{name: "non prometheus datasource", result: nonPrometheusDS, dsArg: DefaultDataSource, want: false},
-		{name: "valid prometheus datasource", result: defaultPrometheusDS, dsArg: DefaultDataSource, want: true},
-		{name: "legacy valid prometheus datasource", result: legacyPrometheusDS, dsArg: DefaultDataSource, want: true},
+		{name: "empty", result: nil, dsArg: "", want: false},
+		{name: "nil datasource", result: noDS, dsArg: "", want: false},
+		{name: "non prometheus datasource", result: nonPrometheusDS, dsArg: "influxdb", want: false},
+		{name: "valid prometheus datasource", result: defaultPrometheusDS, dsArg: prometheusDS, want: true},
+		{name: "legacy valid prometheus datasource", result: legacyPrometheusDS, dsArg: "Prometheus", want: true},
 		{name: "multiple prometheus datasource with same datasource given", result: multiPrometheusDSWithSameDS, dsArg: "NetProm", want: true},
 		{name: "multiple prometheus datasource with different datasource given", result: multiPrometheusDSWithOtherDS, dsArg: "UpdateProm", want: false},
 	}
