@@ -6,6 +6,7 @@ import (
 	"github.com/Netapp/harvest-automation/test/cmds"
 	"github.com/Netapp/harvest-automation/test/docker"
 	"github.com/Netapp/harvest-automation/test/installer"
+	"log/slog"
 	"strings"
 	"testing"
 )
@@ -40,9 +41,10 @@ func TestDockerInstall(t *testing.T) {
 	}
 
 	for _, container := range containers {
-		if fips140.Enabled() && container.Name() == "poller-u2" {
+		if fips140.Enabled() && container.Name() == "/poller-umeng-aff300-05-06" {
 			// FIPS 140-3 is only supported on ONTAP 9.11.1+
 			// u2 is running version 9.9.1 so ignore FIPs failures on it
+			slog.Warn("Skipping FIPS validation for container", slog.String("containerName", container.Name()))
 			continue
 		}
 		if !isValidAsup(container.ID) {

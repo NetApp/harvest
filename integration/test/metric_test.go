@@ -39,6 +39,7 @@ func TestPollerMetrics(t *testing.T) {
 		if fips140.Enabled() && pollerName == "umeng-aff300-05-06" {
 			// FIPS 140-3 is only supported on ONTAP 9.11.1+
 			// umeng-aff300-05-06 is running version 9.9.1 so ignore FIPs failures on it
+			slog.Warn("Skipping poller", slog.String("pollerName", pollerName))
 			continue
 		}
 		port, _ := conf.GetLastPromPort(pollerName, true)

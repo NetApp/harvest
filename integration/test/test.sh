@@ -12,4 +12,4 @@ LD_FLAGS="-X ""'""github.com/netapp/harvest/v2/cmd/harvest/version.VERSION=${VER
 echo "$LD_FLAGS"
 
 go mod tidy
-go test -timeout 30m -ldflags="$LD_FLAGS"
+go test -v -timeout 30m -ldflags="$LD_FLAGS"
