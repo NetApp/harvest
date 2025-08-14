@@ -1,0 +1,8 @@
+
+
+object·objectname·instance·outputName·instanceUUID·
+Object·Object·Instance Name·Instance Name·Instance UUID·
+system:node·system:node·sti78-vsim-ucs188i·sti78-vsim-ucs188i·7c6a514e-6928-11f0-8e46-005056ac300b·
+system:node·system:node·sti78-vsim-ucs188j·sti78-vsim-ucs188j·7c5019b4-6928-11f0-b592-005056acdcde·
+system:node·system:node·sti78-vsim-ucs188l·sti78-vsim-ucs188l·7c7a5bb1-6928-11f0-92d9-005056ac567f·
+

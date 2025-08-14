@@ -6,6 +6,8 @@ object:                   svm_nfs
 global_labels:
   - nfsv: v4.2
 
+allow_partial_aggregation: true
+
 counters:
   - access_avg_latency
   - access_total

@@ -3,6 +3,8 @@ name:                     CIFSNode
 query:                    api/cluster/counter/tables/svm_cifs:node
 object:                   node_cifs
 
+allow_partial_aggregation: true
+
 counters:
   - ^^id
   - ^node.name                    => node
