@@ -135,3 +135,7 @@ The `export_options` section defines how to handle the collected data. It includ
 ### Endpoints
 
 Refer to the [endpoints](configure-rest.md#endpoints) section for more details.
+
+## Partial Aggregation
+
+For more details about partial aggregation behavior and configuration, see [Partial Aggregation](partial-aggregation.md).

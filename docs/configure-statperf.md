@@ -118,3 +118,7 @@ counters:
      - instance_name=NS_svm_nvme|instance_name=*Test*
      - vserver_name=osc
 ```
+
+## Partial Aggregation
+
+For more details about partial aggregation behavior and configuration, see [Partial Aggregation](partial-aggregation.md).
