@@ -55,7 +55,6 @@ security login rest-role create -role harvest-rest-role -access readonly -api /a
 security login rest-role create -role harvest-rest-role -access readonly -api /api/network/ethernet/switch/ports
 security login rest-role create -role harvest-rest-role -access readonly -api /api/network/fc/ports
 security login rest-role create -role harvest-rest-role -access readonly -api /api/network/ip/interfaces
-security login rest-role create -role harvest-rest-role -access readonly -api /api/network/ip/ports
 security login rest-role create -role harvest-rest-role -access readonly -api /api/network/ip/routes
 security login rest-role create -role harvest-rest-role -access readonly -api /api/protocols/cifs/services
 security login rest-role create -role harvest-rest-role -access readonly -api /api/protocols/cifs/sessions
