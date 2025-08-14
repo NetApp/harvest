@@ -9,10 +9,6 @@
       
       
       
-        <link rel="prev" href="../configure-rest/">
-      
-      
-        <link rel="next" href="../configure-statperf/">
       
       
       <link rel="icon" href="../assets/harvest.svg">
@@ -20,7 +16,7 @@
     
     
       
-        <title>KeyPerf - Harvest</title>
+        <title>Partial aggregation - Harvest</title>
       
     
     
@@ -74,7 +70,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#keyperf-collector" class="md-skip">
+        <a href="#identifying-partial-aggregation" class="md-skip">
           Skip to content
         </a>
       
@@ -113,7 +109,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              KeyPerf
+              Partial aggregation
             
           </span>
         </div>
@@ -895,21 +891,19 @@
       
   
   
-    
   
   
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
         
           
           <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
@@ -923,7 +917,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_10">
             <span class="md-nav__icon md-icon"></span>
             Configure Collectors
@@ -976,28 +970,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    KeyPerf
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../configure-keyperf/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1006,168 +982,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#keyperf-collector" class="md-nav__link">
-    <span class="md-ellipsis">
-      KeyPerf Collector
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="KeyPerf Collector">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#target-system" class="md-nav__link">
-    <span class="md-ellipsis">
-      Target System
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#requirements" class="md-nav__link">
-    <span class="md-ellipsis">
-      Requirements
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#metrics" class="md-nav__link">
-    <span class="md-ellipsis">
-      Metrics
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#parameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      Parameters
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#collector-configuration-file" class="md-nav__link">
-    <span class="md-ellipsis">
-      Collector Configuration File
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#object-configuration-file" class="md-nav__link">
-    <span class="md-ellipsis">
-      Object Configuration File
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Object Configuration File">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#template-example" class="md-nav__link">
-    <span class="md-ellipsis">
-      Template Example
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#counters" class="md-nav__link">
-    <span class="md-ellipsis">
-      Counters
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Counters">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#hidden-fields" class="md-nav__link">
-    <span class="md-ellipsis">
-      Hidden Fields
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#filter" class="md-nav__link">
-    <span class="md-ellipsis">
-      Filter
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#export-options" class="md-nav__link">
-    <span class="md-ellipsis">
-      Export Options
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#endpoints" class="md-nav__link">
-    <span class="md-ellipsis">
-      Endpoints
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#partial-aggregation" class="md-nav__link">
-    <span class="md-ellipsis">
-      Partial Aggregation
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1899,144 +1713,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#keyperf-collector" class="md-nav__link">
+  <a href="#identifying-partial-aggregation" class="md-nav__link">
     <span class="md-ellipsis">
-      KeyPerf Collector
+      Identifying Partial Aggregation
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="KeyPerf Collector">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#target-system" class="md-nav__link">
-    <span class="md-ellipsis">
-      Target System
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#requirements" class="md-nav__link">
-    <span class="md-ellipsis">
-      Requirements
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#metrics" class="md-nav__link">
-    <span class="md-ellipsis">
-      Metrics
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#parameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      Parameters
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#collector-configuration-file" class="md-nav__link">
-    <span class="md-ellipsis">
-      Collector Configuration File
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#object-configuration-file" class="md-nav__link">
-    <span class="md-ellipsis">
-      Object Configuration File
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Object Configuration File">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#template-example" class="md-nav__link">
-    <span class="md-ellipsis">
-      Template Example
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#counters" class="md-nav__link">
-    <span class="md-ellipsis">
-      Counters
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Counters">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#hidden-fields" class="md-nav__link">
-    <span class="md-ellipsis">
-      Hidden Fields
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#filter" class="md-nav__link">
-    <span class="md-ellipsis">
-      Filter
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#export-options" class="md-nav__link">
-    <span class="md-ellipsis">
-      Export Options
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#endpoints" class="md-nav__link">
-    <span class="md-ellipsis">
-      Endpoints
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#partial-aggregation" class="md-nav__link">
+  <a href="#node-scoped-objects-exception" class="md-nav__link">
     <span class="md-ellipsis">
-      Partial Aggregation
+      Node-Scoped Objects Exception
     </span>
   </a>
   
@@ -2057,199 +1745,20 @@
                   
 
 
-  <h1>KeyPerf</h1>
+  <h1>Partial aggregation</h1>
 
-<h2 id="keyperf-collector">KeyPerf Collector<a class="headerlink" href="#keyperf-collector" title="Permanent link">&para;</a></h2>
-<p>The KeyPerf collector is designed to gather performance counters from ONTAP objects that include a statistics field in their REST responses. This collector is an alternative to ZapiPerf and RestPerf collectors when these collectors cannot be used due to unavailable relevant APIs.</p>
-<h3 id="target-system">Target System<a class="headerlink" href="#target-system" title="Permanent link">&para;</a></h3>
-<p>The KeyPerf collector targets ONTAP systems that support the statistics field in their REST responses.</p>
-<h3 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">&para;</a></h3>
-<p>No additional SDK or software requirements are needed. It is recommended to create a read-only user for Harvest on the ONTAP system. For more details, refer to the <a href="../prepare-cdot-clusters/#all-apis-read-only-approach">prepare monitored clusters</a> documentation.</p>
-<h3 id="metrics">Metrics<a class="headerlink" href="#metrics" title="Permanent link">&para;</a></h3>
-<p>The KeyPerf collector gathers a dynamic set of performance metrics, including IOPS, latency, and throughput. These metrics are extracted from the statistics fields in the ONTAP REST responses.</p>
-<h3 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h3>
-<p>The parameters for the KeyPerf collector are distributed across three files:</p>
-<ul>
-<li><a href="../configure-harvest-basic/#pollers">Harvest configuration file</a> (default: <code>harvest.yml</code>)</li>
-<li>KeyPerf configuration file (default: <code>conf/keyperf/default.yaml</code>)</li>
-<li>Each object has its own configuration file (located in <code>conf/keyperf/$version/</code>)</li>
-</ul>
-<p>Except for <code>addr</code> and <code>datacenter</code>, all other parameters of the KeyPerf collector can be defined in any of these three files. Parameters defined in the lower-level file override parameters in the higher-level ones, allowing for individual object configuration or shared parameters across all objects.</p>
-<h3 id="collector-configuration-file">Collector Configuration File<a class="headerlink" href="#collector-configuration-file" title="Permanent link">&para;</a></h3>
-<p>This configuration file contains a list of objects that should be collected and the filenames of their templates (explained in the next section).</p>
-<p>Additionally, this file contains the parameters that are applied as defaults to all objects. As mentioned before, any of these parameters can be defined in the Harvest or object configuration files as well.</p>
-<table>
-<thead>
-<tr>
-<th>parameter</th>
-<th>type</th>
-<th>description</th>
-<th style="text-align: right;">default</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>use_insecure_tls</code></td>
-<td>bool, optional</td>
-<td>skip verifying TLS certificate of the target system</td>
-<td style="text-align: right;">false</td>
-</tr>
-<tr>
-<td><code>client_timeout</code></td>
-<td>duration (Go-syntax)</td>
-<td>how long to wait for server responses</td>
-<td style="text-align: right;">30s</td>
-</tr>
-<tr>
-<td><code>latency_io_reqd</code></td>
-<td>int, optional</td>
-<td>threshold of IOPs for calculating latency metrics (latencies based on very few IOPs are unreliable)</td>
-<td style="text-align: right;">10</td>
-</tr>
-<tr>
-<td><code>jitter</code></td>
-<td>duration (Go-syntax), optional</td>
-<td>Each Harvest collector runs independently, which means that at startup, each collector may send its REST queries at nearly the same time. To spread out the collector startup times over a broader period, you can use <code>jitter</code> to randomly distribute collector startup across a specified duration. For example, a <code>jitter</code> of <code>1m</code> starts each collector after a random delay between 0 and 60 seconds. For more details, refer to <a href="https://github.com/NetApp/harvest/discussions/2856">this discussion</a>.</td>
-<td style="text-align: right;"></td>
-</tr>
-<tr>
-<td><code>schedule</code></td>
-<td>list, required</td>
-<td>the poll frequencies of the collector/object, should include exactly these three elements in the exact same other:</td>
-<td style="text-align: right;"></td>
-</tr>
-<tr>
-<td>- <code>counter</code></td>
-<td>duration (Go-syntax)</td>
-<td>poll frequency of updating the counter metadata cache</td>
-<td style="text-align: right;">24 hours</td>
-</tr>
-<tr>
-<td>- <code>data</code></td>
-<td>duration (Go-syntax)</td>
-<td>poll frequency of updating the data cache <br /><br /><strong>Note</strong> Harvest allows defining poll intervals on sub-second level (e.g. <code>1ms</code>), however keep in mind the following:<br /><ul><li>API response of an ONTAP system can take several seconds, so the collector is likely to enter failed state if the poll interval is less than <code>client_timeout</code>.</li><li>Small poll intervals will create significant workload on the ONTAP system, as many counters are aggregated on-demand.</li><li>Some metric values become less significant if they are calculated for very short intervals (e.g. latencies)</li></ul></td>
-<td style="text-align: right;">1  minute</td>
-</tr>
-</tbody>
-</table>
-<p>The template should define objects in the <code>objects</code> section. Example:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">objects</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">Aggregate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aggr.yaml</span>
-</code></pre></div>
-<p>For each object, we define the filename of the object configuration file. The object configuration files are located in subdirectories matching the ONTAP version that was used to create these files. It is possible to have multiple version-subdirectories for multiple ONTAP versions. At runtime, the collector will select the object configuration file that closest matches the version of the target ONTAP system.</p>
-<h3 id="object-configuration-file">Object Configuration File<a class="headerlink" href="#object-configuration-file" title="Permanent link">&para;</a></h3>
-<p>The object configuration file should contain the following parameters:</p>
-<table>
-<thead>
-<tr>
-<th>Parameter</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>name</code></td>
-<td>string, <strong>required</strong></td>
-<td>Display name of the collector that will collect this object</td>
-<td></td>
-</tr>
-<tr>
-<td><code>query</code></td>
-<td>string, <strong>required</strong></td>
-<td>REST endpoint used to issue a REST request</td>
-<td></td>
-</tr>
-<tr>
-<td><code>object</code></td>
-<td>string, <strong>required</strong></td>
-<td>Short name of the object</td>
-<td></td>
-</tr>
-<tr>
-<td><code>counters</code></td>
-<td>string</td>
-<td>List of counters to collect (see notes below)</td>
-<td></td>
-</tr>
-<tr>
-<td><code>plugins</code></td>
-<td>list</td>
-<td>Plugins and their parameters to run on the collected data</td>
-<td></td>
-</tr>
-<tr>
-<td><code>export_options</code></td>
-<td>list</td>
-<td>Parameters to pass to exporters (see notes below)</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<h4 id="template-example">Template Example<a class="headerlink" href="#template-example" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w">                     </span><span class="l l-Scalar l-Scalar-Plain">Volume</span>
-<span class="nt">query</span><span class="p">:</span><span class="w">                    </span><span class="l l-Scalar l-Scalar-Plain">api/storage/volumes</span>
-<span class="nt">object</span><span class="p">:</span><span class="w">                   </span><span class="l l-Scalar l-Scalar-Plain">volume</span>
-
-<span class="nt">counters</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^name                                =&gt; volume</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^svm.name                            =&gt; svm</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^statistics.status                    =&gt; status</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^style                                =&gt; style</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.iops_raw.other             =&gt; other_ops</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.iops_raw.read              =&gt; read_ops</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.iops_raw.total             =&gt; total_ops</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.iops_raw.write             =&gt; write_ops</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.latency_raw.other          =&gt; other_latency</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.latency_raw.read           =&gt; read_latency</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.latency_raw.total          =&gt; avg_latency</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.latency_raw.write          =&gt; write_latency</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.throughput_raw.other       =&gt; other_data</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.throughput_raw.read        =&gt; read_data</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.throughput_raw.total       =&gt; total_data</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.throughput_raw.write       =&gt; write_data</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.timestamp(timestamp)       =&gt; timestamp</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">hidden_fields</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">filter</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">statistics.timestamp=!&quot;-&quot;</span>
-
-<span class="nt">endpoints</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api/private/cli/volume</span>
-<span class="w">    </span><span class="nt">counters</span><span class="p">:</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^volume                          =&gt; volume</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^vserver                         =&gt; svm</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^aggr_list                        =&gt; aggr</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^nodes                            =&gt; node</span>
-
-<span class="nt">plugins</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Aggregator</span><span class="p">:</span>
-<span class="w">      </span><span class="c1"># Plugin will create summary/average for each object</span>
-<span class="w">      </span><span class="c1"># Any names after the object names will be treated as label names that will be added to instances</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">svm&lt;&gt;svm_vol</span>
-
-<span class="nt">export_options</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">instance_keys</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aggr</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">style</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">svm</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">volume</span>
-</code></pre></div>
-<h3 id="counters">Counters<a class="headerlink" href="#counters" title="Permanent link">&para;</a></h3>
-<p>The <code>counters</code> section defines the list of counters to be collected. These counters can be labels or numeric metrics. The display name of a counter can be changed using <code>=&gt;</code>.</p>
-<h4 id="hidden-fields">Hidden Fields<a class="headerlink" href="#hidden-fields" title="Permanent link">&para;</a></h4>
-<p>Some fields are not returned by ONTAP unless explicitly requested. The <code>hidden_fields</code> parameter specifies additional fields to include in the REST response.</p>
-<h4 id="filter">Filter<a class="headerlink" href="#filter" title="Permanent link">&para;</a></h4>
-<p>The <code>filter</code> parameter constrains the data returned by the endpoint, allowing for more targeted data retrieval. The filtering uses ONTAP's REST record filtering.</p>
-<h3 id="export-options">Export Options<a class="headerlink" href="#export-options" title="Permanent link">&para;</a></h3>
-<p>The <code>export_options</code> section defines how to handle the collected data. It includes parameters such as <code>instance_keys</code> and <code>instance_labels</code> to specify which labels to export with the metrics and instance labels.</p>
-<h3 id="endpoints">Endpoints<a class="headerlink" href="#endpoints" title="Permanent link">&para;</a></h3>
-<p>Refer to the <a href="../configure-rest/#endpoints">endpoints</a> section for more details.</p>
-<h2 id="partial-aggregation">Partial Aggregation<a class="headerlink" href="#partial-aggregation" title="Permanent link">&para;</a></h2>
-<p>For more details about partial aggregation behavior and configuration, see <a href="../partial-aggregation/">Partial Aggregation</a>.</p>
+<p>ONTAP may report partial aggregate results for certain objects during events such as node outages or cluster disruptions.
+When this occurs, Harvest's performance collectors (ZapiPerf, RestPerf, KeyPerf, and StatPerf) will skip reporting performance counters for the affected objects to ensure data accuracy.</p>
+<h4 id="identifying-partial-aggregation">Identifying Partial Aggregation<a class="headerlink" href="#identifying-partial-aggregation" title="Permanent link">&para;</a></h4>
+<p>To determine whether partial aggregation affects an object, check the <code>numPartials</code> entry in the Harvest logs.
+If <code>numPartials</code> is greater than zero, it indicates that partial aggregations have occurred for that object.</p>
+<p>For example, consider the log entry:
+<code>Collected Poller=aff-251 collector=ZapiPerf:NFSv4 apiMs=870 bytesRx=3640 calcMs=0 exportMs=0 instances=56 instancesExported=41 metrics=400 metricsExported=340 numCalls=1 numPartials=15</code></p>
+<p>In this example, 15 out of 56 NFSv4 instances experienced partial aggregation.</p>
+<h4 id="node-scoped-objects-exception">Node-Scoped Objects Exception<a class="headerlink" href="#node-scoped-objects-exception" title="Permanent link">&para;</a></h4>
+<p>Node-scoped objects are not affected by issues related to partial aggregation. For these objects, Harvest emits metrics even when ONTAP reports partial aggregation.
+This behavior is controlled by the <code>allow_partial_aggregation</code> flag in the object's template configuration.</p>
+<p>When <code>allow_partial_aggregation: true</code> is set in a template, Harvest will continue to collect and emit metrics for that object regardless of the partial aggregation status.</p>
 
 
 
