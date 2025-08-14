@@ -8,15 +8,18 @@ To set up Harvest and FSx make sure you read through
 
 Amazon FSx for ONTAP exposes a different set of metrics than ONTAP cDOT.
 That means a limited set of out-of-the-box dashboards are supported and
-some panels may be missing information. 
+some panels may be missing information.
+
+You can also enable the [KeyPerf](configure-keyperf.md) and [StatPerf](configure-statperf.md) collector for FSx systems to collect performance metrics that are not available via the `ZapiPerf/RestPerf` collector.
 
 The dashboards that work with FSx are tagged with `fsx` and listed below:
 
 * ONTAP: cDOT
 * ONTAP: Cluster
-* ONTAP: Data Protection Snapshots
+* ONTAP: Data Protection
 * ONTAP: Datacenter
 * ONTAP: FlexGroup
+* ONTAP: FPolicy
 * ONTAP: LUN
 * ONTAP: NFS Troubleshooting
 * ONTAP: Quota

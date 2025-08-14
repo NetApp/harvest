@@ -1,4 +1,3 @@
-
 ## Prepare ONTAP cDOT cluster
 
 NetApp Harvest requires login credentials to access monitored hosts.
@@ -246,6 +245,12 @@ security login rest-role create -role harvest2-rest-role -access readonly -api /
 security login rest-role create -role harvest2-rest-role -access read_create -api /api/private/cli
 security login create -user-or-group-name harvest2 -application ssh -authentication-method password -role harvest2-role
 security login create -user-or-group-name harvest2 -application http -authentication-method password -role harvest2-rest-role
+```
+
+**Note:** If you are monitoring an FSx system with the `fsxadmin` role, you only need to give the following permission for StatPerf to work:
+
+```bash
+security login role create -role fsxadmin -cmddirname "system node run"
 ```
 
 #### 7-Mode CLI
@@ -644,6 +649,7 @@ curl --cacert umeng-aff300-05-06.crt --key cert/cgrindst-mac-0.key --cert cert/c
         }
       }
     }
+  ]
 }
 ```
 
@@ -714,6 +720,3 @@ cluster):
 security ssl modify -client-enabled true -vserver CLUSTER
 ```
 
-## Reference
-
-- https://github.com/jcbsmpsn/golang-https-example
