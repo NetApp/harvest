@@ -33,10 +33,12 @@ func TestDockerInstall(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
+
 	if len(ids) > 0 {
-		id := ids[0].ID
-		if !isValidAsup(id) {
-			panic("Asup validation failed")
+		for _, id := range ids {
+			if !isValidAsup(id.ID) {
+				panic("Asup validation failed")
+			}
 		}
 	} else {
 		panic("No pollers running")
