@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/fips140"
 	"fmt"
 	"github.com/Netapp/harvest-automation/test/cmds"
 	"github.com/Netapp/harvest-automation/test/docker"
@@ -29,21 +30,25 @@ func TestDockerInstall(t *testing.T) {
 		docker.CopyFile(container.ID, fileRestName, installer.HarvestHome+"/"+installer.RestPerfDefaultFile)
 	}
 	_ = docker.ReStartContainers("poller")
-	ids, err := docker.Containers("poller")
+	containers, err := docker.Containers("poller")
 	if err != nil {
 		panic(err)
 	}
 
-	if len(ids) > 0 {
-		for _, id := range ids {
-			if !isValidAsup(id.ID) {
-				panic("Asup validation failed")
-			}
-		}
-	} else {
+	if len(containers) == 0 {
 		panic("No pollers running")
 	}
 
+	for _, container := range containers {
+		if fips140.Enabled() && container.Name() == "poller-u2" {
+			// FIPS 140-3 is only supported on ONTAP 9.11.1+
+			// u2 is running version 9.9.1 so ignore FIPs failures on it
+			continue
+		}
+		if !isValidAsup(container.ID) {
+			panic("Asup validation failed")
+		}
+	}
 }
 
 func isValidAsup(containerName string) bool {
