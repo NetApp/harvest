@@ -9,7 +9,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
-	"net/http"
 	"time"
 )
 
@@ -97,7 +96,8 @@ func checkZapi(pollerName string, cred *auth.Credentials) (conf.Remote, error) {
 		var he errs.HarvestError
 		if errors.As(err, &he) {
 			switch {
-			case he.ErrNum == errs.ErrNumZAPISuspended, he.StatusCode == http.StatusBadRequest:
+			case he.ErrNum == errs.ErrNumZAPISuspended, he.StatusCode >= 400 && he.StatusCode < 500:
+				// ZAPI is suspended, or we got a 4xx error, so we assume that ZAPI is not available
 				zapisExist = false
 				returnErr = false
 			}
