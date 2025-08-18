@@ -2,9 +2,9 @@
 ## [Releases](https://github.com/NetApp/harvest/releases)
 
 ## 25.08.1 / 2025-08-18 Release
-:pushpin: This release is the same as version 25.08.0, with an fix. It fixes an issue where the ONTAP REST collector fails to start if ZAPI is disabled on the cluster.
+:pushpin: This release is the same as version 25.08.0, with a fix for an issue where the ONTAP REST collector fails to start if ZAPIs are disabled on the cluster.
 
-**Upgrade Recommendation:** Only upgrade if you are monitoring clusters with ZAPI disabled. If ZAPI is enabled, you can continue using the 25.08.0.
+**Upgrade Recommendation:** Only upgrade if you are monitoring clusters with ZAPIs disabled. If ZAPIs are enabled, you can continue using the 25.08.0.
 
 **Full Changelog**: https://github.com/NetApp/harvest/compare/v25.08.0...v25.08.1
 
