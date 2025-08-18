@@ -1,0 +1,545 @@
+{
+  "name": "system:node",
+  "description": "The System table reports general system activity. This includes global throughput for the main services, I/O latency, and CPU activity. The alias name for system:node is system_node.",
+  "counter_schemas": [
+    {
+      "name": "average_processor_busy_percent",
+      "description": "Average processor utilization across active processors in the system",
+      "type": "percent",
+      "unit": "percent",
+      "denominator": {
+        "name": "cpu_elapsed_time"
+      }
+    },
+    {
+      "name": "cifs_ops",
+      "description": "Number of CIFS operations per second",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "cp",
+      "description": "CP time rate",
+      "type": "percent",
+      "unit": "percent",
+      "denominator": {
+        "name": "cpu_elapsed_time"
+      }
+    },
+    {
+      "name": "cp_time",
+      "description": "Processor time in CP",
+      "type": "delta",
+      "unit": "microsec"
+    },
+    {
+      "name": "cpu_busy",
+      "description": "System CPU resource utilization. Returns a computed percentage for the default CPU field. Basically computes a 'cpu usage summary' value which indicates how 'busy' the system is based upon the most heavily utilized domain. The idea is to determine the amount of available CPU until we're limited by either a domain maxing out OR we exhaust all available idle CPU cycles, whichever occurs first.",
+      "type": "percent",
+      "unit": "percent",
+      "denominator": {
+        "name": "cpu_elapsed_time"
+      }
+    },
+    {
+      "name": "cpu_elapsed_time",
+      "description": "Elapsed time since boot",
+      "type": "delta",
+      "unit": "microsec"
+    },
+    {
+      "name": "disk_data_read",
+      "description": "Number of disk kilobytes (KB) read per second",
+      "type": "rate",
+      "unit": "kb_per_sec"
+    },
+    {
+      "name": "disk_data_written",
+      "description": "Number of disk kilobytes (KB) written per second",
+      "type": "rate",
+      "unit": "kb_per_sec"
+    },
+    {
+      "name": "domain_busy",
+      "description": "Array of processor time in percentage spent in various domains",
+      "type": "percent",
+      "unit": "percent",
+      "denominator": {
+        "name": "cpu_elapsed_time"
+      }
+    },
+    {
+      "name": "domain_shared",
+      "description": "Array of processor time in percentage spent in various shared domains",
+      "type": "percent",
+      "unit": "percent",
+      "denominator": {
+        "name": "cpu_elapsed_time"
+      }
+    },
+    {
+      "name": "dswitchto_cnt",
+      "description": "Array of processor time in percentage spent in domain switch",
+      "type": "percent",
+      "unit": "percent",
+      "denominator": {
+        "name": "cpu_elapsed_time"
+      }
+    },
+    {
+      "name": "fcp_data_received",
+      "description": "Number of FCP kilobytes (KB) received per second",
+      "type": "rate",
+      "unit": "kb_per_sec"
+    },
+    {
+      "name": "fcp_data_sent",
+      "description": "Number of FCP kilobytes (KB) sent per second",
+      "type": "rate",
+      "unit": "kb_per_sec"
+    },
+    {
+      "name": "fcp_ops",
+      "description": "Number of FCP operations per second",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "hard_switches",
+      "description": "Number of context switches per second",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "hdd_data_read",
+      "description": "Number of HDD Disk kilobytes (KB) read per second",
+      "type": "rate",
+      "unit": "kb_per_sec"
+    },
+    {
+      "name": "hdd_data_written",
+      "description": "Number of HDD kilobytes (KB) written per second",
+      "type": "rate",
+      "unit": "kb_per_sec"
+    },
+    {
+      "name": "idle",
+      "description": "Processor idle rate percentage",
+      "type": "percent",
+      "unit": "percent",
+      "denominator": {
+        "name": "cpu_elapsed_time"
+      }
+    },
+    {
+      "name": "idle_time",
+      "description": "Processor idle time",
+      "type": "delta",
+      "unit": "microsec"
+    },
+    {
+      "name": "instance_name",
+      "description": "Node name",
+      "type": "string",
+      "unit": "none"
+    },
+    {
+      "name": "interrupt",
+      "description": "Processor interrupt rate percentage",
+      "type": "percent",
+      "unit": "percent",
+      "denominator": {
+        "name": "cpu_elapsed_time"
+      }
+    },
+    {
+      "name": "interrupt_in_cp",
+      "description": "Processor interrupt rate percentage",
+      "type": "percent",
+      "unit": "percent",
+      "denominator": {
+        "name": "cp_time"
+      }
+    },
+    {
+      "name": "interrupt_in_cp_time",
+      "description": "Processor interrupt in CP time",
+      "type": "delta",
+      "unit": "microsec"
+    },
+    {
+      "name": "interrupt_num",
+      "description": "Processor interrupt number",
+      "type": "delta",
+      "unit": "none"
+    },
+    {
+      "name": "interrupt_num_in_cp",
+      "description": "Number of processor interrupts in CP",
+      "type": "delta",
+      "unit": "none"
+    },
+    {
+      "name": "interrupt_time",
+      "description": "Processor interrupt time",
+      "type": "delta",
+      "unit": "microsec"
+    },
+    {
+      "name": "intr_cnt",
+      "description": "Array of interrupt count per second",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "intr_cnt_ipi",
+      "description": "IPI interrupt count per second",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "intr_cnt_msec",
+      "description": "Millisecond interrupt count per second",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "intr_cnt_total",
+      "description": "Total interrupt count per second",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "iscsi_data_received",
+      "description": "iSCSI kilobytes (KB) received per second",
+      "type": "rate",
+      "unit": "kb_per_sec"
+    },
+    {
+      "name": "iscsi_data_sent",
+      "description": "iSCSI kilobytes (KB) sent per second",
+      "type": "rate",
+      "unit": "kb_per_sec"
+    },
+    {
+      "name": "iscsi_ops",
+      "description": "Number of iSCSI operations per second",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "memory",
+      "description": "Total memory in megabytes (MB)",
+      "type": "raw",
+      "unit": "none"
+    },
+    {
+      "name": "network_data_received",
+      "description": "Number of network kilobytes (KB) received per second",
+      "type": "rate",
+      "unit": "kb_per_sec"
+    },
+    {
+      "name": "network_data_sent",
+      "description": "Number of network kilobytes (KB) sent per second",
+      "type": "rate",
+      "unit": "kb_per_sec"
+    },
+    {
+      "name": "nfs_ops",
+      "description": "Number of NFS operations per second",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "non_interrupt",
+      "description": "Processor non-interrupt rate percentage",
+      "type": "percent",
+      "unit": "percent",
+      "denominator": {
+        "name": "cpu_elapsed_time"
+      }
+    },
+    {
+      "name": "non_interrupt_time",
+      "description": "Processor non-interrupt time",
+      "type": "delta",
+      "unit": "microsec"
+    },
+    {
+      "name": "num_processors",
+      "description": "Total number of processors in the system",
+      "type": "raw",
+      "unit": "none"
+    },
+    {
+      "name": "nvme_fc_data_received",
+      "description": "NVMe/FC kilobytes (KB) received per second",
+      "type": "rate",
+      "unit": "kb_per_sec"
+    },
+    {
+      "name": "nvme_fc_data_sent",
+      "description": "NVMe/FC kilobytes (KB) sent per second",
+      "type": "rate",
+      "unit": "kb_per_sec"
+    },
+    {
+      "name": "nvme_fc_ops",
+      "description": "NVMe/FC operations per second",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "nvme_roce_data_received",
+      "description": "NVMe/RoCE kilobytes (KB) received per second",
+      "type": "rate",
+      "unit": "kb_per_sec"
+    },
+    {
+      "name": "nvme_roce_data_sent",
+      "description": "NVMe/RoCE kilobytes (KB) sent per second",
+      "type": "rate",
+      "unit": "kb_per_sec"
+    },
+    {
+      "name": "nvme_roce_ops",
+      "description": "NVMe/RoCE operations per second",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "nvme_tcp_data_received",
+      "description": "NVMe/TCP kilobytes (KB) received per second",
+      "type": "rate",
+      "unit": "kb_per_sec"
+    },
+    {
+      "name": "nvme_tcp_data_sent",
+      "description": "NVMe/TCP kilobytes (KB) sent per second",
+      "type": "rate",
+      "unit": "kb_per_sec"
+    },
+    {
+      "name": "nvme_tcp_ops",
+      "description": "NVMe/TCP operations per second",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "other_data",
+      "description": "Other throughput",
+      "type": "rate",
+      "unit": "b_per_sec"
+    },
+    {
+      "name": "other_latency",
+      "description": "Average latency for all other operations in the system in microseconds",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "other_ops"
+      }
+    },
+    {
+      "name": "other_ops",
+      "description": "All other operations per second",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "partner_data_received",
+      "description": "SCSI Partner kilobytes (KB) received per second",
+      "type": "rate",
+      "unit": "kb_per_sec"
+    },
+    {
+      "name": "partner_data_sent",
+      "description": "SCSI Partner kilobytes (KB) sent per second",
+      "type": "rate",
+      "unit": "kb_per_sec"
+    },
+    {
+      "name": "processor_plevel",
+      "description": "Processor plevel rate percentage",
+      "type": "percent",
+      "unit": "percent",
+      "denominator": {
+        "name": "cpu_elapsed_time"
+      }
+    },
+    {
+      "name": "processor_plevel_time",
+      "description": "Processor plevel rate percentage",
+      "type": "delta",
+      "unit": "none"
+    },
+    {
+      "name": "read_data",
+      "description": "Read throughput",
+      "type": "rate",
+      "unit": "b_per_sec"
+    },
+    {
+      "name": "read_latency",
+      "description": "Average latency for all read operations in the system in microseconds",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "read_ops"
+      }
+    },
+    {
+      "name": "read_ops",
+      "description": "Read operations per second",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "sk_switches",
+      "description": "Number of sk switches per second",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "ssd_data_read",
+      "description": "Number of SSD Disk kilobytes (KB) read per second",
+      "type": "rate",
+      "unit": "kb_per_sec"
+    },
+    {
+      "name": "ssd_data_written",
+      "description": "Number of SSD Disk kilobytes (KB) written per second",
+      "type": "rate",
+      "unit": "kb_per_sec"
+    },
+    {
+      "name": "sys_read_data",
+      "description": "Network and FCP kilobytes (KB) received per second",
+      "type": "rate",
+      "unit": "kb_per_sec"
+    },
+    {
+      "name": "sys_total_data",
+      "description": "Network and FCP kilobytes (KB) received and sent per second",
+      "type": "rate",
+      "unit": "kb_per_sec"
+    },
+    {
+      "name": "sys_write_data",
+      "description": "Network and FCP kilobytes (KB) sent per second",
+      "type": "rate",
+      "unit": "kb_per_sec"
+    },
+    {
+      "name": "tape_data_read",
+      "description": "Tape bytes read per millisecond",
+      "type": "rate",
+      "unit": "kb_per_sec"
+    },
+    {
+      "name": "tape_data_written",
+      "description": "Tape bytes written per millisecond",
+      "type": "rate",
+      "unit": "kb_per_sec"
+    },
+    {
+      "name": "time",
+      "description": "Time in seconds since the Epoch (00:00:00 UTC January 1 1970)",
+      "type": "raw",
+      "unit": "sec"
+    },
+    {
+      "name": "time_per_interrupt",
+      "description": "Processor time per interrupt",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "interrupt_num"
+      }
+    },
+    {
+      "name": "time_per_interrupt_in_cp",
+      "description": "Processor time per interrupt in CP",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "interrupt_num_in_cp"
+      }
+    },
+    {
+      "name": "total_data",
+      "description": "Total throughput in bytes",
+      "type": "rate",
+      "unit": "b_per_sec"
+    },
+    {
+      "name": "total_latency",
+      "description": "Average latency for all operations in the system in microseconds",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "total_ops"
+      }
+    },
+    {
+      "name": "total_ops",
+      "description": "Total number of operations per second",
+      "type": "rate",
+      "unit": "per_sec"
+    },
+    {
+      "name": "total_processor_busy",
+      "description": "Total processor utilization of active processors in the system",
+      "type": "percent",
+      "unit": "percent",
+      "denominator": {
+        "name": "cpu_elapsed_time"
+      }
+    },
+    {
+      "name": "total_processor_busy_time",
+      "description": "Total processor time of active processors in the system",
+      "type": "delta",
+      "unit": "microsec"
+    },
+    {
+      "name": "uptime",
+      "description": "Time in seconds that the system has been up",
+      "type": "raw",
+      "unit": "sec"
+    },
+    {
+      "name": "wafliron",
+      "description": "Wafliron counters",
+      "type": "delta",
+      "unit": "none"
+    },
+    {
+      "name": "write_data",
+      "description": "Write throughput",
+      "type": "rate",
+      "unit": "b_per_sec"
+    },
+    {
+      "name": "write_latency",
+      "description": "Average latency for all write operations in the system in microseconds",
+      "type": "average",
+      "unit": "microsec",
+      "denominator": {
+        "name": "write_ops"
+      }
+    },
+    {
+      "name": "write_ops",
+      "description": "Write operations per second",
+      "type": "rate",
+      "unit": "per_sec"
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "/api/cluster/counter/tables/system:node"
+    }
+  }
+}

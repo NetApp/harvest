@@ -76,23 +76,24 @@ const (
 var workloadDetailMetrics = []string{"resource_latency"}
 
 type ZapiPerf struct {
-	*zapi.Zapi        // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
-	object            string
-	filter            string
-	batchSize         int
-	latencyIoReqd     int
-	instanceKeys      []string
-	instanceLabels    map[string]string
-	histogramLabels   map[string][]string
-	scalarCounters    []string
-	qosLabels         map[string]string
-	isCacheEmpty      bool
-	keyName           string
-	keyNameIndex      int
-	testFilePath      string // Used only from unit test
-	recordsToSave     int    // Number of records to save when using the recorder
-	pollDataCalls     int
-	pollInstanceCalls int
+	*zapi.Zapi              // provides: AbstractCollector, Client, Object, Query, TemplateFn, TemplateType
+	object                  string
+	filter                  string
+	batchSize               int
+	latencyIoReqd           int
+	instanceKeys            []string
+	instanceLabels          map[string]string
+	histogramLabels         map[string][]string
+	scalarCounters          []string
+	qosLabels               map[string]string
+	isCacheEmpty            bool
+	keyName                 string
+	keyNameIndex            int
+	testFilePath            string // Used only from unit test
+	recordsToSave           int    // Number of records to save when using the recorder
+	pollDataCalls           int
+	pollInstanceCalls       int
+	allowPartialAggregation bool // allow partial aggregation for this collector
 }
 
 func init() {
@@ -186,6 +187,10 @@ func (z *ZapiPerf) InitCache() error {
 	z.latencyIoReqd = z.loadParamInt("latency_io_reqd", latencyIoReqd)
 	z.isCacheEmpty = true
 	z.object = z.loadParamStr("object", "")
+	allowPartialAggregation := z.loadParamStr("allow_partial_aggregation", "false")
+	if allowPartialAggregation == "true" {
+		z.allowPartialAggregation = true
+	}
 	z.keyName, z.keyNameIndex = z.initKeyName()
 	// hack to override from AbstractCollector
 	// @TODO need cleaner solution
@@ -595,10 +600,18 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 			}
 
 			if z.isPartialAggregation(i) {
-				instance.SetPartial(true)
-				instance.SetExportable(false)
-				numPartials++
+				if z.allowPartialAggregation {
+					// Partial aggregation detected but allowed processing - mark as complete and exportable
+					instance.SetPartial(false)
+					instance.SetExportable(true)
+				} else {
+					// Partial aggregation detected and not allowed processing - mark instance as partial and non-exportable
+					instance.SetPartial(true)
+					instance.SetExportable(false)
+					numPartials++
+				}
 			} else {
+				// Aggregation is complete - mark as complete and exportable
 				instance.SetPartial(false)
 				instance.SetExportable(true)
 			}
@@ -802,7 +815,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	// calculate timestamp delta first since many counters require it for postprocessing.
 	// Timestamp has "raw" property, so it isn't post-processed automatically
-	if _, err = curMat.Delta(timestampMetricName, prevMat, cachedData, z.Logger); err != nil {
+	if _, err = curMat.Delta(timestampMetricName, prevMat, cachedData, z.allowPartialAggregation, z.Logger); err != nil {
 		z.Logger.Error("(timestamp) calculate delta:", slogx.Err(err))
 		// @TODO terminate since other counters will be incorrect
 	}
@@ -821,7 +834,7 @@ func (z *ZapiPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 
 		// all other properties - first calculate delta
-		if skips, err = curMat.Delta(key, prevMat, cachedData, z.Logger); err != nil {
+		if skips, err = curMat.Delta(key, prevMat, cachedData, z.allowPartialAggregation, z.Logger); err != nil {
 			z.Logger.Error("Calculate delta", slogx.Err(err), slog.String("key", key))
 			continue
 		}

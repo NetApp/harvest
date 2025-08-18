@@ -5,6 +5,8 @@ object:                   node
 
 instance_key:             name
 
+allow_partial_aggregation: true
+
 counters:
   - avg_processor_busy
   - cifs_ops

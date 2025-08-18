@@ -15,6 +15,7 @@ var metricToJSON = map[string]string{
 	"objects":     "objectCount",
 	"bytes":       "dataBytes",
 	"quota_bytes": "quotaObjectBytes",
+	"labels":      "labels",
 }
 
 type Bucket struct {
@@ -91,6 +92,7 @@ func (b *Bucket) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *coll
 			for _, bucketJSON := range bucketsJSON.Array() {
 				bucket := bucketJSON.Get("name").ClonedString()
 				region := bucketJSON.Get("region").ClonedString()
+				versioningEnabled := bucketJSON.Get("versioningEnabled").ClonedString()
 
 				instanceKey = instKey + "#" + bucket
 				bucketInstance, err2 := b.data.NewInstance(instanceKey)
@@ -106,6 +108,12 @@ func (b *Bucket) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *coll
 				bucketInstance.SetLabel("tenant", tenantName)
 				bucketInstance.SetLabel("region", region)
 				for metricKey, m := range b.data.GetMetrics() {
+					if metricKey == "labels" {
+						bucketInstance.SetLabel("versioningEnabled", versioningEnabled)
+						bucketInstance.SetLabel("tenantID", instKey)
+						m.SetValueFloat64(bucketInstance, 1.0)
+						continue
+					}
 					jsonKey := metricToJSON[metricKey]
 					if value := bucketJSON.Get(jsonKey); value.Exists() {
 						valueStr := value.ClonedString()
