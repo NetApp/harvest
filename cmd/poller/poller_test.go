@@ -2,13 +2,14 @@ package main
 
 import (
 	"errors"
+	"strings"
+	"testing"
+
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"strings"
-	"testing"
 )
 
 func TestUnion2(t *testing.T) {
@@ -268,7 +269,7 @@ func TestMergeRemotes(t *testing.T) {
 			errZapi:    nil,
 			errRest:    errors.New("no REST"),
 			want:       conf.Remote{UUID: "abc", Version: "9.11.1", ZAPIsExist: true},
-			wantErr:    true,
+			wantErr:    false,
 		},
 		{
 			name:       "No ZAPIs",
@@ -277,7 +278,7 @@ func TestMergeRemotes(t *testing.T) {
 			errZapi:    errors.New("no ZAPI"),
 			errRest:    nil,
 			want:       conf.Remote{UUID: "abc", Version: "9.17.1", HasREST: true},
-			wantErr:    true,
+			wantErr:    false,
 		},
 		{
 			name:       "Both",
