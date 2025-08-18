@@ -25,7 +25,7 @@ objects:
   Namespace:         namespace.yaml
   NicCommon:         nic_common.yaml
   Path:              path.yaml
-#  Qtree:             qtree.yaml           #Enabling `qtree.yaml` may slow down data collection
+  Qtree:             qtree.yaml           #Enabling `qtree.yaml` may slow down data collection
   Rwctx:             rwctx.yaml
   SystemNode:        system_node.yaml
 #  TokenManager:      token_manager.yaml
