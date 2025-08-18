@@ -17,12 +17,12 @@ jobs:
       actions: read
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           persist-credentials: false
 
       - name: Install the latest version of uv
-        uses: astral-sh/setup-uv@ad5ded2d63f566e08a19ef248c3a694efce8c0e4
+        uses: astral-sh/setup-uv@c0e7e93474eb09a343746f2a2742979d0cba523c
 
       - name: Run zizmor 🌈
         run: uvx zizmor --format sarif . > results.sarif
