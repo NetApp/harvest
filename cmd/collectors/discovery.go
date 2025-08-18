@@ -2,8 +2,6 @@ package collectors
 
 import (
 	"errors"
-	"time"
-
 	ciscorest "github.com/netapp/harvest/v2/cmd/collectors/cisco/rest"
 	sgrest "github.com/netapp/harvest/v2/cmd/collectors/storagegrid/rest"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
@@ -11,6 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
+	"time"
 )
 
 func GatherClusterInfo(pollerName string, cred *auth.Credentials) (conf.Remote, error) {
@@ -29,21 +28,19 @@ func GatherStorageGridInfo(pollerName string, cred *auth.Credentials) (conf.Remo
 }
 
 func MergeRemotes(remoteZapi conf.Remote, remoteRest conf.Remote, errZapi error, errRest error) (conf.Remote, error) {
+	err := errors.Join(errZapi, errRest)
+
 	remoteRest.ZAPIsExist = remoteZapi.ZAPIsExist
 
-	// If both failed, return the combined error
-	if errZapi != nil && errRest != nil {
-		return remoteRest, errors.Join(errZapi, errRest)
+	if errZapi != nil {
+		return remoteRest, err
 	}
 
-	// If at least one succeeded, return no error
-	// Prefer REST remote if available, otherwise use ZAPI remote
-	if errRest == nil {
-		return remoteRest, nil
+	if errRest != nil {
+		return remoteZapi, err
 	}
 
-	// errRest != nil but errZapi == nil (only ZAPI succeeded)
-	return remoteZapi, nil
+	return remoteRest, err
 }
 
 func checkRest(pollerName string, cred *auth.Credentials) (conf.Remote, error) {
