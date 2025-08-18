@@ -40,6 +40,8 @@ const (
 	UpgradeRPM        = "UPGRADE_RPM"
 	STOP              = "STOP"
 	TestStatPerf      = "TEST_STAT_PERF"
+
+	Fips = "fips140=on"
 )
 
 func Run(command string, arg ...string) (string, error) {
@@ -332,5 +334,16 @@ func SkipIfMissing(t *testing.T, vars ...string) {
 	}
 	if !anyMatches {
 		t.Skipf("Set one of %s envvars to run this test", strings.Join(vars, ", "))
+	}
+}
+
+func SkipIfFipsSet(t *testing.T) {
+	environ := os.Environ()
+	for _, e := range environ {
+		if strings.HasPrefix(e, "GODEBUG") && strings.Contains(e, Fips) {
+			// FIPS 140-3 is only supported on ONTAP 9.
+			t.Skipf("Skipping test because %s is set in the environment", Fips)
+			return
+		}
 	}
 }

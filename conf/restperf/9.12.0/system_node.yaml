@@ -2,6 +2,8 @@ name:                     SystemNode
 query:                    api/cluster/counter/tables/system:node
 object:                   node
 
+allow_partial_aggregation: true
+
 counters:
   - ^^id
   - ^node.name                         => node

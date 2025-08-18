@@ -68,6 +68,7 @@ type Rest struct {
 	Endpoints                    []*EndPoint
 	isIgnoreUnknownFieldsEnabled bool
 	BatchSize                    string
+	AllowPartialAggregation      bool
 }
 
 type EndPoint struct {
@@ -638,13 +639,30 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 		// If the `statistics.status` is not OK, then set `partial` to true.
 		if mat.UUID == "KeyPerf" {
 			status := instanceData.Get("statistics.status")
-			if status.Exists() && status.ClonedString() != "ok" {
-				instance.SetPartial(true)
-				instance.SetExportable(false)
-				numPartials++
-			} else {
-				instance.SetPartial(false)
-				instance.SetExportable(true)
+			if status.Exists() {
+				s := status.ClonedString()
+				switch {
+				case strings.HasPrefix(s, "partial"):
+					// Partial aggregation detected but allowed processing - mark as complete and exportable
+					if r.AllowPartialAggregation {
+						instance.SetPartial(false)
+						instance.SetExportable(true)
+					} else {
+						// Partial aggregation detected and not allowed processing - mark instance as partial and non-exportable
+						instance.SetPartial(true)
+						instance.SetExportable(false)
+						numPartials++
+					}
+				case s != "ok":
+					// Any non-OK status (excluding partial) - mark as partial and non-exportable
+					instance.SetPartial(true)
+					instance.SetExportable(false)
+					numPartials++
+				default:
+					// Status is "ok" - mark as complete and exportable
+					instance.SetPartial(false)
+					instance.SetExportable(true)
+				}
 			}
 		}
 

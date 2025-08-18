@@ -178,6 +178,8 @@ func validateStatPerfCounters(t *testing.T) {
 
 func TestJsonExpression(t *testing.T) {
 	cmds.SkipIfMissing(t, cmds.Regression)
+	cmds.SkipIfFipsSet(t)
+
 	if len(fileSet) == 0 {
 		TestDashboardsLoad(t)
 	}

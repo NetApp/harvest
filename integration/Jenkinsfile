@@ -241,7 +241,7 @@ pipeline {
                                   --image ghcr.io/netapp/harvest:latest-fips
                                 docker compose -f prom-stack.yml -f harvest-compose.yml up -d --remove-orphans
                                 sleep 1m
-                                INSTALL_DOCKER=1 bash $WORKSPACE/harvest/integration/test/test.sh
+                                INSTALL_DOCKER=1 GODEBUG=fips140=on bash $WORKSPACE/harvest/integration/test/test.sh
                                 '''
                             }
                              post {
@@ -251,8 +251,8 @@ pipeline {
                                         rm -f docker_fips_logs.zip
                                         zip -r docker_fips_logs.zip /var/log/harvest
                                         cd $WORKSPACE/docker
-                                        ANALYZE_DOCKER_LOGS=1 bash $WORKSPACE/harvest/integration/test/test.sh
-                                        CHECK_METRICS=1 bash $WORKSPACE/harvest/integration/test/test.sh
+                                        GODEBUG=fips140=on ANALYZE_DOCKER_LOGS=1 bash $WORKSPACE/harvest/integration/test/test.sh
+                                        GODEBUG=fips140=on CHECK_METRICS=1 bash $WORKSPACE/harvest/integration/test/test.sh
                                         docker ps -q | xargs docker stop | xargs docker rm --force
                                     """
                                     archiveArtifacts artifacts: "docker_fips_logs.zip", fingerprint: true

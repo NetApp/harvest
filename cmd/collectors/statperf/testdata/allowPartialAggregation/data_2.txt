@@ -1,0 +1,194 @@
+
+
+
+Warning: Unable to list entries on node sti78-vsim-ucs188k. RPC: Couldn't make
+         connection [from mgwd on node "sti78-vsim-ucs188i" (VSID: -1) to mgwd
+         at 192.168.176.166]
+
+Object: system:node
+Instance: sti78-vsim-ucs188i
+Start-time: 8/6/2025 08:05:40
+End-time: 8/6/2025 08:05:40
+Scope: C1_sti78-vsim-ucs188i_1753428001
+Number of Constituents: 1 (partial_aggregation)
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    avg_processor_busy                                   92110736034%
+    cifs_ops                                                        0
+    cpu_busy                                             92384424989%
+    cpu_elapsed_time                                    1054118872794
+    disk_data_read                                        16220041216
+    disk_data_written                                    417734963200
+    domain_busy                                                     -
+                                idle                    1924016273952
+                              kahuna                         17397372
+                             storage                       3950038672
+                              exempt                      52451523720
+                                none                       1394384559
+                                raid                        820345326
+                         raid_exempt                               22
+                          xor_exempt                        113678917
+                              target                          1536198
+                         wafl_exempt                      11167143707
+                      wafl_mpcleaner                        340110054
+                           sm_exempt                         46369504
+                            protocol                       1243133656
+                          nwk_exempt                                9
+                             network                       8054072505
+                              hostOS                      94871708729
+                         ssan_exempt                         85432214
+                        unclassified                         79065023
+                       kahuna_legacy                          1566935
+                                  ha                       1028465258
+                        ssan_exempt2                                8
+                          exempt_ise                                9
+                             exempt1                                8
+                             exempt2                               18
+                            reserved                               15
+    fcp_data_recv                                                   0
+    fcp_data_sent                                                   0
+    fcp_ops                                                         0
+    hdd_data_read                                         16220041216
+    hdd_data_written                                     417734963200
+    instance_name                                  sti78-vsim-ucs188i
+    instance_uuid                            7c6a514e-6928-11f0-8e46-
+                                                         005056ac300b
+    iscsi_ops                                                       0
+    memory                                                       8304
+    net_data_recv                                         45157046272
+    net_data_sent                                         17362096128
+    nfs_ops                                                         0
+    nvme_fc_data_recv                                               0
+    nvme_fc_data_sent                                               0
+    nvme_fc_ops                                                     0
+    ssd_data_read                                                   0
+    ssd_data_written                                                0
+    total_data                                                      0
+    total_latency                                                 0us
+    total_ops                                                       0
+
+Object: system:node
+Instance: sti78-vsim-ucs188j
+Start-time: 8/6/2025 08:05:40
+End-time: 8/6/2025 08:05:40
+Scope: C1_sti78-vsim-ucs188i_1753428001
+Number of Constituents: 1 (partial_aggregation)
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    avg_processor_busy                                   88905012048%
+    cifs_ops                                                        0
+    cpu_busy                                             89178571626%
+    cpu_elapsed_time                                    1054118849238
+    disk_data_read                                        15089090560
+    disk_data_written                                    398061096960
+    domain_busy                                                     -
+                                idle                    1930427674811
+                              kahuna                         14951275
+                             storage                       3966049847
+                              exempt                      51401440130
+                                none                       1396615306
+                                raid                        794414401
+                         raid_exempt                               18
+                          xor_exempt                        107776340
+                              target                          1533688
+                         wafl_exempt                       9984762102
+                      wafl_mpcleaner                        324153941
+                           sm_exempt                         49292169
+                            protocol                       1234296844
+                          nwk_exempt                                9
+                             network                       7497096325
+                              hostOS                      91691724468
+                         ssan_exempt                         85648095
+                        unclassified                         79864018
+                       kahuna_legacy                          1549216
+                                  ha                        915811395
+                        ssan_exempt2                                9
+                          exempt_ise                               12
+                             exempt1                                9
+                             exempt2                               16
+                            reserved                               10
+    fcp_data_recv                                                   0
+    fcp_data_sent                                                   0
+    fcp_ops                                                         0
+    hdd_data_read                                         15089090560
+    hdd_data_written                                     398061096960
+    instance_name                                  sti78-vsim-ucs188j
+    instance_uuid                            7c5019b4-6928-11f0-b592-
+                                                         005056acdcde
+    iscsi_ops                                                       0
+    memory                                                       8304
+    net_data_recv                                         45065806848
+    net_data_sent                                         13782632448
+    nfs_ops                                                         0
+    nvme_fc_data_recv                                               0
+    nvme_fc_data_sent                                               0
+    nvme_fc_ops                                                     0
+    ssd_data_read                                                   0
+    ssd_data_written                                                0
+    total_data                                                      0
+    total_latency                                                 0us
+    total_ops                                                       0
+
+Object: system:node
+Instance: sti78-vsim-ucs188l
+Start-time: 8/6/2025 08:05:40
+End-time: 8/6/2025 08:05:40
+Scope: C1_sti78-vsim-ucs188i_1753428001
+Number of Constituents: 1 (partial_aggregation)
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    avg_processor_busy                                   86902439602%
+    cifs_ops                                                        0
+    cpu_busy                                             87170838507%
+    cpu_elapsed_time                                    1054118779930
+    disk_data_read                                        10406457344
+    disk_data_written                                    407343128576
+    domain_busy                                                     -
+                                idle                    1934432681077
+                              kahuna                         15574762
+                             storage                       3974875851
+                              exempt                      50030544813
+                                none                        989435762
+                                raid                        638566251
+                         raid_exempt                               11
+                          xor_exempt                        109649135
+                              target                          1528970
+                         wafl_exempt                       8058427754
+                      wafl_mpcleaner                        334328941
+                           sm_exempt                         47168866
+                            protocol                       1221776837
+                          nwk_exempt                                8
+                             network                       7483223032
+                              hostOS                      94695823147
+                         ssan_exempt                         83349113
+                        unclassified                         75263859
+                       kahuna_legacy                          1577174
+                                  ha                        193274823
+                        ssan_exempt2                                9
+                          exempt_ise                                9
+                             exempt1                                9
+                             exempt2                                8
+                            reserved                               10
+    fcp_data_recv                                                   0
+    fcp_data_sent                                                   0
+    fcp_ops                                                         0
+    hdd_data_read                                         10406457344
+    hdd_data_written                                     407343128576
+    instance_name                                  sti78-vsim-ucs188l
+    instance_uuid                            7c7a5bb1-6928-11f0-92d9-
+                                                         005056ac567f
+    iscsi_ops                                                       0
+    memory                                                       8304
+    net_data_recv                                         43003927552
+    net_data_sent                                         11427161088
+    nfs_ops                                                         0
+    nvme_fc_data_recv                                               0
+    nvme_fc_data_sent                                               0
+    nvme_fc_ops                                                     0
+    ssd_data_read                                                   0
+    ssd_data_written                                                0
+    total_data                                                      0
+    total_latency                                                 0us
+    total_ops                                                       0
+81 entries were displayed.
+

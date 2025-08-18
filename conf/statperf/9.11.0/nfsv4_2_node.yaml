@@ -6,6 +6,8 @@ object:                   node_nfs
 global_labels:
   - nfsv: v4.2
 
+allow_partial_aggregation: true
+
 counters:
   - ^^instance_uuid
   - ^instance_name           => node

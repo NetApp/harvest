@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/fips140"
 	"fmt"
 	"github.com/Netapp/harvest-automation/test/cmds"
 	"github.com/Netapp/harvest-automation/test/installer"
@@ -35,6 +36,12 @@ func TestPollerMetrics(t *testing.T) {
 	}
 	var duplicateMetrics []string
 	for _, pollerName := range conf.Config.PollersOrdered {
+		if fips140.Enabled() && pollerName == "umeng-aff300-05-06" {
+			// FIPS 140-3 is only supported on ONTAP 9.11.1+
+			// umeng-aff300-05-06 is running version 9.9.1 so ignore FIPs failures on it
+			slog.Warn("Skipping poller", slog.String("pollerName", pollerName))
+			continue
+		}
 		port, _ := conf.GetLastPromPort(pollerName, true)
 		portString := strconv.Itoa(port)
 		var validCounters = 0
