@@ -59,7 +59,6 @@ counters:
   - snapshot_reserve_available                    => snapshot_reserve_available
   - snapshot_reserve_size                         => snapshot_reserve_size
   - snapshot_space_used                           => snapshot_reserve_used_percent
-  - space_mgmt_try_first                          => space_mgmt_try_first
   - total                                         => size_total
   - used                                          => size_used
   - virtual_used                                  => space_physical_used # See https://github.com/NetApp/harvest/issues/3030

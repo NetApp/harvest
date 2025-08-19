@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Aug-12
+Creation Date : 2025-Aug-19
 ONTAP Version: 9.16.1
 ```
 
@@ -21529,6 +21529,14 @@ Used space threshold which triggers autogrow. When the size-used is greater than
 | REST | `api/private/cli/volume` | `autosize_grow_threshold_percent` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-autosize-attributes.grow-threshold-percent` | conf/zapi/cdot/9.8.0/volume.yaml |
 
+The `volume_autosize_grow_threshold_percent` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Volume | Volume Table | table | [Volumes Autogrow](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=186) |
+///
+
 
 
 ### volume_autosize_maximum_size
@@ -21539,6 +21547,52 @@ The maximum size (in bytes) to which the volume would be grown automatically. Th
 |--------|----------|--------|---------|
 | REST | `api/private/cli/volume` | `max_autosize` | conf/rest/9.14.0/volume.yaml |
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-autosize-attributes.maximum-size` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+The `volume_autosize_maximum_size` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Volume | Volume Table | table | [Volumes Autogrow](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=186) |
+///
+
+
+
+### volume_autosize_minimum_size
+
+Minimum size in bytes up to which the volume shrinks automatically. This size cannot be greater than or equal to the maximum size of volume.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/volume` | `min_autosize` | conf/rest/9.14.0/volume.yaml |
+| ZAPI | `volume-get-iter` | `volume-attributes.volume-autosize-attributes.minimum-size` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+The `volume_autosize_minimum_size` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Volume | Volume Table | table | [Volumes Autogrow](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=186) |
+///
+
+
+
+### volume_autosize_shrink_threshold_percent
+
+Used space threshold size, in percentage, for the automatic shrinkage of the volume. When the amount of used space in the volume drops below this threshold, the volume automatically shrinks unless it has reached the minimum size. The volume shrinks when the 'space.used' is less than the 'shrink_threshold' percent of 'space.size'. The 'shrink_threshold' size cannot be greater than or equal to the 'grow_threshold' size.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/volume` | `autosize_shrink_threshold_percent` | conf/rest/9.14.0/volume.yaml |
+| ZAPI | `volume-get-iter` | `volume-attributes.volume-autosize-attributes.shrink-threshold-percent` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+The `volume_autosize_shrink_threshold_percent` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Volume | Volume Table | table | [Volumes Autogrow](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=186) |
+///
 
 
 
@@ -21824,6 +21878,7 @@ The `volume_labels` metric is visualized in the following Grafana dashboards:
 | ONTAP: Volume | Volume Table | table | [Top $TopResources Volumes by Write Latency](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=40) |
 | ONTAP: Volume | Volume Table | table | [Top $TopResources Volumes by Write Throughput](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=42) |
 | ONTAP: Volume | Volume Table | table | [Top $TopResources Volumes by Write IOPS](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=44) |
+| ONTAP: Volume | Volume Table | table | [Volumes Autogrow](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=186) |
 | ONTAP: Volume | Performance | timeseries | [Top $TopResources Volumes by Read Latency](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=30) |
 | ONTAP: Volume | Performance | timeseries | [Top $TopResources Volumes by Write Latency](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=33) |
 | ONTAP: Volume | Performance | timeseries | [Top $TopResources Volumes by Other Latency](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=116) |
@@ -22578,6 +22633,7 @@ The `volume_size_total` metric is visualized in the following Grafana dashboards
 | ONTAP: Health | Volume | table | [Volumes with Ransomware Issues (9.10+ Only)](/d/cdot-health/ontap3a-health?orgId=1&viewPanel=264) |
 | ONTAP: Health | Volume | table | [Volumes Move Issues](/d/cdot-health/ontap3a-health?orgId=1&viewPanel=271) |
 | ONTAP: Volume | Volume Table | table | [Volumes in Cluster](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=18) |
+| ONTAP: Volume | Volume Table | table | [Volumes Autogrow](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=186) |
 | ONTAP: Volume Deep Dive | Volume Capacity: $Volume | table | [Volumes in Cluster](/d/cdot-volume-deep-dive/ontap3a-volume deep dive?orgId=1&viewPanel=22) |
 ///
 
@@ -22633,6 +22689,7 @@ The `volume_size_used_percent` metric is visualized in the following Grafana das
 | ONTAP: LUN | Top Volume and LUN Capacity | timeseries | [Top $TopResources Volumes by Used %](/d/cdot-lun/ontap3a-lun?orgId=1&viewPanel=77) |
 | ONTAP: SVM | Volume Capacity % | timeseries | [Top $TopResources Volumes Per Volume Size Used](/d/cdot-svm/ontap3a-svm?orgId=1&viewPanel=320) |
 | ONTAP: Volume | Volume Table | table | [Volumes in Cluster](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=18) |
+| ONTAP: Volume | Volume Table | table | [Volumes Autogrow](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=186) |
 | ONTAP: Volume | Capacity % | timeseries | [Top $TopResources Volumes Per Volume Size Used](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=125) |
 | ONTAP: Volume | Forecast Volume Capacity | table | [Top $TopResources Volumes Per Size Used Percentage Trend](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=149) |
 | ONTAP: Volume Deep Dive | Volume Capacity: $Volume | table | [Volumes in Cluster](/d/cdot-volume-deep-dive/ontap3a-volume deep dive?orgId=1&viewPanel=22) |
