@@ -2124,7 +2124,22 @@
             }
           ],
           "type": "table"
-        },
+        }
+      ],
+      "title": "Volume Table",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 17
+      },
+      "id": 38,
+      "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
           "description": "Volume autogrow details.",
@@ -2426,7 +2441,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 40
+            "y": 18
           },
           "id": 186,
           "interval": "1m",
@@ -2453,61 +2468,51 @@
           "targets": [
             {
               "datasource": "${DS_PROMETHEUS}",
-              "editorMode": "code",
               "expr": "volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}",
               "format": "table",
               "instant": true,
               "interval": "",
-              "intervalFactor": 1,
               "legendFormat": "",
               "refId": "B"
             },
             {
               "datasource": "${DS_PROMETHEUS}",
-              "editorMode": "code",
               "expr": "volume_autosize_grow_threshold_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\n* on (datacenter, cluster, svm, volume) group_left (node)\n  volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}",
               "format": "table",
               "hide": false,
               "instant": true,
               "interval": "",
-              "intervalFactor": 1,
               "legendFormat": "",
               "refId": "A"
             },
             {
               "datasource": "${DS_PROMETHEUS}",
-              "editorMode": "code",
               "exemplar": false,
               "expr": "volume_autosize_shrink_threshold_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\n* on (datacenter, cluster, svm, volume) group_left (node)\n  volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}",
               "format": "table",
               "hide": false,
               "instant": true,
               "legendFormat": "",
-              "range": false,
               "refId": "C"
             },
             {
               "datasource": "${DS_PROMETHEUS}",
-              "editorMode": "code",
               "exemplar": false,
               "expr": "volume_autosize_maximum_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\n* on (datacenter, cluster, svm, volume) group_left (node)\n  volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}",
               "format": "table",
               "hide": false,
               "instant": true,
               "legendFormat": "",
-              "range": false,
               "refId": "D"
             },
             {
               "datasource": "${DS_PROMETHEUS}",
-              "editorMode": "code",
               "exemplar": false,
               "expr": "volume_autosize_minimum_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\n* on (datacenter, cluster, svm, volume) group_left (node)\n  volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}",
               "format": "table",
               "hide": false,
               "instant": true,
               "legendFormat": "",
-              "range": false,
               "refId": "E"
             },
             {
@@ -2551,7 +2556,8 @@
                     "Value #E",
                     "Value #F",
                     "Value #G",
-                    "state"
+                    "state",
+                    "space_mgmt_try_first"
                   ]
                 }
               }
@@ -2576,17 +2582,18 @@
                 },
                 "includeByName": {},
                 "indexByName": {
-                  "Value #A": 12,
-                  "Value #C": 13,
-                  "Value #D": 10,
-                  "Value #E": 11,
-                  "Value #F": 8,
-                  "Value #G": 9,
+                  "Value #A": 13,
+                  "Value #C": 14,
+                  "Value #D": 11,
+                  "Value #E": 12,
+                  "Value #F": 9,
+                  "Value #G": 10,
                   "aggr": 5,
                   "autosize_mode": 7,
                   "cluster": 1,
                   "datacenter": 0,
                   "node": 4,
+                  "space_mgmt_try_first": 8,
                   "state": 6,
                   "svm": 2,
                   "volume": 3
@@ -2603,6 +2610,7 @@
                   "clone_parent_svm": "",
                   "clone_parent_volume": "",
                   "junction_path": "",
+                  "space_mgmt_try_first": "Space Management Strategy",
                   "tags": ""
                 }
               }
@@ -2611,7 +2619,7 @@
           "type": "table"
         }
       ],
-      "title": "Volume Table",
+      "title": "Volume Autosize Table",
       "type": "row"
     },
     {
@@ -2621,7 +2629,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 17
+        "y": 18
       },
       "id": 28,
       "panels": [
@@ -3576,7 +3584,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 18
+        "y": 19
       },
       "id": 66,
       "panels": [
@@ -4871,7 +4879,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 19
+        "y": 20
       },
       "id": 142,
       "panels": [
@@ -5070,7 +5078,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 20
+        "y": 21
       },
       "id": 70,
       "panels": [
@@ -5906,7 +5914,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 21
+        "y": 22
       },
       "id": 71,
       "panels": [
@@ -6490,7 +6498,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 23
       },
       "id": 153,
       "panels": [
@@ -6889,7 +6897,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 23
+        "y": 24
       },
       "id": 165,
       "panels": [
@@ -7288,7 +7296,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 24
+        "y": 25
       },
       "id": 92,
       "panels": [
@@ -7782,7 +7790,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 25
+        "y": 26
       },
       "id": 99,
       "panels": [
@@ -9009,7 +9017,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 26
+        "y": 27
       },
       "id": 98,
       "panels": [
@@ -9289,7 +9297,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 27
+        "y": 28
       },
       "id": 105,
       "panels": [

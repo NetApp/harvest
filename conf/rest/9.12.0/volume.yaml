@@ -18,6 +18,7 @@ counters:
   - ^nodes                                        => node
   - ^snaplock_type                                => snaplock_type
   - ^snapshot_policy                              => snapshot_policy
+  - ^space_mgmt_try_first                         => space_mgmt_try_first
   - ^state                                        => state
   - ^tags                                         => tags
   - ^type                                         => type
@@ -145,6 +146,7 @@ export_options:
     - snaplock_type
     - snapshot_autodelete
     - snapshot_policy
+    - space_mgmt_try_first
     - state
     - svm_root
     - tags

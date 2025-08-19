@@ -50,6 +50,7 @@ counters:
     - volume-space-attributes:
         - ^is-space-enforcement-logical               => is_space_enforcement_logical
         - ^is-space-reporting-logical                 => is_space_reporting_logical
+        - ^space-mgmt-option-try-first                => space_mgmt_try_first
         - expected-available
         - filesystem-size                             => filesystem_size
         - logical-available
@@ -134,6 +135,7 @@ export_options:
     - root_volume
     - snapshot_autodelete
     - snapshot_policy
+    - space_mgmt_try_first
     - state
     - svm_root
     - type
