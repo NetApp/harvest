@@ -2046,6 +2046,30 @@
                     ]
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Rx Alignment Err"
+                },
+                "properties": [
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-text"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Rx Length Err"
+                },
+                "properties": [
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-text"
+                  }
+                ]
               }
             ]
           },
@@ -2084,7 +2108,7 @@
               "instant": true,
               "interval": "",
               "legendFormat": "",
-              "refId": "B"
+              "refId": "rx_crc_errors"
             },
             {
               "exemplar": false,
@@ -2094,7 +2118,7 @@
               "instant": true,
               "interval": "",
               "legendFormat": "",
-              "refId": "C"
+              "refId": "tx_hw_errors"
             },
             {
               "exemplar": false,
@@ -2104,7 +2128,7 @@
               "instant": true,
               "interval": "",
               "legendFormat": "",
-              "refId": "D"
+              "refId": "tx_total_errors"
             },
             {
               "exemplar": false,
@@ -2114,7 +2138,7 @@
               "instant": true,
               "interval": "",
               "legendFormat": "",
-              "refId": "E"
+              "refId": "rx_total_errors"
             },
             {
               "exemplar": false,
@@ -2124,7 +2148,27 @@
               "instant": true,
               "interval": "",
               "legendFormat": "",
-              "refId": "F"
+              "refId": "link_up_to_downs"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum_over_time(\n  nic_rx_alignment_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "rx_alignment_errors"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum_over_time(\n  nic_rx_length_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "rx_length_errors"
             }
           ],
           "title": "Ethernet port errors",
@@ -2134,15 +2178,17 @@
               "options": {
                 "include": {
                   "names": [
+                    "cluster",
+                    "datacenter",
                     "nic",
                     "node",
-                    "Value #B",
-                    "Value #C",
-                    "Value #D",
-                    "Value #E",
-                    "Value #F",
-                    "cluster",
-                    "datacenter"
+                    "Value #rx_crc_errors",
+                    "Value #tx_hw_errors",
+                    "Value #tx_total_errors",
+                    "Value #rx_total_errors",
+                    "Value #link_up_to_downs",
+                    "Value #rx_alignment_errors",
+                    "Value #rx_length_errors"
                   ]
                 }
               }
@@ -2156,11 +2202,14 @@
               "options": {
                 "excludeByName": {},
                 "indexByName": {
-                  "Value #B": 4,
-                  "Value #C": 5,
-                  "Value #D": 6,
-                  "Value #E": 7,
-                  "Value #F": 8,
+                  "Value #link_up_to_downs": 10,
+                  "Value #rx_alignment_errors": 5,
+                  "Value #rx_crc_errors": 4,
+                  "Value #rx_length_errors": 6,
+                  "Value #rx_total_errors": 7,
+                  "Value #tx_hw_errors": 8,
+                  "Value #tx_total_errors": 9,
+                  "__name__": 11,
                   "cluster": 1,
                   "datacenter": 0,
                   "nic": 3,
@@ -2170,11 +2219,21 @@
                   "Value #A": "",
                   "Value #B": "Rx CRC Err",
                   "Value #C": "Tx HW Err",
-                  "Value #D": "Rx Total Err",
-                  "Value #E": "Tx Total Err",
+                  "Value #D": "Tx Total Err",
+                  "Value #E": "Rx Total Err",
                   "Value #F": "Up to Downs",
+                  "Value #G": "",
+                  "Value #link_up_to_downs": "Up to Downs",
+                  "Value #rx_alignment_errors": "Rx Alignment Err",
+                  "Value #rx_crc_errors": "Rx CRC Err",
+                  "Value #rx_length_errors": "Rx Length Err",
+                  "Value #rx_total_errors": "Rx Total Err",
+                  "Value #tx_errors": "Tx Errs",
+                  "Value #tx_hw_errors": "Tx HW Err",
+                  "Value #tx_total_errors": "Tx Total Err",
                   "cluster": "",
-                  "nic": "Nic"
+                  "nic": "Nic",
+                  "node": ""
                 }
               }
             }
