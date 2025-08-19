@@ -4,9 +4,18 @@
 .PHONY: help deps clean build test fmt lint package asup dev fetch-asup ci
 
 SHELL := /bin/bash
-REQUIRED_GO_VERSION := 1.24
 GOLANGCI_LINT_VERSION := latest
 GOVULNCHECK_VERSION := latest
+HARVEST_ENV := .harvest.env
+
+# Read the environment file if it exists and export the uncommented variables
+ifneq (,$(wildcard $(HARVEST_ENV)))
+    include $(HARVEST_ENV)
+	export $(shell sed '/^\#/d; s/=.*//' $(HARVEST_ENV))
+endif
+
+REQUIRED_GO_VERSION := $(GO_VERSION)
+
 ifneq (, $(shell which go))
 FOUND_GO_VERSION := $(shell go version | cut -d" " -f3 | cut -d"o" -f 2)
 CORRECT_GO_VERSION := $(shell expr `go version | cut -d" " -f3 | cut -d"o" -f 2` \>= ${REQUIRED_GO_VERSION})
@@ -32,13 +41,6 @@ BIN_PLATFORM ?= linux
 BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 MKDOCS_EXISTS := $(shell which mkdocs)
 FETCH_ASUP_EXISTS := $(shell which ./.github/fetch-asup)
-HARVEST_ENV := .harvest.env
-
-# Read the environment file if it exists and export the uncommented variables
-ifneq (,$(wildcard $(HARVEST_ENV)))
-    include $(HARVEST_ENV)
-	export $(shell sed '/^\#/d; s/=.*//' $(HARVEST_ENV))
-endif
 
 help:  ## Display this help
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m\033[0m\n\nTargets:\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-11s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
