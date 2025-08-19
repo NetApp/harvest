@@ -9,10 +9,10 @@ counters:
   volume-attributes:
     - ^encrypt                                        => isEncrypted
     - volume-autosize-attributes:
+        - ^mode                                       => autosize_mode
         - grow-threshold-percent
         - maximum-size
         - minimum-size
-        - ^mode                                       => autosize_mode
         - shrink-threshold-percent
     - volume-id-attributes:
         - ^^instance-uuid                             => uuid
