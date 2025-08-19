@@ -11,6 +11,9 @@ counters:
     - volume-autosize-attributes:
         - grow-threshold-percent
         - maximum-size
+        - minimum-size
+        - ^mode                                       => autosize_mode
+        - shrink-threshold-percent
     - volume-id-attributes:
         - ^^instance-uuid                             => uuid
         - ^containing-aggregate-uuid                  => aggrUuid
@@ -115,6 +118,7 @@ export_options:
     - volume
   instance_labels:
     - clone_parent_snapshot
+    - autosize_mode
     - clone_parent_svm
     - clone_parent_volume
     - isDestinationCloud
