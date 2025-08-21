@@ -14008,6 +14008,24 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#volume_autosize_minimum_size" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_autosize_minimum_size
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#volume_autosize_shrink_threshold_percent" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_autosize_shrink_threshold_percent
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#volume_avg_latency" class="md-nav__link">
     <span class="md-ellipsis">
       volume_avg_latency
@@ -27883,6 +27901,24 @@
   <a href="#volume_autosize_maximum_size" class="md-nav__link">
     <span class="md-ellipsis">
       volume_autosize_maximum_size
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#volume_autosize_minimum_size" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_autosize_minimum_size
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#volume_autosize_shrink_threshold_percent" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_autosize_shrink_threshold_percent
     </span>
   </a>
   
@@ -86509,6 +86545,27 @@ ONTAP Version: 9.16.1
 </tr>
 </tbody>
 </table>
+<p>The <code>volume_autosize_grow_threshold_percent</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ONTAP: Volume</td>
+<td>Volume Autosize Table</td>
+<td>table</td>
+<td><a href="/d/cdot-volume/ontap3a-volume?orgId=1&amp;viewPanel=186">Volumes Autogrow</a></td>
+</tr>
+</tbody>
+</table>
+</div>
 <h3 id="volume_autosize_maximum_size">volume_autosize_maximum_size<a class="headerlink" href="#volume_autosize_maximum_size" title="Permanent link">&para;</a></h3>
 <p>The maximum size (in bytes) to which the volume would be grown automatically. The default value is 20% greater than the volume size. It is an error for the maximum volume size to be less than the current volume size. It is also an error for the maximum size to be less than or equal to the minimum size.</p>
 <table>
@@ -86535,6 +86592,121 @@ ONTAP Version: 9.16.1
 </tr>
 </tbody>
 </table>
+<p>The <code>volume_autosize_maximum_size</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ONTAP: Volume</td>
+<td>Volume Autosize Table</td>
+<td>table</td>
+<td><a href="/d/cdot-volume/ontap3a-volume?orgId=1&amp;viewPanel=186">Volumes Autogrow</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="volume_autosize_minimum_size">volume_autosize_minimum_size<a class="headerlink" href="#volume_autosize_minimum_size" title="Permanent link">&para;</a></h3>
+<p>Minimum size in bytes up to which the volume shrinks automatically. This size cannot be greater than or equal to the maximum size of volume.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/private/cli/volume</code></td>
+<td><code>min_autosize</code></td>
+<td>conf/rest/9.14.0/volume.yaml</td>
+</tr>
+<tr>
+<td>ZAPI</td>
+<td><code>volume-get-iter</code></td>
+<td><code>volume-attributes.volume-autosize-attributes.minimum-size</code></td>
+<td>conf/zapi/cdot/9.8.0/volume.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>volume_autosize_minimum_size</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ONTAP: Volume</td>
+<td>Volume Autosize Table</td>
+<td>table</td>
+<td><a href="/d/cdot-volume/ontap3a-volume?orgId=1&amp;viewPanel=186">Volumes Autogrow</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="volume_autosize_shrink_threshold_percent">volume_autosize_shrink_threshold_percent<a class="headerlink" href="#volume_autosize_shrink_threshold_percent" title="Permanent link">&para;</a></h3>
+<p>Used space threshold size, in percentage, for the automatic shrinkage of the volume. When the amount of used space in the volume drops below this threshold, the volume automatically shrinks unless it has reached the minimum size. The volume shrinks when the 'space.used' is less than the 'shrink_threshold' percent of 'space.size'. The 'shrink_threshold' size cannot be greater than or equal to the 'grow_threshold' size.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/private/cli/volume</code></td>
+<td><code>autosize_shrink_threshold_percent</code></td>
+<td>conf/rest/9.14.0/volume.yaml</td>
+</tr>
+<tr>
+<td>ZAPI</td>
+<td><code>volume-get-iter</code></td>
+<td><code>volume-attributes.volume-autosize-attributes.shrink-threshold-percent</code></td>
+<td>conf/zapi/cdot/9.8.0/volume.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>volume_autosize_shrink_threshold_percent</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ONTAP: Volume</td>
+<td>Volume Autosize Table</td>
+<td>table</td>
+<td><a href="/d/cdot-volume/ontap3a-volume?orgId=1&amp;viewPanel=186">Volumes Autogrow</a></td>
+</tr>
+</tbody>
+</table>
+</div>
 <h3 id="volume_avg_latency">volume_avg_latency<a class="headerlink" href="#volume_avg_latency" title="Permanent link">&para;</a></h3>
 <p>Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time</p>
 <table>
@@ -87537,6 +87709,12 @@ ONTAP Version: 9.16.1
 <td>Volume Table</td>
 <td>table</td>
 <td><a href="/d/cdot-volume/ontap3a-volume?orgId=1&amp;viewPanel=44">Top $TopResources Volumes by Write IOPS</a></td>
+</tr>
+<tr>
+<td>ONTAP: Volume</td>
+<td>Volume Autosize Table</td>
+<td>table</td>
+<td><a href="/d/cdot-volume/ontap3a-volume?orgId=1&amp;viewPanel=186">Volumes Autogrow</a></td>
 </tr>
 <tr>
 <td>ONTAP: Volume</td>
@@ -89908,6 +90086,12 @@ ONTAP Version: 9.16.1
 <td><a href="/d/cdot-volume/ontap3a-volume?orgId=1&amp;viewPanel=18">Volumes in Cluster</a></td>
 </tr>
 <tr>
+<td>ONTAP: Volume</td>
+<td>Volume Autosize Table</td>
+<td>table</td>
+<td><a href="/d/cdot-volume/ontap3a-volume?orgId=1&amp;viewPanel=186">Volumes Autogrow</a></td>
+</tr>
+<tr>
 <td>ONTAP: Volume Deep Dive</td>
 <td>Volume Capacity: $Volume</td>
 <td>table</td>
@@ -90102,6 +90286,12 @@ ONTAP Version: 9.16.1
 <td>Volume Table</td>
 <td>table</td>
 <td><a href="/d/cdot-volume/ontap3a-volume?orgId=1&amp;viewPanel=18">Volumes in Cluster</a></td>
+</tr>
+<tr>
+<td>ONTAP: Volume</td>
+<td>Volume Autosize Table</td>
+<td>table</td>
+<td><a href="/d/cdot-volume/ontap3a-volume?orgId=1&amp;viewPanel=186">Volumes Autogrow</a></td>
 </tr>
 <tr>
 <td>ONTAP: Volume</td>
