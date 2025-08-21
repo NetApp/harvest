@@ -77,7 +77,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1752677612260,
+  "iteration": 1755802089646,
   "links": [
     {
       "asDropdown": true,
@@ -3912,6 +3912,135 @@
       ],
       "title": "Storage Efficiency",
       "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 43
+      },
+      "id": 662,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Detail cluster information with links to System Manager.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "addr"
+                },
+                "properties": [
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "System Manager",
+                        "url": "https://${__data.fields.addr}/sysmgr/v4/"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 44
+          },
+          "id": 664,
+          "options": {
+            "showHeader": true
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "cluster_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "System Manager",
+          "transformations": [
+            {
+              "id": "labelsToFields",
+              "options": {}
+            },
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "addr",
+                    "cluster",
+                    "datacenter",
+                    "poller"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "addr": false
+                },
+                "indexByName": {
+                  "addr": 3,
+                  "cluster": 1,
+                  "datacenter": 0,
+                  "poller": 2
+                },
+                "renameByName": {
+                  "addr": "System Manager",
+                  "cluster": "Cluster",
+                  "datacenter": "Datacenter",
+                  "poller": "Poller",
+                  "tags": "Tags"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "System Manager",
+      "type": "row"
     }
   ],
   "refresh": "",
@@ -4132,5 +4261,5 @@
   "timezone": "",
   "title": "ONTAP: Datacenter",
   "uid": "cdot-datacenter",
-  "version": 3
+  "version": 16
 }

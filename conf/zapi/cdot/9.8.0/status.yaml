@@ -11,6 +11,7 @@ only_cluster_instance: true
 no_max_records: true
 
 plugins:
+  - Cluster
   - LabelAgent:
     # metric label zapi_value rest_value `default_value`
     value_to_num:

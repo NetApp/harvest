@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Aug-19
+Creation Date : 2025-Aug-21
 ONTAP Version: 9.16.1
 ```
 
@@ -1791,6 +1791,7 @@ The `cluster_new_status` metric is visualized in the following Grafana dashboard
 | ONTAP: Cluster | Nodes & Subsystems - $Cluster | table | [$Cluster](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=52) |
 | ONTAP: Cluster | Nodes & Subsystems - $Cluster | stat | [cluster health status](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=156) |
 | ONTAP: Datacenter | Health | table | [Cluster Health](/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=480) |
+| ONTAP: Datacenter | System Manager | table | [System Manager](/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=664) |
 ///
 
 
@@ -8953,6 +8954,7 @@ The `nic_rx_alignment_errors` metric is visualized in the following Grafana dash
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | ONTAP: Network | Ethernet | timeseries | [NICs Receive Errors by Cluster](/d/cdot-network/ontap3a-network?orgId=1&viewPanel=30) |
+| ONTAP: Network | Ethernet | table | [Ethernet port errors](/d/cdot-network/ontap3a-network?orgId=1&viewPanel=119) |
 ///
 
 
@@ -9027,6 +9029,7 @@ The `nic_rx_length_errors` metric is visualized in the following Grafana dashboa
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | ONTAP: Network | Ethernet | timeseries | [NICs Receive Errors by Cluster](/d/cdot-network/ontap3a-network?orgId=1&viewPanel=30) |
+| ONTAP: Network | Ethernet | table | [Ethernet port errors](/d/cdot-network/ontap3a-network?orgId=1&viewPanel=119) |
 ///
 
 
@@ -21530,7 +21533,7 @@ Used space threshold which triggers autogrow. When the size-used is greater than
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-autosize-attributes.grow-threshold-percent` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 The `volume_autosize_grow_threshold_percent` metric is visualized in the following Grafana dashboards:
-
+    
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
@@ -21549,7 +21552,7 @@ The maximum size (in bytes) to which the volume would be grown automatically. Th
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-autosize-attributes.maximum-size` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 The `volume_autosize_maximum_size` metric is visualized in the following Grafana dashboards:
-
+    
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
@@ -21568,7 +21571,7 @@ Minimum size in bytes up to which the volume shrinks automatically. This size ca
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-autosize-attributes.minimum-size` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 The `volume_autosize_minimum_size` metric is visualized in the following Grafana dashboards:
-
+    
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
@@ -21587,7 +21590,7 @@ Used space threshold size, in percentage, for the automatic shrinkage of the vol
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-autosize-attributes.shrink-threshold-percent` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 The `volume_autosize_shrink_threshold_percent` metric is visualized in the following Grafana dashboards:
-
+    
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
