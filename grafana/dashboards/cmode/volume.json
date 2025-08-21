@@ -2142,7 +2142,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Volume autogrow details.",
+          "description": "Displays detail of the volume autogrow. \n\n|  Column  | Represents  |  \n|---|---|\n| `Status` | Current status of a volume |  \n| `Mode` | Autosize mode for the volume [grow, grow_shrink, off] |\n| `Space Management Strategy` | Primary Space Management Strategy [volume_grow, snap_delete] |\n|`Size`| Total provisioned size |\n| `Used %` | Percentage of the volume size that is used |\n| `Max`| Maximum size in bytes up to which a volume grows automatically |\n| `Min` | Minimum size in bytes up to which the volume shrinks automatically |\n| `Grow Threshold %` | Used space threshold size, in percentage, for the automatic growth of the volume |\n| `Shrink Threshold %` | Used space threshold size, in percentage, for the automatic shrinkage of the volume|.",
           "fieldConfig": {
             "defaults": {
               "custom": {
