@@ -9,8 +9,11 @@ counters:
   volume-attributes:
     - ^encrypt                                        => isEncrypted
     - volume-autosize-attributes:
+        - ^mode                                       => autosize_mode
         - grow-threshold-percent
         - maximum-size
+        - minimum-size
+        - shrink-threshold-percent
     - volume-id-attributes:
         - ^^instance-uuid                             => uuid
         - ^containing-aggregate-uuid                  => aggrUuid
@@ -47,6 +50,7 @@ counters:
     - volume-space-attributes:
         - ^is-space-enforcement-logical               => is_space_enforcement_logical
         - ^is-space-reporting-logical                 => is_space_reporting_logical
+        - ^space-mgmt-option-try-first                => space_mgmt_try_first
         - expected-available
         - filesystem-size                             => filesystem_size
         - logical-available
@@ -115,6 +119,7 @@ export_options:
     - volume
   instance_labels:
     - clone_parent_snapshot
+    - autosize_mode
     - clone_parent_svm
     - clone_parent_volume
     - isDestinationCloud
@@ -130,6 +135,7 @@ export_options:
     - root_volume
     - snapshot_autodelete
     - snapshot_policy
+    - space_mgmt_try_first
     - state
     - svm_root
     - type

@@ -6,6 +6,7 @@ counters:
   - ^^volume
   - ^^vserver                                     => svm
   - ^aggr_list                                    => aggr
+  - ^autosize_mode                                => autosize_mode
   - ^clone_parent_name                            => clone_parent_volume
   - ^clone_parent_vserver                         => clone_parent_svm
   - ^clone_volume                                 => is_flexclone
@@ -17,6 +18,7 @@ counters:
   - ^nodes                                        => node
   - ^snaplock_type                                => snaplock_type
   - ^snapshot_policy                              => snapshot_policy
+  - ^space_mgmt_try_first                         => space_mgmt_try_first
   - ^state                                        => state
   - ^tags                                         => tags
   - ^type                                         => type
@@ -24,6 +26,7 @@ counters:
   - ^volume_style_extended                        => style
   - ^vsroot                                       => svm_root
   - autosize_grow_threshold_percent               => autosize_grow_threshold_percent
+  - autosize_shrink_threshold_percent             => autosize_shrink_threshold_percent
   - available                                     => size_available
   - compression_space_saved                       => sis_compress_saved
   - compression_space_saved_percent               => sis_compress_saved_percent
@@ -39,6 +42,7 @@ counters:
   - logical_used_by_snapshots                     => space_logical_used_by_snapshots
   - logical_used_percent                          => space_logical_used_percent
   - max_autosize                                  => autosize_maximum_size
+  - min_autosize                                  => autosize_minimum_size
   - overwrite_reserve                             => overwrite_reserve_total
   - overwrite_reserve_used                        => overwrite_reserve_used
   - percent_snapshot_space                        => snapshot_reserve_percent
@@ -130,6 +134,7 @@ export_options:
     - volume
   instance_labels:
     - antiRansomwareState
+    - autosize_mode
     - clone_parent_snapshot
     - clone_parent_svm
     - clone_parent_volume
@@ -146,6 +151,7 @@ export_options:
     - snaplock_type
     - snapshot_autodelete
     - snapshot_policy
+    - space_mgmt_try_first
     - state
     - svm_root
     - tags
