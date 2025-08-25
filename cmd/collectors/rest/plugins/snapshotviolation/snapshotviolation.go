@@ -147,7 +147,7 @@ func (s *SnapshotViolation) getFilteredVolumeSnapshotStats(prefixMap map[string]
 				snapshotviolation.ProcessSnapshotData(svm, volume, snapshot, size, prefixMap, filteredSnapshotStats)
 			} else {
 				// If conversion fails, log warning and use original value
-				s.SLogger.Warn("Failed to convert snapshot size from KB to bytes",
+				s.SLogger.Warn("Failed to convert snapshot size",
 					slog.String("svm", svm),
 					slog.String("volume", volume),
 					slog.String("snapshot", snapshot),
