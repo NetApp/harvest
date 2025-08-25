@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1755847087209,
+  "iteration": 1756121779217,
   "links": [
     {
       "asDropdown": true,
@@ -3267,7 +3267,7 @@
         {
           "datasource": "${DS_PROMETHEUS}",
           "gridPos": {
-            "h": 2,
+            "h": 3,
             "w": 24,
             "x": 0,
             "y": 22
@@ -3318,7 +3318,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 24
+            "y": 25
           },
           "id": 170,
           "options": {
@@ -3388,7 +3388,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 24
+            "y": 25
           },
           "id": 171,
           "options": {
@@ -3567,7 +3567,7 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 32
+            "y": 33
           },
           "id": 168,
           "options": {
@@ -3666,8 +3666,8 @@
                   "volume 2": 14
                 },
                 "renameByName": {
-                  "Value #A": "Snapshot Count",
-                  "Value #B": "Snapshot Total Size"
+                  "Value #A": "Snapshot Violation Count",
+                  "Value #B": "Snapshot Violation Total Size"
                 }
               }
             }
