@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1756121779217,
+  "iteration": 1756121779220,
   "links": [
     {
       "asDropdown": true,
@@ -3575,7 +3575,7 @@
             "sortBy": [
               {
                 "desc": true,
-                "displayName": "Snapshot Total Size"
+                "displayName": "Snapshot Violation Total Size"
               }
             ]
           },
