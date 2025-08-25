@@ -3,10 +3,7 @@ package snapshotviolation
 import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/set"
-	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"log/slog"
-	"strconv"
 	"strings"
 )
 
@@ -45,7 +42,7 @@ func InitMatrix(parent string) (*matrix.Matrix, error) {
 	return mat, nil
 }
 
-func ProcessSnapshotData(svm, volume, snapshot, sizeStr string, prefixMap map[string]*set.Set, filteredSnapshotStats map[string]Stats, logger *slog.Logger) {
+func ProcessSnapshotData(svm, volume, snapshot string, size int64, prefixMap map[string]*set.Set, filteredSnapshotStats map[string]Stats) {
 	key := svm + KeyToken + volume
 
 	prefixes := prefixMap[svm]
@@ -76,12 +73,6 @@ func ProcessSnapshotData(svm, volume, snapshot, sizeStr string, prefixMap map[st
 
 	// Only process snapshots that don't have any prefix
 	if !hasPrefix {
-		size, err := strconv.ParseInt(sizeStr, 10, 64)
-		if err != nil {
-			logger.Warn("Failed to parse size", slog.String("size", sizeStr), slogx.Err(err))
-			return
-		}
-
 		stats, exists := filteredSnapshotStats[key]
 		if !exists {
 			stats = Stats{

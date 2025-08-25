@@ -154,10 +154,9 @@ func (s *SnapshotViolation) getFilteredVolumeSnapshotStats(prefixMap map[string]
 			sizeKBStr := sData.GetChildContentS("total")
 
 			// Convert size from KB to bytes (multiply by 1024)
-			var sizeStr string
 			if sizeKB, err := strconv.ParseInt(sizeKBStr, 10, 64); err == nil {
 				sizeBytes := sizeKB * 1024
-				sizeStr = strconv.FormatInt(sizeBytes, 10)
+				snapshotviolation.ProcessSnapshotData(svm, volume, snapshot, sizeBytes, prefixMap, filteredSnapshotStats)
 			} else {
 				// If conversion fails, log warning and use original value
 				s.SLogger.Warn("Failed to convert snapshot size from KB to bytes",
@@ -169,7 +168,6 @@ func (s *SnapshotViolation) getFilteredVolumeSnapshotStats(prefixMap map[string]
 				continue
 			}
 
-			snapshotviolation.ProcessSnapshotData(svm, volume, snapshot, sizeStr, prefixMap, filteredSnapshotStats, s.SLogger)
 		}
 		return nil
 	}

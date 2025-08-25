@@ -13,6 +13,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
+	"strconv"
 	"time"
 )
 
@@ -142,7 +143,18 @@ func (s *SnapshotViolation) getFilteredVolumeSnapshotStats(prefixMap map[string]
 			snapshot := sData.Get("snapshot").ClonedString()
 			sizeStr := sData.Get("size").ClonedString()
 
-			snapshotviolation.ProcessSnapshotData(svm, volume, snapshot, sizeStr, prefixMap, filteredSnapshotStats, s.SLogger)
+			if size, err := strconv.ParseInt(sizeStr, 10, 64); err == nil {
+				snapshotviolation.ProcessSnapshotData(svm, volume, snapshot, size, prefixMap, filteredSnapshotStats)
+			} else {
+				// If conversion fails, log warning and use original value
+				s.SLogger.Warn("Failed to convert snapshot size from KB to bytes",
+					slog.String("svm", svm),
+					slog.String("volume", volume),
+					slog.String("snapshot", snapshot),
+					slog.String("size", sizeStr),
+					slogx.Err(err))
+				continue
+			}
 		}
 		return nil
 	}
