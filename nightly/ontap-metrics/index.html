@@ -12226,6 +12226,24 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#snapshot_volume_violation_count" class="md-nav__link">
+    <span class="md-ellipsis">
+      snapshot_volume_violation_count
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#snapshot_volume_violation_total_size" class="md-nav__link">
+    <span class="md-ellipsis">
+      snapshot_volume_violation_total_size
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#support_auto_update_labels" class="md-nav__link">
     <span class="md-ellipsis">
       support_auto_update_labels
@@ -26125,6 +26143,24 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#snapshot_volume_violation_count" class="md-nav__link">
+    <span class="md-ellipsis">
+      snapshot_volume_violation_count
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#snapshot_volume_violation_total_size" class="md-nav__link">
+    <span class="md-ellipsis">
+      snapshot_volume_violation_total_size
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#support_auto_update_labels" class="md-nav__link">
     <span class="md-ellipsis">
       support_auto_update_labels
@@ -33585,6 +33621,12 @@ ONTAP Version: 9.16.1
 <td>Health</td>
 <td>table</td>
 <td><a href="/d/cdot-datacenter/ontap3a-datacenter?orgId=1&amp;viewPanel=480">Cluster Health</a></td>
+</tr>
+<tr>
+<td>ONTAP: Datacenter</td>
+<td>System Manager</td>
+<td>table</td>
+<td><a href="/d/cdot-datacenter/ontap3a-datacenter?orgId=1&amp;viewPanel=664">System Manager</a></td>
 </tr>
 </tbody>
 </table>
@@ -77195,6 +77237,112 @@ ONTAP Version: 9.16.1
 <td>Snapshots</td>
 <td>piechart</td>
 <td><a href="/d/cdot-datacenter/ontap3a-datacenter?orgId=1&amp;viewPanel=632">Snapshot Copies</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="snapshot_volume_violation_count">snapshot_volume_violation_count<a class="headerlink" href="#snapshot_volume_violation_count" title="Permanent link">&para;</a></h3>
+<p>This metric represents the total number of snapshots that exist on volumes without being created through an applied snapshot policy.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/rest/9.12.0/snapshotpolicy.yaml</td>
+</tr>
+<tr>
+<td>ZAPI</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/zapi/cdot/9.8.0/snapshotpolicy.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>snapshot_volume_violation_count</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ONTAP: Data Protection</td>
+<td>Snapshot Policy Violations</td>
+<td>stat</td>
+<td><a href="/d/cdot-data-protection/ontap3a-data protection?orgId=1&amp;viewPanel=170">Total Snapshots Violations</a></td>
+</tr>
+<tr>
+<td>ONTAP: Data Protection</td>
+<td>Snapshot Policy Violations</td>
+<td>table</td>
+<td><a href="/d/cdot-data-protection/ontap3a-data protection?orgId=1&amp;viewPanel=168">Snapshot Violation Details</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="snapshot_volume_violation_total_size">snapshot_volume_violation_total_size<a class="headerlink" href="#snapshot_volume_violation_total_size" title="Permanent link">&para;</a></h3>
+<p>This metric captures the total size of all snapshots that were not created through an applied snapshot policy.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/rest/9.12.0/snapshotpolicy.yaml</td>
+</tr>
+<tr>
+<td>ZAPI</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/zapi/cdot/9.8.0/snapshotpolicy.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>snapshot_volume_violation_total_size</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ONTAP: Data Protection</td>
+<td>Snapshot Policy Violations</td>
+<td>stat</td>
+<td><a href="/d/cdot-data-protection/ontap3a-data protection?orgId=1&amp;viewPanel=171">Snapshot Violations Total Size</a></td>
+</tr>
+<tr>
+<td>ONTAP: Data Protection</td>
+<td>Snapshot Policy Violations</td>
+<td>table</td>
+<td><a href="/d/cdot-data-protection/ontap3a-data protection?orgId=1&amp;viewPanel=168">Snapshot Violation Details</a></td>
 </tr>
 </tbody>
 </table>
