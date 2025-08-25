@@ -7,7 +7,6 @@ package zapi
 import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors"
-	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/snapshotviolation"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/aggregate"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/certificate"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/cluster"
@@ -18,6 +17,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/shelf"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/snapmirror"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/snapshotpolicy"
+	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/snapshotviolation"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/svm"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/systemnode"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/volume"

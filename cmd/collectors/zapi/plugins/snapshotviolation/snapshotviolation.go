@@ -167,7 +167,6 @@ func (s *SnapshotViolation) getFilteredVolumeSnapshotStats(prefixMap map[string]
 					slogx.Err(err))
 				continue
 			}
-
 		}
 		return nil
 	}
