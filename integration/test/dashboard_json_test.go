@@ -75,7 +75,6 @@ var excludeCounters = []string{
 	"change_log",
 	"cifs_session",
 	"cluster_peer",
-	// Based on the cluster upgrade, these metrics existence would be changed.
 	"cluster_software_",
 	"efficiency_savings",
 	"ems_destination_labels",
