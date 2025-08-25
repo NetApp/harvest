@@ -7,6 +7,7 @@ package zapi
 import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors"
+	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/snapshotviolation"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/aggregate"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/certificate"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/cluster"
@@ -172,6 +173,8 @@ func (z *Zapi) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return snapmirror.New(abc)
 	case "SnapshotPolicy":
 		return snapshotpolicy.New(abc)
+	case "SnapshotViolation":
+		return snapshotviolation.New(abc)
 	case "SVM":
 		return svm.New(abc)
 	case "SystemNode":
