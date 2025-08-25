@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Aug-25
+Creation Date : 2025-Aug-21
 ONTAP Version: 9.16.1
 ```
 
@@ -1791,6 +1791,7 @@ The `cluster_new_status` metric is visualized in the following Grafana dashboard
 | ONTAP: Cluster | Nodes & Subsystems - $Cluster | table | [$Cluster](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=52) |
 | ONTAP: Cluster | Nodes & Subsystems - $Cluster | stat | [cluster health status](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=156) |
 | ONTAP: Datacenter | Health | table | [Cluster Health](/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=480) |
+| ONTAP: Datacenter | System Manager | table | [System Manager](/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=664) |
 ///
 
 
@@ -18460,46 +18461,6 @@ The `snapshot_policy_labels` metric is visualized in the following Grafana dashb
 | ONTAP: Data Protection | Snapshot Copies | table | [Volume count by the number of Snapshot copies](/d/cdot-data-protection/ontap3a-data protection?orgId=1&viewPanel=94) |
 | ONTAP: Data Protection | Local Policy | table | [Snapshot policies](/d/cdot-data-protection/ontap3a-data protection?orgId=1&viewPanel=101) |
 | ONTAP: Datacenter | Snapshots | piechart | [Snapshot Copies](/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=632) |
-///
-
-
-
-### snapshot_volume_violation_count
-
-This metric represents the total number of snapshots that exist on volumes without being created through an applied snapshot policy.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/snapshotpolicy.yaml |
-| ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/snapshotpolicy.yaml |
-
-The `snapshot_volume_violation_count` metric is visualized in the following Grafana dashboards:
-    
-/// html | div.grafana-table
-| Dashboard | Row | Type | Panel |
-|--------|----------|--------|--------|
-| ONTAP: Data Protection | Snapshot Policy Violations | stat | [Total Snapshots Violations](/d/cdot-data-protection/ontap3a-data protection?orgId=1&viewPanel=170) |
-| ONTAP: Data Protection | Snapshot Policy Violations | table | [Snapshot Violation Details](/d/cdot-data-protection/ontap3a-data protection?orgId=1&viewPanel=168) |
-///
-
-
-
-### snapshot_volume_violation_total_size
-
-This metric captures the total size of all snapshots that were not created through an applied snapshot policy.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/snapshotpolicy.yaml |
-| ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/snapshotpolicy.yaml |
-
-The `snapshot_volume_violation_total_size` metric is visualized in the following Grafana dashboards:
-    
-/// html | div.grafana-table
-| Dashboard | Row | Type | Panel |
-|--------|----------|--------|--------|
-| ONTAP: Data Protection | Snapshot Policy Violations | stat | [Snapshot Violations Total Size](/d/cdot-data-protection/ontap3a-data protection?orgId=1&viewPanel=171) |
-| ONTAP: Data Protection | Snapshot Policy Violations | table | [Snapshot Violation Details](/d/cdot-data-protection/ontap3a-data protection?orgId=1&viewPanel=168) |
 ///
 
 

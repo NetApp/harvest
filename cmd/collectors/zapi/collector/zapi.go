@@ -9,6 +9,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/aggregate"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/certificate"
+	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/cluster"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/qospolicyadaptive"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/qospolicyfixed"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/qtree"
@@ -16,7 +17,6 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/shelf"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/snapmirror"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/snapshotpolicy"
-	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/snapshotviolation"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/svm"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/systemnode"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/volume"
@@ -148,36 +148,36 @@ func (z *Zapi) InitVars() error {
 
 func (z *Zapi) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin {
 	switch kind {
+	case "Aggregate":
+		return aggregate.New(abc)
+	case "Certificate":
+		return certificate.New(abc)
+	case "Cluster":
+		return cluster.New(abc)
+	case "LIF":
+		return collectors.NewLif(abc)
+	case "QosPolicyAdaptive":
+		return qospolicyadaptive.New(abc)
+	case "QosPolicyFixed":
+		return qospolicyfixed.New(abc)
+	case "Qtree":
+		return qtree.New(abc)
+	case "Security":
+		return security.New(abc)
+	case "Sensor":
+		return collectors.NewSensor(abc)
+	case "Shelf":
+		return shelf.New(abc)
 	case "Snapmirror":
 		return snapmirror.New(abc)
 	case "SnapshotPolicy":
 		return snapshotpolicy.New(abc)
-	case "SnapshotViolation":
-		return snapshotviolation.New(abc)
-	case "Shelf":
-		return shelf.New(abc)
-	case "Qtree":
-		return qtree.New(abc)
-	case "Volume":
-		return volume.New(abc)
-	case "LIF":
-		return collectors.NewLif(abc)
-	case "Sensor":
-		return collectors.NewSensor(abc)
-	case "Certificate":
-		return certificate.New(abc)
 	case "SVM":
 		return svm.New(abc)
-	case "Security":
-		return security.New(abc)
-	case "QosPolicyFixed":
-		return qospolicyfixed.New(abc)
-	case "QosPolicyAdaptive":
-		return qospolicyadaptive.New(abc)
-	case "Aggregate":
-		return aggregate.New(abc)
 	case "SystemNode":
 		return systemnode.New(abc)
+	case "Volume":
+		return volume.New(abc)
 	case "Workload":
 		return workload.New(abc)
 	default:
