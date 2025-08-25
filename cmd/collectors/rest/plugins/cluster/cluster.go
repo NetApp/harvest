@@ -14,6 +14,7 @@ import (
 type Cluster struct {
 	*plugin.AbstractPlugin
 	tags *matrix.Matrix
+	addr string
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -38,6 +39,11 @@ func (c *Cluster) Init(_ conf.Remote) error {
 		return err
 	}
 
+	ap, err := conf.PollerNamed(c.Options.Poller)
+	if err != nil {
+		return err
+	}
+	c.addr = ap.Addr
 	return nil
 }
 
@@ -46,6 +52,9 @@ func (c *Cluster) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *col
 
 	// Based on the tags array, cluster_tags instances/metrics would be created
 	c.handleTags(data)
+
+	data.SetGlobalLabel("addr", c.addr)
+	data.SetGlobalLabel("poller", c.Options.Poller)
 
 	return []*matrix.Matrix{c.tags}, nil, nil
 }
