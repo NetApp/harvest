@@ -11,10 +11,11 @@ counters:
   - ^name             => snapshot_policy
   - ^scope            => scope
 
-
+# SnapshotViolation plugin needs to be above SnapshotPolicy because the SnapshotPolicy plugin overwrites the 'copies' field, which is used in the SnapshotViolation plugin.
 plugins:
+#  - SnapshotViolation
   - SnapshotPolicy
-  
+
 export_options:
   instance_keys:
     - snapshot_policy
@@ -25,4 +26,3 @@ export_options:
     - enabled
     - schedules
     - scope
-

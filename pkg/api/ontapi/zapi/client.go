@@ -310,6 +310,12 @@ func (c *Client) InvokeZapiCall(request *node.Node) ([]*node.Node, error) {
 	return output, nil
 }
 
+// InvokeZapiCallStream will issue API requests with batching and process results in streaming fashion
+// The processBatch function is called for each batch of records as they are received
+func (c *Client) InvokeZapiCallStream(request *node.Node, processBatch func([]*node.Node) error) error {
+	return c.invokeZapi(request, processBatch)
+}
+
 // Invoke is used for two purposes
 // If testFilePath is non-empty -> Used only from unit test
 // Else -> will issue the API request and return server response

@@ -2180,6 +2180,30 @@ counters:
   - Name: node_volume_total_data
     Description: Represents the aggregated total data throughput in bytes across all volumes on a node. This metric is calculated by Harvest by summing the data read from and written to each volume on the node.
 
+  - Name: snapshot_volume_violation_count
+    Description: This metric represents the total number of snapshots that exist on volumes without being created through an applied snapshot policy.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/snapshotpolicy.yaml
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapi/cdot/9.8.0/snapshotpolicy.yaml
+
+  - Name: snapshot_volume_violation_total_size
+    Description: This metric captures the total size of all snapshots that were not created through an applied snapshot policy.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/snapshotpolicy.yaml
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapi/cdot/9.8.0/snapshotpolicy.yaml
+
   - Name: ethernet_switch_port_receive_discards
     Description: Total number of discarded packets.
     APIs:

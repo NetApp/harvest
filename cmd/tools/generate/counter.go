@@ -50,18 +50,18 @@ const (
 var (
 	replacer         = strings.NewReplacer("\n", "", ":", "")
 	objectSwaggerMap = map[string]string{
-		"volume":             "xc_volume",
 		"aggr":               "xc_aggregate",
-		"net_port":           "xc_broadcast_domain",
 		"environment_sensor": "sensors",
+		"fcp":                "fc_port",
+		"flexcache":          "volume",
+		"lif":                "ip_interface",
+		"namespace":          "nvme_namespace",
+		"net_port":           "xc_broadcast_domain",
 		"ontaps3":            "xc_s3_bucket",
 		"security_ssh":       "cluster_ssh_server",
-		"namespace":          "nvme_namespace",
-		"fcp":                "fc_port",
 		"svm_cifs":           "cifs_service",
 		"svm_nfs":            "nfs_service",
-		"lif":                "ip_interface",
-		"flexcache":          "volume",
+		"volume":             "xc_volume",
 	}
 	swaggerBytes         []byte
 	excludePerfTemplates = map[string]struct{}{
@@ -69,23 +69,18 @@ var (
 		"workload_detail_volume.yaml": {},
 	}
 	excludeCounters = map[string]struct{}{
-		"write_latency_histogram": {},
-		"read_latency_histogram":  {},
 		"latency_histogram":       {},
-		"nfsv3_latency_hist":      {},
 		"nfs4_latency_hist":       {},
-		"read_latency_hist":       {},
-		"write_latency_hist":      {},
-		"total.latency_histogram": {},
 		"nfs41_latency_hist":      {},
+		"nfsv3_latency_hist":      {},
+		"read_latency_hist":       {},
+		"read_latency_histogram":  {},
+		"total.latency_histogram": {},
+		"write_latency_hist":      {},
+		"write_latency_histogram": {},
 	}
 	// Excludes these Rest gaps from logs
 	excludeLogRestCounters = []string{
-		"smb2_",
-		"ontaps3_svm_",
-		"nvmf_rdma_port_",
-		"nvmf_tcp_port_",
-		"netstat_",
 		"external_service_op_",
 		"fabricpool_average_latency",
 		"fabricpool_get_throughput_bytes",
@@ -93,11 +88,16 @@ var (
 		"fabricpool_stats",
 		"fabricpool_throughput_ops",
 		"iw_",
+		"netstat_",
+		"nvmf_rdma_port_",
+		"nvmf_tcp_port_",
+		"ontaps3_svm_",
+		"smb2_",
 	}
 	// Special handling perf objects
 	specialPerfObjects = map[string]bool{
-		"svm_nfs":  true,
 		"node_nfs": true,
+		"svm_nfs":  true,
 	}
 
 	knownDescriptionGaps = map[string]struct{}{
@@ -132,64 +132,67 @@ var (
 	}
 
 	excludeDocumentedRestMetrics = []string{
-		"ontaps3_svm_",
-		"svm_ontaps3_svm_",
-		"mav_request_",
-		"nvme_lif_",
+		"aggr_hybrid_disk_count",
+		"cifs_session_idle_duration",
+		"cluster_software",
+		"ems_events",
+		"export_rule_labels",
 		"fcvi_",
-		"smb2_",
-		"nvmf_",
 		"flashpool_",
-		"fcvi_",
-		"nfs_diag_",
+		"health_",
 		"iw_",
+		"mav_request_",
+		"mediator_labels",
+		"metrocluster_",
+		"ndmp_session",
+		"net_connection_labels",
+		"nfs_clients_idle_duration",
+		"nfs_diag_",
 		"node_cifs_",
+		"nvme_lif_",
+		"nvmf_",
+		"ontaps3_svm_",
+		"path_",
+		"smb2_",
+		"snapshot_volume_violation_count",
+		"snapshot_volume_violation_total_size",
 		"svm_cifs_",
-		"vscan_",
+		"svm_ontaps3_svm_",
 		"svm_vscan_",
 		"token_",
-		"metrocluster_",
-		"path_",
-		"ndmp_session",
-		"export_rule_labels",
-		"mediator_labels",
-		"net_connection_labels",
-		"health_",
-		"aggr_hybrid_disk_count",
-		"nfs_clients_idle_duration",
-		"ems_events",
 		"volume_top_clients",
 		"volume_top_files",
-		"cluster_software",
-		"cifs_session_idle_duration",
+		"vscan_",
 	}
 
 	excludeDocumentedZapiMetrics = []string{
-		"fabricpool_",
-		"external_service_",
-		"netstat_",
-		"flexcache_",
-		"quota_disk_used_pct_threshold",
 		"ems_events",
+		"external_service_",
+		"fabricpool_",
+		"flexcache_",
 		"fpolicy_svm_failedop_notifications",
+		"netstat_",
+		"quota_disk_used_pct_threshold",
+		"snapshot_volume_violation_count",
+		"snapshot_volume_violation_total_size",
 	}
 
 	// Exclude extra metrics for REST
 	excludeNotDocumentedRestMetrics = []string{
-		"volume_aggr_labels",
+		"ALERTS",
 		"flexcache_",
 		"hist_",
+		"volume_aggr_labels",
 		"volume_arw_status",
-		"ALERTS",
 	}
 
 	// Exclude extra metrics for ZAPI
 	excludeNotDocumentedZapiMetrics = []string{
-		"volume_aggr_labels",
+		"ALERTS",
 		"hist_",
 		"security_",
 		"svm_ldap",
-		"ALERTS",
+		"volume_aggr_labels",
 	}
 
 	// include StatPerf Templates

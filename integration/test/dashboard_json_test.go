@@ -30,35 +30,33 @@ var fileSet []string
 
 // zapiCounterMap are additional counters, above and beyond the ones from counterMap, which should be excluded from Zapi
 var zapiCounterMap = map[string]struct{}{
-	"net_route_labels":             {},
-	"ontaps3_labels":               {},
-	"ontaps3_logical_used_size":    {},
-	"ontaps3_size":                 {},
-	"ontaps3_object_count":         {},
-	"ontaps3_used_percent":         {},
-	"ontaps3_services_labels":      {},
-	"ontaps3_policy_labels":        {},
-	"volume_arw_status":            {},
-	"volume_num_compress_fail":     {},
-	"volume_num_compress_attempts": {},
-	"cluster_tags":                 {},
-	"volume_tags":                  {},
+	"aggr_object_store_logical_used":         {},
+	"aggr_object_store_physical_used":        {},
+	"cluster_schedule_labels":                {},
+	"cluster_tags":                           {},
+	"fpolicy_svm_failedop_notifications":     {},
+	"fru_status":                             {},
+	"net_route_labels":                       {},
+	"ontaps3_labels":                         {},
+	"ontaps3_logical_used_size":              {},
+	"ontaps3_object_count":                   {},
+	"ontaps3_policy_labels":                  {},
+	"ontaps3_services_labels":                {},
+	"ontaps3_size":                           {},
+	"ontaps3_used_percent":                   {},
+	"snapshot_policy_labels":                 {},
+	"volume_arw_status":                      {},
+	"volume_capacity_tier_footprint":         {},
+	"volume_capacity_tier_footprint_percent": {},
+	"volume_num_compress_attempts":           {},
+	"volume_num_compress_fail":               {},
 	// sar is experiencing high api time for ZapiPerf. The u2 cluster does not have fabricpool added for the collection of these counters. Remove the following once sar is capable of running ZapiPerf.
 	"volume_performance_tier_footprint":         {},
-	"volume_capacity_tier_footprint":            {},
-	"volume_capacity_tier_footprint_percent":    {},
 	"volume_performance_tier_footprint_percent": {},
-	// Below are not available in ZAPI
-	"aggr_object_store_logical_used":  {},
-	"aggr_object_store_physical_used": {},
-	"fru_status":                      {},
-	"snapshot_policy_labels":          {},
-	"cluster_schedule_labels":         {},
+	"volume_tags": {},
 	// Skip this counter in CI environments because it was introduced in version 9.15.
 	// The CI currently operates with clusters running versions earlier than 9.15 for the ZAPI collector.
 	"volume_total_metadata_footprint": {},
-	// Skip fpolicy_svm_failedop_notifications as it is not available in 9.9
-	"fpolicy_svm_failedop_notifications": {},
 }
 
 // restCounterMap are additional counters, above and beyond the ones from counterMap, which should be excluded from Rest
@@ -73,10 +71,11 @@ var restCounterMap = map[string]struct{}{
 // excludeCounters consists of counters which should be excluded from both Zapi/Rest in CI test
 var excludeCounters = []string{
 	"aggr_physical_",
-	"change_log",
 	"audit_log",
+	"change_log",
 	"cifs_session",
 	"cluster_peer",
+	"cluster_software_",
 	"efficiency_savings",
 	"ems_destination_labels",
 	"ems_events",
@@ -107,11 +106,17 @@ var excludeCounters = []string{
 	"ontaps3_svm_",
 	"path_",
 	"poller",
+	"qtree_cifs_",
+	"qtree_internal_",
+	"qtree_nfs_",
+	"qtree_total_",
 	"quota_disk_used_pct_disk_limit",
 	"quota_files_used_pct_file_limit",
 	"security_login",
 	"smb2_",
 	"snapmirror_",
+	"snapshot_volume_violation_count",
+	"snapshot_volume_violation_total_size",
 	"support_auto_update_labels",
 	"svm_cifs_",
 	"svm_ldap",
@@ -123,12 +128,6 @@ var excludeCounters = []string{
 	"svm_write_total",
 	"volume_top_clients_",
 	"volume_top_files_",
-	// Based on the cluster upgrade, these metrics existence would be changed.
-	"cluster_software_",
-	"qtree_cifs_",
-	"qtree_nfs_",
-	"qtree_total_",
-	"qtree_internal_",
 }
 
 var flakyCounters = []string{

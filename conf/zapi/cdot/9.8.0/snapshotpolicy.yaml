@@ -12,6 +12,7 @@ counters:
     - snapshot-policy-schedules:
         - snapshot-schedule-info:
             - ^count         => copies
+            - ^prefix        => prefix
             - ^schedule      => schedules
 
 collect_only_labels: true
@@ -20,6 +21,7 @@ plugins:
   - LabelAgent:
       split:
         - policy_owner `-admin` scope,
+#  - SnapshotViolation
   - SnapshotPolicy
 
 export_options:
