@@ -2,7 +2,7 @@
   "__inputs": [
     {
       "description": "",
-      "label": "Prometheus",
+      "label": "prometheus",
       "name": "DS_PROMETHEUS",
       "pluginId": "prometheus",
       "pluginName": "Prometheus",
@@ -11,20 +11,14 @@
   ],
   "__requires": [
     {
-      "id": "bargauge",
-      "name": "Bar gauge",
-      "type": "panel",
-      "version": ""
-    },
-    {
       "id": "grafana",
       "name": "Grafana",
       "type": "grafana",
-      "version": "7.5.4"
+      "version": "8.1.8"
     },
     {
-      "id": "graph",
-      "name": "Graph",
+      "id": "piechart",
+      "name": "Pie chart",
       "type": "panel",
       "version": ""
     },
@@ -43,6 +37,12 @@
     {
       "id": "table",
       "name": "Table",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "text",
+      "name": "Text",
       "type": "panel",
       "version": ""
     }
@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1637051731590,
+  "iteration": 1755847087209,
   "links": [
     {
       "asDropdown": true,
@@ -1663,7 +1663,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "count(\n        volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\"}\n      * on (snapshot_policy) group_left ()\n        group by (snapshot_policy) (snapshot_policy_labels)\n    * on (volume, svm, cluster) group_right ()\n      (\n            volume_snapshot_reserve_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e= 0\n          and\n            volume_snapshots_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e= 0\n        and\n            volume_snapshots_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n          \u003e\n            volume_snapshot_reserve_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n      )\n  )\nor on ()\n  vector(0)",
+              "expr": "count(\n        volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\"}\n      * on (snapshot_policy) group_left ()\n        group by (snapshot_policy) (snapshot_policy_labels)\n    * on (volume, svm, cluster) group_right ()\n      (\n            volume_snapshot_reserve_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} >= 0\n          and\n            volume_snapshots_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} >= 0\n        and\n            volume_snapshots_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n          >\n            volume_snapshot_reserve_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n      )\n  )\nor on ()\n  vector(0)",
               "format": "time_series",
               "hide": false,
               "instant": true,
@@ -1737,7 +1737,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(\n      count(\n          (\n              volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\"}\n            * on (snapshot_policy) group_left ()\n              group by (snapshot_policy) (snapshot_policy_labels)\n          )\n        * on (volume, svm, cluster) group_right ()\n          (\n                volume_snapshot_reserve_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e 0\n              and\n                volume_snapshots_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e 0\n            and\n                volume_snapshots_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n              \u003c=\n                volume_snapshot_reserve_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n          )\n      )\n    or on ()\n      vector(0)\n  )\n+\n  (\n      count(\n            volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\"}\n          * on (snapshot_policy) group_left ()\n            group by (snapshot_policy) (snapshot_policy_labels)\n        * on (volume, svm, cluster) group_right ()\n          (\n              volume_snapshot_reserve_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e= 0\n            and\n              volume_snapshots_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} == 0\n          )\n      )\n    or on ()\n      vector(0)\n  )",
+              "expr": "(\n      count(\n          (\n              volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\"}\n            * on (snapshot_policy) group_left ()\n              group by (snapshot_policy) (snapshot_policy_labels)\n          )\n        * on (volume, svm, cluster) group_right ()\n          (\n                volume_snapshot_reserve_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} > 0\n              and\n                volume_snapshots_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} > 0\n            and\n                volume_snapshots_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n              <=\n                volume_snapshot_reserve_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n          )\n      )\n    or on ()\n      vector(0)\n  )\n+\n  (\n      count(\n            volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\"}\n          * on (snapshot_policy) group_left ()\n            group by (snapshot_policy) (snapshot_policy_labels)\n        * on (volume, svm, cluster) group_right ()\n          (\n              volume_snapshot_reserve_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} >= 0\n            and\n              volume_snapshots_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} == 0\n          )\n      )\n    or on ()\n      vector(0)\n  )",
               "format": "time_series",
               "hide": false,
               "instant": true,
@@ -2060,7 +2060,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\"}\n  * on (snapshot_policy) group_left ()\n    group by (snapshot_policy) (snapshot_policy_labels)\n* on (volume, svm, cluster) group_right ()\n  (\n      volume_snapshot_reserve_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e= 0\n    and\n      volume_snapshots_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e= 0\n  )",
+              "expr": "volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\"}\n  * on (snapshot_policy) group_left ()\n    group by (snapshot_policy) (snapshot_policy_labels)\n* on (volume, svm, cluster) group_right ()\n  (\n      volume_snapshot_reserve_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} >= 0\n    and\n      volume_snapshots_size_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} >= 0\n  )",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -2204,7 +2204,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "count(\n      (\n          volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\",volume!~\"MDV.*\"}\n        * on (snapshot_policy) group_left ()\n          group by (snapshot_policy) (snapshot_policy_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n      )\n    * on (volume, svm, cluster)\n      (\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e 0\n        and\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003c 10\n      )\n  )\nor on ()\n  vector(0)",
+              "expr": "count(\n      (\n          volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\",volume!~\"MDV.*\"}\n        * on (snapshot_policy) group_left ()\n          group by (snapshot_policy) (snapshot_policy_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n      )\n    * on (volume, svm, cluster)\n      (\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} > 0\n        and\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} < 10\n      )\n  )\nor on ()\n  vector(0)",
               "format": "time_series",
               "hide": false,
               "instant": true,
@@ -2267,7 +2267,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "count(\n      (\n          volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\",volume!~\"MDV.*\"}\n        * on (snapshot_policy) group_left ()\n          group by (snapshot_policy) (snapshot_policy_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n      )\n    * on (volume, svm, cluster)\n      (\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e= 10\n        and\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003c= 100\n      )\n  )\nor on ()\n  vector(0)",
+              "expr": "count(\n      (\n          volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\",volume!~\"MDV.*\"}\n        * on (snapshot_policy) group_left ()\n          group by (snapshot_policy) (snapshot_policy_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n      )\n    * on (volume, svm, cluster)\n      (\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} >= 10\n        and\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} <= 100\n      )\n  )\nor on ()\n  vector(0)",
               "format": "time_series",
               "hide": false,
               "instant": true,
@@ -2330,7 +2330,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "count(\n      (\n          volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\",volume!~\"MDV.*\"}\n        * on (snapshot_policy) group_left ()\n          group by (snapshot_policy) (snapshot_policy_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n      )\n    * on (volume, svm, cluster)\n      (\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e 100\n        and\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003c= 500\n      )\n  )\nor on ()\n  vector(0)",
+              "expr": "count(\n      (\n          volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\",volume!~\"MDV.*\"}\n        * on (snapshot_policy) group_left ()\n          group by (snapshot_policy) (snapshot_policy_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n      )\n    * on (volume, svm, cluster)\n      (\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} > 100\n        and\n          volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} <= 500\n      )\n  )\nor on ()\n  vector(0)",
               "format": "time_series",
               "hide": false,
               "instant": true,
@@ -2393,7 +2393,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "count(\n      (\n          volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\",volume!~\"MDV.*\"}\n        * on (snapshot_policy) group_left ()\n          group by (snapshot_policy) (snapshot_policy_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n      )\n    * on (volume, svm, cluster)\n      (volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e 500)\n  )\nor on ()\n  vector(0)",
+              "expr": "count(\n      (\n          volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\",volume!~\"MDV.*\"}\n        * on (snapshot_policy) group_left ()\n          group by (snapshot_policy) (snapshot_policy_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n      )\n    * on (volume, svm, cluster)\n      (volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} > 500)\n  )\nor on ()\n  vector(0)",
               "format": "time_series",
               "hide": false,
               "instant": true,
@@ -2587,7 +2587,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(\n      volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\",volume!~\"MDV.*\"}\n    * on (snapshot_policy) group_left ()\n      group by (snapshot_policy) (snapshot_policy_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n  )\n* on (volume, svm, cluster)\n  (volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} \u003e 0)",
+              "expr": "(\n      volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy!=\"\",snapshot_policy!~\"none.*\",volume!~\"MDV.*\"}\n    * on (snapshot_policy) group_left ()\n      group by (snapshot_policy) (snapshot_policy_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n  )\n* on (volume, svm, cluster)\n  (volume_snapshot_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} > 0)",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -3252,6 +3252,431 @@
       ],
       "title": "Local Policy",
       "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 21
+      },
+      "id": 166,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "gridPos": {
+            "h": 2,
+            "w": 24,
+            "x": 0,
+            "y": 22
+          },
+          "id": 173,
+          "options": {
+            "content": "<br>\n\nTo use these panels dashboard, enable the SnapshotViolation plugin in SnapshotPolicy templates. For more details, visit the [SnapshotViolation documentation](https://github.com/NetApp/harvest/discussions/3854).\n",
+            "mode": "markdown"
+          },
+          "pluginVersion": "8.1.8",
+          "type": "text"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel displays the number of snapshots not created by a policy.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "short"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 24
+          },
+          "id": 170,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum(snapshot_volume_violation_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Total Snapshots Violations",
+          "type": "stat"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel shows the total size of snapshots not created by a policy.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 24
+          },
+          "id": 171,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum(snapshot_volume_violation_total_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Snapshot Violations Total Size",
+          "type": "stat"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This table shows volumes that have snapshots not created by a policy and displays the count and total size of those snapshots.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "cluster"
+                },
+                "properties": [
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "volume"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Volume"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-volume/ontap-volume?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Volume=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "svm"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "SVM"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-svm/ontap-svm?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-SVM=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #B"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #A"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "short"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 24,
+            "x": 0,
+            "y": 32
+          },
+          "id": 168,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": true,
+                "displayName": "Snapshot Total Size"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "label_join(\n  snapshot_volume_violation_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\"\n)",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "label_join(\n  snapshot_volume_violation_total_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"svm\",\n  \"volume\"\n)",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "B"
+            }
+          ],
+          "title": "Snapshot Violation Details",
+          "transformations": [
+            {
+              "id": "seriesToColumns",
+              "options": {
+                "byField": "unique_id"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "(.*) 1$",
+                "renamePattern": "$1"
+              }
+            },
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "unique_id",
+                    "cluster",
+                    "datacenter",
+                    "instance",
+                    "job",
+                    "svm",
+                    "volume",
+                    "Value #A",
+                    "Value #B"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "cluster 2": true,
+                  "datacenter 2": true,
+                  "instance": true,
+                  "instance 2": true,
+                  "job": true,
+                  "job 2": true,
+                  "svm 2": true,
+                  "unique_id": true,
+                  "volume 2": true
+                },
+                "indexByName": {
+                  "Value #A": 5,
+                  "Value #B": 6,
+                  "cluster": 2,
+                  "cluster 2": 9,
+                  "datacenter": 1,
+                  "datacenter 2": 10,
+                  "instance": 7,
+                  "instance 2": 11,
+                  "job": 8,
+                  "job 2": 12,
+                  "svm": 3,
+                  "svm 2": 13,
+                  "unique_id": 0,
+                  "volume": 4,
+                  "volume 2": 14
+                },
+                "renameByName": {
+                  "Value #A": "Snapshot Count",
+                  "Value #B": "Snapshot Total Size"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Snapshot Policy Violations",
+      "type": "row"
     }
   ],
   "refresh": "",
@@ -3268,8 +3693,8 @@
       {
         "current": {
           "selected": false,
-          "text": "Prometheus",
-          "value": "Prometheus"
+          "text": "prometheus",
+          "value": "prometheus"
         },
         "description": null,
         "error": null,
@@ -3359,5 +3784,5 @@
   "timezone": "",
   "title": "ONTAP: Data Protection",
   "uid": "cdot-data-protection",
-  "version": 3
+  "version": 4
 }

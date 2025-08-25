@@ -16,6 +16,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/shelf"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/snapmirror"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/snapshotpolicy"
+	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/snapshotviolation"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/svm"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/systemnode"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapi/plugins/volume"
@@ -151,6 +152,8 @@ func (z *Zapi) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return snapmirror.New(abc)
 	case "SnapshotPolicy":
 		return snapshotpolicy.New(abc)
+	case "SnapshotViolation":
+		return snapshotviolation.New(abc)
 	case "Shelf":
 		return shelf.New(abc)
 	case "Qtree":

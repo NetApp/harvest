@@ -11,10 +11,10 @@ counters:
   - ^name             => snapshot_policy
   - ^scope            => scope
 
-
 plugins:
+#  - SnapshotViolation
   - SnapshotPolicy
-  
+
 export_options:
   instance_keys:
     - snapshot_policy
@@ -25,4 +25,3 @@ export_options:
     - enabled
     - schedules
     - scope
-

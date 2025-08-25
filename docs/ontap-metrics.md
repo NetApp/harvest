@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Aug-19
+Creation Date : 2025-Aug-25
 ONTAP Version: 9.16.1
 ```
 
@@ -8953,6 +8953,7 @@ The `nic_rx_alignment_errors` metric is visualized in the following Grafana dash
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | ONTAP: Network | Ethernet | timeseries | [NICs Receive Errors by Cluster](/d/cdot-network/ontap3a-network?orgId=1&viewPanel=30) |
+| ONTAP: Network | Ethernet | table | [Ethernet port errors](/d/cdot-network/ontap3a-network?orgId=1&viewPanel=119) |
 ///
 
 
@@ -9027,6 +9028,7 @@ The `nic_rx_length_errors` metric is visualized in the following Grafana dashboa
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | ONTAP: Network | Ethernet | timeseries | [NICs Receive Errors by Cluster](/d/cdot-network/ontap3a-network?orgId=1&viewPanel=30) |
+| ONTAP: Network | Ethernet | table | [Ethernet port errors](/d/cdot-network/ontap3a-network?orgId=1&viewPanel=119) |
 ///
 
 
@@ -18462,6 +18464,46 @@ The `snapshot_policy_labels` metric is visualized in the following Grafana dashb
 
 
 
+### snapshot_volume_violation_count
+
+This metric represents the total number of snapshots that exist on volumes without being created through an applied snapshot policy.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/snapshotpolicy.yaml |
+| ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/snapshotpolicy.yaml |
+
+The `snapshot_volume_violation_count` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Data Protection | Snapshot Policy Violations | stat | [Total Snapshots Violations](/d/cdot-data-protection/ontap3a-data protection?orgId=1&viewPanel=170) |
+| ONTAP: Data Protection | Snapshot Policy Violations | table | [Snapshot Violation Details](/d/cdot-data-protection/ontap3a-data protection?orgId=1&viewPanel=168) |
+///
+
+
+
+### snapshot_volume_violation_total_size
+
+This metric captures the total size of all snapshots that were not created through an applied snapshot policy.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/snapshotpolicy.yaml |
+| ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/snapshotpolicy.yaml |
+
+The `snapshot_volume_violation_total_size` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Data Protection | Snapshot Policy Violations | stat | [Snapshot Violations Total Size](/d/cdot-data-protection/ontap3a-data protection?orgId=1&viewPanel=171) |
+| ONTAP: Data Protection | Snapshot Policy Violations | table | [Snapshot Violation Details](/d/cdot-data-protection/ontap3a-data protection?orgId=1&viewPanel=168) |
+///
+
+
+
 ### support_auto_update_labels
 
 This metric provides information about SupportAutoUpdate
@@ -21530,7 +21572,7 @@ Used space threshold which triggers autogrow. When the size-used is greater than
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-autosize-attributes.grow-threshold-percent` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 The `volume_autosize_grow_threshold_percent` metric is visualized in the following Grafana dashboards:
-
+    
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
@@ -21549,7 +21591,7 @@ The maximum size (in bytes) to which the volume would be grown automatically. Th
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-autosize-attributes.maximum-size` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 The `volume_autosize_maximum_size` metric is visualized in the following Grafana dashboards:
-
+    
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
@@ -21568,7 +21610,7 @@ Minimum size in bytes up to which the volume shrinks automatically. This size ca
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-autosize-attributes.minimum-size` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 The `volume_autosize_minimum_size` metric is visualized in the following Grafana dashboards:
-
+    
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
@@ -21587,7 +21629,7 @@ Used space threshold size, in percentage, for the automatic shrinkage of the vol
 | ZAPI | `volume-get-iter` | `volume-attributes.volume-autosize-attributes.shrink-threshold-percent` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 The `volume_autosize_shrink_threshold_percent` metric is visualized in the following Grafana dashboards:
-
+    
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
