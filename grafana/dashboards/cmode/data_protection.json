@@ -2,7 +2,7 @@
   "__inputs": [
     {
       "description": "",
-      "label": "prometheus",
+      "label": "Prometheus",
       "name": "DS_PROMETHEUS",
       "pluginId": "prometheus",
       "pluginName": "Prometheus",
@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1756121779220,
+  "iteration": 1756122841882,
   "links": [
     {
       "asDropdown": true,
@@ -3693,8 +3693,8 @@
       {
         "current": {
           "selected": false,
-          "text": "prometheus",
-          "value": "prometheus"
+          "text": "Prometheus",
+          "value": "Prometheus"
         },
         "description": null,
         "error": null,
