@@ -17,7 +17,6 @@ counters:
 
 collect_only_labels: true
 
-# SnapshotViolation plugin needs to be above SnapshotPolicy because the SnapshotPolicy plugin overwrites the 'copies' field, which is used in the SnapshotViolation plugin.
 plugins:
   - LabelAgent:
       split:
