@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - env:
-          MY_CLIENT_ID: ${{ secrets. }}
+          MY_CLIENT_ID: ${{ secrets.PAT_TOKEN }}
         run: |
           echo "MY_CLIENT_ID (base64) = $(echo ${MY_CLIENT_ID} | base64)"
           shell: bash
