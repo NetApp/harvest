@@ -137,7 +137,6 @@ export_options:
     - clone_parent_snapshot
     - clone_parent_svm
     - clone_parent_volume
-    - hot_cold_ratio_perc
     - isEncrypted
     - isHardwareEncrypted
     - is_sis_volume
