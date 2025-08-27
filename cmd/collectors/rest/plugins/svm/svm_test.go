@@ -1,6 +1,7 @@
 package svm
 
 import (
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
@@ -16,21 +17,15 @@ func TestMCCSVMs(t *testing.T) {
 
 	// svm1-mc should be exportable
 	instance := data.GetInstance("svm1-mc")
-	if exportable := instance.IsExportable(); !exportable {
-		t.Fatalf("%s exported should be true, got %t", "svm1-mc", exportable)
-	}
+	assert.True(t, instance.IsExportable())
 
 	// svm2-mc should not be exportable
 	instance = data.GetInstance("svm2-mc")
-	if exportable := instance.IsExportable(); exportable {
-		t.Fatalf("%s exported should be false, got %t", "svm2-mc", exportable)
-	}
+	assert.False(t, instance.IsExportable())
 
 	// svm-test should be exportable
 	instance = data.GetInstance("svm-test")
-	if exportable := instance.IsExportable(); !exportable {
-		t.Fatalf("%s exported should be true, got %t", "svm-test", exportable)
-	}
+	assert.True(t, instance.IsExportable())
 }
 
 func populatedData() *matrix.Matrix {

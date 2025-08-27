@@ -1,6 +1,7 @@
 package nic
 
 import (
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
@@ -125,32 +126,22 @@ func runNicTest(t *testing.T, createRestNic func(params *node.Node) plugin.Plugi
 
 	// Run the plugin
 	output, _, err := n.Run(dataMap)
-	if err != nil {
-		t.Fatalf("Run method failed: %v", err)
-	}
+	assert.Nil(t, err)
 
 	// Verify the output
-	if len(output) != 1 {
-		t.Fatalf("expected 2 output matrices, got %d", len(output))
-	}
+	assert.Equal(t, len(output), 1)
 
 	ifgroupData := output[0]
 
 	// Check for ifgroup instance
 	ifgroupInstance1 := ifgroupData.GetInstance("rtp-a700s-01a0a")
-	if ifgroupInstance1 == nil {
-		t.Fatalf("expected ifgroup instance 'rtp-a700s-01a0a' not found")
-	}
+	assert.NotNil(t, ifgroupInstance1)
 
 	// Check for ifgroup instance
 	ifgroupInstance2 := ifgroupData.GetInstance("rtp-a700s-02a0b")
-	if ifgroupInstance2 != nil {
-		t.Fatalf("expected ifgroup instance 'rtp-a700s-02a0b' found")
-	}
+	assert.Nil(t, ifgroupInstance2)
 
-	if label := ifgroupInstance1.GetLabel("ports"); label != "f5w,f5x,f5y,f5z" {
-		t.Fatalf("expected ifgroup metric instance label 'ports' to be 'f5w,f5x,f5y,f5z', got '%s'", label)
-	}
+	assert.Equal(t, ifgroupInstance1.GetLabel("ports"), "f5w,f5x,f5y,f5z")
 
 	// count ifgroup instances
 	ifgroupCount := 0
@@ -161,15 +152,11 @@ func runNicTest(t *testing.T, createRestNic func(params *node.Node) plugin.Plugi
 	}
 
 	// Verify the number of instances in the ifgroup
-	if ifgroupCount != expectedCount {
-		t.Errorf("expected %d instances in the matrix, got %d", expectedCount, ifgroupCount)
-	}
+	assert.Equal(t, ifgroupCount, expectedCount)
 
-	if value, ok := ifgroupData.GetMetric("rx_bytes").GetValueFloat64(ifgroupInstance1); !ok {
-		t.Error("Value [rx_bytes] missing")
-	} else if value != 11447209427908.0 {
-		t.Errorf("Value [rx_bytes] = (%f) incorrect", value)
-	}
+	value, ok := ifgroupData.GetMetric("rx_bytes").GetValueFloat64(ifgroupInstance1)
+	assert.True(t, ok)
+	assert.Equal(t, value, 11447209427908.0)
 }
 
 func TestRunForAllImplementations(t *testing.T) {

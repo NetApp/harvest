@@ -2,6 +2,7 @@ package environment
 
 import (
 	diff "github.com/google/go-cmp/cmp"
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"os"
@@ -45,14 +46,9 @@ func TestNewPowerModel(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// Read the file from the testdata directory
 			data, err := os.ReadFile("testdata/" + tt.input)
-			if err != nil {
-				t.Errorf("failed to read %s file: %v", tt.input, err)
-			}
+			assert.Nil(t, err)
 			got := NewPowerModel(gjson.ParseBytes(data), slog.Default())
-			diff1 := diff.Diff(tt.want, got)
-			if diff1 != "" {
-				t.Errorf("Mismatch (-got +want):\n%s", diff1)
-			}
+			assert.Equal(t, diff.Diff(tt.want, got), "")
 		})
 	}
 }
@@ -87,14 +83,10 @@ func TestFanSpeed(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// Read the file from the testdata directory
 			data, err := os.ReadFile("testdata/" + tt.input)
-			if err != nil {
-				t.Errorf("failed to read %s file: %v", tt.input, err)
-			}
+			assert.Nil(t, err)
 			got := NewFanModel(gjson.ParseBytes(data), slog.Default())
 			diff1 := diff.Diff(got, tt.want)
-			if diff1 != "" {
-				t.Errorf("Mismatch (-got +want):\n%s", diff1)
-			}
+			assert.Equal(t, diff1, "")
 		})
 	}
 }

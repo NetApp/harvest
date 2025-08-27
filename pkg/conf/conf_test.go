@@ -1,14 +1,16 @@
 package conf
 
 import (
-	"github.com/google/go-cmp/cmp"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"os"
 	"slices"
 	"sort"
 	"strconv"
 	"strings"
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
+	"github.com/netapp/harvest/v2/assert"
+	"github.com/netapp/harvest/v2/pkg/tree/node"
 )
 
 var testYml = "../../cmd/tools/doctor/testdata/testConfig.yml"
@@ -47,9 +49,7 @@ func TestGetLastPromPortIssue284(t *testing.T) {
 	TestLoadHarvestConfig("../../cmd/tools/doctor/testdata/issue-284.yml")
 	loadPrometheusExporterPortRangeMapping(false)
 	got, _ := GetLastPromPort("issue-284", false)
-	if got != 0 {
-		t.Fatalf("expected port to be 0 but was %d", got)
-	}
+	assert.Equal(t, got, 0)
 }
 
 func TestPollerStructDefaults(t *testing.T) {
@@ -60,16 +60,10 @@ func TestPollerStructDefaults(t *testing.T) {
 			panic(err)
 		}
 		// the poller does not define exporters but defaults does
-		if poller.Exporters == nil {
-			t.Fatalf(`expected exporters to not be nil, but it was`)
-		}
-		if len(poller.Exporters) != 1 {
-			t.Fatalf(`expected 1 exporter but got %v`, poller.Exporters)
-		}
+		assert.NotNil(t, poller.Exporters)
+		assert.Equal(t, len(poller.Exporters), 1)
 		diff := cmp.Diff(poller.Exporters, []string{"prometheusrange"})
-		if diff != "" {
-			t.Errorf("Mismatch (-got +want):\n%s", diff)
-		}
+		assert.Equal(t, diff, "")
 	})
 
 	t.Run("poller collector", func(t *testing.T) {
@@ -78,18 +72,12 @@ func TestPollerStructDefaults(t *testing.T) {
 			panic(err)
 		}
 		// the poller does not define collectors but defaults does
-		if poller.Collectors == nil {
-			t.Fatalf(`expected collectors to not be nil, but it was`)
-		}
-		if len(poller.Collectors) != 2 {
-			t.Fatalf(`expected 2 collectors but got %v`, poller.Collectors)
-		}
+		assert.NotNil(t, poller.Collectors)
+		assert.Equal(t, len(poller.Collectors), 2)
 		defaultT := []string{"default.yaml", "custom.yaml"}
 		want := []Collector{{Name: "Zapi", Templates: &defaultT}, {Name: "ZapiPerf", Templates: &defaultT}}
 		diff := cmp.Diff(poller.Collectors, want)
-		if diff != "" {
-			t.Errorf("Mismatch (-got +want):\n%s", diff)
-		}
+		assert.Equal(t, diff, "")
 	})
 
 	t.Run("poller username", func(t *testing.T) {

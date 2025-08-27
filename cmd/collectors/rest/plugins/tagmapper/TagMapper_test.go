@@ -1,11 +1,11 @@
 package tagmapper
 
 import (
-	"reflect"
+	"github.com/netapp/harvest/v2/assert"
 	"testing"
 )
 
-func TestTagMapper_parseTagsToMap(t *testing.T) {
+func Test_parseTagsToMap(t *testing.T) {
 	tagMapper := &TagMapper{}
 
 	tests := []struct {
@@ -61,9 +61,7 @@ func TestTagMapper_parseTagsToMap(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result := tagMapper.parseTagsToMap(tt.tags)
-			if !reflect.DeepEqual(result, tt.expected) {
-				t.Errorf("parseTagsToMap() = %v, want %v", result, tt.expected)
-			}
+			assert.Equal(t, result, tt.expected)
 		})
 	}
 }

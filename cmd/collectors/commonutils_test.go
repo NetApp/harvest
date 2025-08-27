@@ -1,6 +1,7 @@
 package collectors
 
 import (
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"testing"
@@ -44,9 +45,8 @@ func testWithoutGroupType(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("group_type", "")
 	UpdateProtectedFields(instance)
 
-	if instance.GetLabel("protectedBy") != "" || instance.GetLabel("protectionSourceType") != "" {
-		t.Errorf("Labels protectedBy= %s, expected empty  and protectionSourceType= %s, expected empty", instance.GetLabel("protectedBy"), instance.GetLabel("protectionSourceType"))
-	}
+	assert.Equal(t, instance.GetLabel("protectedBy"), "")
+	assert.Equal(t, instance.GetLabel("protectionSourceType"), "")
 }
 
 func testSvmdr(t *testing.T, instance *matrix.Instance) {
@@ -55,9 +55,8 @@ func testSvmdr(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("source_volume", "")
 	UpdateProtectedFields(instance)
 
-	if instance.GetLabel("protectedBy") != "storage_vm" || instance.GetLabel("protectionSourceType") != "storage_vm" {
-		t.Errorf("Labels protectedBy= %s, expected: storage_vm and protectionSourceType= %s, expected: storage_vm", instance.GetLabel("protectedBy"), instance.GetLabel("protectionSourceType"))
-	}
+	assert.Equal(t, instance.GetLabel("protectedBy"), "storage_vm")
+	assert.Equal(t, instance.GetLabel("protectionSourceType"), "storage_vm")
 }
 
 func testConstituentVolumeWithinSvmdr(t *testing.T, instance *matrix.Instance) {
@@ -67,9 +66,8 @@ func testConstituentVolumeWithinSvmdr(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("destination_location", "test1")
 	UpdateProtectedFields(instance)
 
-	if instance.GetLabel("protectedBy") != "storage_vm" || instance.GetLabel("protectionSourceType") != "volume" {
-		t.Errorf("Labels protectedBy= %s, expected: storage_vm and protectionSourceType= %s, expected: volume", instance.GetLabel("protectedBy"), instance.GetLabel("protectionSourceType"))
-	}
+	assert.Equal(t, instance.GetLabel("protectedBy"), "storage_vm")
+	assert.Equal(t, instance.GetLabel("protectionSourceType"), "volume")
 }
 
 func testCg(t *testing.T, instance *matrix.Instance) {
@@ -77,9 +75,8 @@ func testCg(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("destination_location", "test123:/cg/")
 	UpdateProtectedFields(instance)
 
-	if instance.GetLabel("protectedBy") != "cg" || instance.GetLabel("protectionSourceType") != "cg" {
-		t.Errorf("Labels protectedBy= %s, expected: cg and protectionSourceType= %s, expected: cg", instance.GetLabel("protectedBy"), instance.GetLabel("protectionSourceType"))
-	}
+	assert.Equal(t, instance.GetLabel("protectedBy"), "cg")
+	assert.Equal(t, instance.GetLabel("protectionSourceType"), "cg")
 }
 
 func testConstituentVolumeWithinCg(t *testing.T, instance *matrix.Instance) {
@@ -87,18 +84,16 @@ func testConstituentVolumeWithinCg(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("destination_location", "test123")
 	UpdateProtectedFields(instance)
 
-	if instance.GetLabel("protectedBy") != "cg" || instance.GetLabel("protectionSourceType") != "volume" {
-		t.Errorf("Labels protectedBy= %s, expected: cg and protectionSourceType= %s, expected: volume", instance.GetLabel("protectedBy"), instance.GetLabel("protectionSourceType"))
-	}
+	assert.Equal(t, instance.GetLabel("protectedBy"), "cg")
+	assert.Equal(t, instance.GetLabel("protectionSourceType"), "volume")
 }
 
 func testNegativeCase1(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("group_type", "infinitevol")
 	UpdateProtectedFields(instance)
 
-	if instance.GetLabel("protectedBy") != "volume" || instance.GetLabel("protectionSourceType") != "not_mapped" {
-		t.Errorf("Labels protectedBy= %s, expected: volume and protectionSourceType= %s, expected: not_mapped", instance.GetLabel("protectedBy"), instance.GetLabel("protectionSourceType"))
-	}
+	assert.Equal(t, instance.GetLabel("protectedBy"), "volume")
+	assert.Equal(t, instance.GetLabel("protectionSourceType"), "not_mapped")
 }
 
 func testNegativeCase2(t *testing.T, instance *matrix.Instance) {
@@ -108,27 +103,24 @@ func testNegativeCase2(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("destination_location", "test123:")
 	UpdateProtectedFields(instance)
 
-	if instance.GetLabel("protectedBy") != "volume" || instance.GetLabel("protectionSourceType") != "not_mapped" {
-		t.Errorf("Labels protectedBy= %s, expected: volume and protectionSourceType= %s, expected: not_mapped", instance.GetLabel("protectedBy"), instance.GetLabel("protectionSourceType"))
-	}
+	assert.Equal(t, instance.GetLabel("protectedBy"), "volume")
+	assert.Equal(t, instance.GetLabel("protectionSourceType"), "not_mapped")
 }
 
 func testGroupTypeNone(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("group_type", "none")
 	UpdateProtectedFields(instance)
 
-	if instance.GetLabel("protectedBy") != "volume" || instance.GetLabel("protectionSourceType") != "volume" {
-		t.Errorf("Labels protectedBy= %s, expected: volume and protectionSourceType= %s, expected: volume", instance.GetLabel("protectedBy"), instance.GetLabel("protectionSourceType"))
-	}
+	assert.Equal(t, instance.GetLabel("protectedBy"), "volume")
+	assert.Equal(t, instance.GetLabel("protectionSourceType"), "volume")
 }
 
 func testGroupTypeFlexgroup(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("group_type", "flexgroup")
 	UpdateProtectedFields(instance)
 
-	if instance.GetLabel("protectedBy") != "volume" || instance.GetLabel("protectionSourceType") != "volume" {
-		t.Errorf("Labels protectedBy= %s, expected: volume and protectionSourceType= %s, expected: volume", instance.GetLabel("protectedBy"), instance.GetLabel("protectionSourceType"))
-	}
+	assert.Equal(t, instance.GetLabel("protectedBy"), "volume")
+	assert.Equal(t, instance.GetLabel("protectionSourceType"), "volume")
 }
 
 // Test cases for derived_relationship_type
@@ -137,9 +129,7 @@ func testStrictSyncMirror(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("policy_type", "strict_sync_mirror")
 	UpdateProtectedFields(instance)
 
-	if instance.GetLabel("derived_relationship_type") != "sync_mirror_strict" {
-		t.Errorf("Labels derived_relationship_type= %s, expected: sync_mirror_strict", instance.GetLabel("derived_relationship_type"))
-	}
+	assert.Equal(t, instance.GetLabel("derived_relationship_type"), "sync_mirror_strict")
 }
 
 func testSyncMirror(t *testing.T, instance *matrix.Instance) {
@@ -147,9 +137,7 @@ func testSyncMirror(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("policy_type", "sync_mirror")
 	UpdateProtectedFields(instance)
 
-	if instance.GetLabel("derived_relationship_type") != "sync_mirror" {
-		t.Errorf("Labels derived_relationship_type= %s, expected: sync_mirror", instance.GetLabel("derived_relationship_type"))
-	}
+	assert.Equal(t, instance.GetLabel("derived_relationship_type"), "sync_mirror")
 }
 
 func testMirrorVault(t *testing.T, instance *matrix.Instance) {
@@ -157,9 +145,7 @@ func testMirrorVault(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("policy_type", "mirror_vault")
 	UpdateProtectedFields(instance)
 
-	if instance.GetLabel("derived_relationship_type") != "mirror_vault" {
-		t.Errorf("Labels derived_relationship_type= %s, expected: mirror_vault", instance.GetLabel("derived_relationship_type"))
-	}
+	assert.Equal(t, instance.GetLabel("derived_relationship_type"), "mirror_vault")
 }
 
 func testAutomatedFailover(t *testing.T, instance *matrix.Instance) {
@@ -167,9 +153,7 @@ func testAutomatedFailover(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("policy_type", "automated_failover")
 	UpdateProtectedFields(instance)
 
-	if instance.GetLabel("derived_relationship_type") != "automated_failover" {
-		t.Errorf("Labels derived_relationship_type= %s, expected: automated_failover", instance.GetLabel("derived_relationship_type"))
-	}
+	assert.Equal(t, instance.GetLabel("derived_relationship_type"), "automated_failover")
 }
 
 func testAutomatedFailoverDuplex(t *testing.T, instance *matrix.Instance) {
@@ -177,9 +161,7 @@ func testAutomatedFailoverDuplex(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("policy_type", "automated_failover_duplex")
 	UpdateProtectedFields(instance)
 
-	if instance.GetLabel("derived_relationship_type") != "automated_failover_duplex" {
-		t.Errorf("Labels derived_relationship_type= %s, expected: automated_failover_duplex", instance.GetLabel("derived_relationship_type"))
-	}
+	assert.Equal(t, instance.GetLabel("derived_relationship_type"), "automated_failover_duplex")
 }
 
 func testOtherPolicyType(t *testing.T, instance *matrix.Instance) {
@@ -187,9 +169,7 @@ func testOtherPolicyType(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("policy_type", "vault")
 	UpdateProtectedFields(instance)
 
-	if instance.GetLabel("derived_relationship_type") != "vault" {
-		t.Errorf("Labels derived_relationship_type= %s, expected: vault", instance.GetLabel("derived_relationship_type"))
-	}
+	assert.Equal(t, instance.GetLabel("derived_relationship_type"), "vault")
 }
 
 func testWithNoPolicyType(t *testing.T, instance *matrix.Instance) {
@@ -197,9 +177,7 @@ func testWithNoPolicyType(t *testing.T, instance *matrix.Instance) {
 	instance.SetLabel("policy_type", "")
 	UpdateProtectedFields(instance)
 
-	if instance.GetLabel("derived_relationship_type") != "extended_data_protection" {
-		t.Errorf("Labels derived_relationship_type= %s, expected: extended_data_protection", instance.GetLabel("derived_relationship_type"))
-	}
+	assert.Equal(t, instance.GetLabel("derived_relationship_type"), "extended_data_protection")
 }
 
 func testWithNoPolicyTypeNoRelationshipType(t *testing.T, instance *matrix.Instance) {
@@ -207,9 +185,7 @@ func testWithNoPolicyTypeNoRelationshipType(t *testing.T, instance *matrix.Insta
 	instance.SetLabel("policy_type", "")
 	UpdateProtectedFields(instance)
 
-	if instance.GetLabel("derived_relationship_type") != "" {
-		t.Errorf("Labels derived_relationship_type= %s, expected: \"\"(empty)", instance.GetLabel("derived_relationship_type"))
-	}
+	assert.Equal(t, instance.GetLabel("derived_relationship_type"), "")
 }
 
 // Test cases for timestamp comparison with duration
@@ -218,9 +194,7 @@ func testOlderTimestampThanDuration(t *testing.T) {
 	duration := 5 * time.Minute
 	isOlder := IsTimestampOlderThanDuration(time.Now(), timestamp, duration)
 
-	if !isOlder {
-		t.Errorf("timestamp= %f is older than duration %s", timestamp, duration.String())
-	}
+	assert.True(t, isOlder)
 }
 
 func testNewerTimestampThanDuration(t *testing.T) {
@@ -228,9 +202,7 @@ func testNewerTimestampThanDuration(t *testing.T) {
 	duration := 2 * time.Hour
 	isOlder := IsTimestampOlderThanDuration(time.Now(), timestamp, duration)
 
-	if isOlder {
-		t.Errorf("timestamp= %f is newer than duration %s", timestamp, duration.String())
-	}
+	assert.False(t, isOlder)
 }
 
 func TestGetDataInterval(t *testing.T) {
@@ -255,13 +227,11 @@ func TestGetDataInterval(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := GetDataInterval(tt.args.param, tt.args.defaultInterval)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("GetDataInterval() error = %v, wantErr %v", err, tt.wantErr)
+			if err != nil {
+				assert.True(t, tt.wantErr)
 				return
 			}
-			if got.Seconds() != tt.want {
-				t.Errorf("GetDataInterval() got = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, got.Seconds(), tt.want)
 		})
 	}
 }
@@ -295,22 +265,16 @@ func TestLagTimeBasedOnLastTransferSize(t *testing.T) {
 
 	data := matrix.New("SnapMirrorTest", "SnapMirror", "SnapMirror")
 	lastTransferSizeMetric, err := data.NewMetricUint8("last_transfer_size")
-	if err != nil {
-		panic(err)
-	}
+	assert.Nil(t, err)
 	lagTimeMetric, err := data.NewMetricUint8("lag_time")
-	if err != nil {
-		panic(err)
-	}
+	assert.Nil(t, err)
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			instance := populateInstance(data, tt.instance, tt.healthy, tt.schedule, tt.lastTransferError, tt.relationshipID, lastTransferSizeMetric, tt.lastBytesValue, lagTimeMetric, tt.lagTimeValue)
 			UpdateLagTime(instance, lastTransferSizeMetric, lagTimeMetric)
 			actualValue, _ := lagTimeMetric.GetValueFloat64(instance)
-			if actualValue != tt.want {
-				t.Errorf("expected %f got %f", tt.want, actualValue)
-			}
+			assert.Equal(t, actualValue, tt.want)
 		})
 	}
 }
@@ -391,18 +355,10 @@ func Test_SplitVscanName(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			scanerNames, ok := SplitVscanName(tt.ontapName, tt.isZapi)
 
-			if scanerNames.Svm != tt.svm {
-				t.Errorf("splitOntapName() got = %v, want %v", scanerNames.Svm, tt.svm)
-			}
-			if scanerNames.Scanner != tt.scanner {
-				t.Errorf("splitOntapName() got = %v, want %v", scanerNames.Scanner, tt.scanner)
-			}
-			if scanerNames.Node != tt.node {
-				t.Errorf("splitOntapName() got = %v, want %v", scanerNames.Node, tt.node)
-			}
-			if ok != tt.isValid {
-				t.Errorf("splitOntapName() got = %v, want %v", ok, tt.isValid)
-			}
+			assert.Equal(t, scanerNames.Svm, tt.svm)
+			assert.Equal(t, scanerNames.Scanner, tt.scanner)
+			assert.Equal(t, scanerNames.Node, tt.node)
+			assert.Equal(t, ok, tt.isValid)
 		})
 	}
 }
@@ -435,9 +391,7 @@ func Test_HandleDuration(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.timeFieldValue, func(t *testing.T) {
-			if got := HandleDuration(tt.timeFieldValue); got != tt.want {
-				t.Errorf("actual value = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, HandleDuration(tt.timeFieldValue), tt.want)
 		})
 	}
 }
@@ -462,9 +416,7 @@ func Test_HandleTimestamp(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.timeFieldValue, func(t *testing.T) {
-			if got := HandleTimestamp(tt.timeFieldValue); got != tt.want {
-				t.Errorf("actual value = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, HandleTimestamp(tt.timeFieldValue), tt.want)
 		})
 	}
 }

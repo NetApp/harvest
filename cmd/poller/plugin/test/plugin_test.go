@@ -1,6 +1,7 @@
 package test
 
 import (
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/aggregator"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/labelagent"
@@ -37,9 +38,8 @@ func TestMultipleRule(t *testing.T) {
 			}
 			abc := plugin.New("Test", nil, params, nil, "", nil)
 			lb = &labelagent.LabelAgent{AbstractPlugin: abc}
-			if err := lb.Init(remote); err != nil {
-				t.Fatal(err)
-			}
+			err := lb.Init(remote)
+			assert.Nil(t, err)
 			Plugins = append(Plugins, lb)
 		}
 
@@ -51,9 +51,8 @@ func TestMultipleRule(t *testing.T) {
 			abc := plugin.New("Test", nil, params, nil, "", nil)
 			ag := &aggregator.Aggregator{AbstractPlugin: abc}
 
-			if err := ag.Init(remote); err != nil {
-				t.Fatal(err)
-			}
+			err := ag.Init(remote)
+			assert.Nil(t, err)
 			Plugins = append(Plugins, ag)
 		}
 	}
@@ -61,14 +60,10 @@ func TestMultipleRule(t *testing.T) {
 	m := matrix.New("TestLabelAgent", "", "test")
 
 	metricA, err := m.NewMetricUint8("metricA")
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.Nil(t, err)
 
 	metricB, err := m.NewMetricUint8("metricB")
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.Nil(t, err)
 	metricB.SetProperty("average")
 
 	// should match
@@ -101,37 +96,22 @@ func TestMultipleRule(t *testing.T) {
 		}
 	}
 
-	if instanceA.IsExportable() {
-		t.Error("InstanceYes should have been excluded")
-	}
+	assert.False(t, instanceA.IsExportable())
+	assert.True(t, instanceNo.IsExportable())
 
-	if !instanceNo.IsExportable() {
-		t.Error("instanceNo should not have been excluded")
-	}
-
-	if instanceA.GetLabel("B") != "xyz" {
-		t.Errorf("metric [status]: value for InstanceA is %s, expected %s", instanceA.GetLabel("B"), "xyz")
-	}
+	assert.Equal(t, instanceA.GetLabel("B"), "xyz")
 
 	var status *matrix.Metric
 	var expected uint8
-	if status = m.GetMetric("new_status"); status == nil {
-		t.Fatal("metric [status] missing")
-	}
+	status = m.GetMetric("new_status")
+	assert.NotNil(t, status)
 
 	expected = 1
-	if v, ok := status.GetValueUint8(instanceA); !ok {
-		t.Error("metric [status]: value for InstanceA not set")
-	} else if v != expected {
-		t.Errorf("metric [status]: value for InstanceA is %d, expected %d", v, expected)
-	} else {
-		t.Logf("OK - metric [status]: value for instanceA set to %d", v)
-	}
+	v, ok := status.GetValueUint8(instanceA)
+	assert.True(t, ok)
+	assert.Equal(t, expected, v)
 
 	n := results[1]
 	// one instance present as instanceA exported was false
-	if len(n.GetInstances()) != 1 {
-		t.Fatalf("Number of instances is %d, 1 was expected\n", len(n.GetInstances()))
-	}
-
+	assert.Equal(t, len(n.GetInstances()), 1)
 }

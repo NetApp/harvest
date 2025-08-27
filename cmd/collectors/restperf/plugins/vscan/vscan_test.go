@@ -2,6 +2,7 @@ package vscan
 
 import (
 	"encoding/json"
+	"github.com/netapp/harvest/v2/assert"
 	"log/slog"
 	"os"
 	"testing"
@@ -34,23 +35,16 @@ func runTest(t *testing.T, createRestVscan func(params *node.Node) plugin.Plugin
 	}
 	// run the plugin
 	results, _, err := v.Run(dataMap)
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.Nil(t, err)
 
 	if metricsPerScanner == "false" {
-		if results != nil {
-			t.Fatalf("result should be nil")
-		} else {
-			return
-		}
+		assert.Nil(t, results)
+		return
 	}
 
 	// Verify the cacheData
 	cacheData := results[0]
-	if len(cacheData.GetInstances()) != cacheExportedInstanceCount {
-		t.Fatalf("expected %d cacheExportedInstance count, got %d", cacheExportedInstanceCount, len(cacheData.GetInstances()))
-	}
+	assert.Equal(t, len(cacheData.GetInstances()), cacheExportedInstanceCount)
 
 	exportedInstance := 0
 	for _, instance := range data.GetInstances() {
@@ -58,9 +52,7 @@ func runTest(t *testing.T, createRestVscan func(params *node.Node) plugin.Plugin
 			exportedInstance++
 		}
 	}
-	if exportedInstance != dataExportedInstanceCount {
-		t.Fatalf("expected %d dataExportedInstance count, got %d", dataExportedInstanceCount, len(data.GetInstances()))
-	}
+	assert.Equal(t, exportedInstance, dataExportedInstanceCount)
 }
 
 func TestRunForAllImplementations(t *testing.T) {

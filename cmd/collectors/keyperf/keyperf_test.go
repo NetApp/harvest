@@ -2,6 +2,7 @@ package keyperf
 
 import (
 	"fmt"
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
@@ -132,9 +133,7 @@ func (kp *KeyPerf) testPollInstanceAndDataWithMetrics(t *testing.T, pollDataFile
 	prevMat := kp.Matrix[kp.Object]
 	pollData := collectors.JSONToGson(pollDataFile, true)
 	got, _, err := processAndCookCounters(kp, pollData, prevMat)
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.Nil(t, err)
 
 	totalMetrics := 0
 	exportableInstance := 0
@@ -158,14 +157,10 @@ func (kp *KeyPerf) testPollInstanceAndDataWithMetrics(t *testing.T, pollDataFile
 		}
 	}
 
-	if exportableInstance != expectedExportedInst {
-		t.Errorf("Exported instances got=%d, expected=%d", exportableInstance, expectedExportedInst)
-	}
+	assert.Equal(t, expectedExportedInst, exportableInstance)
 
 	// Check if the total number of metrics matches the expected value
-	if totalMetrics != expectedExportedMetrics {
-		t.Errorf("Total metrics got=%d, expected=%d", totalMetrics, expectedExportedMetrics)
-	}
+	assert.Equal(t, expectedExportedMetrics, totalMetrics)
 	return mat
 }
 
@@ -255,13 +250,11 @@ func TestKeyPerf_pollData(t *testing.T) {
 			for _, name := range names {
 				i := m.GetInstance(name)
 				val, recorded := metric.GetValueInt64(i)
-				if recorded != tt.record {
-					t.Errorf("pollData() recorded got=%v, want=%v", recorded, tt.record)
-				}
+				assert.Equal(t, tt.record, recorded)
 				sum += val
 			}
-			if sum != tt.sum && tt.checksum {
-				t.Errorf("pollData() sum got=%v, want=%v", sum, tt.sum)
+			if tt.checksum {
+				assert.Equal(t, tt.sum, sum)
 			}
 		})
 	}

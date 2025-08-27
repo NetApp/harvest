@@ -1,6 +1,7 @@
 package volumetopmetrics
 
 import (
+	"github.com/netapp/harvest/v2/assert"
 	"testing"
 
 	"github.com/netapp/harvest/v2/cmd/collectors"
@@ -93,30 +94,20 @@ func TestProcessTopClients(t *testing.T) {
 			mockVolume.maxVolumeCount = 5
 
 			err := mockVolume.InitAllMatrix()
-			if err != nil {
-				t.Errorf("InitAllMatrix should not return an error: %v", err)
-			}
+			assert.Nil(t, err)
 
 			data := globalDataMatrix
 
 			metrics, err := mockVolume.processTopMetrics(data)
-			if err != nil {
-				return
-			}
+			assert.Nil(t, err)
 
 			err = mockVolume.processTopClients(metrics)
-			if err != nil {
-				t.Errorf("processTopClients should not return an error: %v", err)
-			}
+			assert.Nil(t, err)
 
 			resultMatrix := mockVolume.data[tc.matrixName]
 
-			if resultMatrix == nil {
-				t.Errorf("%s Matrix should be initialized", tc.matrixName)
-			}
-			if len(resultMatrix.GetInstances()) != tc.expectedCount {
-				t.Errorf("%s Matrix should have %d instance(s), got %d", tc.matrixName, tc.expectedCount, len(resultMatrix.GetInstances()))
-			}
+			assert.NotNil(t, resultMatrix)
+			assert.Equal(t, len(resultMatrix.GetInstances()), tc.expectedCount)
 		})
 	}
 }
@@ -140,30 +131,20 @@ func TestProcessTopFiles(t *testing.T) {
 			mockVolume.maxVolumeCount = 5
 
 			err := mockVolume.InitAllMatrix()
-			if err != nil {
-				t.Errorf("InitAllMatrix should not return an error: %v", err)
-			}
+			assert.Nil(t, err)
 
 			data := globalDataMatrix
 
 			metrics, err := mockVolume.processTopMetrics(data)
-			if err != nil {
-				return
-			}
+			assert.Nil(t, err)
 
 			err = mockVolume.processTopFiles(metrics)
-			if err != nil {
-				t.Errorf("processTopClients should not return an error: %v", err)
-			}
+			assert.Nil(t, err)
 
 			resultMatrix := mockVolume.data[tc.matrixName]
 
-			if resultMatrix == nil {
-				t.Errorf("%s Matrix should be initialized", tc.matrixName)
-			}
-			if len(resultMatrix.GetInstances()) != tc.expectedCount {
-				t.Errorf("%s Matrix should have %d instance(s), got %d", tc.matrixName, tc.expectedCount, len(resultMatrix.GetInstances()))
-			}
+			assert.NotNil(t, resultMatrix)
+			assert.Equal(t, len(resultMatrix.GetInstances()), tc.expectedCount)
 		})
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/Netapp/harvest-automation/test/cmds"
 	"github.com/Netapp/harvest-automation/test/installer"
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	rest2 "github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/auth"
@@ -53,36 +54,20 @@ func TestCounters(t *testing.T) {
 	conf.TestLoadHarvestConfig(installer.HarvestConfigFile)
 
 	pollerName := "dc1"
-	if poller, err = conf.PollerNamed(pollerName); err != nil {
-		slog.Error("", slogx.Err(err), slog.String("poller", pollerName))
-		os.Exit(1)
-	}
-	if poller.Addr == "" {
-		slog.Error("Address is empty", slog.String("poller", pollerName))
-		os.Exit(1)
-	}
+	poller, err = conf.PollerNamed(pollerName)
+	assert.Nil(t, err)
+	assert.NotEqual(t, poller.Addr, "")
 	timeout, _ := time.ParseDuration(rest2.DefaultTimeout)
 
-	if client, err = rest2.New(poller, timeout, auth.NewCredentials(poller, slog.Default())); err != nil {
-		slog.Error(
-			"error creating new client",
-			slogx.Err(err),
-			slog.String("poller", pollerName),
-		)
-		os.Exit(1)
-	}
+	client, err = rest2.New(poller, timeout, auth.NewCredentials(poller, slog.Default()))
+	assert.Nil(t, err)
 
-	if err = client.Init(5, conf.Remote{}); err != nil {
-		slog.Error("client init failed", slogx.Err(err))
-		os.Exit(1)
-	}
+	err = client.Init(5, conf.Remote{})
+	assert.Nil(t, err)
 
 	restCounters := processRestCounters(client)
-	if err = invokeRestCall(client, restCounters); err != nil {
-		slog.Error("rest call failed", slogx.Err(err))
-		os.Exit(1)
-	}
-
+	err = invokeRestCall(client, restCounters)
+	assert.Nil(t, err)
 }
 
 func validateRolePermissions() {

@@ -2,6 +2,8 @@ package conf
 
 import (
 	"testing"
+
+	"github.com/netapp/harvest/v2/assert"
 )
 
 func Test_expandVars(t *testing.T) {
@@ -30,13 +32,8 @@ func Test_expandVars(t *testing.T) {
 			}
 			g, err := ExpandVars([]byte(tt.in))
 			got := string(g)
-			if err != nil {
-				t.Errorf("ExpandVars() error %v", err)
-				return
-			}
-			if got != tt.want {
-				t.Errorf("ExpandVars() got %v, want %v", got, tt.want)
-			}
+			assert.Nil(t, err)
+			assert.Equal(t, got, tt.want)
 		})
 	}
 }

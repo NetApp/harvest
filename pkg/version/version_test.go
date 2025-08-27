@@ -1,6 +1,10 @@
 package version
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/netapp/harvest/v2/assert"
+)
 
 func TestAtLeast(t *testing.T) {
 
@@ -18,11 +22,9 @@ func TestAtLeast(t *testing.T) {
 
 	for _, tc := range testCases {
 		result, err := AtLeast(tc.clusterVersion, tc.minVersion)
-		if err != nil && tc.expected {
-			t.Errorf("versionAtLeast(%q, %q) returned error: %v", tc.clusterVersion, tc.minVersion, err)
+		if tc.expected {
+			assert.Nil(t, err)
 		}
-		if result != tc.expected {
-			t.Errorf("versionAtLeast(%q, %q) = %v; want %v", tc.clusterVersion, tc.minVersion, result, tc.expected)
-		}
+		assert.Equal(t, result, tc.expected)
 	}
 }

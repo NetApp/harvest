@@ -2,6 +2,7 @@ package rest
 
 import (
 	"github.com/google/go-cmp/cmp"
+	"github.com/netapp/harvest/v2/assert"
 	"strconv"
 	"testing"
 )
@@ -22,9 +23,7 @@ func TestBuild(t *testing.T) {
 		IsIgnoreUnknownFieldsEnabled(true).
 		Build()
 
-	if hrefTest1 != expectedHrefTest1 {
-		t.Errorf("hrefTest1 should be %s but got %s", expectedHrefTest1, hrefTest1)
-	}
+	assert.Equal(t, hrefTest1, expectedHrefTest1)
 
 	testFields = make([]string, 0)
 	for i := range URLMaxLimit / len("Test") {
@@ -41,9 +40,7 @@ func TestBuild(t *testing.T) {
 		IsIgnoreUnknownFieldsEnabled(true).
 		Build()
 
-	if hrefTest2 != expectedHrefTest2 {
-		t.Errorf("hrefTest2 should be %s but got %s", expectedHrefTest2, hrefTest2)
-	}
+	assert.Equal(t, hrefTest2, expectedHrefTest2)
 }
 
 func TestFields(t *testing.T) {
@@ -92,9 +89,7 @@ func TestFields(t *testing.T) {
 			hBuilder := NewHrefBuilder()
 			hBuilder.Fields(tt.fields).HiddenFields(tt.hiddenFields).Build()
 			diff := cmp.Diff(hBuilder.fields, tt.expectedResult)
-			if diff != "" {
-				t.Errorf("Mismatch (-got +want):\n%s", diff)
-			}
+			assert.Equal(t, diff, "")
 		})
 	}
 }

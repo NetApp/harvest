@@ -1,6 +1,7 @@
 package vscanpool
 
 import (
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
@@ -71,23 +72,13 @@ func TestRunForAllImplementations(t *testing.T) {
 			_ = v.Init(conf.Remote{})
 			// run the plugin
 			newData, _, err := v.Run(dataMap)
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			if len(newData) != 1 {
-				t.Fatalf("expected 1 output matrices, got %d", len(newData))
-			}
-
-			if len(newData[0].GetInstances()) != tt.expectedInstances {
-				t.Fatalf("expected %d output matrices, got %d", tt.expectedInstances, len(newData[0].GetInstances()))
-			}
+			assert.Nil(t, err)
+			assert.Equal(t, len(newData), 1)
+			assert.Equal(t, tt.expectedInstances, len(newData[0].GetInstances()))
 
 			for _, instance := range newData[0].GetInstances() {
 				actualDisconnectedServers := instance.GetLabel("vscan_server")
-				if actualDisconnectedServers != tt.expectedDisconnectedServers {
-					t.Fatalf("expected disconnected servers %s, got %s", tt.expectedDisconnectedServers, actualDisconnectedServers)
-				}
+				assert.Equal(t, actualDisconnectedServers, tt.expectedDisconnectedServers)
 			}
 			data.RemoveInstance(tt.name)
 		})

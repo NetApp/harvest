@@ -1,13 +1,11 @@
 package errs
 
 import (
-	"errors"
+	"github.com/netapp/harvest/v2/assert"
 	"testing"
 )
 
 func TestErrAuthFailed(t *testing.T) {
 	err := NewRest().Error(ErrAuthFailed).Build()
-	if !errors.Is(err, ErrAuthFailed) {
-		t.Errorf("err should be ErrAuthFailed but isn't")
-	}
+	assert.ErrorIs(t, err, ErrAuthFailed)
 }
