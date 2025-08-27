@@ -5,6 +5,7 @@
 package labelagent
 
 import (
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
@@ -82,9 +83,8 @@ func TestSplitSimpleRule(t *testing.T) {
 
 	_ = p.splitSimple(m)
 
-	if instance.GetLabel("C") != "c" || instance.GetLabel("D") != "d" {
-		t.Error("Labels C and D don't have expected values")
-	}
+	assert.Equal(t, instance.GetLabel("C"), "c")
+	assert.Equal(t, instance.GetLabel("D"), "d")
 }
 
 func TestSplitRegexQtree(t *testing.T) {
@@ -95,25 +95,19 @@ func TestSplitRegexQtree(t *testing.T) {
 	abc := plugin.New("Test", nil, params, nil, "", nil)
 	p := &LabelAgent{AbstractPlugin: abc}
 	err := p.Init(conf.Remote{})
-	if err != nil {
-		panic(err)
-	}
+	assert.Nil(t, err)
 
 	instance, _ := m.NewInstance("0")
 	instance.SetLabel("X", "/vol/vol_georg_fcp401/lun401/lun-1")
 	_ = p.splitRegex(m)
 
-	if instance.GetLabel("lun") != "lun-1" {
-		t.Errorf("got=%s want=lun-1", instance.GetLabel("lun"))
-	}
+	assert.Equal(t, instance.GetLabel("lun"), "lun-1")
 
 	wantLun := "🦃\U0001FAF6🏾"
 	instance.SetLabel("X", "/vol/vol_georg_fcp401/"+wantLun)
 	_ = p.splitRegex(m)
 
-	if instance.GetLabel("lun") != wantLun {
-		t.Errorf("got=%s want=%s", instance.GetLabel("lun"), wantLun)
-	}
+	assert.Equal(t, instance.GetLabel("lun"), wantLun)
 }
 
 func TestSplitRegexRule(t *testing.T) {
@@ -125,9 +119,8 @@ func TestSplitRegexRule(t *testing.T) {
 
 	_ = p.splitRegex(m)
 
-	if instance.GetLabel("A") != "A22" || instance.GetLabel("B") != "B333" {
-		t.Error("Labels A and B don't have expected values")
-	}
+	assert.Equal(t, instance.GetLabel("A"), "A22")
+	assert.Equal(t, instance.GetLabel("B"), "B333")
 }
 
 func TestSplitPairsRule(t *testing.T) {
@@ -139,9 +132,8 @@ func TestSplitPairsRule(t *testing.T) {
 
 	_ = p.splitPairs(m)
 
-	if instance.GetLabel("owner") != "jack" || instance.GetLabel("contact") != "some@email" {
-		t.Error("Labels owner and contact don't have expected values")
-	}
+	assert.Equal(t, instance.GetLabel("owner"), "jack")
+	assert.Equal(t, instance.GetLabel("contact"), "some@email")
 }
 
 func TestJoinSimpleRule(t *testing.T) {
@@ -154,9 +146,7 @@ func TestJoinSimpleRule(t *testing.T) {
 
 	_ = p.joinSimple(m)
 
-	if instance.GetLabel("X") != "aaa_bbb" {
-		t.Error("Label A does have expected value")
-	}
+	assert.Equal(t, instance.GetLabel("X"), "aaa_bbb")
 }
 
 func TestReplaceSimpleRule(t *testing.T) {
@@ -168,9 +158,8 @@ func TestReplaceSimpleRule(t *testing.T) {
 
 	_ = p.replaceSimple(m)
 
-	if instance.GetLabel("A") != "X" || instance.GetLabel("B") != "bbb_X" {
-		t.Error("Labels A and B don't have expected values")
-	}
+	assert.Equal(t, instance.GetLabel("A"), "X")
+	assert.Equal(t, instance.GetLabel("B"), "bbb_X")
 }
 
 func TestReplaceRegexRule(t *testing.T) {
@@ -182,9 +171,7 @@ func TestReplaceRegexRule(t *testing.T) {
 
 	_ = p.replaceRegex(m)
 
-	if instance.GetLabel("B") != "abcDEF-12345-bbb" {
-		t.Error("Label B does not have expected value")
-	}
+	assert.Equal(t, instance.GetLabel("B"), "abcDEF-12345-bbb")
 }
 
 func TestExcludeEqualsRule(t *testing.T) {
@@ -202,13 +189,8 @@ func TestExcludeEqualsRule(t *testing.T) {
 
 	_ = p.excludeEquals(m)
 
-	if instanceYes.IsExportable() {
-		t.Error("InstanceYes should have been excluded")
-	}
-
-	if !instanceNo.IsExportable() {
-		t.Error("instanceNo should not have been excluded")
-	}
+	assert.False(t, instanceYes.IsExportable())
+	assert.True(t, instanceNo.IsExportable())
 }
 
 func TestExcludeContainsRule(t *testing.T) {
@@ -225,13 +207,8 @@ func TestExcludeContainsRule(t *testing.T) {
 
 	_ = p.excludeContains(m)
 
-	if instanceYes.IsExportable() {
-		t.Error("InstanceYes should have been excluded")
-	}
-
-	if !instanceNo.IsExportable() {
-		t.Error("instanceNo should not have been excluded")
-	}
+	assert.False(t, instanceYes.IsExportable())
+	assert.True(t, instanceNo.IsExportable())
 }
 
 func TestExcludeRegexRule(t *testing.T) {
@@ -248,13 +225,8 @@ func TestExcludeRegexRule(t *testing.T) {
 
 	_ = p.excludeRegex(m)
 
-	if instanceYes.IsExportable() {
-		t.Error("InstanceYes should have been excluded")
-	}
-
-	if !instanceNo.IsExportable() {
-		t.Error("instanceNo should not have been excluded")
-	}
+	assert.False(t, instanceYes.IsExportable())
+	assert.True(t, instanceNo.IsExportable())
 }
 
 func TestIncludeEqualsRule(t *testing.T) {
@@ -272,13 +244,8 @@ func TestIncludeEqualsRule(t *testing.T) {
 
 	_ = p.includeEquals(m)
 
-	if !instanceYes.IsExportable() {
-		t.Error("InstanceYes should have been included")
-	}
-
-	if instanceNo.IsExportable() {
-		t.Error("instanceNo should not have been included")
-	}
+	assert.True(t, instanceYes.IsExportable())
+	assert.False(t, instanceNo.IsExportable())
 }
 
 func TestIncludeContainsRule(t *testing.T) {
@@ -295,13 +262,8 @@ func TestIncludeContainsRule(t *testing.T) {
 
 	_ = p.includeContains(m)
 
-	if !instanceYes.IsExportable() {
-		t.Error("InstanceYes should have been included")
-	}
-
-	if instanceNo.IsExportable() {
-		t.Error("instanceNo should not have been included")
-	}
+	assert.True(t, instanceYes.IsExportable())
+	assert.False(t, instanceNo.IsExportable())
 }
 
 func TestIncludeRegexRule(t *testing.T) {
@@ -318,13 +280,8 @@ func TestIncludeRegexRule(t *testing.T) {
 
 	_ = p.includeRegex(m)
 
-	if !instanceYes.IsExportable() {
-		t.Error("InstanceYes should have been included")
-	}
-
-	if instanceNo.IsExportable() {
-		t.Error("instanceNo should not have been included")
-	}
+	assert.True(t, instanceYes.IsExportable())
+	assert.False(t, instanceNo.IsExportable())
 }
 
 func TestValueToNumRule(t *testing.T) {
@@ -340,92 +297,63 @@ func TestValueToNumRule(t *testing.T) {
 	m := matrix.New("TestLabelAgent", "test", "test")
 	p := newLabelAgent()
 
-	if instanceA, err = m.NewInstance("A"); err != nil {
-		t.Fatal(err)
-	}
+	instanceA, err = m.NewInstance("A")
+	assert.Nil(t, err)
 	instanceA.SetLabel("state", "up")   // "status" should be 1
 	instanceA.SetLabel("stage", "init") // "stage" should be 1
 	instanceA.SetLabel("outage", "")    // "outageStatus" should be 1
 
-	if instanceB, err = m.NewInstance("B"); err != nil {
-		t.Fatal(err)
-	}
+	instanceB, err = m.NewInstance("B")
+	assert.Nil(t, err)
 	instanceB.SetLabel("state", "unknown") // "status" should not be set
 	instanceB.SetLabel("stage", "unknown") // "stage" should be 4 (default)
 	instanceB.SetLabel("outage", "failed") // "outage" should be 0 (default)
 
-	if err = p.mapValueToNum(m); err != nil {
-		t.Fatal(err)
-	}
+	err = p.mapValueToNum(m)
+	assert.Nil(t, err)
 
-	if status = m.GetMetric("new_status"); status == nil {
-		t.Fatal("metric [status] missing")
-	}
+	status = m.GetMetric("new_status")
+	assert.NotNil(t, status)
 
-	if stage = m.GetMetric("new_stage"); stage == nil {
-		t.Fatal("metric [stage] missing")
-	}
+	stage = m.GetMetric("new_stage")
+	assert.NotNil(t, stage)
 
-	if outage = m.GetMetric("new_outage"); outage == nil {
-		t.Fatal("metric [outage] missing")
-	}
+	outage = m.GetMetric("new_outage")
+	assert.NotNil(t, outage)
 
 	// check "status" for instanceA
 	expected = 1
-	if v, ok = status.GetValueUint8(instanceA); !ok {
-		t.Error("metric [status]: value for InstanceA not set")
-	} else if v != expected {
-		t.Errorf("metric [status]: value for InstanceA is %d, expected %d", v, expected)
-	} else {
-		t.Logf("OK - metric [status]: value for instanceA set to %d", v)
-	}
+	v, ok = status.GetValueUint8(instanceA)
+	assert.True(t, ok)
+	assert.Equal(t, v, expected)
 
 	// check "status" for instanceB
-	if v, ok = status.GetValueUint8(instanceB); !ok {
-		t.Log("OK - metric [status]: value for InstanceB not set")
-	} else {
-		t.Errorf("metric [status]: value for InstanceB is %d, should not be set", v)
-	}
+	_, ok = status.GetValueUint8(instanceB)
+	assert.False(t, ok)
 
 	// check "stage" for instanceA
 	expected = 1
-	if v, ok = stage.GetValueUint8(instanceA); !ok {
-		t.Error("metric [stage]: value for InstanceA not set")
-	} else if v != expected {
-		t.Errorf("metric [stage]: value for InstanceA is %d, expected %d", v, expected)
-	} else {
-		t.Logf("OK - metric [stage]: value for instanceA set to %d", v)
-	}
+	v, ok = stage.GetValueUint8(instanceA)
+	assert.True(t, ok)
+	assert.Equal(t, v, expected)
 
 	// check "stage" for instanceB
 	expected = 4
-	if v, ok = stage.GetValueUint8(instanceB); !ok {
-		t.Error("metric [stage]: value for InstanceB not set")
-	} else if v != expected {
-		t.Errorf("metric [stage]: value for InstanceB is %d, expected %d", v, expected)
-	} else {
-		t.Logf("OK - metric [stage]: value for instanceB set to %d", v)
-	}
+	v, ok = stage.GetValueUint8(instanceB)
+	assert.True(t, ok)
+	assert.Equal(t, v, expected)
 
 	// check "outage" for instanceA
 	expected = 1
-	if v, ok = outage.GetValueUint8(instanceA); !ok {
-		t.Error("metric [outage]: value for InstanceA not set")
-	} else if v != expected {
-		t.Errorf("metric [outage]: value for InstanceA is %d, expected %d", v, expected)
-	} else {
-		t.Logf("OK - metric [outage]: value for instanceA set to %d", v)
-	}
+	v, ok = outage.GetValueUint8(instanceA)
+	assert.True(t, ok)
+	assert.Equal(t, v, expected)
 
 	// check "outage" for instanceB
 	expected = 0
-	if v, ok = outage.GetValueUint8(instanceB); !ok {
-		t.Error("metric [outage]: value for InstanceB not set")
-	} else if v != expected {
-		t.Errorf("metric [outage]: value for InstanceB is %d, expected %d", v, expected)
-	} else {
-		t.Logf("OK - metric [outage]: value for instanceB set to %d", v)
-	}
+	v, ok = outage.GetValueUint8(instanceB)
+	assert.True(t, ok)
+	assert.Equal(t, v, expected)
 }
 
 func TestValueToNumRegexRule(t *testing.T) {
@@ -441,95 +369,65 @@ func TestValueToNumRegexRule(t *testing.T) {
 	m := matrix.New("TestLabelAgent", "test", "test")
 	p := newLabelAgent()
 
-	if instanceA, err = m.NewInstance("A"); err != nil {
-		t.Fatal(err)
-	}
+	instanceA, err = m.NewInstance("A")
+	assert.Nil(t, err)
 	instanceA.SetLabel("state", "up")      // "status" should be 1
 	instanceA.SetLabel("stage", "stopped") // "output" should be 4 (default)
 	instanceA.SetLabel("value", "test11")  // "result" should be 1
 
-	if instanceB, err = m.NewInstance("B"); err != nil {
-		t.Fatal(err)
-	}
+	instanceB, err = m.NewInstance("B")
+	assert.Nil(t, err)
 	instanceB.SetLabel("state", "error")   // "status" should be 0 (default)
 	instanceB.SetLabel("stage", "running") // "output" should be 1
 	instanceB.SetLabel("value", "done")    // "result" should be 4 (default)
 
-	if err = p.mapValueToNumRegex(m); err != nil {
-		t.Fatal(err)
-	}
+	err = p.mapValueToNumRegex(m)
+	assert.Nil(t, err)
 
-	if status = m.GetMetric("status"); status == nil {
-		t.Fatal("metric [status] missing")
-	}
+	status = m.GetMetric("status")
+	assert.NotNil(t, status)
 
-	if output = m.GetMetric("output"); output == nil {
-		t.Fatal("metric [output] missing")
-	}
+	output = m.GetMetric("output")
+	assert.NotNil(t, output)
 
-	if result = m.GetMetric("result"); result == nil {
-		t.Fatal("metric [result] missing")
-	}
+	result = m.GetMetric("result")
+	assert.NotNil(t, result)
 
 	// check "status" for instanceA
 	expected = 1
-	if v, ok = status.GetValueUint8(instanceA); !ok {
-		t.Error("metric [status]: value for InstanceA not set")
-	} else if v != expected {
-		t.Errorf("metric [status]: value for InstanceA is %d, expected %d", v, expected)
-	} else {
-		t.Logf("OK - metric [status]: value for instanceA set to %d", v)
-	}
+	v, ok = status.GetValueUint8(instanceA)
+	assert.True(t, ok)
+	assert.Equal(t, v, expected)
 
 	// check "status" for instanceB
 	expected = 0
-	if v, ok = status.GetValueUint8(instanceB); !ok {
-		t.Log("metric [status]: value for InstanceB not set")
-	} else if v != expected {
-		t.Errorf("metric [status]: value for InstanceB is %d, expected %d", v, expected)
-	} else {
-		t.Logf("Ok - metric [status]: value for InstanceB set to %d", v)
-	}
+	v, ok = status.GetValueUint8(instanceB)
+	assert.True(t, ok)
+	assert.Equal(t, v, expected)
 
 	// check "output" for instanceA
 	expected = 4
-	if v, ok = output.GetValueUint8(instanceA); !ok {
-		t.Error("metric [stage]: value for InstanceA not set")
-	} else if v != expected {
-		t.Errorf("metric [stage]: value for InstanceA is %d, expected %d", v, expected)
-	} else {
-		t.Logf("OK - metric [stage]: value for instanceA set to %d", v)
-	}
+	v, ok = output.GetValueUint8(instanceA)
+	assert.True(t, ok)
+	assert.Equal(t, v, expected)
 
 	// check "output" for instanceB
 	expected = 1
-	if v, ok = output.GetValueUint8(instanceB); !ok {
-		t.Error("metric [stage]: value for InstanceB not set")
-	} else if v != expected {
-		t.Errorf("metric [stage]: value for InstanceB is %d, expected %d", v, expected)
-	} else {
-		t.Logf("OK - metric [stage]: value for instanceB set to %d", v)
-	}
+	v, ok = output.GetValueUint8(instanceB)
+	assert.True(t, ok)
+	assert.Equal(t, v, expected)
 
 	// check "result" for instanceA
 	expected = 1
-	if v, ok = result.GetValueUint8(instanceA); !ok {
-		t.Error("metric [outage]: value for InstanceA not set")
-	} else if v != expected {
-		t.Errorf("metric [outage]: value for InstanceA is %d, expected %d", v, expected)
-	} else {
-		t.Logf("OK - metric [outage]: value for instanceA set to %d", v)
-	}
+	v, ok = result.GetValueUint8(instanceA)
+	assert.True(t, ok)
+	assert.Equal(t, v, expected)
 
 	// check "result" for instanceB
 	expected = 4
-	if v, ok = result.GetValueUint8(instanceB); !ok {
-		t.Error("metric [outage]: value for InstanceB not set")
-	} else if v != expected {
-		t.Errorf("metric [outage]: value for InstanceB is %d, expected %d", v, expected)
-	} else {
-		t.Logf("OK - metric [outage]: value for instanceB set to %d", v)
-	}
+	v, ok = result.GetValueUint8(instanceB)
+	assert.True(t, ok)
+	assert.Equal(t, v, expected)
 }
 
 func TestExcludeEqualIncludeEqualRuleOrder(t *testing.T) {
@@ -552,17 +450,9 @@ func TestExcludeEqualIncludeEqualRuleOrder(t *testing.T) {
 	_ = p.excludeEquals(m)
 	_ = p.includeEquals(m)
 
-	if instanceOne.IsExportable() {
-		t.Error("InstanceOne should have been excluded")
-	}
-
-	if !instanceTwo.IsExportable() {
-		t.Error("InstanceTwo should not have been excluded")
-	}
-
-	if instanceThree.IsExportable() {
-		t.Error("instanceThree should have been excluded")
-	}
+	assert.False(t, instanceOne.IsExportable())
+	assert.True(t, instanceTwo.IsExportable())
+	assert.False(t, instanceThree.IsExportable())
 }
 
 func TestIncludeContainExcludeContainRuleOrder(t *testing.T) {
@@ -585,15 +475,7 @@ func TestIncludeContainExcludeContainRuleOrder(t *testing.T) {
 	_ = p.includeContains(m)
 	_ = p.excludeContains(m)
 
-	if !instanceFour.IsExportable() {
-		t.Error("InstanceFour should not have been excluded")
-	}
-
-	if instanceFive.IsExportable() {
-		t.Error("InstanceFive should have been excluded")
-	}
-
-	if instanceSix.IsExportable() {
-		t.Error("instanceSix should have been excluded")
-	}
+	assert.True(t, instanceFour.IsExportable())
+	assert.False(t, instanceFive.IsExportable())
+	assert.False(t, instanceSix.IsExportable())
 }

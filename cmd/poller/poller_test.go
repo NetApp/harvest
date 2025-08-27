@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"github.com/netapp/harvest/v2/assert"
 	"strings"
 	"testing"
 
@@ -17,17 +18,13 @@ func TestUnion2(t *testing.T) {
 	n := node.NewS("foople")
 	conf.TestLoadHarvestConfig(configPath)
 	p, err := conf.PollerNamed("infinity2")
-	if err != nil {
-		panic(err)
-	}
+	assert.Nil(t, err)
 	err = Union2(n, p)
-	if err != nil {
-		panic(err)
-	}
+	assert.Nil(t, err)
+
 	labels := n.GetChildS("labels")
-	if labels == nil {
-		t.Fatal("got nil, want labels")
-	}
+	assert.NotNil(t, labels)
+
 	type label struct {
 		key string
 		val string
@@ -39,19 +36,17 @@ func TestUnion2(t *testing.T) {
 	}
 	for i, c := range labels.Children {
 		want := wants[i]
-		if want.key != c.GetNameS() {
-			t.Errorf("got key=%s, want=%s", c.GetNameS(), want.key)
-		}
+		assert.Equal(t, c.GetNameS(), want.key)
+
 		got := c.GetContentS()
+		assert.Equal(t, got, want.val)
 		if want.val != got {
 			t.Errorf("got key=%s, want=%s", got, want.val)
 		}
 	}
 
 	pp := n.GetChildContentS("prom_port")
-	if pp != "2000" {
-		t.Errorf("got prom_port=%s, want=2000", pp)
-	}
+	assert.Equal(t, pp, "2000")
 }
 
 func TestPublishUrl(t *testing.T) {
@@ -80,9 +75,7 @@ func TestPublishUrl(t *testing.T) {
 			}
 			conf.Config.Admin.Httpsd.Listen = tt.listen
 			got := poller.makePublishURL()
-			if got != tt.want {
-				t.Errorf("makePublishURL got = [%v] want [%v]", got, tt.want)
-			}
+			assert.Equal(t, got, tt.want)
 		})
 	}
 }
@@ -133,9 +126,7 @@ func TestCollectorUpgrade(t *testing.T) {
 			}
 
 			newCollector := poller.upgradeCollector(collector, tt.remote)
-			if newCollector.Name != tt.wantCollector {
-				t.Errorf("got = [%s] want [%s]", newCollector.Name, tt.wantCollector)
-			}
+			assert.Equal(t, newCollector.Name, tt.wantCollector)
 		})
 	}
 }

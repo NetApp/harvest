@@ -1,6 +1,7 @@
 package qospolicyfixed
 
 import (
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"strconv"
 	"testing"
@@ -37,13 +38,12 @@ func Test_zapiXputToRest(t *testing.T) {
 	for i, tt := range tests {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			got, err := collectors.ZapiXputToRest(tt.zapi)
-			if err != nil && !tt.isErr {
-				t.Errorf("ZapiXputToRest(%s) got=%+v, want no err but got err=%s", tt.zapi, got, err)
+			if err != nil {
+				assert.True(t, tt.isErr)
 				return
 			}
-			if got.IOPS != tt.want.IOPS || got.Mbps != tt.want.Mbps {
-				t.Errorf("ZapiXputToRest(%s) got=%+v, want=%+v", tt.zapi, got, tt.want)
-			}
+			assert.Equal(t, got.IOPS, tt.want.IOPS)
+			assert.Equal(t, got.Mbps, tt.want.Mbps)
 		})
 	}
 }

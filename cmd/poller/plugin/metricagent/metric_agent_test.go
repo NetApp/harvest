@@ -5,6 +5,7 @@
 package metricagent
 
 import (
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
@@ -56,148 +57,100 @@ func TestComputeMetricsRule(t *testing.T) {
 	p := newAgent()
 	m := matrix.New("TestLabelAgent", "test", "test")
 
-	if instanceA, err = m.NewInstance("A"); err != nil {
-		t.Fatal(err)
-	}
+	instanceA, err = m.NewInstance("A")
+	assert.Nil(t, err)
 
 	// space metric for addition
-	if metricAvail, err = m.NewMetricFloat64("space_available"); err == nil {
-		metricAvail.SetValueFloat64(instanceA, 1010101010)
-	} else {
-		t.Error("metric [space_available]  not created for InstanceA")
-	}
-	if metricUsed, err = m.NewMetricFloat64("space_used"); err == nil {
-		metricUsed.SetValueFloat64(instanceA, 5050505050)
-	} else {
-		t.Error("metric [space_used]  not created for InstanceA")
-	}
-	// files metric for subtraction
-	if metricFiles, err = m.NewMetricFloat64("files"); err == nil {
-		metricFiles.SetValueFloat64(instanceA, 1024)
-	} else {
-		t.Error("metric [files]  not created for InstanceA")
-	}
-	if metricFilesUsed, err = m.NewMetricFloat64("files_used"); err == nil {
-		metricFilesUsed.SetValueFloat64(instanceA, 216)
-	} else {
-		t.Error("metric [files_used]  not created for InstanceA")
-	}
+	metricAvail, err = m.NewMetricFloat64("space_available")
+	assert.Nil(t, err)
+	metricAvail.SetValueFloat64(instanceA, 1010101010)
 
-	if instanceB, err = m.NewInstance("B"); err != nil {
-		t.Fatal(err)
-	}
+	metricUsed, err = m.NewMetricFloat64("space_used")
+	assert.Nil(t, err)
+	metricUsed.SetValueFloat64(instanceA, 5050505050)
+
+	// files metric for subtraction
+	metricFiles, err = m.NewMetricFloat64("files")
+	assert.Nil(t, err)
+	metricFiles.SetValueFloat64(instanceA, 1024)
+
+	metricFilesUsed, err = m.NewMetricFloat64("files_used")
+	assert.Nil(t, err)
+	metricFilesUsed.SetValueFloat64(instanceA, 216)
+
+	instanceB, err = m.NewInstance("B")
+	assert.Nil(t, err)
 
 	// disk metric for addition
-	if metricDiskP, err = m.NewMetricFloat64("primary.disk_count"); err == nil {
-		metricDiskP.SetValueFloat64(instanceB, 8)
-	} else {
-		t.Error("metric [primary.disk_count]  not created for InstanceB")
-	}
-	if metricDiskS, err = m.NewMetricFloat64("secondary.disk_count"); err == nil {
-		metricDiskS.SetValueFloat64(instanceB, 10)
-	} else {
-		t.Error("metric [secondary.disk_count]  not created for InstanceB")
-	}
-	if metricDiskH, err = m.NewMetricFloat64("hybrid.disk_count"); err == nil {
-		metricDiskH.SetValueFloat64(instanceB, 4)
-	} else {
-		t.Error("metric [hybrid.disk_count]  not created for InstanceB")
-	}
-	// bytes metric for multiplication
-	if metricBytesPSector, err = m.NewMetricFloat64("bytes_per_sector"); err == nil {
-		metricBytesPSector.SetValueFloat64(instanceB, 10000)
-	} else {
-		t.Error("metric [bytes_per_sector]  not created for InstanceB")
-	}
-	if metricSectorCount, err = m.NewMetricFloat64("sector_count"); err == nil {
-		metricSectorCount.SetValueFloat64(instanceB, 12)
-	} else {
-		t.Error("metric [sector_count]  not created for InstanceB")
-	}
-	// transmission metric for division
-	if metricBytesTransferred, err = m.NewMetricFloat64("transfer.bytes_transferred"); err == nil {
-		metricBytesTransferred.SetValueFloat64(instanceB, 9000000)
-	} else {
-		t.Error("metric [transfer.bytes_transferred]  not created for InstanceB")
-	}
-	if metricTotalDuration, err = m.NewMetricFloat64("transfer.total_duration"); err == nil {
-		metricTotalDuration.SetValueFloat64(instanceB, 3600)
-	} else {
-		t.Error("metric [transfer.total_duration]  not created for InstanceB")
-	}
+	metricDiskP, err = m.NewMetricFloat64("primary.disk_count")
+	assert.Nil(t, err)
+	metricDiskP.SetValueFloat64(instanceB, 8)
 
-	if err = p.computeMetrics(m); err != nil {
-		t.Fatal(err)
-	}
+	metricDiskS, err = m.NewMetricFloat64("secondary.disk_count")
+	assert.Nil(t, err)
+	metricDiskS.SetValueFloat64(instanceB, 10)
+
+	metricDiskH, err = m.NewMetricFloat64("hybrid.disk_count")
+	assert.Nil(t, err)
+	metricDiskH.SetValueFloat64(instanceB, 4)
+
+	// bytes metric for multiplication
+	metricBytesPSector, err = m.NewMetricFloat64("bytes_per_sector")
+	assert.Nil(t, err)
+	metricBytesPSector.SetValueFloat64(instanceB, 10000)
+
+	metricSectorCount, err = m.NewMetricFloat64("sector_count")
+	assert.Nil(t, err)
+	metricSectorCount.SetValueFloat64(instanceB, 12)
+
+	// transmission metric for division
+	metricBytesTransferred, err = m.NewMetricFloat64("transfer.bytes_transferred")
+	assert.Nil(t, err)
+	metricBytesTransferred.SetValueFloat64(instanceB, 9000000)
+
+	metricTotalDuration, err = m.NewMetricFloat64("transfer.total_duration")
+	assert.Nil(t, err)
+	metricTotalDuration.SetValueFloat64(instanceB, 3600)
+
+	err = p.computeMetrics(m)
+	assert.Nil(t, err)
 
 	// check "space_total" for instanceA
 	expected = 6060606060
-	if metricTotal = m.GetMetric("space_total"); metricTotal != nil {
-		if metricTotalVal, ok := metricTotal.GetValueFloat64(instanceA); !ok {
-			t.Error("metric [space_total]: value for InstanceA not set")
-		} else if metricTotalVal != expected {
-			t.Errorf("metric [space_total]: value for InstanceA is %f, expected %f", metricTotalVal, expected)
-		} else {
-			t.Logf("OK - metric [space_total]: value for instanceA set to %f", metricTotalVal)
-		}
-	} else {
-		t.Error("metric [space_total] missing")
-	}
+	metricTotal = m.GetMetric("space_total")
+	assert.NotNil(t, metricTotal)
+	metricTotalVal, ok := metricTotal.GetValueFloat64(instanceA)
+	assert.True(t, ok)
+	assert.Equal(t, metricTotalVal, expected)
 
 	// check "disk_count" for instanceB
 	expected = 22
-	if metricDiskTotal = m.GetMetric("disk_count"); metricDiskTotal != nil {
-		if metricDiskTotalVal, ok := metricDiskTotal.GetValueFloat64(instanceB); !ok {
-			t.Error("metric [disk_count]: value for InstanceB not set")
-		} else if metricDiskTotalVal != expected {
-			t.Errorf("metric [disk_count]: value for InstanceB is %f, expected %f", metricDiskTotalVal, expected)
-		} else {
-			t.Logf("OK - metric [disk_count]: value for instanceB set to %f", metricDiskTotalVal)
-		}
-	} else {
-		t.Error("metric [disk_count] missing")
-	}
+	metricDiskTotal = m.GetMetric("disk_count")
+	assert.NotNil(t, metricDiskTotal)
+	metricDiskTotalVal, ok := metricDiskTotal.GetValueFloat64(instanceB)
+	assert.True(t, ok)
+	assert.Equal(t, metricDiskTotalVal, expected)
 
 	// check "files_available" for instanceA
 	expected = 808
-	if metricFilesAvailable = m.GetMetric("files_available"); metricFilesAvailable != nil {
-		if metricFilesAvailableVal, ok := metricFilesAvailable.GetValueFloat64(instanceA); !ok {
-			t.Error("metric [files_available]: value for InstanceA not set")
-		} else if metricFilesAvailableVal != expected {
-			t.Errorf("metric [files_available]: value for InstanceA is %f, expected %f", metricFilesAvailableVal, expected)
-		} else {
-			t.Logf("OK - metric [files_available]: value for instanceA set to %f", metricFilesAvailableVal)
-		}
-	} else {
-		t.Error("metric [files_available] missing")
-	}
+	metricFilesAvailable = m.GetMetric("files_available")
+	assert.NotNil(t, metricFilesAvailable)
+	metricFilesAvailableVal, ok := metricFilesAvailable.GetValueFloat64(instanceA)
+	assert.True(t, ok)
+	assert.Equal(t, metricFilesAvailableVal, expected)
 
 	// check "total_bytes" for instanceB
 	expected = 120000
-	if metricTotalBytes = m.GetMetric("total_bytes"); metricTotalBytes != nil {
-		if metricTotalBytesVal, ok := metricTotalBytes.GetValueFloat64(instanceB); !ok {
-			t.Error("metric [total_bytes]: value for InstanceB not set")
-		} else if metricTotalBytesVal != expected {
-			t.Errorf("metric [total_bytes]: value for InstanceB is %f, expected %f", metricTotalBytesVal, expected)
-		} else {
-			t.Logf("OK - metric [total_bytes]: value for instanceB set to %f", metricTotalBytesVal)
-		}
-	} else {
-		t.Error("metric [total_bytes] missing")
-	}
+	metricTotalBytes = m.GetMetric("total_bytes")
+	assert.NotNil(t, metricTotalBytes)
+	metricTotalBytesVal, ok := metricTotalBytes.GetValueFloat64(instanceB)
+	assert.True(t, ok)
+	assert.Equal(t, metricTotalBytesVal, expected)
 
 	// check "transmission_rate" for instanceB
 	expected = 2500
-	if metricTransmissionRate = m.GetMetric("transmission_rate"); metricTransmissionRate != nil {
-		if metricTransmissionRateVal, ok := metricTransmissionRate.GetValueFloat64(instanceB); !ok {
-			t.Error("metric [transmission_rate]: value for InstanceB not set")
-		} else if metricTransmissionRateVal != expected {
-			t.Errorf("metric [transmission_rate]: value for InstanceB is %f, expected %f", metricTransmissionRateVal, expected)
-		} else {
-			t.Logf("OK - metric [transmission_rate]: value for instanceB set to %f", metricTransmissionRateVal)
-		}
-	} else {
-		t.Error("metric [transmission_rate] missing")
-	}
-
+	metricTransmissionRate = m.GetMetric("transmission_rate")
+	metricTransmissionRateVal, ok := metricTransmissionRate.GetValueFloat64(instanceB)
+	assert.True(t, ok)
+	assert.Equal(t, metricTransmissionRateVal, expected)
 }

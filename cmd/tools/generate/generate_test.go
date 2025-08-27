@@ -1,6 +1,9 @@
 package generate
 
-import "testing"
+import (
+	"github.com/netapp/harvest/v2/assert"
+	"testing"
+)
 
 func Test_toMount(t *testing.T) {
 	tests := []struct {
@@ -14,9 +17,7 @@ func Test_toMount(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := toMount(tt.hostPath); got != tt.want {
-				t.Errorf("toMount() = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, toMount(tt.hostPath), tt.want)
 		})
 	}
 }

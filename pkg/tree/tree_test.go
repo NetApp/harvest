@@ -2,6 +2,8 @@ package tree
 
 import (
 	"testing"
+
+	"github.com/netapp/harvest/v2/assert"
 )
 
 func TestImportYaml(t *testing.T) {
@@ -15,12 +17,8 @@ func TestImportYaml(t *testing.T) {
 		for range name.GetChildren() {
 			got++
 		}
-		if name.GetContentS() == "" {
-			t.Errorf("empty content")
-		}
-		if got != want {
-			t.Errorf("got %v, want %v", got, want)
-		}
+		assert.NotEqual(t, name.GetContentS(), "")
+		assert.Equal(t, got, want)
 	}
 
 	// check counters
@@ -261,9 +259,7 @@ emptyKey: # This key has an empty value
 `
 
 	n, err := LoadYaml([]byte(yamlTest))
-	if err != nil {
-		t.Fatalf("failed to import yaml: %v", err)
-	}
+	assert.Nil(t, err)
 
 	tests := []struct {
 		key   string
@@ -282,11 +278,8 @@ emptyKey: # This key has an empty value
 	for _, test := range tests {
 		t.Run(test.key, func(t *testing.T) {
 			got := n.GetChildS(test.key)
-			if got == nil {
-				t.Errorf("got nil for key [%s]", test.key)
-			} else if got.GetContentS() != test.value {
-				t.Errorf("got [%s], want [%s]", got.GetContentS(), test.value)
-			}
+			assert.NotNil(t, got)
+			assert.Equal(t, got.GetContentS(), test.value)
 		})
 	}
 }

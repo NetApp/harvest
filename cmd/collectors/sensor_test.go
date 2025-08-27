@@ -2,6 +2,7 @@ package collectors
 
 import (
 	"fmt"
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree"
@@ -152,15 +153,11 @@ func TestSensor_Run(t *testing.T) {
 
 	for _, k := range eMetrics {
 		metrics := omat[0].GetMetrics()
-		if len(omat[0].GetInstances()) == 0 {
-			t.Errorf("got no instances")
-		}
+		assert.NotEqual(t, len(omat[0].GetInstances()), 0)
 		for iKey, v := range omat[0].GetInstances() {
 			got, _ := metrics[k].GetValueFloat64(v)
 			exp := expected[k][iKey]
-			if got != exp {
-				t.Errorf("instance %s metrics %s expected: = %v, got: %v", iKey, k, exp, got)
-			}
+			assert.Equal(t, got, exp)
 		}
 	}
 }
@@ -180,23 +177,15 @@ func TestPowerRegex(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			data, err := os.ReadFile(tt.path)
-			if err != nil {
-				panic(err)
-			}
+			assert.Nil(t, err)
 			powerMatches := countMatches(powerInRegex, data)
-			if powerMatches != tt.wantPower {
-				t.Errorf("power regex\ngot=%v\nwant=%v", powerMatches, tt.wantPower)
-			}
+			assert.Equal(t, powerMatches, tt.wantPower)
 
 			currentMatches := countMatches(currentRegex, data)
-			if currentMatches != tt.wantCurrent {
-				t.Errorf("current regex\ngot=%v\nwant=%v", currentMatches, tt.wantCurrent)
-			}
+			assert.Equal(t, currentMatches, tt.wantCurrent)
 
 			voltageMatches := countMatches(voltageRegex, data)
-			if voltageMatches != tt.wantVoltage {
-				t.Errorf("voltage regex\ngot=%v\nwant=%v", voltageMatches, tt.wantVoltage)
-			}
+			assert.Equal(t, voltageMatches, tt.wantVoltage)
 		})
 	}
 }

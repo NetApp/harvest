@@ -4,6 +4,7 @@
 package influxdb
 
 import (
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/poller/exporter"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -16,18 +17,13 @@ func setupInfluxDB(t *testing.T, exporterName string) *InfluxDB {
 	opts.IsTest = true
 
 	_, err := conf.LoadHarvestConfig("../../tools/doctor/testdata/testConfig.yml")
-	if err != nil {
-		panic(err)
-	}
+	assert.Nil(t, err)
 	e, ok := conf.Config.Exporters[exporterName]
-	if !ok {
-		t.Fatalf(`exporter (%v) not defined in config`, exporterName)
-	}
+	assert.True(t, ok)
 
 	influx := &InfluxDB{AbstractExporter: exporter.New("InfluxDB", exporterName, opts, e, nil)}
-	if err := influx.Init(); err != nil {
-		t.Fatal(err)
-	}
+	err = influx.Init()
+	assert.Nil(t, err)
 
 	return influx
 }
@@ -39,11 +35,7 @@ func TestAddrParameter(t *testing.T) {
 	exporterName := "influx-test-addr"
 	influx := setupInfluxDB(t, exporterName)
 
-	if influx.url == expectedURL {
-		t.Logf("OK - url: [%s]", expectedURL)
-	} else {
-		t.Fatalf("FAIL - expected [%s]\n                             got [%s]", expectedURL, influx.url)
-	}
+	assert.Equal(t, influx.url, expectedURL)
 }
 
 // test that the addr (and port) parameters
@@ -53,11 +45,7 @@ func TestUrlParameter(t *testing.T) {
 	exporterName := "influx-test-url"
 	influx := setupInfluxDB(t, exporterName)
 
-	if influx.url == expectedURL {
-		t.Logf("OK - url: [%s]", expectedURL)
-	} else {
-		t.Fatalf("FAIL - expected [%s]\n       got [%s]", expectedURL, influx.url)
-	}
+	assert.Equal(t, influx.url, expectedURL)
 }
 
 // test that the addr, port and version parameters are handled properly to construct server URL
@@ -66,11 +54,7 @@ func TestVersionParameter(t *testing.T) {
 	exporterName := "influx-test-version"
 	influx := setupInfluxDB(t, exporterName)
 
-	if influx.url == expectedURL {
-		t.Logf("OK - url: [%s]", expectedURL)
-	} else {
-		t.Fatalf("FAIL - expected [%s]\n       got [%s]", expectedURL, influx.url)
-	}
+	assert.Equal(t, influx.url, expectedURL)
 }
 
 // test that `bucket`, `org`, `port`, and `precision` fields are ignored when using the `url` field
@@ -79,11 +63,7 @@ func TestUrlIgnores(t *testing.T) {
 	exporterName := "influx-with-url"
 	influx := setupInfluxDB(t, exporterName)
 
-	if influx.url == expectedURL {
-		t.Logf("OK - url: [%s]", expectedURL)
-	} else {
-		t.Fatalf("FAIL - expected [%s]\n       got [%s]", expectedURL, influx.url)
-	}
+	assert.Equal(t, influx.url, expectedURL)
 }
 
 // test rendering in debug mode
@@ -99,15 +79,11 @@ func TestExportDebug(t *testing.T) {
 
 	// add metric
 	m, err := data.NewMetricInt64("test_metric")
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.Nil(t, err)
 
 	// add instance
 	i, err := data.NewInstance("test_instance")
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.Nil(t, err)
 	i.SetLabel("test_label", "test_label_value")
 
 	// add numeric data
@@ -115,9 +91,8 @@ func TestExportDebug(t *testing.T) {
 	m.SetValueInt64(i, 42)
 
 	// render data
-	if _, err := influx.Export(data); err != nil {
-		t.Fatal(err)
-	}
+	_, err = influx.Export(data)
+	assert.Nil(t, err)
 }
 
 // test that whitespace is escaped in the  parameters
@@ -127,7 +102,5 @@ func TestWhiteSpaceInParameter(t *testing.T) {
 	exporterName := "influx-test-space"
 	influx := setupInfluxDB(t, exporterName)
 
-	if influx.url != expectedURL {
-		t.Fatalf("FAIL - expected [%s]\n                             got [%s]", expectedURL, influx.url)
-	}
+	assert.Equal(t, influx.url, expectedURL)
 }

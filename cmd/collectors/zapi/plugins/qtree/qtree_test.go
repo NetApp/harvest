@@ -1,6 +1,7 @@
 package qtree
 
 import (
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	client "github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
@@ -110,9 +111,8 @@ func runQtreeTest(t *testing.T, createQtree func(historicalLabels bool, testFile
 	q := createQtree(historicalLabels, testFileName)
 
 	// Initialize the plugin
-	if err := q.Init(conf.Remote{}); err != nil {
-		t.Fatalf("failed to initialize plugin: %v", err)
-	}
+	err := q.Init(conf.Remote{})
+	assert.Nil(t, err)
 
 	// Create test data
 	qtreeData := matrix.New("qtree", "qtree", "qtree")
@@ -140,9 +140,7 @@ func runQtreeTest(t *testing.T, createQtree func(historicalLabels bool, testFile
 
 	// Run the plugin
 	output, _, err := q.Run(dataMap)
-	if err != nil {
-		t.Fatalf("Run method failed: %v", err)
-	}
+	assert.Nil(t, err)
 
 	quotaOutput := output[0]
 	verifyInstanceCount(t, quotaOutput, expectedQuotaCount)
@@ -167,9 +165,7 @@ func verifyInstanceCount(t *testing.T, output *matrix.Matrix, expectedCount int)
 	}
 
 	// Verify the number of instances
-	if currentCount != expectedCount {
-		t.Errorf("expected %d instances, got %d", expectedCount, currentCount)
-	}
+	assert.Equal(t, currentCount, expectedCount)
 }
 
 func verifyLabelCount(t *testing.T, quotaOutput *matrix.Matrix, quotaInstanceKey string, expectedQuotaLabels int) {
@@ -178,9 +174,7 @@ func verifyLabelCount(t *testing.T, quotaOutput *matrix.Matrix, quotaInstanceKey
 		quotaLabels = len(quotaInstance.GetLabels())
 	}
 
-	if quotaLabels != expectedQuotaLabels {
-		t.Errorf("labels = %d; want %d", quotaLabels, expectedQuotaLabels)
-	}
+	assert.Equal(t, quotaLabels, expectedQuotaLabels)
 }
 
 func TestUserIdentifierHandling(t *testing.T) {
@@ -203,9 +197,8 @@ func TestUserIdentifierHandling(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			q := NewQtree(false, testFileName)
 
-			if err := q.Init(conf.Remote{}); err != nil {
-				t.Fatalf("failed to initialize plugin: %v", err)
-			}
+			err := q.Init(conf.Remote{})
+			assert.Nil(t, err)
 
 			qtreeData := matrix.New("qtree", "qtree", "qtree")
 			qtreeInstance, _ := qtreeData.NewInstance("svm1.volume1.qtree1")
@@ -216,15 +209,12 @@ func TestUserIdentifierHandling(t *testing.T) {
 			}
 
 			output, _, err := q.Run(dataMap)
-			if err != nil {
-				t.Fatalf("Run method failed: %v", err)
-			}
+			assert.Nil(t, err)
 
 			quotaOutput := output[0]
 			for _, iKey := range tc.expectedInstanceKey {
-				if quotaInstance := quotaOutput.GetInstance(iKey); quotaInstance == nil {
-					t.Errorf("expected instance key %s not found", tc.expectedInstanceKey)
-				}
+				quotaInstance := quotaOutput.GetInstance(iKey)
+				assert.NotNil(t, quotaInstance)
 			}
 		})
 	}

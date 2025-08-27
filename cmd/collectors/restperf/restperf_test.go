@@ -3,6 +3,7 @@ package restperf
 import (
 	"fmt"
 	"github.com/google/go-cmp/cmp"
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
@@ -26,9 +27,7 @@ const (
 
 func Test_parseMetricResponse(t *testing.T) {
 	data, err := os.ReadFile("testdata/submetrics.json")
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.Nil(t, err)
 	instanceData := gjson.GetBytes(data, "records.0")
 	type args struct {
 		instanceData gjson.Result
@@ -61,9 +60,7 @@ func Test_parseMetricResponse(t *testing.T) {
 			metricResponses := parseMetricResponses(tt.args.instanceData, metrics)
 			got := metricResponses[tt.args.metric]
 			diff := cmp.Diff(got, tt.want, cmp.AllowUnexported(metricResponse{}))
-			if diff != "" {
-				t.Errorf("Mismatch (-got +want):\n%s", diff)
-			}
+			assert.Equal(t, diff, "")
 		})
 	}
 }
@@ -166,27 +163,19 @@ func TestRestPerf_pollData(t *testing.T) {
 
 			counters := jsonToPerfRecords(tt.pollCounters)
 			_, err := r.pollCounter(counters[0].Records.Array(), 0)
-			if err != nil {
-				t.Fatal(err)
-			}
+			assert.Nil(t, err)
 			pollInstance := jsonToPerfRecords(tt.pollInstance)
 			pollData := jsonToPerfRecords(tt.pollDataPath1)
 			_, err = r.pollInstance(r.Matrix[r.Object], perfToJSON(pollInstance), 0)
-			if err != nil {
-				t.Fatal(err)
-			}
+			assert.Nil(t, err)
 
 			prevMat := r.Matrix[r.Object]
 			_, _, err = processAndCookCounters(r, pollData, prevMat)
-			if err != nil {
-				t.Fatal(err)
-			}
+			assert.Nil(t, err)
 
 			counters = jsonToPerfRecords(tt.pollCounters2)
 			_, err = r.pollCounter(counters[0].Records.Array(), 0)
-			if err != nil {
-				t.Fatal(err)
-			}
+			assert.Nil(t, err)
 
 			future := time.Now().Add(time.Minute * 15)
 			pollData = jsonToPerfRecords(tt.pollDataPath2)
@@ -194,19 +183,14 @@ func TestRestPerf_pollData(t *testing.T) {
 
 			prevMat = r.Matrix[r.Object]
 			got, metricCount, err := processAndCookCounters(r, pollData, prevMat)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("pollData() error = %v, wantErr %v", err, tt.wantErr)
+			if err != nil {
+				assert.True(t, tt.wantErr)
 				return
 			}
 
 			m := got["Volume"]
-			if len(m.GetInstances()) != tt.numInstances {
-				t.Errorf("pollData() numInstances got=%v, want=%v", len(m.GetInstances()), tt.numInstances)
-			}
-
-			if metricCount != tt.numMetrics {
-				t.Errorf("pollData() numMetrics got=%v, want=%v", metricCount, tt.numMetrics)
-			}
+			assert.Equal(t, len(m.GetInstances()), tt.numInstances)
+			assert.Equal(t, metricCount, tt.numMetrics)
 
 			var sum int64
 			var names []string
@@ -218,14 +202,10 @@ func TestRestPerf_pollData(t *testing.T) {
 			for _, name := range names {
 				i := m.GetInstance(name)
 				val, recorded := metric.GetValueInt64(i)
-				if recorded != tt.record {
-					t.Errorf("pollData() recorded got=%v, want=%v", recorded, tt.record)
-				}
+				assert.Equal(t, recorded, tt.record)
 				sum += val
 			}
-			if sum != tt.sum {
-				t.Errorf("pollData() sum got=%v, want=%v", sum, tt.sum)
-			}
+			assert.Equal(t, sum, tt.sum)
 		})
 	}
 }
@@ -235,9 +215,7 @@ func (r *RestPerf) testPollInstanceAndDataWithMetrics(t *testing.T, pollDataFile
 	prevMat := r.Matrix[r.Object]
 	pollData := jsonToPerfRecords(pollDataFile)
 	got, _, err := processAndCookCounters(r, pollData, prevMat)
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.Nil(t, err)
 
 	totalMetrics := 0
 	exportableInstance := 0
@@ -261,14 +239,8 @@ func (r *RestPerf) testPollInstanceAndDataWithMetrics(t *testing.T, pollDataFile
 		}
 	}
 
-	if exportableInstance != expectedExportedInst {
-		t.Errorf("Exported instances got=%d, expected=%d", exportableInstance, expectedExportedInst)
-	}
-
-	// Check if the total number of metrics matches the expected value
-	if totalMetrics != expectedExportedMetrics {
-		t.Errorf("Total metrics got=%d, expected=%d", totalMetrics, expectedExportedMetrics)
-	}
+	assert.Equal(t, exportableInstance, expectedExportedInst)
+	assert.Equal(t, totalMetrics, expectedExportedMetrics)
 }
 
 func TestPollCounter(t *testing.T) {
@@ -279,13 +251,8 @@ func TestPollCounter(t *testing.T) {
 
 	counters := jsonToPerfRecords("testdata/partialAggregation/counters.json")
 	_, err = r.pollCounter(counters[0].Records.Array(), 0)
-	if err != nil {
-		t.Fatalf("Failed to fetch poll counter %v", err)
-	}
-
-	if len(r.Prop.Metrics) != len(r.perfProp.counterInfo) {
-		t.Errorf("Prop metrics and counterInfo size should be same")
-	}
+	assert.Nil(t, err)
+	assert.Equal(t, len(r.Prop.Metrics), len(r.perfProp.counterInfo))
 }
 
 type partialAggTestCase struct {
@@ -311,14 +278,10 @@ func TestPartialAggregationSequence(t *testing.T) {
 
 	counters := jsonToPerfRecords("testdata/partialAggregation/counters.json")
 	_, err := r.pollCounter(counters[0].Records.Array(), 0)
-	if err != nil {
-		t.Fatalf("Failed to fetch poll counter %v", err)
-	}
+	assert.Nil(t, err)
 	pollInstance := jsonToPerfRecords("testdata/partialAggregation/poll-instance.json")
 	_, err = r.pollInstance(r.Matrix[r.Object], perfToJSON(pollInstance), 0)
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.Nil(t, err)
 
 	cases := []partialAggTestCase{
 		{"First Poll", "poll-data-1.json", 0, 0},
@@ -338,14 +301,10 @@ func TestAllowPartialAggregationSequence(t *testing.T) {
 
 	counters := jsonToPerfRecords("testdata/allowPartialAggregation/counters.json")
 	_, err := r.pollCounter(counters[0].Records.Array(), 0)
-	if err != nil {
-		t.Fatalf("Failed to fetch poll counter %v", err)
-	}
+	assert.Nil(t, err)
 	pollInstance := jsonToPerfRecords("testdata/allowPartialAggregation/poll-instance.json")
 	_, err = r.pollInstance(r.Matrix[r.Object], perfToJSON(pollInstance), 0)
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.Nil(t, err)
 
 	cases := []partialAggTestCase{
 		{"First Poll", "poll-data-1.json", 0, 0},
@@ -440,15 +399,11 @@ func TestQosVolume(t *testing.T) {
 
 			counters := jsonToPerfRecords(tt.pollCounters)
 			_, err := r.pollCounter(counters[0].Records.Array(), 0)
-			if err != nil {
-				t.Fatal(err)
-			}
+			assert.Nil(t, err)
 
 			pollInst := jsonToPerfRecords(tt.pollInstance)
 			_, err = r.pollInstance(r.Matrix[r.Object], perfToJSON(pollInst), 0)
-			if err != nil {
-				t.Fatal(err)
-			}
+			assert.Nil(t, err)
 
 			pollData := jsonToPerfRecords(tt.pollDataPath1)
 			now := time.Now().Truncate(time.Second)
@@ -456,9 +411,7 @@ func TestQosVolume(t *testing.T) {
 			prevMat := r.Matrix[r.Object]
 
 			_, _, err = processAndCookCounters(r, pollData, prevMat)
-			if err != nil {
-				t.Fatal(err)
-			}
+			assert.Nil(t, err)
 
 			future := now.Add(time.Minute * 1)
 			pollData = jsonToPerfRecords(tt.pollDataPath2)
@@ -466,19 +419,14 @@ func TestQosVolume(t *testing.T) {
 
 			prevMat = r.Matrix[r.Object]
 			got, metricCount, err := processAndCookCounters(r, pollData, prevMat)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("pollData() error = %v, wantErr %v", err, tt.wantErr)
+			if err != nil {
+				assert.True(t, tt.wantErr)
 				return
 			}
 
 			m := got["WorkloadVolume"]
-			if len(m.GetInstances()) != tt.numInstances {
-				t.Errorf("pollData() numInstances got=%v, want=%v", len(m.GetInstances()), tt.numInstances)
-			}
-
-			if metricCount != tt.numMetrics {
-				t.Errorf("pollData() numMetrics got=%v, want=%v", metricCount, tt.numMetrics)
-			}
+			assert.Equal(t, len(m.GetInstances()), tt.numInstances)
+			assert.Equal(t, metricCount, tt.numMetrics)
 
 			var sum int64
 			var names []string
@@ -490,14 +438,10 @@ func TestQosVolume(t *testing.T) {
 			for _, name := range names {
 				i := m.GetInstance(name)
 				val, recorded := readLatency.GetValueInt64(i)
-				if !recorded {
-					t.Errorf("pollData() recorded = false, want true")
-				}
+				assert.True(t, recorded)
 				sum += val
 			}
-			if sum != tt.sum {
-				t.Errorf("pollData() sum got=%v, want=%v", sum, tt.sum)
-			}
+			assert.Equal(t, sum, tt.sum)
 		})
 	}
 }
@@ -507,9 +451,7 @@ func TestSkipsSequence(t *testing.T) {
 
 	counters := jsonToPerfRecords("testdata/skips/pollCounter.json")
 	_, err := r.pollCounter(counters[0].Records.Array(), 0)
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.Nil(t, err)
 
 	// First Poll
 	t.Log("Running First Poll")

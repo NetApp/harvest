@@ -6,6 +6,7 @@ import (
 	"github.com/Netapp/harvest-automation/test/cmds"
 	"github.com/Netapp/harvest-automation/test/docker"
 	"github.com/Netapp/harvest-automation/test/installer"
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
 	"os/exec"
@@ -19,9 +20,7 @@ func TestCopyLogs(t *testing.T) {
 	pollerProcessName := "bin/poller"
 	harvestLogDir := installer.LogDir
 	containerIDs, err := docker.Containers(pollerProcessName)
-	if err != nil {
-		panic(err)
-	}
+	assert.Nil(t, err)
 	for _, container := range containerIDs {
 		containerShortID := container.ID[:10]
 		dest := harvestLogDir + "/" + containerShortID + ".log"
@@ -54,9 +53,7 @@ func TestNoErrors(t *testing.T) {
 
 	for _, containerPattern := range containerPatterns {
 		containers, err := docker.Containers(containerPattern.name)
-		if err != nil {
-			panic(err)
-		}
+		assert.Nil(t, err)
 		for _, container := range containers {
 			checkLogs(t, container, containerPattern)
 		}

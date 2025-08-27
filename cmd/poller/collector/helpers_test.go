@@ -1,6 +1,7 @@
 package collector
 
 import (
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/third_party/go-version"
 	"sort"
@@ -42,9 +43,8 @@ func Test_getClosestIndex(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := getClosestIndex(tt.args.versions, tt.args.version); got != tt.want {
-				t.Errorf("getClosestIndex() = %v, want %v", got, tt.want)
-			}
+			got := getClosestIndex(tt.args.versions, tt.args.version)
+			assert.Equal(t, got, tt.want)
 		})
 	}
 }
@@ -52,12 +52,7 @@ func Test_getClosestIndex(t *testing.T) {
 func Test_HARVEST_CONF(t *testing.T) {
 	t.Setenv(conf.HomeEnvVar, "testdata")
 	template, err := ImportTemplate([]string{"conf"}, "test.yaml", "test")
-	if err != nil {
-		t.Errorf(`got err="%v", want no err`, err)
-		return
-	}
+	assert.Nil(t, err)
 	name := template.GetChildContentS("collector")
-	if name != "Test" {
-		t.Errorf("collectorName got=%s, want=Test", name)
-	}
+	assert.Equal(t, name, "Test")
 }

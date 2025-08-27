@@ -1,6 +1,9 @@
 package version
 
-import "testing"
+import (
+	"github.com/netapp/harvest/v2/assert"
+	"testing"
+)
 
 func Test_isNewerAvailable(t *testing.T) {
 	type test struct {
@@ -19,12 +22,8 @@ func Test_isNewerAvailable(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			available, err := isNewerAvailable(tt.curVersion, tt.remoteVersion)
-			if err != nil {
-				panic(err)
-			}
-			if available != tt.shouldUpgrade {
-				t.Errorf("expected %t got %t for %+v", tt.shouldUpgrade, available, tt)
-			}
+			assert.Nil(t, err)
+			assert.Equal(t, available, tt.shouldUpgrade)
 		})
 	}
 }

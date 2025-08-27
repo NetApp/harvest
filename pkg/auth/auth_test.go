@@ -1,11 +1,13 @@
 package auth
 
 import (
-	"github.com/google/go-cmp/cmp"
-	"github.com/netapp/harvest/v2/pkg/conf"
+	"github.com/netapp/harvest/v2/assert"
 	"log/slog"
 	"os"
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
+	"github.com/netapp/harvest/v2/pkg/conf"
 )
 
 func TestCredentials_GetPollerAuth(t *testing.T) {
@@ -589,40 +591,21 @@ Pollers:
 				conf.Config.Defaults = &conf.Poller{}
 			}
 			err := conf.DecodeConfig([]byte(tt.yaml))
-			if err != nil {
-				t.Errorf("expected no error got %+v", err)
-				return
-			}
+			assert.Nil(t, err)
 			poller, err := conf.PollerNamed(tt.pollerName)
-			if err != nil {
-				t.Errorf("expected no error got %+v", err)
-				return
-			}
+			assert.Nil(t, err)
 			c := NewCredentials(poller, slog.Default())
 			got, err := c.GetPollerAuth()
-			if (err != nil) != tt.wantErr {
-				t.Errorf("GetPollerAuth() error = %v, wantErr %v", err, tt.wantErr)
+			if err != nil {
+				assert.True(t, tt.wantErr)
 				return
 			}
-			if tt.want.Username != got.Username {
-				t.Errorf("got username=[%s], want username=[%s]", got.Username, tt.want.Username)
-			}
-			if tt.want.Password != got.Password {
-				t.Errorf("got password=[%s], want password=[%s]", got.Password, tt.want.Password)
-			}
-			if tt.want.AuthToken != got.AuthToken {
-				t.Errorf("got authToken=[%s], want authToken=[%s]", got.AuthToken, tt.want.AuthToken)
-			}
-			if tt.want.IsCert != got.IsCert {
-				t.Errorf("got IsCert=[%t], want IsCert=[%t]", got.IsCert, tt.want.IsCert)
-			}
-			if tt.want.HasCredentialScript != got.HasCredentialScript {
-				t.Errorf(
-					"got HasCredentialScript=[%t], want HasCredentialScript=[%t]",
-					got.HasCredentialScript,
-					tt.want.HasCredentialScript,
-				)
-			}
+			assert.Equal(t, got.Username, tt.want.Username)
+			assert.Equal(t, got.Password, tt.want.Password)
+			assert.Equal(t, got.AuthToken, tt.want.AuthToken)
+			assert.Equal(t, got.IsCert, tt.want.IsCert)
+			assert.Equal(t, got.HasCredentialScript, tt.want.HasCredentialScript)
+
 			diff1 := cmp.Diff(tt.want.PemCert, got.PemCert)
 			if diff1 != "" {
 				t.Errorf("Mismatch (-got +want):\n%s", diff1)
@@ -632,14 +615,12 @@ Pollers:
 				t.Errorf("Mismatch (-got +want):\n%s", diff2)
 			}
 			if tt.want.CertPath != got.CertPath && got.CertPath != hostCertPath {
-				t.Errorf("got CertPath=[%s], want CertPath=[%s]", got.CertPath, tt.want.CertPath)
+				assert.Equal(t, got.CertPath, hostCertPath)
 			}
 			if tt.want.KeyPath != got.KeyPath && got.KeyPath != hostKeyPath {
-				t.Errorf("got KeyPath=[%s], want KeyPath=[%s]", got.KeyPath, tt.want.KeyPath)
+				assert.Equal(t, got.KeyPath, hostKeyPath)
 			}
-			if tt.want.CaCertPath != got.CaCertPath {
-				t.Errorf("got CaCertPath=[%s], want CaCertPath=[%s]", got.CaCertPath, tt.want.CaCertPath)
-			}
+			assert.Equal(t, got.CaCertPath, tt.want.CaCertPath)
 		})
 	}
 }

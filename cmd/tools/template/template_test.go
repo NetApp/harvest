@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"github.com/goccy/go-yaml/ast"
 	"github.com/goccy/go-yaml/parser"
+	"github.com/netapp/harvest/v2/assert"
 	template2 "github.com/netapp/harvest/v2/pkg/template"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"io/fs"
-	"log"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -30,9 +30,7 @@ var allTemplatesButEms = []string{"rest", "restperf", "storagegrid", "zapi", "za
 func TestTemplateFileNames(t *testing.T) {
 	for _, dir := range []string{toConf} {
 		err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
-			if err != nil {
-				log.Fatal("failed to read directory:", err)
-			}
+			assert.Nil(t, err)
 			if info.IsDir() {
 				return nil
 			}
@@ -49,9 +47,7 @@ func TestTemplateFileNames(t *testing.T) {
 			}
 			return nil
 		})
-		if err != nil {
-			log.Fatal("failed to read template:", err)
-		}
+		assert.Nil(t, err)
 	}
 }
 
@@ -64,10 +60,7 @@ func TestTemplateNamesMatchDefault(t *testing.T) {
 	modelsByTemplate := make(map[string]objectMap)
 	defaults, err := readDefaults(allTemplatesButEms)
 
-	if err != nil {
-		log.Fatal("failed to read defaults:", err)
-
-	}
+	assert.Nil(t, err)
 
 	visitTemplates(t, func(path string, model Model) {
 		sp := collectorPath(path)
@@ -134,7 +127,7 @@ func TestTotals(t *testing.T) {
 		}
 	}, allTemplatesButEms...)
 
-	fmt.Printf("%d objects, %d counters\n", len(totalObject), totalCounters)
+	t.Logf("%d objects, %d counters\n", len(totalObject), totalCounters)
 }
 
 func readDefaults(dirs []string) (map[string]objectMap, error) {

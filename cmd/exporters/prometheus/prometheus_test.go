@@ -6,6 +6,7 @@ package prometheus
 
 import (
 	"github.com/google/go-cmp/cmp"
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/poller/exporter"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -43,9 +44,7 @@ some_other_metric{node="node_3"} 0.0
 	_ = p.writeMetrics(&w, example, seen)
 
 	diff := cmp.Diff(w.String(), expected)
-	if diff != "" {
-		t.Errorf("Mismatch (-got +want):\n%s", diff)
-	}
+	assert.Equal(t, diff, "")
 }
 
 func TestEscape(t *testing.T) {
@@ -67,9 +66,7 @@ func TestEscape(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.want, func(t *testing.T) {
 			got := escape(replacer, tc.key, tc.value)
-			if got != tc.want {
-				t.Errorf("escape failed got=[%s] want=[%s] for key=[%s] value=[%s]", got, tc.want, tc.key, tc.value)
-			}
+			assert.Equal(t, got, tc.want)
 		})
 	}
 }
@@ -142,15 +139,11 @@ net_app_bike_max_speed{} 3`, "bike"},
 	for _, tt := range tests {
 		t.Run(tt.prefix, func(t *testing.T) {
 			p, err := setUpPrometheusExporter(tt.prefix)
-			if err != nil {
-				t.Errorf("expected nil, got %v", err)
-			}
+			assert.Nil(t, err)
 			m := setUpMatrix(tt.object)
 
 			_, err = p.Export(m)
-			if err != nil {
-				t.Errorf("expected nil, got %v", err)
-			}
+			assert.Nil(t, err)
 
 			prom := p.(*Prometheus)
 			var lines []string
@@ -161,9 +154,7 @@ net_app_bike_max_speed{} 3`, "bike"},
 			}
 
 			slices.Sort(lines)
-			if strings.Join(lines, "\n") != tt.want {
-				t.Errorf("got = [%s], want = [%s]", strings.Join(lines, "\n"), tt.want)
-			}
+			assert.Equal(t, strings.Join(lines, "\n"), tt.want)
 		})
 	}
 }
@@ -184,16 +175,12 @@ netapp_change_log{category="metric",cluster="umeng-aff300-01-02",object="volume"
 	for _, tt := range tests {
 		t.Run(tt.prefix, func(t *testing.T) {
 			p, err := setUpPrometheusExporter("netapp")
+			assert.Nil(t, err)
 
-			if err != nil {
-				t.Errorf("expected nil, got %v", err)
-			}
 			m := setUpChangeMatrix()
 
 			_, err = p.Export(m)
-			if err != nil {
-				t.Errorf("expected nil, got %v", err)
-			}
+			assert.Nil(t, err)
 
 			prom := p.(*Prometheus)
 			var lines []string
@@ -205,9 +192,7 @@ netapp_change_log{category="metric",cluster="umeng-aff300-01-02",object="volume"
 
 			slices.Sort(lines)
 			diff := cmp.Diff(strings.TrimSpace(tt.want), strings.Join(lines, "\n"))
-			if diff != "" {
-				t.Errorf("Mismatch (-got +want):\n%s", diff)
-			}
+			assert.Equal(t, diff, "")
 		})
 	}
 }
@@ -264,16 +249,12 @@ func setUpHistogramMatrix() *matrix.Matrix {
 
 func TestRenderHistogramExample(t *testing.T) {
 	p, err := setUpPrometheusExporter("")
-	if err != nil {
-		t.Fatalf("Error setting up Prometheus exporter: %v", err)
-	}
+	assert.Nil(t, err)
 
 	m := setUpHistogramMatrix()
 
 	_, err = p.Export(m)
-	if err != nil {
-		t.Fatalf("Export failed: %v", err)
-	}
+	assert.Nil(t, err)
 
 	prom := p.(*Prometheus)
 	var lines []string
@@ -294,7 +275,6 @@ func TestRenderHistogramExample(t *testing.T) {
 	expected := strings.Join(expectedLines, "\n")
 	result := strings.Join(lines, "\n")
 
-	if diff := cmp.Diff(expected, result); diff != "" {
-		t.Errorf("Histogram render mismatch (-want +got):\n%s", diff)
-	}
+	diff := cmp.Diff(expected, result)
+	assert.Equal(t, diff, "")
 }

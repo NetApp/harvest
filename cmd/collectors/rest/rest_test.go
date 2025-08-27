@@ -2,6 +2,7 @@ package rest
 
 import (
 	"github.com/google/go-cmp/cmp"
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
@@ -72,15 +73,11 @@ func Test_pollDataVolume(t *testing.T) {
 			r.postPollData(apiD, parseD, metricCount, set.New())
 			m := r.Matrix["Volume"]
 
-			if len(m.GetInstances()) != tt.numInstances {
-				t.Errorf("pollData() numInstances got=%v, want=%v", len(m.GetInstances()), tt.numInstances)
-			}
+			assert.Equal(t, tt.numInstances, len(m.GetInstances()))
 
 			metadata := r.Metadata
 			numMetrics, _ := metadata.GetMetric("metrics").GetValueInt(metadata.GetInstance("data"))
-			if numMetrics != tt.numMetrics {
-				t.Errorf("pollData() numMetrics got=%v, want=%v", numMetrics, tt.numMetrics)
-			}
+			assert.Equal(t, tt.numMetrics, numMetrics)
 		})
 	}
 }
@@ -195,9 +192,7 @@ func TestIsValidFormat(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result := tt.r.isValidFormat(tt.p)
-			if result != tt.expectedResult {
-				t.Errorf("Expected %v, got %v", tt.expectedResult, result)
-			}
+			assert.Equal(t, tt.expectedResult, result)
 		})
 	}
 }
@@ -285,9 +280,7 @@ func TestFields(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			result := tt.r.Fields(tt.p)
 			diff := cmp.Diff(result, tt.expectedResult)
-			if diff != "" {
-				t.Errorf("Mismatch (-got +want):\n%s", diff)
-			}
+			assert.Equal(t, diff, "")
 		})
 	}
 }
@@ -296,9 +289,7 @@ func TestQuotas(t *testing.T) {
 	r := newRest("Quota", "quota.yaml", "../../../conf")
 	var instanceKeys []string
 	result, err := collectors.InvokeRestCallWithTestFile(r.Client, "", "testdata/quota.json")
-	if err != nil {
-		t.Errorf("Error while invoking quota rest api call")
-	}
+	assert.Nil(t, err)
 
 	for _, quotaInstanceData := range result {
 		var instanceKey string
@@ -318,7 +309,5 @@ func TestQuotas(t *testing.T) {
 		}
 	}
 
-	if slice.HasDuplicates(instanceKeys) {
-		t.Errorf("Duplicate instanceKeys found for quota rest api")
-	}
+	assert.False(t, slice.HasDuplicates(instanceKeys))
 }

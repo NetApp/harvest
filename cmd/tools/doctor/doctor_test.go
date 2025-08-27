@@ -3,6 +3,7 @@ package doctor
 import (
 	"github.com/goccy/go-yaml"
 	"github.com/google/go-cmp/cmp"
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"os"
 	"strings"
@@ -26,18 +27,12 @@ func assertRedacted(t *testing.T, input, redacted string) {
 	redacted = strings.TrimSpace(redacted)
 
 	inputNode, err := printRedactedConfig("test", []byte(input))
-	if err != nil {
-		t.Fatalf("error redacting input node: %v", err)
-	}
+	assert.Nil(t, err)
 	inputBytes, err := yaml.Marshal(inputNode)
-	if err != nil {
-		t.Fatalf("error marshalling input node: %v", err)
-	}
+	assert.Nil(t, err)
 	input = strings.TrimSpace(string(inputBytes))
 
-	if input != redacted {
-		t.Fatalf(`input=[%s] != redacted=[%s]`, input, redacted)
-	}
+	assert.Equal(t, input, redacted)
 }
 
 func TestDoDoctor(t *testing.T) {
@@ -56,84 +51,50 @@ func TestDoDoctor(t *testing.T) {
 		output := doDoctor(tt.parentPath)
 
 		outBytes, err := os.ReadFile(tt.outPath)
-		if err != nil {
-			t.Fatalf("failed to read expected output file: %v", err)
-		}
+		assert.Nil(t, err)
 
 		expectedOutput := string(outBytes)
 
 		diff := cmp.Diff(output, expectedOutput)
-		if diff != "" {
-			t.Errorf("%s Mismatch (-got +want):\n%s", tt.outPath, diff)
-		}
+		assert.Equal(t, diff, "")
 	}
 }
 
 func TestConfigToStruct(t *testing.T) {
 	conf.TestLoadHarvestConfig("testdata/testConfig.yml")
-	if conf.Config.Defaults.Password != "123#abc" {
-		t.Fatalf(`expected harvestConfig.Defaults.Password to be 123#abc, actual=[%+v]`,
-			conf.Config.Defaults.Addr)
-	}
-
-	if conf.Config.Defaults.Addr != "" {
-		t.Fatalf(`expected harvestConfig.Defaults.addr to be nil, actual=[%+v]`,
-			conf.Config.Defaults.Addr)
-	}
-	if len(conf.Config.Defaults.Collectors) != 2 {
-		t.Fatalf(`expected two default collectors, actual=%+v`, conf.Config.Defaults.Collectors)
-	}
+	assert.Equal(t, conf.Config.Defaults.Password, "123#abc")
+	assert.Equal(t, conf.Config.Defaults.Addr, "")
+	assert.Equal(t, len(conf.Config.Defaults.Collectors), 2)
 
 	allowedRegexes := conf.Config.Exporters["prometheus"].AllowedAddrsRegex
-	if (*allowedRegexes)[0] != "^192.168.0.\\d+$" {
-		t.Fatalf(`expected allow_addrs_regex to be ^192.168.0.\d+$ actual=%+v`,
-			(*allowedRegexes)[0])
-	}
+	assert.Equal(t, (*allowedRegexes)[0], "^192.168.0.\\d+$")
 
 	influxyAddr := conf.Config.Exporters["influxy"].Addr
-	if (*influxyAddr) != "localhost" {
-		t.Fatalf(`expected addr to be "localhost", actual=%+v`, *influxyAddr)
-	}
+	assert.Equal(t, *influxyAddr, "localhost")
 
 	influxyURL := conf.Config.Exporters["influxz"].URL
-	if (*influxyURL) != "www.example.com/influxdb" {
-		t.Fatalf(`expected addr to be "www.example.com/influxdb", actual=%+v`, *influxyURL)
-	}
+	assert.Equal(t, *influxyURL, "www.example.com/influxdb")
 
 	infinity2, _ := conf.PollerNamed("infinity2")
 	collectors := infinity2.Collectors
-	if collectors[0].Name != "Zapi" {
-		t.Fatalf(`expected infinity2 collectors to contain Zapi actual=%+v`, collectors[0])
-	}
-	if infinity2.IsKfs {
-		t.Fatalf(`expected infinity2 is_kfs to be false, but was true`)
-	}
+	assert.Equal(t, collectors[0].Name, "Zapi")
+	assert.False(t, infinity2.IsKfs)
 	sim1 := conf.Config.Pollers["sim-0001"]
-	if !sim1.IsKfs {
-		t.Fatalf(`expected sim-0001 is_kfs to be true, but was false`)
-	}
+	assert.True(t, sim1.IsKfs)
 }
 
 func TestUniquePromPorts(t *testing.T) {
 	conf.TestLoadHarvestConfig("testdata/testConfig.yml")
 	valid := checkUniquePromPorts(conf.Config)
-	if valid.isValid {
-		t.Fatal(`expected isValid to be false since there are duplicate prom ports, actual was isValid=true`)
-	}
-	if len(valid.invalid) != 4 {
-		t.Fatalf(`expected checkUniquePromPorts to return 2 invalid results, actual was %s`, valid.invalid)
-	}
+	assert.False(t, valid.isValid)
+	assert.Equal(t, len(valid.invalid), 4)
 }
 
 func TestExporterTypesAreValid(t *testing.T) {
 	conf.TestLoadHarvestConfig("testdata/testConfig.yml")
 	valid := checkExporterTypes(conf.Config)
-	if valid.isValid {
-		t.Fatalf(`expected isValid to be false since there are invalid exporter types, actual was %+v`, valid)
-	}
-	if len(valid.invalid) != 3 {
-		t.Fatalf(`expected three invalid exporters, got %d`, len(valid.invalid))
-	}
+	assert.False(t, valid.isValid)
+	assert.Equal(t, len(valid.invalid), 3)
 }
 
 func TestCustomYamlIsValid(t *testing.T) {
@@ -169,16 +130,10 @@ func TestCustomYamlIsValid(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.path, func(t *testing.T) {
 			valid := checkConfTemplates([]string{tt.path})
-			if valid.isValid != tt.isValid {
-				t.Errorf("want isValid=%t, got %t", tt.isValid, valid.isValid)
-			}
-			if len(valid.invalid) != tt.numInvalid {
-				t.Errorf("want %d invalid, got %d", tt.numInvalid, len(valid.invalid))
-			}
+			assert.Equal(t, valid.isValid, tt.isValid)
+			assert.Equal(t, len(valid.invalid), tt.numInvalid)
 			for _, invalid := range valid.invalid {
-				if !strings.Contains(invalid, tt.msgContains) {
-					t.Errorf("want invalid to contain %s, got %s", tt.msgContains, invalid)
-				}
+				assert.True(t, strings.Contains(invalid, tt.msgContains))
 			}
 		})
 	}
@@ -216,9 +171,7 @@ func TestCheckCollectorName(t *testing.T) {
 		t.Run(tt.path, func(t *testing.T) {
 			conf.TestLoadHarvestConfig(tt.path)
 			valid := checkCollectorName(conf.Config)
-			if valid.isValid != tt.want {
-				t.Errorf("want isValid=%t, got %t", tt.want, valid.isValid)
-			}
+			assert.Equal(t, valid.isValid, tt.want)
 		})
 	}
 }
@@ -226,19 +179,12 @@ func TestCheckCollectorName(t *testing.T) {
 func TestExportersExist(t *testing.T) {
 	conf.TestLoadHarvestConfig("testdata/noExporters.yml")
 	valid := checkExportersExist(conf.Config)
-	if valid.isValid {
-		t.Errorf(`got isValid=true, want isValid=false since there is no exporters section`)
-	}
+	assert.False(t, valid.isValid)
 }
 
 func TestPollerPromPorts(t *testing.T) {
 	conf.TestLoadHarvestConfig("testdata/promPortNoPromExporters.yml")
 	valid := checkPollerPromPorts(conf.Config)
-	if valid.isValid {
-		t.Errorf(`got isValid=true, want isValid=false since there are non unique prom ports`)
-	}
-
-	if len(valid.invalid) != 2 {
-		t.Errorf(`got %d invalid, want 2`, len(valid.invalid))
-	}
+	assert.False(t, valid.isValid)
+	assert.Equal(t, len(valid.invalid), 2)
 }
