@@ -2,6 +2,8 @@ package slice
 
 import (
 	"testing"
+
+	"github.com/netapp/harvest/v2/assert"
 )
 
 func TestIntersection(t *testing.T) {
@@ -33,12 +35,8 @@ func TestIntersection(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			match, miss := Intersection(tt.a, tt.b)
-			if len(match) != tt.matchLength {
-				t.Errorf("Intersection() match length = %v, want %v", len(match), tt.matchLength)
-			}
-			if len(miss) != tt.missLength {
-				t.Errorf("Intersection() miss length = %v, want %v", len(miss), tt.missLength)
-			}
+			assert.Equal(t, len(match), tt.matchLength)
+			assert.Equal(t, len(miss), tt.missLength)
 		})
 	}
 }
@@ -75,8 +73,6 @@ func TestHasDuplicates(t *testing.T) {
 
 	for _, testcase := range tests {
 		isArray := HasDuplicates(testcase.childNames)
-		if isArray != testcase.expectedArray {
-			t.Errorf("array hasn't been detected properly for %s, isArray is = %v, isArray should = %v", testcase.testCase, isArray, testcase.expectedArray)
-		}
+		assert.Equal(t, isArray, testcase.expectedArray)
 	}
 }

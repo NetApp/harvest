@@ -1,6 +1,7 @@
 package collectors
 
 import (
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/matrix"
@@ -45,14 +46,10 @@ func TestRunForAllImplementations(t *testing.T) {
 			}
 			// run the plugin
 			_, _, err := l.Run(dataMap)
-			if err != nil {
-				t.Fatal(err)
-			}
+			assert.Nil(t, err)
 
 			actualSvm := data.GetInstance(tt.name).GetLabel("svm")
-			if actualSvm != tt.expectedSvm {
-				t.Fatalf("expected svm is %s, got %s", tt.expectedSvm, actualSvm)
-			}
+			assert.Equal(t, actualSvm, tt.expectedSvm)
 		})
 	}
 }

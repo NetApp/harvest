@@ -1,6 +1,7 @@
 package node
 
 import (
+	"github.com/netapp/harvest/v2/assert"
 	"testing"
 )
 
@@ -20,9 +21,7 @@ func Test_simpleName(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := simpleName(tt.s); got != tt.want {
-				t.Errorf("simpleName() = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, simpleName(tt.s), tt.want)
 		})
 	}
 }

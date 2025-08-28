@@ -2,6 +2,8 @@ package matrix
 
 import (
 	"testing"
+
+	"github.com/netapp/harvest/v2/assert"
 )
 
 func setUpMatrix() *Matrix {
@@ -42,7 +44,7 @@ func TestMatrix_RemoveInstance(t *testing.T) {
 				}
 			}
 			if maxIndex != tt.maxInstanceIndex {
-				t.Errorf("expected = %d, got %d", tt.maxInstanceIndex, maxIndex)
+				assert.Equal(t, maxIndex, tt.maxInstanceIndex)
 			}
 		})
 	}

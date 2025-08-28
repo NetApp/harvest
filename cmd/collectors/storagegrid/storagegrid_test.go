@@ -1,6 +1,7 @@
 package storagegrid
 
 import (
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/collectors/storagegrid/rest"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
@@ -38,9 +39,7 @@ func Test_SGAddRemoveRestInstances(t *testing.T) {
 	conf.TestLoadHarvestConfig("testdata/config.yml")
 
 	sg, err := newStorageGrid("Tenant", "tenant.yaml")
-	if err != nil {
-		t.Fatalf("failed to create new StorageGrid: %v", err)
-	}
+	assert.Nil(t, err)
 
 	testFile(t, sg, "testdata/tenant.json", 9)
 	testFile(t, sg, "testdata/tenant_delete.json", 8)
@@ -49,15 +48,10 @@ func Test_SGAddRemoveRestInstances(t *testing.T) {
 
 func testFile(t *testing.T, sg *StorageGrid, filename string, expectedLen int) {
 	output, err := os.ReadFile(filename)
-	if err != nil {
-		t.Fatalf("failed to read file: %v", err)
-	}
+	assert.Nil(t, err)
 
 	data := gjson.Get(string(output), "data")
 	_ = sg.handleResults(data.Array())
 
-	got := len(sg.Matrix[sg.Object].GetInstances())
-	if got != expectedLen {
-		t.Errorf("length of matrix = %v, want %v", got, expectedLen)
-	}
+	assert.Equal(t, len(sg.Matrix[sg.Object].GetInstances()), expectedLen)
 }

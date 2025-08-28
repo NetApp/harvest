@@ -2,6 +2,7 @@ package statperf
 
 import (
 	"fmt"
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -140,45 +141,31 @@ func TestStatPerf_pollData(t *testing.T) {
 			s := newStatPerf(tt.object, tt.path)
 
 			counters, err := getDataJSON(tt.pollCounters)
-			if err != nil {
-				t.Fatalf("error: %v", err)
-			}
+			assert.Nil(t, err)
 
 			err = s.pollCounter(counters, 0)
-			if err != nil {
-				t.Fatal(err)
-			}
+			assert.Nil(t, err)
 
 			instances, err := getDataJSON(tt.pollInstance)
-			if err != nil {
-				t.Fatalf("error: %v", err)
-			}
+			assert.Nil(t, err)
 
 			_, err = s.pollInstance(s.Matrix[s.Object], instances, 0)
-			if err != nil {
-				t.Fatal(err)
-			}
+			assert.Nil(t, err)
 
 			data, err := getDataJSON(tt.pollDataPath1)
-			if err != nil {
-				t.Fatalf("error: %v", err)
-			}
+			assert.Nil(t, err)
 
 			prevMat := s.Matrix[s.Object]
 			_, _, err = processAndCookCounters(s, data, prevMat)
-			if err != nil {
-				t.Fatal(err)
-			}
+			assert.Nil(t, err)
 
 			data2, err := getDataJSON(tt.pollDataPath2)
-			if err != nil {
-				t.Fatalf("error: %v", err)
-			}
+			assert.Nil(t, err)
 
 			prevMat = s.Matrix[s.Object]
 			got, metricCount, err := processAndCookCounters(s, data2, prevMat)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("pollData() error = %v, wantErr %v", err, tt.wantErr)
+			if err != nil {
+				assert.True(t, tt.wantErr)
 				return
 			}
 
@@ -190,13 +177,8 @@ func TestStatPerf_pollData(t *testing.T) {
 					exportInstances++
 				}
 			}
-			if exportInstances != tt.numInstances {
-				t.Errorf("pollData() numInstances got=%v, want=%v", exportInstances, tt.numInstances)
-			}
-
-			if metricCount != tt.numMetrics {
-				t.Errorf("pollData() numMetrics got=%v, want=%v", metricCount, tt.numMetrics)
-			}
+			assert.Equal(t, exportInstances, tt.numInstances)
+			assert.Equal(t, metricCount, tt.numMetrics)
 
 			var sum int64
 			var names []string
@@ -208,14 +190,10 @@ func TestStatPerf_pollData(t *testing.T) {
 			for _, name := range names {
 				i := m.GetInstance(name)
 				val, recorded := metric.GetValueInt64(i)
-				if recorded != tt.record {
-					t.Errorf("pollData() recorded got=%v, want=%v", recorded, tt.record)
-				}
+				assert.Equal(t, recorded, tt.record)
 				sum += val
 			}
-			if sum != tt.sum {
-				t.Errorf("pollData() sum got=%v, want=%v", sum, tt.sum)
-			}
+			assert.Equal(t, sum, tt.sum)
 		})
 	}
 }
@@ -227,17 +205,11 @@ func TestPollCounter(t *testing.T) {
 	s := newStatPerf("flexcache_per_volume", "flexcache.yaml")
 
 	counters, err := getDataJSON("testdata/counters.txt")
-	if err != nil {
-		t.Fatalf("error: %v", err)
-	}
+	assert.Nil(t, err)
 	err = s.pollCounter(counters, 0)
-	if err != nil {
-		t.Fatalf("Failed to fetch poll counter %v", err)
-	}
+	assert.Nil(t, err)
 
-	if len(s.Prop.Metrics) != len(s.perfProp.counterInfo) {
-		t.Errorf("Prop metrics and counterInfo size should be same")
-	}
+	assert.Equal(t, len(s.Prop.Metrics), len(s.perfProp.counterInfo))
 }
 
 func getDataJSON(filePath string) ([]gjson.Result, error) {

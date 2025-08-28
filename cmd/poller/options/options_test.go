@@ -1,6 +1,9 @@
 package options
 
-import "testing"
+import (
+	"github.com/netapp/harvest/v2/assert"
+	"testing"
+)
 
 // Make sure that if --config is passed on the cmdline that it is not overwritten
 // See https://github.com/NetApp/harvest/issues/28
@@ -8,7 +11,5 @@ func TestConfigPath(t *testing.T) {
 	want := "foo"
 	options := New(WithConfigPath(want))
 
-	if options.Config != want {
-		t.Fatalf(`options.Config expected=[%q], actual was=[%q]`, want, options.Config)
-	}
+	assert.Equal(t, options.Config, want)
 }

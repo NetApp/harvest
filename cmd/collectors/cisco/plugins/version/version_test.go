@@ -2,6 +2,7 @@ package version
 
 import (
 	"github.com/google/go-cmp/cmp"
+	"github.com/netapp/harvest/v2/assert"
 	"testing"
 )
 
@@ -62,9 +63,7 @@ func Test_parseRCF(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got := parseRCF(tt.banner)
 			diff := cmp.Diff(got, tt.want)
-			if diff != "" {
-				t.Errorf("Mismatch (-got +want):\n%s", diff)
-			}
+			assert.Equal(t, diff, "")
 		})
 	}
 }

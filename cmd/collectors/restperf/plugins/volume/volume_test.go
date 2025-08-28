@@ -1,6 +1,7 @@
 package volume_test
 
 import (
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	volume2 "github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/volume"
 	"github.com/netapp/harvest/v2/cmd/collectors/zapiperf/plugins/volume"
@@ -88,76 +89,57 @@ func runVolumeTest(t *testing.T, createVolume func(params *node.Node) plugin.Plu
 	// Run the plugin
 	boolValue, _ := strconv.ParseBool(includeConstituents)
 	output, _, err := collectors.ProcessFlexGroupData(slog.Default(), data, StyleType, boolValue, OpsKeyPrefix, volumesMap, true)
-	if err != nil {
-		t.Fatalf("Run method failed: %v", err)
-	}
+	assert.Nil(t, err)
 
 	// Verify the output
-	if len(output) != 2 {
-		t.Fatalf("expected 2 output matrices, got %d", len(output))
-	}
+	assert.Equal(t, len(output), 2)
 
 	cache := output[0]
 	volumeAggrmetric := output[1]
 
 	// Check for flexgroup instance
 	flexgroupInstance := cache.GetInstance("svm1.RahulTest")
-	if flexgroupInstance == nil {
-		t.Fatalf("expected flexgroup instance 'svm1.RahulTest' not found")
-	}
+	assert.NotNil(t, flexgroupInstance)
 
 	// Check for flexgroup constituents
 	if includeConstituents == "true" {
 		for _, suffix := range []string{"0001", "0002", "0003"} {
 			instance := data.GetInstance("RahulTest__" + suffix)
-			if instance == nil {
-				t.Fatalf("expected flexgroup constituent 'svm1.RahulTest__%s' not found", suffix)
-			}
-			if label := instance.GetLabel("volume"); label != "RahulTest__"+suffix {
-				t.Fatalf("expected instance label 'volume' to be 'RahulTest__%s', got '%s'", suffix, label)
-			}
+			assert.NotNil(t, instance)
+			assert.Equal(t, instance.GetLabel("volume"), "RahulTest__"+suffix)
 		}
 	}
 
 	// Check for aggregated metrics
 	flexgroupMetricInstance := volumeAggrmetric.GetInstance("svm1.RahulTest")
-	if flexgroupMetricInstance == nil {
-		t.Fatalf("expected flexgroup metric instance 'svm1.RahulTest' not found")
-	}
-	if label := flexgroupMetricInstance.GetLabel("volume"); label != "RahulTest" {
-		t.Fatalf("expected flexgroup metric instance label 'volume' to be 'RahulTest', got '%s'", label)
-	}
+	assert.NotNil(t, flexgroupMetricInstance)
+	assert.Equal(t, flexgroupMetricInstance.GetLabel("volume"), "RahulTest")
 
 	// Verify aggregated ops metric
 	if setMetricNaN {
-		if _, ok := cache.GetMetric("read_ops").GetValueFloat64(flexgroupInstance); ok {
-			t.Errorf("expected metric 'read_ops' for flexgroup instance 'svm1.RahulTest' to be NaN")
-		}
-	} else if value, ok := cache.GetMetric("read_ops").GetValueFloat64(flexgroupInstance); !ok {
-		t.Error("Value [read_ops] missing")
-	} else if value != 20 {
-		t.Errorf("Value [read_ops] = (%f) incorrect", value)
+		assert.True(t, flexgroupMetricInstance.IsExportable())
+		_, ok := cache.GetMetric("read_ops").GetValueFloat64(flexgroupInstance)
+		assert.False(t, ok)
+	} else {
+		value, ok := cache.GetMetric("read_ops").GetValueFloat64(flexgroupInstance)
+		assert.True(t, ok)
+		assert.Equal(t, value, 20.0)
 	}
 
 	// Verify aggregated latency metric (weighted average)
 	if setMetricNaN {
-		if _, ok := cache.GetMetric("read_latency").GetValueFloat64(flexgroupInstance); ok {
-			t.Errorf("expected metric 'read_latency' for flexgroup instance 'svm1.RahulTest' to be NaN")
-		}
+		_, ok := cache.GetMetric("read_latency").GetValueFloat64(flexgroupInstance)
+		assert.False(t, ok)
 	} else {
 		expectedLatency := (20*4 + 30*6 + 40*10) / 20.0
-		if value, ok := cache.GetMetric("read_latency").GetValueFloat64(flexgroupInstance); !ok {
-			t.Error("Value [read_latency] missing")
-		} else if value != expectedLatency {
-			t.Errorf("Value [read_latency] = (%f) incorrect, expected (%f)", value, expectedLatency)
-		}
+		value, ok := cache.GetMetric("read_latency").GetValueFloat64(flexgroupInstance)
+		assert.True(t, ok)
+		assert.Equal(t, value, expectedLatency)
 	}
 
 	// Check for simple volume instance
 	simpleVolumeInstance := cache.GetInstance("svm1.SimpleVolume")
-	if simpleVolumeInstance != nil {
-		t.Fatalf("expected simple volume instance 'svm1.SimpleVolume' found")
-	}
+	assert.Nil(t, simpleVolumeInstance)
 
 	// count instances in both data and cache
 	currentCount := 0
@@ -174,9 +156,7 @@ func runVolumeTest(t *testing.T, createVolume func(params *node.Node) plugin.Plu
 	}
 
 	// Verify the number of instances in the cache
-	if currentCount != expectedCount {
-		t.Errorf("expected %d instances in the matrix, got %d", expectedCount, currentCount)
-	}
+	assert.Equal(t, currentCount, expectedCount)
 }
 
 func TestRunForAllImplementations(t *testing.T) {
@@ -273,16 +253,11 @@ func TestProcessFlexGroupFootPrint(t *testing.T) {
 		t.Fatalf("expected flexgroup instance 'svm1.RahulTest' to be created")
 	}
 
-	aggr := flexgroupInstance.GetLabel("aggr")
-	if aggr != "aggr1,aggr2,aggr3" {
-		t.Fatalf("expected flexgroup instance 'aggr1,aggr2,aggr3' to be created got '%s'", aggr)
-	}
+	assert.Equal(t, flexgroupInstance.GetLabel("aggr"), "aggr1,aggr2,aggr3")
 
-	if value, ok := cache.GetMetric("volume_blocks_footprint_bin0").GetValueFloat64(flexgroupInstance); !ok {
-		t.Error("Value [volume_blocks_footprint_bin0] missing")
-	} else if value != 70 {
-		t.Errorf("Value [volume_blocks_footprint_bin0] = (%f) incorrect, expected 70", value)
-	}
+	value, ok := cache.GetMetric("volume_blocks_footprint_bin0").GetValueFloat64(flexgroupInstance)
+	assert.True(t, ok)
+	assert.Equal(t, value, float64(70))
 }
 
 func createRestVolume(params *node.Node) plugin.Plugin {

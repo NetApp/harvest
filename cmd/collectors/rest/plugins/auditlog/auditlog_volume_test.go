@@ -1,6 +1,7 @@
 package auditlog
 
 import (
+	"github.com/netapp/harvest/v2/assert"
 	"testing"
 )
 
@@ -29,12 +30,9 @@ func TestVolumeWriteCreateHandler(t *testing.T) {
 	for _, input := range inputs {
 		input = normalizeInput(input)
 		volume, svm, _, _ := handler.ExtractNames(input, auditlog)
-		if volume != "testVolume" || svm != "testSVM" {
-			t.Errorf("Input: %s, Expected volume: testVolume, svm: testSVM, got volume: %s, svm: %s", input, volume, svm)
-		}
-		if handler.GetOperation() != "create" {
-			t.Errorf("Expected operation: create, got: %s", handler.GetOperation())
-		}
+		assert.Equal(t, volume, "testVolume")
+		assert.Equal(t, svm, "testSVM")
+		assert.Equal(t, handler.GetOperation(), "create")
 	}
 }
 
@@ -50,12 +48,9 @@ func TestVolumeWriteModifyHandler(t *testing.T) {
 	for _, input := range inputs {
 		input = normalizeInput(input)
 		volume, svm, _, _ := handler.ExtractNames(input, auditlog)
-		if volume != "testVolume" || svm != "testSVM" {
-			t.Errorf("Input: %s, Expected volume: testVolume, svm: testSVM, got volume: %s, svm: %s", input, volume, svm)
-		}
-		if handler.GetOperation() != "update" {
-			t.Errorf("Expected operation: update, got: %s", handler.GetOperation())
-		}
+		assert.Equal(t, volume, "testVolume")
+		assert.Equal(t, svm, "testSVM")
+		assert.Equal(t, handler.GetOperation(), "update")
 	}
 }
 
@@ -69,12 +64,9 @@ func TestVolumeWriteRenameHandler(t *testing.T) {
 	for _, input := range inputs {
 		input = normalizeInput(input)
 		volume, svm, _, _ := handler.ExtractNames(input, auditlog)
-		if volume != "testVolume1" || svm != "testSVM" {
-			t.Errorf("Input: %s, Expected volume: testVolume1, svm: testSVM, got volume: %s, svm: %s", input, volume, svm)
-		}
-		if handler.GetOperation() != "update" {
-			t.Errorf("Expected operation: update, got: %s", handler.GetOperation())
-		}
+		assert.Equal(t, volume, "testVolume1")
+		assert.Equal(t, svm, "testSVM")
+		assert.Equal(t, handler.GetOperation(), "update")
 	}
 }
 
@@ -90,12 +82,9 @@ func TestVolumeWriteDeleteHandler(t *testing.T) {
 	for _, input := range inputs {
 		input = normalizeInput(input)
 		volume, svm, _, _ := handler.ExtractNames(input, auditlog)
-		if volume != "testVolume" || svm != "testSVM" {
-			t.Errorf("Input: %s, Expected volume: testVolume, svm: testSVM, got volume: %s, svm: %s", input, volume, svm)
-		}
-		if handler.GetOperation() != "delete" {
-			t.Errorf("Expected operation: delete, got: %s", handler.GetOperation())
-		}
+		assert.Equal(t, volume, "testVolume")
+		assert.Equal(t, svm, "testSVM")
+		assert.Equal(t, handler.GetOperation(), "delete")
 	}
 }
 
@@ -110,12 +99,9 @@ func TestVolumePatchHandler(t *testing.T) {
 	for _, input := range inputs {
 		input = normalizeInput(input)
 		volume, svm, _, _ := handler.ExtractNames(input, auditlog)
-		if volume != "testVolume" || svm != "testSVM" {
-			t.Errorf("Input: %s, Expected volume: testVolume, svm: testSVM, got volume: %s, svm: %s", input, volume, svm)
-		}
-		if handler.GetOperation() != "update" {
-			t.Errorf("Expected operation: update, got: %s", handler.GetOperation())
-		}
+		assert.Equal(t, volume, "testVolume")
+		assert.Equal(t, svm, "testSVM")
+		assert.Equal(t, handler.GetOperation(), "update")
 	}
 }
 
@@ -129,12 +115,9 @@ func TestVolumePostHandler(t *testing.T) {
 	for _, input := range inputs {
 		input = normalizeInput(input)
 		volume, svm, _, _ := handler.ExtractNames(input, auditlog)
-		if volume != "testVolume" || svm != "testSVM" {
-			t.Errorf("Input: %s, Expected volume: testVolume, svm: testSVM, got volume: %s, svm: %s", input, volume, svm)
-		}
-		if handler.GetOperation() != "create" {
-			t.Errorf("Expected operation: create, got: %s", handler.GetOperation())
-		}
+		assert.Equal(t, volume, "testVolume")
+		assert.Equal(t, svm, "testSVM")
+		assert.Equal(t, handler.GetOperation(), "create")
 	}
 }
 
@@ -148,12 +131,9 @@ func TestVolumeDeleteHandler(t *testing.T) {
 	for _, input := range inputs {
 		input = normalizeInput(input)
 		volume, svm, _, _ := handler.ExtractNames(input, auditlog)
-		if volume != "testVolume" || svm != "testSVM" {
-			t.Errorf("Input: %s, Expected volume: testVolume, svm: testSVM, got volume: %s, svm: %s", input, volume, svm)
-		}
-		if handler.GetOperation() != "delete" {
-			t.Errorf("Expected operation: delete, got: %s", handler.GetOperation())
-		}
+		assert.Equal(t, volume, "testVolume")
+		assert.Equal(t, svm, "testSVM")
+		assert.Equal(t, handler.GetOperation(), "delete")
 	}
 }
 
@@ -168,12 +148,9 @@ func TestVolumePrivateCliPostHandler(t *testing.T) {
 	for _, input := range inputs {
 		input = normalizeInput(input)
 		volume, svm, _, _ := handler.ExtractNames(input, auditlog)
-		if volume != "testVolume" || svm != "testSVM" {
-			t.Errorf("Input: %s, Expected volume: testVolume, svm: testSVM, got volume: %s, svm: %s", input, volume, svm)
-		}
-		if handler.GetOperation() != "create" {
-			t.Errorf("Expected operation: create, got: %s", handler.GetOperation())
-		}
+		assert.Equal(t, volume, "testVolume")
+		assert.Equal(t, svm, "testSVM")
+		assert.Equal(t, handler.GetOperation(), "create")
 	}
 }
 
@@ -187,12 +164,9 @@ func TestVolumePrivateCliRenameHandler(t *testing.T) {
 	for _, input := range inputs {
 		input = normalizeInput(input)
 		volume, svm, _, _ := handler.ExtractNames(input, auditlog)
-		if volume != "newTestVolume" || svm != "testSVM" {
-			t.Errorf("Input: %s, Expected volume: newTestVolume, svm: testSVM, got volume: %s, svm: %s", input, volume, svm)
-		}
-		if handler.GetOperation() != "update" {
-			t.Errorf("Expected operation: update, got: %s", handler.GetOperation())
-		}
+		assert.Equal(t, volume, "newTestVolume")
+		assert.Equal(t, svm, "testSVM")
+		assert.Equal(t, handler.GetOperation(), "update")
 	}
 }
 
@@ -207,12 +181,9 @@ func TestVolumePrivateCliDeleteCliHandler(t *testing.T) {
 	for _, input := range inputs {
 		input = normalizeInput(input)
 		volume, svm, _, _ := handler.ExtractNames(input, auditlog)
-		if volume != "testVolume" || svm != "testSVM" {
-			t.Errorf("Input: %s, Expected volume: testVolume, svm: testSVM, got volume: %s, svm: %s", input, volume, svm)
-		}
-		if handler.GetOperation() != "delete" {
-			t.Errorf("Expected operation: delete, got: %s", handler.GetOperation())
-		}
+		assert.Equal(t, volume, "testVolume")
+		assert.Equal(t, svm, "testSVM")
+		assert.Equal(t, handler.GetOperation(), "delete")
 	}
 }
 
@@ -227,11 +198,8 @@ func TestApplicationPostHandler(t *testing.T) {
 	for _, input := range inputs {
 		input = normalizeInput(input)
 		volume, svm, _, _ := handler.ExtractNames(input, auditlog)
-		if volume != "testApp" || svm != "testSVM" {
-			t.Errorf("Input: %s, Expected volume: testApp, svm: testSVM, got volume: %s, svm: %s", input, volume, svm)
-		}
-		if handler.GetOperation() != "create" {
-			t.Errorf("Expected operation: create, got: %s", handler.GetOperation())
-		}
+		assert.Equal(t, volume, "testApp")
+		assert.Equal(t, svm, "testSVM")
+		assert.Equal(t, handler.GetOperation(), "create")
 	}
 }

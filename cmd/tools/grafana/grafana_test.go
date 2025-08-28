@@ -1,9 +1,9 @@
 package grafana
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/netapp/harvest/v2/assert"
 	"regexp"
 	"strings"
 	"testing"
@@ -28,11 +28,8 @@ func TestCheckVersion(t *testing.T) {
 	}
 	for _, check := range checks {
 		got := checkVersion(check.version)
-		if got != check.want {
-			t.Errorf("Expected %t but got %t for input %s", check.want, got, check.version)
-		}
+		assert.Equal(t, got, check.want)
 	}
-	t.Log("") // required so the test is not marked as terminated
 }
 
 func TestHttpsAddr(t *testing.T) {
@@ -40,30 +37,22 @@ func TestHttpsAddr(t *testing.T) {
 	opts.dir = "../../../grafana/dashboards"
 	opts.config = "../doctor/testdata/testConfig.yml"
 	adjustOptions()
-	if opts.addr != "https://1.1.1.1:3000" {
-		t.Errorf("Expected opts.addr to be %s but got %s", "https://1.1.1.1:3000", opts.addr)
-	}
+	assert.Equal(t, opts.addr, "https://1.1.1.1:3000")
 
 	opts.addr = "https://1.1.1.1:3000"
 	opts.useHTTPS = false // addr takes precedence over useHTTPS
 	adjustOptions()
-	if opts.addr != "https://1.1.1.1:3000" {
-		t.Errorf("Expected opts.addr to be %s but got %s", "https://1.1.1.1:3000", opts.addr)
-	}
+	assert.Equal(t, opts.addr, "https://1.1.1.1:3000")
 
 	opts.addr = "http://1.1.1.1:3000"
 	adjustOptions()
-	if opts.addr != "http://1.1.1.1:3000" {
-		t.Errorf("Expected opts.addr to be %s but got %s", "http://1.1.1.1:3000", opts.addr)
-	}
+	assert.Equal(t, opts.addr, "http://1.1.1.1:3000")
 
 	// Old way of specifying https
 	opts.addr = "http://1.1.1.1:3000"
 	opts.useHTTPS = true
 	adjustOptions()
-	if opts.addr != "https://1.1.1.1:3000" {
-		t.Errorf("Expected opts.addr to be %s but got %s", "https://1.1.1.1:3000", opts.addr)
-	}
+	assert.Equal(t, opts.addr, "https://1.1.1.1:3000")
 }
 
 func TestAddPrefixToMetricNames(t *testing.T) {
@@ -175,9 +164,7 @@ func TestChainedParsing(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			wrappedInDef := `"definition": "` + tt.json + `"`
 			got := toChainedVar(wrappedInDef, "foo")
-			if got != tt.want {
-				t.Errorf("TestChainedParsing\n got=[%v]\nwant=[%v]", got, tt.want)
-			}
+			assert.Equal(t, got, tt.want)
 		})
 	}
 }
@@ -266,9 +253,7 @@ func TestIsValidDatasource(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			opts.datasource = tt.dsArg
 			got := isValidDatasource(tt.result)
-			if got != tt.want {
-				t.Errorf("TestIsValidDatasource\n got=[%v]\nwant=[%v]", got, tt.want)
-			}
+			assert.Equal(t, got, tt.want)
 		})
 	}
 }
@@ -605,18 +590,12 @@ func TestAddLabel(t *testing.T) {
 			}
 
 			formattedGot, err := formatJSON(data)
-			if err != nil {
-				t.Errorf("TestAddLabel\n failed to format json %v", err)
-			}
+			assert.Nil(t, err)
 
 			formattedWant, err := formatJSON([]byte(tt.want))
-			if err != nil {
-				t.Errorf("TestAddLabel\n failed to format wanted json %v", err)
-			}
+			assert.Nil(t, err)
 
-			if !bytes.Equal(formattedGot, formattedWant) {
-				t.Errorf("TestAddLabel\n got=%v\nwant=%v", string(formattedGot), string(formattedWant))
-			}
+			assert.Equal(t, formattedGot, formattedWant)
 		})
 	}
 }
@@ -671,9 +650,7 @@ func TestClusterRewrite(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := rewriteCluster(tt.input, tt.cluster)
-			if got != tt.want {
-				t.Errorf("TestClusterLabel\n got=%v\nwant=%v", got, tt.want)
-			}
+			assert.Equal(t, got, tt.want)
 		})
 	}
 }
@@ -701,9 +678,7 @@ func TestValidateVarDefaults(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.input, func(t *testing.T) {
 			got := validateVarDefaults(tt.input)
-			if got != tt.want {
-				t.Errorf("validateVarDefaults(%q) = %v, want %v", tt.input, got, tt.want)
-			}
+			assert.Equal(t, got, tt.want)
 		})
 	}
 }

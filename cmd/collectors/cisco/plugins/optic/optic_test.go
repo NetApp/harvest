@@ -2,6 +2,7 @@ package optic
 
 import (
 	"github.com/google/go-cmp/cmp"
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"os"
 	"testing"
@@ -33,9 +34,7 @@ func TestNewOpticModels(t *testing.T) {
 	// Read the file from the testdata directory
 	filename := "testdata/N9K-C9336C-FX2_10.3.4-show_interface_transceiver_details.json"
 	data, err := os.ReadFile(filename)
-	if err != nil {
-		t.Errorf("failed to read %s file: %v", filename, err)
-	}
+	assert.Nil(t, err)
 
 	result := gjson.ParseBytes(data)
 	jsons := result.Get("TABLE_interface.ROW_interface").Array()
@@ -44,9 +43,7 @@ func TestNewOpticModels(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got := NewOpticModel(jsons[i])
 			diff1 := cmp.Diff(tt.want, got)
-			if diff1 != "" {
-				t.Errorf("Mismatch (-got +want):\n%s", diff1)
-			}
+			assert.Equal(t, diff1, "")
 		})
 	}
 }

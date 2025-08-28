@@ -1,6 +1,7 @@
 package schedule
 
 import (
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"testing"
 	"time"
@@ -31,17 +32,11 @@ func TestSchedule_Recover(t *testing.T) {
 	for _, task := range s.GetTasks() {
 		switch task.Name {
 		case "counter":
-			if task.interval != 1.2e+12 {
-				t.Errorf("expected = %v, got %d", 1.2e+12, task.interval)
-			}
+			assert.Equal(t, task.interval, 1.2e+12)
 		case "data":
-			if task.interval != 1.8e+11 {
-				t.Errorf("expected = %b, got %b", 1.8e+11, task.interval)
-			}
+			assert.Equal(t, task.interval, 1.8e+11)
 		case "instance":
-			if task.interval != 6e+11 {
-				t.Errorf("expected = %b, got %b", 6e+11, task.interval)
-			}
+			assert.Equal(t, task.interval, 6e+11)
 		}
 	}
 }
@@ -71,24 +66,16 @@ func TestNewTaskString(t *testing.T) {
 
 			// Create a task with runNow set to tc.runNow
 			err := s.NewTaskString(tc.name+"1", tc.interval, tc.jitter, f, tc.runNow, "testID1")
-			if err != nil {
-				t.Errorf("NewTaskString returned an error: %v", err)
-			}
+			assert.Nil(t, err)
 
 			// create another task with runNow set to tc.runNow and jitter 0
 			err = s.NewTaskString(tc.name+"2", tc.interval, 0, f, tc.runNow, "testID2")
-			if err != nil {
-				t.Errorf("NewTaskString returned an error: %v", err)
-			}
+			assert.Nil(t, err)
 
-			if len(s.tasks) != 2 {
-				t.Errorf("Expected 2 tasks, got %d", len(s.tasks))
-			}
+			assert.Equal(t, len(s.tasks), 2)
 
 			// Check that the task with jitter should run after the task with jitter set to 0
-			if s.tasks[0].timer.Before(s.tasks[1].timer) {
-				t.Errorf("Expected first task to run after second task, got first task timer '%s' and second task timer '%s'", s.tasks[0].timer, s.tasks[1].timer)
-			}
+			assert.False(t, s.tasks[0].timer.Before(s.tasks[1].timer))
 		})
 	}
 }

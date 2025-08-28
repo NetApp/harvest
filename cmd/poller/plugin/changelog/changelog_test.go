@@ -1,6 +1,7 @@
 package changelog
 
 import (
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -63,22 +64,12 @@ func newChangeLogMetricTrack(object string) *ChangeLog {
 }
 
 func checkChangeLogInstances(t *testing.T, o []*matrix.Matrix, expectedInstances, expectedLabels int, expectedOpLabel, opLabel string) {
-	if len(o) == 1 {
-		cl := o[0]
-		if len(cl.GetInstances()) != expectedInstances {
-			t.Errorf("ChangeLog instances size expected %d, actual %d", expectedInstances, len(cl.GetInstances()))
-		} else {
-			for _, i := range cl.GetInstances() {
-				if i.GetLabel(opLabel) != expectedOpLabel {
-					t.Errorf("ChangeLog %s label expected %s, actual %s", opLabel, expectedOpLabel, i.GetLabel(opLabel))
-				}
-				if len(i.GetLabels()) != expectedLabels {
-					t.Errorf("ChangeLog number of labels expected %d, actual %d", expectedLabels, len(i.GetLabels()))
-				}
-			}
-		}
-	} else {
-		t.Error("ChangeLog slice size is wrong")
+	assert.Equal(t, len(o), 1)
+	cl := o[0]
+	assert.Equal(t, len(cl.GetInstances()), expectedInstances)
+	for _, i := range cl.GetInstances() {
+		assert.Equal(t, i.GetLabel(opLabel), expectedOpLabel)
+		assert.Equal(t, len(i.GetLabels()), expectedLabels)
 	}
 }
 
@@ -225,9 +216,7 @@ func TestChangeLogUnsupported(t *testing.T) {
 
 	o, _, _ := p.Run(data1)
 
-	if len(o) != 0 {
-		t.Errorf("ChangeLog mEtric size expected %d, actual %d", 0, len(o))
-	}
+	assert.Equal(t, len(o), 0)
 }
 
 func TestChangeLogModifiedUnsupportedTrack(t *testing.T) {

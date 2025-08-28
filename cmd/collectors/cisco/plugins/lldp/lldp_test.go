@@ -2,6 +2,7 @@ package lldp
 
 import (
 	"github.com/google/go-cmp/cmp"
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"os"
 	"testing"
@@ -29,9 +30,7 @@ func TestNewLLDPModel(t *testing.T) {
 	// Read the file from the testdata directory
 	filename := "testdata/lldp.json"
 	data, err := os.ReadFile(filename)
-	if err != nil {
-		t.Errorf("failed to read %s file: %v", filename, err)
-	}
+	assert.Nil(t, err)
 
 	result := gjson.ParseBytes(data)
 	jsons := result.Get("TABLE_nbor_detail.ROW_nbor_detail").Array()
@@ -40,9 +39,7 @@ func TestNewLLDPModel(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got := NewLLDPModel(jsons[i])
 			diff1 := cmp.Diff(tt.want, got)
-			if diff1 != "" {
-				t.Errorf("Mismatch (-got +want):\n%s", diff1)
-			}
+			assert.Equal(t, diff1, "")
 		})
 	}
 }

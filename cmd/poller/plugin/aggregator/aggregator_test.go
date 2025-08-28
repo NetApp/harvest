@@ -5,6 +5,7 @@
 package aggregator
 
 import (
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
@@ -39,49 +40,31 @@ func TestRuleSimpleAggregation(t *testing.T) {
 		m.Object: m,
 	}
 	results, _, err := p.Run(dataMap)
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.Nil(t, err)
 
-	if len(results) == 1 {
-		n = results[0]
-	} else {
-		t.Fatalf("Plugin output has %d matrices, 1 was expected\n", len(results))
-	}
+	assert.Equal(t, len(results), 1)
+	n = results[0]
 
 	// check aggregated values
 
-	if len(n.GetInstances()) != 1 {
-		t.Fatalf("Number of instances is %d, 1 was expected\n", len(n.GetInstances()))
-	}
+	assert.Equal(t, len(n.GetInstances()), 1)
 
-	if instanceA = n.GetInstance("nodeA"); instanceA == nil {
-		t.Fatal("Instance [nodeA] missing")
-	}
+	instanceA = n.GetInstance("nodeA")
+	assert.NotNil(t, instanceA)
 
-	if metricA = n.GetMetric("metricA"); metricA == nil {
-		t.Fatal("Metric [metricA] missing")
-	}
+	metricA = n.GetMetric("metricA")
+	assert.NotNil(t, metricA)
 
-	if metricB = n.GetMetric("metricB"); metricB == nil {
-		t.Fatal("Metric [metricB] missing")
-	}
+	metricB = n.GetMetric("metricB")
+	assert.NotNil(t, metricB)
 
-	if value, ok := metricA.GetValueUint8(instanceA); !ok {
-		t.Error("Value [metricA] missing")
-	} else if value != 20 {
-		t.Errorf("Value [metricA] = (%d) incorrect", value)
-	} else {
-		t.Logf("Value [metricA] = (%d) correct!", value)
-	}
+	value, ok := metricA.GetValueUint8(instanceA)
+	assert.True(t, ok)
+	assert.Equal(t, value, uint8(20))
 
-	if value, ok := metricB.GetValueUint8(instanceA); !ok {
-		t.Error("Value [metricB] missing")
-	} else if value != 10 {
-		t.Errorf("Value [metricB] = (%d) incorrect", value)
-	} else {
-		t.Logf("Value [metricB] = (%d) correct!", value)
-	}
+	value, ok = metricB.GetValueUint8(instanceA)
+	assert.True(t, ok)
+	assert.Equal(t, value, uint8(10))
 }
 
 func TestRuleIncludeAllLabels(t *testing.T) {
@@ -95,9 +78,8 @@ func TestRuleIncludeAllLabels(t *testing.T) {
 
 	p.Params = params
 
-	if err := p.Init(conf.Remote{}); err != nil {
-		t.Fatal(err)
-	}
+	err := p.Init(conf.Remote{})
+	assert.Nil(t, err)
 
 	for _, instance := range m.GetInstances() {
 		instance.SetLabel("svm", "svmA")
@@ -109,36 +91,15 @@ func TestRuleIncludeAllLabels(t *testing.T) {
 		m.Object: m,
 	}
 	results, _, err := p.Run(dataMap)
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.Nil(t, err)
 
-	if len(results) == 1 {
-		n = results[0]
-	} else {
-		t.Fatalf("plugin output has %d matrices, 1 was expected\n", len(results))
-	}
+	assert.Equal(t, len(results), 1)
+	n = results[0]
 
 	for _, instance := range n.GetInstances() {
-
-		if instance.GetLabel("node") != "nodeA" {
-			t.Errorf("label [node] has not expected value: %s", instance.GetLabel("node"))
-		} else {
-			t.Logf("label [svm] set: %s", instance.GetLabel("svm"))
-		}
-
-		if instance.GetLabel("svm") != "svmA" {
-			t.Errorf("label [svm] has not expected value: %s", instance.GetLabel("svm"))
-		} else {
-			t.Logf("label [svm] set: %s", instance.GetLabel("svm"))
-		}
-
-		if instance.GetLabel("datacenter") != "DatacenterA" {
-			t.Errorf("label [datacenter] has not expected value: %s", instance.GetLabel("datacenter"))
-		} else {
-			t.Logf("label [datacenter] set: %s", instance.GetLabel("datacenter"))
-		}
-
+		assert.Equal(t, instance.GetLabel("node"), "nodeA")
+		assert.Equal(t, instance.GetLabel("svm"), "svmA")
+		assert.Equal(t, instance.GetLabel("datacenter"), "DatacenterA")
 		break
 	}
 }
@@ -157,42 +118,41 @@ func TestComplexRuleRegex(t *testing.T) {
 	p.Params = params
 	m := newArtificialData()
 
-	if err := p.Init(conf.Remote{}); err != nil {
-		t.Fatal(err)
-	}
+	err = p.Init(conf.Remote{})
+	assert.Nil(t, err)
 
 	m.PurgeInstances()
 
 	// should match rule
-	if A, err = m.NewInstance("A"); err != nil {
-		t.Fatal(err)
-	}
+	A, err = m.NewInstance("A")
+	assert.Nil(t, err)
+
 	A.SetLabel("volume", "A_1234")
 	A.SetLabel("aggr", "aggrA")
 	A.SetLabel("svm", "svmA")
 
 	// should match
-	if B, err = m.NewInstance("B"); err != nil {
-		t.Fatal(err)
-	}
+	B, err = m.NewInstance("B")
+	assert.Nil(t, err)
+
 	B.SetLabel("volume", "A_1234")
 	B.SetLabel("aggr", "aggrA")
 	B.SetLabel("svm", "svmA")
 	B.SetLabel("node", "nodeA")
 
 	// should NOT match rule
-	if C, err = m.NewInstance("C"); err != nil {
-		t.Fatal(err)
-	}
+	C, err = m.NewInstance("C")
+	assert.Nil(t, err)
+
 	C.SetLabel("volume", "C_12345") // not 4 digits
 	C.SetLabel("aggr", "aggrA")
 	C.SetLabel("svm", "svmA")
 	B.SetLabel("node", "nodeA")
 
 	// should match
-	if D, err = m.NewInstance("D"); err != nil {
-		t.Fatal(err)
-	}
+	D, err = m.NewInstance("D")
+	assert.Nil(t, err)
+
 	D.SetLabel("volume", "D_1111")
 	D.SetLabel("aggr", "aggrB")
 	D.SetLabel("svm", "svmB")
@@ -201,9 +161,8 @@ func TestComplexRuleRegex(t *testing.T) {
 	// flush data from previous tests
 	m.Reset()
 
-	if metricA = m.GetMetric("metricA"); metricA == nil {
-		t.Fatal("missing [metricA]")
-	}
+	metricA = m.GetMetric("metricA")
+	assert.NotNil(t, metricA)
 
 	metricA.SetValueUint8(A, 2)
 	metricA.SetValueUint8(B, 2)
@@ -215,84 +174,50 @@ func TestComplexRuleRegex(t *testing.T) {
 		m.Object: m,
 	}
 	results, _, err := p.Run(dataMap)
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.Nil(t, err)
 
-	if len(results) == 1 {
-		n = results[0]
-	} else {
-		t.Fatalf("plugin output has %d matrices, 1 was expected", len(results))
-	}
+	assert.Equal(t, len(results), 1)
+	n = results[0]
 
 	// expecting new matrix with two instances
 	// where A+B is new instance
 	// C is discarded
 	// and D is as it was
 
-	if len(n.GetInstances()) == 2 {
-		t.Logf("OK - matrix has %d instances as expected", len(n.GetInstances()))
-	} else {
-		t.Fatalf("matrix has %d instances, 2 was expected", len(n.GetInstances()))
-	}
+	assert.Equal(t, len(n.GetInstances()), 2)
+	assert.Equal(t, n.Object, "flexgroup")
 
-	if n.Object == "flexgroup" {
-		t.Logf("OK - matrix object is (%s)", n.Object)
-	} else {
-		t.Errorf("matrix object is (%s), expected (flexgroup)", n.Object)
-	}
-
-	if metricA = n.GetMetric("metricA"); metricA == nil {
-		t.Fatal("missing [metricA]")
-	}
+	metricA = n.GetMetric("metricA")
+	assert.NotNil(t, metricA)
 
 	key := "A_1234.aggrA.svmA"
 	expected := uint8(4)
-	if instance = n.GetInstance(key); instance == nil {
-		t.Errorf("instance [%s] missing", key)
-	} else {
+	instance = n.GetInstance(key)
+	assert.NotNil(t, instance)
+	assert.Equal(t, instance.GetLabel("aggr"), "aggrA")
+	assert.Equal(t, instance.GetLabel("svm"), "svmA")
+	assert.Equal(t, instance.GetLabel("node"), "")
 
-		if instance.GetLabel("svm") == "svmA" && instance.GetLabel("aggr") == "aggrA" && instance.GetLabel("node") == "" {
-			t.Logf("OK - instance has expected labels: %v", instance.GetLabels())
-		} else {
-			t.Errorf("instance has not expected labels: %v", instance.GetLabels())
-		}
-		if v, ok := metricA.GetValueUint8(instance); !ok {
-			t.Errorf("value [metricA] not set")
-		} else if v != expected {
-			t.Errorf("value [metricA] = %d, expected %d", v, expected)
-		} else {
-			t.Logf("OK - value [metricA] = %d", v)
-		}
-	}
+	v, ok := metricA.GetValueUint8(instance)
+	assert.True(t, ok)
+	assert.Equal(t, v, expected)
 
 	key = "D_1111.aggrB.svmB"
 	expected = uint8(2)
-	if instance = n.GetInstance(key); instance == nil {
-		t.Errorf("instance [%s] missing", key)
-	} else {
+	instance = n.GetInstance(key)
 
-		if instance.GetLabel("svm") == "svmB" && instance.GetLabel("aggr") == "aggrB" && instance.GetLabel("node") == "" {
-			t.Logf("OK - instance has expected labels: %v", instance.GetLabels())
-		} else {
-			t.Errorf("instance has not expected labels: %v", instance.GetLabels())
-		}
+	assert.NotNil(t, instance)
+	assert.Equal(t, instance.GetLabel("aggr"), "aggrB")
+	assert.Equal(t, instance.GetLabel("svm"), "svmB")
+	assert.Equal(t, instance.GetLabel("node"), "")
 
-		if v, ok := metricA.GetValueUint8(instance); !ok {
-			t.Errorf("value [metricA] not set")
-		} else if v != expected {
-			t.Errorf("value [metricA] = %d, expected %d", v, expected)
-		} else {
-			t.Logf("OK - value [metricA] = %d", v)
-		}
-	}
+	v, ok = metricA.GetValueUint8(instance)
+	assert.True(t, ok)
+	assert.Equal(t, v, expected)
 
 	key = "C_12345.aggrA.svmA"
-	if instance = n.GetInstance(key); instance == nil {
-		t.Logf("OK - no instance [%s] added (did not match regex)", key)
-	} else {
-		t.Errorf("instance [%s] was added, however should not match regex", key)
-	}
+	instance = n.GetInstance(key)
+	assert.Nil(t, instance)
 }
 
 func TestRuleSimpleLatencyAggregation(t *testing.T) {
@@ -303,38 +228,30 @@ func TestRuleSimpleLatencyAggregation(t *testing.T) {
 
 	p.Params = params
 
-	if err := p.Init(conf.Remote{}); err != nil {
-		t.Fatal(err)
-	}
+	err := p.Init(conf.Remote{})
+	assert.Nil(t, err)
 
 	m := newArtificialData()
 	var n *matrix.Matrix
 
 	metricA, err := m.NewMetricUint8("read_latency")
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.Nil(t, err)
+
 	metricA.SetComment("total_read_ops")
 	metricA.SetProperty("average")
 
 	metricB, err := m.NewMetricUint8("total_read_ops")
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.Nil(t, err)
 	metricB.SetProperty("rate")
 
 	m.RemoveInstance("InstanceA")
 	instanceA, err := m.NewInstance("InstanceA")
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.Nil(t, err)
 	instanceA.SetLabel("node", "nodeA")
 
 	m.RemoveInstance("InstanceB")
 	instanceB, err := m.NewInstance("InstanceB")
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.Nil(t, err)
 	instanceB.SetLabel("node", "nodeA")
 
 	metricA.SetValueUint8(instanceA, 20)
@@ -347,49 +264,31 @@ func TestRuleSimpleLatencyAggregation(t *testing.T) {
 		m.Object: m,
 	}
 	results, _, err := p.Run(dataMap)
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.Nil(t, err)
 
-	if len(results) == 1 {
-		n = results[0]
-	} else {
-		t.Fatalf("Plugin output has %d matrices, 1 was expected\n", len(results))
-	}
+	assert.Equal(t, len(results), 1)
+	n = results[0]
 
 	// check aggregated values
 
-	if len(n.GetInstances()) != 1 {
-		t.Fatalf("Number of instances is %d, 1 was expected\n", len(n.GetInstances()))
-	}
+	assert.Equal(t, len(n.GetInstances()), 1)
 
-	if instanceA = n.GetInstance("nodeA"); instanceA == nil {
-		t.Fatal("Instance [nodeA] missing")
-	}
+	instanceA = n.GetInstance("nodeA")
+	assert.NotNil(t, instanceA)
 
-	if metricA = n.GetMetric("read_latency"); metricA == nil {
-		t.Fatal("Metric [read_latency] missing")
-	}
+	metricA = n.GetMetric("read_latency")
+	assert.NotNil(t, metricA)
 
-	if metricB = n.GetMetric("total_read_ops"); metricB == nil {
-		t.Fatal("Metric [total_read_ops] missing")
-	}
+	metricB = n.GetMetric("total_read_ops")
+	assert.NotNil(t, metricB)
 
-	if value, ok := metricA.GetValueUint8(instanceA); !ok {
-		t.Error("Value [read_latency] missing")
-	} else if value != 26 {
-		t.Errorf("Value [read_latency] = (%d) incorrect", value)
-	} else {
-		t.Logf("Value [read_latency] = (%d) correct!", value)
-	}
+	value, ok := metricA.GetValueUint8(instanceA)
+	assert.True(t, ok)
+	assert.Equal(t, value, 26)
 
-	if value, ok := metricB.GetValueUint8(instanceA); !ok {
-		t.Error("Value [total_read_ops] missing")
-	} else if value != 10 {
-		t.Errorf("Value [total_read_ops] = (%d) incorrect", value)
-	} else {
-		t.Logf("Value [total_read_ops] = (%d) correct!", value)
-	}
+	value, ok = metricB.GetValueUint8(instanceA)
+	assert.True(t, ok)
+	assert.Equal(t, value, 10)
 }
 
 func TestRuleSimpleLatencyZeroAggregation(t *testing.T) {
@@ -400,38 +299,30 @@ func TestRuleSimpleLatencyZeroAggregation(t *testing.T) {
 
 	p.Params = params
 
-	if err := p.Init(conf.Remote{}); err != nil {
-		t.Fatal(err)
-	}
+	err := p.Init(conf.Remote{})
+	assert.Nil(t, err)
 
 	m := newArtificialData()
 	var n *matrix.Matrix
 
 	metricA, err := m.NewMetricUint8("read_latency")
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.Nil(t, err)
+
 	metricA.SetComment("total_read_ops")
 	metricA.SetProperty("average")
 
 	metricB, err := m.NewMetricUint8("total_read_ops")
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.Nil(t, err)
 	metricB.SetProperty("rate")
 
 	m.RemoveInstance("InstanceA")
 	instanceA, err := m.NewInstance("InstanceA")
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.Nil(t, err)
 	instanceA.SetLabel("node", "nodeA")
 
 	m.RemoveInstance("InstanceB")
 	instanceB, err := m.NewInstance("InstanceB")
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.Nil(t, err)
 	instanceB.SetLabel("node", "nodeA")
 
 	metricA.SetValueUint8(instanceA, 20)
@@ -444,49 +335,31 @@ func TestRuleSimpleLatencyZeroAggregation(t *testing.T) {
 		m.Object: m,
 	}
 	results, _, err := p.Run(dataMap)
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.Nil(t, err)
 
-	if len(results) == 1 {
-		n = results[0]
-	} else {
-		t.Fatalf("Plugin output has %d matrices, 1 was expected\n", len(results))
-	}
+	assert.Equal(t, len(results), 1)
+	n = results[0]
 
 	// check aggregated values
 
-	if len(n.GetInstances()) != 1 {
-		t.Fatalf("Number of instances is %d, 1 was expected\n", len(n.GetInstances()))
-	}
+	assert.Equal(t, len(n.GetInstances()), 1)
 
-	if instanceA = n.GetInstance("nodeA"); instanceA == nil {
-		t.Fatal("Instance [nodeA] missing")
-	}
+	instanceA = n.GetInstance("nodeA")
+	assert.NotNil(t, instanceA)
 
-	if metricA = n.GetMetric("read_latency"); metricA == nil {
-		t.Fatal("Metric [read_latency] missing")
-	}
+	metricA = n.GetMetric("read_latency")
+	assert.NotNil(t, metricA)
 
-	if metricB = n.GetMetric("total_read_ops"); metricB == nil {
-		t.Fatal("Metric [total_read_ops] missing")
-	}
+	metricB = n.GetMetric("total_read_ops")
+	assert.NotNil(t, metricB)
 
-	if value, ok := metricA.GetValueUint8(instanceA); !ok {
-		t.Error("Value [read_latency] missing")
-	} else if value != 0 {
-		t.Errorf("Value [read_latency] = (%d) incorrect", value)
-	} else {
-		t.Logf("Value [read_latency] = (%d) correct!", value)
-	}
+	value, ok := metricA.GetValueUint8(instanceA)
+	assert.True(t, ok)
+	assert.Equal(t, value, 0)
 
-	if value, ok := metricB.GetValueUint8(instanceA); !ok {
-		t.Error("Value [total_read_ops] missing")
-	} else if value != 0 {
-		t.Errorf("Value [total_read_ops] = (%d) incorrect", value)
-	} else {
-		t.Logf("Value [total_read_ops] = (%d) correct!", value)
-	}
+	value, ok = metricB.GetValueUint8(instanceA)
+	assert.True(t, ok)
+	assert.Equal(t, value, 0)
 }
 
 func newArtificialData() *matrix.Matrix {

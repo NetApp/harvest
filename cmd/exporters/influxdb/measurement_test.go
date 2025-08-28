@@ -3,7 +3,10 @@
  */
 package influxdb
 
-import "testing"
+import (
+	"github.com/netapp/harvest/v2/assert"
+	"testing"
+)
 
 /* All examples from :
 https://docs.influxdata.com/influxdb/v1.8/write_protocols/line_protocol_tutorial/
@@ -18,13 +21,9 @@ func TestMeasurementA(t *testing.T) {
 	m.AddField("temperature", "82")
 	m.SetTimestamp("1465839830100400200")
 
-	if out, err := m.Render(); err != nil {
-		t.Errorf("render: %s", err.Error())
-	} else if out != expecting {
-		t.Errorf("\n%-10s [%s]\n%-10s [%s]", "got:", out, "expected:", expecting)
-	} else {
-		t.Logf("\n%-10s [%s]\n%-10s [%s]", "got:", out, "expected:", expecting)
-	}
+	out, err := m.Render()
+	assert.Nil(t, err)
+	assert.Equal(t, out, expecting)
 }
 
 func TestMeasurementB(t *testing.T) {
@@ -35,13 +34,9 @@ func TestMeasurementB(t *testing.T) {
 	m.AddField("temperature", "82")
 	m.SetTimestamp("1465839830100400200")
 
-	if out, err := m.Render(); err != nil {
-		t.Errorf("render: %s", err.Error())
-	} else if out != expecting {
-		t.Errorf("\n%-10s [%s]\n%-10s [%s]", "got:", out, "expected:", expecting)
-	} else {
-		t.Logf("\n%-10s [%s]\n%-10s [%s]", "got:", out, "expected:", expecting)
-	}
+	out, err := m.Render()
+	assert.Nil(t, err)
+	assert.Equal(t, out, expecting)
 }
 
 func TestMeasurementC(t *testing.T) {
@@ -52,13 +47,9 @@ func TestMeasurementC(t *testing.T) {
 	m.AddTag("location", "us-midwest")
 	m.AddField("temperature", "82")
 
-	if out, err := m.Render(); err != nil {
-		t.Errorf("render: %s", err.Error())
-	} else if out != expecting {
-		t.Errorf("\n%-10s [%s]\n%-10s [%s]", "got:", out, "expected:", expecting)
-	} else {
-		t.Logf("\n%-10s [%s]\n%-10s [%s]", "got:", out, "expected:", expecting)
-	}
+	out, err := m.Render()
+	assert.Nil(t, err)
+	assert.Equal(t, out, expecting)
 }
 
 func TestMeasurementD(t *testing.T) {
@@ -71,13 +62,9 @@ func TestMeasurementD(t *testing.T) {
 	m.AddField("humidity", "71")
 	m.SetTimestamp("1465839830100400200")
 
-	if out, err := m.Render(); err != nil {
-		t.Errorf("render: %s", err.Error())
-	} else if out != expecting {
-		t.Errorf("\n%-10s [%s]\n%-10s [%s]", "got:", out, "expected:", expecting)
-	} else {
-		t.Logf("\n%-10s [%s]\n%-10s [%s]", "got:", out, "expected:", expecting)
-	}
+	out, err := m.Render()
+	assert.Nil(t, err)
+	assert.Equal(t, out, expecting)
 }
 
 func TestMeasurementE(t *testing.T) {
@@ -89,11 +76,7 @@ func TestMeasurementE(t *testing.T) {
 	m.AddFieldString("temperature", "too warm")
 	m.SetTimestamp("1465839830100400200")
 
-	if out, err := m.Render(); err != nil {
-		t.Errorf("render: %s", err.Error())
-	} else if out != expecting {
-		t.Errorf("\n%-10s [%s]\n%-10s [%s]", "got:", out, "expected:", expecting)
-	} else {
-		t.Logf("\n%-10s [%s]\n%-10s [%s]", "got:", out, "expected:", expecting)
-	}
+	out, err := m.Render()
+	assert.Nil(t, err)
+	assert.Equal(t, out, expecting)
 }

@@ -3,6 +3,8 @@ package matrix
 import (
 	"log/slog"
 	"testing"
+
+	"github.com/netapp/harvest/v2/assert"
 )
 
 type matrixOp string
@@ -172,12 +174,8 @@ func TestMetricFloat64_Delta_PartialAggregation(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			previous, current := setupMatrixForPartialAggregation(tt.prevRaw, tt.curRaw, tt.prevPartialAggregation, tt.currPartialAggregation)
 			skips, err := current.Delta("speed", previous, current, false, slog.Default())
-			if err != nil {
-				t.Errorf("Delta method returned an error: %v", err)
-			}
-			if skips != tt.expectedSkips {
-				t.Errorf("Expected %d skips, got %d", tt.expectedSkips, skips)
-			}
+			assert.Nil(t, err)
+			assert.Equal(t, skips, tt.expectedSkips)
 		})
 	}
 }
@@ -243,10 +241,7 @@ func TestMetricFloat64_Divide(t *testing.T) {
 			prevMat, curMat := setupMatrixAdv(latency, tt.prevRaw, tt.curRaw, tt.matrixOp)
 			for k := range curMat.GetMetrics() {
 				_, err := curMat.Delta(k, prevMat, curMat, false, slog.Default())
-				if err != nil {
-					t.Error("unexpected error", err)
-					return
-				}
+				assert.Nil(t, err)
 			}
 			skips, err := curMat.Divide(latency, "total_ops")
 			matrixTestAdv(t, tt, curMat, skips, err, latency)
@@ -278,10 +273,7 @@ func TestMetricFloat64_DivideWithThreshold(t *testing.T) {
 
 			for k := range curMat.GetMetrics() {
 				_, err := curMat.Delta(k, prevMat, curMat, false, slog.Default())
-				if err != nil {
-					t.Error("unexpected error", err)
-					return
-				}
+				assert.Nil(t, err)
 			}
 
 			skips, err := curMat.DivideWithThreshold(latency, "total_ops", tt.threshold, cachedData, prevMat, "timestamp", slog.Default())
@@ -306,49 +298,31 @@ func TestMetricFloat64_MultiplyByScalar(t *testing.T) {
 }
 
 func matrixTestAdv(t *testing.T, tt testAdv, cur *Matrix, skips int, err error, latency string) {
-	if err != nil {
-		t.Error("unexpected error", err)
-		return
-	}
-	if skips != tt.skips {
-		t.Errorf("skips expected = %d, got %d", tt.skips, skips)
-	}
+	assert.Nil(t, err)
+	assert.Equal(t, skips, tt.skips)
 
 	cooked := cur.GetMetric(latency).values
 	for i := range cooked {
-		if cooked[i] != tt.cooked[i] {
-			t.Errorf("cooked expected = %v, got %v", tt.cooked, cooked)
-		}
+		assert.Equal(t, cooked[i], tt.cooked[i])
 	}
 
 	record := cur.GetMetric(latency).GetRecords()
 	for i := range record {
-		if record[i] != tt.record[i] {
-			t.Errorf("record expected = %t, got %t", tt.record, record)
-		}
+		assert.Equal(t, record[i], tt.record[i])
 	}
 }
 
 func matrixTest(t *testing.T, tt test, cur *Matrix, skips int, err error) {
-	if err != nil {
-		t.Error("unexpected error", err)
-		return
-	}
-	if skips != tt.skips {
-		t.Errorf("skips expected = %d, got %d", tt.skips, skips)
-	}
+	assert.Nil(t, err)
+	assert.Equal(t, skips, tt.skips)
 	cooked := cur.GetMetric("speed").values
 	for i := range cooked {
-		if cooked[i] != tt.cooked[i] {
-			t.Errorf("cooked expected = %v, got %v", tt.cooked, cooked)
-		}
+		assert.Equal(t, cooked[i], tt.cooked[i])
 	}
 
 	record := cur.GetMetric("speed").GetRecords()
 	for i := range record {
-		if record[i] != tt.record[i] {
-			t.Errorf("record expected = %t, got %t", tt.record, record)
-		}
+		assert.Equal(t, record[i], tt.record[i])
 	}
 }
 
@@ -359,7 +333,5 @@ func TestMetricReset(t *testing.T) {
 	_ = m.LazySetValueInt64("poll_time", "task1", 10)
 	m.ResetInstance("task1")
 	_, pass := m.LazyGetValueInt64("poll_time", "task1")
-	if pass {
-		t.Errorf("expected metric to be skipped but passed")
-	}
+	assert.False(t, pass)
 }

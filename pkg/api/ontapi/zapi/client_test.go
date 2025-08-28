@@ -1,6 +1,7 @@
 package zapi
 
 import (
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -55,9 +56,8 @@ func TestNew(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			poller := conf.ZapiPoller(tt.config)
 			_, err := New(poller, auth.NewCredentials(poller, slog.Default()))
-			if (err != nil) != tt.wantErr {
-				t.Errorf("New() error = %v, wantErr %v", err, tt.wantErr)
-				return
+			if err != nil {
+				assert.True(t, tt.wantErr)
 			}
 		})
 	}
@@ -85,16 +85,11 @@ func TestClientTimeout(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			clientTimeout, err := parseClientTimeout(tt.fromTemplate)
-			if err != nil && !tt.hasErr {
-				t.Errorf("parseClientTimeout() error = %v", err)
+			if err != nil {
+				assert.True(t, tt.hasErr)
+				assert.Equal(t, tt.display, clientTimeout.String())
 			}
-			if err != nil && tt.display != clientTimeout.String() {
-				t.Errorf("clientTimeout.String() got=%s want=%s", clientTimeout.String(), tt.display)
-			}
-			if clientTimeout != tt.want {
-				t.Errorf("parseClientTimeout got=[%s] want=[%s]", clientTimeout.String(), tt.want.String())
-				return
-			}
+			assert.Equal(t, clientTimeout, tt.want)
 		})
 	}
 }

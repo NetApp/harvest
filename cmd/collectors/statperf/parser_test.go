@@ -1,6 +1,7 @@
 package statperf
 
 import (
+	"github.com/netapp/harvest/v2/assert"
 	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"log/slog"
@@ -22,47 +23,22 @@ type testCase struct {
 func runCounterTest(t *testing.T, tc testCase) {
 	t.Run(tc.name, func(t *testing.T) {
 		content, err := os.ReadFile(tc.fileName)
-		if err != nil {
-			t.Fatalf("Failed to read from file: %v", err)
-		}
+		assert.Nil(t, err)
 
 		sp := &StatPerf{}
 		counters, err := sp.ParseCounters(string(content))
-		if err != nil {
-			t.Fatalf("Unexpected error during parseCounters: %v", err)
-		}
-		if len(counters) != tc.expectedCount {
-			t.Errorf("Expected %d counter, got %d", tc.expectedCount, len(counters))
-		}
+		assert.Nil(t, err)
+		assert.Equal(t, len(counters), tc.expectedCount)
 
 		cp, exists := counters[tc.expectedCounter.Counter]
-		if !exists {
-			t.Fatalf("Expected to find counter '%s'", tc.expectedCounter.Counter)
-		}
+		assert.True(t, exists)
 
-		if cp.BaseCounter != tc.expectedCounter.BaseCounter {
-			t.Errorf("Expected BaseCounter '%s', got '%s'", tc.expectedCounter.BaseCounter, cp.BaseCounter)
-		}
-
-		if cp.Properties != tc.expectedCounter.Properties {
-			t.Errorf("Expected Properties '%s', got '%s'", tc.expectedCounter.Properties, cp.Properties)
-		}
-
-		if cp.Type != tc.expectedCounter.Type {
-			t.Errorf("Expected Type '%s', got '%s'", tc.expectedCounter.Type, cp.Type)
-		}
-
-		if cp.Deprecated != tc.expectedCounter.Deprecated {
-			t.Errorf("Expected Deprecated '%s', got '%s'", tc.expectedCounter.Deprecated, cp.Deprecated)
-		}
-
-		if cp.ReplacedBy != tc.expectedCounter.ReplacedBy {
-			t.Errorf("Expected ReplacedBy '%s', got '%s'", tc.expectedCounter.ReplacedBy, cp.ReplacedBy)
-		}
-
-		if cp.LabelCount != tc.expectedCounter.LabelCount {
-			t.Errorf("Expected LabelCount %d, got %d", tc.expectedCounter.LabelCount, cp.LabelCount)
-		}
+		assert.Equal(t, cp.BaseCounter, tc.expectedCounter.BaseCounter)
+		assert.Equal(t, cp.Properties, tc.expectedCounter.Properties)
+		assert.Equal(t, cp.Type, tc.expectedCounter.Type)
+		assert.Equal(t, cp.Deprecated, tc.expectedCounter.Deprecated)
+		assert.Equal(t, cp.ReplacedBy, tc.expectedCounter.ReplacedBy)
+		assert.Equal(t, cp.LabelCount, tc.expectedCounter.LabelCount)
 	})
 }
 
@@ -192,15 +168,11 @@ func TestParseInstances(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			content, err := os.ReadFile(tc.fileName)
-			if err != nil {
-				t.Fatalf("Failed to read from file: %v", err)
-			}
+			assert.Nil(t, err)
 			sp := &StatPerf{}
 			instances, _ := sp.parseInstances(string(content))
 
-			if len(instances) != 6 {
-				t.Errorf("Expected 6 instances, got %d", len(instances))
-			}
+			assert.Equal(t, len(instances), 6)
 		})
 	}
 }
@@ -254,9 +226,7 @@ func TestParseData(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			content, err := os.ReadFile(tc.fileName)
-			if err != nil {
-				t.Fatalf("Failed to read from file %s: %v", tc.fileName, err)
-			}
+			assert.Nil(t, err)
 
 			s := &StatPerf{
 				Rest: &rest2.Rest{
@@ -270,18 +240,10 @@ func TestParseData(t *testing.T) {
 				s.perfProp = &perfProp{}
 			}
 			resp, err := s.parseData(string(content))
-			if err != nil {
-				t.Fatalf("Unexpected error: %v", err)
-			}
+			assert.Nil(t, err)
 
-			if !resp.IsArray() {
-				t.Fatalf("Expected JSON result to be an array, got: %v", resp.Type)
-			}
-
-			groupsCount := len(resp.Array())
-			if groupsCount < tc.expectedMinGroupNum {
-				t.Errorf("Expected at least %d groups, got %d", tc.expectedMinGroupNum, groupsCount)
-			}
+			assert.True(t, resp.IsArray())
+			assert.True(t, len(resp.Array()) >= tc.expectedMinGroupNum)
 
 			foundInstance := false
 			foundMetric := false
@@ -294,12 +256,8 @@ func TestParseData(t *testing.T) {
 				}
 			}
 
-			if !foundInstance {
-				t.Errorf("Expected to find a group with instance_name '%s'", tc.expectedInstance)
-			}
-			if !foundMetric {
-				t.Errorf("Expected to find a group with metric '%s'", tc.expectedMetric)
-			}
+			assert.True(t, foundInstance)
+			assert.True(t, foundMetric)
 		})
 	}
 }
@@ -386,9 +344,7 @@ flexcache_per_volume·Test·blocks_requested_from_client·637069129383·`,
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			result := FilterNonEmpty(tc.input)
-			if !slices.Equal(result, tc.expected) {
-				t.Errorf("expected %v, got %v", tc.expected, result)
-			}
+			assert.True(t, slices.Equal(result, tc.expected))
 		})
 	}
 }

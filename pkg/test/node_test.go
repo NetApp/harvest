@@ -1,6 +1,7 @@
 package test
 
 import (
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/yaml"
 	"os"
@@ -21,9 +22,7 @@ func TestNode_Merge(t *testing.T) {
 		for range objects.GetChildren() {
 			got++
 		}
-		if got != want {
-			t.Errorf("got %v, want %v", got, want)
-		}
+		assert.Equal(t, got, want)
 	}
 
 	// Compare overwritten values for object
@@ -36,18 +35,13 @@ func TestNode_Merge(t *testing.T) {
 
 	// Check if additional object is added
 	checkObject := "Sensor"
-	if defaultTemplate.GetChildS("objects").GetChildS(checkObject) == nil {
-		t.Errorf("missing object %v", checkObject)
-	}
+	assert.NotNil(t, defaultTemplate.GetChildS("objects").GetChildS(checkObject))
 
 	// Compare overwritten values for schedule
 	want2 := "650s"
 	got2 := defaultTemplate.GetChildS("schedule").GetChildS("instance").GetContentS()
 
-	if got2 != want2 {
-		t.Errorf("got %v, want %v", got2, want2)
-	}
-
+	assert.Equal(t, got2, want2)
 }
 
 // merge collector templates for 21.08.6+ versions
@@ -64,18 +58,14 @@ func TestNode_MergeCollector(t *testing.T) {
 	expected, _ := os.ReadFile("mergeTemplates/lun_merge.yaml")
 	expectedString := strings.TrimSpace(string(expected))
 
-	if gotString != expectedString {
-		t.Errorf("got %v, want %v", gotString, expectedString)
-	}
+	assert.Equal(t, gotString, expectedString)
 
 	// object name overwrite
 	want := "customLun"
 	var got string
 	if name := defaultTemplate.GetChildS("name"); name != nil {
 		got = name.GetContentS()
-		if got != want {
-			t.Errorf("got %v, want %v", got, want)
-		}
+		assert.Equal(t, got, want)
 	}
 
 	// Add new counter
@@ -89,9 +79,7 @@ func TestNode_MergeCollector(t *testing.T) {
 		}
 	}
 
-	if got1 != want1 {
-		t.Errorf("got %v, want %v", got1, want1)
-	}
+	assert.Equal(t, got1, want1)
 
 	// plugins labelagent add same child to existing plugin
 	want3 := 1
@@ -103,9 +91,7 @@ func TestNode_MergeCollector(t *testing.T) {
 		}
 	}
 
-	if got3 != want3 {
-		t.Errorf("got %v, want %v", got3, want3)
-	}
+	assert.Equal(t, got3, want3)
 
 	// plugins labelagent add same child to existing plugin
 	want4 := 1
@@ -117,9 +103,7 @@ func TestNode_MergeCollector(t *testing.T) {
 		}
 	}
 
-	if got4 != want4 {
-		t.Errorf("got %v, want %v", got4, want4)
-	}
+	assert.Equal(t, got4, want4)
 
 	// plugins labelagent existing child no change
 	want5 := 1
@@ -131,9 +115,7 @@ func TestNode_MergeCollector(t *testing.T) {
 		}
 	}
 
-	if got5 != want5 {
-		t.Errorf("got %v, want %v", got5, want5)
-	}
+	assert.Equal(t, got5, want5)
 
 	// plugins aggregator add new child
 	want8 := 2
@@ -145,9 +127,7 @@ func TestNode_MergeCollector(t *testing.T) {
 		}
 	}
 
-	if got8 != want8 {
-		t.Errorf("got %v, want %v", got8, want8)
-	}
+	assert.Equal(t, got8, want8)
 
 	// export_options add new instance_key
 	want6 := 6
@@ -159,9 +139,7 @@ func TestNode_MergeCollector(t *testing.T) {
 		}
 	}
 
-	if got6 != want6 {
-		t.Errorf("got %v, want %v", want6, got6)
-	}
+	assert.Equal(t, got6, want6)
 
 	// export_options add same instance_labels
 	want7 := 1
@@ -173,9 +151,7 @@ func TestNode_MergeCollector(t *testing.T) {
 		}
 	}
 
-	if got7 != want7 {
-		t.Errorf("got %v, want %v", want7, got7)
-	}
+	assert.Equal(t, got7, want7)
 
 	// override block
 	want9 := 2
@@ -187,20 +163,13 @@ func TestNode_MergeCollector(t *testing.T) {
 		}
 	}
 
-	if want9 != got9 {
-		t.Errorf("got %v, want %v", want9, got9)
-	}
+	assert.Equal(t, got9, want9)
 
 	//export block
 
 	export := defaultTemplate.GetChildS("export")
-	if export != nil {
-		t.Errorf("missing export block")
-	}
-
-	if want9 != got9 {
-		t.Errorf("got %v, want %v", want9, got9)
-	}
+	assert.Nil(t, export)
+	assert.Equal(t, got9, want9)
 }
 
 // Merge collector templates where custom templates are from 21.08.6 and before
@@ -222,9 +191,7 @@ func TestNode_MergeCollectorOld(t *testing.T) {
 		}
 	}
 
-	if got3 != want3 {
-		t.Errorf("got %v, want %v", got3, want3)
-	}
+	assert.Equal(t, got3, want3)
 
 	// plugins labelagent add same child to existing plugin
 	want4 := 1
@@ -236,9 +203,7 @@ func TestNode_MergeCollectorOld(t *testing.T) {
 		}
 	}
 
-	if got4 != want4 {
-		t.Errorf("got %v, want %v", got4, want4)
-	}
+	assert.Equal(t, got4, want4)
 
 	// plugins aggregator add new child
 	want5 := 3
@@ -250,9 +215,7 @@ func TestNode_MergeCollectorOld(t *testing.T) {
 		}
 	}
 
-	if got5 != want5 {
-		t.Errorf("got %v, want %v", got5, want5)
-	}
+	assert.Equal(t, got5, want5)
 }
 
 func TestNode_PreProcessCollector(t *testing.T) {
@@ -301,9 +264,8 @@ func TestNode_PreProcessCollector(t *testing.T) {
 			expected, _ := os.ReadFile(tt.compareFile)
 			gotString := strings.TrimSpace(string(got))
 			expectedString := strings.TrimSpace(string(expected))
-			if gotString != expectedString {
-				t.Errorf("\ngot:\n%v\n\nwant:\n%v", gotString, expectedString)
-			}
+
+			assert.Equal(t, gotString, expectedString)
 		})
 	}
 }
@@ -353,9 +315,7 @@ func TestNode_PreProcessMergeCollector(t *testing.T) {
 			expected, _ := os.ReadFile(tt.mergeTemplate)
 			expectedString := strings.TrimSpace(string(expected))
 
-			if gotString != expectedString {
-				t.Errorf("\ngot:\n%v\n\nwant:\n%v", gotString, expectedString)
-			}
+			assert.Equal(t, gotString, expectedString)
 		})
 	}
 }

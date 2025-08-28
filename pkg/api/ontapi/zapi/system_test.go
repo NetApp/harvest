@@ -2,6 +2,7 @@ package zapi
 
 import (
 	"fmt"
+	"github.com/netapp/harvest/v2/assert"
 	"testing"
 )
 
@@ -25,16 +26,13 @@ func Test_7modeParsing(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			v0, v1, v2, err := parse7mode(tt.release)
 			if err != nil {
+				assert.True(t, tt.wantErr)
 				if tt.wantErr {
 					return
 				}
-				t.Errorf("got error=%v, want %v", err, tt.want)
-
 			}
 			got := fmt.Sprintf("%d.%d.%d", v0, v1, v2)
-			if got != tt.want {
-				t.Errorf("got version=%v, want %v", got, tt.want)
-			}
+			assert.Equal(t, got, tt.want)
 		})
 	}
 }
