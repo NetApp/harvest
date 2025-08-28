@@ -2629,7 +2629,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Cold data size that is physically used in the volume.",
+          "description": "Cold data percentage that is physically used in the volume.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2720,7 +2720,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Hot data size that is physically used in the volume.",
+          "description": "Hot data percentage that is physically used in the volume.",
           "fieldConfig": {
             "defaults": {
               "color": {

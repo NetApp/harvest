@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Aug-25
+Creation Date : 2025-Aug-28
 ONTAP Version: 9.16.1
 ```
 
@@ -21685,6 +21685,9 @@ The `volume_capacity_tier_footprint` metric is visualized in the following Grafa
 |--------|----------|--------|--------|
 | ONTAP: Aggregate | Volume Capacity | timeseries | [Top $TopResources Volumes by Capacity Tier Footprint](/d/cdot-aggregate/ontap3a-aggregate?orgId=1&viewPanel=99) |
 | ONTAP: FlexGroup | Top Volume FabricPool | timeseries | [Top $TopResources Volumes by Capacity Tier Footprint](/d/cdot-flexgroup/ontap3a-flexgroup?orgId=1&viewPanel=121) |
+| ONTAP: Volume | Volume Hot-Cold Data | table | [Volumes by Cold data](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=45) |
+| ONTAP: Volume | Volume Hot-Cold Data | timeseries | [Top $TopResources Volumes by Cold Data](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=47) |
+| ONTAP: Volume | Volume Hot-Cold Data | timeseries | [Top $TopResources Volumes by Cold Data %](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=49) |
 | ONTAP: Volume | FabricPool | table | [Volumes Footprint](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=185) |
 | ONTAP: Volume | FabricPool | timeseries | [Top $TopResources Volumes by Capacity Tier Footprint](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=121) |
 ///
@@ -21779,6 +21782,27 @@ The `volume_guarantee_footprint` metric is visualized in the following Grafana d
 |--------|----------|--------|--------|
 | ONTAP: Volume | FabricPool | table | [Volumes Footprint](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=185) |
 | ONTAP: Volume | FabricPool | timeseries | [Top $TopResources Volumes by Capacity Tier Footprint](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=182) |
+///
+
+
+
+### volume_hot_data
+
+Hot data size that is physically used in the volume.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/volume` | `total_footprint, capacity_tier_footprint` | conf/rest/9.14.0/volume.yaml |
+| ZAPI | `volume-get-iter` | `total_footprint, capacity_tier_footprint` | conf/zapi/cdot/9.8.0/volume.yaml |
+
+The `volume_hot_data` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Volume | Volume Hot-Cold Data | table | [Volumes by Cold data](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=45) |
+| ONTAP: Volume | Volume Hot-Cold Data | timeseries | [Top $TopResources Volumes by Hot Data](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=48) |
+| ONTAP: Volume | Volume Hot-Cold Data | timeseries | [Top $TopResources Volumes by Hot Data %](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=50) |
 ///
 
 
@@ -21921,6 +21945,11 @@ The `volume_labels` metric is visualized in the following Grafana dashboards:
 | ONTAP: Volume | Volume Table | table | [Top $TopResources Volumes by Write Latency](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=40) |
 | ONTAP: Volume | Volume Table | table | [Top $TopResources Volumes by Write Throughput](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=42) |
 | ONTAP: Volume | Volume Table | table | [Top $TopResources Volumes by Write IOPS](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=44) |
+| ONTAP: Volume | Volume Hot-Cold Data | table | [Volumes by Cold data](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=45) |
+| ONTAP: Volume | Volume Hot-Cold Data | timeseries | [Top $TopResources Volumes by Cold Data](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=47) |
+| ONTAP: Volume | Volume Hot-Cold Data | timeseries | [Top $TopResources Volumes by Hot Data](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=48) |
+| ONTAP: Volume | Volume Hot-Cold Data | timeseries | [Top $TopResources Volumes by Cold Data %](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=49) |
+| ONTAP: Volume | Volume Hot-Cold Data | timeseries | [Top $TopResources Volumes by Hot Data %](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=50) |
 | ONTAP: Volume | Volume Autosize Table | table | [Volumes Autogrow](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=186) |
 | ONTAP: Volume | Performance | timeseries | [Top $TopResources Volumes by Read Latency](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=30) |
 | ONTAP: Volume | Performance | timeseries | [Top $TopResources Volumes by Write Latency](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=33) |
@@ -23294,6 +23323,9 @@ The `volume_total_footprint` metric is visualized in the following Grafana dashb
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
+| ONTAP: Volume | Volume Hot-Cold Data | table | [Volumes by Cold data](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=45) |
+| ONTAP: Volume | Volume Hot-Cold Data | timeseries | [Top $TopResources Volumes by Cold Data %](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=49) |
+| ONTAP: Volume | Volume Hot-Cold Data | timeseries | [Top $TopResources Volumes by Hot Data %](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=50) |
 | ONTAP: Volume | FabricPool | table | [Volumes Footprint](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=185) |
 | ONTAP: Volume | FabricPool | timeseries | [Top $TopResources Volumes by Total Footprint](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=180) |
 ///
