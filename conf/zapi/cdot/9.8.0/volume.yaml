@@ -14,6 +14,8 @@ counters:
         - maximum-size
         - minimum-size
         - shrink-threshold-percent
+    - volume-comp-aggr-attributes:
+        - ^tiering-policy                             => tiering_policy
     - volume-id-attributes:
         - ^^instance-uuid                             => uuid
         - ^containing-aggregate-uuid                  => aggrUuid
@@ -91,6 +93,7 @@ plugins:
         - inode_used_percent PERCENT inode_files_used inode_files_total
         - snapshot_reserve_used SUBTRACT snapshot_reserve_size snapshot_reserve_available
         - overwrite_reserve_available SUBTRACT overwrite_reserve_total overwrite_reserve_used
+        - hot_data SUBTRACT total_footprint capacity_tier_footprint
   - LabelAgent:
       # metric label zapi_value rest_value `default_value`
       value_to_num:
@@ -138,4 +141,5 @@ export_options:
     - space_mgmt_try_first
     - state
     - svm_root
+    - tiering_policy
     - type

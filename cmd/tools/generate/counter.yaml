@@ -2246,3 +2246,14 @@ counters:
         Endpoint: api/network/ethernet/switch/ports
         ONTAPCounter: transmit_raw.packets
         Template: conf/keyperf/9.15.0/ethernet_switch_port.yaml
+  - Name: volume_hot_data
+    Description: Hot data size that is physically used in the volume.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.14.0/volume.yaml
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapi/cdot/9.8.0/volume.yaml
