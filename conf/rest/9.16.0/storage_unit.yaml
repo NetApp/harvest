@@ -1,0 +1,30 @@
+name:                     StorageUnit
+query:                    api/storage/storage-units
+object:                   storage_unit
+
+counters:
+  - ^^uuid
+  - ^class
+  - ^consistency_group.name                      => cg_name
+  - ^location.node.name                          => node
+  - ^location.storage_availability_zone.name     => storage_availability_zone
+  - ^location.volume.name                        => volume
+  - ^name
+  - ^svm.name                                    => svm
+  - ^type
+  - space.efficiency_ratio
+  - space.size
+  - space.used
+
+
+export_options:
+  instance_keys:
+    - name
+    - node
+    - svm
+    - volume
+  instance_labels:
+    - cg_name
+    - class
+    - type
+    - storage_availability_zone
