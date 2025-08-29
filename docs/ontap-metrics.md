@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Aug-28
+Creation Date : 2025-Aug-29
 ONTAP Version: 9.16.1
 ```
 
@@ -21792,8 +21792,8 @@ Hot data size that is physically used in the volume.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/private/cli/volume` | `total_footprint, capacity_tier_footprint` | conf/rest/9.14.0/volume.yaml |
-| ZAPI | `volume-get-iter` | `total_footprint, capacity_tier_footprint` | conf/zapi/cdot/9.8.0/volume.yaml |
+| REST | `NA` | `Harvest generated` | conf/rest/9.14.0/volume.yaml |
+| ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 The `volume_hot_data` metric is visualized in the following Grafana dashboards:
 
