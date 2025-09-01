@@ -98,7 +98,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -113,7 +113,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time.",
       "fieldConfig": {
         "defaults": {
@@ -194,7 +194,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Average RDMA write I/O latency.",
       "fieldConfig": {
         "defaults": {
@@ -275,7 +275,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "RDMA write throughput in bytes per second.",
       "fieldConfig": {
         "defaults": {
@@ -352,7 +352,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Number of RDMA write I/Os issued per second.",
       "fieldConfig": {
         "defaults": {
@@ -428,7 +428,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Average processor utilization across all processors in the system.",
       "fieldConfig": {
         "defaults": {
@@ -507,7 +507,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "The utilization percent of the disk. aggr_disk_max_busy is the maximum of [disk_busy](#disk_busy) for label `aggr`.",
       "fieldConfig": {
         "defaults": {
@@ -586,7 +586,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -596,7 +596,7 @@
       "id": 90,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Average RDMA write I/O latency per node.",
           "fieldConfig": {
             "defaults": {
@@ -689,7 +689,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Average RDMA write throughput in bytes per second per node.",
           "fieldConfig": {
             "defaults": {
@@ -782,7 +782,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Average Number of RDMA write I/Os issued per second per node.",
           "fieldConfig": {
             "defaults": {
@@ -876,7 +876,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Total Number of times hard reset of FCVI adapter got issued per node.",
           "fieldConfig": {
             "defaults": {
@@ -969,7 +969,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Total Number of times soft reset of FCVI adapter got issued per node.",
           "fieldConfig": {
             "defaults": {
@@ -1062,7 +1062,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Total Number of times Firmware reported link failure count per node.",
           "fieldConfig": {
             "defaults": {
@@ -1155,7 +1155,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Total Number of times Firmware reported loss of signal count per node.",
           "fieldConfig": {
             "defaults": {
@@ -1248,7 +1248,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Total Number of times Firmware reported loss of sync count per node.",
           "fieldConfig": {
             "defaults": {
@@ -1341,7 +1341,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Total Number of times Firmware reported SyStatDiscardFrames value per node.",
           "fieldConfig": {
             "defaults": {
@@ -1434,7 +1434,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Total Number of times Firmware reported invalid crc count per node.",
           "fieldConfig": {
             "defaults": {
@@ -1527,7 +1527,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Total Number of times Firmware reported invalid transmit word count per node.",
           "fieldConfig": {
             "defaults": {
@@ -1626,7 +1626,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1636,7 +1636,7 @@
       "id": 107,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Average Number of RDMA I/Os issued per node.",
           "fieldConfig": {
             "defaults": {
@@ -1730,7 +1730,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Average Number of RDMA read I/Os issued per node.",
           "fieldConfig": {
             "defaults": {
@@ -1824,7 +1824,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Average Number of RDMA write I/Os issued per node.",
           "fieldConfig": {
             "defaults": {
@@ -1918,7 +1918,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Average RDMA I/O latency per node.",
           "fieldConfig": {
             "defaults": {
@@ -2017,7 +2017,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2027,7 +2027,7 @@
       "id": 91,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "The utilization percent of the disk. plex_disk_busy is disk_busy aggregated by plex.",
           "fieldConfig": {
             "defaults": {
@@ -2128,7 +2128,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "The utilization percent of the disk. plex_disk_busy is disk_busy aggregated by plex.",
           "fieldConfig": {
             "defaults": {
@@ -2258,7 +2258,7 @@
           "type": "table"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Number of disk read operations initiated each second for retrieving data or metadata associated with user requests. plex_disk_user_reads is [disk_user_reads](#disk_user_reads) aggregated by `plex`.",
           "fieldConfig": {
             "defaults": {
@@ -2352,7 +2352,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Number of disk write operations initiated each second for storing data or metadata associated with user requests. plex_disk_user_writes is [disk_user_writes](#disk_user_writes) aggregated by `plex`.",
           "fieldConfig": {
             "defaults": {
@@ -2449,7 +2449,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Average latency per block in microseconds for user read operations. plex_disk_user_read_latency is [disk_user_read_latency](#disk_user_read_latency) aggregated by `plex`.",
           "fieldConfig": {
             "defaults": {
@@ -2543,7 +2543,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Average latency per block in microseconds for user write operations. plex_disk_user_write_latency is [disk_user_write_latency](#disk_user_write_latency) aggregated by `plex`.",
           "fieldConfig": {
             "defaults": {
@@ -2639,7 +2639,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2649,7 +2649,7 @@
       "id": 92,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Bytes read through a host adapter.",
           "fieldConfig": {
             "defaults": {
@@ -2743,7 +2743,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Bytes written through a host adapter.",
           "fieldConfig": {
             "defaults": {
@@ -2843,7 +2843,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2853,7 +2853,7 @@
       "id": 93,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "The average latency of I/O read operations sent from this controller to the indicated target port.",
           "fieldConfig": {
             "defaults": {
@@ -2946,7 +2946,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "The average read throughput in kilobytes per second read from the indicated target port by the controller.",
           "fieldConfig": {
             "defaults": {
@@ -3039,7 +3039,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "The number of I/O read operations sent from the initiator port to the indicated target port.",
           "fieldConfig": {
             "defaults": {
@@ -3133,7 +3133,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "The average latency of I/O write operations sent from this controller to the indicated target port.",
           "fieldConfig": {
             "defaults": {
@@ -3226,7 +3226,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "The average write throughput in kilobytes per second written to the indicated target port by the controller.",
           "fieldConfig": {
             "defaults": {
@@ -3319,7 +3319,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "The number of I/O write operations sent from the initiator port to the indicated target port.",
           "fieldConfig": {
             "defaults": {
@@ -3419,7 +3419,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -3429,7 +3429,7 @@
       "id": 94,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "gridPos": {
             "h": 2,
             "w": 24,
@@ -3445,7 +3445,7 @@
           "type": "text"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This panel displays cluster level diagnostics status detail of Metrocluster.",
           "fieldConfig": {
             "defaults": {
@@ -3523,7 +3523,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
               "expr": "metronetapp_cluster_check_netapp_cluster_status{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
@@ -3570,7 +3570,7 @@
           "type": "table"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This panel displays node level diagnostics status detail of Metrocluster.",
           "fieldConfig": {
             "defaults": {
@@ -3670,7 +3670,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
               "expr": "metronetapp_cluster_check_node_status{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}",
@@ -3718,7 +3718,7 @@
           "type": "table"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This panel displays aggregate level diagnostics status detail of Metrocluster.",
           "fieldConfig": {
             "defaults": {
@@ -3840,7 +3840,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
               "expr": "metronetapp_cluster_check_aggr_status{aggregate=~\"$Aggr\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}",
@@ -3889,7 +3889,7 @@
           "type": "table"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This panel displays volume level diagnostics status detail of Metrocluster.",
           "fieldConfig": {
             "defaults": {
@@ -4033,7 +4033,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
               "expr": "metronetapp_cluster_check_volume_status{aggregate=~\"$Aggr\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}",
@@ -4106,7 +4106,7 @@
         },
         "description": null,
         "error": null,
-        "hide": 2,
+        "hide": 0,
         "includeAll": false,
         "label": "Data Source",
         "multi": false,
@@ -4121,7 +4121,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"}, datacenter)",
         "description": null,
         "error": null,
@@ -4150,7 +4150,7 @@
         "allFormat": "wildcard",
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, netapp_cluster)",
         "description": null,
         "error": null,
@@ -4178,7 +4178,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(aggr_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\"}, node)",
         "description": null,
         "error": null,
@@ -4202,7 +4202,7 @@
         "allFormat": "wildcard",
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(aggr_new_status{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\",node=~\"$Node\"}, aggr)",
         "description": null,
         "error": null,

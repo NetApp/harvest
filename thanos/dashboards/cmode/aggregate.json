@@ -90,7 +90,7 @@
   ],
   "panels": [
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 2,
         "w": 24,
@@ -108,7 +108,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -122,7 +122,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Number of aggregates.",
       "fieldConfig": {
         "defaults": {
@@ -198,7 +198,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Number of disks in the aggregate.",
       "fieldConfig": {
         "defaults": {
@@ -274,7 +274,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "The aggregate's volume count, which includes both FlexVols and FlexGroup constituents.",
       "fieldConfig": {
         "defaults": {
@@ -349,7 +349,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Total usable space in bytes, not including WAFL reserve and aggregate Snapshot copy reserve.",
       "fieldConfig": {
         "defaults": {
@@ -407,7 +407,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Space used or reserved in bytes. Includes volume guarantees and aggregate metadata..",
       "fieldConfig": {
         "defaults": {
@@ -465,7 +465,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Space available in bytes.",
       "fieldConfig": {
         "defaults": {
@@ -523,7 +523,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Percent of space used.",
       "fieldConfig": {
         "defaults": {
@@ -582,7 +582,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Aggregate details.",
       "fieldConfig": {
         "defaults": {
@@ -1107,7 +1107,7 @@
       "type": "table"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Total aggregate size. If aggregate is restricted or offline, a value of 0 is returned.",
       "fieldConfig": {
         "defaults": {
@@ -1198,7 +1198,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Total physical used size of an aggregate.",
       "fieldConfig": {
         "defaults": {
@@ -1289,7 +1289,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Total physical used size percentage of an aggregate.",
       "fieldConfig": {
         "defaults": {
@@ -1372,7 +1372,7 @@
           "exemplar": false,
           "expr": "aggr_space_physical_used_percent{aggr=~\"$Aggregate\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      aggr_space_physical_used_percent{aggr=~\"$Aggregate\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[3h] @ end()\n    )\n  )",
           "interval": "",
-          "legendFormat": "{{node}} - {{aggr}} - DATA COMPACTION",
+          "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
         }
       ],
@@ -1382,7 +1382,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Space available.",
       "fieldConfig": {
         "defaults": {
@@ -1473,7 +1473,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "The amount of inactive data in an aggregate.",
       "fieldConfig": {
         "defaults": {
@@ -1564,7 +1564,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Inactive data percentage of an aggregate.",
       "fieldConfig": {
         "defaults": {
@@ -1645,9 +1645,9 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "aggr_space_physical_used_percent{aggr=~\"$Aggregate\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      aggr_space_physical_used_percent{aggr=~\"$Aggregate\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[3h] @ end()\n    )\n  )",
+          "expr": "aggr_space_performance_tier_inactive_user_data_percent{aggr=~\"$Aggregate\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      aggr_space_performance_tier_inactive_user_data_percent{aggr=~\"$Aggregate\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[3h] @ end()\n    )\n  )",
           "interval": "",
-          "legendFormat": "{{node}} - {{aggr}} - DATA COMPACTION",
+          "legendFormat": "{{node}} - {{aggr}}",
           "refId": "A"
         }
       ],
@@ -1657,7 +1657,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Displays the logical space usage of aggregates in the attached object store.\n\n*Note:* This field is only supported for Rest Collector.",
       "fieldConfig": {
         "defaults": {
@@ -1749,7 +1749,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Displays the physical space usage of aggregates in the attached object store.\n\n*Note:* This field is only supported for Rest Collector.",
       "fieldConfig": {
         "defaults": {
@@ -1841,7 +1841,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Used space in bytes in the cloud store. Only applicable for aggregates with a cloud store tier.",
       "fieldConfig": {
         "defaults": {
@@ -1933,7 +1933,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This panel displays detail of space used by snapshot copies and available space for Snapshot copies in bytes.",
       "fieldConfig": {
         "defaults": {
@@ -2033,7 +2033,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Amount of space saved by storage efficiency.",
       "fieldConfig": {
         "defaults": {
@@ -2125,7 +2125,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Space saved in bytes by compacting the data.",
       "fieldConfig": {
         "defaults": {
@@ -2217,7 +2217,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "The percentage of disk space currently in use based on user-visible file count on the referenced file system.",
       "fieldConfig": {
         "defaults": {
@@ -2310,7 +2310,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This panel displays detail of Number of user-visible files used in the referenced file system and Maximum number of user-visible files that this referenced file system can currently hold.",
       "fieldConfig": {
         "defaults": {
@@ -2408,7 +2408,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This panel displays detail of number of files that can currently be stored on disk for system metadata files and number of files that can currently be stored on disk for user-visible files.",
       "fieldConfig": {
         "defaults": {
@@ -2506,7 +2506,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "The percentage of disk space currently in use based on user-visible file (inode) count on the referenced file system.",
       "fieldConfig": {
         "defaults": {
@@ -2599,7 +2599,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Percentage of disk space used by Snapshot copies.",
       "fieldConfig": {
         "defaults": {
@@ -2692,7 +2692,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Percentage of disk space used by Snapshot copies.",
       "fieldConfig": {
         "defaults": {
@@ -2785,7 +2785,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This panel displays detail of total files allowed in snapshot copies and total files created in snapshot copies.",
       "fieldConfig": {
         "defaults": {
@@ -2884,7 +2884,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This panel displays detail of files in use by snapshot copies, the largest value to which the maxfiles-available parameter can be increased by reconfiguration, on the referenced file system and maximum files available for snapshot copies.",
       "fieldConfig": {
         "defaults": {
@@ -2991,7 +2991,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Percentage of space reserved for Snapshot copies.",
       "fieldConfig": {
         "defaults": {
@@ -3085,7 +3085,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -3095,7 +3095,7 @@
       "id": 39,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Storage efficiency ratio without snapshots and flexclones.",
           "fieldConfig": {
             "defaults": {
@@ -3151,7 +3151,7 @@
           "type": "stat"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Storage efficiency ratio with flexclones.",
           "fieldConfig": {
             "defaults": {
@@ -3208,7 +3208,7 @@
           "type": "stat"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Storage efficiency ratio of total space used.",
           "fieldConfig": {
             "defaults": {
@@ -3264,7 +3264,7 @@
           "type": "stat"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Logical used.",
           "fieldConfig": {
             "defaults": {
@@ -3349,7 +3349,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Total data deduction physical used without snapshots and Flexclones.",
           "fieldConfig": {
             "defaults": {
@@ -3434,7 +3434,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Logical used with flexclones.",
           "fieldConfig": {
             "defaults": {
@@ -3519,7 +3519,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Total Data Reduction Physical Used with FlexClones.",
           "fieldConfig": {
             "defaults": {
@@ -3604,7 +3604,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Logical Used with Snapshots \u0026 flexClones.",
           "fieldConfig": {
             "defaults": {
@@ -3689,7 +3689,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Physical Used with Snapshots \u0026 FlexClones.",
           "fieldConfig": {
             "defaults": {
@@ -3779,7 +3779,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -3789,7 +3789,7 @@
       "id": 40,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Disk Utilization per Aggregate for latest record (independent of time range selected).",
           "fieldConfig": {
             "defaults": {
@@ -3951,7 +3951,7 @@
               "refId": "B"
             }
           ],
-          "title": "Top $TopResources Average Disk Utilization per Aggregate",
+          "title": "Top $TopResources Average Disk Utilization Per Aggregate",
           "transformations": [
             {
               "id": "filterFieldsByName",
@@ -3969,7 +3969,7 @@
           "type": "table"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Disk Utilization per Aggregate in the selected time range.",
           "fieldConfig": {
             "defaults": {
@@ -4068,7 +4068,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -4078,7 +4078,7 @@
       "id": 65,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This panel displays detail of percentage of HDD read operations replace by SSD and number of HDD read operations replaced by SSD reads per second.",
           "fieldConfig": {
             "defaults": {
@@ -4215,7 +4215,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This panel displays detail of average of RAID I/O latency on read hit and average read miss latency.",
           "fieldConfig": {
             "defaults": {
@@ -4313,7 +4313,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This panel displays detail of total read/write/total cached SSD blocks.",
           "fieldConfig": {
             "defaults": {
@@ -4420,7 +4420,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Number of read-cache/write-cache blocks per second.",
           "fieldConfig": {
             "defaults": {
@@ -4531,7 +4531,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Number of block destage/free per second.",
           "fieldConfig": {
             "defaults": {
@@ -4647,7 +4647,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -4657,7 +4657,7 @@
       "id": 810,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "A summation of volume footprints (including volume guarantees), in bytes. This includes all of the volume footprints in the block_storage tier and the cloud_storage tier.This is an advanced property; there is an added computational cost to retrieving its value. The field is not populated for either a collection GET or an instance GET unless it is explicitly requested using the \u003ci\u003efields\u003c/i\u003e query parameter containing either footprint or **.",
           "fieldConfig": {
             "defaults": {
@@ -4751,7 +4751,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Volume footprints percent.",
           "fieldConfig": {
             "defaults": {
@@ -4847,7 +4847,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Used space in bytes in the cloud store. Only applicable for aggregates with a cloud store tier.",
           "fieldConfig": {
             "defaults": {
@@ -4946,7 +4946,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -4956,7 +4956,7 @@
       "id": 81,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Flexgroup by-aggregate filtering does not display the per-aggregate breakdown, instead the sum of all flexgroup aggregates is displayed. This is how ONTAP reports the data, even when an aggregate is selected in the dropdown.",
           "fieldConfig": {
             "defaults": {
@@ -5046,7 +5046,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Flexgroup by-aggregate filtering does not display the per-aggregate breakdown, instead the sum of all flexgroup aggregates is displayed. This is how ONTAP reports the data, even when an aggregate is selected in the dropdown.",
           "fieldConfig": {
             "defaults": {
@@ -5142,7 +5142,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Flexgroup by-aggregate filtering does not display the per-aggregate breakdown, instead the sum of all flexgroup aggregates is displayed. This is how ONTAP reports the data, even when an aggregate is selected in the dropdown.",
           "fieldConfig": {
             "defaults": {
@@ -5236,7 +5236,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Flexgroup by-aggregate filtering does not display the per-aggregate breakdown, instead the sum of all flexgroup aggregates is displayed. This is how ONTAP reports the data, even when an aggregate is selected in the dropdown.\n\nNote that in some scenarios, it is possible to exceed 100% of the space allocated.\n.",
           "fieldConfig": {
             "defaults": {
@@ -5332,7 +5332,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Footprint of blocks written to the volume in bytes for the performance tier (bin 0).",
           "fieldConfig": {
             "defaults": {
@@ -5426,7 +5426,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Footprint of blocks written to the volume in performance tier (bin 0) as a percentage of aggregate size.",
           "fieldConfig": {
             "defaults": {
@@ -5522,7 +5522,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Footprint of blocks written to the volume in bytes for capacity tier (bin 1).",
           "fieldConfig": {
             "defaults": {
@@ -5616,7 +5616,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Footprint of blocks written to the volume in capacity tier (bin 1) as a percentage of aggregate size.",
           "fieldConfig": {
             "defaults": {
@@ -5717,7 +5717,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -5727,7 +5727,7 @@
       "id": 28,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
@@ -5805,7 +5805,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
               "expr": "volume_avg_latency{aggr=~\".*$Aggregate.*\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\nand on (datacenter, netapp_cluster, svm, volume)\n  topk(\n    $TopResources,\n    avg_over_time(\n      volume_avg_latency{aggr=~\".*$Aggregate.*\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[3h] @ end()\n    )\n  )",
               "interval": "",
@@ -5818,7 +5818,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Volume total throughput.",
           "fieldConfig": {
             "defaults": {
@@ -5896,7 +5896,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
               "expr": "(\n      volume_read_data{aggr=~\".*$Aggregate.*\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n    +\n      volume_write_data{aggr=~\".*$Aggregate.*\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n  )\nand on (datacenter, netapp_cluster, svm, volume)\n  topk(\n    $TopResources,\n    (\n        avg_over_time(\n          volume_read_data{aggr=~\".*$Aggregate.*\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[3h] @ end()\n        )\n      +\n        avg_over_time(\n          volume_write_data{aggr=~\".*$Aggregate.*\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[3h] @ end()\n        )\n    )\n  )",
               "interval": "",
@@ -5909,7 +5909,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Number of operations per second serviced by the volume.",
           "fieldConfig": {
             "defaults": {
@@ -5988,7 +5988,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
               "expr": "volume_total_ops{aggr=~\".*$Aggregate.*\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\nand on (datacenter, netapp_cluster, svm, volume)\n  topk(\n    $TopResources,\n    avg_over_time(\n      volume_total_ops{aggr=~\".*$Aggregate.*\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[3h] @ end()\n    )\n  )",
               "interval": "",
@@ -6001,7 +6001,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Average latency in microseconds for the WAFL filesystem to process read request to the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
@@ -6090,7 +6090,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Bytes read per second.",
           "fieldConfig": {
             "defaults": {
@@ -6180,7 +6180,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Number of read operations per second from the volume.",
           "fieldConfig": {
             "defaults": {
@@ -6270,7 +6270,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Average latency in microseconds for the WAFL filesystem to process write request to the volume; not including request processing or network communication time.",
           "fieldConfig": {
             "defaults": {
@@ -6359,7 +6359,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Bytes written per second.",
           "fieldConfig": {
             "defaults": {
@@ -6448,7 +6448,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Number of write operations per second to the volume.",
           "fieldConfig": {
             "defaults": {
@@ -6553,7 +6553,7 @@
       "id": 827,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Physical space used growth rate per second in the aggregate.",
           "fieldConfig": {
             "defaults": {
@@ -6637,7 +6637,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
               "expr": "deriv(\n    aggr_total_physical_used{aggr=~\"$Aggregate\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[4m]\n  )\nand\n  topk(\n    $TopResources,\n    (\n      avg_over_time(\n        aggr_total_physical_used{aggr=~\"$Aggregate\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[3h] @ end()\n      )\n    )\n  )",
@@ -6653,7 +6653,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Logical space used growth rate per second in the aggregate.",
           "fieldConfig": {
             "defaults": {
@@ -6737,7 +6737,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
               "expr": "deriv(\n    aggr_total_logical_used{aggr=~\"$Aggregate\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[4m]\n  )\nand\n  topk(\n    $TopResources,\n    (\n      avg_over_time(\n        aggr_total_logical_used{aggr=~\"$Aggregate\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[3h] @ end()\n      )\n    )\n  )",
@@ -6753,7 +6753,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This panel tracks changes in the physical usage space of the top $TopResources aggregates by physical space. It includes the following delta columns:\n\n- **1-Day Delta:** This column shows the change in physical usage space over the past 24 hours. \n  \n- **7-Day Delta:** This column displays the change in physical usage space over the past 7 days.\n  \n- **Time Range Delta:** This column reflects the change in physical usage space over the selected time range in the Grafana dashboard.\n",
           "fieldConfig": {
             "defaults": {
@@ -7014,7 +7014,7 @@
           "type": "table"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This panel tracks changes in the logical usage space of the top $TopResources aggregates by physical space. It includes the following delta columns:\n\n- **1-Day Delta:** This column shows the change in logical usage space over the past 24 hours. \n  \n- **7-Day Delta:** This column displays the change in logical usage space over the past 7 days.\n  \n- **Time Range Delta:** This column reflects the change in logical usage space over the selected time range in the Grafana dashboard.\n",
           "fieldConfig": {
             "defaults": {
@@ -7297,7 +7297,7 @@
         },
         "description": null,
         "error": null,
-        "hide": 2,
+        "hide": 0,
         "includeAll": false,
         "label": "Data Source",
         "multi": false,
@@ -7312,7 +7312,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"}, datacenter)",
         "description": null,
         "error": null,
@@ -7338,7 +7338,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, netapp_cluster)",
         "description": null,
         "error": null,
@@ -7364,7 +7364,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(aggr_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\"}, node)",
         "description": null,
         "error": null,
@@ -7390,7 +7390,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(aggr_new_status{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\",node=~\"$Node\"}, aggr)",
         "description": null,
         "error": null,

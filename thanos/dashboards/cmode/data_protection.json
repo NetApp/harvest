@@ -11,20 +11,14 @@
   ],
   "__requires": [
     {
-      "id": "bargauge",
-      "name": "Bar gauge",
-      "type": "panel",
-      "version": ""
-    },
-    {
       "id": "grafana",
       "name": "Grafana",
       "type": "grafana",
-      "version": "7.5.4"
+      "version": "8.1.8"
     },
     {
-      "id": "graph",
-      "name": "Graph",
+      "id": "piechart",
+      "name": "Pie chart",
       "type": "panel",
       "version": ""
     },
@@ -43,6 +37,12 @@
     {
       "id": "table",
       "name": "Table",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "text",
+      "name": "Text",
       "type": "panel",
       "version": ""
     }
@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1637051731590,
+  "iteration": 1756122841882,
   "links": [
     {
       "asDropdown": true,
@@ -91,7 +91,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -104,7 +104,7 @@
       "type": "row"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This panel displays volume protection by Snapshot copies.",
       "fieldConfig": {
         "defaults": {
@@ -189,7 +189,7 @@
       "pluginVersion": "8.1.2",
       "targets": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
           "expr": "count(volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",state!=\"\",type=\"rw\"}) or vector(1)",
           "instant": true,
@@ -198,7 +198,7 @@
           "refId": "A"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
           "expr": "count(\n    volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",snapshot_policy=~\"none.*\",state!=\"\",type=\"rw\",volume!~\"MDV.*\"}\n  )\nor on ()\n  vector(0)",
           "hide": false,
@@ -242,7 +242,7 @@
       "type": "piechart"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This panel displays volume protection by SnapMirror relationship.",
       "fieldConfig": {
         "defaults": {
@@ -327,7 +327,7 @@
       "pluginVersion": "8.1.2",
       "targets": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
           "expr": "count(volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",state!=\"\",type=\"rw\"}) or vector(1)",
           "instant": true,
@@ -336,7 +336,7 @@
           "refId": "A"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
           "expr": "count(\n    volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",isDestinationOntap=\"true\",isProtected=\"true\",state!=\"\",svm_root=\"false\",type=\"rw\"}\n  )\nor\n  vector(0)",
           "hide": false,
@@ -380,7 +380,7 @@
       "type": "piechart"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This panel displays volume protection by backed up to cloud bucket.",
       "fieldConfig": {
         "defaults": {
@@ -465,7 +465,7 @@
       "pluginVersion": "8.1.2",
       "targets": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
           "expr": "count(volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",state!=\"\"}) or vector(1)",
           "instant": true,
@@ -474,7 +474,7 @@
           "refId": "A"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
           "expr": "count(\n    volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",isDestinationCloud=\"true\",isProtected=\"true\",state!=\"\",svm_root=\"false\"}\n  )\nor\n  vector(0)",
           "hide": false,
@@ -518,7 +518,7 @@
       "type": "piechart"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This panel displays volume protection detail via Snapshot, SnapMirror or Bucket.",
       "fieldConfig": {
         "defaults": {
@@ -860,7 +860,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -870,7 +870,7 @@
       "id": 24,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Number of total buckets.",
           "fieldConfig": {
             "defaults": {
@@ -920,7 +920,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
               "expr": "count(ontaps3_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
@@ -937,7 +937,7 @@
           "type": "stat"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Number of buckets which are not protected.",
           "fieldConfig": {
             "defaults": {
@@ -987,7 +987,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
               "expr": "count(ontaps3_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_protected=\"false\"})",
@@ -1004,7 +1004,7 @@
           "type": "stat"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Number of buckets which are not backed up to cloud.",
           "fieldConfig": {
             "defaults": {
@@ -1054,7 +1054,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
               "expr": "count(ontaps3_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",protected_in_cloud=\"false\"})",
@@ -1071,7 +1071,7 @@
           "type": "stat"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This panel displays bucket detail.",
           "fieldConfig": {
             "defaults": {
@@ -1469,7 +1469,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1479,7 +1479,7 @@
       "id": 45,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Total number of volumes that are not protected.",
           "fieldConfig": {
             "defaults": {
@@ -1553,7 +1553,7 @@
           "type": "stat"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Total number of volumes that are protected.",
           "fieldConfig": {
             "defaults": {
@@ -1616,7 +1616,7 @@
           "type": "stat"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Total number of volumes whose snapshot size used is breached the snapshot reserve size.",
           "fieldConfig": {
             "defaults": {
@@ -1679,7 +1679,7 @@
           "type": "stat"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Total number of volumes whose snapshot size used is not breached the snapshot reserve size.",
           "fieldConfig": {
             "defaults": {
@@ -1753,7 +1753,7 @@
           "type": "stat"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This panel displays volumes detail with protected status and snapshot policy.",
           "fieldConfig": {
             "defaults": {
@@ -1899,7 +1899,7 @@
           "type": "table"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Volumes details of snapshot copy reserve space.",
           "fieldConfig": {
             "defaults": {
@@ -2157,7 +2157,7 @@
           "type": "table"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Total number of volumes whose snapshot count is \u003c 10.",
           "fieldConfig": {
             "defaults": {
@@ -2216,11 +2216,11 @@
               "refId": "A"
             }
           ],
-          "title": " \u003c10 Copies ",
+          "title": "\u003c10 Copies ",
           "type": "stat"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Total number of volumes whose snapshot count is between 10 to 100.",
           "fieldConfig": {
             "defaults": {
@@ -2283,7 +2283,7 @@
           "type": "stat"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Total number of volumes whose snapshot count is between 101 to 500.",
           "fieldConfig": {
             "defaults": {
@@ -2346,7 +2346,7 @@
           "type": "stat"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Total number of volumes whose snapshot count is \u003e 500.",
           "fieldConfig": {
             "defaults": {
@@ -2409,7 +2409,7 @@
           "type": "stat"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This panel displays volumes detail with snapshot count.",
           "fieldConfig": {
             "defaults": {
@@ -2650,7 +2650,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2660,7 +2660,7 @@
       "id": 23,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This panel displays protection policy detail.",
           "fieldConfig": {
             "defaults": {
@@ -2866,7 +2866,7 @@
           "type": "table"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This panel displays Snapshot policy detail.",
           "fieldConfig": {
             "defaults": {
@@ -3080,7 +3080,7 @@
           "type": "table"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This panel displays cluster schedules detail.",
           "fieldConfig": {
             "defaults": {
@@ -3257,6 +3257,431 @@
       ],
       "title": "Local Policy",
       "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 21
+      },
+      "id": 166,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "gridPos": {
+            "h": 3,
+            "w": 24,
+            "x": 0,
+            "y": 22
+          },
+          "id": 173,
+          "options": {
+            "content": "\u003cbr\u003e\n\nTo use these panels dashboard, enable the SnapshotViolation plugin in SnapshotPolicy templates. For more details, visit the [SnapshotViolation documentation](https://github.com/NetApp/harvest/discussions/3854).\n",
+            "mode": "markdown"
+          },
+          "pluginVersion": "8.1.8",
+          "type": "text"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel displays the number of snapshots not created by a policy.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "short"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 25
+          },
+          "id": 170,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum(snapshot_volume_violation_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Total Snapshots Violations",
+          "type": "stat"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel shows the total size of snapshots not created by a policy.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 25
+          },
+          "id": 171,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum(snapshot_volume_violation_total_size{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Snapshot Violations Total Size",
+          "type": "stat"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This table shows volumes that have snapshots not created by a policy and displays the count and total size of those snapshots.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1\u0026${__url_time_range}\u0026var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "netapp_cluster"
+                },
+                "properties": [
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1\u0026${Datacenter:queryparam}\u0026${__url_time_range}\u0026var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "volume"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Volume"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-volume/ontap-volume?orgId=1\u0026${Datacenter:queryparam}\u0026${Cluster:queryparam}\u0026${__url_time_range}\u0026var-Volume=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "svm"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "SVM"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-svm/ontap-svm?orgId=1\u0026${Datacenter:queryparam}\u0026${Cluster:queryparam}\u0026${__url_time_range}\u0026var-SVM=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #B"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #A"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "short"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 24,
+            "x": 0,
+            "y": 33
+          },
+          "id": 168,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": true,
+                "displayName": "Snapshot Violation Total Size"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "label_join(\n  snapshot_volume_violation_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"svm\",\n  \"volume\"\n)",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "label_join(\n  snapshot_volume_violation_total_size{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"svm\",\n  \"volume\"\n)",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "B"
+            }
+          ],
+          "title": "Snapshot Violation Details",
+          "transformations": [
+            {
+              "id": "seriesToColumns",
+              "options": {
+                "byField": "unique_id"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "(.*) 1$",
+                "renamePattern": "$1"
+              }
+            },
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "unique_id",
+                    "netapp_cluster",
+                    "datacenter",
+                    "instance",
+                    "job",
+                    "svm",
+                    "volume",
+                    "Value #A",
+                    "Value #B"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "datacenter 2": true,
+                  "instance": true,
+                  "instance 2": true,
+                  "job": true,
+                  "job 2": true,
+                  "netapp_cluster 2": true,
+                  "svm 2": true,
+                  "unique_id": true,
+                  "volume 2": true
+                },
+                "indexByName": {
+                  "Value #A": 5,
+                  "Value #B": 6,
+                  "datacenter": 1,
+                  "datacenter 2": 10,
+                  "instance": 7,
+                  "instance 2": 11,
+                  "job": 8,
+                  "job 2": 12,
+                  "netapp_cluster": 2,
+                  "netapp_cluster 2": 9,
+                  "svm": 3,
+                  "svm 2": 13,
+                  "unique_id": 0,
+                  "volume": 4,
+                  "volume 2": 14
+                },
+                "renameByName": {
+                  "Value #A": "Snapshot Violation Count",
+                  "Value #B": "Snapshot Violation Total Size"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Snapshot Policy Violations",
+      "type": "row"
     }
   ],
   "refresh": "",
@@ -3278,7 +3703,7 @@
         },
         "description": null,
         "error": null,
-        "hide": 2,
+        "hide": 0,
         "includeAll": false,
         "label": "Data Source",
         "multi": false,
@@ -3293,7 +3718,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"},datacenter)",
         "description": null,
         "error": null,
@@ -3319,7 +3744,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},netapp_cluster)",
         "description": null,
         "error": null,
@@ -3364,5 +3789,5 @@
   "timezone": "",
   "title": "ONTAP: Data Protection",
   "uid": "cdot-data-protection",
-  "version": 3
+  "version": 4
 }

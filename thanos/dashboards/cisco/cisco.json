@@ -91,7 +91,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -104,7 +104,7 @@
       "type": "row"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Displays detail of the Switches.",
       "fieldConfig": {
         "defaults": {
@@ -200,6 +200,18 @@
                 "value": 120
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Zone Fan Speed"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              }
+            ]
           }
         ]
       },
@@ -231,16 +243,6 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "cisco_switch_labels{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
-          "format": "table",
-          "instant": true,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "",
-          "refId": "A"
-        },
-        {
-          "exemplar": false,
           "expr": "cisco_environment_power_mode{datacenter=~\"$Datacenter\",item=\"operational\",switch=~\"$Switch\"}",
           "format": "table",
           "instant": true,
@@ -259,12 +261,21 @@
         },
         {
           "exemplar": false,
-          "expr": "cisco_environment_fan_speed{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
+          "expr": "cisco_environment_fan_zone_speed{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
           "format": "table",
           "instant": true,
           "interval": "",
           "legendFormat": "",
           "refId": "D"
+        },
+        {
+          "exemplar": false,
+          "expr": "cisco_switch_uptime{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "E"
         }
       ],
       "title": "Switch Details",
@@ -290,7 +301,8 @@
                 "value 1",
                 "value 2",
                 "datacenter 1",
-                "Value #D"
+                "Value #D",
+                "Value #E"
               ]
             }
           }
@@ -300,15 +312,16 @@
           "options": {
             "excludeByName": {},
             "indexByName": {
+              "Value #E": 2,
               "biosVersion": 4,
               "chassis": 3,
               "datacenter 1": 0,
               "osVersion": 5,
-              "switch": 1,
-              "upTime": 2
+              "switch": 1
             },
             "renameByName": {
-              "Value #D": "Fan Speed",
+              "Value #D": "Zone Fan Speed",
+              "Value #E": "Uptime",
               "biosVersion": "BIOS Version",
               "chassis": "Chassis",
               "datacenter 3": "",
@@ -330,7 +343,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -340,7 +353,7 @@
       "id": 7,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This panel displays total power of all switches.",
           "fieldConfig": {
             "defaults": {
@@ -366,7 +379,7 @@
             "h": 10,
             "w": 7,
             "x": 0,
-            "y": 9
+            "y": 2
           },
           "id": 33,
           "options": {
@@ -387,7 +400,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
               "expr": "sum(cisco_environment_power_in{datacenter=~\"$Datacenter\",switch=~\"$Switch\"})",
               "format": "time_series",
@@ -402,7 +415,7 @@
           "type": "stat"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This panel displays PSU efficiency.",
           "fieldConfig": {
             "defaults": {
@@ -428,7 +441,7 @@
             "h": 10,
             "w": 7,
             "x": 7,
-            "y": 9
+            "y": 2
           },
           "id": 9,
           "options": {
@@ -449,7 +462,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "expr": "sum(cisco_environment_power_out{datacenter=~\"$Datacenter\",switch=~\"$Switch\"})\n/\n  sum(cisco_environment_power_in{datacenter=~\"$Datacenter\",switch=~\"$Switch\"})",
               "hide": false,
               "legendFormat": "PSU efficiency",
@@ -460,7 +473,7 @@
           "type": "stat"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Displays power consumption detail.",
           "fieldConfig": {
             "defaults": {
@@ -518,7 +531,7 @@
             "h": 10,
             "w": 10,
             "x": 14,
-            "y": 9
+            "y": 2
           },
           "id": 8,
           "options": {
@@ -542,28 +555,28 @@
               "exemplar": false,
               "expr": "cisco_environment_power_in{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(cisco_environment_power_in{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end())\n  )",
               "interval": "",
-              "legendFormat": "Power in PSU {{ps}} {{switch}}",
+              "legendFormat": "{{switch}} PSU {{ps}} Input",
               "refId": "A"
             },
             {
               "exemplar": false,
               "expr": "sum by (switch) (cisco_environment_power_in{datacenter=~\"$Datacenter\",switch=~\"$Switch\"})",
               "interval": "",
-              "legendFormat": "Total power in {{switch}}",
+              "legendFormat": "{{switch}} Total Input",
               "refId": "B"
             },
             {
               "exemplar": false,
               "expr": "cisco_environment_power_out{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(cisco_environment_power_out{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}[3h] @ end())\n  )",
               "interval": "",
-              "legendFormat": "Power out PSU {{ps}} {{switch}}",
+              "legendFormat": "{{switch}} PSU {{ps}} Output",
               "refId": "C"
             },
             {
               "exemplar": false,
               "expr": "sum by (switch) (cisco_environment_power_out{datacenter=~\"$Datacenter\",switch=~\"$Switch\"})",
               "interval": "",
-              "legendFormat": "Total power out {{switch}}",
+              "legendFormat": "{{switch}} Total Output",
               "refId": "D"
             }
           ],
@@ -573,7 +586,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Displays detail of the PSUs. `power_out / power_capacity` would be the usage % of that PSU.",
           "fieldConfig": {
             "defaults": {
@@ -652,18 +665,18 @@
                           "ok": {
                             "color": "semi-dark-green",
                             "index": 0,
-                            "text": "Good"
+                            "text": "good"
                           }
                         },
                         "type": "value"
                       },
                       {
                         "options": {
-                          "match": "null+nan",
+                          "match": "null",
                           "result": {
                             "color": "semi-dark-orange",
                             "index": 1,
-                            "text": "Not good"
+                            "text": "not good"
                           }
                         },
                         "type": "special"
@@ -694,7 +707,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 19
+            "y": 12
           },
           "id": 35,
           "interval": "",
@@ -800,7 +813,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -810,7 +823,7 @@
       "id": 11,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Displays detail of the temperature.",
           "fieldConfig": {
             "defaults": {
@@ -865,10 +878,10 @@
             "overrides": []
           },
           "gridPos": {
-            "h": 9,
-            "w": 13,
+            "h": 10,
+            "w": 24,
             "x": 0,
-            "y": 6
+            "y": 10
           },
           "id": 10,
           "options": {
@@ -902,7 +915,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Displays detail of the Fans.",
           "fieldConfig": {
             "defaults": {
@@ -962,21 +975,21 @@
                     "value": [
                       {
                         "options": {
-                          "Ok": {
+                          "ok": {
                             "color": "semi-dark-green",
                             "index": 0,
-                            "text": "Good"
+                            "text": "good"
                           }
                         },
                         "type": "value"
                       },
                       {
                         "options": {
-                          "match": "null+nan",
+                          "match": "null",
                           "result": {
                             "color": "semi-dark-orange",
                             "index": 1,
-                            "text": "Not good"
+                            "text": "not good"
                           }
                         },
                         "type": "special"
@@ -988,14 +1001,30 @@
                     "value": "color-background"
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Speed"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "percent"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 0
+                  }
+                ]
               }
             ]
           },
           "gridPos": {
             "h": 9,
-            "w": 11,
-            "x": 13,
-            "y": 6
+            "w": 24,
+            "x": 0,
+            "y": 20
           },
           "id": 18,
           "interval": "",
@@ -1021,6 +1050,16 @@
               "intervalFactor": 1,
               "legendFormat": "",
               "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "cisco_environment_fan_speed{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "B"
             }
           ],
           "title": "Fan Details",
@@ -1031,25 +1070,35 @@
                 "include": {
                   "names": [
                     "datacenter",
-                    "status",
                     "switch",
-                    "name"
+                    "name",
+                    "status",
+                    "Value #B",
+                    "model"
                   ]
                 }
               }
+            },
+            {
+              "id": "merge",
+              "options": {}
             },
             {
               "id": "organize",
               "options": {
                 "excludeByName": {},
                 "indexByName": {
+                  "Value #B": 4,
                   "datacenter": 0,
+                  "model": 3,
                   "name": 2,
-                  "status": 3,
+                  "status": 5,
                   "switch": 1
                 },
                 "renameByName": {
+                  "Value #B": "Speed",
                   "datacenter": "",
+                  "model": "Model",
                   "name": "Fan",
                   "status": "Status",
                   "switch": "Switch"
@@ -1065,7 +1114,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1075,7 +1124,7 @@
       "id": 22,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Displays power of Transceiver RX.",
           "fieldConfig": {
             "defaults": {
@@ -1133,7 +1182,7 @@
             "h": 11,
             "w": 12,
             "x": 0,
-            "y": 7
+            "y": 11
           },
           "id": 21,
           "options": {
@@ -1166,7 +1215,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Displays power of Transceiver TX.",
           "fieldConfig": {
             "defaults": {
@@ -1224,7 +1273,7 @@
             "h": 11,
             "w": 12,
             "x": 12,
-            "y": 7
+            "y": 11
           },
           "id": 23,
           "options": {
@@ -1262,7 +1311,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1272,8 +1321,173 @@
       "id": 30,
       "panels": [
         {
-          "datasource": "thanos",
-          "description": "Displays total transmit traffic per interface per second.",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This table tracks hardware switch traffic for all supported network interface cards.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "text",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Send"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "Bps"
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "continuous-GrYlRd"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Receive"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "Bps"
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "continuous-GrYlRd"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 24,
+            "x": 0,
+            "y": 5
+          },
+          "id": 48,
+          "options": {
+            "showHeader": true
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "rate(\n  cisco_interface_transmit_bytes{datacenter=~\"$Datacenter\",description!=\"\",switch=~\"$Switch\"}[4m]\n)",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "rate(cisco_interface_receive_bytes{datacenter=~\"$Datacenter\",description!=\"\",switch=~\"$Switch\"}[4m])",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "B"
+            }
+          ],
+          "title": "Traffic on Switch",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "datacenter",
+                    "description",
+                    "interface",
+                    "speed",
+                    "switch",
+                    "Value #A",
+                    "Value #B"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "merge",
+              "options": {}
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "__name__": true,
+                  "datacenter": false,
+                  "instance": true,
+                  "job": true,
+                  "mac": true
+                },
+                "indexByName": {
+                  "Time": 0,
+                  "Value #A": 10,
+                  "__name__": 1,
+                  "datacenter": 2,
+                  "description": 4,
+                  "instance": 5,
+                  "interface": 6,
+                  "job": 7,
+                  "mac": 8,
+                  "speed": 9,
+                  "switch": 3
+                },
+                "renameByName": {
+                  "Value #A": "Send",
+                  "Value #B": "Receive",
+                  "datacenter": "Datacenter",
+                  "description": "Description",
+                  "instance": "",
+                  "interface": "Interface",
+                  "mac": "",
+                  "speed": "Speed",
+                  "switch": "Switch"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Displays total send traffic per interface per second.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1330,7 +1544,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 8
+            "y": 17
           },
           "id": 28,
           "options": {
@@ -1360,11 +1574,11 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Interface Transmit Traffic",
+          "title": "Top $TopResources Interface Send Throughput",
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Displays total receive traffic per interface per second.",
           "fieldConfig": {
             "defaults": {
@@ -1422,7 +1636,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 8
+            "y": 17
           },
           "id": 29,
           "options": {
@@ -1452,11 +1666,11 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Top $TopResources Interface Receive Traffic",
+          "title": "Top $TopResources Interface Receive Throughput",
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Displays drop packets per interface per second.",
           "fieldConfig": {
             "defaults": {
@@ -1514,7 +1728,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 16
+            "y": 25
           },
           "id": 31,
           "options": {
@@ -1555,7 +1769,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Displays errors per interface per second.",
           "fieldConfig": {
             "defaults": {
@@ -1613,7 +1827,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 16
+            "y": 25
           },
           "id": 32,
           "options": {
@@ -1654,7 +1868,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Displays CRC error per interface.",
           "fieldConfig": {
             "defaults": {
@@ -1712,7 +1926,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 24
+            "y": 33
           },
           "id": 34,
           "options": {
@@ -1751,7 +1965,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1761,7 +1975,7 @@
       "id": 42,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Displays Link Layer Discovery Protocol (LLDP) neighbors.",
           "fieldConfig": {
             "defaults": {
@@ -1820,13 +2034,13 @@
                 "include": {
                   "names": [
                     "capabilities",
-                    "chassis",
                     "datacenter",
-                    "description",
-                    "device_id",
-                    "local_interface",
-                    "port_id",
-                    "switch"
+                    "local_platform",
+                    "local_port",
+                    "remote_name",
+                    "remote_port",
+                    "switch",
+                    "remote_platform"
                   ]
                 }
               }
@@ -1836,23 +2050,26 @@
               "options": {
                 "excludeByName": {},
                 "indexByName": {
-                  "capabilities": 7,
-                  "chassis": 2,
+                  "capabilities": 4,
+                  "chassis": 8,
                   "datacenter": 0,
-                  "description": 4,
-                  "device_id": 3,
-                  "local_interface": 5,
-                  "port_id": 6,
-                  "switch": 1
+                  "description": 7,
+                  "local_platform": 1,
+                  "local_port": 3,
+                  "remote_name": 6,
+                  "remote_port": 5,
+                  "switch": 2
                 },
                 "renameByName": {
                   "capabilities": "Capabilities",
-                  "chassis": "Chassis",
+                  "chassis": "",
                   "datacenter": "Datacenter",
-                  "description": "Description",
-                  "device_id": "DeviceId",
-                  "local_interface": "LocalInterface",
-                  "port_id": "PortId",
+                  "description": "Remote Platform",
+                  "local_platform": "Local Platform",
+                  "local_port": "Local Port",
+                  "remote_name": "Remote Name",
+                  "remote_platform": "Remote Platform",
+                  "remote_port": "Remote Port",
                   "switch": "Switch"
                 }
               }
@@ -1861,7 +2078,7 @@
           "type": "table"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Displays Cisco Discovery Protocol (CDP) neighbors.",
           "fieldConfig": {
             "defaults": {
@@ -1891,7 +2108,7 @@
             "overrides": []
           },
           "gridPos": {
-            "h": 6,
+            "h": 7,
             "w": 24,
             "x": 0,
             "y": 20
@@ -1921,13 +2138,12 @@
                   "names": [
                     "capabilities",
                     "datacenter",
-                    "device_id",
-                    "local_interface_mac",
-                    "platform_id",
-                    "port_id",
-                    "remote_interface_mac",
+                    "local_platform",
+                    "local_port",
                     "switch",
-                    "version"
+                    "remote_port",
+                    "remote_name",
+                    "remote_platform"
                   ]
                 }
               }
@@ -1937,24 +2153,28 @@
               "options": {
                 "excludeByName": {},
                 "indexByName": {
-                  "capabilities": 8,
+                  "capabilities": 4,
                   "datacenter": 0,
-                  "device_id": 3,
-                  "local_interface_mac": 5,
-                  "platform_id": 2,
-                  "port_id": 6,
-                  "remote_interface_mac": 7,
-                  "switch": 1,
-                  "version": 4
+                  "local_platform": 1,
+                  "local_port": 3,
+                  "remote_name": 6,
+                  "remote_platform": 7,
+                  "remote_port": 5,
+                  "switch": 2
                 },
                 "renameByName": {
                   "capabilities": "Capabilities",
                   "datacenter": "Datacenter",
                   "device_id": "DeviceId",
                   "local_interface_mac": "LocalInterface",
+                  "local_platform": "Local Platform",
+                  "local_port": "Local Port",
                   "platform_id": "PlatformId",
                   "port_id": "PortId",
                   "remote_interface_mac": "RemoteInterface",
+                  "remote_name": "Remote Name",
+                  "remote_platform": "Remote Platform",
+                  "remote_port": "Remote Port",
                   "switch": "Switch",
                   "version": "Version"
                 }
@@ -1969,7 +2189,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1979,7 +2199,7 @@
       "id": 25,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Total interfaces count which are down once or more times in past 24 hours duration.",
           "fieldConfig": {
             "defaults": {
@@ -2055,7 +2275,7 @@
           "type": "stat"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "These interfaces are down once or more times in past 24 hours duration.",
           "fieldConfig": {
             "defaults": {
@@ -2173,7 +2393,7 @@
           "type": "table"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "These interfaces are down once or more times in past 24 hours duration.",
           "fieldConfig": {
             "defaults": {
@@ -2323,7 +2543,7 @@
         },
         "description": null,
         "error": null,
-        "hide": 2,
+        "hide": 0,
         "includeAll": false,
         "label": "Data Source",
         "multi": false,
@@ -2338,7 +2558,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cisco_switch_labels{}, datacenter)",
         "description": null,
         "error": null,
@@ -2364,7 +2584,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cisco_switch_labels{datacenter=~\"$Datacenter\"}, switch)",
         "description": null,
         "error": null,
@@ -2390,7 +2610,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cisco_interface_admin_up{datacenter=~\"$Datacenter\",switch=~\"$Switch\"}, interface)",
         "description": null,
         "error": null,

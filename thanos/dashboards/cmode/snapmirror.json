@@ -97,7 +97,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -110,7 +110,7 @@
       "type": "row"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Number of unhealthy snapmirrors.",
       "fieldConfig": {
         "defaults": {
@@ -160,7 +160,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
           "expr": "count(\n  count by (relationship_id) (\n    snapmirror_labels{healthy=\"false\",relationship_id!=\"\",source_cluster=~\"$Cluster\",source_volume=~\"$Volume\",source_vserver=~\"$SVM\"}\n  )\n)",
@@ -177,7 +177,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Total number of snapmirror transfers that have failed.",
       "fieldConfig": {
         "defaults": {
@@ -227,7 +227,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
           "expr": "sum(\n        snapmirror_break_failed_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}\n      )\n    +\n      sum(\n        snapmirror_resync_failed_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}\n      )\n  +\n    sum(\n      snapmirror_update_failed_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}\n    )\nor on ()\n  vector(0)",
@@ -244,7 +244,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Total number of snapmirror transfers that have been successfully completed without any errors or issues.",
       "fieldConfig": {
         "defaults": {
@@ -294,7 +294,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
           "expr": "sum(\n        snapmirror_break_successful_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}\n      )\n    +\n      sum(\n        snapmirror_resync_successful_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}\n      )\n  +\n    sum(\n      snapmirror_update_successful_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}\n    )\nor on ()\n  vector(0)",
@@ -312,7 +312,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Number of unprotected volumes.",
       "fieldConfig": {
         "defaults": {
@@ -362,7 +362,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
           "expr": "count(\n      volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",state!=\"\",svm=~\"$SVM\",type=\"rw\",volume=~\"$Volume\"}\n    )\n  -\n    count(\n      volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",isDestinationOntap=\"true\",isProtected=\"true\",state!=\"\",svm=~\"$SVM\",svm_root=\"false\",type=\"rw\",volume=~\".*$Volume.*\"}\n    )\nor\n  vector(0)",
@@ -379,7 +379,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Number of protected volumes.",
       "fieldConfig": {
         "defaults": {
@@ -449,7 +449,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
           "expr": "count(\n    volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",state!=\"\",svm=~\"$SVM\",type=\"rw\",volume=~\"$Volume\"}\n  )\nor\n  vector(0)",
@@ -460,7 +460,7 @@
           "refId": "A"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
           "expr": "count(\n    volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",isDestinationOntap=\"true\",isProtected=\"true\",state!=\"\",svm=~\"$SVM\",svm_root=\"false\",type=\"rw\",volume=~\"$Volume\"}\n  )\nor\n  vector(0)",
@@ -516,7 +516,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This panel displays detail of all the snapmirror relationships from source side of view.",
       "fieldConfig": {
         "defaults": {
@@ -856,7 +856,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
           "expr": "snapmirror_last_transfer_duration{relationship_id!=\"\",source_cluster=~\"$Cluster\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}",
@@ -868,7 +868,7 @@
           "refId": "B"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
           "expr": "snapmirror_last_transfer_size{relationship_id!=\"\",source_cluster=~\"$Cluster\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}",
@@ -880,7 +880,7 @@
           "refId": "C"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
           "expr": "snapmirror_lag_time{relationship_id!=\"\",source_cluster=~\"$Cluster\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}",
@@ -892,7 +892,7 @@
           "refId": "D"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
           "expr": "snapmirror_labels{derived_relationship_type!=\"load_sharing\",relationship_id!=\"\",source_cluster=~\"$Cluster\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}",
@@ -973,7 +973,7 @@
       "type": "table"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This panel displays duration of the last SnapMirror transfer in seconds.",
       "fieldConfig": {
         "defaults": {
@@ -1056,7 +1056,7 @@
       "repeatDirection": "h",
       "targets": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
           "expr": "snapmirror_last_transfer_duration{source_cluster=~\"$Cluster\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      snapmirror_last_transfer_duration{source_cluster=~\"$Cluster\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}[3h] @ end()\n    )\n  )",
@@ -1073,7 +1073,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This panel displays amount of time since the last snapmirror transfer in seconds.",
       "fieldConfig": {
         "defaults": {
@@ -1157,7 +1157,7 @@
       "repeatDirection": "h",
       "targets": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
           "expr": "snapmirror_lag_time{source_cluster=~\"$Cluster\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      snapmirror_lag_time{source_cluster=~\"$Cluster\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}[3h] @ end()\n    )\n  )",
@@ -1174,7 +1174,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This panel displays size in kilobytes (1024 bytes) of the last transfer.",
       "fieldConfig": {
         "defaults": {
@@ -1257,7 +1257,7 @@
       "repeatDirection": "h",
       "targets": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "editorMode": "code",
           "exemplar": false,
           "expr": "snapmirror_last_transfer_size{source_cluster=~\"$Cluster\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      snapmirror_last_transfer_size{source_cluster=~\"$Cluster\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}[3h] @ end()\n    )\n  )",
@@ -1275,7 +1275,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1285,7 +1285,7 @@
       "id": 45,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This panel displays volume relationship count based on the relationship type.",
           "fieldConfig": {
             "defaults": {
@@ -1338,7 +1338,7 @@
           "pluginVersion": "8.1.2",
           "targets": [
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
               "expr": "count(\n    snapmirror_labels{derived_relationship_type=\"extended_data_protection\",relationship_id!=\"\",source_cluster=~\"$Cluster\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}\n  )\nor\n  vector(0)",
@@ -1348,7 +1348,7 @@
               "refId": "A"
             },
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
               "expr": "count(\n    snapmirror_labels{derived_relationship_type=\"mirror_vault\",relationship_id!=\"\",source_cluster=~\"$Cluster\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}\n  )\nor\n  vector(0)",
@@ -1359,7 +1359,7 @@
               "refId": "B"
             },
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
               "expr": "count(\n    snapmirror_labels{derived_relationship_type=\"vault\",relationship_id!=\"\",source_cluster=~\"$Cluster\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}\n  )\nor\n  vector(0)",
@@ -1370,7 +1370,7 @@
               "refId": "C"
             },
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
               "expr": "count(\n    snapmirror_labels{derived_relationship_type=\"sync_mirror_strict\",relationship_id!=\"\",source_cluster=~\"$Cluster\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}\n  )\nor\n  vector(0)",
@@ -1381,7 +1381,7 @@
               "refId": "D"
             },
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
               "expr": "count(\n    snapmirror_labels{derived_relationship_type=\"sync_mirror\",relationship_id!=\"\",source_cluster=~\"$Cluster\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}\n  )\nor\n  vector(0)",
@@ -1392,7 +1392,7 @@
               "refId": "E"
             },
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
               "expr": "count(\n    snapmirror_labels{derived_relationship_type=\"automated_failover\",relationship_id!=\"\",source_cluster=~\"$Cluster\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}\n  )\nor\n  vector(0)",
@@ -1403,7 +1403,7 @@
               "refId": "F"
             },
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
               "expr": "count(\n    snapmirror_labels{derived_relationship_type=\"automated_failover_duplex\",relationship_id!=\"\",source_cluster=~\"$Cluster\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}\n  )\nor\n  vector(0)",
@@ -1419,7 +1419,7 @@
           "type": "piechart"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This panel displays volume relationship count based on the lag time bucket.",
           "fieldConfig": {
             "defaults": {
@@ -1533,7 +1533,7 @@
           "pluginVersion": "8.1.2",
           "targets": [
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
               "expr": "count(\n    (\n          1\n        \u003c\n          snapmirror_lag_time{relationship_id!=\"\",source_cluster=~\"$Cluster\",source_volume!=\"\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}\n      \u003c=\n        900\n    )\n  )\nor\n  vector(0)",
@@ -1543,7 +1543,7 @@
               "refId": "A"
             },
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
               "expr": "count(\n    (\n          900\n        \u003c\n          snapmirror_lag_time{relationship_id!=\"\",source_cluster=~\"$Cluster\",source_volume!=\"\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}\n      \u003c=\n        1800\n    )\n  )\nor\n  vector(0)",
@@ -1554,7 +1554,7 @@
               "refId": "B"
             },
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
               "expr": "count(\n    (\n          1800\n        \u003c\n          snapmirror_lag_time{relationship_id!=\"\",source_cluster=~\"$Cluster\",source_volume!=\"\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}\n      \u003c=\n        3600\n    )\n  )\nor\n  vector(0)",
@@ -1565,7 +1565,7 @@
               "refId": "C"
             },
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
               "expr": "count(\n    (\n        snapmirror_lag_time{relationship_id!=\"\",source_cluster=~\"$Cluster\",source_volume!=\"\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}\n      \u003e\n        3600\n    )\n  )\nor\n  vector(0)",
@@ -1581,7 +1581,7 @@
           "type": "piechart"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This panel displays snapmirror relationships with protection policy and lag duration details.",
           "fieldConfig": {
             "defaults": {
@@ -1838,7 +1838,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
               "expr": "snapmirror_lag_time{source_cluster=~\"$Cluster\",source_volume!=\"\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}\n  * on (source_cluster, source_vserver, source_volume) group_left (derived_relationship_type)\n    snapmirror_labels{source_cluster=~\"$Cluster\",source_volume!=\"\",source_volume=~\".*$Volume.*\",source_vserver=~\"$SVM\"}\n\u003e\n  0",
@@ -1926,7 +1926,7 @@
         },
         "description": null,
         "error": null,
-        "hide": 2,
+        "hide": 0,
         "includeAll": false,
         "label": "Data Source",
         "multi": false,
@@ -1941,7 +1941,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"},datacenter)",
         "description": "Select all the datacenters that contain the ONTAP clusters acting as source for SnapMirror relationships.",
         "error": null,
@@ -1967,7 +1967,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "query_result(snapmirror_labels{system_type!=\"7mode\"} * on (source_volume, source_vserver, source_cluster) group_left() label_replace( label_replace( label_replace( volume_labels{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, \"source_volume\", \"$1\", \"volume\", \"(.*)\") , \"source_vserver\", \"$1\", \"svm\", \"(.*)\"), \"source_cluster\", \"$1\", \"netapp_cluster\", \"(.*)\"))",
         "description": null,
         "error": null,
@@ -1993,7 +1993,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(snapmirror_labels{source_cluster=~\"$Cluster\"},source_vserver)",
         "description": null,
         "error": null,
@@ -2020,7 +2020,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(snapmirror_labels{source_cluster=~\"$Cluster\", source_vserver=~\"$SVM\"},source_volume)",
         "description": null,
         "error": null,

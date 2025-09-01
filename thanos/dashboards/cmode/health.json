@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1730271272394,
+  "iteration": 1752677427894,
   "links": [
     {
       "asDropdown": true,
@@ -91,7 +91,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -104,7 +104,7 @@
       "type": "row"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 3,
         "w": 24,
@@ -121,7 +121,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -134,7 +134,7 @@
       "type": "row"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -225,7 +225,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -304,7 +304,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "(\n              count(health_disk_alerts{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"} == 1)\n            or\n              vector(0)\n          )\n        +\n          (\n              count(health_shelf_alerts{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"} == 1)\n            or\n              vector(0)\n          )\n      +\n        (\n            count(\n                last_over_time(\n                  health_support_alerts{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"}[1d]\n                )\n              ==\n                1\n            )\n          or\n            vector(0)\n        )\n    +\n      (\n          count(health_lif_alerts{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"} == 1)\n        or\n          vector(0)\n      )\n  +\n    (\n        count(\n          health_volume_move_alerts{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"} == 1\n        )\n      or\n        vector(0)\n    )\n+\n  (\n      count(\n        health_volume_ransomware_alerts{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"error\"} == 1\n      )\n    or\n      vector(0)\n  )",
+          "expr": "(\n              count(health_disk_alerts{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"} == 1)\n            or\n              vector(0)\n          )\n        +\n          (\n              count(health_shelf_alerts{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"} == 1)\n            or\n              vector(0)\n          )\n      +\n        (\n            count(health_support_alerts{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"} == 1)\n          or\n            vector(0)\n        )\n    +\n      (\n          count(health_lif_alerts{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"} == 1)\n        or\n          vector(0)\n      )\n  +\n    (\n        count(\n          health_volume_move_alerts{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"} == 1\n        )\n      or\n        vector(0)\n    )\n+\n  (\n      count(\n        health_volume_ransomware_alerts{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"error\"} == 1\n      )\n    or\n      vector(0)\n  )",
           "instant": true,
           "interval": "",
           "legendFormat": "",
@@ -316,7 +316,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "$EMSDescription",
       "fieldConfig": {
         "defaults": {
@@ -392,7 +392,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -512,7 +512,7 @@
       "type": "piechart"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -614,11 +614,11 @@
         },
         {
           "exemplar": false,
-          "expr": "(\n    count(\n        last_over_time(\n          health_support_alerts{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"}[1d]\n        )\n      ==\n        1\n    )\n  or\n    vector(0)\n)",
+          "expr": "(\n    count(health_support_alerts{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",severity=\"warning\"} == 1)\n  or\n    vector(0)\n)",
           "hide": false,
           "instant": true,
           "interval": "",
-          "legendFormat": "Health Monitor Alerts (last 24h)",
+          "legendFormat": "Health Monitor Alerts",
           "refId": "C"
         },
         {
@@ -654,7 +654,7 @@
       "type": "piechart"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "$EMSDescription",
       "fieldConfig": {
         "defaults": {
@@ -763,7 +763,7 @@
       "id": 283,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1005,7 +1005,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1015,7 +1015,7 @@
       "id": 251,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1202,7 +1202,7 @@
       "id": 287,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Displays sensors with failed state.",
           "fieldConfig": {
             "defaults": {
@@ -1382,7 +1382,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1392,7 +1392,7 @@
       "id": 230,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1553,7 +1553,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1563,7 +1563,7 @@
       "id": 245,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -2255,7 +2255,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2265,7 +2265,7 @@
       "id": 266,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Volumes with abnormal activity",
           "fieldConfig": {
             "defaults": {
@@ -2744,7 +2744,7 @@
           "type": "table"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -3279,7 +3279,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -3289,7 +3289,7 @@
       "id": 274,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3424,7 +3424,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -3434,7 +3434,7 @@
       "id": 255,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3697,7 +3697,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -3707,7 +3707,7 @@
       "id": 259,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3861,7 +3861,7 @@
           "type": "table"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -4020,7 +4020,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -4030,7 +4030,7 @@
       "id": 235,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "$EMSDescription",
           "fieldConfig": {
             "defaults": {
@@ -4211,7 +4211,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -4221,7 +4221,7 @@
       "id": 247,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "These are the health monitor events that have occurred within the selected time range",
           "fieldConfig": {
             "defaults": {
@@ -4336,7 +4336,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "last_over_time(health_support_alerts{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[$__range])\n==\n  1",
+              "expr": "health_support_alerts{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"} == 1",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -4415,7 +4415,7 @@
         },
         "description": null,
         "error": null,
-        "hide": 2,
+        "hide": 0,
         "includeAll": false,
         "label": "Data Source",
         "multi": false,
@@ -4430,7 +4430,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"},datacenter)",
         "description": null,
         "error": null,
@@ -4456,7 +4456,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},netapp_cluster)",
         "description": null,
         "error": null,
@@ -4523,5 +4523,5 @@
   "timezone": "",
   "title": "ONTAP: Health",
   "uid": "cdot-health",
-  "version": 5
+  "version": 6
 }

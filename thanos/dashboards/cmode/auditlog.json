@@ -98,7 +98,7 @@
       "type": "row"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 3,
         "w": 24,
@@ -128,7 +128,7 @@
       "type": "row"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This change type indicates that Volume has been created.",
       "fieldConfig": {
         "defaults": {
@@ -188,7 +188,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This change type indicates that Volume object has been updated.",
       "fieldConfig": {
         "defaults": {
@@ -247,7 +247,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This change type indicates that Volume has been deleted.",
       "fieldConfig": {
         "defaults": {
@@ -306,7 +306,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "`Cluster Time:` The time on the cluster.\n\n`Object:` The name of the ONTAP object that was changed.\n\n`OP:` The type of change that was made (e.g., create, update, delete).\n\n`User`: The user who performed this action.\n\n`Location`: The IP address of the user.\n\n `Application`: The application used to perform the action. Possible values are `http` and `ssh`.\n\n`Count`: Number of times operation is performed.\n\n**Note:** Only REST and ONTAP CLI commands are included in the audit. ZAPI commands are not supported.\n",
       "fieldConfig": {
         "defaults": {
@@ -632,7 +632,7 @@
         },
         "description": null,
         "error": null,
-        "hide": 2,
+        "hide": 0,
         "includeAll": false,
         "label": "Data Source",
         "multi": false,
@@ -647,7 +647,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"},datacenter)",
         "description": null,
         "error": null,
@@ -673,7 +673,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},netapp_cluster)",
         "description": null,
         "error": null,

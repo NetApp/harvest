@@ -86,7 +86,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -99,7 +99,7 @@
       "type": "row"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 4,
         "w": 24,
@@ -115,7 +115,7 @@
       "type": "text"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -127,7 +127,7 @@
       "type": "row"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "You must enable the Rest collector in your harvest.yml config.",
       "fieldConfig": {
         "defaults": {
@@ -510,7 +510,7 @@
       "type": "table"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Specifies the bucket logical used size up to this point.",
       "fieldConfig": {
         "defaults": {
@@ -587,7 +587,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
           "expr": "ontaps3_logical_used_size{bucket=~\"$Bucket\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      ontaps3_logical_used_size{bucket=~\"$Bucket\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h] @ end()\n    )\n  )",
           "hide": false,
@@ -601,7 +601,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Specifies the bucket logical used percent.",
       "fieldConfig": {
         "defaults": {
@@ -705,7 +705,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
           "expr": "ontaps3_used_percent{bucket=~\"$Bucket\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      ontaps3_used_percent{bucket=~\"$Bucket\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h] @ end()\n    )\n  )",
           "hide": false,
@@ -719,7 +719,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "You must enable the Rest collector in your harvest.yml config.",
       "fieldConfig": {
         "defaults": {
@@ -913,7 +913,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -923,7 +923,7 @@
       "id": 17,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This panel displays Requests and Connections counts at each SVM.",
           "fieldConfig": {
             "defaults": {
@@ -1158,7 +1158,7 @@
           "type": "table"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Number of GET/PUT/HEAD/DELETE SVM operations.",
           "fieldConfig": {
             "defaults": {
@@ -1285,7 +1285,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Number of GET/PUT/HEAD/DELETE SVM operations per second.",
           "fieldConfig": {
             "defaults": {
@@ -1413,7 +1413,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Average latency for GET/PUT/HEAD/DELETE SVM operations.",
           "fieldConfig": {
             "defaults": {
@@ -1540,7 +1540,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Rate of GET/PUT SVM data transfers per second.",
           "fieldConfig": {
             "defaults": {
@@ -1670,7 +1670,7 @@
         },
         "description": null,
         "error": null,
-        "hide": 2,
+        "hide": 0,
         "includeAll": false,
         "label": "Data Source",
         "multi": false,
@@ -1685,7 +1685,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"}, datacenter)",
         "description": null,
         "error": null,
@@ -1712,7 +1712,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, netapp_cluster)",
         "description": null,
         "error": null,
@@ -1737,7 +1737,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(ontaps3_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\"}, svm)",
         "description": null,
         "error": null,
@@ -1762,7 +1762,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(ontaps3_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\", svm=~\"$SVM\"}, bucket)",
         "description": null,
         "error": null,

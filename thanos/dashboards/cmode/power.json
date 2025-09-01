@@ -91,7 +91,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -104,7 +104,7 @@
       "type": "row"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 4,
         "w": 24,
@@ -121,7 +121,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -135,7 +135,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This panel displays total power of nodes and shelves.",
       "fieldConfig": {
         "defaults": {
@@ -199,7 +199,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Average Power per used TB.",
       "fieldConfig": {
         "defaults": {
@@ -248,7 +248,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "(avg(environment_sensor_power{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) or vector(0))\n/\n  (\n          (sum(aggr_space_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) / 1024 / 1024 / 1024 / 1024)\n        /\n          count(sum(node_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))\n      \u003e\n        1\n    or\n      max(\n          aggr_space_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n        /\n          aggr_space_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n      )\n  )",
+          "expr": "(\n      (avg(environment_sensor_power{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) or vector(0))\n    +\n      avg(\n          (\n              shelf_power{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n            * on (datacenter, netapp_cluster, shelf)\n              shelf_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",isEmbedded=\"No\"}\n          )\n        or\n          vector(0)\n      )\n  )\n/\n  (\n          (sum(aggr_space_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) / 1024 / 1024 / 1024 / 1024)\n        /\n          count(sum(node_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}))\n      \u003e\n        1\n    or\n      max(\n          aggr_space_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n        /\n          aggr_space_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n      )\n  )",
           "hide": false,
           "interval": "",
           "legendFormat": "",
@@ -259,7 +259,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Maximum temperature of all non-ambient sensors for node in Celsius.",
       "fieldConfig": {
         "defaults": {
@@ -335,7 +335,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Maximum fan speed for shelf in rpm.",
       "fieldConfig": {
         "defaults": {
@@ -392,8 +392,8 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
-      "description": "Average IOPs per Watt.",
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Average IOPs Per Watt.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -441,7 +441,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "avg(node_total_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n/\n  (avg(environment_sensor_power{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) or vector(1))",
+          "expr": "avg(node_total_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})\n/\n  (\n      (\n          (avg(environment_sensor_power{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}) or vector(0))\n        +\n          avg(\n              (\n                  shelf_power{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n                * on (datacenter, netapp_cluster, shelf)\n                  shelf_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",isEmbedded=\"No\"}\n              )\n            or\n              vector(0)\n          )\n      )\n    or\n      vector(1)\n  )",
           "hide": false,
           "interval": "",
           "legendFormat": "",
@@ -452,7 +452,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Maximum temperature of all non-ambient sensors for shelf in Celsius.",
       "fieldConfig": {
         "defaults": {
@@ -528,7 +528,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Maximum fan speed for node in rpm.",
       "fieldConfig": {
         "defaults": {
@@ -586,7 +586,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This panel displays total power consumed by Node, Shelf and both.",
       "fieldConfig": {
         "defaults": {
@@ -730,7 +730,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This panel displays the average power consumption in kilowatt-hours (kWh) over the last hour for Nodes, Shelves, and the total combined.",
       "fieldConfig": {
         "defaults": {
@@ -874,7 +874,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Power consumed by a node in Watts.",
       "fieldConfig": {
         "defaults": {
@@ -965,7 +965,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Average temperature of all non-ambient sensors for node in Celsius.",
       "fieldConfig": {
         "defaults": {
@@ -1055,7 +1055,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Power consumed by shelf in Watts.",
       "fieldConfig": {
         "defaults": {
@@ -1146,7 +1146,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Average temperature of all non-ambient sensors for shelf in Celsius.",
       "fieldConfig": {
         "defaults": {
@@ -1237,7 +1237,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "View the power usage at the aggregate level, track down any \"hot\" aggregates and their corresponding workloads.\n\nThe line chart provides the ability to see how read/write IOs directly affect the power usage of the system. .",
       "fieldConfig": {
         "defaults": {
@@ -1328,7 +1328,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Power used across your Aggregate disk types.",
       "fieldConfig": {
         "defaults": {
@@ -1419,7 +1419,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Provides the ability to see how read/write IOs directly affect the power usage of the system.",
       "fieldConfig": {
         "defaults": {
@@ -1515,12 +1515,12 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top $TopResources Aggregates by IOPS per Power Consumed",
+      "title": "Top $TopResources Aggregates by IOPS Per Power Consumed",
       "type": "timeseries"
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1530,7 +1530,7 @@
       "id": 93,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Aggregate details.",
           "fieldConfig": {
             "defaults": {
@@ -1948,7 +1948,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1958,7 +1958,7 @@
       "id": 84,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Displays sensors with failed state.",
           "fieldConfig": {
             "defaults": {
@@ -2147,7 +2147,7 @@
       "id": 104,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "gridPos": {
             "h": 2,
             "w": 24,
@@ -2163,7 +2163,7 @@
           "type": "text"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Displays information about the status of Field Replaceable Units (FRUs).",
           "fieldConfig": {
             "defaults": {
@@ -2303,7 +2303,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2313,7 +2313,7 @@
       "id": 76,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Storage node details.",
           "fieldConfig": {
             "defaults": {
@@ -2906,7 +2906,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2916,7 +2916,7 @@
       "id": 78,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Storage shelf details.",
           "fieldConfig": {
             "defaults": {
@@ -3636,7 +3636,7 @@
         },
         "description": null,
         "error": null,
-        "hide": 2,
+        "hide": 0,
         "includeAll": false,
         "label": "Data Source",
         "multi": false,
@@ -3651,7 +3651,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"}, datacenter)",
         "description": null,
         "error": null,
@@ -3677,7 +3677,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, netapp_cluster)",
         "description": null,
         "error": null,

@@ -27,6 +27,18 @@
       "name": "Table",
       "type": "panel",
       "version": ""
+    },
+    {
+      "id": "text",
+      "name": "Text",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "timeseries",
+      "name": "Time series",
+      "type": "panel",
+      "version": ""
     }
   ],
   "annotations": {
@@ -54,7 +66,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1717086996579,
+  "iteration": 1754555692014,
   "links": [
     {
       "asDropdown": true,
@@ -74,12 +86,42 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
         "y": 0
+      },
+      "id": 130,
+      "panels": [],
+      "title": "Important Information",
+      "type": "row"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 132,
+      "options": {
+        "content": "\u003cbr\u003eBy default, only `tree` type quotas are collected via Harvest. If you wish to collect user and group quotas as well, please follow the steps outlined at [GitHub discussion #2911](https://github.com/NetApp/harvest/discussions/2911).",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.1.8",
+      "type": "text"
+    },
+    {
+      "collapsed": false,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 3
       },
       "id": 121,
       "panels": [],
@@ -87,7 +129,7 @@
       "type": "row"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Only tree quotas are shown by default. To collect user/group quotas, enable them in the qtree.yaml template.",
       "fieldConfig": {
         "defaults": {
@@ -186,6 +228,15 @@
                 "value": [
                   {
                     "options": {
+                      "-1": {
+                        "index": 2,
+                        "text": "No Hard Limit"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
                       "match": "null",
                       "result": {
                         "index": 0,
@@ -245,6 +296,15 @@
               {
                 "id": "mappings",
                 "value": [
+                  {
+                    "options": {
+                      "-1": {
+                        "index": 2,
+                        "text": "No Hard Limit"
+                      }
+                    },
+                    "type": "value"
+                  },
                   {
                     "options": {
                       "match": "null",
@@ -546,7 +606,7 @@
         "h": 16,
         "w": 24,
         "x": 0,
-        "y": 1
+        "y": 4
       },
       "id": 5,
       "options": {
@@ -568,9 +628,9 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "label_join(\n  quota_disk_limit{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
+          "expr": "label_join(\n    quota_disk_limit{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, netapp_cluster, svm, volume) group_left (tags)\n    volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -579,9 +639,9 @@
           "refId": "A"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "label_join(\n  quota_disk_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
+          "expr": "label_join(\n    quota_disk_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, netapp_cluster, svm, volume) group_left (tags)\n    volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -590,9 +650,9 @@
           "refId": "B"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "label_join(\n  quota_file_limit{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
+          "expr": "label_join(\n    quota_file_limit{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, netapp_cluster, svm, volume) group_left (tags)\n    volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -601,9 +661,9 @@
           "refId": "C"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "label_join(\n  quota_files_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
+          "expr": "label_join(\n    quota_files_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, netapp_cluster, svm, volume) group_left (tags)\n    volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -612,9 +672,9 @@
           "refId": "D"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "label_join(\n  quota_soft_disk_limit{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
+          "expr": "label_join(\n    quota_soft_disk_limit{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, netapp_cluster, svm, volume) group_left (tags)\n    volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -623,9 +683,9 @@
           "refId": "E"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "label_join(\n  quota_disk_used_pct_disk_limit{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
+          "expr": "label_join(\n    quota_disk_used_pct_disk_limit{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, netapp_cluster, svm, volume) group_left (tags)\n    volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -634,9 +694,9 @@
           "refId": "F"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "label_join(\n  quota_files_used_pct_file_limit{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
+          "expr": "label_join(\n    quota_files_used_pct_file_limit{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, netapp_cluster, svm, volume) group_left (tags)\n    volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -645,9 +705,9 @@
           "refId": "G"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "exemplar": false,
-          "expr": "label_join(\n  quota_soft_file_limit{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
+          "expr": "label_join(\n    quota_soft_file_limit{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, netapp_cluster, svm, volume) group_left (tags)\n    volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"},\n  \"index\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"svm\",\n  \"volume\",\n  \"qtree\",\n  \"group\",\n  \"user\"\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -680,7 +740,6 @@
                 "datacenter",
                 "qtree",
                 "svm",
-                "user",
                 "volume",
                 "Value #A",
                 "Value #B",
@@ -690,7 +749,7 @@
                 "Value #F",
                 "Value #G",
                 "Value #H",
-                "group"
+                "tags"
               ]
             }
           }
@@ -745,6 +804,13 @@
               "svm 6": true,
               "svm 7": true,
               "svm 8": true,
+              "tags 2": true,
+              "tags 3": true,
+              "tags 4": true,
+              "tags 5": true,
+              "tags 6": true,
+              "tags 7": true,
+              "tags 8": true,
               "tree 3": true,
               "tree 8": true,
               "unit": true,
@@ -770,70 +836,62 @@
               "vserver 8": true
             },
             "indexByName": {
-              "Value #A": 11,
-              "Value #B": 8,
-              "Value #C": 13,
-              "Value #D": 10,
-              "Value #E": 12,
-              "Value #F": 7,
-              "Value #G": 9,
-              "Value #H": 14,
+              "Value #A": 10,
+              "Value #B": 7,
+              "Value #C": 12,
+              "Value #D": 9,
+              "Value #E": 11,
+              "Value #F": 6,
+              "Value #G": 8,
+              "Value #H": 13,
               "datacenter": 0,
-              "datacenter 2": 16,
-              "datacenter 3": 30,
-              "datacenter 4": 31,
-              "datacenter 5": 32,
-              "datacenter 6": 33,
-              "datacenter 7": 34,
-              "datacenter 8": 35,
-              "group": 6,
-              "group 2": 36,
-              "group 3": 37,
-              "group 4": 38,
-              "group 5": 39,
-              "group 6": 40,
-              "group 7": 41,
-              "group 8": 42,
+              "datacenter 2": 15,
+              "datacenter 3": 29,
+              "datacenter 4": 30,
+              "datacenter 5": 31,
+              "datacenter 6": 32,
+              "datacenter 7": 33,
+              "datacenter 8": 34,
               "netapp_cluster": 1,
-              "netapp_cluster 2": 15,
-              "netapp_cluster 3": 24,
-              "netapp_cluster 4": 25,
-              "netapp_cluster 5": 26,
-              "netapp_cluster 6": 27,
-              "netapp_cluster 7": 28,
-              "netapp_cluster 8": 29,
+              "netapp_cluster 2": 14,
+              "netapp_cluster 3": 23,
+              "netapp_cluster 4": 24,
+              "netapp_cluster 5": 25,
+              "netapp_cluster 6": 26,
+              "netapp_cluster 7": 27,
+              "netapp_cluster 8": 28,
               "qtree": 4,
-              "qtree 2": 17,
-              "qtree 3": 18,
-              "qtree 4": 19,
-              "qtree 5": 20,
-              "qtree 6": 21,
-              "qtree 7": 22,
-              "qtree 8": 23,
+              "qtree 2": 16,
+              "qtree 3": 17,
+              "qtree 4": 18,
+              "qtree 5": 19,
+              "qtree 6": 20,
+              "qtree 7": 21,
+              "qtree 8": 22,
               "svm": 2,
-              "svm 2": 50,
-              "svm 3": 51,
-              "svm 4": 52,
-              "svm 5": 53,
-              "svm 6": 54,
-              "svm 7": 55,
-              "svm 8": 56,
-              "user": 5,
-              "user 2": 57,
-              "user 3": 58,
-              "user 4": 59,
-              "user 5": 60,
-              "user 6": 61,
-              "user 7": 62,
-              "user 8": 63,
+              "svm 2": 42,
+              "svm 3": 43,
+              "svm 4": 44,
+              "svm 5": 45,
+              "svm 6": 46,
+              "svm 7": 47,
+              "svm 8": 48,
+              "tags": 5,
+              "tags 2": 49,
+              "tags 3": 50,
+              "tags 4": 51,
+              "tags 5": 52,
+              "tags 6": 53,
+              "tags 7": 54,
+              "tags 8": 55,
               "volume": 3,
-              "volume 2": 43,
-              "volume 3": 44,
-              "volume 4": 45,
-              "volume 5": 46,
-              "volume 6": 47,
-              "volume 7": 48,
-              "volume 8": 49
+              "volume 2": 35,
+              "volume 3": 36,
+              "volume 4": 37,
+              "volume 5": 38,
+              "volume 6": 39,
+              "volume 7": 40,
+              "volume 8": 41
             },
             "renameByName": {
               "Value #A": "Space Hard Limit",
@@ -845,6 +903,7 @@
               "Value #G": "% Files Used",
               "Value #H": "Files Soft Limit",
               "group": "Group",
+              "tags": "Volume Tag",
               "user": "User",
               "user_name": "User"
             }
@@ -855,17 +914,17 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 17
+        "y": 20
       },
       "id": 128,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "The amount of space used in qtree.",
           "fieldConfig": {
             "defaults": {
@@ -944,7 +1003,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "quota_disk_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      quota_disk_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h] @ end()\n    )\n  )",
+              "expr": "quota_disk_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand\n  topk(\n    $TopResources,\n      max without (tags) (\n        avg_over_time(\n          quota_disk_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h]\n        )\n      )\n    * on (datacenter, netapp_cluster, svm, volume) group_left ()\n      volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n  )",
               "interval": "",
               "legendFormat": "{{volume}} - {{qtree}} - {{type}}",
               "refId": "A"
@@ -956,7 +1015,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "The amount of space used % in qtree.",
           "fieldConfig": {
             "defaults": {
@@ -1010,7 +1069,30 @@
               },
               "unit": "percent"
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "-1": {
+                            "index": 0,
+                            "text": "No Hard Limit"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
           },
           "gridPos": {
             "h": 11,
@@ -1037,7 +1119,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "quota_disk_used_pct_disk_limit{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      quota_disk_used_pct_disk_limit{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h] @ end()\n    )\n  )",
+              "expr": "quota_disk_used_pct_disk_limit{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand\n  topk(\n    $TopResources,\n      max without (tags) (\n        avg_over_time(\n          quota_disk_used_pct_disk_limit{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h]\n        )\n      )\n    * on (datacenter, netapp_cluster, svm, volume) group_left ()\n      volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n  )",
               "interval": "",
               "legendFormat": "{{volume}} - {{qtree}} - {{type}}",
               "refId": "A"
@@ -1049,7 +1131,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "The number of files used in qtree.",
           "fieldConfig": {
             "defaults": {
@@ -1128,7 +1210,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "quota_files_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      quota_files_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h] @ end()\n    )\n  )",
+              "expr": "quota_files_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand\n  topk(\n    $TopResources,\n      max without (tags) (\n        avg_over_time(\n          quota_files_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h]\n        )\n      )\n    * on (datacenter, netapp_cluster, svm, volume) group_left ()\n      volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n  )",
               "interval": "",
               "legendFormat": "{{volume}} - {{qtree}} - {{type}}",
               "refId": "A"
@@ -1140,7 +1222,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "The number of files used % in qtree.",
           "fieldConfig": {
             "defaults": {
@@ -1194,7 +1276,30 @@
               },
               "unit": "percent"
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "-1": {
+                            "index": 0,
+                            "text": "No Hard Limit"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
           },
           "gridPos": {
             "h": 11,
@@ -1221,7 +1326,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "quota_files_used_pct_file_limit{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      quota_files_used_pct_file_limit{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h] @ end()\n    )\n  )",
+              "expr": "quota_files_used_pct_file_limit{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand\n  topk(\n    $TopResources,\n      max without (tags) (\n        avg_over_time(\n          quota_files_used_pct_file_limit{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",qtree=~\"$Qtree\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h]\n        )\n      )\n    * on (datacenter, netapp_cluster, svm, volume) group_left ()\n      volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n  )",
               "interval": "",
               "legendFormat": "{{volume}} - {{qtree}} - {{type}}",
               "refId": "A"
@@ -1256,7 +1361,7 @@
         },
         "description": null,
         "error": null,
-        "hide": 2,
+        "hide": 0,
         "includeAll": false,
         "label": "Data Source",
         "multi": false,
@@ -1271,7 +1376,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"}, datacenter)",
         "description": null,
         "error": null,
@@ -1298,7 +1403,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, netapp_cluster)",
         "description": null,
         "error": null,
@@ -1323,8 +1428,8 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
-        "definition": "label_values(quota_disk_limit{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\"}, svm)",
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(svm_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\"}, svm)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -1335,7 +1440,7 @@
         "name": "SVM",
         "options": [],
         "query": {
-          "query": "label_values(quota_disk_limit{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\"}, svm)",
+          "query": "label_values(svm_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\"}, svm)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -1348,8 +1453,54 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
-        "definition": "label_values(quota_disk_limit{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\", svm=~\"$SVM\"}, qtree)",
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(volume_tags{datacenter=~\"$Datacenter\", netapp_cluster=~\"$Cluster\", svm=~\"$SVM\"},tag)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": "Volume Tag",
+        "multi": true,
+        "name": "Tag",
+        "options": [],
+        "query": {
+          "query": "label_values(volume_tags{datacenter=~\"$Datacenter\", netapp_cluster=~\"$Cluster\", svm=~\"$SVM\"},tag)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(volume_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\",svm=~\"$SVM\",style!=\"flexgroup_constituent\",tags=~\".*$Tag.*\"}, volume)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "Volume",
+        "options": [],
+        "query": {
+          "query": "label_values(volume_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\",svm=~\"$SVM\",style!=\"flexgroup_constituent\",tags=~\".*$Tag.*\"}, volume)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(quota_disk_limit{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\"} * on (datacenter, netapp_cluster, svm, volume) group_left(tags) volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"})",
         "description": null,
         "error": null,
         "hide": 0,
@@ -1360,12 +1511,12 @@
         "name": "Qtree",
         "options": [],
         "query": {
-          "query": "label_values(quota_disk_limit{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\", svm=~\"$SVM\"}, qtree)",
+          "query": "query_result(quota_disk_limit{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\", svm=~\"$SVM\",volume=~\"$Volume\"} * on (datacenter, netapp_cluster, svm, volume) group_left(tags) volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"})",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
         "refresh_on_load": false,
-        "regex": "",
+        "regex": ".*qtree=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 1,
         "type": "query"

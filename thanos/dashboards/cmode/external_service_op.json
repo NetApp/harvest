@@ -84,7 +84,7 @@
   ],
   "panels": [
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 2,
         "w": 24,
@@ -102,7 +102,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -115,7 +115,7 @@
       "type": "row"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This panel includes Average request latency for operations on specified server.",
       "fieldConfig": {
         "defaults": {
@@ -212,7 +212,7 @@
         "mode": "spectrum"
       },
       "dataFormat": "tsbuckets",
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This panel tracks histograms for request latency values of this operation to the specified server.",
       "gridPos": {
         "h": 9,
@@ -238,7 +238,7 @@
           "instant": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": " {{ le }}",
+          "legendFormat": "{{ le }}",
           "refId": "A"
         }
       ],
@@ -267,7 +267,7 @@
       "yBucketSize": null
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This panel displays Number of 'Not Found' responses for the operations.",
       "fieldConfig": {
         "defaults": {
@@ -350,11 +350,11 @@
           "refId": "A"
         }
       ],
-      "title": "Top $TopResources Number of 'Not Found' Responses per Operation",
+      "title": "Top $TopResources Number of 'Not Found' Responses Per Operation",
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This panel displays cumulative count of all request failures.",
       "fieldConfig": {
         "defaults": {
@@ -441,7 +441,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This panel displays Number of requests sent to the service.",
       "fieldConfig": {
         "defaults": {
@@ -528,7 +528,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This panel displays Number of responses received from the server (does not include timeouts).",
       "fieldConfig": {
         "defaults": {
@@ -615,7 +615,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This panel displays Number of successful responses to the operation.",
       "fieldConfig": {
         "defaults": {
@@ -702,7 +702,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This panel displays Number of times requests to the server for this operation timed out.",
       "fieldConfig": {
         "defaults": {
@@ -807,7 +807,7 @@
         },
         "description": null,
         "error": null,
-        "hide": 2,
+        "hide": 0,
         "includeAll": false,
         "label": "Data Source",
         "multi": false,
@@ -822,7 +822,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"}, datacenter)",
         "description": null,
         "error": null,
@@ -848,7 +848,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, netapp_cluster)",
         "description": null,
         "error": null,
@@ -874,7 +874,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(external_service_op_request_latency{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\"}, svm)",
         "description": null,
         "error": null,
@@ -900,7 +900,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(external_service_op_request_latency{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\",svm=~\"$SVM\"}, service_name)",
         "description": null,
         "error": null,
@@ -926,7 +926,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(external_service_op_request_latency{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\",svm=~\"$SVM\",service_name=~\"$ServiceName\"}, operation)",
         "description": null,
         "error": null,

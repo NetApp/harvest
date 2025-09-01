@@ -65,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1727355926722,
+  "iteration": 1753800978357,
   "links": [
     {
       "asDropdown": true,
@@ -85,7 +85,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -98,7 +98,7 @@
       "type": "row"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Number of datacenters.",
       "fieldConfig": {
         "defaults": {
@@ -158,7 +158,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Number of pollers.",
       "fieldConfig": {
         "defaults": {
@@ -230,7 +230,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This panel shows the total count of objects across all collectors.",
       "fieldConfig": {
         "defaults": {
@@ -304,7 +304,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Failed Object Count Across Collectors.",
       "fieldConfig": {
         "defaults": {
@@ -395,7 +395,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Number of exporters.",
       "fieldConfig": {
         "defaults": {
@@ -467,7 +467,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Data points collected last 24h.",
       "fieldConfig": {
         "defaults": {
@@ -539,7 +539,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Data points collected per minute.",
       "fieldConfig": {
         "defaults": {
@@ -612,7 +612,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Data points exported per minute.",
       "fieldConfig": {
         "defaults": {
@@ -685,7 +685,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "System CPU used by Harvest Pollers. Number can be greater than 100% on multi-core systems.",
       "fieldConfig": {
         "defaults": {
@@ -764,9 +764,9 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(poller_cpu_percent{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\"})",
+          "expr": "sum by (hostname) (\n  poller_cpu_percent{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\"}\n)",
           "interval": "",
-          "legendFormat": "% CPU used",
+          "legendFormat": "% CPU used - {{hostname}}",
           "refId": "A"
         }
       ],
@@ -774,7 +774,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "System Memory used by Harvest Pollers.",
       "fieldConfig": {
         "defaults": {
@@ -854,10 +854,10 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(poller_memory_percent{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\"})",
+          "expr": "sum by (hostname) (\n  poller_memory_percent{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\"}\n)",
           "hide": false,
           "interval": "",
-          "legendFormat": "% Memory used",
+          "legendFormat": "% Memory used - {{hostname}}",
           "refId": "A"
         }
       ],
@@ -865,7 +865,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Target system details.",
       "fieldConfig": {
         "defaults": {
@@ -893,7 +893,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "ping"
+                "value": "Ping"
               },
               {
                 "id": "custom.displayMode",
@@ -926,6 +926,10 @@
                     }
                   ]
                 }
+              },
+              {
+                "id": "custom.width",
+                "value": 505
               }
             ]
           },
@@ -961,30 +965,6 @@
             "properties": [
               {
                 "id": "custom.width"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Value #B"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 215
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "ping"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 505
               }
             ]
           },
@@ -1040,13 +1020,17 @@
               {
                 "id": "custom.displayMode",
                 "value": "color-background"
+              },
+              {
+                "id": "custom.width",
+                "value": 215
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "hostname"
+              "options": "Hostname"
             },
             "properties": [
               {
@@ -1108,7 +1092,8 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "metadata_target_ping{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\"}",
+          "exemplar": false,
+          "expr": "label_join(\n  metadata_target_ping{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"poller\",\n  \"addr\",\n  \"pid\"\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1117,7 +1102,8 @@
           "refId": "A"
         },
         {
-          "expr": "metadata_target_status{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\"}",
+          "exemplar": false,
+          "expr": "label_join(\n  metadata_target_status{datacenter=~\"$Datacenter\",hostname=~\"$Hostname\",poller=~\"$Poller\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"poller\",\n  \"addr\",\n  \"pid\"\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1129,37 +1115,84 @@
       "title": "Target Systems",
       "transformations": [
         {
-          "id": "merge",
-          "options": {}
+          "id": "seriesToColumns",
+          "options": {
+            "byField": "unique_id"
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "(.*) 2$",
+            "renamePattern": "$1"
+          }
         },
         {
           "id": "organize",
           "options": {
             "excludeByName": {
               "Time": true,
+              "Time 1": true,
+              "Time 2": true,
               "__name__": true,
+              "__name__ 1": true,
+              "__name__ 2": true,
+              "addr 1": true,
+              "addr 2": true,
+              "datacenter 1": true,
+              "datacenter 2": true,
+              "hostname 1": true,
+              "hostname 2": true,
               "instance": true,
+              "instance 1": true,
+              "instance 2": true,
               "job": true,
-              "version": true
+              "job 1": true,
+              "job 2": true,
+              "pid 1": true,
+              "pid 2": true,
+              "poller 1": true,
+              "poller 2": true,
+              "promport 1": true,
+              "promport 2": true,
+              "unique_id": true,
+              "version": true,
+              "version 1": true,
+              "version 2": true
             },
             "indexByName": {
-              "Time": 1,
-              "Value #A": 11,
-              "Value #B": 12,
-              "__name__": 2,
-              "addr": 4,
+              "Time": 7,
+              "Time 1": 14,
+              "Value #A": 12,
+              "Value #B": 4,
+              "__name__": 8,
+              "__name__ 1": 15,
+              "addr": 5,
+              "addr 1": 16,
               "datacenter": 0,
-              "hostname": 8,
-              "instance": 5,
-              "job": 6,
-              "pid": 9,
-              "poller": 3,
-              "promport": 10,
-              "version": 7
+              "datacenter 1": 17,
+              "hostname": 2,
+              "hostname 1": 18,
+              "instance": 9,
+              "instance 1": 19,
+              "job": 10,
+              "job 1": 20,
+              "pid": 3,
+              "pid 1": 21,
+              "poller": 1,
+              "poller 1": 22,
+              "promport": 6,
+              "promport 1": 23,
+              "unique_id": 13,
+              "version": 11,
+              "version 1": 24
             },
             "renameByName": {
-              "addr": "",
-              "poller": ""
+              "addr": "Addr",
+              "hostname": "Hostname",
+              "pid": "PID",
+              "poller": "Poller",
+              "promport": "PromPort"
             }
           }
         }
@@ -1167,7 +1200,7 @@
       "type": "table"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Detail of pollers.",
       "fieldConfig": {
         "defaults": {
@@ -1468,7 +1501,7 @@
       "type": "table"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Detail of collectors.",
       "fieldConfig": {
         "defaults": {
@@ -1740,7 +1773,7 @@
       "type": "table"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Detail of exporters.",
       "fieldConfig": {
         "defaults": {
@@ -1993,7 +2026,7 @@
       "type": "table"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Average duration of data poll of all collectors.",
       "fieldConfig": {
         "defaults": {
@@ -2079,11 +2112,11 @@
           "refId": "C"
         }
       ],
-      "title": "Average Poll time per Poller",
+      "title": "Average Poll Time Per Poller",
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Average duration of data poll (includes API time and plugins).",
       "fieldConfig": {
         "defaults": {
@@ -2168,11 +2201,11 @@
           "refId": "C"
         }
       ],
-      "title": "Average  time per Collector",
+      "title": "Average Time Per Collector",
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Average export time (includes render time).",
       "fieldConfig": {
         "defaults": {
@@ -2257,11 +2290,11 @@
           "refId": "C"
         }
       ],
-      "title": "Average  time per Exporter",
+      "title": "Average Time Per Exporter",
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Poller resident set memory.",
       "fieldConfig": {
         "defaults": {
@@ -2347,7 +2380,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2357,7 +2390,7 @@
       "id": 137,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "amount of time it took for the poll to finish.",
           "fieldConfig": {
             "defaults": {
@@ -2443,11 +2476,11 @@
               "refId": "C"
             }
           ],
-          "title": "Time per Data Poll",
+          "title": "Time Per Data Poll",
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Number of instances collected per Poll.",
           "fieldConfig": {
             "defaults": {
@@ -2535,11 +2568,11 @@
               "refId": "C"
             }
           ],
-          "title": "Instances per Poll",
+          "title": "Instances Per Poll",
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Number of metrics collected per Poll.",
           "fieldConfig": {
             "defaults": {
@@ -2627,11 +2660,11 @@
               "refId": "C"
             }
           ],
-          "title": "Data Points per Poll",
+          "title": "Data Points Per Poll",
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "API wait time of each data poll.",
           "fieldConfig": {
             "defaults": {
@@ -2721,7 +2754,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "amount of time to parse XML, JSON, etc. for cluster object.",
           "fieldConfig": {
             "defaults": {
@@ -2811,7 +2844,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "amount of time it took to compute metrics between two successive polls, specifically using properties like raw, delta, rate, average, and percent. This metric is available for ZapiPerf/RestPerf collectors.",
           "fieldConfig": {
             "defaults": {
@@ -2906,7 +2939,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2916,7 +2949,7 @@
       "id": 176,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Note that the Prometheus exporter has two concurrent components, each performing different tasks. The main goroutine receives, renders data from collectors and stores in a cache (=\"export)\". The HTTP daemon will serve this data to the Prometheus database on demand (=\"http\"). It will also serve information about available metrics for humans (=\"info\").\n\nThe total time includes \"export\" and \"http\" time, but not \"info\" (which is not part of the export).",
           "fieldConfig": {
             "defaults": {
@@ -3033,11 +3066,11 @@
               "refId": "A"
             }
           ],
-          "title": "Average time per Export",
+          "title": "Average Time Per Export",
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Two values:\n- IN: number of data points pushed from collectors to the exporter\n- OUT: number of data points delivered to the Prometheus database over HTTP (might be more than IN, if Prometheus scrapes Harvest with a higher interval).",
           "fieldConfig": {
             "defaults": {
@@ -3133,7 +3166,7 @@
               "refId": "A"
             }
           ],
-          "title": "Data Points per Export",
+          "title": "Data Points Per Export",
           "type": "timeseries"
         }
       ],
@@ -3157,7 +3190,7 @@
         },
         "description": null,
         "error": null,
-        "hide": 2,
+        "hide": 0,
         "includeAll": false,
         "label": "Data Source",
         "multi": false,
@@ -3172,7 +3205,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(metadata_target_status, datacenter)",
         "description": null,
         "error": null,
@@ -3198,7 +3231,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(metadata_target_status, hostname)",
         "description": null,
         "error": null,
@@ -3224,7 +3257,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(metadata_target_status, poller)",
         "description": null,
         "error": null,
@@ -3250,7 +3283,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(metadata_component_status{type=\"collector\",poller=~\"$Poller\"}, name)",
         "description": null,
         "error": null,
@@ -3276,7 +3309,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(metadata_component_status{type=\"collector\",poller=~\"$Poller\",name=~\"$Collector\"}, target)",
         "description": null,
         "error": null,

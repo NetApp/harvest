@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1723188904112,
+  "iteration": 1749475358867,
   "links": [
     {
       "asDropdown": true,
@@ -91,7 +91,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -104,7 +104,7 @@
       "type": "row"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Bytes sent.",
       "fieldConfig": {
         "defaults": {
@@ -161,7 +161,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This panel displays detail of total number of FC-NVMe/FCP operations and amount of FC-NVMe/FCP traffic to and from the storage system.",
       "fieldConfig": {
         "defaults": {
@@ -254,7 +254,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Bytes received.",
       "fieldConfig": {
         "defaults": {
@@ -310,7 +310,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Bytes sent.",
       "fieldConfig": {
         "defaults": {
@@ -366,7 +366,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This panel displays detail of number of FC-NVMe/FC read operations and amount of data read from the storage system (FC-NVMe/FC).",
       "fieldConfig": {
         "defaults": {
@@ -459,7 +459,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "This panel displays detail of Number of FC-NVMe/FC write operations and amount of data written to the storage system (FC-NVMe/FC).",
       "fieldConfig": {
         "defaults": {
@@ -553,7 +553,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -563,8 +563,8 @@
       "id": 32,
       "panels": [
         {
-          "datasource": "thanos",
-          "description": "Ethernet port details.",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Displays a collection of ports (physical, VLAN and LAG) for an entire cluster.",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -762,6 +762,18 @@
                     "value": "Mbits"
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "MTU"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "string"
+                  }
+                ]
               }
             ]
           },
@@ -794,7 +806,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "expr": "net_port_status{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$Eth\"}",
               "format": "table",
@@ -805,7 +817,7 @@
               "refId": "A"
             },
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
               "expr": "net_port_mtu{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$Eth\"}",
@@ -893,8 +905,8 @@
           "type": "table"
         },
         {
-          "datasource": "thanos",
-          "description": "NIC port details.",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This table tracks hardware network traffic performance and errors for all supported network interface cards (NIC), such as Intel Niantic, Qlogic, and CNA.",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -1232,7 +1244,7 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
               "expr": "nic_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
               "format": "table",
@@ -1242,7 +1254,7 @@
               "refId": "A"
             },
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "expr": "nic_new_status{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
               "format": "table",
               "hide": false,
@@ -1252,7 +1264,7 @@
               "refId": "B"
             },
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "expr": "nic_util_percent{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
               "format": "table",
               "hide": false,
@@ -1262,7 +1274,7 @@
               "refId": "C"
             },
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "expr": "nic_tx_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
               "format": "table",
               "hide": false,
@@ -1272,7 +1284,7 @@
               "refId": "D"
             },
             {
-              "datasource": "thanos",
+              "datasource": "${DS_PROMETHEUS}",
               "expr": "nic_rx_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
               "format": "table",
               "hide": false,
@@ -1346,7 +1358,7 @@
           "type": "table"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Bytes sent.",
           "fieldConfig": {
             "defaults": {
@@ -1439,7 +1451,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Bytes received.",
           "fieldConfig": {
             "defaults": {
@@ -1531,7 +1543,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Percentage of bytes transferred.",
           "fieldConfig": {
             "defaults": {
@@ -1615,7 +1627,7 @@
               "exemplar": false,
               "expr": "nic_util_percent{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      nic_util_percent{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[3h] @ end()\n    )\n  )",
               "interval": "",
-              "legendFormat": "{{node}} {{nic}}",
+              "legendFormat": "{{node}} - {{nic}}",
               "refId": "A"
             }
           ],
@@ -1625,7 +1637,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Summarized on Cluster or Node level. Select Eth to show for a specific Ethernet Port.",
           "fieldConfig": {
             "defaults": {
@@ -1704,13 +1716,15 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "sum by (netapp_cluster) (\n  nic_tx_total_errors{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\n)",
+              "exemplar": false,
+              "expr": "sum(nic_tx_total_errors{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "TOTAL",
               "refId": "A"
             },
             {
-              "expr": "sum by (netapp_cluster) (\n  nic_tx_hw_errors{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\n)",
+              "exemplar": false,
+              "expr": "sum(nic_tx_hw_errors{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "HW",
               "refId": "D"
@@ -1722,7 +1736,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Summarized on Cluster or Node level. Select Eth to show for a specific Ethernet Port.",
           "fieldConfig": {
             "defaults": {
@@ -1801,25 +1815,29 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "sum by (netapp_cluster) (\n  nic_rx_total_errors{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\n)",
+              "exemplar": false,
+              "expr": "sum(nic_rx_total_errors{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "TOTAL",
               "refId": "A"
             },
             {
-              "expr": "sum by (netapp_cluster) (\n  nic_rx_alignment_errors{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\n)",
+              "exemplar": false,
+              "expr": "sum(\n  nic_rx_alignment_errors{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\n)",
               "interval": "",
               "legendFormat": "ALIGNMENT",
               "refId": "B"
             },
             {
-              "expr": "sum by (netapp_cluster) (\n  nic_rx_crc_errors{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\n)",
+              "exemplar": false,
+              "expr": "sum(nic_rx_crc_errors{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "CRC",
               "refId": "C"
             },
             {
-              "expr": "sum by (netapp_cluster) (\n  nic_rx_length_errors{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\n)",
+              "exemplar": false,
+              "expr": "sum(nic_rx_length_errors{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "LENGTH",
               "refId": "D"
@@ -1831,7 +1849,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Ethernet port errors.",
           "fieldConfig": {
             "defaults": {
@@ -2029,6 +2047,30 @@
                     ]
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Rx Alignment Err"
+                },
+                "properties": [
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-text"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Rx Length Err"
+                },
+                "properties": [
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-text"
+                  }
+                ]
               }
             ]
           },
@@ -2067,7 +2109,7 @@
               "instant": true,
               "interval": "",
               "legendFormat": "",
-              "refId": "B"
+              "refId": "rx_crc_errors"
             },
             {
               "exemplar": false,
@@ -2077,7 +2119,7 @@
               "instant": true,
               "interval": "",
               "legendFormat": "",
-              "refId": "C"
+              "refId": "tx_hw_errors"
             },
             {
               "exemplar": false,
@@ -2087,7 +2129,7 @@
               "instant": true,
               "interval": "",
               "legendFormat": "",
-              "refId": "D"
+              "refId": "tx_total_errors"
             },
             {
               "exemplar": false,
@@ -2097,7 +2139,7 @@
               "instant": true,
               "interval": "",
               "legendFormat": "",
-              "refId": "E"
+              "refId": "rx_total_errors"
             },
             {
               "exemplar": false,
@@ -2107,7 +2149,27 @@
               "instant": true,
               "interval": "",
               "legendFormat": "",
-              "refId": "F"
+              "refId": "link_up_to_downs"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum_over_time(\n  nic_rx_alignment_errors{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "rx_alignment_errors"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum_over_time(\n  nic_rx_length_errors{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "rx_length_errors"
             }
           ],
           "title": "Ethernet port errors",
@@ -2117,15 +2179,17 @@
               "options": {
                 "include": {
                   "names": [
+                    "netapp_cluster",
+                    "datacenter",
                     "nic",
                     "node",
-                    "Value #B",
-                    "Value #C",
-                    "Value #D",
-                    "Value #E",
-                    "Value #F",
-                    "netapp_cluster",
-                    "datacenter"
+                    "Value #rx_crc_errors",
+                    "Value #tx_hw_errors",
+                    "Value #tx_total_errors",
+                    "Value #rx_total_errors",
+                    "Value #link_up_to_downs",
+                    "Value #rx_alignment_errors",
+                    "Value #rx_length_errors"
                   ]
                 }
               }
@@ -2139,26 +2203,39 @@
               "options": {
                 "excludeByName": {},
                 "indexByName": {
-                  "Value #B": 4,
-                  "Value #C": 5,
-                  "Value #D": 6,
-                  "Value #E": 7,
-                  "Value #F": 8,
+                  "Value #link_up_to_downs": 10,
+                  "Value #rx_alignment_errors": 5,
+                  "Value #rx_crc_errors": 4,
+                  "Value #rx_length_errors": 6,
+                  "Value #rx_total_errors": 7,
+                  "Value #tx_hw_errors": 8,
+                  "Value #tx_total_errors": 9,
+                  "__name__": 11,
                   "datacenter": 0,
                   "netapp_cluster": 1,
-                  "nic": 2,
-                  "node": 3
+                  "nic": 3,
+                  "node": 2
                 },
                 "renameByName": {
                   "Value #A": "",
                   "Value #B": "Rx CRC Err",
                   "Value #C": "Tx HW Err",
-                  "Value #D": "Rx Total Err",
-                  "Value #E": "Tx Total Err",
+                  "Value #D": "Tx Total Err",
+                  "Value #E": "Rx Total Err",
                   "Value #F": "Up to Downs",
+                  "Value #G": "",
+                  "Value #link_up_to_downs": "Up to Downs",
+                  "Value #rx_alignment_errors": "Rx Alignment Err",
+                  "Value #rx_crc_errors": "Rx CRC Err",
+                  "Value #rx_length_errors": "Rx Length Err",
+                  "Value #rx_total_errors": "Rx Total Err",
+                  "Value #tx_errors": "Tx Errs",
+                  "Value #tx_hw_errors": "Tx HW Err",
+                  "Value #tx_total_errors": "Tx Total Err",
                   "cluster": "",
                   "netapp_cluster": "",
-                  "nic": "Nic"
+                  "nic": "Nic",
+                  "node": ""
                 }
               }
             }
@@ -2171,7 +2248,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2181,7 +2258,7 @@
       "id": 33,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Detail of interface group, also known as a Link Aggregation Group (LAG), created by combining two or more physical ports on the same node into a single logical port.",
           "fieldConfig": {
             "defaults": {
@@ -2427,7 +2504,7 @@
           "type": "table"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Bytes sent.",
           "fieldConfig": {
             "defaults": {
@@ -2526,7 +2603,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Bytes received.",
           "fieldConfig": {
             "defaults": {
@@ -2627,7 +2704,7 @@
       ],
       "targets": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "refId": "A"
         }
       ],
@@ -2636,7 +2713,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2646,7 +2723,7 @@
       "id": 80,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "FC port details.",
           "fieldConfig": {
             "defaults": {
@@ -2963,7 +3040,7 @@
           "type": "table"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "gridPos": {
             "h": 2,
             "w": 24,
@@ -2979,7 +3056,7 @@
           "type": "text"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "FC ports with fabric details.",
           "fieldConfig": {
             "defaults": {
@@ -3265,7 +3342,7 @@
           "type": "table"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Amount of data read from the storage system.",
           "fieldConfig": {
             "defaults": {
@@ -3358,7 +3435,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Amount of data written to the storage system.",
           "fieldConfig": {
             "defaults": {
@@ -3450,7 +3527,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Average latency for read operations.",
           "fieldConfig": {
             "defaults": {
@@ -3543,7 +3620,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Average latency for write operations.",
           "fieldConfig": {
             "defaults": {
@@ -3636,7 +3713,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Summarized on Cluster or Node level. Select FCP to show for a specific FibreChannel Port.",
           "fieldConfig": {
             "defaults": {
@@ -3756,7 +3833,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Summarized on Cluster or Node level. Select FCP to show for a specific FibreChannel Port.",
           "fieldConfig": {
             "defaults": {
@@ -3882,7 +3959,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Number of times the Fibre Channel link was lost.",
           "fieldConfig": {
             "defaults": {
@@ -3974,7 +4051,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Number of link failures.",
           "fieldConfig": {
             "defaults": {
@@ -4071,7 +4148,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -4081,7 +4158,7 @@
       "id": 96,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "NVMe/FC port details.",
           "fieldConfig": {
             "defaults": {
@@ -4332,7 +4409,7 @@
           "type": "table"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Amount of data read from the storage system (FC-NVMe).",
           "fieldConfig": {
             "defaults": {
@@ -4425,7 +4502,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Amount of data written to the storage system (FC-NVMe).",
           "fieldConfig": {
             "defaults": {
@@ -4517,7 +4594,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Average latency for read operations (FC-NVMe).",
           "fieldConfig": {
             "defaults": {
@@ -4610,7 +4687,7 @@
           "type": "timeseries"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Average latency for write operations (FC-NVMe).",
           "fieldConfig": {
             "defaults": {
@@ -4708,7 +4785,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -4718,7 +4795,7 @@
       "id": 110,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "",
           "gridPos": {
             "h": 2,
@@ -4735,7 +4812,7 @@
           "type": "text"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Detail of network routes.",
           "fieldConfig": {
             "defaults": {
@@ -4921,7 +4998,7 @@
         },
         "description": null,
         "error": null,
-        "hide": 2,
+        "hide": 0,
         "includeAll": false,
         "label": "Data Source",
         "multi": false,
@@ -4936,7 +5013,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"}, datacenter)",
         "description": null,
         "error": null,
@@ -4962,7 +5039,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, netapp_cluster)",
         "description": null,
         "error": null,
@@ -4988,7 +5065,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(node_labels{system_type!=\"7mode\",netapp_cluster=~\"$Cluster\"}, node)",
         "description": null,
         "error": null,
@@ -5014,7 +5091,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(nic_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\",node=~\"$Node\"}, nic)",
         "description": null,
         "error": null,
@@ -5040,7 +5117,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(fcp_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\",node=~\"$Node\"}, port)",
         "description": null,
         "error": null,
@@ -5181,5 +5258,5 @@
   "timezone": "",
   "title": "ONTAP: Network",
   "uid": "cdot-network",
-  "version": 12
+  "version": 13
 }

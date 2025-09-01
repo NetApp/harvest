@@ -83,7 +83,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1726748714554,
+  "iteration": 1753866155444,
   "links": [
     {
       "asDropdown": true,
@@ -103,7 +103,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -116,7 +116,7 @@
       "type": "row"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 4,
         "w": 24,
@@ -133,7 +133,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -146,7 +146,7 @@
       "type": "row"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "The virtual space used (includes volume reserves) before storage efficiency, in bytes.",
       "fieldConfig": {
         "defaults": {
@@ -190,7 +190,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(volume_size_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "expr": "sum(\n    volume_size_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, netapp_cluster, svm, volume) group_left ()\n    volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n)",
           "hide": false,
           "instant": false,
           "interval": "",
@@ -214,7 +214,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "The available space, in bytes.",
       "fieldConfig": {
         "defaults": {
@@ -258,7 +258,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(\n  volume_size_available{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n)",
+          "expr": "sum(\n    volume_size_available{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, netapp_cluster, svm, volume) group_left ()\n    volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n)",
           "instant": false,
           "interval": "",
           "legendFormat": "",
@@ -271,7 +271,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Total size of AFS, excluding snap-reserve, in bytes.",
       "fieldConfig": {
         "defaults": {
@@ -315,7 +315,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(volume_size_total{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "expr": "sum(\n    volume_size_total{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, netapp_cluster, svm, volume) group_left ()\n    volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n)",
           "instant": true,
           "interval": "",
           "legendFormat": "",
@@ -328,7 +328,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Volume space used percent.",
       "fieldConfig": {
         "defaults": {
@@ -380,7 +380,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "(\n      sum(volume_size_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"})\n    *\n      100\n  )\n/\n  sum(volume_size_total{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+          "expr": "(\n      sum(\n          volume_size_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n        * on (datacenter, netapp_cluster, svm, volume) group_left ()\n          volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n      )\n    *\n      100\n  )\n/\n  sum(\n      volume_size_total{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n    * on (datacenter, netapp_cluster, svm, volume) group_left ()\n      volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n  )",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -390,7 +390,7 @@
       "type": "bargauge"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Total directory count including the root and children directories.",
       "fieldConfig": {
         "defaults": {
@@ -437,7 +437,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(\n  volume_analytics_dir_subdir_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name=\".\",volume=~\"$Volume\"}\n)",
+          "expr": "sum(\n    volume_analytics_dir_subdir_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, netapp_cluster, svm, volume) group_left ()\n    volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n)",
           "instant": true,
           "interval": "",
           "legendFormat": "",
@@ -448,7 +448,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "The actual number of bytes used on disk by this file. If byte_offset and length parameters are specified, this will return the bytes used by the file within the given range.",
       "fieldConfig": {
         "defaults": {
@@ -526,7 +526,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "volume_analytics_dir_bytes_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      volume_analytics_dir_bytes_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name!=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n    )\n  )",
+          "expr": "sum by (datacenter, netapp_cluster, svm, volume, dir_name) (\n    volume_analytics_dir_bytes_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  and on (datacenter, netapp_cluster, svm, volume, dir_name)\n    topk(\n      $TopResources,\n      max by (datacenter, netapp_cluster, svm, volume, uuid, dir_name) (\n          avg_over_time(\n            volume_analytics_dir_bytes_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name!=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n          )\n        * on (datacenter, netapp_cluster, svm, volume) group_left ()\n          (\n            max by (datacenter, netapp_cluster, svm, volume) (\n              volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n            )\n          )\n      )\n    )\n)",
           "interval": "",
           "legendFormat": "{{svm}}-{{volume}}-{{dir_name}}",
           "refId": "A"
@@ -536,7 +536,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Total number of files in root and child directories.",
       "fieldConfig": {
         "defaults": {
@@ -583,7 +583,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(\n  volume_analytics_dir_file_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name=\".\",volume=~\"$Volume\"}\n)",
+          "expr": "sum(\n    volume_analytics_dir_file_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, netapp_cluster, svm, volume) group_left ()\n    volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n)",
           "instant": true,
           "interval": "",
           "legendFormat": "",
@@ -594,7 +594,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Shows Top 100 directories per volume.",
       "fieldConfig": {
         "defaults": {
@@ -758,7 +758,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "volume_analytics_dir_bytes_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      volume_analytics_dir_bytes_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name!=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n    )\n  )",
+          "expr": "label_join(\n  (\n      volume_analytics_dir_bytes_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n    and\n      topk(\n        $TopResources,\n          avg_over_time(\n            volume_analytics_dir_bytes_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name!=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n          )\n        * on (datacenter, netapp_cluster, svm, volume) group_left ()\n          (\n            max by (datacenter, netapp_cluster, svm, volume) (\n              volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n            )\n          )\n      )\n  ),\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"svm\",\n  \"volume\",\n  \"dir_name\"\n)",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -767,7 +767,7 @@
         },
         {
           "exemplar": false,
-          "expr": "volume_analytics_dir_file_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      volume_analytics_dir_bytes_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name!=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n    )\n  )",
+          "expr": "label_join(\n  (\n      volume_analytics_dir_file_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n    and\n      topk(\n        $TopResources,\n          avg_over_time(\n            volume_analytics_dir_bytes_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name!=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n          )\n        * on (datacenter, netapp_cluster, svm, volume) group_left ()\n          (\n            max by (datacenter, netapp_cluster, svm, volume) (\n              volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n            )\n          )\n      )\n  ),\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"svm\",\n  \"volume\",\n  \"dir_name\"\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -777,7 +777,7 @@
         },
         {
           "exemplar": false,
-          "expr": "volume_analytics_dir_subdir_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      volume_analytics_dir_bytes_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name!=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n    )\n  )",
+          "expr": "label_join(\n  (\n      volume_analytics_dir_subdir_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n    and\n      topk(\n        $TopResources,\n          avg_over_time(\n            volume_analytics_dir_bytes_used{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name!=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n          )\n        * on (datacenter, netapp_cluster, svm, volume) group_left ()\n          (\n            max by (datacenter, netapp_cluster, svm, volume) (\n              volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n            )\n          )\n      )\n  ),\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"netapp_cluster\",\n  \"svm\",\n  \"volume\",\n  \"dir_name\"\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -791,7 +791,7 @@
         {
           "id": "seriesToColumns",
           "options": {
-            "byField": "index"
+            "byField": "unique_id"
           }
         },
         {
@@ -813,6 +813,7 @@
                 "volume",
                 "Value #A",
                 "Value #B",
+                "volume 3",
                 "Value #C"
               ]
             }
@@ -868,7 +869,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -878,7 +879,7 @@
       "id": 90,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -922,6 +923,18 @@
                     "value": "bytes"
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "time"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "string"
+                  }
+                ]
               }
             ]
           },
@@ -956,10 +969,10 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (time, order) (\n  volume_analytics_bytes_used_by_accessed_time{activity=~\"$Activity\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}\n)",
+              "expr": "sum by (time, order) (\n    volume_analytics_bytes_used_by_accessed_time{activity=~\"$Activity\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, netapp_cluster, svm, volume) group_left (tags)\n    volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n)",
               "instant": true,
               "interval": "",
-              "legendFormat": "{{ volume }}",
+              "legendFormat": "{{volume}}",
               "refId": "A"
             }
           ],
@@ -1029,7 +1042,7 @@
           "type": "barchart"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -1074,6 +1087,18 @@
                     "value": "percent"
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "time"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "string"
+                  }
+                ]
               }
             ]
           },
@@ -1108,10 +1133,10 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (time, order) (\n      volume_analytics_bytes_used_percent_by_accessed_time{activity=~\"$Activity\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}\n    * on (netapp_cluster, datacenter, svm, volume) group_left ()\n      volume_size{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  )\n/ on (netapp_cluster, datacenter, svm, volume) group_left ()\n  sum(volume_size{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+              "expr": "sum by (time, order) (\n      volume_analytics_bytes_used_percent_by_accessed_time{activity=~\"$Activity\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}\n    * on (netapp_cluster, datacenter, svm, volume) group_left (tags)\n      (\n          volume_size{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n        * on (netapp_cluster, datacenter, svm, volume) group_left (tags)\n          volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n      )\n  )\n/ on (netapp_cluster, datacenter, svm, volume) group_left ()\n  sum(\n      volume_size{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n    * on (netapp_cluster, datacenter, svm, volume) group_left (tags)\n      volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n  )",
               "instant": true,
               "interval": "",
-              "legendFormat": "{{ volume }} - {{ time }}",
+              "legendFormat": "{{volume}} - {{time}}",
               "refId": "A"
             }
           ],
@@ -1182,7 +1207,7 @@
           "type": "barchart"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -1226,6 +1251,18 @@
                     "value": "bytes"
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "time"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "string"
+                  }
+                ]
               }
             ]
           },
@@ -1260,10 +1297,10 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (time, order) (\n  volume_analytics_bytes_used_by_modified_time{activity=~\"$Activity\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}\n)",
+              "expr": "sum by (time, order) (\n    volume_analytics_bytes_used_by_modified_time{activity=~\"$Activity\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  * on (datacenter, netapp_cluster, svm, volume) group_left (tags)\n    volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n)",
               "instant": true,
               "interval": "",
-              "legendFormat": "{{ volume }}",
+              "legendFormat": "{{volume}}",
               "refId": "A"
             }
           ],
@@ -1333,7 +1370,7 @@
           "type": "barchart"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -1378,6 +1415,18 @@
                     "value": "percent"
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "time"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "string"
+                  }
+                ]
               }
             ]
           },
@@ -1412,10 +1461,10 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum by (time, order) (\n      volume_analytics_bytes_used_percent_by_modified_time{activity=~\"$Activity\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}\n    * on (netapp_cluster, datacenter, svm, volume) group_left ()\n      volume_size{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n  )\n/ on (netapp_cluster, datacenter, svm, volume) group_left ()\n  sum(volume_size{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"})",
+              "expr": "sum by (time, order) (\n      volume_analytics_bytes_used_percent_by_modified_time{activity=~\"$Activity\",netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",dir_name=\".\",svm=~\"$SVM\",volume=~\"$Volume\"}\n    * on (netapp_cluster, datacenter, svm, volume) group_left (tags)\n      (\n          volume_size{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n        * on (netapp_cluster, datacenter, svm, volume) group_left (tags)\n          volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n      )\n  )\n/ on (netapp_cluster, datacenter, svm, volume) group_left ()\n  sum(\n      volume_size{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n    * on (netapp_cluster, datacenter, svm, volume) group_left (tags)\n      volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n  )",
               "instant": true,
               "interval": "",
-              "legendFormat": "{{ volume }}",
+              "legendFormat": "{{volume}}",
               "refId": "A"
             }
           ],
@@ -1507,7 +1556,7 @@
         },
         "description": null,
         "error": null,
-        "hide": 2,
+        "hide": 0,
         "includeAll": false,
         "label": "Data Source",
         "multi": false,
@@ -1522,7 +1571,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"}, datacenter)",
         "description": null,
         "error": null,
@@ -1548,7 +1597,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, netapp_cluster)",
         "description": null,
         "error": null,
@@ -1574,7 +1623,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\"}, svm)",
         "description": null,
         "error": null,
@@ -1600,8 +1649,31 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
-        "definition": "label_values(volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\",svm=~\"$SVM\"}, volume)",
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(volume_tags{datacenter=~\"$Datacenter\", netapp_cluster=~\"$Cluster\", svm=~\"$SVM\"},tag)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "Tag",
+        "options": [],
+        "query": {
+          "query": "label_values(volume_tags{datacenter=~\"$Datacenter\", netapp_cluster=~\"$Cluster\", svm=~\"$SVM\"},tag)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "query_result(volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\", svm=~\"$SVM\"} * on (datacenter, netapp_cluster, svm, volume) group_left(tags) volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\"})",
         "description": null,
         "error": null,
         "hide": 0,
@@ -1611,11 +1683,11 @@
         "name": "Volume",
         "options": [],
         "query": {
-          "query": "label_values(volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\",svm=~\"$SVM\"}, volume)",
+          "query": "query_result(volume_analytics_dir_bytes_used{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\", svm=~\"$SVM\"} * on (datacenter, netapp_cluster, svm, volume) group_left(tags) volume_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",tags=~\".*$Tag.*\"})",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
-        "regex": "",
+        "regex": ".*volume=\\\"(.*?)\\\".*",
         "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
@@ -1771,5 +1843,5 @@
   "timezone": "",
   "title": "ONTAP: File System Analytics (FSA)",
   "uid": "cdot-fsa",
-  "version": 6
+  "version": 4
 }

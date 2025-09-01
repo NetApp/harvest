@@ -98,7 +98,7 @@
       "type": "row"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 2,
         "w": 24,
@@ -125,7 +125,7 @@
       "id": 282,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This change type indicates that a new ONTAP object has been created.",
           "fieldConfig": {
             "defaults": {
@@ -185,7 +185,7 @@
           "type": "stat"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This change type indicates that an existing ONTAP object has been updated.",
           "fieldConfig": {
             "defaults": {
@@ -244,7 +244,7 @@
           "type": "stat"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This change type indicates that an existing ONTAP object has been deleted.",
           "fieldConfig": {
             "defaults": {
@@ -303,7 +303,7 @@
           "type": "stat"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "`Poller Time:` The timestamp when Harvest Poller captured the change \n\n`Object:` The name of the ONTAP object that was changed (e.g., volume, svm, node)  \n\n`OP:` The type of change that was made (e.g., create, update, delete)  \n\n`Track:` Property of the object which was modified  \n\n`New Value:` The new value of the property after the change was made  \n\n`Old Value:` The previous value of the property before the change was made \n\n*Note:* `Old Value` and `New Value` are only available for label changes and not for metric changes.",
           "fieldConfig": {
             "defaults": {
@@ -539,7 +539,7 @@
       "id": 297,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This change type indicates that a new ONTAP object has been created.",
           "fieldConfig": {
             "defaults": {
@@ -599,7 +599,7 @@
           "type": "stat"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This change type indicates that an existing ONTAP object has been updated.",
           "fieldConfig": {
             "defaults": {
@@ -658,7 +658,7 @@
           "type": "stat"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This change type indicates that an existing ONTAP object has been deleted.",
           "fieldConfig": {
             "defaults": {
@@ -717,7 +717,7 @@
           "type": "stat"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "`Poller Time:` The timestamp when Harvest Poller captured the change \n\n`Object:` The name of the ONTAP object that was changed (e.g., volume, svm, node)  \n\n`OP:` The type of change that was made (e.g., create, update, delete)  \n\n`Track:` Property of the object which was modified  \n\n`New Value:` The new value of the property after the change was made  \n\n`Old Value:` The previous value of the property before the change was made \n\n*Note:* `Old Value` and `New Value` are only available for label changes and not for metric changes.",
           "fieldConfig": {
             "defaults": {
@@ -979,7 +979,7 @@
       "id": 290,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This change type indicates that a new ONTAP object has been created.",
           "fieldConfig": {
             "defaults": {
@@ -1039,7 +1039,7 @@
           "type": "stat"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This change type indicates that an existing ONTAP object has been updated.",
           "fieldConfig": {
             "defaults": {
@@ -1098,7 +1098,7 @@
           "type": "stat"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "This change type indicates that an existing ONTAP object has been deleted.",
           "fieldConfig": {
             "defaults": {
@@ -1157,7 +1157,7 @@
           "type": "stat"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "`Poller Time:` The timestamp when Harvest Poller captured the change \n\n`Object:` The name of the ONTAP object that was changed (e.g., volume, svm, node)  \n\n`OP:` The type of change that was made (e.g., create, update, delete)  \n\n`Track:` Property of the object which was modified  \n\n`New Value:` The new value of the property after the change was made  \n\n`Old Value:` The previous value of the property before the change was made \n\n*Note:* `Old Value` and `New Value` are only available for label changes and not for metric changes.",
           "fieldConfig": {
             "defaults": {
@@ -1452,7 +1452,7 @@
         },
         "description": null,
         "error": null,
-        "hide": 2,
+        "hide": 0,
         "includeAll": false,
         "label": "Data Source",
         "multi": false,
@@ -1467,7 +1467,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"},datacenter)",
         "description": null,
         "error": null,
@@ -1493,7 +1493,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"},netapp_cluster)",
         "description": null,
         "error": null,

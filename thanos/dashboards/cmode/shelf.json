@@ -91,7 +91,7 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -105,7 +105,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Number of shelves.",
       "fieldConfig": {
         "defaults": {
@@ -181,7 +181,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Power consumed by shelf in Watts.",
       "fieldConfig": {
         "defaults": {
@@ -256,7 +256,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Maximum temperature of all non-ambient sensors for shelf in Celsius.",
       "fieldConfig": {
         "defaults": {
@@ -332,7 +332,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Temperature, in degrees celsius.",
       "fieldConfig": {
         "defaults": {
@@ -406,7 +406,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Fan speed, in rpm.",
       "fieldConfig": {
         "defaults": {
@@ -464,7 +464,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Maximum fan speed for shelf in rpm.",
       "fieldConfig": {
         "defaults": {
@@ -521,7 +521,7 @@
       "type": "stat"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Current, in milliamps.",
       "fieldConfig": {
         "defaults": {
@@ -580,7 +580,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -593,7 +593,7 @@
       "type": "row"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Power consumed by shelf in Watts.",
       "fieldConfig": {
         "defaults": {
@@ -683,7 +683,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Average temperature of all non-ambient sensors for shelf in Celsius.",
       "fieldConfig": {
         "defaults": {
@@ -772,7 +772,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "description": "Storage shelf details.",
       "fieldConfig": {
         "defaults": {
@@ -1471,7 +1471,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1481,7 +1481,7 @@
       "id": 78,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Storage shelf PSU details.",
           "fieldConfig": {
             "defaults": {
@@ -1781,7 +1781,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1791,7 +1791,7 @@
       "id": 80,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Storage shelf module details.",
           "fieldConfig": {
             "defaults": {
@@ -2038,7 +2038,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2048,7 +2048,7 @@
       "id": 35,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Temperature, in degrees celsius.",
           "fieldConfig": {
             "defaults": {
@@ -2114,7 +2114,7 @@
           "type": "bargauge"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Fan speed, in rpm.",
           "fieldConfig": {
             "defaults": {
@@ -2184,7 +2184,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2194,7 +2194,7 @@
       "id": 37,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Voltage, in volts.",
           "fieldConfig": {
             "defaults": {
@@ -2259,7 +2259,7 @@
           "type": "bargauge"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Power drawn, in watts.",
           "fieldConfig": {
             "defaults": {
@@ -2322,7 +2322,7 @@
           "type": "bargauge"
         },
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Power rating, in watts.",
           "fieldConfig": {
             "defaults": {
@@ -2390,7 +2390,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "thanos",
+      "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2400,7 +2400,7 @@
       "id": 40,
       "panels": [
         {
-          "datasource": "thanos",
+          "datasource": "${DS_PROMETHEUS}",
           "description": "Current, in milliamps.",
           "fieldConfig": {
             "defaults": {
@@ -2487,7 +2487,7 @@
         },
         "description": null,
         "error": null,
-        "hide": 2,
+        "hide": 0,
         "includeAll": false,
         "label": "Data Source",
         "multi": false,
@@ -2502,7 +2502,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\"}, datacenter)",
         "description": null,
         "error": null,
@@ -2528,7 +2528,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, netapp_cluster)",
         "description": null,
         "error": null,
@@ -2554,7 +2554,7 @@
       {
         "allValue": ".*",
         "current": {},
-        "datasource": "thanos",
+        "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(shelf_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\"}, shelf)",
         "description": null,
         "error": null,
