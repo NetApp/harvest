@@ -3987,7 +3987,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "cluster_new_status{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}",
+              "expr": "cluster_new_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "instant": true,
               "interval": "",
