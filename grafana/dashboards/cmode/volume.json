@@ -2142,7 +2142,33 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Displays detail of Hot Cold data resides in the volume which has tiering policy other than none. \n\nCold data detection detail [here](https://github.com/NetApp/harvest/wiki/FAQ#cold-data-detection-detail) \n\n|  Column  | Represents  |  \n|---|---|\n| `Hot Data` | Space used by the performance tier (active data) in volume |  \n| `Hot Data %` | % of active data in volume |\n| `Cold Data` | Space used by capacity tier (inactive data) in volume |\n|`Cold Data %`| % of inactive data in volume |.",
+          "fieldConfig": {
+            "defaults": {},
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 2,
+            "w": 24,
+            "x": 0,
+            "y": 18
+          },
+          "id": 187,
+          "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
+            "content": "This row would displays the detail of hot and cold data of only those volumes which has tiering policy other than none. Those volumes having tiering policy value as none would not be displayed here. <br> [Cold data detection logic](https://github.com/NetApp/harvest/wiki/FAQ#cold-data-detection-detail)",
+            "mode": "markdown"
+          },
+          "pluginVersion": "8.1.8",
+          "title": "",
+          "type": "text"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Displays detail of Hot Cold data resides in the volume which has tiering policy other than none. \n\n|  Column  | Represents  |  \n|---|---|\n| `Hot Data` | Space used by the performance tier (active data) in volume |  \n| `Hot Data %` | % of active data in volume |\n| `Cold Data` | Space used by capacity tier (inactive data) in volume |\n|`Cold Data %`| % of inactive data in volume |.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2339,7 +2365,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 18
+            "y": 20
           },
           "id": 45,
           "options": {
@@ -2504,7 +2530,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 25
+            "y": 27
           },
           "id": 47,
           "options": {
@@ -2593,7 +2619,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 25
+            "y": 27
           },
           "id": 48,
           "options": {
@@ -2684,7 +2710,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 25
+            "y": 39
           },
           "id": 49,
           "options": {
@@ -2775,7 +2801,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 25
+            "y": 39
           },
           "id": 50,
           "options": {
