@@ -7,6 +7,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"github.com/netapp/harvest/v2/third_party/shirou/gopsutil/v4/internal/common"
 	"io"
 	"math"
 	"os"
