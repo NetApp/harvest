@@ -119,6 +119,7 @@ var (
 		"quota_disk_used_pct_threshold":    {},
 		"rw_ctx_":                          {},
 		"security_audit_destination_port":  {},
+		"storage_unit_":                    {},
 		"wafl_reads_from_pmem":             {},
 	}
 
