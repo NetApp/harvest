@@ -103,6 +103,9 @@ var (
 	knownDescriptionGaps = map[string]struct{}{
 		"ontaps3_object_count":                      {},
 		"security_certificate_expiry_time":          {},
+		"storage_unit_space_efficiency_ratio":       {},
+		"storage_unit_space_size":                   {},
+		"storage_unit_space_used":                   {},
 		"volume_capacity_tier_footprint":            {},
 		"volume_capacity_tier_footprint_percent":    {},
 		"volume_num_compress_attempts":              {},
@@ -184,6 +187,7 @@ var (
 		"ALERTS",
 		"flexcache_",
 		"hist_",
+		"storage_unit_",
 		"volume_aggr_labels",
 		"volume_arw_status",
 	}
@@ -1220,7 +1224,8 @@ func generateOntapCounterTemplate(counters map[string]Counter, version string) {
 	fmt.Printf("Harvest metric documentation generated at %s \n", targetPath)
 
 	if table.NumLines() > 0 {
-		log.Fatalf("Issues found: refer table above")
+		slog.Error("Issues found: Please refer to the table above")
+		os.Exit(1)
 	}
 }
 
