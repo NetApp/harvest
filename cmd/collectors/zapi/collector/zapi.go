@@ -95,7 +95,8 @@ func (z *Zapi) InitVars() error {
 	if z.Options.IsTest {
 		z.Client = client.NewTestClient()
 		templateName := z.Params.GetChildS("objects").GetChildContentS(z.Object)
-		template, path, err := z.ImportSubTemplate("cdot", templateName, jitter, "9.8.0")
+		models := []string{conf.CDOT}
+		template, path, err := z.ImportSubTemplate(models, templateName, jitter, "9.8.0")
 		if err != nil {
 			return err
 		}
@@ -115,13 +116,13 @@ func (z *Zapi) InitVars() error {
 	}
 	z.Logger.Debug("connected", slog.String("client", z.Client.Info()))
 
-	model := "cdot"
+	model := conf.CDOT
 	if !z.Client.IsClustered() {
 		model = "7mode"
 	}
 
 	templateName := z.Params.GetChildS("objects").GetChildContentS(z.Object)
-	template, path, err := z.ImportSubTemplate(model, templateName, jitter, z.Remote.Version)
+	template, path, err := z.ImportSubTemplate([]string{model}, templateName, jitter, z.Remote.Version)
 	if err != nil {
 		return err
 	}

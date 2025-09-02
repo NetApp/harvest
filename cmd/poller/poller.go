@@ -624,7 +624,6 @@ func (p *Poller) Run() {
 				}
 			}
 
-			// @TODO if there are no "master" exporters, don't collect metadata
 			for _, ee := range p.exporters {
 				if _, err := ee.Export(p.metadata); err != nil {
 					logger.Error("export component metadata", slogx.Err(err))
@@ -771,7 +770,10 @@ func (p *Poller) readObjects(c conf.Collector) ([]objectCollector, error) {
 				level := slog.LevelWarn
 				// When the template is custom.yaml, log at debug level to reduce noise, since that template
 				// won't exist for most people
-				if t == "custom.yaml" {
+				if strings.Contains(t, "custom.yaml") {
+					level = slog.LevelDebug
+				}
+				if p.remote.IsASAr2() && strings.Contains(t, "asar2/default.yaml") {
 					level = slog.LevelDebug
 				}
 				logger.LogAttrs(
@@ -1552,7 +1554,15 @@ func (p *Poller) negotiateAPI(cols []conf.Collector) []conf.Collector {
 
 	if len(ontapCols) > 0 {
 		if p.negotiateConnection("ONTAP") {
-			validCollectors = append(validCollectors, ontapCols...)
+			if p.remote.IsASAr2() {
+				for _, col := range ontapCols {
+					newTemplates := append(*col.Templates, "asar2/default.yaml", "asar2/custom.yaml")
+					col.Templates = &newTemplates
+					validCollectors = append(validCollectors, col)
+				}
+			} else {
+				validCollectors = append(validCollectors, ontapCols...)
+			}
 		} else {
 			logger.Warn("ONTAP connection failed, skipping ONTAP collectors")
 		}

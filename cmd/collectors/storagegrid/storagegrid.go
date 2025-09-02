@@ -478,7 +478,7 @@ func (s *StorageGrid) LoadTemplate() (string, error) {
 
 	jitter := s.Params.GetChildContentS("jitter")
 
-	subTemplate, path, err = s.ImportSubTemplate("", rest.TemplateFn(s.Params, s.Object), jitter, s.Remote.Version)
+	subTemplate, path, err = s.ImportSubTemplate([]string{""}, rest.TemplateFn(s.Params, s.Object), jitter, s.Remote.Version)
 	if err != nil {
 		return "", err
 	}
