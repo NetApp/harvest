@@ -156,6 +156,7 @@ var (
 		"smb2_",
 		"snapshot_volume_violation_count",
 		"snapshot_volume_violation_total_size",
+		"storage_unit_",
 		"svm_cifs_",
 		"svm_ontaps3_svm_",
 		"svm_vscan_",
