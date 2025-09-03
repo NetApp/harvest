@@ -1,7 +1,6 @@
-
-name:                       Node
-query:                      api/cluster/nodes
-object:                     node
+name: Node
+query: api/cluster/nodes
+object: node
 
 counters:
   - ^^name                                            => node
@@ -13,14 +12,18 @@ counters:
   - ^location
   - ^model
   - ^serial_number                                    => serial
+  - ^service_processor.autoupdate_enabled             => bmc_autoupdate_enabled
   - ^service_processor.firmware_version               => bmc_firmware_version
+  - ^service_processor.ipv4_interface.address         => bmc_ip_address
+  - ^service_processor.is_ip_configured               => bmc_is_ip_configured
+  - ^service_processor.mac_address                    => bmc_mac_address
+  - ^service_processor.state                          => bmc_state
   - ^state
   - ^uuid
   - ^version.full                                     => version
   - controller.failed_fan.count                       => failed_fan
   - controller.failed_power_supply.count              => failed_power
   - uptime
-
 endpoints:
   - query: api/private/cli/node
     counters:
@@ -48,6 +51,10 @@ export_options:
     - serial
   instance_labels:
     - bmc_firmware_version
+    - bmc_ip_address
+    - bmc_mac_address
+    - bmc_autoupdate_enabled
+    - bmc_is_ip_configured
     - cpu_firmware_release
     - healthy
     - location
