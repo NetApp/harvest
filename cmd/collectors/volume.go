@@ -26,6 +26,7 @@ var footprintMetrics = map[string]struct{}{
 	"guarantee_footprint":          {}, // Zapi
 	"capacity_tier_footprint":      {}, // Zapi
 	"performance_tier_footprint":   {}, // Zapi
+	"hot_data":                     {}, // Rest, Zapi
 
 }
 
@@ -229,11 +230,26 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 
 func ProcessFlexGroupFootPrint(data *matrix.Matrix, logger *slog.Logger) *matrix.Matrix {
 	fgAggrMap := make(map[string]*set.Set)
+	var err error
 
 	cache := data.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: true})
 	cache.UUID += ".VolumeFootPrint.Flexgroup"
 	// remove instance_labels from this matrix otherwise it will emit volume_labels
 	cache.GetExportOptions().PopChildS("instance_labels")
+
+	// This is for zapi and rest, rest supports volume_blocks_footprint_bin1 whereas zapi supports capacity_tier_footprint
+	capacityTierFootprintMetric := cache.GetMetric("volume_blocks_footprint_bin1")
+	if capacityTierFootprintMetric == nil {
+		capacityTierFootprintMetric = cache.GetMetric("capacity_tier_footprint")
+	}
+
+	totalFootprintMetric := cache.GetMetric("total_footprint")
+	hotDataMetric := cache.GetMetric("hot_data")
+	if hotDataMetric == nil {
+		if hotDataMetric, err = cache.NewMetricFloat64("hot_data"); err != nil {
+			logger.Error("error while creating hot data metric", slogx.Err(err))
+		}
+	}
 
 	for _, i := range data.GetInstances() {
 		volName := i.GetLabel("volume")
@@ -304,6 +320,14 @@ func ProcessFlexGroupFootPrint(data *matrix.Matrix, logger *slog.Logger) *matrix
 			if value, ok := m.GetValueFloat64(i); ok {
 				fgv, _ := fgm.GetValueFloat64(fg)
 				fgm.SetValueFloat64(fg, fgv+value)
+			}
+		}
+
+		// Calculate Hot data metric, where hot data = total footprint - cold data
+		if capacityTierFootprintMetric != nil {
+			if capacityTierFootprintMetricValue, exist := capacityTierFootprintMetric.GetValueFloat64(fg); exist {
+				totalFootprintMetricValue, _ := totalFootprintMetric.GetValueFloat64(fg)
+				hotDataMetric.SetValueFloat64(fg, totalFootprintMetricValue-capacityTierFootprintMetricValue)
 			}
 		}
 	}

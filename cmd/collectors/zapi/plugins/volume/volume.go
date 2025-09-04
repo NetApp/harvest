@@ -301,6 +301,12 @@ func (v *Volume) getVolumeFootprint() (map[string]map[string]string, error) {
 		footprintMetrics["total_metadata_footprint"] = totalMetadataFootprint
 		footprintMetrics["guarantee_footprint"] = volumeBlocksFootprint
 
+		// Calculate Hot data metric, where hot data = total footprint - cold data
+		if capacityTierFootprint != "" {
+			totalFootprintVal, _ := strconv.ParseFloat(totalFootprint, 64)
+			capacityTierFootprintVal, _ := strconv.ParseFloat(capacityTierFootprint, 64)
+			footprintMetrics["hot_data"] = strconv.FormatFloat(totalFootprintVal-capacityTierFootprintVal, 'f', -1, 64)
+		}
 		volumeFootprintMap[volume+svm] = footprintMetrics
 	}
 
