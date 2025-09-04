@@ -67,6 +67,3 @@ objects:
   Volume:                      volume.yaml
   VolumeAnalytics:             volume_analytics.yaml
   Vscan:                       vscan.yaml
-
-  # ASAr2 templates TODO: They will be moved to separate folder later
-  AvailabilityZone:            availability_zone.yaml
