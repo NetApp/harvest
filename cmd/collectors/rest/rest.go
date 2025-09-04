@@ -796,7 +796,7 @@ func (r *Rest) CollectAutoSupport(p *collector.Payload) {
 
 	if ((isRest || isKeyPerf) && isOneOfVolumeNode) || isEMS {
 		p.Target.Version = r.Remote.Version
-		p.Target.Model = "cdot"
+		p.Target.Model = conf.CDOT
 		if p.Target.Serial == "" {
 			p.Target.Serial = r.Remote.UUID
 		}

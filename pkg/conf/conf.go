@@ -810,19 +810,19 @@ type Pollers struct {
 	namesInOrder []string
 }
 
-var defaultTemplate = &[]string{"default.yaml", "custom.yaml"}
+var DefaultTemplates = &[]string{"default.yaml", "custom.yaml"}
 
 func NewCollector(name string) Collector {
 	return Collector{
 		Name:      name,
-		Templates: defaultTemplate,
+		Templates: DefaultTemplates,
 	}
 }
 
 func (c *Collector) UnmarshalYAML(n ast.Node) error {
 	if n.Type() == ast.StringType {
 		c.Name = n.(*ast.StringNode).Value
-		c.Templates = defaultTemplate
+		c.Templates = DefaultTemplates
 	} else if n.Type() == ast.MappingType {
 		values := n.(*ast.MappingNode).Values
 		if len(values) > 0 {

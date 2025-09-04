@@ -123,8 +123,8 @@ func (c *CiscoRest) LoadTemplate() (string, error) {
 	)
 
 	jitter := c.Params.GetChildContentS("jitter")
-
-	template, path, err = c.ImportSubTemplate(c.Remote.Model, rest2.TemplateFn(c.Params, c.Object), jitter, c.Remote.Version)
+	models := []string{c.Remote.Model}
+	template, path, err = c.ImportSubTemplate(models, rest2.TemplateFn(c.Params, c.Object), jitter, c.Remote.Version)
 	if err != nil {
 		return "", err
 	}

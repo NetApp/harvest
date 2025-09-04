@@ -122,7 +122,7 @@ func (c *Client) getSystem() error {
 
 	r.Version = strconv.Itoa(versionT[0]) + "." + strconv.Itoa(versionT[1]) + "." + strconv.Itoa(versionT[2])
 	if isClustered {
-		r.Model = "cdot"
+		r.Model = conf.CDOT
 	} else {
 		r.Model = "7mode"
 	}
