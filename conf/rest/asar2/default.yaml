@@ -6,4 +6,5 @@ schedule:
   - data: 3m
 
 objects:
+  AvailabilityZone:               availability_zone.yaml
   StorageUnit:                    storage_unit.yaml
