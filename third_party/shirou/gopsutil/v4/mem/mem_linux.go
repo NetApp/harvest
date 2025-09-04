@@ -7,6 +7,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"github.com/netapp/harvest/v2/third_party/shirou/gopsutil/v4/internal/common"
 	"io"
 	"math"
 	"os"
@@ -14,8 +15,6 @@ import (
 	"strings"
 
 	"golang.org/x/sys/unix"
-
-	"github.com/netapp/harvest/v2/third_party/shirou/gopsutil/v4/internal/common"
 )
 
 func VirtualMemory() (*VirtualMemoryStat, error) {
@@ -32,7 +31,10 @@ func VirtualMemoryWithContext(ctx context.Context) (*VirtualMemoryStat, error) {
 
 func fillFromMeminfoWithContext(ctx context.Context) (*VirtualMemoryStat, *ExVirtualMemory, error) {
 	filename := common.HostProcWithContext(ctx, "meminfo")
-	lines, _ := common.ReadLines(filename)
+	lines, err := common.ReadLines(filename)
+	if err != nil {
+		return nil, nil, fmt.Errorf("couldn't read %s: %w", filename, err)
+	}
 
 	// flag if MemAvailable is in /proc/meminfo (kernel 3.14+)
 	memavail := false
@@ -303,8 +305,7 @@ func fillFromMeminfoWithContext(ctx context.Context) (*VirtualMemoryStat, *ExVir
 			ret.Available = ret.Cached + ret.Free
 		}
 	}
-
-	ret.Used = ret.Total - ret.Free - ret.Buffers - ret.Cached
+	ret.Used = ret.Total - ret.Available
 	ret.UsedPercent = float64(ret.Used) / float64(ret.Total) * 100.0
 
 	return ret, retEx, nil
@@ -332,7 +333,10 @@ func SwapMemoryWithContext(ctx context.Context) (*SwapMemoryStat, error) {
 		ret.UsedPercent = 0
 	}
 	filename := common.HostProcWithContext(ctx, "vmstat")
-	lines, _ := common.ReadLines(filename)
+	lines, err := common.ReadLines(filename)
+	if err != nil {
+		return nil, fmt.Errorf("couldn't read %s: %w", filename, err)
+	}
 	for _, l := range lines {
 		fields := strings.Fields(l)
 		if len(fields) < 2 {

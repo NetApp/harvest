@@ -2,6 +2,7 @@ package rest
 
 import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
+	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/template"
@@ -16,7 +17,16 @@ import (
 func (r *Rest) LoadTemplate() (string, error) {
 
 	jitter := r.Params.GetChildContentS("jitter")
-	subTemplate, path, err := r.ImportSubTemplate("", TemplateFn(r.Params, r.Object), jitter, r.Remote.Version)
+	filename := TemplateFn(r.Params, r.Object)
+
+	var models []string
+	if r.Remote.IsASAr2() {
+		models = []string{conf.ASAr2, ""}
+	} else {
+		models = []string{""}
+	}
+
+	subTemplate, path, err := r.ImportSubTemplate(models, filename, jitter, r.Remote.Version)
 	if err != nil {
 		return "", err
 	}

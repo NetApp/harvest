@@ -32,6 +32,7 @@ const (
 	ErrMetroClusterNotConfigured = harvestError("MetroCluster is not configured in cluster")
 	ErrTemplateNotSupported      = harvestError("template not supported")
 	ErrMissingMetric             = harvestError("missing metric")
+	ErrNoTemplateMatch           = harvestError("no template matches")
 )
 
 const (

@@ -188,6 +188,9 @@ func visitRestTemplates(dir string, client *rest2.Client, eachTemp func(path str
 		if strings.HasSuffix(path, "default.yaml") {
 			return nil
 		}
+		if strings.Contains(path, "asar2") {
+			return nil
+		}
 
 		if skipTemplates[shortPath(path)] {
 			return nil

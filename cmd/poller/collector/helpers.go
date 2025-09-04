@@ -26,6 +26,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -66,7 +67,7 @@ var versionRegex = regexp.MustCompile(`\d+\.\d+\.\d+`)
 // are sorted, and we try to return the subtemplate that most closely matches the ONTAP version.
 // Model is cdot or 7mode, filename is the name of the subtemplate, and ver is the
 // ONTAP version triple (generation, major, minor)
-func (c *AbstractCollector) ImportSubTemplate(model, filename, jitter string, verWithDots string) (*node.Node, string, error) {
+func (c *AbstractCollector) ImportSubTemplate(models []string, filename, jitter string, verWithDots string) (*node.Node, string, error) {
 
 	var (
 		selectedVersion, templatePath string
@@ -96,53 +97,57 @@ func (c *AbstractCollector) ImportSubTemplate(model, filename, jitter string, ve
 nextFile:
 	for _, f := range filenames {
 		for _, confPath := range c.Options.ConfPaths {
-			selectedVersion, err = c.findBestFit(homePath, confPath, f, model, ontapVersion)
-			if err != nil || selectedVersion == "" {
-				continue
-			}
+			for _, model := range models {
+				selectedVersion, err = c.findBestFit(homePath, confPath, f, model, ontapVersion)
 
-			templatePath = filepath.Join(selectedVersion, f)
-			if jitter == "" {
-				jitter = "none"
-			}
-
-			c.Logger.Info(
-				"best-fit template",
-				slog.String("path", templatePath),
-				slog.String("v", verWithDots),
-				slog.String("jitter", jitter),
-			)
-
-			if finalTemplate == nil {
-				finalTemplate, err = tree.ImportYaml(templatePath)
-				if err == nil {
-					finalTemplate.PreprocessTemplate()
-					continue nextFile
-				}
-				importErrs = append(importErrs, fmt.Errorf("failed to import template: %s file: %w", templatePath, err))
-			} else {
-				// any errors w.r.t customTemplate are warnings and should not be returned to caller
-				customTemplate, customTemplateErr = tree.ImportYaml(templatePath)
-				if customTemplateErr != nil {
-					c.Logger.Warn("Unable to import template file. File is invalid or empty",
-						slogx.Err(customTemplateErr),
-						slog.String("path", templatePath),
-					)
+				if err != nil {
+					importErrs = append(importErrs, err)
 					continue
 				}
-				customTemplate.PreprocessTemplate()
-				finalTemplate.Merge(customTemplate, nil)
-				continue nextFile
+
+				templatePath = filepath.Join(selectedVersion, f)
+				if jitter == "" {
+					jitter = "none"
+				}
+
+				c.Logger.Info(
+					"best-fit template",
+					slog.String("path", templatePath),
+					slog.String("v", verWithDots),
+					slog.String("jitter", jitter),
+				)
+
+				if finalTemplate == nil {
+					finalTemplate, err = tree.ImportYaml(templatePath)
+					if err == nil {
+						finalTemplate.PreprocessTemplate()
+						continue nextFile
+					}
+					importErrs = append(importErrs, fmt.Errorf("failed to import template: %s file: %w", templatePath, err))
+				} else {
+					// any errors w.r.t customTemplate are warnings and should not be returned to caller
+					customTemplate, customTemplateErr = tree.ImportYaml(templatePath)
+					if customTemplateErr != nil {
+						c.Logger.Warn("Unable to import template file. File is invalid or empty",
+							slogx.Err(customTemplateErr),
+							slog.String("path", templatePath),
+						)
+						continue
+					}
+					customTemplate.PreprocessTemplate()
+					finalTemplate.Merge(customTemplate, nil)
+					continue nextFile
+				}
 			}
 		}
 
 		if finalTemplate == nil {
 			// workaround for 7mode template that will always be missing in cdot
-			if c.Object == "Status_7mode" && model == "cdot" {
+			if c.Object == "Status_7mode" && slices.Contains(models, conf.CDOT) {
 				return nil, "", errs.New(errs.ErrWrongTemplate, "unable to load status_7.yaml on cdot")
 			}
-			return nil, "", fmt.Errorf("no best-fit template for %s on confPath %s %w",
-				filename, c.Options.ConfPath, errors.Join(importErrs...))
+			return nil, "", fmt.Errorf("no best-fit template for %s models %v on confPath [%s] %w",
+				filename, models, c.Options.ConfPath, errors.Join(importErrs...))
 		}
 	}
 
@@ -189,7 +194,7 @@ func (c *AbstractCollector) findBestFit(homePath string, confPath string, name s
 	}
 
 	if len(availableVersions) == 0 {
-		return "", nil
+		return "", errs.ErrNoTemplateMatch
 	}
 
 	versions := make([]*version.Version, len(availableVersions))
