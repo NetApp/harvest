@@ -12244,6 +12244,42 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#storage_unit_labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      storage_unit_labels
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storage_unit_space_efficiency_ratio" class="md-nav__link">
+    <span class="md-ellipsis">
+      storage_unit_space_efficiency_ratio
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storage_unit_space_size" class="md-nav__link">
+    <span class="md-ellipsis">
+      storage_unit_space_size
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storage_unit_space_used" class="md-nav__link">
+    <span class="md-ellipsis">
+      storage_unit_space_used
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#support_auto_update_labels" class="md-nav__link">
     <span class="md-ellipsis">
       support_auto_update_labels
@@ -26161,6 +26197,42 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#storage_unit_labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      storage_unit_labels
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storage_unit_space_efficiency_ratio" class="md-nav__link">
+    <span class="md-ellipsis">
+      storage_unit_space_efficiency_ratio
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storage_unit_space_size" class="md-nav__link">
+    <span class="md-ellipsis">
+      storage_unit_space_size
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storage_unit_space_used" class="md-nav__link">
+    <span class="md-ellipsis">
+      storage_unit_space_used
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#support_auto_update_labels" class="md-nav__link">
     <span class="md-ellipsis">
       support_auto_update_labels
@@ -29028,7 +29100,7 @@ These can be generated on demand by running <code>bin/harvest grafana metrics</c
 <p>More information about ONTAP REST performance counters can be found <a href="https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html">here</a>.</p>
 </li>
 </ul>
-<div class="highlight"><pre><span></span><code>Creation Date : 2025-Sep-02
+<div class="highlight"><pre><span></span><code>Creation Date : 2025-Sep-04
 ONTAP Version: 9.16.1
 </code></pre></div>
 <details>
@@ -77347,6 +77419,83 @@ ONTAP Version: 9.16.1
 </tbody>
 </table>
 </div>
+<h3 id="storage_unit_labels">storage_unit_labels<a class="headerlink" href="#storage_unit_labels" title="Permanent link">&para;</a></h3>
+<p>This metric provides information about StorageUnit</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/storage/storage-units</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/rest/asar2/9.16.0/storage_unit.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="storage_unit_space_efficiency_ratio">storage_unit_space_efficiency_ratio<a class="headerlink" href="#storage_unit_space_efficiency_ratio" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/storage/storage-units</code></td>
+<td><code>space.efficiency_ratio</code></td>
+<td>conf/rest/asar2/9.16.0/storage_unit.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="storage_unit_space_size">storage_unit_space_size<a class="headerlink" href="#storage_unit_space_size" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/storage/storage-units</code></td>
+<td><code>space.size</code></td>
+<td>conf/rest/asar2/9.16.0/storage_unit.yaml</td>
+</tr>
+</tbody>
+</table>
+<h3 id="storage_unit_space_used">storage_unit_space_used<a class="headerlink" href="#storage_unit_space_used" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/storage/storage-units</code></td>
+<td><code>space.used</code></td>
+<td>conf/rest/asar2/9.16.0/storage_unit.yaml</td>
+</tr>
+</tbody>
+</table>
 <h3 id="support_auto_update_labels">support_auto_update_labels<a class="headerlink" href="#support_auto_update_labels" title="Permanent link">&para;</a></h3>
 <p>This metric provides information about SupportAutoUpdate</p>
 <table>

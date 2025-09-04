@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#supported-harvest-metrics" class="md-skip">
+        <a href="#prepare-ara-r2-cluster" class="md-skip">
           Skip to content
         </a>
       
@@ -702,6 +702,30 @@
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prepare-ara-r2-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prepare ARA r2 cluster
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prepare ARA r2 cluster">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rest-least-privilege-role" class="md-nav__link">
+    <span class="md-ellipsis">
+      REST least-privilege role
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
   <a href="#supported-harvest-metrics" class="md-nav__link">
@@ -1764,6 +1788,30 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#prepare-ara-r2-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prepare ARA r2 cluster
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prepare ARA r2 cluster">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rest-least-privilege-role" class="md-nav__link">
+    <span class="md-ellipsis">
+      REST least-privilege role
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#supported-harvest-metrics" class="md-nav__link">
     <span class="md-ellipsis">
       Supported Harvest Metrics
@@ -1790,6 +1838,13 @@
   <h1>ASA r2</h1>
 
 <p>Since Harvest 24.11.1, NetApp ASA r2 systems monitoring is supported. We recommend using the latest Harvest version to ensure compatibility with ASA r2 systems.</p>
+<h2 id="prepare-ara-r2-cluster">Prepare ARA r2 cluster<a class="headerlink" href="#prepare-ara-r2-cluster" title="Permanent link">&para;</a></h2>
+<p>You need to prepare your ASA r2 cluster for monitoring by following the steps outlined in <a href="../prepare-cdot-clusters/#rest-least-privilege-role">monitoring ONTAP systems</a>, and then perform the following steps.</p>
+<h4 id="rest-least-privilege-role">REST least-privilege role<a class="headerlink" href="#rest-least-privilege-role" title="Permanent link">&para;</a></h4>
+<p>Verify there are no errors when you copy/paste these. Warnings are fine.</p>
+<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/storage/storage-units
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/storage/availability-zones
+</code></pre></div>
 <h2 id="supported-harvest-metrics">Supported Harvest Metrics<a class="headerlink" href="#supported-harvest-metrics" title="Permanent link">&para;</a></h2>
 <p>Most capacity metrics collected via the REST collector are available in ASA r2 monitoring. However, only limited performance metrics are supported in ASA r2 systems. That is because ASA r2 clusters do not support the <code>RestPerf</code> collector. Instead, Harvest uses the <a href="../configure-keyperf/">KeyPerf</a> collector to gather latency, IOPS, and throughput performance metrics for a limited set of objects.</p>
 <p>Harvest automatically detects ASA r2 systems and replaces any <code>ZapiPerf</code> or <code>RestPerf</code> collectors with the <code>KeyPerf</code> collector. </p>
