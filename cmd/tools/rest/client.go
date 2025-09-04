@@ -338,17 +338,7 @@ func (c *Client) UpdateClusterInfo(retries int) error {
 		}
 
 		results := gjson.ParseBytes(content)
-		c.remote.Model = "cdot"
-		c.remote.Name = results.Get("name").ClonedString()
-		c.remote.UUID = results.Get("uuid").ClonedString()
-		c.remote.Version = results.Get("version.generation").ClonedString() + "." +
-			results.Get("version.major").ClonedString() + "." +
-			results.Get("version.minor").ClonedString()
-		c.remote.Release = results.Get("version.full").ClonedString()
-		c.remote.IsSanOptimized = results.Get("san_optimized").Bool()
-		c.remote.IsDisaggregated = results.Get("disaggregated").Bool()
-		c.remote.IsClustered = true
-		c.remote.HasREST = true
+		c.remote = conf.NewRemote(results)
 
 		return nil
 	}
