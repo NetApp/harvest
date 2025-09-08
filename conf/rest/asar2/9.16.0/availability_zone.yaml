@@ -1,0 +1,17 @@
+name:                     AvailabilityZone
+query:                    api/storage/availability-zones
+object:                   availability_zone
+
+counters:
+  - ^^uuid
+  - ^name
+  - ^nodes.#.name                            => nodes
+  - space.available
+  - space.physical_used
+  - space.physical_used_percent
+  - space.size
+
+export_options:
+  instance_keys:
+    - name
+    - nodes
