@@ -137,6 +137,7 @@ var (
 
 	excludeDocumentedRestMetrics = []string{
 		"aggr_hybrid_disk_count",
+		"availability_zone_",
 		"cifs_session_idle_duration",
 		"cluster_software",
 		"ems_events",
