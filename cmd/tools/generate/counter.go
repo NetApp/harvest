@@ -101,17 +101,21 @@ var (
 	}
 
 	knownDescriptionGaps = map[string]struct{}{
-		"ontaps3_object_count":                      {},
-		"security_certificate_expiry_time":          {},
-		"storage_unit_space_efficiency_ratio":       {},
-		"storage_unit_space_size":                   {},
-		"storage_unit_space_used":                   {},
-		"volume_capacity_tier_footprint":            {},
-		"volume_capacity_tier_footprint_percent":    {},
-		"volume_num_compress_attempts":              {},
-		"volume_num_compress_fail":                  {},
-		"volume_performance_tier_footprint":         {},
-		"volume_performance_tier_footprint_percent": {},
+		"availability_zone_space_available":             {},
+		"availability_zone_space_physical_used":         {},
+		"availability_zone_space_physical_used_percent": {},
+		"availability_zone_space_size":                  {},
+		"ontaps3_object_count":                          {},
+		"security_certificate_expiry_time":              {},
+		"storage_unit_space_efficiency_ratio":           {},
+		"storage_unit_space_size":                       {},
+		"storage_unit_space_used":                       {},
+		"volume_capacity_tier_footprint":                {},
+		"volume_capacity_tier_footprint_percent":        {},
+		"volume_num_compress_attempts":                  {},
+		"volume_num_compress_fail":                      {},
+		"volume_performance_tier_footprint":             {},
+		"volume_performance_tier_footprint_percent":     {},
 	}
 
 	knownMappingGaps = map[string]struct{}{
