@@ -57,6 +57,7 @@ var zapiCounterMap = map[string]struct{}{
 	// Skip this counter in CI environments because it was introduced in version 9.15.
 	// The CI currently operates with clusters running versions earlier than 9.15 for the ZAPI collector.
 	"volume_total_metadata_footprint": {},
+	"volume_hot_data":                 {},
 }
 
 // restCounterMap are additional counters, above and beyond the ones from counterMap, which should be excluded from Rest
