@@ -2159,7 +2159,7 @@
               "showLineNumbers": false,
               "showMiniMap": false
             },
-            "content": "This row would displays the detail of hot and cold data of only those volumes which has tiering policy other than none. Those volumes having tiering policy value as none would not be displayed here. <br> [Cold data detection logic](https://github.com/NetApp/harvest/wiki/FAQ#cold-data-detection-detail)",
+            "content": "This row displays the details of hot and cold data for volumes that have a tiering policy other than 'none'. Volumes with a 'none' tiering policy will not be shown. <br> [Cold data detection logic](https://github.com/NetApp/harvest/wiki/FAQ#cold-data-detection-detail)",
             "mode": "markdown"
           },
           "pluginVersion": "8.1.8",
@@ -2168,7 +2168,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Displays detail of Hot Cold data resides in the volume which has tiering policy other than none. \n\n|  Column  | Represents  |  \n|---|---|\n| `Hot Data` | Space used by the performance tier (active data) in volume |  \n| `Hot Data %` | % of active data in volume |\n| `Cold Data` | Space used by capacity tier (inactive data) in volume |\n|`Cold Data %`| % of inactive data in volume |.",
+          "description": "Display hot and cold data for volume that have a tiering policy other than 'none'. \n\n|  Column  | Represents  |  \n|---|---|\n| `Hot Data` | Space used by the performance tier (active data) in volume |  \n| `Hot Data %` | % of active data in volume |\n| `Cold Data` | Space used by capacity tier (inactive data) in volume |\n|`Cold Data %`| % of inactive data in volume |.",
           "fieldConfig": {
             "defaults": {
               "color": {
