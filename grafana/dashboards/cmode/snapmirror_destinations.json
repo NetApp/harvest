@@ -1154,6 +1154,98 @@
       "type": "timeseries"
     },
     {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "This panel displays the total amount of data read from and written to the destination volume in an SnapMirror or SnapVault relationship.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "log": 10,
+              "type": "log"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "Bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 34
+      },
+      "id": 147,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "volume_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\nand on (datacenter, cluster, svm, volume)\n  topk(\n    $TopResources,\n    (\n        avg_over_time(\n          volume_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n        )\n      * on (datacenter, cluster, svm, volume)\n        label_replace(\n          label_replace(\n            snapmirror_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",derived_relationship_type!=\"load_sharing\",destination_volume=~\"$Volume\",destination_vserver=~\"$SVM\",relationship_id!=\"\"},\n            \"volume\",\n            \"$1\",\n            \"destination_volume\",\n            \"(.*)\"\n          ),\n          \"svm\",\n          \"$1\",\n          \"destination_vserver\",\n          \"(.*)\"\n        )\n    )\n  )",
+          "interval": "",
+          "legendFormat": "{{svm}} - {{volume}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top $TopResources Destination Volumes by Average Throughput",
+      "transformations": [],
+      "type": "timeseries"
+    },
+    {
       "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
@@ -2033,5 +2125,5 @@
   "timezone": "",
   "title": "ONTAP: SnapMirror Destinations",
   "uid": "cdot-snapmirror-destinations",
-  "version": 2
+  "version": 3
 }
