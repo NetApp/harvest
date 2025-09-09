@@ -27,6 +27,7 @@ func (p *Prometheus) startHTTPD(addr string, port int) {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", p.ServeInfo)
+	mux.HandleFunc("/health", p.checkHealth)
 	mux.HandleFunc("/metrics", p.ServeMetrics)
 	mux.HandleFunc("localhost/debug/pprof/", pprof.Index)
 	mux.HandleFunc("localhost/debug/pprof/cmdline", pprof.Cmdline)
@@ -65,6 +66,15 @@ func (p *Prometheus) startHTTPD(addr string, port int) {
 			p.Logger.Error("Failed to start server", slogx.Err(err), slog.String("url", url))
 			os.Exit(1)
 		}
+	}
+}
+
+func (p *Prometheus) checkHealth(w http.ResponseWriter, _ *http.Request) {
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	w.WriteHeader(http.StatusOK)
+	if _, err := w.Write([]byte("OK")); err != nil {
+		p.Logger.Error("error", slogx.Err(err))
 	}
 }
 
