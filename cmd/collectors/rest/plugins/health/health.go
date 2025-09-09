@@ -37,7 +37,6 @@ const (
 	licenseHealthMatrix                           = "health_license"
 	emsHealthMatrix                               = "health_ems"
 	severityLabel                                 = "severity"
-	defaultDataPollDuration                       = 3 * time.Minute
 )
 
 type Health struct {
@@ -510,6 +509,16 @@ func (h *Health) collectHAAlerts() int {
 		}
 		return 0
 	}
+
+	// Build a map of partner names to check if a node with empty mode is someone's partner
+	partnerNodes := make(map[string]bool)
+	for _, record := range records {
+		partnerName := record.Get("partner_name").ClonedString()
+		if partnerName != "" {
+			partnerNodes[partnerName] = true
+		}
+	}
+
 	mat := h.data[haHealthMatrix]
 	for _, record := range records {
 		nodeName := record.Get("node").ClonedString()
@@ -517,24 +526,28 @@ func (h *Health) collectHAAlerts() int {
 		partnerName := record.Get("partner_name").ClonedString()
 		stateDescription := record.Get("state_description").ClonedString()
 		partnerState := record.Get("partner_state").ClonedString()
+		mode := record.Get("mode").ClonedString()
 		if takeoverPossible == "" {
 			takeoverPossible = "false"
 		}
 
-		instance, err = mat.NewInstance(nodeName)
-		if err != nil {
-			h.SLogger.Warn("error while creating instance", slog.String("key", nodeName))
-			continue
-		}
-		HAAlertCount++
-		instance.SetLabel("node", nodeName)
-		instance.SetLabel("takeover_possible", takeoverPossible)
-		instance.SetLabel("partner", partnerName)
-		instance.SetLabel("state_description", stateDescription)
-		instance.SetLabel("partner_state", partnerState)
-		instance.SetLabel(severityLabel, string(errr))
+		// Only process if mode is "ha" OR if this node is a partner in some other record
+		if mode == "ha" || (mode == "" && partnerNodes[nodeName]) {
+			instance, err = mat.NewInstance(nodeName)
+			if err != nil {
+				h.SLogger.Warn("error while creating instance", slog.String("key", nodeName))
+				continue
+			}
+			HAAlertCount++
+			instance.SetLabel("node", nodeName)
+			instance.SetLabel("takeover_possible", takeoverPossible)
+			instance.SetLabel("partner", partnerName)
+			instance.SetLabel("state_description", stateDescription)
+			instance.SetLabel("partner_state", partnerState)
+			instance.SetLabel(severityLabel, string(errr))
 
-		h.setAlertMetric(mat, instance, 1)
+			h.setAlertMetric(mat, instance, 1)
+		}
 	}
 	return HAAlertCount
 }
@@ -748,7 +761,7 @@ func (h *Health) getNodes() ([]gjson.Result, error) {
 }
 
 func (h *Health) getHADown(possible string) ([]gjson.Result, error) {
-	fields := []string{possible, "partner_name,state_description,partner_state"}
+	fields := []string{possible, "partner_name,state_description,partner_state,mode"}
 	query := "api/private/cli/storage/failover"
 	href := rest.NewHrefBuilder().
 		APIPath(query).

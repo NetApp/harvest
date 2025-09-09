@@ -21,6 +21,7 @@ counters:
   - ^space_mgmt_try_first                         => space_mgmt_try_first
   - ^state                                        => state
   - ^tags                                         => tags
+  - ^tiering_policy                               => tiering_policy
   - ^type                                         => type
   - ^uuid                                         => uuid
   - ^volume_style_extended                        => style
@@ -150,4 +151,5 @@ export_options:
     - state
     - svm_root
     - tags
+    - tiering_policy
     - type
