@@ -936,7 +936,8 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 
 		for _, name := range expr.vars {
 			v, ok := variables[name]
-			if !ok {
+			// label_replace queries would have $1, which could be treated as var 1.
+			if !ok && name != "1" {
 				t.Errorf(`dashboard=%s path=%s is using var that does not exist. var=%s`,
 					ShortPath(path), expr.path, name)
 				continue
