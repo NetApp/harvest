@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1752221944847,
+  "iteration": 1757332739044,
   "links": [
     {
       "asDropdown": true,
@@ -2131,26 +2131,294 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
         "y": 17
       },
-      "id": 46,
+      "id": 190,
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
           "gridPos": {
             "h": 2,
             "w": 24,
             "x": 0,
             "y": 18
+          },
+          "id": 192,
+          "options": {
+            "content": "This panel is available via REST collector. Enable the REST collector in your harvest config.<br>",
+            "mode": "markdown"
+          },
+          "pluginVersion": "8.1.8",
+          "type": "text"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Volume snaplock details.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "rgb(31, 176, 196)",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "node"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Node"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-node/ontap-node?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Node=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "aggr"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Aggregate"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-aggregate/ontap-aggregate?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Aggregate=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "svm"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "SVM"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-svm/ontap-svm?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-SVM=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "volume"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Volume"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-volume/ontap-volume?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${SVM:queryparam}&${__url_time_range}&var-Volume=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 20
+          },
+          "id": 188,
+          "interval": "1m",
+          "maxDataPoints": 2,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": true,
+                "displayName": "Space Used %"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "volume_snaplock_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n* on (cluster, datacenter, svm, volume) group_left (junction_path, style, tags)\n  volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "B"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Volume Snaplock",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "autocommit_period_display",
+                    "cluster",
+                    "datacenter",
+                    "default_retention_period_display",
+                    "maximum_retention_period_display",
+                    "minimum_retention_period_display",
+                    "svm",
+                    "type",
+                    "volume"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "autocommit_period_display": 5,
+                  "cluster": 1,
+                  "datacenter": 0,
+                  "default_retention_period_display": 6,
+                  "maximum_retention_period_display": 7,
+                  "minimum_retention_period_display": 8,
+                  "svm": 2,
+                  "type": 4,
+                  "volume": 3
+                },
+                "renameByName": {
+                  "autocommit_period_display": "Autocommit Period",
+                  "cluster": "Cluster",
+                  "datacenter": "Datacenter",
+                  "default_retention_period_display": "Default Retention Period",
+                  "maximum_retention_period_display": "Maximum Retention Period",
+                  "minimum_retention_period_display": "Minimum Retention Period",
+                  "svm": "SVM",
+                  "type": "Snaplock Type",
+                  "volume": "Volume"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Snaplock",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "id": 46,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "gridPos": {
+            "h": 2,
+            "w": 24,
+            "x": 0,
+            "y": 19
           },
           "id": 187,
           "options": {
@@ -2163,7 +2431,6 @@
             "mode": "markdown"
           },
           "pluginVersion": "8.1.8",
-          "title": "",
           "type": "text"
         },
         {
@@ -2365,7 +2632,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 20
+            "y": 21
           },
           "id": 45,
           "options": {
@@ -2530,7 +2797,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 27
+            "y": 28
           },
           "id": 47,
           "options": {
@@ -2619,7 +2886,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 27
+            "y": 28
           },
           "id": 48,
           "options": {
@@ -2710,7 +2977,7 @@
             "h": 12,
             "w": 12,
             "x": 0,
-            "y": 39
+            "y": 40
           },
           "id": 49,
           "options": {
@@ -2801,7 +3068,7 @@
             "h": 12,
             "w": 12,
             "x": 12,
-            "y": 39
+            "y": 40
           },
           "id": 50,
           "options": {
@@ -2846,7 +3113,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 18
+        "y": 19
       },
       "id": 38,
       "panels": [
@@ -2857,11 +3124,8 @@
             "defaults": {
               "custom": {
                 "align": "left",
-                "cellOptions": {
-                  "type": "auto"
-                },
-                "filterable": true,
-                "inspect": false
+                "displayMode": "auto",
+                "filterable": true
               },
               "mappings": [],
               "thresholds": {
@@ -3151,7 +3415,7 @@
             "h": 8,
             "w": 24,
             "x": 0,
-            "y": 18
+            "y": 20
           },
           "id": 186,
           "interval": "1m",
@@ -3174,7 +3438,7 @@
               }
             ]
           },
-          "pluginVersion": "11.3.2",
+          "pluginVersion": "8.1.8",
           "targets": [
             {
               "datasource": "${DS_PROMETHEUS}",
@@ -3339,7 +3603,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 19
+        "y": 20
       },
       "id": 28,
       "panels": [
@@ -4294,7 +4558,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 20
+        "y": 21
       },
       "id": 66,
       "panels": [
@@ -5589,7 +5853,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 21
+        "y": 22
       },
       "id": 142,
       "panels": [
@@ -5765,7 +6029,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "(\n      volume_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\n    / on (datacenter, cluster, svm, volume)\n      clamp_min(\n          volume_space_logical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\n        /\n          1099511627776,\n        1\n      )\n  )\nand on (datacenter, cluster, svm, volume)\n  bottomk(\n    $TopResources,\n      min by (datacenter, cluster, svm, volume) (\n          (\n              avg_over_time(\n                volume_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n              )\n            * on (datacenter, cluster, svm, volume) group_left ()\n              (\n                max by (datacenter, cluster, svm, volume) (\n                  volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n                )\n              )\n          )\n        /\n          clamp_min(\n              (\n                  avg_over_time(\n                    volume_space_logical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n                  )\n                * on (datacenter, cluster, svm, volume) group_left ()\n                  (\n                    max by (datacenter, cluster, svm, volume) (\n                      volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n                    )\n                  )\n              )\n            /\n              1099511627776,\n            1\n          )\n      )\n    and on (datacenter, cluster, svm, volume)\n      (\n              volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",root_volume!=\"Yes\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\n            * on (datacenter, cluster, svm, volume)\n              min by (datacenter, cluster, svm, volume) (\n                avg_over_time(\n                  volume_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n                )\n              )\n          * on (datacenter, cluster, svm, volume) group_left ()\n            (\n              max by (datacenter, cluster, svm, volume) (\n                volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n              )\n            )\n        \u003e\n          50\n      )\n  )",
+              "expr": "(\n      volume_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\n    / on (datacenter, cluster, svm, volume)\n      clamp_min(\n          volume_space_logical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\n        /\n          1099511627776,\n        1\n      )\n  )\nand on (datacenter, cluster, svm, volume)\n  bottomk(\n    $TopResources,\n      min by (datacenter, cluster, svm, volume) (\n          (\n              avg_over_time(\n                volume_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n              )\n            * on (datacenter, cluster, svm, volume) group_left ()\n              (\n                max by (datacenter, cluster, svm, volume) (\n                  volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n                )\n              )\n          )\n        /\n          clamp_min(\n              (\n                  avg_over_time(\n                    volume_space_logical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n                  )\n                * on (datacenter, cluster, svm, volume) group_left ()\n                  (\n                    max by (datacenter, cluster, svm, volume) (\n                      volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n                    )\n                  )\n              )\n            /\n              1099511627776,\n            1\n          )\n      )\n    and on (datacenter, cluster, svm, volume)\n      (\n              volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",root_volume!=\"Yes\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}\n            * on (datacenter, cluster, svm, volume)\n              min by (datacenter, cluster, svm, volume) (\n                avg_over_time(\n                  volume_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",volume=~\"$Volume\"}[3h] @ end()\n                )\n              )\n          * on (datacenter, cluster, svm, volume) group_left ()\n            (\n              max by (datacenter, cluster, svm, volume) (\n                volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}\n              )\n            )\n        >\n          50\n      )\n  )",
               "interval": "",
               "legendFormat": "{{svm}} - {{volume}}",
               "refId": "A"
@@ -5788,7 +6052,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 23
       },
       "id": 70,
       "panels": [
@@ -6624,7 +6888,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 23
+        "y": 24
       },
       "id": 71,
       "panels": [
@@ -7208,7 +7472,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 24
+        "y": 25
       },
       "id": 153,
       "panels": [
@@ -7607,7 +7871,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 25
+        "y": 26
       },
       "id": 165,
       "panels": [
@@ -8006,7 +8270,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 26
+        "y": 27
       },
       "id": 92,
       "panels": [
@@ -8500,7 +8764,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 27
+        "y": 28
       },
       "id": 99,
       "panels": [
@@ -9727,7 +9991,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 28
+        "y": 29
       },
       "id": 98,
       "panels": [
@@ -10007,7 +10271,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 29
+        "y": 30
       },
       "id": 105,
       "panels": [
@@ -10017,7 +10281,7 @@
             "h": 2,
             "w": 24,
             "x": 0,
-            "y": 28
+            "y": 31
           },
           "id": 110,
           "options": {
@@ -10088,7 +10352,7 @@
             "h": 8,
             "w": 8,
             "x": 0,
-            "y": 30
+            "y": 33
           },
           "id": 108,
           "options": {
@@ -10180,7 +10444,7 @@
             "h": 8,
             "w": 8,
             "x": 8,
-            "y": 30
+            "y": 33
           },
           "id": 106,
           "options": {
@@ -10272,7 +10536,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 30
+            "y": 33
           },
           "id": 107,
           "options": {
@@ -10316,7 +10580,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 30
+        "y": 31
       },
       "id": 135,
       "panels": [
@@ -11115,7 +11379,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 31
+        "y": 32
       },
       "id": 136,
       "panels": [
@@ -11376,7 +11640,7 @@
             "h": 7,
             "w": 24,
             "x": 0,
-            "y": 30
+            "y": 33
           },
           "id": 149,
           "interval": "1m",

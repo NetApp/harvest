@@ -31,6 +31,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/tagmapper"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/volume"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/volumeanalytics"
+	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/volumesnaplock"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/vscanpool"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/workload"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
@@ -518,6 +519,8 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return volume.New(abc)
 	case "VolumeAnalytics":
 		return volumeanalytics.New(abc)
+	case "VolumeSnaplock":
+		return volumesnaplock.New(abc)
 	case "Certificate":
 		return certificate.New(abc)
 	case "SVM":

@@ -1,0 +1,30 @@
+name:                     VolumeSnaplock
+query:                    api/private/cli/volume/snaplock
+object:                   volume_snaplock
+
+counters:
+  - ^^volume                           => volume
+  - ^^vserver                          => svm
+  - ^autocommit_period
+  - ^default_retention_period
+  - ^maximum_retention_period
+  - ^minimum_retention_period
+  - ^type
+
+plugins:
+  - VolumeSnaplock
+
+export_options:
+  instance_keys:
+    - svm
+    - volume
+  instance_labels:
+    - minimum_retention_period_seconds
+    - minimum_retention_period_display
+    - default_retention_period_seconds
+    - default_retention_period_display
+    - maximum_retention_period_seconds
+    - maximum_retention_period_display
+    - autocommit_period_seconds
+    - autocommit_period_display
+    - type
