@@ -1155,7 +1155,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "This panel represents the total amount of data that has been read from and written to a specific volume which is destination of SnapMirror or SnapVault relationship.",
+      "description": "This panel displays the total amount of data read from and written to the destination volume in an SnapMirror or SnapVault relationship.",
       "fieldConfig": {
         "defaults": {
           "color": {
