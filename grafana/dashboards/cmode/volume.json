@@ -71,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1757332739044,
+  "iteration": 1757501688710,
   "links": [
     {
       "asDropdown": true,
@@ -2326,8 +2326,8 @@
             "showHeader": true,
             "sortBy": [
               {
-                "desc": true,
-                "displayName": "Space Used %"
+                "desc": false,
+                "displayName": "Volume"
               }
             ]
           },
