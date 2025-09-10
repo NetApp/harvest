@@ -2335,7 +2335,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "volume_snaplock_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n* on (cluster, datacenter, svm, volume) group_left (junction_path, style, tags)\n  volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}",
+              "expr": "volume_snaplock_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\",volume=~\"$Volume\"}\n* on (cluster, datacenter, svm, volume) group_left ()\n  volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",junction_path=~\"$Junction\",style!=\"flexgroup_constituent\",svm=~\"$SVM\",tags=~\".*$Tag.*\",volume=~\"$Volume\"}",
               "format": "table",
               "instant": true,
               "interval": "",
