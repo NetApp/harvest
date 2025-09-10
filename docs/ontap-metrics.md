@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Aug-29
+Creation Date : 2025-Sep-10
 ONTAP Version: 9.16.1
 ```
 
@@ -1681,6 +1681,46 @@ Performance metric for write I/O operations.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/storage/aggregates` | `statistics.iops_raw.write`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/aggr.yaml |
+
+
+
+### availability_zone_space_available
+
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/availability-zones` | `space.available` | conf/rest/asar2/9.16.0/availability_zone.yaml |
+
+
+
+### availability_zone_space_physical_used
+
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/availability-zones` | `space.physical_used` | conf/rest/asar2/9.16.0/availability_zone.yaml |
+
+
+
+### availability_zone_space_physical_used_percent
+
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/availability-zones` | `space.physical_used_percent` | conf/rest/asar2/9.16.0/availability_zone.yaml |
+
+
+
+### availability_zone_space_size
+
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/availability-zones` | `space.size` | conf/rest/asar2/9.16.0/availability_zone.yaml |
 
 
 
@@ -18226,6 +18266,7 @@ The `snapmirror_labels` metric is visualized in the following Grafana dashboards
 | ONTAP: SnapMirror Destinations | Highlights | piechart | [Relationships by Protection Policy](/d/cdot-snapmirror-destinations/ontap3a-snapmirror destinations?orgId=1&viewPanel=111) |
 | ONTAP: SnapMirror Destinations | Highlights | stat | [Healthy](/d/cdot-snapmirror-destinations/ontap3a-snapmirror destinations?orgId=1&viewPanel=143) |
 | ONTAP: SnapMirror Destinations | Highlights | table | [Relationships](/d/cdot-snapmirror-destinations/ontap3a-snapmirror destinations?orgId=1&viewPanel=28) |
+| ONTAP: SnapMirror Destinations | Highlights | timeseries | [Top $TopResources Destination Volumes by Average Throughput](/d/cdot-snapmirror-destinations/ontap3a-snapmirror destinations?orgId=1&viewPanel=147) |
 | ONTAP: SnapMirror Destinations | Consistency Group Data Protection | stat | [Unhealthy](/d/cdot-snapmirror-destinations/ontap3a-snapmirror destinations?orgId=1&viewPanel=144) |
 | ONTAP: SnapMirror Destinations | Consistency Group Data Protection | piechart | [Consistency Group relationships by relationship type](/d/cdot-snapmirror-destinations/ontap3a-snapmirror destinations?orgId=1&viewPanel=113) |
 | ONTAP: SnapMirror Destinations | Consistency Group Data Protection | stat | [Healthy](/d/cdot-snapmirror-destinations/ontap3a-snapmirror destinations?orgId=1&viewPanel=145) |
@@ -18502,6 +18543,46 @@ The `snapshot_volume_violation_total_size` metric is visualized in the following
 | ONTAP: Data Protection | Snapshot Policy Violations | stat | [Snapshot Violations Total Size](/d/cdot-data-protection/ontap3a-data protection?orgId=1&viewPanel=171) |
 | ONTAP: Data Protection | Snapshot Policy Violations | table | [Snapshot Violation Details](/d/cdot-data-protection/ontap3a-data protection?orgId=1&viewPanel=168) |
 ///
+
+
+
+### storage_unit_labels
+
+This metric provides information about StorageUnit
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/storage-units` | `Harvest generated` | conf/rest/asar2/9.16.0/storage_unit.yaml |
+
+
+
+### storage_unit_space_efficiency_ratio
+
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/storage-units` | `space.efficiency_ratio` | conf/rest/asar2/9.16.0/storage_unit.yaml |
+
+
+
+### storage_unit_space_size
+
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/storage-units` | `space.size` | conf/rest/asar2/9.16.0/storage_unit.yaml |
+
+
+
+### storage_unit_space_used
+
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/storage-units` | `space.used` | conf/rest/asar2/9.16.0/storage_unit.yaml |
 
 
 
@@ -21796,7 +21877,7 @@ Hot data size that is physically used in the volume.
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 The `volume_hot_data` metric is visualized in the following Grafana dashboards:
-
+    
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
@@ -21945,6 +22026,7 @@ The `volume_labels` metric is visualized in the following Grafana dashboards:
 | ONTAP: Volume | Volume Table | table | [Top $TopResources Volumes by Write Latency](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=40) |
 | ONTAP: Volume | Volume Table | table | [Top $TopResources Volumes by Write Throughput](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=42) |
 | ONTAP: Volume | Volume Table | table | [Top $TopResources Volumes by Write IOPS](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=44) |
+| ONTAP: Volume | Snaplock | table | [Volume Snaplock](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=188) |
 | ONTAP: Volume | Volume Hot-Cold Data | table | [Volumes by Cold data](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=45) |
 | ONTAP: Volume | Volume Hot-Cold Data | timeseries | [Top $TopResources Volumes by Cold Data](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=47) |
 | ONTAP: Volume | Volume Hot-Cold Data | timeseries | [Top $TopResources Volumes by Hot Data](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=48) |
@@ -22771,6 +22853,24 @@ The `volume_size_used_percent` metric is visualized in the following Grafana das
 
 
 
+### volume_snaplock_labels
+
+This metric provides information about VolumeSnaplock
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/volume/snaplock` | `Harvest generated` | conf/rest/9.12.0/volume_snaplock.yaml |
+
+The `volume_snaplock_labels` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Volume | Snaplock | table | [Volume Snaplock](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=188) |
+///
+
+
+
 ### volume_snapshot_count
 
 Number of snapshots in the volume.
@@ -23305,6 +23405,7 @@ The `volume_total_data` metric is visualized in the following Grafana dashboards
 |--------|----------|--------|--------|
 | ONTAP: Cluster | Throughput | timeseries | [Data](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=107) |
 | ONTAP: Datacenter | Performance | timeseries | [Top $TopResources Throughput by Cluster](/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=107) |
+| ONTAP: SnapMirror Destinations | Highlights | timeseries | [Top $TopResources Destination Volumes by Average Throughput](/d/cdot-snapmirror-destinations/ontap3a-snapmirror destinations?orgId=1&viewPanel=147) |
 ///
 
 
