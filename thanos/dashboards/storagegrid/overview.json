@@ -1,0 +1,2386 @@
+{
+  "__inputs": [
+    {
+      "description": "",
+      "label": "Prometheus",
+      "name": "DS_PROMETHEUS",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus",
+      "type": "datasource"
+    }
+  ],
+  "__requires": [
+    {
+      "id": "grafana",
+      "name": "Grafana",
+      "type": "grafana",
+      "version": "8.1.8"
+    },
+    {
+      "id": "heatmap",
+      "name": "Heatmap",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "prometheus",
+      "name": "Prometheus",
+      "type": "datasource",
+      "version": "1.0.0"
+    },
+    {
+      "id": "table",
+      "name": "Table",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "timeseries",
+      "name": "Time series",
+      "type": "panel",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations \u0026 Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "",
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": null,
+  "iteration": 1693920052430,
+  "links": [],
+  "panels": [
+    {
+      "collapsed": false,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 6,
+      "panels": [],
+      "title": "Overview",
+      "type": "row"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "The percentage of the total usable space for object data that has been used for the site",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "filterable": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "decbytes"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Site"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 118
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value #C"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "netapp_cluster"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Cluster"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 1
+      },
+      "id": 37,
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Used space"
+          }
+        ]
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "sum by (site_name, netapp_cluster, datacenter) (\n  storagegrid_storage_utilization_data_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n)",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum by (site_name, netapp_cluster, datacenter) (\n    storagegrid_storage_utilization_usable_space_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n  +\n    storagegrid_storage_utilization_data_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n)",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "B"
+        },
+        {
+          "exemplar": false,
+          "expr": "100\n  *\n    sum by (site_name, netapp_cluster, datacenter) (\n      storagegrid_storage_utilization_data_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n    )\n/\n  sum by (site_name, netapp_cluster, datacenter) (\n      storagegrid_storage_utilization_usable_space_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n    +\n      storagegrid_storage_utilization_data_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n  )",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "C"
+        }
+      ],
+      "title": "Data space usage breakdown",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "netapp_cluster",
+                "site_name",
+                "Value #A",
+                "Value #B",
+                "Value #C"
+              ]
+            }
+          }
+        },
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {
+              "Value #A": 3,
+              "Value #B": 4,
+              "Value #C": 2,
+              "netapp_cluster": 1,
+              "site_name": 0
+            },
+            "renameByName": {
+              "Value": "Used space",
+              "Value #A": "Used space",
+              "Value #B": "Total space",
+              "Value #C": "Usage %",
+              "instance": "Node",
+              "service": "Service",
+              "site_name": "Site"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "The percentage of the total allowed space for object metadata that has been used for the site",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "filterable": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "decbytes"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Site"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 118
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value #C"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "netapp_cluster"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Cluster"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 1
+      },
+      "id": 38,
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Used space"
+          }
+        ]
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "sum by (site_name, netapp_cluster, datacenter) (\n  storagegrid_storage_utilization_metadata_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n)",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        },
+        {
+          "exemplar": false,
+          "expr": "sum by (site_name, netapp_cluster, datacenter) (\n  storagegrid_storage_utilization_metadata_allowed_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n)",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "B"
+        },
+        {
+          "exemplar": false,
+          "expr": "100\n  *\n    sum by (site_name, netapp_cluster, datacenter) (\n      storagegrid_storage_utilization_metadata_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n    )\n/\n  sum by (site_name, netapp_cluster, datacenter) (\n    storagegrid_storage_utilization_metadata_allowed_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n  )",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "C"
+        }
+      ],
+      "title": "Metadata allowed space usage breakdown",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "netapp_cluster",
+                "site_name",
+                "Value #A",
+                "Value #B",
+                "Value #C"
+              ]
+            }
+          }
+        },
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {
+              "Value #A": 4,
+              "Value #B": 3,
+              "Value #C": 2,
+              "netapp_cluster": 1,
+              "site_name": 0
+            },
+            "renameByName": {
+              "Value": "Used space",
+              "Value #A": "Used space",
+              "Value #B": "Allowed space",
+              "Value #C": "Usage %",
+              "instance": "Node",
+              "service": "Service",
+              "site_name": "Site"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "The amount of space used for user data during the selected time frame.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "decbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
+      "id": 40,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "sum by (netapp_cluster) (\n  storagegrid_storage_utilization_data_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n)",
+          "interval": "",
+          "legendFormat": "{{netapp_cluster}} - Space used",
+          "refId": "A"
+        }
+      ],
+      "title": "Data storage over time",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 20
+      },
+      "id": 4,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "The number of S3-specific operations performed. You can use this information to monitor your system's workloads and efficiencies.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "locale"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 2
+          },
+          "id": 24,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (\n  increase(\n    storagegrid_private_s3_total_requests{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",type=~\"put_.*\"}[2m]\n  )\n)",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - PUT",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (\n  increase(\n    storagegrid_private_s3_total_requests{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",type=~\"get_.*\"}[2m]\n  )\n)",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - GET",
+              "refId": "B"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (\n  increase(\n    storagegrid_private_s3_total_requests{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",type=~\"delete_.*\"}[2m]\n  )\n)",
+              "hide": false,
+              "instant": false,
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - DELETE",
+              "refId": "C"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (\n  increase(\n    storagegrid_private_s3_total_requests{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",type=~\"head_.*\"}[2m]\n  )\n)",
+              "hide": false,
+              "instant": false,
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - HEAD",
+              "refId": "D"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (\n  increase(\n    storagegrid_private_s3_total_requests{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",type=~\"post_.*\"}[2m]\n  )\n)",
+              "hide": false,
+              "instant": false,
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - POST",
+              "refId": "E"
+            }
+          ],
+          "title": "S3 operations",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "**Received**: The rate at which data is being received.\n\n**Transmitted**: The rate at which data is being sent.\n\nFor troubleshooting, these values can help establish a general baseline for network performance.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "Bps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 2
+          },
+          "id": 26,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (\n  rate(storagegrid_network_received_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[5m])\n)",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - Received",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (\n  rate(storagegrid_network_transmitted_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[5m])\n)",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - Transmitted",
+              "refId": "B"
+            }
+          ],
+          "title": "Network traffic",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "The number of S3 API requests received during the selected time frame.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "reqps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 11
+          },
+          "id": 28,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (\n  rate(storagegrid_s3_operations_successful{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[2m])\n)",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - Successful",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (\n  rate(storagegrid_s3_operations_failed{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[2m])\n)",
+              "hide": false,
+              "instant": false,
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - Failed",
+              "refId": "B"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (\n  rate(storagegrid_s3_operations_unauthorized{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[2m])\n)",
+              "hide": false,
+              "instant": false,
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - Unauthorized",
+              "refId": "C"
+            }
+          ],
+          "title": "S3 API requests",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "- Bad request: 400\n- Forbidden: 403\n- Not found: 404\n\nYou can use these metrics to ensure platform services are working. Unexpected values might mean a platform service is incorrectly configured, or they might indicate an external problem such as a network issue. ",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "reqps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 11
+          },
+          "id": 30,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (\n  rate(\n    storagegrid_private_load_balancer_storage_request_count{netapp_cluster=~\"$Cluster\",code=\"400\",datacenter=~\"$Datacenter\"}[3m]\n  )\n)",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - Bad request (400)",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (\n  rate(\n    storagegrid_private_load_balancer_storage_request_count{netapp_cluster=~\"$Cluster\",code=\"403\",datacenter=~\"$Datacenter\"}[3m]\n  )\n)",
+              "hide": false,
+              "instant": false,
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - Forbidden (403)",
+              "refId": "B"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (\n  rate(\n    storagegrid_private_load_balancer_storage_request_count{netapp_cluster=~\"$Cluster\",code=\"404\",datacenter=~\"$Datacenter\"}[3m]\n  )\n)",
+              "hide": false,
+              "instant": false,
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - Not found (404)",
+              "refId": "C"
+            }
+          ],
+          "title": "Error rate (requests/second)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Provides a 3-minute moving average of request durations, broken down by request type (GET, PUT, and DELETE). Each request duration starts when a request header is parsed by the Load Balancer service and ends when the complete response body is returned to the client.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 20
+          },
+          "id": 32,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "(\n    sum by (netapp_cluster) (\n      rate(\n        storagegrid_private_load_balancer_storage_request_time{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",method=\"DELETE\"}[3m]\n      )\n    )\n  )\n/\n  (\n    sum by (netapp_cluster) (\n      rate(\n        storagegrid_private_load_balancer_storage_request_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",method=\"DELETE\"}[3m]\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - DELETE",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "(\n    sum by (netapp_cluster) (\n      rate(\n        storagegrid_private_load_balancer_storage_request_time{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",method=\"GET\"}[3m]\n      )\n    )\n  )\n/\n  (\n    sum by (netapp_cluster) (\n      rate(\n        storagegrid_private_load_balancer_storage_request_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",method=\"GET\"}[3m]\n      )\n    )\n  )",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - GET",
+              "refId": "B"
+            },
+            {
+              "exemplar": false,
+              "expr": "(\n    sum by (netapp_cluster) (\n      rate(\n        storagegrid_private_load_balancer_storage_request_time{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",method=\"PUT\"}[3m]\n      )\n    )\n  )\n/\n  (\n    sum by (netapp_cluster) (\n      rate(\n        storagegrid_private_load_balancer_storage_request_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",method=\"PUT\"}[3m]\n      )\n    )\n  )",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - PUT",
+              "refId": "C"
+            },
+            {
+              "exemplar": false,
+              "expr": "(\n    sum by (netapp_cluster) (\n      rate(\n        storagegrid_private_load_balancer_storage_request_time{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",method=\"POST\"}[3m]\n      )\n    )\n  )\n/\n  (\n    sum by (netapp_cluster) (\n      rate(\n        storagegrid_private_load_balancer_storage_request_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",method=\"POST\"}[3m]\n      )\n    )\n  )",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - POST",
+              "refId": "D"
+            },
+            {
+              "exemplar": false,
+              "expr": "(\n    sum by (netapp_cluster) (\n      rate(\n        storagegrid_private_load_balancer_storage_request_time{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",method=\"HEAD\"}[3m]\n      )\n    )\n  )\n/\n  (\n    sum by (netapp_cluster) (\n      rate(\n        storagegrid_private_load_balancer_storage_request_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",method=\"HEAD\"}[3m]\n      )\n    )\n  )",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - HEAD",
+              "refId": "E"
+            }
+          ],
+          "title": "Average request duration (non-error)",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Performance",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 21
+      },
+      "id": 2,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "decbytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 3
+          },
+          "id": 12,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "avg by (netapp_cluster, tenant, datacenter) (\n    storagegrid_tenant_usage_data_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (netapp_cluster, tenant, datacenter) (\n      avg_over_time(\n        storagegrid_tenant_usage_data_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h]\n      )\n    )\n  )",
+              "format": "time_series",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - {{tenant}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources tenants by logical space used",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 1,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percentunit"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 3
+          },
+          "id": 14,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "avg by (netapp_cluster, tenant, datacenter) (\n      storagegrid_tenant_usage_data_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n    /\n      storagegrid_tenant_usage_quota_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n  )\nand\n  topk(\n    $TopResources,\n    avg by (netapp_cluster, tenant, datacenter) (\n        avg_over_time(\n          storagegrid_tenant_usage_data_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h]\n        )\n      /\n        avg_over_time(\n          storagegrid_tenant_usage_quota_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h]\n        )\n    )\n  )",
+              "format": "time_series",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - {{tenant}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources tenants by quota usage",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Storage",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 22
+      },
+      "id": 8,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 23
+          },
+          "id": 16,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (\n  storagegrid_ilm_awaiting_client_objects{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n)",
+              "format": "time_series",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - To be scanned",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (\n  storagegrid_private_ilm_awaiting_delete_objects{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n)",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - To be deleted",
+              "refId": "B"
+            }
+          ],
+          "title": "ILM queue (Objects)",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 1,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "objects/sec"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 23
+          },
+          "id": 18,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (\n  rate(storagegrid_ilm_objects_processed{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[1h])\n)",
+              "format": "time_series",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - Scans",
+              "refId": "A"
+            }
+          ],
+          "title": "ILM evaluation rate (objects/second)",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Information Lifecycle Management (ILM)",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 23
+      },
+      "id": 10,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 24
+          },
+          "id": 20,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "(\n        storagegrid_storage_utilization_data_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n      /\n        (\n            storagegrid_storage_utilization_usable_space_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n          +\n            storagegrid_storage_utilization_data_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n        )\n    *\n      100\n  )\nand\n  topk(\n    5,\n      (\n          avg_over_time(\n            storagegrid_storage_utilization_data_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h]\n          )\n        /\n          (\n              avg_over_time(\n                storagegrid_storage_utilization_usable_space_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h]\n              )\n            +\n              avg_over_time(\n                storagegrid_storage_utilization_data_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h]\n              )\n          )\n      )\n    *\n      100\n  )",
+              "format": "time_series",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - {{node}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources nodes by data usage",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 24
+          },
+          "id": 22,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "storagegrid_node_cpu_utilization_percentage{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      storagegrid_node_cpu_utilization_percentage{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h]\n    )\n  )",
+              "format": "time_series",
+              "interval": "",
+              "legendFormat": "{{netapp_cluster}} - {{node}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources nodes by CPU usage",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Nodes",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      },
+      "id": 42,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "bps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 6
+          },
+          "id": 46,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "8\n*\n  (\n      sum by (netapp_cluster, policy) (\n        rate(storagegrid_private_load_balancer_storage_rx_bytes{netapp_cluster=~\"$Cluster\",policy=~\"$Policy\"}[4m])\n      )\n    and on (netapp_cluster, policy)\n      topk(\n        $TopResources,\n        sum by (netapp_cluster, policy) (\n          avg_over_time(\n            storagegrid_private_load_balancer_storage_rx_bytes{netapp_cluster=~\"$Cluster\",policy=~\"$Policy\"}[3h]\n          )\n        )\n      )\n  )",
+              "hide": false,
+              "instant": false,
+              "interval": "3m",
+              "intervalFactor": 1,
+              "legendFormat": "{{netapp_cluster}} - {{policy}} - Received",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "8\n*\n  (\n      sum by (netapp_cluster, policy) (\n        rate(storagegrid_private_load_balancer_storage_tx_bytes{netapp_cluster=~\"$Cluster\",policy=~\"$Policy\"}[4m])\n      )\n    and on (netapp_cluster, policy)\n      topk(\n        $TopResources,\n        sum by (netapp_cluster, policy) (\n          avg_over_time(\n            storagegrid_private_load_balancer_storage_tx_bytes{netapp_cluster=~\"$Cluster\",policy=~\"$Policy\"}[3h]\n          )\n        )\n      )\n  )",
+              "hide": false,
+              "interval": "3m",
+              "intervalFactor": 1,
+              "legendFormat": "{{netapp_cluster}} - {{policy}} - Sent",
+              "refId": "B"
+            }
+          ],
+          "title": "Top $TopResources Load Balancer Request Traffic by Policy",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "reqps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 6
+          },
+          "id": 47,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster, policy) (\n      rate(\n        storagegrid_private_load_balancer_storage_request_count{netapp_cluster=~\"$Cluster\",policy=~\"$Policy\"}[4m]\n      )\n    )\n  \u003e\n    0\nand on (netapp_cluster, policy)\n  topk(\n    $TopResources,\n    sum by (netapp_cluster, policy) (\n      avg_over_time(\n        storagegrid_private_load_balancer_storage_request_count{netapp_cluster=~\"$Cluster\",policy=~\"$Policy\"}[3h]\n      )\n    )\n  )",
+              "hide": false,
+              "instant": false,
+              "interval": "3m",
+              "intervalFactor": 1,
+              "legendFormat": "{{netapp_cluster}} - {{policy}} - Total",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster, policy, method) (\n      rate(\n        storagegrid_private_load_balancer_storage_request_count{netapp_cluster=~\"$Cluster\",policy=~\"$Policy\"}[4m]\n      )\n    )\n  \u003e\n    0\nand on (netapp_cluster, policy, method)\n  topk(\n    $TopResources,\n    sum by (netapp_cluster, policy, method) (\n      avg_over_time(\n        storagegrid_private_load_balancer_storage_request_count{netapp_cluster=~\"$Cluster\",policy=~\"$Policy\"}[3h]\n      )\n    )\n  )",
+              "hide": false,
+              "interval": "3m",
+              "intervalFactor": 1,
+              "legendFormat": "{{netapp_cluster}} - {{policy}} - {{method}}",
+              "refId": "B"
+            }
+          ],
+          "title": "Top $TopResources Load Balancer Request Completion Rates by Policy",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "reqps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 15
+          },
+          "id": 48,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster, policy, code) (\n      rate(\n        storagegrid_private_load_balancer_storage_request_count{netapp_cluster=~\"$Cluster\",code=~\"[45].*\",policy=~\"$Policy\"}[4m]\n      )\n    )\n  \u003e\n    0\nand on (netapp_cluster, policy, code)\n  topk(\n    $TopResources,\n    sum by (netapp_cluster, policy, code) (\n      avg_over_time(\n        storagegrid_private_load_balancer_storage_request_count{netapp_cluster=~\"$Cluster\",code=~\"[45].*\",policy=~\"$Policy\"}[3h]\n      )\n    )\n  )",
+              "hide": false,
+              "instant": false,
+              "interval": "3m",
+              "intervalFactor": 1,
+              "legendFormat": "{{netapp_cluster}} - {{policy}} - {{code}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Error Response Rates by Policy",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 15
+          },
+          "id": 49,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster, policy, method) (\n        rate(\n          storagegrid_private_load_balancer_storage_request_time{netapp_cluster=~\"$Cluster\",code=~\"2.+\",policy=~\"$Policy\"}[4m]\n        )\n      )\n    /\n      (\n        sum by (netapp_cluster, policy, method) (\n          rate(\n            storagegrid_private_load_balancer_storage_request_count{netapp_cluster=~\"$Cluster\",code=~\"2.+\",policy=~\"$Policy\"}[4m]\n          )\n        )\n      )\n  \u003e\n    0\nand on (netapp_cluster, policy, method)\n  topk(\n    $TopResources,\n      sum by (netapp_cluster, policy, method) (\n        avg_over_time(\n          storagegrid_private_load_balancer_storage_request_time{netapp_cluster=~\"$Cluster\",code=~\"2.+\",policy=~\"$Policy\"}[3h]\n        )\n      )\n    /\n      (\n        sum by (netapp_cluster, policy, method) (\n          avg_over_time(\n            storagegrid_private_load_balancer_storage_request_count{netapp_cluster=~\"$Cluster\",code=~\"2.+\",policy=~\"$Policy\"}[3h]\n          )\n        )\n      )\n  )",
+              "hide": false,
+              "instant": false,
+              "interval": "3m",
+              "intervalFactor": 1,
+              "legendFormat": "{{netapp_cluster}} - {{policy}} - {{method}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Average Request Durations (Non-Error) By Policy",
+          "type": "timeseries"
+        },
+        {
+          "cards": {
+            "cardPadding": null,
+            "cardRound": null
+          },
+          "color": {
+            "cardColor": "#b4ff00",
+            "colorScale": "sqrt",
+            "colorScheme": "interpolateRdYlGn",
+            "exponent": 0.5,
+            "mode": "spectrum"
+          },
+          "dataFormat": "tsbuckets",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 24
+          },
+          "heatmap": {},
+          "hideZeroBuckets": false,
+          "highlightCards": true,
+          "id": 50,
+          "legend": {
+            "show": false
+          },
+          "reverseYBuckets": false,
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster, policy, le) (\n  increase(\n    storagegrid_private_load_balancer_storage_request_body_bytes_bucket{method=~\"PUT|POST\",policy=~\"$Policy\"}[9d2m57s]\n  )\n)",
+              "format": "heatmap",
+              "hide": false,
+              "instant": false,
+              "interval": "3m",
+              "intervalFactor": 1,
+              "legendFormat": "{{le}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Write Request Rate by Object Size and Policy",
+          "tooltip": {
+            "show": true,
+            "showHistogram": true
+          },
+          "type": "heatmap",
+          "xAxis": {
+            "show": true
+          },
+          "xBucketNumber": null,
+          "xBucketSize": null,
+          "yAxis": {
+            "decimals": null,
+            "format": "bytes",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true,
+            "splitFactor": null
+          },
+          "yBucketBound": "auto",
+          "yBucketNumber": null,
+          "yBucketSize": null
+        },
+        {
+          "cards": {
+            "cardPadding": null,
+            "cardRound": null
+          },
+          "color": {
+            "cardColor": "#b4ff00",
+            "colorScale": "sqrt",
+            "colorScheme": "interpolateRdYlGn",
+            "exponent": 0.5,
+            "mode": "spectrum"
+          },
+          "dataFormat": "tsbuckets",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 24
+          },
+          "heatmap": {},
+          "hideZeroBuckets": false,
+          "highlightCards": true,
+          "id": 52,
+          "legend": {
+            "show": false
+          },
+          "reverseYBuckets": false,
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster, policy, le) (\n  increase(\n    storagegrid_private_load_balancer_storage_request_body_bytes_bucket{method=~\"GET\",policy=~\"$Policy\"}[9d2m57s]\n  )\n)",
+              "format": "heatmap",
+              "hide": false,
+              "instant": false,
+              "interval": "3m",
+              "intervalFactor": 1,
+              "legendFormat": "{{le}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Read Request Rate by Object Size and Policy",
+          "tooltip": {
+            "show": true,
+            "showHistogram": true
+          },
+          "type": "heatmap",
+          "xAxis": {
+            "show": true
+          },
+          "xBucketNumber": null,
+          "xBucketSize": null,
+          "yAxis": {
+            "decimals": null,
+            "format": "bytes",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true,
+            "splitFactor": null
+          },
+          "yBucketBound": "auto",
+          "yBucketNumber": null,
+          "yBucketSize": null
+        }
+      ],
+      "title": "Traffic Classification",
+      "type": "row"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 30,
+  "style": "dark",
+  "tags": [
+    "harvest",
+    "storagegrid"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "Prometheus",
+          "value": "Prometheus"
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "Data Source",
+        "multi": false,
+        "name": "DS_PROMETHEUS",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(storagegrid_storage_utilization_data_bytes, datacenter)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "Datacenter",
+        "options": [],
+        "query": {
+          "query": "label_values(storagegrid_storage_utilization_data_bytes, datacenter)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(storagegrid_storage_utilization_data_bytes{datacenter=~\"$Datacenter\"},netapp_cluster)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "Cluster",
+        "options": [],
+        "query": {
+          "query": "label_values(storagegrid_storage_utilization_data_bytes{datacenter=~\"$Datacenter\"},netapp_cluster)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(storagegrid_private_load_balancer_storage_rx_bytes{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\"},policy)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": true,
+        "name": "Policy",
+        "options": [],
+        "query": {
+          "query": "label_values(storagegrid_private_load_balancer_storage_rx_bytes{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\"},policy)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": "5",
+          "value": "5"
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "TopResources",
+        "options": [
+          {
+            "selected": false,
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "selected": false,
+            "text": "2",
+            "value": "2"
+          },
+          {
+            "selected": false,
+            "text": "3",
+            "value": "3"
+          },
+          {
+            "selected": false,
+            "text": "4",
+            "value": "4"
+          },
+          {
+            "selected": true,
+            "text": "5",
+            "value": "5"
+          },
+          {
+            "selected": false,
+            "text": "6",
+            "value": "6"
+          },
+          {
+            "selected": false,
+            "text": "8",
+            "value": "8"
+          },
+          {
+            "selected": false,
+            "text": "10",
+            "value": "10"
+          },
+          {
+            "selected": false,
+            "text": "15",
+            "value": "15"
+          },
+          {
+            "selected": false,
+            "text": "25",
+            "value": "25"
+          },
+          {
+            "selected": false,
+            "text": "50",
+            "value": "50"
+          },
+          {
+            "selected": false,
+            "text": "100",
+            "value": "100"
+          },
+          {
+            "selected": false,
+            "text": "250",
+            "value": "250"
+          },
+          {
+            "selected": false,
+            "text": "500",
+            "value": "500"
+          }
+        ],
+        "query": "1,2,3,4,5,6,8,10,15,25,50,100,250,500",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-3h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "StorageGrid: Overview",
+  "uid": "storagegrid-overview",
+  "version": 4
+}

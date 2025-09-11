@@ -1,0 +1,1984 @@
+{
+  "__inputs": [
+    {
+      "description": "",
+      "label": "Prometheus",
+      "name": "DS_PROMETHEUS",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus",
+      "type": "datasource"
+    }
+  ],
+  "__requires": [
+    {
+      "id": "grafana",
+      "name": "Grafana",
+      "type": "grafana",
+      "version": "8.1.8"
+    },
+    {
+      "id": "heatmap",
+      "name": "Heatmap",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "prometheus",
+      "name": "Prometheus",
+      "type": "datasource",
+      "version": "1.0.0"
+    },
+    {
+      "id": "table",
+      "name": "Table",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "text",
+      "name": "Text",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "timeseries",
+      "name": "Time series",
+      "type": "panel",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations \u0026 Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "",
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 1,
+  "id": null,
+  "iteration": 1705067583809,
+  "links": [
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [
+        "cdot"
+      ],
+      "targetBlank": false,
+      "title": "Related Dashboards",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
+  "panels": [
+    {
+      "collapsed": false,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 94,
+      "panels": [],
+      "title": "Important Information",
+      "type": "row"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 92,
+      "options": {
+        "content": "The `Highlights` section of this dashboard is dependent on the `CIFSSession` template. By default, these templates are disabled to prevent any potential slowdown in data collection, which can occur due to the processing of a large number of metrics. If you're using the Zapi/Rest collector, it's necessary to enable the `CIFSSession` template within its configuration settings.",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.1.8",
+      "type": "text"
+    },
+    {
+      "collapsed": false,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 3
+      },
+      "id": 96,
+      "panels": [],
+      "title": "Highlights",
+      "type": "row"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "The number of CIFS connections associated with the CIFS session.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "locale"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 4
+      },
+      "id": 100,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "cifs_session_connection_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      cifs_session_connection_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[3h] @ end()\n    )\n  )",
+          "interval": "",
+          "legendFormat": "{{netapp_cluster}} - {{svm}} - {{client_ip}} - {{protocol}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Top $TopResources Connection Count",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "The number of CIFS connections associated with SMB version.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "locale"
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "Value"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 4
+      },
+      "id": 101,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "sum by (protocol) (\n  cifs_session_connection_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n)",
+          "interval": "",
+          "legendFormat": "{{protocol}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Connection Count By SMB version",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Detail of CIFS sessions.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "filterable": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Large MTU"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "false": {
+                        "index": 0,
+                        "text": "No"
+                      },
+                      "true": {
+                        "index": 1,
+                        "text": "Yes"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "SMB Signing"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "false": {
+                        "index": 0,
+                        "text": "No"
+                      },
+                      "true": {
+                        "index": 1,
+                        "text": "Yes"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "netapp_cluster"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Cluster"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-cluster/ontap-cluster?orgId=1\u0026${Datacenter:queryparam}\u0026${__url_time_range}\u0026var-Cluster=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "datacenter"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Datacenter"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1\u0026${__url_time_range}\u0026var-Datacenter=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "node"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Node"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-node/ontap-node?orgId=1\u0026${Datacenter:queryparam}\u0026${Cluster:queryparam}\u0026${__url_time_range}\u0026var-Node=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "svm"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "SVM"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-svm/ontap-svm?orgId=1\u0026${Datacenter:queryparam}\u0026${Cluster:queryparam}\u0026${__url_time_range}\u0026var-SVM=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "volumes"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Volumes"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "",
+                    "url": "/d/cdot-volume/ontap-volume?orgId=1\u0026${Datacenter:queryparam}\u0026${Cluster:queryparam}\u0026${SVM:queryparam}\u0026${__url_time_range}\u0026var-Volume=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Idle Duration"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "s"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 13
+      },
+      "id": 98,
+      "options": {
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "cifs_session_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        },
+        {
+          "exemplar": false,
+          "expr": "cifs_session_idle_duration{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "B"
+        }
+      ],
+      "title": "CIFS Sessions",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "authentication",
+                "client_ip",
+                "netapp_cluster",
+                "connection_id",
+                "datacenter",
+                "large_mtu",
+                "mapped_unix_user",
+                "node",
+                "protocol",
+                "server_ip",
+                "smb_encryption",
+                "smb_signing",
+                "svm",
+                "user",
+                "volumes",
+                "Value #B"
+              ]
+            }
+          }
+        },
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {
+              "authentication": 5,
+              "client_ip": 6,
+              "connection_id": 7,
+              "datacenter": 0,
+              "large_mtu": 8,
+              "mapped_unix_user": 9,
+              "netapp_cluster": 1,
+              "node": 2,
+              "protocol": 10,
+              "server_ip": 11,
+              "smb_encryption": 12,
+              "smb_signing": 13,
+              "svm": 3,
+              "user": 14,
+              "volumes": 4
+            },
+            "renameByName": {
+              "Value #B": "Idle Duration",
+              "authentication": "Authetication",
+              "client_ip": "Client IP",
+              "connection_id": "Connection ID",
+              "large_mtu": "Large MTU",
+              "mapped_unix_user": "Mapped Unix User",
+              "protocol": "Protocol",
+              "server_ip": "Server IP",
+              "smb_encryption": "SMB Encryption",
+              "smb_signing": "SMB Signing",
+              "user": "User"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 21
+      },
+      "id": 68,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel includes sum of read and write SMB OP’s /sec.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "iops"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 22
+          },
+          "id": 75,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (smb2_read_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "interval": "",
+              "legendFormat": "read_ops - {{netapp_cluster}}",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (smb2_write_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "write_ops - {{netapp_cluster}}",
+              "refId": "B"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Read / Write IOPS",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel includes average SMB read and write latency.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "µs"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 22
+          },
+          "id": 76,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "avg by (netapp_cluster) (smb2_read_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "interval": "",
+              "legendFormat": "Read - {{netapp_cluster}}",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "avg by (netapp_cluster) (smb2_write_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "Write - {{netapp_cluster}}",
+              "refId": "B"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Read / Write Latency",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel includes SMB OP’s /sec average broken down by other SMB operations.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "iops"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 31
+          },
+          "id": 77,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (smb2_negotiate_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "interval": "",
+              "legendFormat": "negotiate_ops - {{netapp_cluster}}",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (smb2_session_setup_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "session_setup_ops - {{netapp_cluster}}",
+              "refId": "B"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (smb2_tree_connect_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "tree_connect_ops - {{netapp_cluster}}",
+              "refId": "C"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (smb2_create_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "create_ops - {{netapp_cluster}}",
+              "refId": "D"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum(smb2_close_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "close_ops - {{netapp_cluster}}",
+              "refId": "E"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (smb2_lock_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "lock_ops - {{netapp_cluster}}",
+              "refId": "F"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (\n  smb2_query_directory_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n)",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "query_directory_ops - {{netapp_cluster}}",
+              "refId": "G"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (smb2_query_info_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "query_info_ops - {{netapp_cluster}}",
+              "refId": "H"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (smb2_set_info_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "set_info_ops - {{netapp_cluster}}",
+              "refId": "I"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (smb2_tree_connect_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "tree_connect_ops - {{netapp_cluster}}",
+              "refId": "J"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum by (netapp_cluster) (smb2_oplock_break_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "oplock_break_ops - {{netapp_cluster}}",
+              "refId": "K"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Other IOPS",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel includes SMB latency broken down by other SMB operations.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "µs"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 31
+          },
+          "id": 78,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "avg by (netapp_cluster) (smb2_negotiate_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "interval": "",
+              "legendFormat": "negotiate_latency - {{netapp_cluster}}",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "avg by (netapp_cluster) (\n  smb2_session_setup_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n)",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "session_setup_latency - {{netapp_cluster}}",
+              "refId": "B"
+            },
+            {
+              "exemplar": false,
+              "expr": "avg by (netapp_cluster) (\n  smb2_tree_connect_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n)",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "tree_connect_latency - {{netapp_cluster}}",
+              "refId": "C"
+            },
+            {
+              "exemplar": false,
+              "expr": "avg by (netapp_cluster) (smb2_create_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "create_latency - {{netapp_cluster}}",
+              "refId": "D"
+            },
+            {
+              "exemplar": false,
+              "expr": "avg by (netapp_cluster) (smb2_close_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "close_latency - {{netapp_cluster}}",
+              "refId": "E"
+            },
+            {
+              "exemplar": false,
+              "expr": "avg by (netapp_cluster) (smb2_lock_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "lock_latency - {{netapp_cluster}}",
+              "refId": "F"
+            },
+            {
+              "exemplar": false,
+              "expr": "avg by (netapp_cluster) (\n  smb2_query_directory_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n)",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "query_directory_latency - {{netapp_cluster}}",
+              "refId": "G"
+            },
+            {
+              "exemplar": false,
+              "expr": "avg by (netapp_cluster) (\n  smb2_query_info_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n)",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "query_info_latency - {{netapp_cluster}}",
+              "refId": "H"
+            },
+            {
+              "exemplar": false,
+              "expr": "avg by (netapp_cluster) (smb2_set_info_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"})",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "set_info_latency - {{netapp_cluster}}",
+              "refId": "I"
+            },
+            {
+              "exemplar": false,
+              "expr": "avg by (netapp_cluster) (\n  smb2_oplock_break_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}\n)",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "oplock_break_latency - {{netapp_cluster}}",
+              "refId": "J"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Other Latency",
+          "type": "timeseries"
+        }
+      ],
+      "title": "SMB Performance",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 22
+      },
+      "id": 99,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "",
+          "gridPos": {
+            "h": 3,
+            "w": 24,
+            "x": 0,
+            "y": 4
+          },
+          "id": 104,
+          "options": {
+            "code": {
+              "language": "plaintext",
+              "showLineNumbers": false,
+              "showMiniMap": false
+            },
+            "content": "These panels require that the eight `_histogram` counters be uncommented in the respective SMB2 template.\u003cbr\u003e\n`RestPerf` template in `conf/restperf/9.14.1/smb2.yaml`\u003cbr\u003e \n`ZapiPerf` template in `conf/zapiperf/cdot/9.8.0/smb2.yaml`\u003cbr\u003e\nEnabling the SMB2 histogram counters may cause the poller to use more memory if there are a large number of histogram metrics to export.",
+            "mode": "markdown"
+          },
+          "pluginVersion": "8.1.8",
+          "type": "text"
+        },
+        {
+          "cards": {
+            "cardPadding": null,
+            "cardRound": null
+          },
+          "color": {
+            "cardColor": "#b4ff00",
+            "colorScale": "sqrt",
+            "colorScheme": "interpolateRdYlGn",
+            "exponent": 0.5,
+            "mode": "spectrum"
+          },
+          "dataFormat": "tsbuckets",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel tracks histograms for Session Setups and gives good indication of Client Authentication Latency Breakdown.",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 7
+          },
+          "heatmap": {},
+          "hideZeroBuckets": true,
+          "highlightCards": true,
+          "id": 80,
+          "interval": "6m",
+          "legend": {
+            "show": false
+          },
+          "maxDataPoints": 25,
+          "reverseYBuckets": false,
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (le) (\n  increase(\n    smb2_session_setup_latency_histogram_bucket{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[9d2m57s]\n  )\n)",
+              "format": "heatmap",
+              "instant": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "{{ le }}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "title": "Session Setup Latency Heatmap",
+          "tooltip": {
+            "show": true,
+            "showHistogram": false
+          },
+          "type": "heatmap",
+          "xAxis": {
+            "show": true
+          },
+          "xBucketNumber": null,
+          "xBucketSize": null,
+          "yAxis": {
+            "decimals": null,
+            "format": "µs",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true,
+            "splitFactor": null,
+            "width": null
+          },
+          "yBucketBound": "auto",
+          "yBucketNumber": null,
+          "yBucketSize": null
+        },
+        {
+          "cards": {
+            "cardPadding": null,
+            "cardRound": null
+          },
+          "color": {
+            "cardColor": "#b4ff00",
+            "colorScale": "sqrt",
+            "colorScheme": "interpolateRdYlGn",
+            "exponent": 0.5,
+            "mode": "spectrum"
+          },
+          "dataFormat": "tsbuckets",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel tracks histograms for file opens and creates.",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 7
+          },
+          "heatmap": {},
+          "hideZeroBuckets": true,
+          "highlightCards": true,
+          "id": 81,
+          "interval": "6m",
+          "legend": {
+            "show": false
+          },
+          "maxDataPoints": 25,
+          "reverseYBuckets": false,
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (le) (\n  increase(\n    smb2_create_latency_histogram_bucket{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[9d2m57s]\n  )\n)",
+              "format": "heatmap",
+              "instant": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "{{ le }}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "title": "Create Latency Heatmap",
+          "tooltip": {
+            "show": true,
+            "showHistogram": false
+          },
+          "type": "heatmap",
+          "xAxis": {
+            "show": true
+          },
+          "xBucketNumber": null,
+          "xBucketSize": null,
+          "yAxis": {
+            "decimals": null,
+            "format": "µs",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true,
+            "splitFactor": null,
+            "width": null
+          },
+          "yBucketBound": "auto",
+          "yBucketNumber": null,
+          "yBucketSize": null
+        },
+        {
+          "cards": {
+            "cardPadding": null,
+            "cardRound": null
+          },
+          "color": {
+            "cardColor": "#b4ff00",
+            "colorScale": "sqrt",
+            "colorScheme": "interpolateRdYlGn",
+            "exponent": 0.5,
+            "mode": "spectrum"
+          },
+          "dataFormat": "tsbuckets",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel tracks histograms for file closes.",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 15
+          },
+          "heatmap": {},
+          "hideZeroBuckets": true,
+          "highlightCards": true,
+          "id": 87,
+          "interval": "6m",
+          "legend": {
+            "show": false
+          },
+          "maxDataPoints": 25,
+          "reverseYBuckets": false,
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (le) (\n  increase(\n    smb2_close_latency_histogram_bucket{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[9d2m57s]\n  )\n)",
+              "format": "heatmap",
+              "instant": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "{{ le }}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "title": "Close Latency Heatmap",
+          "tooltip": {
+            "show": true,
+            "showHistogram": false
+          },
+          "type": "heatmap",
+          "xAxis": {
+            "show": true
+          },
+          "xBucketNumber": null,
+          "xBucketSize": null,
+          "yAxis": {
+            "decimals": null,
+            "format": "µs",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true,
+            "splitFactor": null,
+            "width": null
+          },
+          "yBucketBound": "auto",
+          "yBucketNumber": null,
+          "yBucketSize": null
+        },
+        {
+          "cards": {
+            "cardPadding": null,
+            "cardRound": null
+          },
+          "color": {
+            "cardColor": "#b4ff00",
+            "colorScale": "sqrt",
+            "colorScheme": "interpolateRdYlGn",
+            "exponent": 0.5,
+            "mode": "spectrum"
+          },
+          "dataFormat": "tsbuckets",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel tracks histograms for file locks.",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 15
+          },
+          "heatmap": {},
+          "hideZeroBuckets": true,
+          "highlightCards": true,
+          "id": 88,
+          "interval": "6m",
+          "legend": {
+            "show": false
+          },
+          "maxDataPoints": 25,
+          "reverseYBuckets": false,
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (le) (\n  increase(\n    smb2_lock_latency_histogram_bucket{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[9d2m57s]\n  )\n)",
+              "format": "heatmap",
+              "instant": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "{{ le }}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "title": "Lock Latency Heatmap",
+          "tooltip": {
+            "show": true,
+            "showHistogram": false
+          },
+          "type": "heatmap",
+          "xAxis": {
+            "show": true
+          },
+          "xBucketNumber": null,
+          "xBucketSize": null,
+          "yAxis": {
+            "decimals": null,
+            "format": "µs",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true,
+            "splitFactor": null,
+            "width": null
+          },
+          "yBucketBound": "auto",
+          "yBucketNumber": null,
+          "yBucketSize": null
+        },
+        {
+          "cards": {
+            "cardPadding": null,
+            "cardRound": null
+          },
+          "color": {
+            "cardColor": "#b4ff00",
+            "colorScale": "sqrt",
+            "colorScheme": "interpolateRdYlGn",
+            "exponent": 0.5,
+            "mode": "spectrum"
+          },
+          "dataFormat": "tsbuckets",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel tracks histograms for readdir.",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 23
+          },
+          "heatmap": {},
+          "hideZeroBuckets": true,
+          "highlightCards": true,
+          "id": 85,
+          "interval": "6m",
+          "legend": {
+            "show": false
+          },
+          "maxDataPoints": 25,
+          "reverseYBuckets": false,
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (le) (\n  increase(\n    smb2_query_directory_latency_histogram_bucket{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[9d2m57s]\n  )\n)",
+              "format": "heatmap",
+              "instant": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "{{ le }}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "title": "Query Directory Latency Heatmap",
+          "tooltip": {
+            "show": true,
+            "showHistogram": false
+          },
+          "type": "heatmap",
+          "xAxis": {
+            "show": true
+          },
+          "xBucketNumber": null,
+          "xBucketSize": null,
+          "yAxis": {
+            "decimals": null,
+            "format": "µs",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true,
+            "splitFactor": null,
+            "width": null
+          },
+          "yBucketBound": "auto",
+          "yBucketNumber": null,
+          "yBucketSize": null
+        },
+        {
+          "cards": {
+            "cardPadding": null,
+            "cardRound": null
+          },
+          "color": {
+            "cardColor": "#b4ff00",
+            "colorScale": "sqrt",
+            "colorScheme": "interpolateRdYlGn",
+            "exponent": 0.5,
+            "mode": "spectrum"
+          },
+          "dataFormat": "tsbuckets",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel tracks histograms for getattr.",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 23
+          },
+          "heatmap": {},
+          "hideZeroBuckets": true,
+          "highlightCards": true,
+          "id": 86,
+          "interval": "6m",
+          "legend": {
+            "show": false
+          },
+          "maxDataPoints": 25,
+          "reverseYBuckets": false,
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (le) (\n  increase(\n    smb2_query_info_latency_histogram_bucket{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[9d2m57s]\n  )\n)",
+              "format": "heatmap",
+              "instant": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "{{ le }}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "title": "Query Info Latency Heatmap",
+          "tooltip": {
+            "show": true,
+            "showHistogram": false
+          },
+          "type": "heatmap",
+          "xAxis": {
+            "show": true
+          },
+          "xBucketNumber": null,
+          "xBucketSize": null,
+          "yAxis": {
+            "decimals": null,
+            "format": "µs",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true,
+            "splitFactor": null,
+            "width": null
+          },
+          "yBucketBound": "auto",
+          "yBucketNumber": null,
+          "yBucketSize": null
+        },
+        {
+          "cards": {
+            "cardPadding": null,
+            "cardRound": null
+          },
+          "color": {
+            "cardColor": "#b4ff00",
+            "colorScale": "sqrt",
+            "colorScheme": "interpolateRdYlGn",
+            "exponent": 0.5,
+            "mode": "spectrum"
+          },
+          "dataFormat": "tsbuckets",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel tracks histograms for setattr.",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 31
+          },
+          "heatmap": {},
+          "hideZeroBuckets": true,
+          "highlightCards": true,
+          "id": 83,
+          "interval": "6m",
+          "legend": {
+            "show": false
+          },
+          "maxDataPoints": 25,
+          "reverseYBuckets": false,
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (le) (\n  increase(\n    smb2_set_info_latency_histogram_bucket{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[9d2m57s]\n  )\n)",
+              "format": "heatmap",
+              "instant": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "{{ le }}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "title": "Set Info Latency Heatmap",
+          "tooltip": {
+            "show": true,
+            "showHistogram": false
+          },
+          "type": "heatmap",
+          "xAxis": {
+            "show": true
+          },
+          "xBucketNumber": null,
+          "xBucketSize": null,
+          "yAxis": {
+            "decimals": null,
+            "format": "µs",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true,
+            "splitFactor": null,
+            "width": null
+          },
+          "yBucketBound": "auto",
+          "yBucketNumber": null,
+          "yBucketSize": null
+        },
+        {
+          "cards": {
+            "cardPadding": null,
+            "cardRound": null
+          },
+          "color": {
+            "cardColor": "#b4ff00",
+            "colorScale": "sqrt",
+            "colorScheme": "interpolateRdYlGn",
+            "exponent": 0.5,
+            "mode": "spectrum"
+          },
+          "dataFormat": "tsbuckets",
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "This panel tracks histograms for oplock breaks.",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 31
+          },
+          "heatmap": {},
+          "hideZeroBuckets": true,
+          "highlightCards": true,
+          "id": 84,
+          "interval": "6m",
+          "legend": {
+            "show": false
+          },
+          "maxDataPoints": 25,
+          "reverseYBuckets": false,
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "sum by (le) (\n  increase(\n    smb2_oplock_break_latency_histogram_bucket{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}[9d2m57s]\n  )\n)",
+              "format": "heatmap",
+              "instant": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "{{ le }}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "title": "Oplock Break Latency Heatmap",
+          "tooltip": {
+            "show": true,
+            "showHistogram": false
+          },
+          "type": "heatmap",
+          "xAxis": {
+            "show": true
+          },
+          "xBucketNumber": null,
+          "xBucketSize": null,
+          "yAxis": {
+            "decimals": null,
+            "format": "µs",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true,
+            "splitFactor": null,
+            "width": null
+          },
+          "yBucketBound": "auto",
+          "yBucketNumber": null,
+          "yBucketSize": null
+        }
+      ],
+      "title": "Heatmaps",
+      "type": "row"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 30,
+  "style": "dark",
+  "tags": [
+    "harvest",
+    "ontap",
+    "cdot"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "Prometheus",
+          "value": "Prometheus"
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "Data Source",
+        "multi": false,
+        "name": "DS_PROMETHEUS",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(cluster_new_status{system_type!=\"7mode\"}, datacenter)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "Datacenter",
+        "options": [],
+        "query": {
+          "query": "label_values(cluster_new_status{system_type!=\"7mode\"}, datacenter)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, netapp_cluster)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "Cluster",
+        "options": [],
+        "query": {
+          "query": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, netapp_cluster)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(volume_labels{netapp_cluster=~\"$Cluster\"}, svm)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "SVM",
+        "options": [],
+        "query": {
+          "query": "label_values(volume_labels{netapp_cluster=~\"$Cluster\"}, svm)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": "5",
+          "value": "5"
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "TopResources",
+        "options": [
+          {
+            "selected": false,
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "selected": false,
+            "text": "2",
+            "value": "2"
+          },
+          {
+            "selected": false,
+            "text": "3",
+            "value": "3"
+          },
+          {
+            "selected": false,
+            "text": "4",
+            "value": "4"
+          },
+          {
+            "selected": true,
+            "text": "5",
+            "value": "5"
+          },
+          {
+            "selected": false,
+            "text": "6",
+            "value": "6"
+          },
+          {
+            "selected": false,
+            "text": "8",
+            "value": "8"
+          },
+          {
+            "selected": false,
+            "text": "10",
+            "value": "10"
+          },
+          {
+            "selected": false,
+            "text": "15",
+            "value": "15"
+          },
+          {
+            "selected": false,
+            "text": "25",
+            "value": "25"
+          },
+          {
+            "selected": false,
+            "text": "50",
+            "value": "50"
+          },
+          {
+            "selected": false,
+            "text": "100",
+            "value": "100"
+          },
+          {
+            "selected": false,
+            "text": "250",
+            "value": "250"
+          },
+          {
+            "selected": false,
+            "text": "500",
+            "value": "500"
+          }
+        ],
+        "query": "1,2,3,4,5,6,8,10,15,25,50,100,250,500",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-3h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "",
+  "title": "ONTAP: SMB",
+  "uid": "cdot-smb",
+  "version": 5
+}

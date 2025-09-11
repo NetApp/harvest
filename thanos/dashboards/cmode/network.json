@@ -55,7 +55,7 @@
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
-        "name": "Annotations & Alerts",
+        "name": "Annotations \u0026 Alerts",
         "target": {
           "limit": 100,
           "matchAny": false,
@@ -149,7 +149,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(\n  nic_tx_bytes + nic_rx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\n)",
+          "expr": "sum(\n  nic_tx_bytes + nic_rx_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\n)",
           "interval": "",
           "legendFormat": "Data",
           "refId": "A"
@@ -234,14 +234,14 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(\n    fcp_total_data\n  +\n    fcp_nvmf_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
+          "expr": "sum(\n    fcp_total_data\n  +\n    fcp_nvmf_total_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
           "interval": "",
           "legendFormat": "Data",
           "refId": "A"
         },
         {
           "exemplar": false,
-          "expr": "sum(\n    fcp_total_ops\n  +\n    fcp_nvmf_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
+          "expr": "sum(\n    fcp_total_ops\n  +\n    fcp_nvmf_total_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
           "hide": false,
           "interval": "",
           "legendFormat": "Operations",
@@ -298,7 +298,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "sum(nic_rx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
+          "expr": "sum(nic_rx_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -354,7 +354,7 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "sum(nic_tx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
+          "expr": "sum(nic_tx_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -439,14 +439,14 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(\n    fcp_read_data\n  +\n    fcp_nvmf_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
+          "expr": "sum(\n    fcp_read_data\n  +\n    fcp_nvmf_read_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
           "interval": "",
           "legendFormat": "Data",
           "refId": "A"
         },
         {
           "exemplar": false,
-          "expr": "sum(\n    fcp_read_ops\n  +\n    fcp_nvmf_read_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
+          "expr": "sum(\n    fcp_read_ops\n  +\n    fcp_nvmf_read_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
           "hide": false,
           "interval": "",
           "legendFormat": "Operations",
@@ -532,14 +532,14 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "sum(\n    fcp_write_data\n  +\n    fcp_nvmf_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
+          "expr": "sum(\n    fcp_write_data\n  +\n    fcp_nvmf_write_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
           "interval": "",
           "legendFormat": "Data",
           "refId": "A"
         },
         {
           "exemplar": false,
-          "expr": "sum(\n    fcp_write_ops\n  +\n    fcp_nvmf_write_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
+          "expr": "sum(\n    fcp_write_ops\n  +\n    fcp_nvmf_write_ops{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
           "hide": false,
           "interval": "",
           "legendFormat": "Operations",
@@ -650,7 +650,7 @@
                       {
                         "targetBlank": true,
                         "title": "",
-                        "url": "/d/cdot-node/ontap-node?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Node=${__value.raw}"
+                        "url": "/d/cdot-node/ontap-node?orgId=1\u0026${Datacenter:queryparam}\u0026${Cluster:queryparam}\u0026${__url_time_range}\u0026var-Node=${__value.raw}"
                       }
                     ]
                   }
@@ -672,7 +672,7 @@
                       {
                         "targetBlank": true,
                         "title": "",
-                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1\u0026${__url_time_range}\u0026var-Datacenter=${__value.raw}"
                       }
                     ]
                   }
@@ -681,7 +681,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "cluster"
+                  "options": "netapp_cluster"
                 },
                 "properties": [
                   {
@@ -694,7 +694,7 @@
                       {
                         "targetBlank": true,
                         "title": "",
-                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1\u0026${Datacenter:queryparam}\u0026${__url_time_range}\u0026var-Cluster=${__value.raw}"
                       }
                     ]
                   }
@@ -808,7 +808,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
-              "expr": "net_port_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$Eth\"}",
+              "expr": "net_port_status{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$Eth\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -820,7 +820,7 @@
               "datasource": "${DS_PROMETHEUS}",
               "editorMode": "code",
               "exemplar": false,
-              "expr": "net_port_mtu{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$Eth\"}",
+              "expr": "net_port_mtu{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$Eth\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -837,7 +837,7 @@
                 "include": {
                   "names": [
                     "admin_speed",
-                    "cluster",
+                    "netapp_cluster",
                     "datacenter",
                     "ipspace",
                     "node",
@@ -862,10 +862,10 @@
                   "Time": true,
                   "Value": false,
                   "__name__": true,
-                  "cluster": false,
                   "datacenter": false,
                   "instance": true,
                   "job": true,
+                  "netapp_cluster": 0,
                   "speed": false,
                   "state": true
                 },
@@ -873,9 +873,9 @@
                 "indexByName": {
                   "Value #B": 4,
                   "admin_speed": 7,
-                  "cluster": 1,
                   "datacenter": 0,
                   "ipspace": 8,
+                  "netapp_cluster": 1,
                   "node": 2,
                   "op_speed": 5,
                   "port": 3,
@@ -891,6 +891,7 @@
                   "cluster": "",
                   "datacenter": "",
                   "ipspace": "IPspace",
+                  "netapp_cluster": "",
                   "node": "",
                   "op_speed": "Link Speed",
                   "port": "",
@@ -1112,7 +1113,7 @@
                       {
                         "targetBlank": true,
                         "title": "",
-                        "url": "/d/cdot-node/ontap-node?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Node=${__value.raw}"
+                        "url": "/d/cdot-node/ontap-node?orgId=1\u0026${Datacenter:queryparam}\u0026${Cluster:queryparam}\u0026${__url_time_range}\u0026var-Node=${__value.raw}"
                       }
                     ]
                   }
@@ -1184,7 +1185,7 @@
                       {
                         "targetBlank": true,
                         "title": "",
-                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1\u0026${__url_time_range}\u0026var-Datacenter=${__value.raw}"
                       }
                     ]
                   }
@@ -1193,7 +1194,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "cluster"
+                  "options": "netapp_cluster"
                 },
                 "properties": [
                   {
@@ -1206,7 +1207,7 @@
                       {
                         "targetBlank": true,
                         "title": "",
-                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1\u0026${Datacenter:queryparam}\u0026${__url_time_range}\u0026var-Cluster=${__value.raw}"
                       }
                     ]
                   }
@@ -1245,7 +1246,7 @@
             {
               "datasource": "${DS_PROMETHEUS}",
               "exemplar": false,
-              "expr": "nic_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
+              "expr": "nic_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1254,7 +1255,7 @@
             },
             {
               "datasource": "${DS_PROMETHEUS}",
-              "expr": "nic_new_status{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
+              "expr": "nic_new_status{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1264,7 +1265,7 @@
             },
             {
               "datasource": "${DS_PROMETHEUS}",
-              "expr": "nic_util_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
+              "expr": "nic_util_percent{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1274,7 +1275,7 @@
             },
             {
               "datasource": "${DS_PROMETHEUS}",
-              "expr": "nic_tx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
+              "expr": "nic_tx_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1284,7 +1285,7 @@
             },
             {
               "datasource": "${DS_PROMETHEUS}",
-              "expr": "nic_rx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
+              "expr": "nic_rx_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1308,7 +1309,7 @@
                     "Value #C",
                     "Value #D",
                     "Value #E",
-                    "cluster",
+                    "netapp_cluster",
                     "datacenter"
                   ]
                 }
@@ -1325,10 +1326,10 @@
                   "Time": true,
                   "Value": true,
                   "__name__": true,
-                  "cluster": false,
                   "datacenter": false,
                   "instance": true,
                   "job": true,
+                  "netapp_cluster": 0,
                   "speed": false,
                   "state": true
                 },
@@ -1338,8 +1339,8 @@
                   "Value #C": 7,
                   "Value #D": 8,
                   "Value #E": 9,
-                  "cluster": 1,
                   "datacenter": 0,
+                  "netapp_cluster": 1,
                   "nic": 3,
                   "node": 2,
                   "speed": 4,
@@ -1437,7 +1438,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "nic_tx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      nic_tx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[3h] @ end()\n    )\n  )",
+              "expr": "nic_tx_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      nic_tx_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[3h] @ end()\n    )\n  )",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{nic}}",
@@ -1530,7 +1531,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "nic_rx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      nic_rx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[3h] @ end()\n    )\n  )",
+              "expr": "nic_rx_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      nic_rx_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{node}} - {{nic}}",
               "refId": "A"
@@ -1624,7 +1625,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "nic_util_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      nic_util_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[3h] @ end()\n    )\n  )",
+              "expr": "nic_util_percent{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      nic_util_percent{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{node}} - {{nic}}",
               "refId": "A"
@@ -1716,14 +1717,14 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(nic_tx_total_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
+              "expr": "sum(nic_tx_total_errors{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "TOTAL",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "sum(nic_tx_hw_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
+              "expr": "sum(nic_tx_hw_errors{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "HW",
               "refId": "D"
@@ -1815,28 +1816,28 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "sum(nic_rx_total_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
+              "expr": "sum(nic_rx_total_errors{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "TOTAL",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "sum(\n  nic_rx_alignment_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\n)",
+              "expr": "sum(\n  nic_rx_alignment_errors{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}\n)",
               "interval": "",
               "legendFormat": "ALIGNMENT",
               "refId": "B"
             },
             {
               "exemplar": false,
-              "expr": "sum(nic_rx_crc_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
+              "expr": "sum(nic_rx_crc_errors{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "CRC",
               "refId": "C"
             },
             {
               "exemplar": false,
-              "expr": "sum(nic_rx_length_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
+              "expr": "sum(nic_rx_length_errors{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "LENGTH",
               "refId": "D"
@@ -1997,7 +1998,7 @@
                       {
                         "targetBlank": true,
                         "title": "",
-                        "url": "/d/cdot-node/ontap-node?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Node=${__value.raw}"
+                        "url": "/d/cdot-node/ontap-node?orgId=1\u0026${Datacenter:queryparam}\u0026${Cluster:queryparam}\u0026${__url_time_range}\u0026var-Node=${__value.raw}"
                       }
                     ]
                   }
@@ -2019,7 +2020,7 @@
                       {
                         "targetBlank": true,
                         "title": "",
-                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1\u0026${__url_time_range}\u0026var-Datacenter=${__value.raw}"
                       }
                     ]
                   }
@@ -2028,7 +2029,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "cluster"
+                  "options": "netapp_cluster"
                 },
                 "properties": [
                   {
@@ -2041,9 +2042,33 @@
                       {
                         "targetBlank": true,
                         "title": "",
-                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1\u0026${Datacenter:queryparam}\u0026${__url_time_range}\u0026var-Cluster=${__value.raw}"
                       }
                     ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Rx Alignment Err"
+                },
+                "properties": [
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-text"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Rx Length Err"
+                },
+                "properties": [
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-text"
                   }
                 ]
               }
@@ -2069,7 +2094,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "nic_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
+              "expr": "nic_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -2078,53 +2103,73 @@
             },
             {
               "exemplar": false,
-              "expr": "sum_over_time(\n  nic_rx_crc_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
+              "expr": "sum_over_time(\n  nic_rx_crc_errors{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
               "format": "table",
               "hide": false,
               "instant": true,
               "interval": "",
               "legendFormat": "",
-              "refId": "B"
+              "refId": "rx_crc_errors"
             },
             {
               "exemplar": false,
-              "expr": "sum_over_time(\n  nic_tx_hw_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
+              "expr": "sum_over_time(\n  nic_tx_hw_errors{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
               "format": "table",
               "hide": false,
               "instant": true,
               "interval": "",
               "legendFormat": "",
-              "refId": "C"
+              "refId": "tx_hw_errors"
             },
             {
               "exemplar": false,
-              "expr": "sum_over_time(\n  nic_tx_total_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
+              "expr": "sum_over_time(\n  nic_tx_total_errors{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
               "format": "table",
               "hide": false,
               "instant": true,
               "interval": "",
               "legendFormat": "",
-              "refId": "D"
+              "refId": "tx_total_errors"
             },
             {
               "exemplar": false,
-              "expr": "sum_over_time(\n  nic_rx_total_errors{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
+              "expr": "sum_over_time(\n  nic_rx_total_errors{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
               "format": "table",
               "hide": false,
               "instant": true,
               "interval": "",
               "legendFormat": "",
-              "refId": "E"
+              "refId": "rx_total_errors"
             },
             {
               "exemplar": false,
-              "expr": "sum_over_time(\n  nic_link_up_to_downs{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
+              "expr": "sum_over_time(\n  nic_link_up_to_downs{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
               "format": "table",
               "hide": false,
               "instant": true,
               "interval": "",
               "legendFormat": "",
-              "refId": "F"
+              "refId": "link_up_to_downs"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum_over_time(\n  nic_rx_alignment_errors{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "rx_alignment_errors"
+            },
+            {
+              "exemplar": false,
+              "expr": "sum_over_time(\n  nic_rx_length_errors{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}[$__range]\n)",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "rx_length_errors"
             }
           ],
           "title": "Ethernet port errors",
@@ -2134,15 +2179,17 @@
               "options": {
                 "include": {
                   "names": [
+                    "netapp_cluster",
+                    "datacenter",
                     "nic",
                     "node",
-                    "Value #B",
-                    "Value #C",
-                    "Value #D",
-                    "Value #E",
-                    "Value #F",
-                    "cluster",
-                    "datacenter"
+                    "Value #rx_crc_errors",
+                    "Value #tx_hw_errors",
+                    "Value #tx_total_errors",
+                    "Value #rx_total_errors",
+                    "Value #link_up_to_downs",
+                    "Value #rx_alignment_errors",
+                    "Value #rx_length_errors"
                   ]
                 }
               }
@@ -2156,13 +2203,16 @@
               "options": {
                 "excludeByName": {},
                 "indexByName": {
-                  "Value #B": 4,
-                  "Value #C": 5,
-                  "Value #D": 6,
-                  "Value #E": 7,
-                  "Value #F": 8,
-                  "cluster": 1,
+                  "Value #link_up_to_downs": 10,
+                  "Value #rx_alignment_errors": 5,
+                  "Value #rx_crc_errors": 4,
+                  "Value #rx_length_errors": 6,
+                  "Value #rx_total_errors": 7,
+                  "Value #tx_hw_errors": 8,
+                  "Value #tx_total_errors": 9,
+                  "__name__": 11,
                   "datacenter": 0,
+                  "netapp_cluster": 1,
                   "nic": 3,
                   "node": 2
                 },
@@ -2170,11 +2220,22 @@
                   "Value #A": "",
                   "Value #B": "Rx CRC Err",
                   "Value #C": "Tx HW Err",
-                  "Value #D": "Rx Total Err",
-                  "Value #E": "Tx Total Err",
+                  "Value #D": "Tx Total Err",
+                  "Value #E": "Rx Total Err",
                   "Value #F": "Up to Downs",
+                  "Value #G": "",
+                  "Value #link_up_to_downs": "Up to Downs",
+                  "Value #rx_alignment_errors": "Rx Alignment Err",
+                  "Value #rx_crc_errors": "Rx CRC Err",
+                  "Value #rx_length_errors": "Rx Length Err",
+                  "Value #rx_total_errors": "Rx Total Err",
+                  "Value #tx_errors": "Tx Errs",
+                  "Value #tx_hw_errors": "Tx HW Err",
+                  "Value #tx_total_errors": "Tx Total Err",
                   "cluster": "",
-                  "nic": "Nic"
+                  "netapp_cluster": "",
+                  "nic": "Nic",
+                  "node": ""
                 }
               }
             }
@@ -2256,7 +2317,7 @@
                       {
                         "targetBlank": true,
                         "title": "",
-                        "url": "/d/cdot-node/ontap-node?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Node=${__value.raw}"
+                        "url": "/d/cdot-node/ontap-node?orgId=1\u0026${Datacenter:queryparam}\u0026${Cluster:queryparam}\u0026${__url_time_range}\u0026var-Node=${__value.raw}"
                       }
                     ]
                   }
@@ -2278,7 +2339,7 @@
                       {
                         "targetBlank": true,
                         "title": "",
-                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1\u0026${__url_time_range}\u0026var-Datacenter=${__value.raw}"
                       }
                     ]
                   }
@@ -2287,7 +2348,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "cluster"
+                  "options": "netapp_cluster"
                 },
                 "properties": [
                   {
@@ -2300,7 +2361,7 @@
                       {
                         "targetBlank": true,
                         "title": "",
-                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1\u0026${Datacenter:queryparam}\u0026${__url_time_range}\u0026var-Cluster=${__value.raw}"
                       }
                     ]
                   }
@@ -2370,7 +2431,7 @@
           "targets": [
             {
               "editorMode": "code",
-              "expr": "nic_ifgrp_tx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",ports!=\"\"}",
+              "expr": "nic_ifgrp_tx_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",ports!=\"\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -2380,7 +2441,7 @@
             },
             {
               "editorMode": "code",
-              "expr": "nic_ifgrp_rx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",ports!=\"\"}",
+              "expr": "nic_ifgrp_rx_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",ports!=\"\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -2402,7 +2463,7 @@
                     "ifgroup",
                     "ports",
                     "datacenter",
-                    "cluster"
+                    "netapp_cluster"
                   ]
                 }
               }
@@ -2427,9 +2488,9 @@
                 "indexByName": {
                   "Value #D": 5,
                   "Value #E": 6,
-                  "cluster": 1,
                   "datacenter": 0,
                   "ifgroup": 3,
+                  "netapp_cluster": 1,
                   "node": 2,
                   "ports": 4
                 },
@@ -2531,7 +2592,7 @@
             {
               "editorMode": "code",
               "exemplar": false,
-              "expr": "nic_ifgrp_tx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      nic_ifgrp_tx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[3h] @ end()\n    )\n  )",
+              "expr": "nic_ifgrp_tx_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      nic_ifgrp_tx_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[3h] @ end()\n    )\n  )",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{ifgroup}}",
@@ -2630,7 +2691,7 @@
             {
               "editorMode": "code",
               "exemplar": false,
-              "expr": "nic_ifgrp_rx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      nic_ifgrp_rx_bytes{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[3h] @ end()\n    )\n  )",
+              "expr": "nic_ifgrp_rx_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      nic_ifgrp_rx_bytes{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{node}} - {{ifgroup}}",
               "range": true,
@@ -2833,7 +2894,7 @@
                       {
                         "targetBlank": true,
                         "title": "",
-                        "url": "/d/cdot-node/ontap-node?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Node=${__value.raw}"
+                        "url": "/d/cdot-node/ontap-node?orgId=1\u0026${Datacenter:queryparam}\u0026${Cluster:queryparam}\u0026${__url_time_range}\u0026var-Node=${__value.raw}"
                       }
                     ]
                   }
@@ -2855,7 +2916,7 @@
                       {
                         "targetBlank": true,
                         "title": "",
-                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1\u0026${__url_time_range}\u0026var-Datacenter=${__value.raw}"
                       }
                     ]
                   }
@@ -2864,7 +2925,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "cluster"
+                  "options": "netapp_cluster"
                 },
                 "properties": [
                   {
@@ -2877,7 +2938,7 @@
                       {
                         "targetBlank": true,
                         "title": "",
-                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1\u0026${Datacenter:queryparam}\u0026${__url_time_range}\u0026var-Cluster=${__value.raw}"
                       }
                     ]
                   }
@@ -2906,7 +2967,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "fcp_util_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}",
+              "expr": "fcp_util_percent{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -2916,7 +2977,7 @@
             },
             {
               "exemplar": false,
-              "expr": "fcp_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}",
+              "expr": "fcp_read_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -2926,7 +2987,7 @@
             },
             {
               "exemplar": false,
-              "expr": "fcp_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}",
+              "expr": "fcp_write_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -2954,7 +3015,7 @@
                     "speed",
                     "Value #B",
                     "Value #A",
-                    "cluster"
+                    "netapp_cluster"
                   ]
                 }
               }
@@ -2966,8 +3027,8 @@
                 "indexByName": {
                   "Value #A": 6,
                   "Value #B": 5,
-                  "cluster": 1,
                   "datacenter": 0,
+                  "netapp_cluster": 1,
                   "node": 2,
                   "port": 3,
                   "speed": 4
@@ -2988,7 +3049,7 @@
           },
           "id": 117,
           "options": {
-            "content": "This panel requires ONTAP 9.6+ and the APIs are only available via REST. Enable the REST collector in your `harvest.yml` config.<br>\nSee https://github.com/NetApp/harvest/wiki/Troubleshooting-Harvest#why-do-i-have-fc-ports-with-fabric-detail-table-empty-in-network-dashboard\nfor more details.",
+            "content": "This panel requires ONTAP 9.6+ and the APIs are only available via REST. Enable the REST collector in your `harvest.yml` config.\u003cbr\u003e\nSee https://github.com/NetApp/harvest/wiki/Troubleshooting-Harvest#why-do-i-have-fc-ports-with-fabric-detail-table-empty-in-network-dashboard\nfor more details.",
             "mode": "markdown"
           },
           "pluginVersion": "8.1.8",
@@ -3113,7 +3174,7 @@
                       {
                         "targetBlank": true,
                         "title": "",
-                        "url": "/d/cdot-node/ontap-node?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Node=${__value.raw}"
+                        "url": "/d/cdot-node/ontap-node?orgId=1\u0026${Datacenter:queryparam}\u0026${Cluster:queryparam}\u0026${__url_time_range}\u0026var-Node=${__value.raw}"
                       }
                     ]
                   }
@@ -3135,7 +3196,7 @@
                       {
                         "targetBlank": true,
                         "title": "",
-                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1\u0026${__url_time_range}\u0026var-Datacenter=${__value.raw}"
                       }
                     ]
                   }
@@ -3144,7 +3205,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "cluster"
+                  "options": "netapp_cluster"
                 },
                 "properties": [
                   {
@@ -3157,7 +3218,7 @@
                       {
                         "targetBlank": true,
                         "title": "",
-                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1\u0026${Datacenter:queryparam}\u0026${__url_time_range}\u0026var-Cluster=${__value.raw}"
                       }
                     ]
                   }
@@ -3180,7 +3241,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "fcp_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}",
+              "expr": "fcp_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -3190,7 +3251,7 @@
             },
             {
               "exemplar": false,
-              "expr": "fcp_max_speed{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}",
+              "expr": "fcp_max_speed{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -3200,7 +3261,7 @@
             },
             {
               "exemplar": false,
-              "expr": "fcp_fabric_connected_speed{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}",
+              "expr": "fcp_fabric_connected_speed{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -3230,7 +3291,7 @@
                     "supported_protocols",
                     "Value #B",
                     "Value #A",
-                    "cluster",
+                    "netapp_cluster",
                     "datacenter"
                   ]
                 }
@@ -3247,12 +3308,12 @@
                 "indexByName": {
                   "Value #A": 13,
                   "Value #B": 12,
-                  "cluster": 1,
                   "datacenter": 0,
                   "enabled": 4,
                   "fabric_connected": 5,
                   "fabric_port_address": 6,
                   "fabric_switch_port": 7,
+                  "netapp_cluster": 1,
                   "node": 3,
                   "physical_protocol": 8,
                   "port": 2,
@@ -3361,7 +3422,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "fcp_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      fcp_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}[3h] @ end()\n    )\n  )",
+              "expr": "fcp_read_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      fcp_read_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}[3h] @ end()\n    )\n  )",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
@@ -3454,7 +3515,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "fcp_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      fcp_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}[3h] @ end()\n    )\n  )",
+              "expr": "fcp_write_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      fcp_write_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
               "refId": "A"
@@ -3546,7 +3607,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "fcp_avg_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      fcp_avg_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}[3h] @ end()\n    )\n  )",
+              "expr": "fcp_avg_read_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      fcp_avg_read_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}[3h] @ end()\n    )\n  )",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
@@ -3639,7 +3700,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "fcp_avg_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      fcp_avg_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}[3h] @ end()\n    )\n  )",
+              "expr": "fcp_avg_write_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      fcp_avg_write_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}[3h] @ end()\n    )\n  )",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
@@ -3731,35 +3792,35 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "sum(fcp_int_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
+              "expr": "sum(fcp_int_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "interrupts",
               "refId": "B"
             },
             {
-              "expr": "sum(\n  fcp_invalid_transmission_word{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
+              "expr": "sum(\n  fcp_invalid_transmission_word{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "invalid transmission words (blocks)",
               "refId": "C"
             },
             {
-              "expr": "sum(fcp_isr_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
+              "expr": "sum(fcp_isr_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "interrupt responses",
               "refId": "D"
             },
             {
-              "expr": "sum(\n  fcp_spurious_int_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
+              "expr": "sum(\n  fcp_spurious_int_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
               "hide": false,
               "interval": "",
               "legendFormat": "spurious interrupts",
               "refId": "I"
             },
             {
-              "expr": "sum(fcp_invalid_crc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
+              "expr": "sum(fcp_invalid_crc{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "invalid CRCs",
@@ -3851,41 +3912,41 @@
           "pluginVersion": "8.1.8",
           "targets": [
             {
-              "expr": "sum(\n  fcp_discarded_frames_count{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
+              "expr": "sum(\n  fcp_discarded_frames_count{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\n)",
               "interval": "",
               "legendFormat": "discarded frames",
               "refId": "A"
             },
             {
-              "expr": "sum(fcp_loss_of_signal{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
+              "expr": "sum(fcp_loss_of_signal{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "loss of signal",
               "refId": "E"
             },
             {
-              "expr": "sum(fcp_loss_of_sync{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
+              "expr": "sum(fcp_loss_of_sync{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "loss of sync",
               "refId": "F"
             },
             {
-              "expr": "sum(fcp_prim_seq_err{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
+              "expr": "sum(fcp_prim_seq_err{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "primitive sequence errors",
               "refId": "G"
             },
             {
-              "expr": "sum(fcp_queue_full{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
+              "expr": "sum(fcp_queue_full{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "queue full",
               "refId": "H"
             },
             {
-              "expr": "sum(fcp_threshold_full{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
+              "expr": "sum(fcp_threshold_full{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"})",
               "hide": false,
               "interval": "",
               "legendFormat": "threshold full",
@@ -3978,7 +4039,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "fcp_link_down{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      fcp_link_down{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}[3h] @ end()\n    )\n  )",
+              "expr": "fcp_link_down{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      fcp_link_down{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
               "refId": "A"
@@ -4070,7 +4131,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "fcp_link_failure{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      fcp_link_failure{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}[3h] @ end()\n    )\n  )",
+              "expr": "fcp_link_failure{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      fcp_link_failure{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
               "refId": "A"
@@ -4212,7 +4273,7 @@
                       {
                         "targetBlank": true,
                         "title": "",
-                        "url": "/d/cdot-node/ontap-node?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-Node=${__value.raw}"
+                        "url": "/d/cdot-node/ontap-node?orgId=1\u0026${Datacenter:queryparam}\u0026${Cluster:queryparam}\u0026${__url_time_range}\u0026var-Node=${__value.raw}"
                       }
                     ]
                   }
@@ -4234,7 +4295,7 @@
                       {
                         "targetBlank": true,
                         "title": "",
-                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1\u0026${__url_time_range}\u0026var-Datacenter=${__value.raw}"
                       }
                     ]
                   }
@@ -4243,7 +4304,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "cluster"
+                  "options": "netapp_cluster"
                 },
                 "properties": [
                   {
@@ -4256,7 +4317,7 @@
                       {
                         "targetBlank": true,
                         "title": "",
-                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1\u0026${Datacenter:queryparam}\u0026${__url_time_range}\u0026var-Cluster=${__value.raw}"
                       }
                     ]
                   }
@@ -4285,7 +4346,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "fcp_nvmf_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}",
+              "expr": "fcp_nvmf_read_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -4295,7 +4356,7 @@
             },
             {
               "exemplar": false,
-              "expr": "fcp_nvmf_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}",
+              "expr": "fcp_nvmf_write_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -4318,7 +4379,7 @@
                     "speed",
                     "Value #B",
                     "Value #A",
-                    "cluster",
+                    "netapp_cluster",
                     "datacenter"
                   ]
                 }
@@ -4335,8 +4396,8 @@
                 "indexByName": {
                   "Value #A": 6,
                   "Value #B": 5,
-                  "cluster": 1,
                   "datacenter": 0,
+                  "netapp_cluster": 1,
                   "node": 2,
                   "port": 3,
                   "speed": 4
@@ -4428,7 +4489,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "fcp_nvmf_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      fcp_nvmf_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}[3h] @ end()\n    )\n  )",
+              "expr": "fcp_nvmf_read_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      fcp_nvmf_read_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}[3h] @ end()\n    )\n  )",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
@@ -4521,7 +4582,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "fcp_nvmf_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      fcp_nvmf_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}[3h] @ end()\n    )\n  )",
+              "expr": "fcp_nvmf_write_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      fcp_nvmf_write_data{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}[3h] @ end()\n    )\n  )",
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
               "refId": "A"
@@ -4613,7 +4674,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "fcp_nvmf_avg_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      fcp_nvmf_avg_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}[3h] @ end()\n    )\n  )",
+              "expr": "fcp_nvmf_avg_read_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      fcp_nvmf_avg_read_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}[3h] @ end()\n    )\n  )",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
@@ -4706,7 +4767,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "fcp_nvmf_avg_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      fcp_nvmf_avg_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}[3h] @ end()\n    )\n  )",
+              "expr": "fcp_nvmf_avg_write_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      fcp_nvmf_avg_write_latency{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",port=~\"$FCP\"}[3h] @ end()\n    )\n  )",
               "instant": false,
               "interval": "",
               "legendFormat": "{{node}} - {{port}}",
@@ -4795,7 +4856,7 @@
                       {
                         "targetBlank": true,
                         "title": "",
-                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1\u0026${__url_time_range}\u0026var-Datacenter=${__value.raw}"
                       }
                     ]
                   }
@@ -4804,7 +4865,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "cluster"
+                  "options": "netapp_cluster"
                 },
                 "properties": [
                   {
@@ -4817,7 +4878,7 @@
                       {
                         "targetBlank": true,
                         "title": "",
-                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1\u0026${Datacenter:queryparam}\u0026${__url_time_range}\u0026var-Cluster=${__value.raw}"
                       }
                     ]
                   }
@@ -4839,7 +4900,7 @@
                       {
                         "targetBlank": true,
                         "title": "",
-                        "url": "/d/cdot-svm/ontap-svm?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-SVM=${__value.raw}"
+                        "url": "/d/cdot-svm/ontap-svm?orgId=1\u0026${Datacenter:queryparam}\u0026${Cluster:queryparam}\u0026${__url_time_range}\u0026var-SVM=${__value.raw}"
                       }
                     ]
                   }
@@ -4861,7 +4922,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "net_route_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
+              "expr": "net_route_labels{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -4886,7 +4947,6 @@
                   "Time": 0,
                   "Value": 14,
                   "__name__": 1,
-                  "cluster": 3,
                   "datacenter": 2,
                   "destination": 6,
                   "family": 7,
@@ -4894,6 +4954,7 @@
                   "instance": 9,
                   "ipspace": 10,
                   "job": 11,
+                  "netapp_cluster": 3,
                   "netmask_length": 12,
                   "scope": 5,
                   "svm": 4,
@@ -4937,7 +4998,7 @@
         },
         "description": null,
         "error": null,
-        "hide": 2,
+        "hide": 0,
         "includeAll": false,
         "label": "Data Source",
         "multi": false,
@@ -4979,7 +5040,7 @@
         "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
+        "definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, netapp_cluster)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -4989,7 +5050,7 @@
         "name": "Cluster",
         "options": [],
         "query": {
-          "query": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, cluster)",
+          "query": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\"}, netapp_cluster)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -5005,7 +5066,7 @@
         "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(node_labels{system_type!=\"7mode\",cluster=~\"$Cluster\"}, node)",
+        "definition": "label_values(node_labels{system_type!=\"7mode\",netapp_cluster=~\"$Cluster\"}, node)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -5015,7 +5076,7 @@
         "name": "Node",
         "options": [],
         "query": {
-          "query": "label_values(node_labels{system_type!=\"7mode\",cluster=~\"$Cluster\"}, node)",
+          "query": "label_values(node_labels{system_type!=\"7mode\",netapp_cluster=~\"$Cluster\"}, node)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -5031,7 +5092,7 @@
         "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(nic_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}, nic)",
+        "definition": "label_values(nic_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\",node=~\"$Node\"}, nic)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -5041,7 +5102,7 @@
         "name": "Eth",
         "options": [],
         "query": {
-          "query": "label_values(nic_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}, nic)",
+          "query": "label_values(nic_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\",node=~\"$Node\"}, nic)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -5057,7 +5118,7 @@
         "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(fcp_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}, port)",
+        "definition": "label_values(fcp_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\",node=~\"$Node\"}, port)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -5067,7 +5128,7 @@
         "name": "FCP",
         "options": [],
         "query": {
-          "query": "label_values(fcp_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",node=~\"$Node\"}, port)",
+          "query": "label_values(fcp_labels{datacenter=~\"$Datacenter\",netapp_cluster=~\"$Cluster\",node=~\"$Node\"}, port)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
