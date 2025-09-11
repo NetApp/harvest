@@ -7,8 +7,6 @@ counters:
   - ^^id
   - ^node.name           => node
   - average_latency      => avg_latency
-  - ops                  => ops
-  - read_ops             => read_ops
   - write_ops            => write_ops
 
 plugins:
