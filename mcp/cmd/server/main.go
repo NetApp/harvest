@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"mcp-server/cmd/loader"
 	"mcp-server/cmd/version"
 	"net/url"
 	"os"
@@ -44,6 +45,8 @@ func setupLogger() *slog.Logger {
 }
 
 var logger = setupLogger().With(slog.String("component", "mcp-server"))
+
+var metricDescriptions map[string]string
 
 // Initialize auth package logger
 func init() {
@@ -409,17 +412,32 @@ func ListPrometheusMetrics(_ context.Context, _ *mcp.CallToolRequest, args ListP
 		metrics = filterStrings(metrics, args.Match)
 	}
 
+	// Include descriptions only when filtering is applied to limit response size
+	includeDescriptions := (args.Match != "" || len(args.Matches) > 0) && len(metricDescriptions) > 0
+
+	metricsArray := make([]map[string]interface{}, 0, len(metrics))
+	for _, metric := range metrics {
+		metricInfo := map[string]interface{}{"name": metric}
+		if includeDescriptions {
+			if description, found := metricDescriptions[metric]; found {
+				metricInfo["description"] = description
+			}
+		}
+		metricsArray = append(metricsArray, metricInfo)
+	}
+
 	response := map[string]interface{}{
 		"status": "success",
 		"data": map[string]interface{}{
-			"metric_names": metrics,
-			"total_count":  len(metrics),
+			"total_count": len(metrics),
 			"filtering": map[string]interface{}{
 				"server_side_matches": len(args.Matches) > 0,
 				"client_side_pattern": args.Match != "" && len(args.Matches) == 0,
 				"pattern_used":        args.Match,
 				"matches_used":        args.Matches,
 			},
+			"descriptions_included": includeDescriptions,
+			"metrics":               metricsArray,
 		},
 	}
 
@@ -709,6 +727,40 @@ func extractIdentifiers(metric map[string]interface{}) string {
 	return strings.Join(identifiers, " ")
 }
 
+// getResourcePath returns path to a resource, trying common locations
+func getResourcePath(resource string) string {
+	paths := []string{
+		filepath.Join("..", "mcp", resource), // From harvest/bin
+		filepath.Join("..", "..", resource),  // From mcp/cmd/server
+		resource,                             // From mcp root or container
+	}
+
+	for _, path := range paths {
+		if _, err := os.Stat(path); err == nil {
+			return path
+		}
+	}
+
+	return resource
+}
+
+// getDocumentPath returns the path to a document file
+func getDocumentPath(filename string) string {
+	paths := []string{
+		filepath.Join("..", "docs", filename),             // From harvest/bin
+		filepath.Join("..", "..", "..", "docs", filename), // From mcp/cmd/server
+		filepath.Join("docs", filename),                   // Container or other
+	}
+
+	for _, path := range paths {
+		if _, err := os.Stat(path); err == nil {
+			return path
+		}
+	}
+
+	return filepath.Join("docs", filename)
+}
+
 // validateTSDBConnection tests the connection to the time-series database (Prometheus/VictoriaMetrics)
 func validateTSDBConnection(config auth.TSDBConfig) error {
 	logger.Info("validating time-series database connection", slog.String("url", config.URL))
@@ -738,18 +790,6 @@ func readFile(filePath string) ([]byte, error) {
 		return nil, fmt.Errorf("failed to read file %s: %w", filePath, err)
 	}
 	return content, nil
-}
-
-// getDocumentPath returns the path to a document file
-func getDocumentPath(filename string) string {
-	// Production/container: docs in same directory as binary
-	prodPath := filepath.Join("docs", filename)
-	if _, err := os.Stat(prodPath); err == nil {
-		return prodPath
-	}
-
-	// Development: docs in parent directory
-	return filepath.Join("..", "..", "..", "docs", filename)
 }
 
 // Resource handlers
@@ -862,6 +902,11 @@ func runMcpServer(_ *cobra.Command, _ []string) {
 
 	server := mcp.NewServer(&mcp.Implementation{Name: AppName, Version: version.Info()}, nil)
 
+	metricDescriptions = loader.LoadMetricDescriptions(getResourcePath("metadata"), logger)
+
+	addTool(server, "get_metric_description", "Get description and metadata for a specific metric by name", GetMetricDescription)
+	addTool(server, "search_metrics", "Search for metrics by name, description, or object type using a pattern", SearchMetrics)
+
 	addTool(server, "prometheus_query",
 		"Execute instant PromQL queries to get current metric values at a specific point in time.\n"+
 			"\t\tReturns immediate snapshots of system state, perfect for real-time monitoring and validation.\n"+
@@ -869,7 +914,7 @@ func runMcpServer(_ *cobra.Command, _ []string) {
 			"\t\tContext: Always combine with range queries to understand trends and historical patterns.\n"+
 			"\t\tState Queries: For status metrics (*_new_status), 0 = offline, 1 = online", PrometheusQuery)
 	addTool(server, "prometheus_range_query", "Execute a PromQL range query to get time series data over a period", PrometheusRangeQuery)
-	addTool(server, "list_prometheus_metrics", "List all available metrics from Prometheus with advanced filtering: 1) 'match' for simple/regex patterns, 2) 'matches' for efficient server-side Prometheus label matchers", ListPrometheusMetrics)
+	addTool(server, "list_prometheus_metrics", "List all available metrics from Prometheus with advanced filtering and optional descriptions. When 'match' or 'matches' filters are applied, metric descriptions are automatically included. Use 1) 'match' for simple/regex patterns, 2) 'matches' for efficient server-side Prometheus label matchers", ListPrometheusMetrics)
 	addTool(server, "get_alerts", "Get active alerts from Prometheus with summary by severity level", GetActiveAlerts)
 	addTool(server, "infrastructure_health",
 		"Perform comprehensive automated health assessment with actionable insights across ONTAP infrastructure.\n"+
@@ -879,6 +924,40 @@ func runMcpServer(_ *cobra.Command, _ []string) {
 			"\t\tWorkflow: Excellent starting point for infrastructure analysis and assessment.", InfrastructureHealth)
 	addTool(server, "list_label_values", "Get all available values for a specific label (e.g., cluster names, node names, volume names) with optional regex filtering", ListLabelValues)
 	addTool(server, "list_all_label_names", "Get all available label names (dimensions) that can be used to filter metrics", ListAllLabelNames)
+
+	promptDefinitions, err := loader.LoadPromptDefinitions(getResourcePath("prompts"), logger)
+	if err != nil {
+		logger.Error("failed to load prompt definitions", slog.Any("error", err))
+	}
+
+	for _, promptDef := range promptDefinitions {
+		content := promptDef.Content
+		server.AddPrompt(
+			&mcp.Prompt{
+				Name:        promptDef.Name,
+				Title:       promptDef.Title,
+				Description: promptDef.Description,
+			},
+			func(_ context.Context, _ *mcp.GetPromptRequest) (*mcp.GetPromptResult, error) {
+				return &mcp.GetPromptResult{
+					Messages: []*mcp.PromptMessage{
+						{
+							Role: "user",
+							Content: &mcp.TextContent{
+								Text: content,
+							},
+						},
+					},
+				}, nil
+			},
+		)
+	}
+
+	if len(promptDefinitions) == 0 {
+		logger.Warn("no prompts loaded - MCP server will run without prompts")
+	} else {
+		logger.Info("registered prompts", slog.Int("count", len(promptDefinitions)))
+	}
 
 	// Add ONTAP metrics documentation as a resource
 	server.AddResource(&mcp.Resource{
@@ -911,6 +990,111 @@ func runMcpServer(_ *cobra.Command, _ []string) {
 		os.Exit(1)
 	}
 	logger.Info("mcp server shutdown gracefully")
+}
+
+type GetMetricDescriptionRequest struct {
+	MetricName string `json:"metricName"`
+}
+
+type SearchMetricsRequest struct {
+	Pattern string `json:"pattern"`
+}
+
+func GetMetricDescription(_ context.Context, _ *mcp.CallToolRequest, params GetMetricDescriptionRequest) (*mcp.CallToolResult, any, error) {
+	if len(metricDescriptions) == 0 {
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{
+				&mcp.TextContent{Text: "Metadata not available. Please ensure metadata files are generated and accessible."},
+			},
+			IsError: true,
+		}, nil, nil
+	}
+
+	if params.MetricName == "" {
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{
+				&mcp.TextContent{Text: "MetricName parameter is required"},
+			},
+			IsError: true,
+		}, nil, nil
+	}
+
+	description, found := metricDescriptions[params.MetricName]
+	if !found {
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{
+				&mcp.TextContent{Text: "No metadata found for metric: " + params.MetricName},
+			},
+		}, nil, nil
+	}
+
+	responseText := fmt.Sprintf("**Metric:** %s\n\n**Description:** %s", params.MetricName, description)
+
+	return &mcp.CallToolResult{
+		Content: []mcp.Content{
+			&mcp.TextContent{Text: responseText},
+		},
+	}, nil, nil
+}
+
+func SearchMetrics(_ context.Context, _ *mcp.CallToolRequest, params SearchMetricsRequest) (*mcp.CallToolResult, any, error) {
+	if len(metricDescriptions) == 0 {
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{
+				&mcp.TextContent{Text: "Metadata not available. Please ensure metadata files are generated and accessible."},
+			},
+			IsError: true,
+		}, nil, nil
+	}
+
+	if params.Pattern == "" {
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{
+				&mcp.TextContent{Text: "Pattern parameter is required"},
+			},
+			IsError: true,
+		}, nil, nil
+	}
+
+	pattern := strings.ToLower(params.Pattern)
+	var matches []struct {
+		name        string
+		description string
+	}
+
+	for metricName, description := range metricDescriptions {
+		if strings.Contains(strings.ToLower(metricName), pattern) ||
+			strings.Contains(strings.ToLower(description), pattern) {
+			matches = append(matches, struct {
+				name        string
+				description string
+			}{metricName, description})
+		}
+	}
+
+	if len(matches) == 0 {
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{
+				&mcp.TextContent{Text: "No metrics found matching pattern: " + params.Pattern},
+			},
+		}, nil, nil
+	}
+
+	var responseBuilder strings.Builder
+	responseBuilder.WriteString(fmt.Sprintf("Found %d metrics matching pattern '%s':\n\n", len(matches), params.Pattern))
+
+	for i, match := range matches {
+		if i > 0 {
+			responseBuilder.WriteString("\n---\n\n")
+		}
+		responseBuilder.WriteString(fmt.Sprintf("**%s**\n%s", match.name, match.description))
+	}
+
+	return &mcp.CallToolResult{
+		Content: []mcp.Content{
+			&mcp.TextContent{Text: responseBuilder.String()},
+		},
+	}, nil, nil
 }
 
 func main() {

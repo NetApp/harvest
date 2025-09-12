@@ -25,6 +25,12 @@ RUN cp -a $BUILD_DIR/docs/ontap-metrics.md $INSTALL_DIR/docs/ 2>/dev/null || tru
 RUN cp -a $BUILD_DIR/docs/cisco-switch-metrics.md $INSTALL_DIR/docs/ 2>/dev/null || true
 RUN cp -a $BUILD_DIR/docs/storagegrid-metrics.md $INSTALL_DIR/docs/ 2>/dev/null || true
 
+RUN mkdir -p $INSTALL_DIR/metadata
+RUN cp -a $BUILD_DIR/mcp/metadata/*.json $INSTALL_DIR/metadata/ 2>/dev/null || true
+
+RUN mkdir -p $INSTALL_DIR/prompts
+RUN cp -a $BUILD_DIR/mcp/prompts/* $INSTALL_DIR/prompts/ 2>/dev/null || true
+
 FROM gcr.io/distroless/static-debian12:debug
 
 ARG INSTALL_DIR=/opt/harvest-mcp

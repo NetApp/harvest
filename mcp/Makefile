@@ -86,11 +86,15 @@ package: clean deps build test ## Package MCP server binary with documentation
 	@rm -rf ${DIST}
 	@mkdir -p ${DIST}/${PACKAGE_NAME}
 	@mkdir -p ${DIST}/${PACKAGE_NAME}/docs
+	@mkdir -p ${DIST}/${PACKAGE_NAME}/metadata
+	@mkdir -p ${DIST}/${PACKAGE_NAME}/prompts
 	@cp ${BIN_DIR}/${BINARY_NAME} ${DIST}/${PACKAGE_NAME}/
 	@cp README.md ${DIST}/${PACKAGE_NAME}/ 2>/dev/null || true
 	@cp ../docs/ontap-metrics.md ${DIST}/${PACKAGE_NAME}/docs/ 2>/dev/null || echo "Warning: ontap-metrics.md not found"
 	@cp ../docs/cisco-switch-metrics.md ${DIST}/${PACKAGE_NAME}/docs/ 2>/dev/null || echo "Warning: cisco-switch-metrics.md not found"
 	@cp ../docs/storagegrid-metrics.md ${DIST}/${PACKAGE_NAME}/docs/ 2>/dev/null || echo "Warning: storagegrid-metrics.md not found"
+	@cp metadata/*.json ${DIST}/${PACKAGE_NAME}/metadata/ 2>/dev/null || echo "Warning: No metadata files found"
+	@cp -r prompts/* ${DIST}/${PACKAGE_NAME}/prompts/ 2>/dev/null || echo "Warning: No prompts found"
 	@cd ${DIST} && tar --create --gzip --file ${PACKAGE_NAME}.tar.gz ${PACKAGE_NAME}/
 	@rm -rf ${DIST}/${PACKAGE_NAME}
 	@echo "✅ Package created: ${DIST}/${PACKAGE_NAME}.tar.gz"
