@@ -32,6 +32,7 @@ const (
 	timestampMetricName = "timestamp"
 	endpoint            = "api/private/cli"
 	keyToken            = "?#"
+	spaceToken          = " "
 )
 
 type StatPerf struct {
@@ -567,12 +568,9 @@ func (s *StatPerf) processPerfRecords(records []gjson.Result, curMat *matrix.Mat
 					instanceKeyValues = append(instanceKeyValues, v)
 				} else {
 					if s.Object == "NvmMirror" {
-						for i, j := range data.Map() {
-							if strings.Contains(i, k) {
-								keySplit := strings.Split(i, " ")
-								instanceKeyValues = append(instanceKeyValues, keySplit[1]+" "+j.String())
-								break
-							}
+						for metricName, metricValue := range data.Map() {
+							_, updatedMetricValue := handleSpaces(metricName, metricValue.String())
+							instanceKeyValues = append(instanceKeyValues, updatedMetricValue)
 						}
 					} else {
 						s.Logger.Warn("missing key", slog.String("key", k))
@@ -621,16 +619,7 @@ func (s *StatPerf) processPerfRecords(records []gjson.Result, curMat *matrix.Mat
 			metricName := k.ClonedString()
 			metricValue := v.ClonedString()
 			if s.Object == "NvmMirror" {
-				if strings.Contains(metricName, "instance_name") {
-					metricNameSplit := strings.Split(metricName, " ")
-					metricName = metricNameSplit[0]
-					metricValue = metricNameSplit[1] + " " + metricValue
-				}
-				if strings.Contains(metricName, "instance_uuid") {
-					metricNameSplit := strings.Split(metricName, " ")
-					metricName = metricNameSplit[0]
-					metricValue = metricNameSplit[1] + " " + metricValue
-				}
+				metricName, metricValue = handleSpaces(metricName, metricValue)
 			}
 			if metricName == "_aggregation" || metricName == "timestamp" {
 				return true

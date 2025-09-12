@@ -128,6 +128,7 @@ var (
 		"security_audit_destination_port":  {},
 		"storage_unit_":                    {},
 		"wafl_reads_from_pmem":             {},
+		"nvm_mirror_":                      {},
 	}
 
 	knownMappingGapsSG = map[string]struct{}{
