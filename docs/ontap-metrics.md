@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Sep-11
+Creation Date : 2025-Sep-12
 ONTAP Version: 9.16.1
 ```
 
@@ -6396,6 +6396,28 @@ The `iw_avg_latency` metric is visualized in the following Grafana dashboards:
 |--------|----------|--------|--------|
 | ONTAP: MetroCluster | MetroCluster Iwarp | timeseries | [Average Latency](/d/cdot-metrocluster/ontap3a-metrocluster?orgId=1&viewPanel=103) |
 ///
+
+
+
+### iw_ops
+
+Number of RDMA I/Os issued.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/iwarp` | `ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/iwarp.yaml |
+| ZAPI | `perf-object-get-instances iwarp` | `iw_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iwarp.yaml |
+
+
+
+### iw_read_ops
+
+Number of RDMA read I/Os issued.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/cluster/counter/tables/iwarp` | `read_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/iwarp.yaml |
+| ZAPI | `perf-object-get-instances iwarp` | `iw_read_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iwarp.yaml |
 
 
 
@@ -18206,6 +18228,7 @@ The `snapmirror_labels` metric is visualized in the following Grafana dashboards
 | ONTAP: SnapMirror Destinations | Highlights | piechart | [Relationships by Protection Policy](/d/cdot-snapmirror-destinations/ontap3a-snapmirror destinations?orgId=1&viewPanel=111) |
 | ONTAP: SnapMirror Destinations | Highlights | stat | [Healthy](/d/cdot-snapmirror-destinations/ontap3a-snapmirror destinations?orgId=1&viewPanel=143) |
 | ONTAP: SnapMirror Destinations | Highlights | table | [Relationships](/d/cdot-snapmirror-destinations/ontap3a-snapmirror destinations?orgId=1&viewPanel=28) |
+| ONTAP: SnapMirror Destinations | Highlights | timeseries | [Top $TopResources Destination Volumes by Average Throughput](/d/cdot-snapmirror-destinations/ontap3a-snapmirror destinations?orgId=1&viewPanel=147) |
 | ONTAP: SnapMirror Destinations | Consistency Group Data Protection | stat | [Unhealthy](/d/cdot-snapmirror-destinations/ontap3a-snapmirror destinations?orgId=1&viewPanel=144) |
 | ONTAP: SnapMirror Destinations | Consistency Group Data Protection | piechart | [Consistency Group relationships by relationship type](/d/cdot-snapmirror-destinations/ontap3a-snapmirror destinations?orgId=1&viewPanel=113) |
 | ONTAP: SnapMirror Destinations | Consistency Group Data Protection | stat | [Healthy](/d/cdot-snapmirror-destinations/ontap3a-snapmirror destinations?orgId=1&viewPanel=145) |
@@ -23285,6 +23308,7 @@ The `volume_total_data` metric is visualized in the following Grafana dashboards
 |--------|----------|--------|--------|
 | ONTAP: Cluster | Throughput | timeseries | [Data](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=107) |
 | ONTAP: Datacenter | Performance | timeseries | [Top $TopResources Throughput by Cluster](/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=107) |
+| ONTAP: SnapMirror Destinations | Highlights | timeseries | [Top $TopResources Destination Volumes by Average Throughput](/d/cdot-snapmirror-destinations/ontap3a-snapmirror destinations?orgId=1&viewPanel=147) |
 ///
 
 

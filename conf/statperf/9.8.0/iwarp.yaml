@@ -7,9 +7,12 @@ counters:
   - ^instance_name          => adapter
   - ^node_name              => node
   - iw_avg_latency          => avg_latency
+  - iw_ops                  => ops
+  - iw_read_ops             => read_ops
   - iw_write_ops            => write_ops
 
 override:
+  - iw_read_ops: rate
   - iw_write_ops: rate
 
 export_options:
