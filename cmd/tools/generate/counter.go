@@ -128,6 +128,7 @@ var (
 		"security_audit_destination_port":  {},
 		"storage_unit_":                    {},
 		"wafl_reads_from_pmem":             {},
+		"nvm_mirror_":                      {},
 	}
 
 	knownMappingGapsSG = map[string]struct{}{
@@ -182,6 +183,7 @@ var (
 		"flexcache_",
 		"fpolicy_svm_failedop_notifications",
 		"netstat_",
+		"nvm_mirror_",
 		"quota_disk_used_pct_threshold",
 		"snapshot_volume_violation_count",
 		"snapshot_volume_violation_total_size",

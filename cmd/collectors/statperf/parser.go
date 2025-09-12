@@ -442,3 +442,15 @@ func preprocessArrayLine(line string) string {
 	result := modifiedText + " " + number
 	return result
 }
+
+func handleSpaces(metricName, metricValue string) (string, string) {
+	var updatedMetricName, updatedMetricValue string
+	if strings.Contains(metricName, "instance_name") || strings.Contains(metricName, "instance_uuid") {
+		if metricNameSplit := strings.Split(metricName, spaceToken); len(metricNameSplit) > 1 {
+			updatedMetricName = metricNameSplit[0]
+			updatedMetricValue = strings.Join(metricNameSplit[1:], spaceToken) + spaceToken + metricValue
+			return updatedMetricName, updatedMetricValue
+		}
+	}
+	return metricName, metricValue
+}
