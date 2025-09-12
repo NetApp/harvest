@@ -567,14 +567,15 @@ func (s *StatPerf) processPerfRecords(records []gjson.Result, curMat *matrix.Mat
 				if v != "" {
 					instanceKeyValues = append(instanceKeyValues, v)
 				} else {
-					if s.Object == "NvmMirror" {
-						for metricName, metricValue := range data.Map() {
+					for metricName, metricValue := range data.Map() {
+						if strings.Contains(metricName, k) {
 							_, updatedMetricValue := handleSpaces(metricName, metricValue.String())
 							instanceKeyValues = append(instanceKeyValues, updatedMetricValue)
 						}
-					} else {
-						s.Logger.Warn("missing key", slog.String("key", k))
 					}
+				}
+				if len(instanceKeyValues) == 0 {
+					s.Logger.Warn("missing key", slog.String("key", k))
 				}
 			}
 
@@ -618,9 +619,8 @@ func (s *StatPerf) processPerfRecords(records []gjson.Result, curMat *matrix.Mat
 			var histogramMetric *matrix.Metric
 			metricName := k.ClonedString()
 			metricValue := v.ClonedString()
-			if s.Object == "NvmMirror" {
-				metricName, metricValue = handleSpaces(metricName, metricValue)
-			}
+			// Handles spaces in instance_name and instance_uuid in few objects
+			metricName, metricValue = handleSpaces(metricName, metricValue)
 			if metricName == "_aggregation" || metricName == "timestamp" {
 				return true
 			}
