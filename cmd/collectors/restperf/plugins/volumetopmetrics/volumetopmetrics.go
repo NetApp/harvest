@@ -299,6 +299,9 @@ func (t *TopMetrics) processTopMetrics(data *matrix.Matrix) (*TopMetricsData, er
 
 	filteredDataInstances := set.New()
 	for key, value := range data.GetInstances() {
+		if !value.IsExportable() {
+			continue
+		}
 		svmName := value.GetLabel("svm")
 		volName := value.GetLabel("volume")
 		if va.Has(svmName + keyToken + volName) {
