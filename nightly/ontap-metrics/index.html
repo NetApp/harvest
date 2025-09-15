@@ -14611,6 +14611,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#volume_snaplock_labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_snaplock_labels
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#volume_snapshot_count" class="md-nav__link">
     <span class="md-ellipsis">
       volume_snapshot_count
@@ -28609,6 +28618,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#volume_snaplock_labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      volume_snaplock_labels
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#volume_snapshot_count" class="md-nav__link">
     <span class="md-ellipsis">
       volume_snapshot_count
@@ -29190,7 +29208,7 @@ These can be generated on demand by running <code>bin/harvest grafana metrics</c
 <p>More information about ONTAP REST performance counters can be found <a href="https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html">here</a>.</p>
 </li>
 </ul>
-<div class="highlight"><pre><span></span><code>Creation Date : 2025-Sep-14
+<div class="highlight"><pre><span></span><code>Creation Date : 2025-Sep-15
 ONTAP Version: 9.16.1
 </code></pre></div>
 <details>
@@ -88258,6 +88276,12 @@ ONTAP Version: 9.16.1
 </tr>
 <tr>
 <td>ONTAP: Volume</td>
+<td>Snaplock</td>
+<td>table</td>
+<td><a href="/d/cdot-volume/ontap3a-volume?orgId=1&amp;viewPanel=188">Volume Snaplock</a></td>
+</tr>
+<tr>
+<td>ONTAP: Volume</td>
 <td>Volume Hot-Cold Data</td>
 <td>table</td>
 <td><a href="/d/cdot-volume/ontap3a-volume?orgId=1&amp;viewPanel=45">Volumes by Cold data</a></td>
@@ -90898,6 +90922,47 @@ ONTAP Version: 9.16.1
 <td>Per Volume Statistics</td>
 <td>timeseries</td>
 <td><a href="/d/cdot-volume-deep-dive/ontap3a-volume deep dive?orgId=1&amp;viewPanel=34">Per Volume Snapshot Space Used Percent</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="volume_snaplock_labels">volume_snaplock_labels<a class="headerlink" href="#volume_snaplock_labels" title="Permanent link">&para;</a></h3>
+<p>This metric provides information about VolumeSnaplock</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>api/private/cli/volume/snaplock</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/rest/9.12.0/volume_snaplock.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>volume_snaplock_labels</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ONTAP: Volume</td>
+<td>Snaplock</td>
+<td>table</td>
+<td><a href="/d/cdot-volume/ontap3a-volume?orgId=1&amp;viewPanel=188">Volume Snaplock</a></td>
 </tr>
 </tbody>
 </table>
