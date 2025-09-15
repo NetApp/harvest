@@ -467,10 +467,7 @@ func (s *StatPerf) PollData() (map[string]*matrix.Matrix, error) {
 	allInstances := s.instanceNames.Slice()
 
 	for i := 0; i < len(allInstances); i += s.batchSize {
-		end := i + s.batchSize
-		if end > len(allInstances) {
-			end = len(allInstances)
-		}
+		end := min(i+s.batchSize, len(allInstances))
 		batchInstances := allInstances[i:end]
 		// Build CLI command with the current batch of instances.
 		cliCommand, err := clirequestbuilder.New().

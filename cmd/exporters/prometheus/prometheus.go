@@ -31,6 +31,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
 	"regexp"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -604,11 +605,8 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 			// Before writing out the histogram, check that every bucket value is non-empty.
 			// Some bucket values may be empty if certain bucket metrics were skipped in the collector while others were not.
 			allBucketsHaveValues := true
-			for _, value := range h.values {
-				if value == "" {
-					allBucketsHaveValues = false
-					break
-				}
+			if slices.Contains(h.values, "") {
+				allBucketsHaveValues = false
 			}
 			if !allBucketsHaveValues {
 				// Skip rendering this histogram entirely.

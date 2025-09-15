@@ -457,8 +457,8 @@ func GetAllJsons(dir string) []string {
 
 func FindStringBetweenTwoChar(stringValue string, startChar string, endChar string) []string {
 	var counters = make([]string, 0)
-	firstSet := strings.Split(stringValue, startChar)
-	for _, actualString := range firstSet {
+	firstSet := strings.SplitSeq(stringValue, startChar)
+	for actualString := range firstSet {
 		counterArray := strings.Split(actualString, endChar)
 		switch {
 		case strings.Contains(actualString, ")"): // check for inner expression such as top:

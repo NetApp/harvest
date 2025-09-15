@@ -418,7 +418,7 @@ func (v *Volume) handleTags(globalLabels map[string]string) {
 		svm := volume.svm
 		vol := volume.vol
 		if tags := volume.tags; tags != "" {
-			for _, tag := range strings.Split(tags, ",") {
+			for tag := range strings.SplitSeq(tags, ",") {
 				tagInstanceKey := globalLabels["cluster"] + svm + vol + tag
 				if tagInstance, err = v.tags.NewInstance(tagInstanceKey); err != nil {
 					v.SLogger.Error(

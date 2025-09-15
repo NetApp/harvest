@@ -25,12 +25,12 @@ func ParseMetric(rawName string) (string, string, string, string) {
 		display = strings.ReplaceAll(display, "-", "_")
 	}
 
-	if strings.HasPrefix(name, "^^") {
-		return strings.TrimPrefix(name, "^^"), strings.TrimPrefix(display, "^^"), "key", ""
+	if after, ok := strings.CutPrefix(name, "^^"); ok {
+		return after, strings.TrimPrefix(display, "^^"), "key", ""
 	}
 
-	if strings.HasPrefix(name, "^") {
-		return strings.TrimPrefix(name, "^"), strings.TrimPrefix(display, "^"), "label", ""
+	if after, ok := strings.CutPrefix(name, "^"); ok {
+		return after, strings.TrimPrefix(display, "^"), "label", ""
 	}
 
 	return name, display, "float", metricType
@@ -55,13 +55,13 @@ func ParseZAPIDisplay(obj string, path []string) string {
 		words  []string
 	)
 
-	for _, w := range strings.Split(obj, "_") {
+	for w := range strings.SplitSeq(obj, "_") {
 		ignore[w] = 0
 	}
 
 	for _, attribute := range path {
-		split := strings.Split(attribute, "-")
-		for _, word := range split {
+		split := strings.SplitSeq(attribute, "-")
+		for word := range split {
 			if word == obj {
 				continue
 			}

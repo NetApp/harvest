@@ -315,14 +315,14 @@ func deepMerge(dst, src reflect.Value, visited map[uintptr]*visit, depth int, co
 // src attributes if they themselves are not empty. dst and src must be valid same-type structs
 // and dst must be a pointer to struct.
 // It won't merge unexported (private) fields and will do recursively any exported field.
-func Merge(dst, src interface{}, opts ...func(*Config)) error {
+func Merge(dst, src any, opts ...func(*Config)) error {
 	return merge(dst, src, opts...)
 }
 
 // MergeWithOverwrite will do the same as Merge except that non-empty dst attributes will be overridden by
 // non-empty src attribute values.
 // Deprecated: use Merge(…) with WithOverride
-func MergeWithOverwrite(dst, src interface{}, opts ...func(*Config)) error {
+func MergeWithOverwrite(dst, src any, opts ...func(*Config)) error {
 	return merge(dst, src, append(opts, WithOverride)...)
 }
 
@@ -371,7 +371,7 @@ func WithSliceDeepCopy(config *Config) {
 	config.Overwrite = true
 }
 
-func merge(dst, src interface{}, opts ...func(*Config)) error {
+func merge(dst, src any, opts ...func(*Config)) error {
 	if dst != nil && reflect.ValueOf(dst).Kind() != reflect.Ptr {
 		return ErrNonPointerArgument
 	}

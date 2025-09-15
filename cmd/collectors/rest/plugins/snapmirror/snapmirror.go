@@ -238,8 +238,8 @@ func (m *SnapMirror) handleCGRelationships(data *matrix.Matrix, keys []string) {
 
 		cgItemMappings := cgInstance.GetLabel("cg_item_mappings")
 		// cg_item_mappings would be array of cgMapping. Example: vols1:@vold1,vols2:@vold2
-		cgMappingData := strings.Split(cgItemMappings, ",")
-		for _, cgMapping := range cgMappingData {
+		cgMappingData := strings.SplitSeq(cgItemMappings, ",")
+		for cgMapping := range cgMappingData {
 			var (
 				cgVolumeInstance *matrix.Instance
 				err              error

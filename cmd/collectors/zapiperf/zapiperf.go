@@ -1132,8 +1132,8 @@ func (z *ZapiPerf) PollCounter() (map[string]*matrix.Matrix, error) {
 				wanted["instance_name"] = z.object
 			} else {
 				display := strings.ReplaceAll(cnt, "-", "_")
-				if strings.HasPrefix(display, z.object) {
-					display = strings.TrimPrefix(display, z.object)
+				if after, ok := strings.CutPrefix(display, z.object); ok {
+					display = after
 					display = strings.TrimPrefix(display, "_")
 				}
 				wanted[cnt] = display

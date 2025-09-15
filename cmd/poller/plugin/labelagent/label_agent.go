@@ -109,7 +109,7 @@ func (a *LabelAgent) splitPairs(aMatrix *matrix.Matrix) error {
 	for _, instance := range aMatrix.GetInstances() {
 		for _, r := range a.splitPairsRules {
 			if value := instance.GetLabel(r.source); value != "" {
-				for _, pair := range strings.Split(value, r.sep1) {
+				for pair := range strings.SplitSeq(value, r.sep1) {
 					if kv := strings.Split(pair, r.sep2); len(kv) == 2 {
 						instance.SetLabel(kv[0], kv[1])
 					}
@@ -158,7 +158,7 @@ func (a *LabelAgent) replaceRegex(aMatrix *matrix.Matrix) error {
 		for _, r := range a.replaceRegexRules {
 			old := instance.GetLabel(r.source)
 			if m := r.reg.FindStringSubmatch(old); m != nil {
-				s := make([]interface{}, 0)
+				s := make([]any, 0)
 				for _, i := range r.indices {
 					if i < len(m)-1 {
 						s = append(s, m[i+1])

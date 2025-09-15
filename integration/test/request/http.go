@@ -44,7 +44,7 @@ func GetResponseBody(url string) ([]byte, error) {
 }
 
 func SendReqAndGetRes(url string, method string,
-	buf []byte) map[string]interface{} {
+	buf []byte) map[string]any {
 	client := &http2.Client{}
 	req, err := requests.New(method, url, bytes.NewBuffer(buf))
 	if err != nil {
@@ -59,7 +59,7 @@ func SendReqAndGetRes(url string, method string,
 	body, err := io.ReadAll(res.Body)
 	errs.PanicIfNotNil(err)
 	slog.Info(string(body))
-	var data map[string]interface{}
+	var data map[string]any
 	err = json.Unmarshal(body, &data)
 	errs.PanicIfNotNil(err)
 	return data

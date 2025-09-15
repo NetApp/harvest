@@ -56,8 +56,8 @@ func checkMetrics(t *testing.T, port int) {
 	}
 
 	// Read the output, line by line, and check for errors, non-errors are ignored
-	lines := strings.Split(string(output), "\n")
-	for _, line := range lines {
+	lines := strings.SplitSeq(string(output), "\n")
+	for line := range lines {
 		line = strings.TrimSpace(line)
 		if line == "" {
 			continue

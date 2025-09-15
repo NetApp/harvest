@@ -530,10 +530,10 @@ func (a *LabelAgent) parseValueToNumRule(rule string) {
 		r.mapping = make(map[string]uint8)
 
 		// This '-' is used for handling special case in disk.yaml, rest all are handled normally with assigning to 1.
-		for _, v := range strings.Split(fields[2], "-") {
+		for v := range strings.SplitSeq(fields[2], "-") {
 			r.mapping[v] = uint8(1)
 		}
-		for _, v := range strings.Split(fields[3], "-") {
+		for v := range strings.SplitSeq(fields[3], "-") {
 			r.mapping[v] = uint8(1)
 		}
 
