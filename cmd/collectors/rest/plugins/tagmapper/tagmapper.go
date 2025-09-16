@@ -105,8 +105,8 @@ func (t *TagMapper) parseTagsToMap(tags string) map[string]string {
 	if tags == "" {
 		return tagMap
 	}
-	pairs := strings.Split(tags, ",")
-	for _, pair := range pairs {
+	pairs := strings.SplitSeq(tags, ",")
+	for pair := range pairs {
 		parts := strings.SplitN(pair, ":", 2)
 		if len(parts) == 2 {
 			key := strings.TrimSpace(parts[0])

@@ -412,7 +412,7 @@ func toChainedVar(defStr string, label string) string {
 }
 
 func newLabelVar(label string) []byte {
-	return []byte(fmt.Sprintf(`{
+	return fmt.Appendf(nil, `{
   "allValue": ".*",
   "current": {
     "selected": false
@@ -432,7 +432,7 @@ func newLabelVar(label string) []byte {
   "skipUrlSync": false,
   "sort": 0,
   "type": "query"
-}`, label, cases.Title(language.Und).String(label), label))
+}`, label, cases.Title(language.Und).String(label), label)
 }
 
 func doImport(_ *cobra.Command, _ []string) {
@@ -531,8 +531,8 @@ func initImportVars() {
 			fmt.Println("Error: Invalid format for --var-defaults. Expected format is 'variable1=value1,value2;variable2=value3'")
 			os.Exit(1)
 		}
-		pairs := strings.Split(opts.varDefaults, ";")
-		for _, pair := range pairs {
+		pairs := strings.SplitSeq(opts.varDefaults, ";")
+		for pair := range pairs {
 			parts := strings.SplitN(pair, "=", 2)
 			if len(parts) == 2 {
 				values := strings.Split(parts[1], ",")
@@ -928,7 +928,7 @@ func formatJSON(data []byte) ([]byte, error) {
 func addGlobalPrefix(db map[string]any, prefix string) {
 
 	var (
-		panels, templates, subPanels       []interface{}
+		panels, templates, subPanels       []any
 		panel, templating, template, query map[string]any
 		queryString, definition            string
 		ok, has                            bool
@@ -940,7 +940,7 @@ func addGlobalPrefix(db map[string]any, prefix string) {
 	}
 
 	// apply to queries in panels
-	if panels, ok = db["panels"].([]interface{}); !ok {
+	if panels, ok = db["panels"].([]any); !ok {
 		return
 	}
 
@@ -955,7 +955,7 @@ func addGlobalPrefix(db map[string]any, prefix string) {
 		if _, has = panel["panels"]; !has {
 			continue
 		}
-		if subPanels, ok = panel["panels"].([]interface{}); ok {
+		if subPanels, ok = panel["panels"].([]any); ok {
 			for _, subP := range subPanels {
 				handlingPanels(subP, prefix)
 			}
@@ -967,7 +967,7 @@ func addGlobalPrefix(db map[string]any, prefix string) {
 		return
 	}
 
-	if templates, ok = templating["list"].([]interface{}); !ok {
+	if templates, ok = templating["list"].([]any); !ok {
 		return
 	}
 
@@ -985,9 +985,9 @@ func addGlobalPrefix(db map[string]any, prefix string) {
 	}
 }
 
-func handlingPanels(p interface{}, prefix string) {
+func handlingPanels(p any, prefix string) {
 	var (
-		targets       []interface{}
+		targets       []any
 		panel, target map[string]any
 		ok, has       bool
 		expr          string
@@ -1000,7 +1000,7 @@ func handlingPanels(p interface{}, prefix string) {
 		return
 	}
 
-	if targets, ok = panel["targets"].([]interface{}); !ok {
+	if targets, ok = panel["targets"].([]any); !ok {
 		return
 	}
 

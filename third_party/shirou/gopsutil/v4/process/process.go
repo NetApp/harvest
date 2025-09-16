@@ -5,7 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"sort"
+	"slices"
 	"sync"
 	"time"
 
@@ -180,7 +180,7 @@ func (p NumCtxSwitchesStat) String() string {
 
 func PidsWithContext(ctx context.Context) ([]int32, error) {
 	pids, err := pidsWithContext(ctx)
-	sort.Slice(pids, func(i, j int) bool { return pids[i] < pids[j] })
+	slices.Sort(pids)
 	return pids, err
 }
 

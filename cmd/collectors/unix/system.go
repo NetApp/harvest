@@ -104,8 +104,8 @@ func (s *System) loadMeminfo() error {
 
 	// First line contains total memory in Kb, example
 	// MemTotal:        7707284 kB
-	lines := strings.Split(string(data), "\n")
-	for _, line := range lines {
+	lines := strings.SplitSeq(string(data), "\n")
+	for line := range lines {
 		if fields := strings.Fields(line); len(fields) > 1 {
 			if strings.HasPrefix(strings.ToLower(fields[0]), "memtotal") {
 				if num, err := strconv.ParseUint(fields[1], 10, 64); err == nil {

@@ -406,11 +406,11 @@ func appendTabs(buf []byte, prefix, indent string, tabs int) []byte {
 		buf = append(buf, prefix...)
 	}
 	if len(indent) == 2 && indent[0] == ' ' && indent[1] == ' ' {
-		for i := 0; i < tabs; i++ {
+		for range tabs {
 			buf = append(buf, ' ', ' ')
 		}
 	} else {
-		for i := 0; i < tabs; i++ {
+		for range tabs {
 			buf = append(buf, indent...)
 		}
 	}

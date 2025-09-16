@@ -346,8 +346,8 @@ func checkConfTemplates(confPaths []string) validation {
 						continue
 					}
 					searchDir := path.Join(confDir, flavor)
-					fileNames := strings.Split(t.GetContentS(), ",")
-					for _, fileName := range fileNames {
+					fileNames := strings.SplitSeq(t.GetContentS(), ",")
+					for fileName := range fileNames {
 						fileName = strings.TrimSpace(fileName) // Remove any leading or trailing spaces
 						if !templateExists(searchDir, fileName) {
 							valid.isValid = false
