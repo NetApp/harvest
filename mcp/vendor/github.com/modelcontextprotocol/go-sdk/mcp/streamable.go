@@ -323,15 +323,6 @@ func (h *StreamableHTTPHandler) ServeHTTP(w http.ResponseWriter, req *http.Reque
 	transport.ServeHTTP(w, req)
 }
 
-// StreamableServerTransportOptions configures the stramable server transport.
-//
-// Deprecated: use a StreamableServerTransport literal.
-type StreamableServerTransportOptions struct {
-	// Storage for events, to enable stream resumption.
-	// If nil, a [MemoryEventStore] with the default maximum size will be used.
-	EventStore EventStore
-}
-
 // A StreamableServerTransport implements the server side of the MCP streamable
 // transport.
 //
@@ -383,22 +374,6 @@ type StreamableServerTransport struct {
 
 	// connection is non-nil if and only if the transport has been connected.
 	connection *streamableServerConn
-}
-
-// NewStreamableServerTransport returns a new [StreamableServerTransport] with
-// the given session ID and options.
-//
-// Deprecated: use a StreamableServerTransport literal.
-//
-//go:fix inline.
-func NewStreamableServerTransport(sessionID string, opts *StreamableServerTransportOptions) *StreamableServerTransport {
-	t := &StreamableServerTransport{
-		SessionID: sessionID,
-	}
-	if opts != nil {
-		t.EventStore = opts.EventStore
-	}
-	return t
 }
 
 // Connect implements the [Transport] interface.
@@ -639,17 +614,22 @@ func (c *streamableServerConn) servePOST(w http.ResponseWriter, req *http.Reques
 		http.Error(w, "POST requires a non-empty body", http.StatusBadRequest)
 		return
 	}
-	// TODO(#21): if the negotiated protocol version is 2025-06-18 or later,
-	// we should not allow batching here.
-	//
-	// This also requires access to the negotiated version, which would either be
-	// set by the MCP-Protocol-Version header, or would require peeking into the
-	// session.
-	incoming, _, err := readBatch(body)
+	incoming, isBatch, err := readBatch(body)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("malformed payload: %v", err), http.StatusBadRequest)
 		return
 	}
+
+	protocolVersion := req.Header.Get(protocolVersionHeader)
+	if protocolVersion == "" {
+		protocolVersion = protocolVersion20250326
+	}
+
+	if isBatch && protocolVersion >= protocolVersion20250618 {
+		http.Error(w, fmt.Sprintf("JSON-RPC batching is not supported in %s and later (request version: %s)", protocolVersion20250618, protocolVersion), http.StatusBadRequest)
+		return
+	}
+
 	requests := make(map[jsonrpc.ID]struct{})
 	tokenInfo := auth.TokenInfoFromContext(req.Context())
 	isInitialize := false
@@ -1025,34 +1005,6 @@ const (
 	reconnectMaxDelay = 30 * time.Second
 )
 
-// StreamableClientTransportOptions provides options for the
-// [NewStreamableClientTransport] constructor.
-//
-// Deprecated: use a StremableClientTransport literal.
-type StreamableClientTransportOptions struct {
-	// HTTPClient is the client to use for making HTTP requests. If nil,
-	// http.DefaultClient is used.
-	HTTPClient *http.Client
-	// MaxRetries is the maximum number of times to attempt a reconnect before giving up.
-	// It defaults to 5. To disable retries, use a negative number.
-	MaxRetries int
-}
-
-// NewStreamableClientTransport returns a new client transport that connects to
-// the streamable HTTP server at the provided URL.
-//
-// Deprecated: use a StreamableClientTransport literal.
-//
-//go:fix inline
-func NewStreamableClientTransport(url string, opts *StreamableClientTransportOptions) *StreamableClientTransport {
-	t := &StreamableClientTransport{Endpoint: url}
-	if opts != nil {
-		t.HTTPClient = opts.HTTPClient
-		t.MaxRetries = opts.MaxRetries
-	}
-	return t
-}
-
 // Connect implements the [Transport] interface.
 //
 // The resulting [Connection] writes messages via POST requests to the
@@ -1119,6 +1071,17 @@ type streamableClientConn struct {
 	sessionID         string
 }
 
+// errSessionMissing distinguishes if the session is known to not be present on
+// the server (see [streamableClientConn.fail]).
+//
+// TODO(rfindley): should we expose this error value (and its corresponding
+// API) to the user?
+//
+// The spec says that if the server returns 404, clients should reestablish
+// a session. For now, we delegate that to the user, but do they need a way to
+// differentiate a 'NotFound' error from other errors?
+var errSessionMissing = errors.New("session not found")
+
 var _ clientConnection = (*streamableClientConn)(nil)
 
 func (c *streamableClientConn) sessionUpdated(state clientSessionState) {
@@ -1146,6 +1109,10 @@ func (c *streamableClientConn) sessionUpdated(state clientSessionState) {
 //
 // If err is non-nil, it is terminal, and subsequent (or pending) Reads will
 // fail.
+//
+// If err wraps errSessionMissing, the failure indicates that the session is no
+// longer present on the server, and no final DELETE will be performed when
+// closing the connection.
 func (c *streamableClientConn) fail(err error) {
 	if err != nil {
 		c.failOnce.Do(func() {
@@ -1193,9 +1160,19 @@ func (c *streamableClientConn) Write(ctx context.Context, msg jsonrpc.Message) e
 		return err
 	}
 
+	var requestSummary string
+	switch msg := msg.(type) {
+	case *jsonrpc.Request:
+		requestSummary = fmt.Sprintf("sending %q", msg.Method)
+	case *jsonrpc.Response:
+		requestSummary = fmt.Sprintf("sending jsonrpc response #%d", msg.ID)
+	default:
+		panic("unreachable")
+	}
+
 	data, err := jsonrpc.EncodeMessage(msg)
 	if err != nil {
-		return err
+		return fmt.Errorf("%s: %v", requestSummary, err)
 	}
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.url, bytes.NewReader(data))
@@ -1208,9 +1185,21 @@ func (c *streamableClientConn) Write(ctx context.Context, msg jsonrpc.Message) e
 
 	resp, err := c.client.Do(req)
 	if err != nil {
-		return err
+		return fmt.Errorf("%s: %v", requestSummary, err)
 	}
 
+	// Section 2.5.3: "The server MAY terminate the session at any time, after
+	// which it MUST respond to requests containing that session ID with HTTP
+	// 404 Not Found."
+	if resp.StatusCode == http.StatusNotFound {
+		// Fail the session immediately, rather than relying on jsonrpc2 to fail
+		// (and close) it, because we want the call to Close to know that this
+		// session is missing (and therefore not send the DELETE).
+		err := fmt.Errorf("%s: failed to send: %w", requestSummary, errSessionMissing)
+		c.fail(err)
+		resp.Body.Close()
+		return err
+	}
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		resp.Body.Close()
 		return fmt.Errorf("broken session: %v", resp.Status)
@@ -1231,16 +1220,6 @@ func (c *streamableClientConn) Write(ctx context.Context, msg jsonrpc.Message) e
 	if resp.StatusCode == http.StatusNoContent || resp.StatusCode == http.StatusAccepted {
 		resp.Body.Close()
 		return nil
-	}
-
-	var requestSummary string
-	switch msg := msg.(type) {
-	case *jsonrpc.Request:
-		requestSummary = fmt.Sprintf("sending %q", msg.Method)
-	case *jsonrpc.Response:
-		requestSummary = fmt.Sprintf("sending jsonrpc response #%d", msg.ID)
-	default:
-		panic("unreachable")
 	}
 
 	switch ct := resp.Header.Get("Content-Type"); ct {
@@ -1333,6 +1312,11 @@ func (c *streamableClientConn) handleSSE(requestSummary string, initialResp *htt
 			resp.Body.Close()
 			return
 		}
+		// (see equivalent handling in [streamableClientConn.Write]).
+		if resp.StatusCode == http.StatusNotFound {
+			c.fail(fmt.Errorf("%s: failed to reconnect: %w", requestSummary, errSessionMissing))
+			return
+		}
 		if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 			resp.Body.Close()
 			c.fail(fmt.Errorf("%s: failed to reconnect: %v", requestSummary, http.StatusText(resp.StatusCode)))
@@ -1423,13 +1407,17 @@ func (c *streamableClientConn) Close() error {
 		c.cancel()
 		close(c.done)
 
-		req, err := http.NewRequest(http.MethodDelete, c.url, nil)
-		if err != nil {
-			c.closeErr = err
+		if errors.Is(c.failure(), errSessionMissing) {
+			// If the session is missing, no need to delete it.
 		} else {
-			c.setMCPHeaders(req)
-			if _, err := c.client.Do(req); err != nil {
+			req, err := http.NewRequest(http.MethodDelete, c.url, nil)
+			if err != nil {
 				c.closeErr = err
+			} else {
+				c.setMCPHeaders(req)
+				if _, err := c.client.Do(req); err != nil {
+					c.closeErr = err
+				}
 			}
 		}
 	})
