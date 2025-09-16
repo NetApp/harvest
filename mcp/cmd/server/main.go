@@ -9,6 +9,7 @@ import (
 	"log/slog"
 	"mcp-server/cmd/loader"
 	"mcp-server/cmd/version"
+	"mcp-server/pkg/rules"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -47,6 +48,7 @@ func setupLogger() *slog.Logger {
 var logger = setupLogger().With(slog.String("component", "mcp-server"))
 
 var metricDescriptions map[string]string
+var ruleManager *rules.RuleManager
 
 // Initialize auth package logger
 func init() {
@@ -58,9 +60,10 @@ const (
 )
 
 const envVarHelpText = `Required Environment Variables:
-  HARVEST_TSDB_URL          URL of your Prometheus or VictoriaMetrics server
+  HARVEST_TSDB_URL         URL of your Prometheus or VictoriaMetrics server
                            Example: http://localhost:9090
                            For NABox4: Enable Victoria Metrics guest access and use https://nabox_url/vm
+  HARVEST_RULES_PATH       Path to directory containing alert_rules.yml and ems_alert_rules.yml
 
 Optional Environment Variables (Authentication):
   HARVEST_TSDB_AUTH_TYPE    Authentication type: none, basic, cert (default: none)
@@ -79,6 +82,9 @@ Optional Environment Variables (Timeout):
 
 Optional Environment Variables (Logging):
   LOG_LEVEL                 Log level: DEBUG, INFO, WARN, ERROR (default: INFO)
+
+Prometheus Reload Control:
+  HARVEST_TSDB_AUTO_RELOAD  Enable automatic reload after rule changes: true/false (default: true)
 
 Examples:
   # Start with no authentication
@@ -120,8 +126,8 @@ Examples:
 type PrometheusResponse struct {
 	Status string `json:"status"`
 	Data   struct {
-		ResultType string      `json:"resultType"`
-		Result     interface{} `json:"result"`
+		ResultType string `json:"resultType"`
+		Result     any    `json:"result"`
 	} `json:"data"`
 	Error     string `json:"error,omitempty"`
 	ErrorType string `json:"errorType,omitempty"`
@@ -130,7 +136,7 @@ type PrometheusResponse struct {
 type PrometheusAlertsResponse struct {
 	Status string `json:"status"`
 	Data   struct {
-		Alerts []interface{} `json:"alerts"`
+		Alerts []any `json:"alerts"`
 	} `json:"data"`
 	Error     string `json:"error,omitempty"`
 	ErrorType string `json:"errorType,omitempty"`
@@ -206,7 +212,7 @@ func makePrometheusAPICall(endpoint string) ([]byte, error) {
 	return io.ReadAll(resp.Body)
 }
 
-func formatDataResponse(data interface{}) (*mcp.CallToolResult, any, error) {
+func formatDataResponse(data any) (*mcp.CallToolResult, any, error) {
 	content, err := formatJSONResponse(data)
 	if err != nil {
 		return &mcp.CallToolResult{
@@ -257,7 +263,7 @@ func executePrometheusQuery(queryURL string, params url.Values) (*PrometheusResp
 	return &promResp, nil
 }
 
-func formatJSONResponse(data interface{}) ([]mcp.Content, error) {
+func formatJSONResponse(data any) ([]mcp.Content, error) {
 	resultJSON, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {
 		return nil, err
@@ -415,9 +421,9 @@ func ListPrometheusMetrics(_ context.Context, _ *mcp.CallToolRequest, args ListP
 	// Include descriptions only when filtering is applied to limit response size
 	includeDescriptions := (args.Match != "" || len(args.Matches) > 0) && len(metricDescriptions) > 0
 
-	metricsArray := make([]map[string]interface{}, 0, len(metrics))
+	metricsArray := make([]map[string]any, 0, len(metrics))
 	for _, metric := range metrics {
-		metricInfo := map[string]interface{}{"name": metric}
+		metricInfo := map[string]any{"name": metric}
 		if includeDescriptions {
 			if description, found := metricDescriptions[metric]; found {
 				metricInfo["description"] = description
@@ -426,11 +432,11 @@ func ListPrometheusMetrics(_ context.Context, _ *mcp.CallToolRequest, args ListP
 		metricsArray = append(metricsArray, metricInfo)
 	}
 
-	response := map[string]interface{}{
+	response := map[string]any{
 		"status": "success",
-		"data": map[string]interface{}{
+		"data": map[string]any{
 			"total_count": len(metrics),
-			"filtering": map[string]interface{}{
+			"filtering": map[string]any{
 				"server_side_matches": len(args.Matches) > 0,
 				"client_side_pattern": args.Match != "" && len(args.Matches) == 0,
 				"pattern_used":        args.Match,
@@ -470,9 +476,9 @@ func ListLabelValues(_ context.Context, _ *mcp.CallToolRequest, args ListLabelVa
 		values = filterStrings(values, args.Match)
 	}
 
-	response := map[string]interface{}{
+	response := map[string]any{
 		"status": "success",
-		"data": map[string]interface{}{
+		"data": map[string]any{
 			"label_name":   args.Label,
 			"label_values": values,
 			"total_count":  len(values),
@@ -498,9 +504,9 @@ func ListAllLabelNames(_ context.Context, _ *mcp.CallToolRequest, _ any) (*mcp.C
 		return handlePrometheusError(errors.New(promResp.Error), "Prometheus label names query"), nil, nil
 	}
 
-	response := map[string]interface{}{
+	response := map[string]any{
 		"status": "success",
-		"data": map[string]interface{}{
+		"data": map[string]any{
 			"label_names": promResp.Data,
 			"total_count": len(promResp.Data),
 		},
@@ -589,11 +595,11 @@ func GetActiveAlerts(_ context.Context, _ *mcp.CallToolRequest, _ any) (*mcp.Cal
 	}, nil, nil
 }
 
-func countAlertsBySeverity(alerts []interface{}) (int, int, int) {
+func countAlertsBySeverity(alerts []any) (int, int, int) {
 	critical, warning, info := 0, 0, 0
 	for _, alert := range alerts {
-		if alertMap, ok := alert.(map[string]interface{}); ok {
-			if labels, ok := alertMap["labels"].(map[string]interface{}); ok {
+		if alertMap, ok := alert.(map[string]any); ok {
+			if labels, ok := alertMap["labels"].(map[string]any); ok {
 				if severity, ok := labels["severity"].(string); ok {
 					switch strings.ToLower(severity) {
 					case "critical":
@@ -651,7 +657,7 @@ func InfrastructureHealth(_ context.Context, _ *mcp.CallToolRequest, args Infras
 		}
 
 		// Check if there are any results
-		if resultSlice, ok := promResp.Data.Result.([]interface{}); ok && len(resultSlice) > 0 {
+		if resultSlice, ok := promResp.Data.Result.([]any); ok && len(resultSlice) > 0 {
 			issuesFound = true
 			icon := "⚠️"
 			if check.critical {
@@ -668,8 +674,8 @@ func InfrastructureHealth(_ context.Context, _ *mcp.CallToolRequest, args Infras
 						healthReport += fmt.Sprintf("   ... and %d more\n", len(resultSlice)-5)
 						break
 					}
-					if resultMap, ok := result.(map[string]interface{}); ok {
-						if metric, ok := resultMap["metric"].(map[string]interface{}); ok {
+					if resultMap, ok := result.(map[string]any); ok {
+						if metric, ok := resultMap["metric"].(map[string]any); ok {
 							name := extractIdentifiers(metric)
 							healthReport += fmt.Sprintf("   - %s\n", name)
 						}
@@ -702,7 +708,7 @@ func InfrastructureHealth(_ context.Context, _ *mcp.CallToolRequest, args Infras
 	}, nil, nil
 }
 
-func extractIdentifiers(metric map[string]interface{}) string {
+func extractIdentifiers(metric map[string]any) string {
 	var identifiers []string
 
 	if cluster, ok := metric["cluster"].(string); ok {
@@ -925,6 +931,23 @@ func runMcpServer(_ *cobra.Command, _ []string) {
 	addTool(server, "list_label_values", "Get all available values for a specific label (e.g., cluster names, node names, volume names) with optional regex filtering", ListLabelValues)
 	addTool(server, "list_all_label_names", "Get all available label names (dimensions) that can be used to filter metrics", ListAllLabelNames)
 
+	// Initialize rule manager
+	var err error
+	ruleManager, err = rules.NewRuleManager(logger)
+	if err != nil {
+		logger.Warn("failed to initialize rule manager", slog.Any("error", err))
+		logger.Info("rule management tools will be disabled - see environment configuration")
+	} else {
+		// Add rule management tools
+		addTool(server, "list_alert_rules", "List all Prometheus alert rules from alert_rules.yml and ems_alert_rules.yml files", ListAlertRules)
+		addTool(server, "create_alert_rule", "Create a new Prometheus alert rule in the appropriate file (alert_rules.yml or ems_alert_rules.yml)", CreateAlertRule)
+		addTool(server, "update_alert_rule", "Update an existing Prometheus alert rule", UpdateAlertRule)
+		addTool(server, "delete_alert_rule", "Delete a Prometheus alert rule", DeleteAlertRule)
+		addTool(server, "validate_alert_syntax", "Validate the syntax of a PromQL expression for an alert rule", ValidateAlertSyntax)
+		addTool(server, "reload_prometheus_rules", "Manually trigger a Prometheus configuration reload to apply rule changes", ReloadPrometheusRules)
+		addTool(server, "get_rules_config_help", "Get help and documentation for configuring the rules management system", GetRulesConfigHelp)
+	}
+
 	promptDefinitions, err := loader.LoadPromptDefinitions(getResourcePath("prompts"), logger)
 	if err != nil {
 		logger.Error("failed to load prompt definitions", slog.Any("error", err))
@@ -1093,6 +1116,211 @@ func SearchMetrics(_ context.Context, _ *mcp.CallToolRequest, params SearchMetri
 	return &mcp.CallToolResult{
 		Content: []mcp.Content{
 			&mcp.TextContent{Text: responseBuilder.String()},
+		},
+	}, nil, nil
+}
+
+// Rule management handlers
+
+func ListAlertRules(_ context.Context, _ *mcp.CallToolRequest, _ struct{}) (*mcp.CallToolResult, any, error) {
+	if ruleManager == nil {
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{
+				&mcp.TextContent{Text: "Rule management is not available. Please configure HARVEST_RULES_PATH environment variable."},
+			},
+		}, nil, nil
+	}
+
+	response, err := ruleManager.ListRules()
+	if err != nil {
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{
+				&mcp.TextContent{Text: fmt.Sprintf("Error listing rules: %v", err)},
+			},
+		}, nil, nil
+	}
+
+	var builder strings.Builder
+	builder.WriteString("**Alert Rules Summary**\n")
+	builder.WriteString(fmt.Sprintf("Total Rules: %d\n", response.TotalRules))
+	builder.WriteString(fmt.Sprintf("Last Modified: %s\n\n", response.LastModified))
+
+	if len(response.AlertRules) > 0 {
+		builder.WriteString("**Standard Alert Rules (alert_rules.yml):**\n")
+		for _, rule := range response.AlertRules {
+			builder.WriteString(fmt.Sprintf("- **%s**\n", rule.Alert))
+			builder.WriteString(fmt.Sprintf("  Expression: `%s`\n", rule.Expr))
+			if rule.For != "" {
+				builder.WriteString(fmt.Sprintf("  Duration: %s\n", rule.For))
+			}
+			if severity, ok := rule.Labels["severity"]; ok {
+				builder.WriteString(fmt.Sprintf("  Severity: %s\n", severity))
+			}
+			if summary, ok := rule.Annotations["summary"]; ok {
+				builder.WriteString(fmt.Sprintf("  Summary: %s\n", summary))
+			}
+			builder.WriteString("\n")
+		}
+	}
+
+	if len(response.EMSRules) > 0 {
+		builder.WriteString("**EMS Alert Rules (ems_alert_rules.yml):**\n")
+		for _, rule := range response.EMSRules {
+			builder.WriteString(fmt.Sprintf("- **%s**\n", rule.Alert))
+			builder.WriteString(fmt.Sprintf("  Expression: `%s`\n", rule.Expr))
+			if rule.For != "" {
+				builder.WriteString(fmt.Sprintf("  Duration: %s\n", rule.For))
+			}
+			if severity, ok := rule.Labels["severity"]; ok {
+				builder.WriteString(fmt.Sprintf("  Severity: %s\n", severity))
+			}
+			if summary, ok := rule.Annotations["summary"]; ok {
+				builder.WriteString(fmt.Sprintf("  Summary: %s\n", summary))
+			}
+			builder.WriteString("\n")
+		}
+	}
+
+	if response.TotalRules == 0 {
+		builder.WriteString("No alert rules found.")
+	}
+
+	return &mcp.CallToolResult{
+		Content: []mcp.Content{
+			&mcp.TextContent{Text: builder.String()},
+		},
+	}, response, nil
+}
+
+func CreateAlertRule(_ context.Context, _ *mcp.CallToolRequest, params rules.CreateRuleRequest) (*mcp.CallToolResult, any, error) {
+	if ruleManager == nil {
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{
+				&mcp.TextContent{Text: "Rule management is not available. Please configure HARVEST_RULES_PATH environment variable."},
+			},
+		}, nil, nil
+	}
+
+	err := ruleManager.CreateRule(&params)
+	if err != nil {
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{
+				&mcp.TextContent{Text: fmt.Sprintf("Error creating rule: %v", err)},
+			},
+		}, nil, nil
+	}
+
+	return &mcp.CallToolResult{
+		Content: []mcp.Content{
+			&mcp.TextContent{Text: fmt.Sprintf("Successfully created alert rule '%s'", params.RuleName)},
+		},
+	}, nil, nil
+}
+
+func UpdateAlertRule(_ context.Context, _ *mcp.CallToolRequest, params rules.UpdateRuleRequest) (*mcp.CallToolResult, any, error) {
+	if ruleManager == nil {
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{
+				&mcp.TextContent{Text: "Rule management is not available. Please configure HARVEST_RULES_PATH environment variable."},
+			},
+		}, nil, nil
+	}
+
+	err := ruleManager.UpdateRule(&params)
+	if err != nil {
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{
+				&mcp.TextContent{Text: fmt.Sprintf("Error updating rule: %v", err)},
+			},
+		}, nil, nil
+	}
+
+	return &mcp.CallToolResult{
+		Content: []mcp.Content{
+			&mcp.TextContent{Text: fmt.Sprintf("Successfully updated alert rule '%s'", params.RuleName)},
+		},
+	}, nil, nil
+}
+
+func DeleteAlertRule(_ context.Context, _ *mcp.CallToolRequest, params rules.DeleteRuleRequest) (*mcp.CallToolResult, any, error) {
+	if ruleManager == nil {
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{
+				&mcp.TextContent{Text: "Rule management is not available. Please configure HARVEST_RULES_PATH environment variable."},
+			},
+		}, nil, nil
+	}
+
+	err := ruleManager.DeleteRule(&params)
+	if err != nil {
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{
+				&mcp.TextContent{Text: fmt.Sprintf("Error deleting rule: %v", err)},
+			},
+		}, nil, nil
+	}
+
+	return &mcp.CallToolResult{
+		Content: []mcp.Content{
+			&mcp.TextContent{Text: fmt.Sprintf("Successfully deleted alert rule '%s'", params.RuleName)},
+		},
+	}, nil, nil
+}
+
+func ValidateAlertSyntax(_ context.Context, _ *mcp.CallToolRequest, params rules.ValidateRuleRequest) (*mcp.CallToolResult, any, error) {
+	if ruleManager == nil {
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{
+				&mcp.TextContent{Text: "Rule management is not available. Please configure HARVEST_RULES_PATH environment variable."},
+			},
+		}, nil, nil
+	}
+
+	err := ruleManager.ValidateRule(&params)
+	if err != nil {
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{
+				&mcp.TextContent{Text: fmt.Sprintf("Validation failed: %v", err)},
+			},
+		}, nil, nil
+	}
+
+	return &mcp.CallToolResult{
+		Content: []mcp.Content{
+			&mcp.TextContent{Text: fmt.Sprintf("Rule '%s' with expression '%s' is valid", params.RuleName, params.Expression)},
+		},
+	}, nil, nil
+}
+
+func ReloadPrometheusRules(_ context.Context, _ *mcp.CallToolRequest, _ struct{}) (*mcp.CallToolResult, any, error) {
+	if ruleManager == nil {
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{
+				&mcp.TextContent{Text: "Rule management is not available. Please configure HARVEST_RULES_PATH environment variable."},
+			},
+		}, nil, nil
+	}
+
+	err := ruleManager.ReloadPrometheus()
+	if err != nil {
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{
+				&mcp.TextContent{Text: fmt.Sprintf("Error reloading Prometheus: %v\n\n%s", err, ruleManager.GetReloadInstructions())},
+			},
+		}, nil, nil
+	}
+
+	return &mcp.CallToolResult{
+		Content: []mcp.Content{
+			&mcp.TextContent{Text: "Successfully triggered Prometheus configuration reload"},
+		},
+	}, nil, nil
+}
+
+func GetRulesConfigHelp(_ context.Context, _ *mcp.CallToolRequest, _ struct{}) (*mcp.CallToolResult, any, error) {
+	return &mcp.CallToolResult{
+		Content: []mcp.Content{
+			&mcp.TextContent{Text: envVarHelpText},
 		},
 	}, nil, nil
 }

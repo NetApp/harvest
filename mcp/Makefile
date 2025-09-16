@@ -65,6 +65,7 @@ fmt: ## Format the Go source files
 lint: ## Run golangci-lint on the source files
 	@echo "Linting..."
 	@go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@${GOLANGCI_LINT_VERSION} run ./...
+	@go run golang.org/x/tools/gopls/internal/analysis/modernize/cmd/modernize@latest ./...
 
 govulncheck: ## Run govulncheck on the source files
 	@echo "Running vulnerability check..."
