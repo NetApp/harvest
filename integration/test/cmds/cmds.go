@@ -196,10 +196,10 @@ func AddPrometheusToGrafana() {
 	url := GetGrafanaHTTPURL() + "/api/datasources"
 	method := "POST"
 	//goland:noinspection HttpUrlsUsage
-	jsonValue := []byte(fmt.Sprintf(`{"name": "%s", "type": "prometheus", "access": "direct",
+	jsonValue := fmt.Appendf(nil, `{"name": "%s", "type": "prometheus", "access": "direct",
 		"url": "%s", "isDefault": true, "basicAuth": false}`,
 		grafana.DefaultDataSource,
-		"http://"+GetOutboundIP()+":"+PrometheusPort))
+		"http://"+GetOutboundIP()+":"+PrometheusPort)
 	data := request.SendReqAndGetRes(url, method, jsonValue)
 	key := fmt.Sprintf("%v", data["message"])
 	if key == "Datasource added" {

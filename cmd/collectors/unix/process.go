@@ -144,7 +144,7 @@ func (p *Process) loadStatus() error {
 		return errs.New(ErrFileRead, "status: "+err.Error())
 	}
 
-	for _, line = range strings.Split(string(data), "\n") {
+	for line = range strings.SplitSeq(string(data), "\n") {
 		if fields = strings.Split(line, ":"); len(fields) == 2 {
 
 			key = strings.ToLower(fields[0])
@@ -236,7 +236,7 @@ func (p *Process) loadIo() error {
 		return nil //nolint:nilerr
 	}
 
-	for _, line = range strings.Split(string(data), "\n") {
+	for line = range strings.SplitSeq(string(data), "\n") {
 		if values = strings.Split(line, ":"); len(values) == 2 {
 			if num, err = strconv.ParseUint(strings.TrimSpace(values[1]), 10, 64); err == nil {
 				p.io[values[0]] = num

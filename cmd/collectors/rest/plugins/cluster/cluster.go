@@ -75,7 +75,7 @@ func (c *Cluster) handleTags(data *matrix.Matrix) {
 	// Based on the tags array, cluster_tags instances/metrics would be created.
 	for _, cluster := range data.GetInstances() {
 		if tags := cluster.GetLabel("tags"); tags != "" {
-			for _, tag := range strings.Split(tags, ",") {
+			for tag := range strings.SplitSeq(tags, ",") {
 				tagInstanceKey := data.GetGlobalLabels()["cluster"] + tag
 				if tagInstance, err = c.tags.NewInstance(tagInstanceKey); err != nil {
 					c.SLogger.Error(

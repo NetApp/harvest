@@ -463,7 +463,7 @@ func (t *Table) printHeading() {
 	max := t.rs[headerRowIdx]
 
 	// Print Heading
-	for x := 0; x < max; x++ {
+	for x := range max {
 		// Check if border is set
 		// Replace with space if not set
 		if !t.noWhiteSpace {
@@ -544,7 +544,7 @@ func (t *Table) printFooter() {
 
 	// Print Footer
 	erasePad := make([]bool, len(t.footers))
-	for x := 0; x < max; x++ {
+	for x := range max {
 		// Check if border is set
 		// Replace with space if not set
 		fmt.Fprint(t.out, ConditionString(t.borders.Bottom, t.pColumn, SPACE))
@@ -653,7 +653,7 @@ func (t *Table) printFooter() {
 func (t Table) printCaption() {
 	width := t.getTableWidth()
 	paragraph, _ := WrapString(t.captionText, width)
-	for linecount := 0; linecount < len(paragraph); linecount++ {
+	for linecount := range paragraph {
 		fmt.Fprintln(t.out, paragraph[linecount])
 	}
 }
@@ -718,13 +718,13 @@ func (t *Table) printRow(columns [][]string, rowIdx int) {
 		length := len(line)
 		pad := max - length
 		pads = append(pads, pad)
-		for n := 0; n < pad; n++ {
+		for range pad {
 			columns[i] = append(columns[i], "  ")
 		}
 	}
 	// fmt.Println(max, "\n")
-	for x := 0; x < max; x++ {
-		for y := 0; y < total; y++ {
+	for x := range max {
+		for y := range total {
 
 			// Check if border is set
 			if !t.noWhiteSpace {
@@ -823,15 +823,15 @@ func (t *Table) printRowMergeCells(writer io.Writer, columns [][]string, rowIdx 
 		length := len(line)
 		pad := max - length
 		pads = append(pads, pad)
-		for n := 0; n < pad; n++ {
+		for range pad {
 			columns[i] = append(columns[i], "  ")
 		}
 	}
 
 	var displayCellBorder []bool
 	t.fillAlignment(total)
-	for x := 0; x < max; x++ {
-		for y := 0; y < total; y++ {
+	for x := range max {
+		for y := range total {
 
 			// Check if border is set
 			fmt.Fprint(writer, ConditionString((!t.borders.Left && y == 0), SPACE, t.pColumn))
@@ -894,7 +894,7 @@ func (t *Table) printRowMergeCells(writer io.Writer, columns [][]string, rowIdx 
 
 	// The new previous line is the current one
 	previousLine = make([]string, total)
-	for y := 0; y < total; y++ {
+	for y := range total {
 		previousLine[y] = strings.TrimRight(strings.Join(columns[y], " "), " ") // Store the full line for multi-lines cells
 	}
 	// Returns the newly added line and wether or not a border should be displayed above.

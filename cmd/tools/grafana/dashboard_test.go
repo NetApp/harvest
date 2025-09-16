@@ -1271,11 +1271,8 @@ func checkJoinExpressions(t *testing.T, path string, data []byte) {
 						for _, transformationN := range transformationsSlice {
 							if transformationN.Get("id").ClonedString() == "renameByRegex" {
 								regex := transformationN.Get("options.regex").ClonedString()
-								for _, expectedRegex := range expectedRegexes {
-									if regex == expectedRegex {
-										regexUsed = true
-										break
-									}
+								if slices.Contains(expectedRegexes, regex) {
+									regexUsed = true
 								}
 								if regexUsed {
 									break

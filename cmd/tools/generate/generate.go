@@ -332,8 +332,8 @@ func makeMounts(pollerName string) []string {
 	if confPath == "" {
 		mounts = append(mounts, toMount("./conf"))
 	} else {
-		paths := strings.Split(confPath, ":")
-		for _, path := range paths {
+		paths := strings.SplitSeq(confPath, ":")
+		for path := range paths {
 			mounts = append(mounts, toMount(path))
 		}
 	}

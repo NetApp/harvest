@@ -186,8 +186,8 @@ func lldpCapabilities(capStr string) []string {
 		code         string
 	)
 
-	splits := strings.Split(capStr, ",")
-	for _, split := range splits {
+	splits := strings.SplitSeq(capStr, ",")
+	for split := range splits {
 		letter := strings.TrimSpace(split)
 		// Ignore empty strings
 		if letter == "" {
