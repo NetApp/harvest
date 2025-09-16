@@ -80,7 +80,7 @@ func makeSequence(codes []int) string {
 }
 
 // Adding ANSI escape  sequences before and after string
-func format(s string, codes interface{}) string {
+func format(s string, codes any) string {
 	var seq string
 
 	switch v := codes.(type) {
@@ -106,7 +106,7 @@ func (t *Table) SetHeaderColor(colors ...Colors) {
 	if t.colSize != len(colors) {
 		panic("Number of header colors must be equal to number of headers.")
 	}
-	for i := 0; i < len(colors); i++ {
+	for i := range colors {
 		t.headerParams = append(t.headerParams, makeSequence(colors[i]))
 	}
 }
@@ -116,7 +116,7 @@ func (t *Table) SetColumnColor(colors ...Colors) {
 	if t.colSize != len(colors) {
 		panic("Number of column colors must be equal to number of headers.")
 	}
-	for i := 0; i < len(colors); i++ {
+	for i := range colors {
 		t.columnsParams = append(t.columnsParams, makeSequence(colors[i]))
 	}
 }
@@ -126,7 +126,7 @@ func (t *Table) SetFooterColor(colors ...Colors) {
 	if len(t.footers) != len(colors) {
 		panic("Number of footer colors must be equal to number of footer.")
 	}
-	for i := 0; i < len(colors); i++ {
+	for i := range colors {
 		t.footerParams = append(t.footerParams, makeSequence(colors[i]))
 	}
 }

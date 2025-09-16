@@ -1,3 +1,4 @@
+
 # github.com/goccy/go-yaml v1.18.0
 ## explicit; go 1.21.0
 github.com/goccy/go-yaml

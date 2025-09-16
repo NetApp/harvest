@@ -50,6 +50,7 @@ var zapiCounterMap = map[string]struct{}{
 	"volume_capacity_tier_footprint_percent": {},
 	"volume_num_compress_attempts":           {},
 	"volume_num_compress_fail":               {},
+	"volume_snaplock_labels":                 {},
 	// sar is experiencing high api time for ZapiPerf. The u2 cluster does not have fabricpool added for the collection of these counters. Remove the following once sar is capable of running ZapiPerf.
 	"volume_performance_tier_footprint":         {},
 	"volume_performance_tier_footprint_percent": {},
@@ -457,8 +458,8 @@ func GetAllJsons(dir string) []string {
 
 func FindStringBetweenTwoChar(stringValue string, startChar string, endChar string) []string {
 	var counters = make([]string, 0)
-	firstSet := strings.Split(stringValue, startChar)
-	for _, actualString := range firstSet {
+	firstSet := strings.SplitSeq(stringValue, startChar)
+	for actualString := range firstSet {
 		counterArray := strings.Split(actualString, endChar)
 		switch {
 		case strings.Contains(actualString, ")"): // check for inner expression such as top:

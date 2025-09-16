@@ -40,6 +40,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"strconv"
 	"strings"
 	"syscall"
@@ -282,11 +283,8 @@ func stopGhostPollers(skipPoller []string) {
 	for _, p := range statuses {
 		// skip if this poller is defined in harvest config
 		var skip bool
-		for _, s := range skipPoller {
-			if p.Name == s {
-				skip = true
-				break
-			}
+		if slices.Contains(skipPoller, p.Name) {
+			skip = true
 		}
 		// if poller doesn't exist in harvest config
 		if !skip {

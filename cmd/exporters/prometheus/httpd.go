@@ -18,6 +18,7 @@ import (
 	"net/http"
 	"net/http/pprof"
 	"os"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -93,11 +94,9 @@ func (p *Prometheus) checkAddr(addr string) bool {
 	addr = strings.Split(addr, ":")[0]
 
 	if p.allowAddrs != nil {
-		for _, a := range p.allowAddrs {
-			if a == addr {
-				p.cacheAddrs[addr] = true
-				return true
-			}
+		if slices.Contains(p.allowAddrs, addr) {
+			p.cacheAddrs[addr] = true
+			return true
 		}
 	}
 

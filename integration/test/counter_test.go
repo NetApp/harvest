@@ -15,6 +15,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/third_party/go-version"
 	"log/slog"
+	"maps"
 	"os"
 	"path/filepath"
 	"strings"
@@ -168,9 +169,7 @@ func processRestCounters(client *rest2.Client) map[string][]counterData {
 		return processRestConfigCounters(path, currentVersion, "rest")
 	})
 
-	for k, v := range restPerfCounters {
-		restCounters[k] = v
-	}
+	maps.Copy(restCounters, restPerfCounters)
 	return restCounters
 }
 
@@ -197,9 +196,7 @@ func visitRestTemplates(dir string, client *rest2.Client, eachTemp func(path str
 		}
 
 		r := eachTemp(path, client.Remote().Version, client)
-		for k, v := range r {
-			result[k] = v
-		}
+		maps.Copy(result, r)
 		return nil
 	})
 

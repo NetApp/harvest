@@ -564,8 +564,8 @@ func (p *process) fillFromStatus(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	lines := strings.Split(string(contents), "\n")
-	for _, line := range lines {
+	lines := strings.SplitSeq(string(contents), "\n")
+	for line := range lines {
 		tabParts := strings.SplitN(line, "\t", 2)
 		if len(tabParts) < 2 {
 			continue
@@ -573,7 +573,7 @@ func (p *process) fillFromStatus(ctx context.Context) error {
 		value := tabParts[1]
 		if strings.TrimRight(tabParts[0], ":") == "Uid" {
 			p.uids = make([]int32, 0, 4)
-			for _, i := range strings.Split(value, "\t") {
+			for i := range strings.SplitSeq(value, "\t") {
 				v, err := strconv.ParseInt(i, 10, 32)
 				if err != nil {
 					return err

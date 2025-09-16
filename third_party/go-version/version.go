@@ -143,14 +143,11 @@ func (v *Version) Compare(other *Version) int {
 	// Get the highest specificity (hS), or if they're equal, just use segmentSelf length
 	lenSelf := len(segmentsSelf)
 	lenOther := len(segmentsOther)
-	hS := lenSelf
-	if lenSelf < lenOther {
-		hS = lenOther
-	}
+	hS := max(lenSelf, lenOther)
 	// Compare the segments
 	// Because a constraint could have more/less specificity than the version it's
 	// checking, we need to account for a lopsided or jagged comparison
-	for i := 0; i < hS; i++ {
+	for i := range hS {
 		if i > lenSelf-1 {
 			// This means Self had the lower specificity
 			// Check to see if the remaining segments in Other are all zeros
@@ -267,10 +264,7 @@ func comparePrereleases(v string, other string) int {
 	selfPreReleaseLen := len(selfPreReleaseMeta)
 	otherPreReleaseLen := len(otherPreReleaseMeta)
 
-	biggestLen := otherPreReleaseLen
-	if selfPreReleaseLen > otherPreReleaseLen {
-		biggestLen = selfPreReleaseLen
-	}
+	biggestLen := max(selfPreReleaseLen, otherPreReleaseLen)
 
 	// loop for parts to find the first difference
 	for i := 0; i < biggestLen; i = i + 1 {
@@ -432,7 +426,7 @@ func (v *Version) MarshalText() ([]byte, error) {
 }
 
 // Scan implements the sql.Scanner interface.
-func (v *Version) Scan(src interface{}) error {
+func (v *Version) Scan(src any) error {
 	switch src := src.(type) {
 	case string:
 		return v.UnmarshalText([]byte(src))

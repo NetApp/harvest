@@ -49,7 +49,7 @@ func deepMap(dst, src reflect.Value, visited map[uintptr]*visit, depth int, conf
 	zeroValue := reflect.Value{}
 	switch dst.Kind() {
 	case reflect.Map:
-		dstMap := dst.Interface().(map[string]interface{})
+		dstMap := dst.Interface().(map[string]any)
 		for i, n := 0, src.NumField(); i < n; i++ {
 			srcType := src.Type()
 			field := srcType.Field(i)
@@ -70,7 +70,7 @@ func deepMap(dst, src reflect.Value, visited map[uintptr]*visit, depth int, conf
 		dst = dst.Elem()
 		fallthrough
 	case reflect.Struct:
-		srcMap := src.Interface().(map[string]interface{})
+		srcMap := src.Interface().(map[string]any)
 		for key := range srcMap {
 			config.overwriteWithEmptyValue = true
 			srcValue := srcMap[key]
@@ -129,18 +129,18 @@ func deepMap(dst, src reflect.Value, visited map[uintptr]*visit, depth int, conf
 // doesn't apply if dst is a map.
 // This is separated method from Merge because it is cleaner and it keeps sane
 // semantics: merging equal types, mapping different (restricted) types.
-func Map(dst, src interface{}, opts ...func(*Config)) error {
+func Map(dst, src any, opts ...func(*Config)) error {
 	return _map(dst, src, opts...)
 }
 
 // MapWithOverwrite will do the same as Map except that non-empty dst attributes will be overridden by
 // non-empty src attribute values.
 // Deprecated: Use Map(…) with WithOverride
-func MapWithOverwrite(dst, src interface{}, opts ...func(*Config)) error {
+func MapWithOverwrite(dst, src any, opts ...func(*Config)) error {
 	return _map(dst, src, append(opts, WithOverride)...)
 }
 
-func _map(dst, src interface{}, opts ...func(*Config)) error {
+func _map(dst, src any, opts ...func(*Config)) error {
 	if dst != nil && reflect.ValueOf(dst).Kind() != reflect.Ptr {
 		return ErrNonPointerArgument
 	}

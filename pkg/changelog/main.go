@@ -13,6 +13,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -278,13 +279,7 @@ func (c *cli) printPrSummary() {
 }
 
 func (c *cli) openIssue(pr pr) {
-	shouldOpen := false
-	for _, kind := range c.openIssues {
-		if pr.kind == kind {
-			shouldOpen = true
-			break
-		}
-	}
+	shouldOpen := slices.Contains(c.openIssues, pr.kind)
 	if !shouldOpen {
 		return
 	}

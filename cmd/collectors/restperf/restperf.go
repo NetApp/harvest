@@ -693,10 +693,7 @@ func (r *RestPerf) processWorkLoadCounter() (map[string]*matrix.Matrix, error) {
 func batchIDs(ids []string) [][]string {
 	var batches [][]string
 	for i := 0; i < len(ids); i += idBatchSize {
-		end := i + idBatchSize
-		if end > len(ids) {
-			end = len(ids)
-		}
+		end := min(i+idBatchSize, len(ids))
 		batches = append(batches, ids[i:end])
 	}
 	return batches

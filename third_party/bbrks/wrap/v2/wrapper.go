@@ -79,7 +79,7 @@ func (w Wrapper) Wrap(s string, limit int) string {
 	}
 
 	var ret string
-	for _, str := range strings.Split(s, w.Newline) {
+	for str := range strings.SplitSeq(s, w.Newline) {
 		str = strings.TrimPrefix(str, w.TrimInputPrefix)
 		str = strings.TrimSuffix(str, w.TrimInputSuffix)
 		ret += w.line(str, limit) + w.Newline

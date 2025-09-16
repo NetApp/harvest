@@ -62,7 +62,7 @@ func isEmptyValue(v reflect.Value, shouldDereference bool) bool {
 	return false
 }
 
-func resolveValues(dst, src interface{}) (vDst, vSrc reflect.Value, err error) {
+func resolveValues(dst, src any) (vDst, vSrc reflect.Value, err error) {
 	if dst == nil || src == nil {
 		err = ErrNilArguments
 		return
