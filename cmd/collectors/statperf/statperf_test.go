@@ -135,6 +135,20 @@ func TestStatPerf_pollData(t *testing.T) {
 			sum:           26,
 			record:        true,
 		},
+		{
+			object:        "nvm_mirror",
+			path:          "nvm_mirror.yaml",
+			name:          "write_throughput",
+			counter:       "write_throughput",
+			pollCounters:  "testdata/space/counters.txt",
+			pollInstance:  "testdata/space/instances.txt",
+			pollDataPath1: "testdata/space/data_1.txt",
+			pollDataPath2: "testdata/space/data_2.txt",
+			numInstances:  2,
+			numMetrics:    8,
+			sum:           2711128,
+			record:        true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

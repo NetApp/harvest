@@ -1,0 +1,30 @@
+
+
+
+Object: nvm_mirror
+Instance: NVM Mirror
+Start-time: 9/12/2025 16:31:25
+End-time: 9/12/2025 16:31:25
+Scope: A250-42
+
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    instance_name                                          NVM Mirror
+    instance_uuid                           A250-42:kernel:NVM Mirror
+    node_name                                                 A250-42
+    write_throughput                                    7206411414320
+
+Object: nvm_mirror
+Instance: NVM Mirror
+Start-time: 9/12/2025 16:31:25
+End-time: 9/12/2025 16:31:25
+Scope: A250-43
+
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    instance_name                                          NVM Mirror
+    instance_uuid                           A250-43:kernel:NVM Mirror
+    node_name                                                 A250-43
+    write_throughput                                  145573279883283
+8 entries were displayed.
+

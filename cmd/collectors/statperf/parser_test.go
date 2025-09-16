@@ -18,10 +18,6 @@ type testCase struct {
 	expectedInstance    string
 	expectedMetric      string
 	expectedMinGroupNum int
-	metricName          string
-	metricValue         string
-	expectedMetricName  string
-	expectedMetricValue string
 }
 
 func runCounterTest(t *testing.T, tc testCase) {
@@ -145,6 +141,20 @@ func TestParseCounters(t *testing.T) {
 				LabelCount:  15,
 			},
 			expectedCount: 553,
+		},
+		{
+			name:     "space",
+			fileName: "testdata/space/counters.txt",
+			expectedCounter: CounterProperty{
+				Counter:     "write_throughput",
+				BaseCounter: "-",
+				Properties:  "rate",
+				Type:        "-",
+				Deprecated:  "false",
+				ReplacedBy:  "-",
+				LabelCount:  0,
+			},
+			expectedCount: 74,
 		},
 	}
 
@@ -349,61 +359,6 @@ flexcache_per_volume·Test·blocks_requested_from_client·637069129383·`,
 		t.Run(tc.name, func(t *testing.T) {
 			result := FilterNonEmpty(tc.input)
 			assert.True(t, slices.Equal(result, tc.expected))
-		})
-	}
-}
-
-func TestHandleSpaces(t *testing.T) {
-	testCases := []testCase{
-		{
-			metricName:          "node",
-			metricValue:         "node-1",
-			expectedMetricName:  "node",
-			expectedMetricValue: "node-1",
-		},
-		{
-			metricName:          "cluster",
-			metricValue:         "cluster-1",
-			expectedMetricName:  "cluster",
-			expectedMetricValue: "cluster-1",
-		},
-		{
-			metricName:          "instance_name",
-			metricValue:         "Adaptor",
-			expectedMetricName:  "instance_name",
-			expectedMetricValue: "Adaptor",
-		},
-		{
-			metricName:          "instance_name NVM",
-			metricValue:         "Mirror",
-			expectedMetricName:  "instance_name",
-			expectedMetricValue: "NVM Mirror",
-		},
-		{
-			metricName:          "instance_name NVM type",
-			metricValue:         "Mirror",
-			expectedMetricName:  "instance_name",
-			expectedMetricValue: "NVM type Mirror",
-		},
-		{
-			metricName:          "instance_uuid",
-			metricValue:         "299b193d-d16c-4186-a2f7-c4afa12691f6",
-			expectedMetricName:  "instance_uuid",
-			expectedMetricValue: "299b193d-d16c-4186-a2f7-c4afa12691f6",
-		},
-		{
-			metricName:          "instance_uuid sti8300mcc-285:kernel:NVM type",
-			metricValue:         "Mirror",
-			expectedMetricName:  "instance_uuid",
-			expectedMetricValue: "sti8300mcc-285:kernel:NVM type Mirror",
-		},
-	}
-
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			updatedMetricName, updateMetricValue := handleSpaces(tc.metricName, tc.metricValue)
-			assert.Equal(t, tc.expectedMetricName, updatedMetricName)
-			assert.Equal(t, tc.expectedMetricValue, updateMetricValue)
 		})
 	}
 }
