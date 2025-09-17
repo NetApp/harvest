@@ -645,6 +645,12 @@ func TestClusterRewrite(t *testing.T) {
 			want:    `snapmirror_labels{source_cluster) "source_cluster", "$1", "netapp_cluster", "(.*)")`,
 			cluster: "netapp_cluster",
 		},
+		{
+			name:    "cluster_software_update",
+			input:   `cluster_software_update{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}`,
+			want:    `cluster_software_update{netapp_cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}`,
+			cluster: "netapp_cluster",
+		},
 	}
 
 	for _, tt := range tests {

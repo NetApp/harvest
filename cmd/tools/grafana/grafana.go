@@ -869,23 +869,10 @@ func changeClusterLabel(data []byte, cluster string) []byte {
 	return data
 }
 
+var clusterRegex = regexp.MustCompile(`\bcluster\b`)
+
 func rewriteCluster(input string, cluster string) string {
-	const marker = `!!^`
-	hiddenNames := []string{"cluster_new_status", "source_cluster"}
-	for _, name := range hiddenNames {
-		if strings.Contains(input, name) {
-			// hide name
-			repl := strings.ReplaceAll(name, "cluster", marker)
-			input = strings.ReplaceAll(input, name, repl)
-		}
-	}
-
-	result := strings.ReplaceAll(input, "cluster", cluster)
-
-	// Restore hidden names
-	result = strings.ReplaceAll(result, marker, "cluster")
-
-	return result
+	return clusterRegex.ReplaceAllLiteralString(input, cluster)
 }
 
 func writeCustomDashboard(dashboard map[string]any, dir string, file os.DirEntry) error {
