@@ -1,0 +1,7 @@
+
+
+object·objectname·instance·outputName·instanceUUID·
+Object·Object·Instance Name·Instance Name·Instance UUID·
+nvm_mirror·nvm_mirror·"NVM Mirror"·"NVM Mirror"·"A250-42:kernel:NVM Mirror"·
+nvm_mirror·nvm_mirror·"NVM Mirror"·"NVM Mirror"·"A250-43:kernel:NVM Mirror"·
+
