@@ -3,6 +3,7 @@ module mcp-server
 go 1.25
 
 require (
+	github.com/goccy/go-yaml v1.18.0
 	github.com/modelcontextprotocol/go-sdk v0.5.0
 	github.com/spf13/cobra v1.10.1
 )

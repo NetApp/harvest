@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"cmp"
 	"crypto/tls"
 	"crypto/x509"
 	"errors"
@@ -8,6 +9,7 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -35,9 +37,10 @@ type Config struct {
 
 // TSDBConfig holds Time Series Database configuration
 type TSDBConfig struct {
-	URL     string
-	Auth    Config
-	Timeout time.Duration
+	URL       string
+	Auth      Config
+	Timeout   time.Duration
+	RulesPath string
 }
 
 var logger = slog.Default()
@@ -49,10 +52,7 @@ func SetLogger(l *slog.Logger) {
 
 // LoadAuthConfig loads authentication configuration from environment variables
 func LoadAuthConfig() Config {
-	authType := Type(strings.ToLower(os.Getenv("HARVEST_TSDB_AUTH_TYPE")))
-	if authType == "" {
-		authType = None
-	}
+	authType := cmp.Or(Type(strings.ToLower(os.Getenv("HARVEST_TSDB_AUTH_TYPE"))), None)
 
 	config := Config{Type: authType}
 
@@ -156,10 +156,35 @@ func GetTSDBConfig() TSDBConfig {
 		}
 	}
 
+	// Rules path configuration
+	rulesPath := os.Getenv("HARVEST_RULES_PATH")
+	if rulesPath == "" {
+		// Try to infer from common patterns
+		if workDir, err := os.Getwd(); err == nil {
+			if strings.Contains(workDir, "harvest") || strings.Contains(workDir, "Harvest") {
+				// Look for common rule file locations
+				commonPaths := []string{
+					filepath.Join(workDir, "rules"),
+					filepath.Join(workDir, "conf", "rules"),
+					filepath.Join(workDir, "prometheus", "rules"),
+					filepath.Join(workDir, "grafana", "rules"),
+				}
+
+				for _, path := range commonPaths {
+					if info, err := os.Stat(path); err == nil && info.IsDir() {
+						rulesPath = path
+						break
+					}
+				}
+			}
+		}
+	}
+
 	return TSDBConfig{
-		URL:     os.Getenv("HARVEST_TSDB_URL"),
-		Auth:    LoadAuthConfig(),
-		Timeout: timeout,
+		URL:       os.Getenv("HARVEST_TSDB_URL"),
+		Auth:      LoadAuthConfig(),
+		Timeout:   timeout,
+		RulesPath: rulesPath,
 	}
 }
 
