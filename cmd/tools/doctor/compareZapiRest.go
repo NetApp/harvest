@@ -26,7 +26,7 @@ type Data struct {
 
 type Result struct {
 	Metric map[string]string `json:"metric"`
-	Value  []interface{}     `json:"value"`
+	Value  []any             `json:"value"`
 }
 
 var ignoreMissingMetrics = map[string]struct{}{

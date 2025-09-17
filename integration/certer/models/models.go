@@ -60,7 +60,7 @@ type NewCA struct {
 	Name                     string   `json:"name,omitempty"`
 	PublicCertificate        string   `json:"public_certificate,omitempty"`
 	Type                     string   `json:"type,omitempty"`
-	Svm                      SVM      `json:"svm,omitempty"`
+	Svm                      SVM      `json:"svm"`
 }
 
 type RootCA struct {
@@ -148,7 +148,7 @@ type PatchUser struct {
 	Locked       bool   `json:"locked,omitempty"`
 	Comment      string `json:"comment,omitempty"`
 	Applications []Apps `json:"applications,omitempty"`
-	Role         Role   `json:"role,omitempty"`
+	Role         Role   `json:"role"`
 }
 
 type SecurityPermissions struct {

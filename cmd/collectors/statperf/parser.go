@@ -95,8 +95,8 @@ func (s *StatPerf) ParseCounters(input string) (map[string]CounterProperty, erro
 				combinedLabels = labelParts
 			} else if match = arrayOneToManyRegex.FindStringSubmatch(labelField); match != nil {
 				identifier := strings.TrimSpace(match[1])
-				quotedLabels := strings.Split(match[2], ",")
-				for _, label := range quotedLabels {
+				quotedLabels := strings.SplitSeq(match[2], ",")
+				for label := range quotedLabels {
 					combinedLabels = append(combinedLabels, label+"."+identifier)
 				}
 			} else if match = arrayManyToManyRegex.FindStringSubmatch(labelField); match != nil {
@@ -109,8 +109,8 @@ func (s *StatPerf) ParseCounters(input string) (map[string]CounterProperty, erro
 				}
 			} else {
 				// Fallback for simple comma-separated lists
-				labelParts := strings.Split(labelField, ",")
-				for _, label := range labelParts {
+				labelParts := strings.SplitSeq(labelField, ",")
+				for label := range labelParts {
 					label = strings.TrimSpace(label)
 					if label != "" {
 						combinedLabels = append(combinedLabels, label)
@@ -384,8 +384,8 @@ func (s *StatPerf) parseRows(input string) ([]map[string]any, error) {
 			continue
 		}
 
-		if strings.HasPrefix(trimLine, "End-time:") {
-			endTimeStr := strings.TrimPrefix(trimLine, "End-time:")
+		if after, ok := strings.CutPrefix(trimLine, "End-time:"); ok {
+			endTimeStr := after
 			endTimeStr = strings.TrimSpace(endTimeStr)
 			endTime, err := time.Parse("1/2/2006 15:04:05", endTimeStr)
 			if err != nil {

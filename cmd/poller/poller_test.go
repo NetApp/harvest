@@ -221,8 +221,8 @@ func objectCollectorMap(constructors ...string) map[string][]objectCollector {
 	for _, template := range constructors {
 		before, after, _ := strings.Cut(template, ":")
 		object := before
-		classes := strings.Split(after, ",")
-		for _, class := range classes {
+		classes := strings.SplitSeq(after, ",")
+		for class := range classes {
 			class := strings.TrimSpace(class)
 			objectsToCollectors[object] = append(objectsToCollectors[object], objectCollector{class: class, object: object})
 		}

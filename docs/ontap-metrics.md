@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Sep-12
+Creation Date : 2025-Sep-10
 ONTAP Version: 9.16.1
 ```
 
@@ -1681,6 +1681,46 @@ Performance metric for write I/O operations.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/storage/aggregates` | `statistics.iops_raw.write`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/aggr.yaml |
+
+
+
+### availability_zone_space_available
+
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/availability-zones` | `space.available` | conf/rest/asar2/9.16.0/availability_zone.yaml |
+
+
+
+### availability_zone_space_physical_used
+
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/availability-zones` | `space.physical_used` | conf/rest/asar2/9.16.0/availability_zone.yaml |
+
+
+
+### availability_zone_space_physical_used_percent
+
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/availability-zones` | `space.physical_used_percent` | conf/rest/asar2/9.16.0/availability_zone.yaml |
+
+
+
+### availability_zone_space_size
+
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/availability-zones` | `space.size` | conf/rest/asar2/9.16.0/availability_zone.yaml |
 
 
 
@@ -6408,6 +6448,14 @@ Number of RDMA I/Os issued.
 | REST | `api/cluster/counter/tables/iwarp` | `ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/iwarp.yaml |
 | ZAPI | `perf-object-get-instances iwarp` | `iw_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iwarp.yaml |
 
+The `iw_ops` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: MetroCluster | MetroCluster Iwarp | timeseries | [IOPs](/d/cdot-metrocluster/ontap3a-metrocluster?orgId=1&viewPanel=104) |
+///
+
 
 
 ### iw_read_ops
@@ -6418,6 +6466,14 @@ Number of RDMA read I/Os issued.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/iwarp` | `read_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/iwarp.yaml |
 | ZAPI | `perf-object-get-instances iwarp` | `iw_read_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iwarp.yaml |
+
+The `iw_read_ops` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: MetroCluster | MetroCluster Iwarp | timeseries | [Read IOPs](/d/cdot-metrocluster/ontap3a-metrocluster?orgId=1&viewPanel=108) |
+///
 
 
 
@@ -13234,24 +13290,6 @@ The `ntpserver_labels` metric is visualized in the following Grafana dashboards:
 
 
 
-### nvm_mirror_write_throughput
-
-Mirror throughput in Bytes per second
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| ZAPI | `perf-object-get-instances nvm_mirror` | `write_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nvm_mirror.yaml |
-
-The `nvm_mirror_write_throughput` metric is visualized in the following Grafana dashboards:
-
-/// html | div.grafana-table
-| Dashboard | Row | Type | Panel |
-|--------|----------|--------|--------|
-| ONTAP: MetroCluster | MetroCluster NVM Mirror | timeseries | [Write Throughput](/d/cdot-metrocluster/ontap3a-metrocluster?orgId=1&viewPanel=104) |
-///
-
-
-
 ### nvme_lif_avg_latency
 
 Average latency for NVMF operations
@@ -18508,6 +18546,46 @@ The `snapshot_volume_violation_total_size` metric is visualized in the following
 
 
 
+### storage_unit_labels
+
+This metric provides information about StorageUnit
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/storage-units` | `Harvest generated` | conf/rest/asar2/9.16.0/storage_unit.yaml |
+
+
+
+### storage_unit_space_efficiency_ratio
+
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/storage-units` | `space.efficiency_ratio` | conf/rest/asar2/9.16.0/storage_unit.yaml |
+
+
+
+### storage_unit_space_size
+
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/storage-units` | `space.size` | conf/rest/asar2/9.16.0/storage_unit.yaml |
+
+
+
+### storage_unit_space_used
+
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/storage-units` | `space.used` | conf/rest/asar2/9.16.0/storage_unit.yaml |
+
+
+
 ### support_auto_update_labels
 
 This metric provides information about SupportAutoUpdate
@@ -21799,7 +21877,7 @@ Hot data size that is physically used in the volume.
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/volume.yaml |
 
 The `volume_hot_data` metric is visualized in the following Grafana dashboards:
-
+    
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
@@ -21948,6 +22026,7 @@ The `volume_labels` metric is visualized in the following Grafana dashboards:
 | ONTAP: Volume | Volume Table | table | [Top $TopResources Volumes by Write Latency](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=40) |
 | ONTAP: Volume | Volume Table | table | [Top $TopResources Volumes by Write Throughput](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=42) |
 | ONTAP: Volume | Volume Table | table | [Top $TopResources Volumes by Write IOPS](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=44) |
+| ONTAP: Volume | Snaplock | table | [Volume Snaplock](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=188) |
 | ONTAP: Volume | Volume Hot-Cold Data | table | [Volumes by Cold data](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=45) |
 | ONTAP: Volume | Volume Hot-Cold Data | timeseries | [Top $TopResources Volumes by Cold Data](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=47) |
 | ONTAP: Volume | Volume Hot-Cold Data | timeseries | [Top $TopResources Volumes by Hot Data](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=48) |
@@ -22770,6 +22849,24 @@ The `volume_size_used_percent` metric is visualized in the following Grafana das
 | ONTAP: Volume Deep Dive | Volume Capacity: $Volume | table | [Volumes in Cluster](/d/cdot-volume-deep-dive/ontap3a-volume deep dive?orgId=1&viewPanel=22) |
 | ONTAP: Volume Deep Dive | Per Volume Statistics | timeseries | [Per Volume Space Used Percent](/d/cdot-volume-deep-dive/ontap3a-volume deep dive?orgId=1&viewPanel=30) |
 | ONTAP: Volume Deep Dive | Per Volume Statistics | timeseries | [Per Volume Snapshot Space Used Percent](/d/cdot-volume-deep-dive/ontap3a-volume deep dive?orgId=1&viewPanel=34) |
+///
+
+
+
+### volume_snaplock_labels
+
+This metric provides information about VolumeSnaplock
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/volume/snaplock` | `Harvest generated` | conf/rest/9.12.0/volume_snaplock.yaml |
+
+The `volume_snaplock_labels` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Volume | Snaplock | table | [Volume Snaplock](/d/cdot-volume/ontap3a-volume?orgId=1&viewPanel=188) |
 ///
 
 

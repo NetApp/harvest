@@ -465,9 +465,7 @@ func processRestCounters(dir string, client *rest.Client) map[string]Counter {
 		}
 		return nil
 	})
-	for k, v := range restPerfCounters {
-		restCounters[k] = v
-	}
+	maps.Copy(restCounters, restPerfCounters)
 
 	keyPerfKeys := slices.Sorted(maps.Keys(keyPerfCounters))
 	for _, k := range keyPerfKeys {
@@ -511,9 +509,7 @@ func processZapiCounters(dir string, client *zapi.Client) map[string]Counter {
 		return processZAPIPerfCounters(path, client)
 	})
 
-	for k, v := range zapiPerfCounters {
-		zapiCounters[k] = v
-	}
+	maps.Copy(zapiCounters, zapiPerfCounters)
 	return zapiCounters
 }
 
@@ -867,8 +863,8 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 	for _, c := range templateCounters.GetAllChildContentS() {
 		if c != "" {
 			name, display, m, _ := template3.ParseMetric(c)
-			if strings.HasPrefix(display, model.Object) {
-				display = strings.TrimPrefix(display, model.Object)
+			if after, ok := strings.CutPrefix(display, model.Object); ok {
+				display = after
 				display = strings.TrimPrefix(display, "_")
 			}
 			harvestName := model.Object + "_" + display
@@ -1074,9 +1070,7 @@ func visitRestTemplates(dir string, client *rest.Client, eachTemp func(path stri
 			return nil
 		}
 		r := eachTemp(path, client)
-		for k, v := range r {
-			result[k] = v
-		}
+		maps.Copy(result, r)
 		return nil
 	})
 
@@ -1099,9 +1093,7 @@ func visitZapiTemplates(dir string, client *zapi.Client, eachTemp func(path stri
 		}
 
 		r := eachTemp(path, client)
-		for k, v := range r {
-			result[k] = v
-		}
+		maps.Copy(result, r)
 		return nil
 	})
 
