@@ -10,11 +10,14 @@ import (
 	"mcp-server/cmd/loader"
 	"mcp-server/cmd/version"
 	"mcp-server/pkg/rules"
+	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
+	"time"
 
 	"mcp-server/pkg/auth"
 	"mcp-server/pkg/helper"
@@ -83,19 +86,27 @@ Optional Environment Variables (Timeout):
 Optional Environment Variables (Logging):
   LOG_LEVEL                 Log level: DEBUG, INFO, WARN, ERROR (default: INFO)
 
+Transport Options:
+  --http                    Enable HTTP transport (default: stdio)
+  --port                    Port for HTTP transport (default: 8080)
+  --host                    Host for HTTP transport (default: localhost)
+
 Prometheus Reload Control:
   HARVEST_TSDB_AUTO_RELOAD  Enable automatic reload after rule changes: true/false (default: true)
 
 Examples:
-  # Start with no authentication
-  HARVEST_TSDB_URL=http://localhost:9090 harvest-mcp start
+  # Start with stdio transport (default)
+  HARVEST_TSDB_URL=http://localhost:9090 ./bin/harvest-mcp start
+  
+  # Start with HTTP transport
+  HARVEST_TSDB_URL=http://localhost:9090 ./bin/harvest-mcp start --http --port 8080
   
   # Start with basic authentication
   HARVEST_TSDB_URL=http://localhost:9090 \
   HARVEST_TSDB_AUTH_TYPE=basic \
   HARVEST_TSDB_USERNAME=admin \
   HARVEST_TSDB_PASSWORD=secret \
-  harvest-mcp start
+  ./bin/harvest-mcp start
   
   # Start with certificate authentication
   HARVEST_TSDB_URL=https://localhost:9090 \
@@ -103,7 +114,7 @@ Examples:
   HARVEST_TSDB_CERT_FILE=/path/to/client.crt \
   HARVEST_TSDB_KEY_FILE=/path/to/client.key \
   HARVEST_TSDB_CA_FILE=/path/to/ca.crt \
-  harvest-mcp start
+  ./bin/harvest-mcp start
   
   # Start with basic auth and insecure TLS (for self-signed certs)
   HARVEST_TSDB_URL=https://localhost:9090 \
@@ -111,17 +122,17 @@ Examples:
   HARVEST_TSDB_USERNAME=admin \
   HARVEST_TSDB_PASSWORD=secret \
   HARVEST_TSDB_TLS_INSECURE=true \
-  harvest-mcp start
+  ./bin/harvest-mcp start --http
   
   # Start with no auth but insecure TLS (for development)
   HARVEST_TSDB_URL=https://localhost:9090 \
   HARVEST_TSDB_TLS_INSECURE=true \
-  harvest-mcp start
+  ./bin/harvest-mcp start
   
   # Start with debug logging
   HARVEST_TSDB_URL=http://localhost:9090 \
   LOG_LEVEL=DEBUG \
-  harvest-mcp start`
+  ./bin/harvest-mcp start`
 
 type PrometheusResponse struct {
 	Status string `json:"status"`
@@ -736,6 +747,7 @@ func extractIdentifiers(metric map[string]any) string {
 // getResourcePath returns path to a resource, trying common locations
 func getResourcePath(resource string) string {
 	paths := []string{
+		filepath.Join("..", resource),        // From mcp/bin directory
 		filepath.Join("..", "mcp", resource), // From harvest/bin
 		filepath.Join("..", "..", resource),  // From mcp/cmd/server
 		resource,                             // From mcp root or container
@@ -753,6 +765,7 @@ func getResourcePath(resource string) string {
 // getDocumentPath returns the path to a document file
 func getDocumentPath(filename string) string {
 	paths := []string{
+		filepath.Join("..", "..", "docs", filename),       // From mcp/bin directory
 		filepath.Join("..", "docs", filename),             // From harvest/bin
 		filepath.Join("..", "..", "..", "docs", filename), // From mcp/cmd/server
 		filepath.Join("docs", filename),                   // Container or other
@@ -864,17 +877,34 @@ var rootCmd = &cobra.Command{
 A Model Context Protocol (MCP) server that provides access to Prometheus and VictoriaMetrics 
 time-series data for ONTAP infrastructure monitoring and analysis.
 
+Use "harvest-mcp start" to start the MCP server.
+
 ` + envVarHelpText,
-	Run: runMcpServer,
 }
 
+// Command-line flags
+var (
+	httpMode bool
+	httpPort int
+	httpHost string
+)
+
+func init() {
+	// Add flags to the start command
+	startCmd.Flags().BoolVar(&httpMode, "http", false, "Enable HTTP transport mode (default: stdio)")
+	startCmd.Flags().IntVar(&httpPort, "port", 8080, "Port for HTTP transport (default: 8080)")
+	startCmd.Flags().StringVar(&httpHost, "host", "localhost", "Host for HTTP transport (default: localhost)")
+}
+
+// startCmd represents the start command
 var startCmd = &cobra.Command{
 	Use:   "start",
 	Short: "Start the MCP server",
-	Long: `Start the NetApp Harvest MCP Server
+	Long: `Start the NetApp Harvest MCP Server.
 
-The server will validate the connection to your time-series database on startup.
-If the connection fails, the server will exit with an error message.
+This command starts the Model Context Protocol (MCP) server that provides access to 
+Prometheus and VictoriaMetrics time-series data for ONTAP infrastructure monitoring 
+and analysis.
 
 ` + envVarHelpText,
 	Run: runMcpServer,
@@ -906,6 +936,16 @@ func runMcpServer(_ *cobra.Command, _ []string) {
 		os.Exit(1)
 	}
 
+	server := createMCPServer()
+
+	if httpMode {
+		runHTTPServer(server)
+	} else {
+		runStdioServer(server)
+	}
+}
+
+func createMCPServer() *mcp.Server {
 	server := mcp.NewServer(&mcp.Implementation{Name: AppName, Version: version.Info()}, nil)
 
 	metricDescriptions = loader.LoadMetricDescriptions(getResourcePath("metadata"), logger)
@@ -1006,10 +1046,53 @@ func runMcpServer(_ *cobra.Command, _ []string) {
 		MIMEType:    "text/markdown",
 	}, handleStorageGridMetricsResource)
 
-	// Run the server over stdin/stdout
+	return server
+}
+
+func runStdioServer(server *mcp.Server) {
 	logger.Info("starting MCP server over stdio transport")
 	if err := server.Run(context.Background(), &mcp.StdioTransport{}); err != nil {
 		logger.Error("mcp server failed to start", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+}
+
+func runHTTPServer(server *mcp.Server) {
+	address := httpHost + ":" + strconv.Itoa(httpPort)
+	logger.Info("starting MCP server over HTTP transport",
+		slog.String("address", address),
+		slog.String("host", httpHost),
+		slog.Int("port", httpPort))
+
+	handler := mcp.NewStreamableHTTPHandler(func(*http.Request) *mcp.Server {
+		return server
+	}, nil)
+
+	wrappedHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Mcp-Protocol-Version, Mcp-Session-Id")
+
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		handler.ServeHTTP(w, r)
+	})
+
+	logger.Info("MCP server endpoint available", slog.String("url", "http://"+address))
+	logger.Info("Server ready to accept connections")
+
+	httpServer := &http.Server{
+		Addr:              address,
+		Handler:           wrappedHandler,
+		ReadHeaderTimeout: 60 * time.Second,
+		IdleTimeout:       60 * time.Second,
+	}
+
+	if err := httpServer.ListenAndServe(); err != nil {
+		logger.Error("http server failed to start", slog.String("error", err.Error()))
 		os.Exit(1)
 	}
 	logger.Info("mcp server shutdown gracefully")
@@ -1326,11 +1409,10 @@ func GetRulesConfigHelp(_ context.Context, _ *mcp.CallToolRequest, _ struct{}) (
 }
 
 func main() {
-	// Add start command
-	rootCmd.AddCommand(startCmd)
-
 	// Add version command
 	rootCmd.AddCommand(version.Cmd())
+	// Add start command
+	rootCmd.AddCommand(startCmd)
 
 	rootCmd.Version = version.String()
 	rootCmd.SetVersionTemplate(version.String())

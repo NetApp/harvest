@@ -18,7 +18,8 @@ WORKDIR $BUILD_DIR/mcp
 
 RUN make build VERSION=$VERSION
 
-RUN cp -a $BUILD_DIR/mcp/bin/harvest-mcp $INSTALL_DIR
+RUN mkdir -p $INSTALL_DIR/bin
+RUN cp -a $BUILD_DIR/mcp/bin/harvest-mcp $INSTALL_DIR/bin/
 
 RUN mkdir -p $INSTALL_DIR/docs
 RUN cp -a $BUILD_DIR/docs/ontap-metrics.md $INSTALL_DIR/docs/ 2>/dev/null || true
@@ -39,4 +40,4 @@ COPY --from=builder $INSTALL_DIR $INSTALL_DIR
 
 WORKDIR $INSTALL_DIR
 
-ENTRYPOINT ["./harvest-mcp"]
+ENTRYPOINT ["./bin/harvest-mcp", "start"]

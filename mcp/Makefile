@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := help
 
-.PHONY: help deps clean build test fmt lint govulncheck package dev all
+.PHONY: help deps clean build test fmt lint govulncheck package all
 
 SHELL := /bin/bash
 GOLANGCI_LINT_VERSION := latest
@@ -75,7 +75,7 @@ test: ## Run tests
 	@echo "Running tests..."
 	@go test -race -shuffle=on -v ./...
 
-build: clean deps fmt ## Build the MCP server binary
+build: clean deps fmt lint govulncheck ## Build the MCP server binary with development checks
 	@echo "Building MCP server..."
 	@mkdir -p ${BIN_DIR}
 	@GOOS=$(GOOS) GOARCH=$(GOARCH) CGO_ENABLED=$(CGO_ENABLED) go build -trimpath -ldflags=$(LD_FLAGS) -o ${BIN_DIR}/${BINARY_NAME} ./cmd/server
@@ -86,10 +86,11 @@ package: clean deps build test ## Package MCP server binary with documentation
 	@echo "Creating package..."
 	@rm -rf ${DIST}
 	@mkdir -p ${DIST}/${PACKAGE_NAME}
+	@mkdir -p ${DIST}/${PACKAGE_NAME}/bin
 	@mkdir -p ${DIST}/${PACKAGE_NAME}/docs
 	@mkdir -p ${DIST}/${PACKAGE_NAME}/metadata
 	@mkdir -p ${DIST}/${PACKAGE_NAME}/prompts
-	@cp ${BIN_DIR}/${BINARY_NAME} ${DIST}/${PACKAGE_NAME}/
+	@cp ${BIN_DIR}/${BINARY_NAME} ${DIST}/${PACKAGE_NAME}/bin/
 	@cp README.md ${DIST}/${PACKAGE_NAME}/ 2>/dev/null || true
 	@cp ../docs/ontap-metrics.md ${DIST}/${PACKAGE_NAME}/docs/ 2>/dev/null || echo "Warning: ontap-metrics.md not found"
 	@cp ../docs/cisco-switch-metrics.md ${DIST}/${PACKAGE_NAME}/docs/ 2>/dev/null || echo "Warning: cisco-switch-metrics.md not found"
@@ -100,19 +101,11 @@ package: clean deps build test ## Package MCP server binary with documentation
 	@rm -rf ${DIST}/${PACKAGE_NAME}
 	@echo "✅ Package created: ${DIST}/${PACKAGE_NAME}.tar.gz"
 
-dev: build lint govulncheck ## Development build with all checks
-
 all: package ## Build, test, and package everything
 	@echo "✅ All tasks complete"
-
-deps-update: ## Download and update dependencies
-	@echo "Updating dependencies..."
-	@go mod download
-	@go mod tidy
-	@go mod verify
-	@echo "✅ Dependencies updated"
 
 docker-build: ## Build Docker image
 	@echo "Building Docker image..."
 	@cd .. && docker build -f mcp/Dockerfile --build-arg GO_VERSION=$(GO_VERSION) -t harvest-mcp:latest .
 	@echo "✅ Docker image built: harvest-mcp:latest"
+
