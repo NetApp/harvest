@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Sep-10
+Creation Date : 2025-Sep-17
 ONTAP Version: 9.16.1
 ```
 
@@ -6448,14 +6448,6 @@ Number of RDMA I/Os issued.
 | REST | `api/cluster/counter/tables/iwarp` | `ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/iwarp.yaml |
 | ZAPI | `perf-object-get-instances iwarp` | `iw_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iwarp.yaml |
 
-The `iw_ops` metric is visualized in the following Grafana dashboards:
-    
-/// html | div.grafana-table
-| Dashboard | Row | Type | Panel |
-|--------|----------|--------|--------|
-| ONTAP: MetroCluster | MetroCluster Iwarp | timeseries | [IOPs](/d/cdot-metrocluster/ontap3a-metrocluster?orgId=1&viewPanel=104) |
-///
-
 
 
 ### iw_read_ops
@@ -6466,14 +6458,6 @@ Number of RDMA read I/Os issued.
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/iwarp` | `read_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.14.1/iwarp.yaml |
 | ZAPI | `perf-object-get-instances iwarp` | `iw_read_ops`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/iwarp.yaml |
-
-The `iw_read_ops` metric is visualized in the following Grafana dashboards:
-    
-/// html | div.grafana-table
-| Dashboard | Row | Type | Panel |
-|--------|----------|--------|--------|
-| ONTAP: MetroCluster | MetroCluster Iwarp | timeseries | [Read IOPs](/d/cdot-metrocluster/ontap3a-metrocluster?orgId=1&viewPanel=108) |
-///
 
 
 
@@ -13286,6 +13270,24 @@ The `ntpserver_labels` metric is visualized in the following Grafana dashboards:
 | ONTAP: Security | Highlights | stat | [Cluster Compliant %](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=214) |
 | ONTAP: Security | Highlights | piechart | [Cluster Compliant](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=215) |
 | ONTAP: Security | Cluster Compliance | table | [Cluster Compliance](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=219) |
+///
+
+
+
+### nvm_mirror_write_throughput
+
+Mirror throughput in Bytes per second
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZAPI | `perf-object-get-instances nvm_mirror` | `write_throughput`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nvm_mirror.yaml |
+
+The `nvm_mirror_write_throughput` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: MetroCluster | MetroCluster NVM Mirror | timeseries | [Write Throughput](/d/cdot-metrocluster/ontap3a-metrocluster?orgId=1&viewPanel=104) |
 ///
 
 
