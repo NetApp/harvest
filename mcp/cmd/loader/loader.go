@@ -3,6 +3,7 @@ package loader
 import (
 	"encoding/json"
 	"log/slog"
+	"maps"
 	"os"
 	"path/filepath"
 )
@@ -19,9 +20,7 @@ func LoadMetricDescriptions(metadataDir string, logger *slog.Logger) map[string]
 		if data, err := os.ReadFile(filePath); err == nil {
 			var fileDescriptions map[string]string
 			if json.Unmarshal(data, &fileDescriptions) == nil {
-				for metric, description := range fileDescriptions {
-					descriptions[metric] = description
-				}
+				maps.Copy(descriptions, fileDescriptions)
 				loadedCount++
 				logger.Info("loaded metadata file",
 					slog.String("file", filename),

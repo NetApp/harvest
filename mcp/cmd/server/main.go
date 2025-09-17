@@ -9,11 +9,14 @@ import (
 	"log/slog"
 	"mcp-server/cmd/loader"
 	"mcp-server/cmd/version"
+	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
+	"time"
 
 	"mcp-server/pkg/auth"
 	"mcp-server/pkg/helper"
@@ -80,16 +83,24 @@ Optional Environment Variables (Timeout):
 Optional Environment Variables (Logging):
   LOG_LEVEL                 Log level: DEBUG, INFO, WARN, ERROR (default: INFO)
 
+Transport Options:
+  --http                    Enable HTTP transport (default: stdio)
+  --port                    Port for HTTP transport (default: 8080)
+  --host                    Host for HTTP transport (default: localhost)
+
 Examples:
-  # Start with no authentication
-  HARVEST_TSDB_URL=http://localhost:9090 harvest-mcp start
+  # Start with stdio transport (default)
+  HARVEST_TSDB_URL=http://localhost:9090 ./bin/harvest-mcp start
+  
+  # Start with HTTP transport
+  HARVEST_TSDB_URL=http://localhost:9090 ./bin/harvest-mcp start --http --port 8080
   
   # Start with basic authentication
   HARVEST_TSDB_URL=http://localhost:9090 \
   HARVEST_TSDB_AUTH_TYPE=basic \
   HARVEST_TSDB_USERNAME=admin \
   HARVEST_TSDB_PASSWORD=secret \
-  harvest-mcp start
+  ./bin/harvest-mcp start
   
   # Start with certificate authentication
   HARVEST_TSDB_URL=https://localhost:9090 \
@@ -97,7 +108,7 @@ Examples:
   HARVEST_TSDB_CERT_FILE=/path/to/client.crt \
   HARVEST_TSDB_KEY_FILE=/path/to/client.key \
   HARVEST_TSDB_CA_FILE=/path/to/ca.crt \
-  harvest-mcp start
+  ./bin/harvest-mcp start
   
   # Start with basic auth and insecure TLS (for self-signed certs)
   HARVEST_TSDB_URL=https://localhost:9090 \
@@ -105,23 +116,23 @@ Examples:
   HARVEST_TSDB_USERNAME=admin \
   HARVEST_TSDB_PASSWORD=secret \
   HARVEST_TSDB_TLS_INSECURE=true \
-  harvest-mcp start
+  ./bin/harvest-mcp start --http
   
   # Start with no auth but insecure TLS (for development)
   HARVEST_TSDB_URL=https://localhost:9090 \
   HARVEST_TSDB_TLS_INSECURE=true \
-  harvest-mcp start
+  ./bin/harvest-mcp start
   
   # Start with debug logging
   HARVEST_TSDB_URL=http://localhost:9090 \
   LOG_LEVEL=DEBUG \
-  harvest-mcp start`
+  ./bin/harvest-mcp start`
 
 type PrometheusResponse struct {
 	Status string `json:"status"`
 	Data   struct {
-		ResultType string      `json:"resultType"`
-		Result     interface{} `json:"result"`
+		ResultType string `json:"resultType"`
+		Result     any    `json:"result"`
 	} `json:"data"`
 	Error     string `json:"error,omitempty"`
 	ErrorType string `json:"errorType,omitempty"`
@@ -130,7 +141,7 @@ type PrometheusResponse struct {
 type PrometheusAlertsResponse struct {
 	Status string `json:"status"`
 	Data   struct {
-		Alerts []interface{} `json:"alerts"`
+		Alerts []any `json:"alerts"`
 	} `json:"data"`
 	Error     string `json:"error,omitempty"`
 	ErrorType string `json:"errorType,omitempty"`
@@ -206,7 +217,7 @@ func makePrometheusAPICall(endpoint string) ([]byte, error) {
 	return io.ReadAll(resp.Body)
 }
 
-func formatDataResponse(data interface{}) (*mcp.CallToolResult, any, error) {
+func formatDataResponse(data any) (*mcp.CallToolResult, any, error) {
 	content, err := formatJSONResponse(data)
 	if err != nil {
 		return &mcp.CallToolResult{
@@ -257,7 +268,7 @@ func executePrometheusQuery(queryURL string, params url.Values) (*PrometheusResp
 	return &promResp, nil
 }
 
-func formatJSONResponse(data interface{}) ([]mcp.Content, error) {
+func formatJSONResponse(data any) ([]mcp.Content, error) {
 	resultJSON, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {
 		return nil, err
@@ -415,9 +426,9 @@ func ListPrometheusMetrics(_ context.Context, _ *mcp.CallToolRequest, args ListP
 	// Include descriptions only when filtering is applied to limit response size
 	includeDescriptions := (args.Match != "" || len(args.Matches) > 0) && len(metricDescriptions) > 0
 
-	metricsArray := make([]map[string]interface{}, 0, len(metrics))
+	metricsArray := make([]map[string]any, 0, len(metrics))
 	for _, metric := range metrics {
-		metricInfo := map[string]interface{}{"name": metric}
+		metricInfo := map[string]any{"name": metric}
 		if includeDescriptions {
 			if description, found := metricDescriptions[metric]; found {
 				metricInfo["description"] = description
@@ -426,11 +437,11 @@ func ListPrometheusMetrics(_ context.Context, _ *mcp.CallToolRequest, args ListP
 		metricsArray = append(metricsArray, metricInfo)
 	}
 
-	response := map[string]interface{}{
+	response := map[string]any{
 		"status": "success",
-		"data": map[string]interface{}{
+		"data": map[string]any{
 			"total_count": len(metrics),
-			"filtering": map[string]interface{}{
+			"filtering": map[string]any{
 				"server_side_matches": len(args.Matches) > 0,
 				"client_side_pattern": args.Match != "" && len(args.Matches) == 0,
 				"pattern_used":        args.Match,
@@ -470,9 +481,9 @@ func ListLabelValues(_ context.Context, _ *mcp.CallToolRequest, args ListLabelVa
 		values = filterStrings(values, args.Match)
 	}
 
-	response := map[string]interface{}{
+	response := map[string]any{
 		"status": "success",
-		"data": map[string]interface{}{
+		"data": map[string]any{
 			"label_name":   args.Label,
 			"label_values": values,
 			"total_count":  len(values),
@@ -498,9 +509,9 @@ func ListAllLabelNames(_ context.Context, _ *mcp.CallToolRequest, _ any) (*mcp.C
 		return handlePrometheusError(errors.New(promResp.Error), "Prometheus label names query"), nil, nil
 	}
 
-	response := map[string]interface{}{
+	response := map[string]any{
 		"status": "success",
-		"data": map[string]interface{}{
+		"data": map[string]any{
 			"label_names": promResp.Data,
 			"total_count": len(promResp.Data),
 		},
@@ -589,11 +600,11 @@ func GetActiveAlerts(_ context.Context, _ *mcp.CallToolRequest, _ any) (*mcp.Cal
 	}, nil, nil
 }
 
-func countAlertsBySeverity(alerts []interface{}) (int, int, int) {
+func countAlertsBySeverity(alerts []any) (int, int, int) {
 	critical, warning, info := 0, 0, 0
 	for _, alert := range alerts {
-		if alertMap, ok := alert.(map[string]interface{}); ok {
-			if labels, ok := alertMap["labels"].(map[string]interface{}); ok {
+		if alertMap, ok := alert.(map[string]any); ok {
+			if labels, ok := alertMap["labels"].(map[string]any); ok {
 				if severity, ok := labels["severity"].(string); ok {
 					switch strings.ToLower(severity) {
 					case "critical":
@@ -651,7 +662,7 @@ func InfrastructureHealth(_ context.Context, _ *mcp.CallToolRequest, args Infras
 		}
 
 		// Check if there are any results
-		if resultSlice, ok := promResp.Data.Result.([]interface{}); ok && len(resultSlice) > 0 {
+		if resultSlice, ok := promResp.Data.Result.([]any); ok && len(resultSlice) > 0 {
 			issuesFound = true
 			icon := "⚠️"
 			if check.critical {
@@ -668,8 +679,8 @@ func InfrastructureHealth(_ context.Context, _ *mcp.CallToolRequest, args Infras
 						healthReport += fmt.Sprintf("   ... and %d more\n", len(resultSlice)-5)
 						break
 					}
-					if resultMap, ok := result.(map[string]interface{}); ok {
-						if metric, ok := resultMap["metric"].(map[string]interface{}); ok {
+					if resultMap, ok := result.(map[string]any); ok {
+						if metric, ok := resultMap["metric"].(map[string]any); ok {
 							name := extractIdentifiers(metric)
 							healthReport += fmt.Sprintf("   - %s\n", name)
 						}
@@ -702,7 +713,7 @@ func InfrastructureHealth(_ context.Context, _ *mcp.CallToolRequest, args Infras
 	}, nil, nil
 }
 
-func extractIdentifiers(metric map[string]interface{}) string {
+func extractIdentifiers(metric map[string]any) string {
 	var identifiers []string
 
 	if cluster, ok := metric["cluster"].(string); ok {
@@ -730,6 +741,7 @@ func extractIdentifiers(metric map[string]interface{}) string {
 // getResourcePath returns path to a resource, trying common locations
 func getResourcePath(resource string) string {
 	paths := []string{
+		filepath.Join("..", resource),        // From mcp/bin directory
 		filepath.Join("..", "mcp", resource), // From harvest/bin
 		filepath.Join("..", "..", resource),  // From mcp/cmd/server
 		resource,                             // From mcp root or container
@@ -747,6 +759,7 @@ func getResourcePath(resource string) string {
 // getDocumentPath returns the path to a document file
 func getDocumentPath(filename string) string {
 	paths := []string{
+		filepath.Join("..", "..", "docs", filename),       // From mcp/bin directory
 		filepath.Join("..", "docs", filename),             // From harvest/bin
 		filepath.Join("..", "..", "..", "docs", filename), // From mcp/cmd/server
 		filepath.Join("docs", filename),                   // Container or other
@@ -858,17 +871,34 @@ var rootCmd = &cobra.Command{
 A Model Context Protocol (MCP) server that provides access to Prometheus and VictoriaMetrics 
 time-series data for ONTAP infrastructure monitoring and analysis.
 
+Use "harvest-mcp start" to start the MCP server.
+
 ` + envVarHelpText,
-	Run: runMcpServer,
 }
 
+// Command-line flags
+var (
+	httpMode bool
+	httpPort int
+	httpHost string
+)
+
+func init() {
+	// Add flags to the start command
+	startCmd.Flags().BoolVar(&httpMode, "http", false, "Enable HTTP transport mode (default: stdio)")
+	startCmd.Flags().IntVar(&httpPort, "port", 8080, "Port for HTTP transport (default: 8080)")
+	startCmd.Flags().StringVar(&httpHost, "host", "localhost", "Host for HTTP transport (default: localhost)")
+}
+
+// startCmd represents the start command
 var startCmd = &cobra.Command{
 	Use:   "start",
 	Short: "Start the MCP server",
-	Long: `Start the NetApp Harvest MCP Server
+	Long: `Start the NetApp Harvest MCP Server.
 
-The server will validate the connection to your time-series database on startup.
-If the connection fails, the server will exit with an error message.
+This command starts the Model Context Protocol (MCP) server that provides access to 
+Prometheus and VictoriaMetrics time-series data for ONTAP infrastructure monitoring 
+and analysis.
 
 ` + envVarHelpText,
 	Run: runMcpServer,
@@ -900,6 +930,16 @@ func runMcpServer(_ *cobra.Command, _ []string) {
 		os.Exit(1)
 	}
 
+	server := createMCPServer()
+
+	if httpMode {
+		runHTTPServer(server)
+	} else {
+		runStdioServer(server)
+	}
+}
+
+func createMCPServer() *mcp.Server {
 	server := mcp.NewServer(&mcp.Implementation{Name: AppName, Version: version.Info()}, nil)
 
 	metricDescriptions = loader.LoadMetricDescriptions(getResourcePath("metadata"), logger)
@@ -983,10 +1023,53 @@ func runMcpServer(_ *cobra.Command, _ []string) {
 		MIMEType:    "text/markdown",
 	}, handleStorageGridMetricsResource)
 
-	// Run the server over stdin/stdout
+	return server
+}
+
+func runStdioServer(server *mcp.Server) {
 	logger.Info("starting MCP server over stdio transport")
 	if err := server.Run(context.Background(), &mcp.StdioTransport{}); err != nil {
 		logger.Error("mcp server failed to start", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+}
+
+func runHTTPServer(server *mcp.Server) {
+	address := httpHost + ":" + strconv.Itoa(httpPort)
+	logger.Info("starting MCP server over HTTP transport",
+		slog.String("address", address),
+		slog.String("host", httpHost),
+		slog.Int("port", httpPort))
+
+	handler := mcp.NewStreamableHTTPHandler(func(*http.Request) *mcp.Server {
+		return server
+	}, nil)
+
+	wrappedHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Mcp-Protocol-Version, Mcp-Session-Id")
+
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		handler.ServeHTTP(w, r)
+	})
+
+	logger.Info("MCP server endpoint available", slog.String("url", "http://"+address))
+	logger.Info("Server ready to accept connections")
+
+	httpServer := &http.Server{
+		Addr:              address,
+		Handler:           wrappedHandler,
+		ReadHeaderTimeout: 60 * time.Second,
+		IdleTimeout:       60 * time.Second,
+	}
+
+	if err := httpServer.ListenAndServe(); err != nil {
+		logger.Error("http server failed to start", slog.String("error", err.Error()))
 		os.Exit(1)
 	}
 	logger.Info("mcp server shutdown gracefully")
@@ -1098,11 +1181,10 @@ func SearchMetrics(_ context.Context, _ *mcp.CallToolRequest, params SearchMetri
 }
 
 func main() {
-	// Add start command
-	rootCmd.AddCommand(startCmd)
-
 	// Add version command
 	rootCmd.AddCommand(version.Cmd())
+	// Add start command
+	rootCmd.AddCommand(startCmd)
 
 	rootCmd.Version = version.String()
 	rootCmd.SetVersionTemplate(version.String())

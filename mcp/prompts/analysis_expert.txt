@@ -70,14 +70,13 @@ When troubleshooting issues:
 
 ## Key Metrics
 
-**Status** (0=offline, 1=online): `*_new_status`, `*_admin_up`, `*_oper_up`
+**Status** (0=offline, 1=online): `*_new_status`
 
 **Capacity**: `*_size_used_percent`, `*_space_used_percent`  
 
 **Performance**: `*_ops`, `*_latency`, `*_data` (ONTAP pre-calculated)
 
 **Health**: `health_*` indicators, error counters, drop counters
-
 
 ## Response Approach
 
@@ -115,10 +114,8 @@ When possible, provide context by:
 - Comparing current metrics to recent historical averages
 - Identifying performance anomalies and trends
 - Highlighting metrics outside normal operational ranges
-- Benchmarking against similar environments where relevant
 
 ## Key Points
-
 - ONTAP performance metrics are pre-calculated (no rate() needed)
 - StorageGrid and some Cisco metrics may need rate() functions  
 - Always use discovery tools to understand metrics before querying
@@ -130,4 +127,3 @@ After analysis, recommend key metrics to monitor:
 - **Performance**: Volumes with sustained latency > 10ms
 - **Efficiency**: Volumes with <20% deduplication savings
 - **Health**: Any non-zero health_* metric values
-- **Balance**: FlexGroup constituents with >2x performance differences

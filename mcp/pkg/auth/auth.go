@@ -19,7 +19,7 @@ type Type string
 const (
 	None  Type = "none"
 	Basic Type = "basic"
-	Cert  Type = "cert" // for future
+	Cert  Type = "cert"
 )
 
 // Config holds authentication configuration
@@ -27,10 +27,10 @@ type Config struct {
 	Type            Type
 	Username        string
 	Password        string
-	CertFile        string // for future
-	KeyFile         string // for future
-	CAFile          string // for future
-	InsecureSkipTLS bool   // Skip TLS certificate verification
+	CertFile        string
+	KeyFile         string
+	CAFile          string
+	InsecureSkipTLS bool // Skip TLS certificate verification
 }
 
 // TSDBConfig holds Time Series Database configuration
