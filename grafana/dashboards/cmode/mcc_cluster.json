@@ -1840,7 +1840,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Mirror throughput in Bytes per second.",
+          "description": "NVM Mirror write throughput.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1922,7 +1922,7 @@
               "exemplar": false,
               "expr": "nvm_mirror_write_throughput{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}",
               "interval": "",
-              "legendFormat": "{{node}}",
+              "legendFormat": "{{node}} - {{name}}",
               "refId": "B",
               "textEditor": false
             }
