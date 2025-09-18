@@ -4,18 +4,27 @@ object:                   storage_unit
 
 counters:
   - ^^uuid
+  - ^anti_ransomware.state                       => arw_state
   - ^class
   - ^consistency_group.name                      => cg_name
   - ^location.node.name                          => node
   - ^location.storage_availability_zone.name     => storage_availability_zone
   - ^location.volume.name                        => volume
+  - ^maps                                        => maps
   - ^name
+  - ^os_type
+  - ^status.state                                => state
   - ^svm.name                                    => svm
   - ^type
   - space.efficiency_ratio
+  - space.physical_used
   - space.size
   - space.used
+  - hidden_fields:
+      - space
 
+plugins:
+  - StorageUnit
 
 export_options:
   instance_keys:
@@ -24,7 +33,11 @@ export_options:
     - svm
     - volume
   instance_labels:
+    - arw_state
     - cg_name
     - class
+    - host_group
+    - os_type
+    - state
     - type
     - storage_availability_zone
