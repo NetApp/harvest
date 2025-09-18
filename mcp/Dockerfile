@@ -12,7 +12,6 @@ WORKDIR $BUILD_DIR
 RUN mkdir -p $INSTALL_DIR
 
 COPY mcp/ ./mcp/
-COPY docs/ ./docs/
 COPY .golangci.yml ./
 
 WORKDIR $BUILD_DIR/mcp
