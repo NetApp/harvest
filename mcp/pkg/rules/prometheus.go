@@ -34,12 +34,12 @@ func NewPrometheusClient(config auth.TSDBConfig, logger *slog.Logger) *Prometheu
 	// Remove trailing slash
 	baseURL = strings.TrimSuffix(baseURL, "/")
 
-	reloadURL := os.Getenv("HARVEST_PROMETHEUS_RELOAD_URL")
+	reloadURL := os.Getenv("HARVEST_TSDB_AUTO_RELOAD_URL")
 	if reloadURL == "" {
 		reloadURL = baseURL + "/-/reload"
 	}
 
-	enableReloadAPI := os.Getenv("HARVEST_PROMETHEUS_RELOAD_API") == "true"
+	enableReloadAPI := os.Getenv("HARVEST_TSDB_AUTO_RELOAD") == "true"
 
 	return &PrometheusClient{
 		config:          config,
@@ -66,7 +66,7 @@ func (pc *PrometheusClient) GetReloadURL() string {
 // ReloadConfig triggers a Prometheus configuration reload
 func (pc *PrometheusClient) ReloadConfig() error {
 	if !pc.enableReloadAPI {
-		return errors.New("prometheus reload API is disabled. Set HARVEST_PROMETHEUS_RELOAD_API=true and restart Prometheus with --web.enable-lifecycle")
+		return errors.New("prometheus reload API is disabled. Set HARVEST_TSDB_AUTO_RELOAD=true and restart Prometheus with --web.enable-lifecycle")
 	}
 
 	pc.logger.Debug("triggering Prometheus config reload", slog.String("url", pc.reloadURL))
@@ -121,5 +121,5 @@ func (pc *PrometheusClient) GetReloadInstructions() string {
 	return `Manual reload required. Choose one of:
 1. Restart the Prometheus container/service
 2. Send SIGHUP to the Prometheus process
-3. Enable reload API by starting Prometheus with --web.enable-lifecycle and set HARVEST_PROMETHEUS_RELOAD_API=true`
+3. Enable reload API by starting Prometheus with --web.enable-lifecycle and set HARVEST_TSDB_AUTO_RELOAD=true`
 }
