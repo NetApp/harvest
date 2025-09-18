@@ -80,6 +80,7 @@ func (pc *PrometheusClient) ReloadConfig() error {
 	if err != nil {
 		return fmt.Errorf("failed to call reload API: %w", err)
 	}
+	//goland:noinspection GoUnhandledErrorResult
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
@@ -100,6 +101,7 @@ func (pc *PrometheusClient) TestConnection() error {
 	if err != nil {
 		return fmt.Errorf("failed to connect to Prometheus: %w", err)
 	}
+	//goland:noinspection GoUnhandledErrorResult
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {

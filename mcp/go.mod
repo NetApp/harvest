@@ -2,9 +2,12 @@ module mcp-server
 
 go 1.25
 
+replace github.com/netapp/harvest/v2 => ../
+
 require (
 	github.com/goccy/go-yaml v1.18.0
 	github.com/modelcontextprotocol/go-sdk v0.5.0
+	github.com/netapp/harvest/v2 v2.0.0-20250916111406-3a9279128da6
 	github.com/spf13/cobra v1.10.1
 )
 

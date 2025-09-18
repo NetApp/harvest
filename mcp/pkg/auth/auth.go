@@ -6,7 +6,9 @@ import (
 	"crypto/x509"
 	"errors"
 	"fmt"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
+	"mcp-server/cmd/version"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -201,7 +203,7 @@ func createHTTPClient(config TSDBConfig) *http.Client {
 	if config.Auth.Type == Cert {
 		certTLSConfig, err := createTLSConfig(config.Auth)
 		if err != nil {
-			logger.Error("failed to create TLS config for certificate auth", slog.Any("error", err))
+			logger.Error("failed to create TLS config for certificate auth", slogx.Err(err))
 			tlsConfig = &tls.Config{MinVersion: tls.VersionTLS12}
 		} else {
 			tlsConfig = certTLSConfig
@@ -261,7 +263,7 @@ func MakeRequest(config TSDBConfig, url string) (*http.Response, error) {
 		return nil, fmt.Errorf("failed to add auth to request: %w", err)
 	}
 
-	req.Header.Set("User-Agent", "harvest-mcp-server/1.0.0")
+	req.Header.Set("User-Agent", "harvest-mcp-server/"+version.Info())
 
 	resp, err := client.Do(req)
 	if err != nil {

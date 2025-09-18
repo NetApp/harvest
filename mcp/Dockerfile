@@ -1,4 +1,4 @@
-ARG GO_VERSION
+ARG GO_VERSION=1.25.1
 FROM golang:${GO_VERSION} AS builder
 
 SHELL ["/bin/bash", "-c"]
@@ -13,6 +13,7 @@ RUN mkdir -p $INSTALL_DIR
 
 COPY mcp/ ./mcp/
 COPY docs/ ./docs/
+COPY .golangci.yml ./
 
 WORKDIR $BUILD_DIR/mcp
 

@@ -9,6 +9,7 @@ import (
 	"log/slog"
 	"mcp-server/cmd/loader"
 	"mcp-server/cmd/version"
+	"mcp-server/pkg/mcptypes"
 	"mcp-server/pkg/rules"
 	"net/http"
 	"net/url"
@@ -21,6 +22,8 @@ import (
 
 	"mcp-server/pkg/auth"
 	"mcp-server/pkg/helper"
+
+	"github.com/netapp/harvest/v2/pkg/slogx"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
@@ -43,20 +46,26 @@ func setupLogger() *slog.Logger {
 		}
 	}
 
-	opts := &slog.HandlerOptions{Level: level}
-	handler := slog.NewTextHandler(os.Stderr, opts)
+	handler := slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{
+		Level:     level,
+		AddSource: true,
+		ReplaceAttr: func(_ []string, a slog.Attr) slog.Attr {
+			if a.Key == slog.SourceKey {
+				source := a.Value.Any().(*slog.Source)
+				source.File = filepath.Base(source.File)
+			}
+			return a
+		},
+	})
+
 	return slog.New(handler)
 }
 
-var logger = setupLogger().With(slog.String("component", "mcp-server"))
+var logger = setupLogger()
 
 var metricDescriptions map[string]string
 var ruleManager *rules.RuleManager
-
-// Initialize auth package logger
-func init() {
-	auth.SetLogger(logger)
-}
+var tsdbConfig auth.TSDBConfig
 
 const (
 	AppName = "harvest-mcp"
@@ -66,7 +75,6 @@ const envVarHelpText = `Required Environment Variables:
   HARVEST_TSDB_URL         URL of your Prometheus or VictoriaMetrics server
                            Example: http://localhost:9090
                            For NABox4: Enable Victoria Metrics guest access and use https://nabox_url/vm
-  HARVEST_RULES_PATH       Path to directory containing alert_rules.yml and ems_alert_rules.yml
 
 Optional Environment Variables (Authentication):
   HARVEST_TSDB_AUTH_TYPE    Authentication type: none, basic, cert (default: none)
@@ -75,6 +83,10 @@ Optional Environment Variables (Authentication):
   HARVEST_TSDB_CERT_FILE    Path to client certificate file (for cert auth)
   HARVEST_TSDB_KEY_FILE     Path to client private key file (for cert auth)  
   HARVEST_TSDB_CA_FILE      Path to CA certificate file (optional, for cert auth)
+
+Optional Environment Variables (Rules):
+HARVEST_RULES_PATH       Path to directory containing alert_rules.yml and ems_alert_rules.yml
+
 
 Optional Environment Variables (TLS):
   HARVEST_TSDB_TLS_INSECURE Skip TLS certificate verification (true/false, default: false)
@@ -134,59 +146,8 @@ Examples:
   LOG_LEVEL=DEBUG \
   ./bin/harvest-mcp start`
 
-type PrometheusResponse struct {
-	Status string `json:"status"`
-	Data   struct {
-		ResultType string `json:"resultType"`
-		Result     any    `json:"result"`
-	} `json:"data"`
-	Error     string `json:"error,omitempty"`
-	ErrorType string `json:"errorType,omitempty"`
-}
-
-type PrometheusAlertsResponse struct {
-	Status string `json:"status"`
-	Data   struct {
-		Alerts []any `json:"alerts"`
-	} `json:"data"`
-	Error     string `json:"error,omitempty"`
-	ErrorType string `json:"errorType,omitempty"`
-}
-
-type PrometheusLabelsResponse struct {
-	Status    string   `json:"status"`
-	Data      []string `json:"data"`
-	Error     string   `json:"error,omitempty"`
-	ErrorType string   `json:"errorType,omitempty"`
-}
-
-type PrometheusQueryArgs struct {
-	Query string `json:"query" jsonschema:"PromQL query string"`
-}
-
-type PrometheusRangeQueryArgs struct {
-	Query string `json:"query" jsonschema:"PromQL query string"`
-	Start string `json:"start" jsonschema:"Start timestamp (RFC3339 or Unix timestamp)"`
-	End   string `json:"end" jsonschema:"End timestamp (RFC3339 or Unix timestamp)"`
-	Step  string `json:"step" jsonschema:"Query resolution step width (e.g., '15s', '1m', '1h')"`
-}
-
-type ListPrometheusMetricsArgs struct {
-	Match   string   `json:"match,omitempty" jsonschema:"Optional metric name pattern to filter results. Supports: 1) Simple string matching (e.g., 'volume'), 2) Regex patterns (e.g., '.*volume.*space.*'), 3) Prometheus label matchers (e.g., '{__name__=~\".*volume.*\"}')"`
-	Matches []string `json:"matches,omitempty" jsonschema:"Array of Prometheus label matchers for server-side filtering (e.g., ['{__name__=~\".*volume.*space.*\"}']). More efficient than 'match' for complex patterns."`
-}
-
-type InfrastructureHealthArgs struct {
-	IncludeDetails bool `json:"includeDetails,omitempty" jsonschema:"Include detailed metrics in the response"`
-}
-
-type ListLabelValuesArgs struct {
-	Label string `json:"label" jsonschema:"Label name to get values for (e.g., 'cluster', 'node', 'volume')"`
-	Match string `json:"match,omitempty" jsonschema:"Optional pattern to filter label values. Supports simple string matching or regex patterns (e.g., '.*prod.*', '^cluster_[0-9]+$')"`
-}
-
 func handlePrometheusError(err error, operation string) *mcp.CallToolResult {
-	logger.Error(operation+" failed", slog.Any("error", err))
+	logger.Error(operation+" failed", slogx.Err(err))
 	return &mcp.CallToolResult{
 		Content: []mcp.Content{
 			&mcp.TextContent{Text: fmt.Sprintf("%s failed: %v", operation, err)},
@@ -205,12 +166,11 @@ func handleValidationError(message string) *mcp.CallToolResult {
 }
 
 func makePrometheusAPICall(endpoint string) ([]byte, error) {
-	config := auth.GetTSDBConfig()
-	fullURL := config.URL + endpoint
+	fullURL := tsdbConfig.URL + endpoint
 
 	logger.Debug("Making Prometheus API call", slog.String("url", fullURL))
 
-	resp, err := auth.MakeRequest(config, fullURL)
+	resp, err := auth.MakeRequest(tsdbConfig, fullURL)
 	if err != nil {
 		return nil, fmt.Errorf("request failed: %w", err)
 	}
@@ -226,6 +186,7 @@ func makePrometheusAPICall(endpoint string) ([]byte, error) {
 func formatDataResponse(data any) (*mcp.CallToolResult, any, error) {
 	content, err := formatJSONResponse(data)
 	if err != nil {
+		logger.Error("failed to format data response", slogx.Err(err), slog.String("data_type", fmt.Sprintf("%T", data)))
 		return &mcp.CallToolResult{
 			Content: []mcp.Content{
 				&mcp.TextContent{Text: fmt.Sprintf("Error formatting response: %v", err)},
@@ -233,6 +194,7 @@ func formatDataResponse(data any) (*mcp.CallToolResult, any, error) {
 			IsError: true,
 		}, nil, nil
 	}
+
 	return &mcp.CallToolResult{Content: content}, nil, nil
 }
 
@@ -243,26 +205,21 @@ func addTool[T any](server *mcp.Server, name, description string, handler func(c
 	}, handler)
 }
 
-func executePrometheusQuery(queryURL string, params url.Values) (*PrometheusResponse, error) {
-	config := auth.GetTSDBConfig()
-
+func executeTSDBQuery(queryURL string, params url.Values) (*mcptypes.MetricsResponse, error) {
 	fullURL := fmt.Sprintf("%s?%s", queryURL, params.Encode())
-	resp, err := auth.MakeRequest(config, fullURL)
+	resp, err := auth.MakeRequest(tsdbConfig, fullURL)
 	if err != nil {
 		return nil, fmt.Errorf("request failed: %w", err)
 	}
-	defer func() {
-		if closeErr := resp.Body.Close(); closeErr != nil {
-			logger.Warn("failed to close response body", slog.Any("error", closeErr))
-		}
-	}()
+	//goland:noinspection GoUnhandledErrorResult
+	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("reading response: %w", err)
 	}
 
-	var promResp PrometheusResponse
+	var promResp mcptypes.MetricsResponse
 	if err := json.Unmarshal(body, &promResp); err != nil {
 		return nil, fmt.Errorf("parsing response: %w", err)
 	}
@@ -277,6 +234,7 @@ func executePrometheusQuery(queryURL string, params url.Values) (*PrometheusResp
 func formatJSONResponse(data any) ([]mcp.Content, error) {
 	resultJSON, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {
+		logger.Error("failed to marshal JSON response", slogx.Err(err), slog.String("data_type", fmt.Sprintf("%T", data)))
 		return nil, err
 	}
 
@@ -285,14 +243,13 @@ func formatJSONResponse(data any) ([]mcp.Content, error) {
 	}, nil
 }
 
-// PrometheusQuery executes a Prometheus instant query
-func PrometheusQuery(_ context.Context, _ *mcp.CallToolRequest, args PrometheusQueryArgs) (*mcp.CallToolResult, any, error) {
+// MetricsQuery executes a time series database instant query
+func MetricsQuery(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.QueryArgs) (*mcp.CallToolResult, any, error) {
 	if err := helper.ValidateQueryArgs(args.Query); err != nil {
 		return handleValidationError(err.Error()), nil, err
 	}
 
-	config := auth.GetTSDBConfig()
-	queryURL := config.URL + "/api/v1/query"
+	queryURL := tsdbConfig.URL + "/api/v1/query"
 	urlValues := url.Values{}
 	urlValues.Set("query", args.Query)
 
@@ -300,23 +257,22 @@ func PrometheusQuery(_ context.Context, _ *mcp.CallToolRequest, args PrometheusQ
 		slog.String("query", args.Query),
 		slog.String("url", queryURL))
 
-	promResp, err := executePrometheusQuery(queryURL, urlValues)
+	promResp, err := executeTSDBQuery(queryURL, urlValues)
 	if err != nil {
-		logger.Error("Prometheus query failed", slog.Any("error", err), slog.String("query", helper.TruncateString(args.Query, 100)))
+		logger.Error("Prometheus query failed", slogx.Err(err), slog.String("query", helper.TruncateString(args.Query, 100)))
 		return handlePrometheusError(err, "Prometheus query"), nil, nil
 	}
 
 	return formatDataResponse(promResp)
 }
 
-// PrometheusRangeQuery executes a Prometheus range query
-func PrometheusRangeQuery(_ context.Context, _ *mcp.CallToolRequest, args PrometheusRangeQueryArgs) (*mcp.CallToolResult, any, error) {
+// MetricsRangeQuery executes a time series database range query
+func MetricsRangeQuery(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.RangeQueryArgs) (*mcp.CallToolResult, any, error) {
 	if err := helper.ValidateRangeQueryArgs(args.Query, args.Start, args.End, args.Step); err != nil {
 		return handleValidationError(err.Error()), nil, err
 	}
 
-	config := auth.GetTSDBConfig()
-	queryURL := config.URL + "/api/v1/query_range"
+	queryURL := tsdbConfig.URL + "/api/v1/query_range"
 	urlValues := url.Values{}
 	urlValues.Set("query", args.Query)
 	urlValues.Set("start", args.Start)
@@ -330,9 +286,9 @@ func PrometheusRangeQuery(_ context.Context, _ *mcp.CallToolRequest, args Promet
 		slog.String("step", args.Step),
 		slog.String("url", queryURL))
 
-	promResp, err := executePrometheusQuery(queryURL, urlValues)
+	promResp, err := executeTSDBQuery(queryURL, urlValues)
 	if err != nil {
-		logger.Error("Prometheus range query failed", slog.Any("error", err), slog.String("query", helper.TruncateString(args.Query, 100)))
+		logger.Error("Prometheus range query failed", slogx.Err(err), slog.String("query", helper.TruncateString(args.Query, 100)))
 		return handlePrometheusError(err, "Prometheus range query"), nil, nil
 	}
 
@@ -346,10 +302,11 @@ func filterStrings(items []string, pattern string) []string {
 
 	regex, err := regexp.Compile(pattern)
 	if err != nil {
-		logger.Debug("Pattern is not valid regex, using string matching", slog.String("pattern", pattern), slog.Any("error", err))
+		logger.Debug("Pattern is not valid regex, using string matching", slog.String("pattern", pattern), slogx.Err(err))
 		var filtered []string
+		lowerPattern := strings.ToLower(pattern)
 		for _, item := range items {
-			if strings.Contains(strings.ToLower(item), strings.ToLower(pattern)) {
+			if strings.Contains(strings.ToLower(item), lowerPattern) {
 				filtered = append(filtered, item)
 			}
 		}
@@ -368,8 +325,6 @@ func filterStrings(items []string, pattern string) []string {
 
 // makePrometheusAPICallWithMatches performs API call with optional label matchers
 func makePrometheusAPICallWithMatches(endpoint string, matches []string) ([]byte, error) {
-	config := auth.GetTSDBConfig()
-
 	var fullURL string
 	if len(matches) > 0 {
 		// Build URL with matches parameter
@@ -377,16 +332,16 @@ func makePrometheusAPICallWithMatches(endpoint string, matches []string) ([]byte
 		for _, match := range matches {
 			params.Add("match[]", match)
 		}
-		fullURL = config.URL + endpoint + "?" + params.Encode()
+		fullURL = tsdbConfig.URL + endpoint + "?" + params.Encode()
 	} else {
-		fullURL = config.URL + endpoint
+		fullURL = tsdbConfig.URL + endpoint
 	}
 
 	logger.Debug("Making Prometheus API call with matches",
 		slog.String("url", fullURL),
 		slog.Any("matches", matches))
 
-	resp, err := auth.MakeRequest(config, fullURL)
+	resp, err := auth.MakeRequest(tsdbConfig, fullURL)
 	if err != nil {
 		return nil, fmt.Errorf("request failed: %w", err)
 	}
@@ -399,8 +354,8 @@ func makePrometheusAPICallWithMatches(endpoint string, matches []string) ([]byte
 	return io.ReadAll(resp.Body)
 }
 
-// ListPrometheusMetrics lists available metrics from Prometheus
-func ListPrometheusMetrics(_ context.Context, _ *mcp.CallToolRequest, args ListPrometheusMetricsArgs) (*mcp.CallToolResult, any, error) {
+// ListMetrics lists available metrics from time series database
+func ListMetrics(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.ListMetricsArgs) (*mcp.CallToolResult, any, error) {
 	var body []byte
 	var err error
 
@@ -415,7 +370,7 @@ func ListPrometheusMetrics(_ context.Context, _ *mcp.CallToolRequest, args ListP
 		return handlePrometheusError(err, "query Prometheus metrics"), nil, nil
 	}
 
-	var promResp PrometheusLabelsResponse
+	var promResp mcptypes.LabelsResponse
 	if err := json.Unmarshal(body, &promResp); err != nil {
 		return handlePrometheusError(err, "parse metrics response"), nil, nil
 	}
@@ -462,18 +417,18 @@ func ListPrometheusMetrics(_ context.Context, _ *mcp.CallToolRequest, args ListP
 }
 
 // ListLabelValues lists available values for a specific label from Prometheus
-func ListLabelValues(_ context.Context, _ *mcp.CallToolRequest, args ListLabelValuesArgs) (*mcp.CallToolResult, any, error) {
+func ListLabelValues(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.ListLabelValuesArgs) (*mcp.CallToolResult, any, error) {
 	if args.Label == "" {
 		return handleValidationError("label parameter is required"), nil, errors.New("label parameter is required")
 	}
 
 	body, err := makePrometheusAPICall("/api/v1/label/" + args.Label + "/values")
 	if err != nil {
-		logger.Error("Failed to query Prometheus label values", slog.Any("error", err), slog.String("label", args.Label))
+		logger.Error("Failed to query Prometheus label values", slogx.Err(err), slog.String("label", args.Label))
 		return handlePrometheusError(err, fmt.Sprintf("query label values for '%s'", args.Label)), nil, nil
 	}
 
-	var promResp PrometheusLabelsResponse
+	var promResp mcptypes.LabelsResponse
 	if err := json.Unmarshal(body, &promResp); err != nil {
 		return handlePrometheusError(err, "parse label values response"), nil, nil
 	}
@@ -506,7 +461,7 @@ func ListAllLabelNames(_ context.Context, _ *mcp.CallToolRequest, _ any) (*mcp.C
 		return handlePrometheusError(err, "query Prometheus label names"), nil, nil
 	}
 
-	var promResp PrometheusLabelsResponse
+	var promResp mcptypes.LabelsResponse
 	if err := json.Unmarshal(body, &promResp); err != nil {
 		return handlePrometheusError(err, "parse label names response"), nil, nil
 	}
@@ -527,12 +482,11 @@ func ListAllLabelNames(_ context.Context, _ *mcp.CallToolRequest, _ any) (*mcp.C
 }
 
 func GetActiveAlerts(_ context.Context, _ *mcp.CallToolRequest, _ any) (*mcp.CallToolResult, any, error) {
-	config := auth.GetTSDBConfig()
-	queryURL := config.URL + "/api/v1/alerts"
+	queryURL := tsdbConfig.URL + "/api/v1/alerts"
 
-	resp, err := auth.MakeRequest(config, queryURL)
+	resp, err := auth.MakeRequest(tsdbConfig, queryURL)
 	if err != nil {
-		logger.Error("Failed to query Prometheus alerts", slog.Any("error", err))
+		logger.Error("Failed to query Prometheus alerts", slogx.Err(err))
 		return &mcp.CallToolResult{
 			Content: []mcp.Content{
 				&mcp.TextContent{Text: fmt.Sprintf("Failed to query Prometheus alerts: %v", err)},
@@ -556,7 +510,7 @@ func GetActiveAlerts(_ context.Context, _ *mcp.CallToolRequest, _ any) (*mcp.Cal
 		}, nil, nil
 	}
 
-	var promResp PrometheusAlertsResponse
+	var promResp mcptypes.AlertsResponse
 	if err := json.Unmarshal(body, &promResp); err != nil {
 		return &mcp.CallToolResult{
 			Content: []mcp.Content{
@@ -627,9 +581,7 @@ func countAlertsBySeverity(alerts []any) (int, int, int) {
 	return critical, warning, info
 }
 
-func InfrastructureHealth(_ context.Context, _ *mcp.CallToolRequest, args InfrastructureHealthArgs) (*mcp.CallToolResult, any, error) {
-	config := auth.GetTSDBConfig()
-
+func InfrastructureHealth(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.InfrastructureHealthArgs) (*mcp.CallToolResult, any, error) {
 	healthReport := "## ONTAP Infrastructure Health Report\n\n"
 	issuesFound := false
 
@@ -651,7 +603,7 @@ func InfrastructureHealth(_ context.Context, _ *mcp.CallToolRequest, args Infras
 	}
 
 	for _, check := range healthChecks {
-		queryURL := config.URL + "/api/v1/query"
+		queryURL := tsdbConfig.URL + "/api/v1/query"
 		urlValues := url.Values{}
 		urlValues.Set("query", check.query)
 
@@ -661,7 +613,7 @@ func InfrastructureHealth(_ context.Context, _ *mcp.CallToolRequest, args Infras
 			slog.String("query", check.query),
 			slog.String("url", queryURL))
 
-		promResp, err := executePrometheusQuery(queryURL, urlValues)
+		promResp, err := executeTSDBQuery(queryURL, urlValues)
 		if err != nil {
 			healthReport += fmt.Sprintf("❌ **%s**: Error querying - %v\n", check.name, err)
 			continue
@@ -920,18 +872,18 @@ func runMcpServer(_ *cobra.Command, _ []string) {
 		os.Exit(1)
 	}
 
-	config := auth.GetTSDBConfig()
+	tsdbConfig = auth.GetTSDBConfig()
 
 	logger.Info("server configuration",
-		slog.String("tsdb_url", config.URL),
-		slog.String("auth_type", string(config.Auth.Type)),
-		slog.Bool("username_set", config.Auth.Username != ""),
-		slog.Bool("password_set", config.Auth.Password != ""))
+		slog.String("tsdb_url", tsdbConfig.URL),
+		slog.String("auth_type", string(tsdbConfig.Auth.Type)),
+		slog.Bool("username_set", tsdbConfig.Auth.Username != ""),
+		slog.Bool("password_set", tsdbConfig.Auth.Password != ""))
 
-	if err := validateTSDBConnection(config); err != nil {
+	if err := validateTSDBConnection(tsdbConfig); err != nil {
 		logger.Error("failed to connect to time-series database server",
-			slog.Any("error", err),
-			slog.String("url", config.URL))
+			slogx.Err(err),
+			slog.String("url", tsdbConfig.URL))
 		logger.Error("please verify HARVEST_TSDB_URL and authentication settings")
 		os.Exit(1)
 	}
@@ -953,15 +905,15 @@ func createMCPServer() *mcp.Server {
 	addTool(server, "get_metric_description", "Get description and metadata for a specific metric by name", GetMetricDescription)
 	addTool(server, "search_metrics", "Search for metrics by name, description, or object type using a pattern", SearchMetrics)
 
-	addTool(server, "prometheus_query",
-		"Execute instant PromQL queries to get current metric values at a specific point in time.\n"+
+	addTool(server, "metrics_query",
+		"Execute instant PromQL queries against Prometheus or VictoriaMetrics to get current metric values at a specific point in time.\n"+
 			"\t\tReturns immediate snapshots of system state, perfect for real-time monitoring and validation.\n"+
 			"\t\tApproach: Start with simple metric queries, then add label filters to narrow scope. Use aggregation functions (sum, avg, max) for infrastructure-wide views.\n"+
 			"\t\tContext: Always combine with range queries to understand trends and historical patterns.\n"+
-			"\t\tState Queries: For status metrics (*_new_status), 0 = offline, 1 = online", PrometheusQuery)
-	addTool(server, "prometheus_range_query", "Execute a PromQL range query to get time series data over a period", PrometheusRangeQuery)
-	addTool(server, "list_prometheus_metrics", "List all available metrics from Prometheus with advanced filtering and optional descriptions. When 'match' or 'matches' filters are applied, metric descriptions are automatically included. Use 1) 'match' for simple/regex patterns, 2) 'matches' for efficient server-side Prometheus label matchers", ListPrometheusMetrics)
-	addTool(server, "get_alerts", "Get active alerts from Prometheus with summary by severity level", GetActiveAlerts)
+			"\t\tState Queries: For status metrics (*_new_status), 0 = offline, 1 = online", MetricsQuery)
+	addTool(server, "metrics_range_query", "Execute a PromQL range query against Prometheus or VictoriaMetrics to get time series data over a period", MetricsRangeQuery)
+	addTool(server, "list_metrics", "List all available metrics from Prometheus or VictoriaMetrics with advanced filtering and optional descriptions. When 'match' or 'matches' filters are applied, metric descriptions are automatically included. Use 1) 'match' for simple/regex patterns, 2) 'matches' for efficient server-side label matchers", ListMetrics)
+	addTool(server, "get_alerts", "Get active alerts from Prometheus or VictoriaMetrics with summary by severity level", GetActiveAlerts)
 	addTool(server, "infrastructure_health",
 		"Perform comprehensive automated health assessment with actionable insights across ONTAP infrastructure.\n"+
 			"\t\tCombines multiple health indicators into a unified operational status view.\n"+
@@ -969,13 +921,13 @@ func createMCPServer() *mcp.Server {
 			"\t\tOutput: Current status with trending indicators for operational planning.\n"+
 			"\t\tWorkflow: Excellent starting point for infrastructure analysis and assessment.", InfrastructureHealth)
 	addTool(server, "list_label_values", "Get all available values for a specific label (e.g., cluster names, node names, volume names) with optional regex filtering", ListLabelValues)
-	addTool(server, "list_all_label_names", "Get all available label names (dimensions) that can be used to filter metrics", ListAllLabelNames)
+	addTool(server, "list_all_label_names", "Get all available label names (dimensions) that can be used to filter metrics in Prometheus or VictoriaMetrics", ListAllLabelNames)
 
 	// Initialize rule manager
 	var err error
 	ruleManager, err = rules.NewRuleManager(logger)
 	if err != nil {
-		logger.Warn("failed to initialize rule manager", slog.Any("error", err))
+		logger.Warn("failed to initialize rule manager", slogx.Err(err))
 		logger.Info("rule management tools will be disabled - see environment configuration")
 	} else {
 		// Add rule management tools
@@ -990,7 +942,7 @@ func createMCPServer() *mcp.Server {
 
 	promptDefinitions, err := loader.LoadPromptDefinitions(getResourcePath("prompts"), logger)
 	if err != nil {
-		logger.Error("failed to load prompt definitions", slog.Any("error", err))
+		logger.Error("failed to load prompt definitions", slogx.Err(err))
 	}
 
 	for _, promptDef := range promptDefinitions {
@@ -1409,6 +1361,7 @@ func GetRulesConfigHelp(_ context.Context, _ *mcp.CallToolRequest, _ struct{}) (
 }
 
 func main() {
+	auth.SetLogger(logger)
 	// Add version command
 	rootCmd.AddCommand(version.Cmd())
 	// Add start command
