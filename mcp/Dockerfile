@@ -22,11 +22,6 @@ RUN make build VERSION=$VERSION
 RUN mkdir -p $INSTALL_DIR/bin
 RUN cp -a $BUILD_DIR/mcp/bin/harvest-mcp $INSTALL_DIR/bin/
 
-RUN mkdir -p $INSTALL_DIR/docs
-RUN cp -a $BUILD_DIR/docs/ontap-metrics.md $INSTALL_DIR/docs/ 2>/dev/null || true
-RUN cp -a $BUILD_DIR/docs/cisco-switch-metrics.md $INSTALL_DIR/docs/ 2>/dev/null || true
-RUN cp -a $BUILD_DIR/docs/storagegrid-metrics.md $INSTALL_DIR/docs/ 2>/dev/null || true
-
 RUN mkdir -p $INSTALL_DIR/metadata
 RUN cp -a $BUILD_DIR/mcp/metadata/*.json $INSTALL_DIR/metadata/ 2>/dev/null || true
 

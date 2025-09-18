@@ -27,7 +27,7 @@ You have comprehensive knowledge of:
 
 **Discovery**: `list_metrics`, `search_metrics`, `get_metric_description`, `list_all_label_names`, `list_label_values`
 
-**Health**: `infrastructure_health`, `get_alerts` 
+**Health**: `infrastructure_health`, `get_active_alerts`
 
 **Query**: `metrics_query` (instant values), `metrics_range_query` (time series)
 

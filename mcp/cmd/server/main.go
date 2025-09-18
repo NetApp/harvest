@@ -714,24 +714,6 @@ func getResourcePath(resource string) string {
 	return resource
 }
 
-// getDocumentPath returns the path to a document file
-func getDocumentPath(filename string) string {
-	paths := []string{
-		filepath.Join("..", "..", "docs", filename),       // From mcp/bin directory
-		filepath.Join("..", "docs", filename),             // From harvest/bin
-		filepath.Join("..", "..", "..", "docs", filename), // From mcp/cmd/server
-		filepath.Join("docs", filename),                   // Container or other
-	}
-
-	for _, path := range paths {
-		if _, err := os.Stat(path); err == nil {
-			return path
-		}
-	}
-
-	return filepath.Join("docs", filename)
-}
-
 // validateTSDBConnection tests the connection to the time-series database (Prometheus/VictoriaMetrics)
 func validateTSDBConnection(config auth.TSDBConfig) error {
 	logger.Info("validating time-series database connection", slog.String("url", config.URL))
@@ -753,72 +735,6 @@ func validateTSDBConnection(config auth.TSDBConfig) error {
 
 	logger.Info("time-series database connection validated successfully")
 	return nil
-}
-
-func readFile(filePath string) ([]byte, error) {
-	content, err := os.ReadFile(filePath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read file %s: %w", filePath, err)
-	}
-	return content, nil
-}
-
-// Resource handlers
-func handleOntapMetricsResource(_ context.Context, req *mcp.ReadResourceRequest) (*mcp.ReadResourceResult, error) {
-	docPath := getDocumentPath("ontap-metrics.md")
-	content, err := readFile(docPath)
-	if err != nil {
-		logger.Error("failed to read ontap-metrics.md", slog.String("path", docPath), slog.String("error", err.Error()))
-		return nil, fmt.Errorf("failed to read ONTAP metrics documentation: %w", err)
-	}
-
-	return &mcp.ReadResourceResult{
-		Contents: []*mcp.ResourceContents{
-			{
-				URI:      req.Params.URI,
-				MIMEType: "text/markdown",
-				Text:     string(content),
-			},
-		},
-	}, nil
-}
-
-func handleCiscoSwitchMetricsResource(_ context.Context, req *mcp.ReadResourceRequest) (*mcp.ReadResourceResult, error) {
-	docPath := getDocumentPath("cisco-switch-metrics.md")
-	content, err := readFile(docPath)
-	if err != nil {
-		logger.Error("failed to read cisco-switch-metrics.md", slog.String("path", docPath), slog.String("error", err.Error()))
-		return nil, fmt.Errorf("failed to read Cisco switch metrics documentation: %w", err)
-	}
-
-	return &mcp.ReadResourceResult{
-		Contents: []*mcp.ResourceContents{
-			{
-				URI:      req.Params.URI,
-				MIMEType: "text/markdown",
-				Text:     string(content),
-			},
-		},
-	}, nil
-}
-
-func handleStorageGridMetricsResource(_ context.Context, req *mcp.ReadResourceRequest) (*mcp.ReadResourceResult, error) {
-	docPath := getDocumentPath("storagegrid-metrics.md")
-	content, err := readFile(docPath)
-	if err != nil {
-		logger.Error("failed to read storagegrid-metrics.md", slog.String("path", docPath), slog.String("error", err.Error()))
-		return nil, fmt.Errorf("failed to read StorageGRID metrics documentation: %w", err)
-	}
-
-	return &mcp.ReadResourceResult{
-		Contents: []*mcp.ResourceContents{
-			{
-				URI:      req.Params.URI,
-				MIMEType: "text/markdown",
-				Text:     string(content),
-			},
-		},
-	}, nil
 }
 
 var rootCmd = &cobra.Command{
@@ -913,7 +829,7 @@ func createMCPServer() *mcp.Server {
 			"\t\tState Queries: For status metrics (*_new_status), 0 = offline, 1 = online", MetricsQuery)
 	addTool(server, "metrics_range_query", "Execute a PromQL range query against Prometheus or VictoriaMetrics to get time series data over a period", MetricsRangeQuery)
 	addTool(server, "list_metrics", "List all available metrics from Prometheus or VictoriaMetrics with advanced filtering and optional descriptions. When 'match' or 'matches' filters are applied, metric descriptions are automatically included. Use 1) 'match' for simple/regex patterns, 2) 'matches' for efficient server-side label matchers", ListMetrics)
-	addTool(server, "get_alerts", "Get active alerts from Prometheus or VictoriaMetrics with summary by severity level", GetActiveAlerts)
+	addTool(server, "get_active_alerts", "Get active alerts from Prometheus or VictoriaMetrics with summary by severity level", GetActiveAlerts)
 	addTool(server, "infrastructure_health",
 		"Perform comprehensive automated health assessment with actionable insights across ONTAP infrastructure.\n"+
 			"\t\tCombines multiple health indicators into a unified operational status view.\n"+
@@ -973,30 +889,6 @@ func createMCPServer() *mcp.Server {
 	} else {
 		logger.Info("registered prompts", slog.Int("count", len(promptDefinitions)))
 	}
-
-	// Add ONTAP metrics documentation as a resource
-	server.AddResource(&mcp.Resource{
-		URI:         "docs://ontap-metrics",
-		Name:        "ONTAP Metrics Documentation",
-		Description: "Documentation of all ONTAP metrics collected by Harvest, including REST/ZAPI mappings",
-		MIMEType:    "text/markdown",
-	}, handleOntapMetricsResource)
-
-	// Add Cisco Switch metrics documentation as a resource
-	server.AddResource(&mcp.Resource{
-		URI:         "docs://cisco-switch-metrics",
-		Name:        "Cisco Switch Metrics Documentation",
-		Description: "Documentation of all Cisco switch metrics collected by Harvest via NXAPI",
-		MIMEType:    "text/markdown",
-	}, handleCiscoSwitchMetricsResource)
-
-	// Add StorageGRID metrics documentation as a resource
-	server.AddResource(&mcp.Resource{
-		URI:         "docs://storagegrid-metrics",
-		Name:        "StorageGRID Metrics Documentation",
-		Description: "Documentation of all StorageGRID metrics collected by Harvest via REST API",
-		MIMEType:    "text/markdown",
-	}, handleStorageGridMetricsResource)
 
 	return server
 }
