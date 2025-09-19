@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/goccy/go-yaml"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strings"
@@ -21,12 +22,14 @@ const (
 // Manager handles alert rule file operations
 type Manager struct {
 	rulesPath string
+	logger    *slog.Logger
 }
 
 // NewManager creates a new rules manager
-func NewManager(rulesPath string) *Manager {
+func NewManager(rulesPath string, logger *slog.Logger) *Manager {
 	return &Manager{
 		rulesPath: rulesPath,
+		logger:    logger,
 	}
 }
 
@@ -37,8 +40,7 @@ func (m *Manager) determineTargetFile(ruleName, expression string) string {
 	lowerExpr := strings.ToLower(expression)
 
 	if strings.Contains(lowerName, "ems") ||
-		strings.Contains(lowerExpr, "ems_") ||
-		strings.Contains(lowerExpr, "event_") {
+		strings.Contains(lowerExpr, "ems_") {
 		return EMSRulesFile
 	}
 
@@ -79,6 +81,13 @@ func (m *Manager) readRuleFile(filename string) (*RuleFile, error) {
 	if err := yaml.Unmarshal(data, &ruleFile); err != nil {
 		return nil, fmt.Errorf("failed to parse rule file %s: %w", filename, err)
 	}
+	// Initialize RulesMap for each group
+	for i := range ruleFile.Groups {
+		ruleFile.Groups[i].RulesMap = make(map[string]AlertRule)
+		for _, rule := range ruleFile.Groups[i].Rules {
+			ruleFile.Groups[i].RulesMap[rule.Alert] = rule
+		}
+	}
 
 	return &ruleFile, nil
 }
@@ -110,18 +119,18 @@ func (m *Manager) writeRuleFile(filename string, ruleFile *RuleFile) error {
 	// Rename temporary file to final location
 	if err := os.Rename(tempPath, filePath); err != nil {
 		// Clean up temp file
-		err := os.Remove(tempPath)
-		if err != nil {
-			return err
+		err2 := os.Remove(tempPath)
+		if err2 != nil {
+			return fmt.Errorf("failed to remove temp file %s %w", tempPath, err2)
 		}
 		// Restore backup if write failed
 		if m.fileExists(filename + BackupExtension) {
-			err := os.Rename(backupPath, filePath)
-			if err != nil {
-				return err
+			err3 := os.Rename(backupPath, filePath)
+			if err3 != nil {
+				return fmt.Errorf("failed to rename backupPath=%s to filePath=%s %w", backupPath, filePath, err3)
 			}
 		}
-		return fmt.Errorf("failed to rename temporary file: %w", err)
+		return fmt.Errorf("failed to rename temporary file oldPath=%s newPath=%s %w", tempPath, filePath, err)
 	}
 
 	return nil
@@ -197,10 +206,9 @@ func (m *Manager) findRuleInFile(filename, ruleName string) (*AlertRule, error) 
 	}
 
 	for _, group := range ruleFile.Groups {
-		for _, rule := range group.Rules {
-			if rule.Alert == ruleName {
-				return &rule, nil
-			}
+		r, ok := group.RulesMap[ruleName]
+		if ok {
+			return &r, nil
 		}
 	}
 

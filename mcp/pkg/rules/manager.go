@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log/slog"
 	"mcp-server/pkg/auth"
+	"slices"
+	"sync"
 	"time"
 )
 
@@ -14,6 +16,7 @@ type RuleManager struct {
 	validator        *Validator
 	prometheusClient *PrometheusClient
 	logger           *slog.Logger
+	mu               *sync.Mutex
 }
 
 // NewRuleManager creates a new rule manager
@@ -24,7 +27,7 @@ func NewRuleManager(logger *slog.Logger) (*RuleManager, error) {
 		return nil, errors.New("HARVEST_RULES_PATH environment variable not set")
 	}
 
-	fileManager := NewManager(config.RulesPath)
+	fileManager := NewManager(config.RulesPath, logger)
 	validator := NewValidator()
 	prometheusClient := NewPrometheusClient(config, logger)
 
@@ -38,11 +41,14 @@ func NewRuleManager(logger *slog.Logger) (*RuleManager, error) {
 		validator:        validator,
 		prometheusClient: prometheusClient,
 		logger:           logger,
+		mu:               &sync.Mutex{},
 	}, nil
 }
 
 // ListRules returns all rules from both files
 func (rm *RuleManager) ListRules() (*RuleListResponse, error) {
+	rm.mu.Lock()
+	defer rm.mu.Unlock()
 	alertRules, emsRules, err := rm.fileManager.getAllRules()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get rules: %w", err)
@@ -106,6 +112,8 @@ func (rm *RuleManager) CreateRule(req *CreateRuleRequest) error {
 	// Determine target file
 	targetFile := rm.fileManager.determineTargetFile(req.RuleName, req.Expression)
 
+	rm.mu.Lock()
+	defer rm.mu.Unlock()
 	// Check if rule already exists
 	if _, _, err := rm.fileManager.findRule(req.RuleName); err == nil {
 		return fmt.Errorf("rule '%s' already exists", req.RuleName)
@@ -170,6 +178,9 @@ func (rm *RuleManager) CreateRule(req *CreateRuleRequest) error {
 
 // UpdateRule updates an existing alert rule
 func (rm *RuleManager) UpdateRule(req *UpdateRuleRequest) error {
+	rm.mu.Lock()
+	defer rm.mu.Unlock()
+
 	// Find the existing rule
 	filename, rule, err := rm.fileManager.findRule(req.RuleName)
 	if err != nil {
@@ -258,6 +269,9 @@ func (rm *RuleManager) UpdateRule(req *UpdateRuleRequest) error {
 
 // DeleteRule deletes an alert rule
 func (rm *RuleManager) DeleteRule(req *DeleteRuleRequest) error {
+	rm.mu.Lock()
+	defer rm.mu.Unlock()
+
 	// Find the rule
 	filename, _, err := rm.fileManager.findRule(req.RuleName)
 	if err != nil {
@@ -276,9 +290,7 @@ func (rm *RuleManager) DeleteRule(req *DeleteRuleRequest) error {
 		for ruleIdx, rule := range ruleFile.Groups[groupIdx].Rules {
 			if rule.Alert == req.RuleName {
 				// Remove the rule from the slice
-				ruleFile.Groups[groupIdx].Rules = append(
-					ruleFile.Groups[groupIdx].Rules[:ruleIdx],
-					ruleFile.Groups[groupIdx].Rules[ruleIdx+1:]...)
+				ruleFile.Groups[groupIdx].Rules = slices.Delete(ruleFile.Groups[groupIdx].Rules, ruleIdx, ruleIdx+1)
 				found = true
 				break
 			}
