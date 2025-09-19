@@ -16,6 +16,7 @@ type RuleGroup struct {
 	Name     string      `yaml:"name"`
 	Interval string      `yaml:"interval,omitempty"`
 	Rules    []AlertRule `yaml:"rules"`
+	RulesMap map[string]AlertRule
 }
 
 // RuleFile represents the structure of a Prometheus rules file
