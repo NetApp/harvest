@@ -72,39 +72,40 @@ const (
 )
 
 const envVarHelpText = `Required Environment Variables:
-  HARVEST_TSDB_URL         URL of your Prometheus or VictoriaMetrics server
-                           Example: http://localhost:9090
-                           For NABox4: Enable Victoria Metrics guest access and use https://nabox_url/vm
+  HARVEST_TSDB_URL              URL of your Prometheus or VictoriaMetrics server
+                                Example: http://localhost:9090
+                                For NABox4: Enable Victoria Metrics guest access and use https://nabox_url/vm
 
 Optional Environment Variables (Authentication):
-  HARVEST_TSDB_AUTH_TYPE    Authentication type: none, basic, cert (default: none)
-  HARVEST_TSDB_USERNAME     Username for basic authentication
-  HARVEST_TSDB_PASSWORD     Password for basic authentication
-  HARVEST_TSDB_CERT_FILE    Path to client certificate file (for cert auth)
-  HARVEST_TSDB_KEY_FILE     Path to client private key file (for cert auth)  
-  HARVEST_TSDB_CA_FILE      Path to CA certificate file (optional, for cert auth)
+  HARVEST_TSDB_AUTH_TYPE        Authentication type: none, basic, cert (default: none)
+  HARVEST_TSDB_USERNAME         Username for basic authentication
+  HARVEST_TSDB_PASSWORD         Password for basic authentication
+  HARVEST_TSDB_CERT_FILE        Path to client certificate file (for cert auth)
+  HARVEST_TSDB_KEY_FILE         Path to client private key file (for cert auth)  
+  HARVEST_TSDB_CA_FILE          Path to CA certificate file (optional, for cert auth)
 
 Optional Environment Variables (Rules):
-HARVEST_RULES_PATH       Path to directory containing alert_rules.yml and ems_alert_rules.yml
+HARVEST_RULES_PATH              Path to directory containing alert_rules.yml and ems_alert_rules.yml
 
 
 Optional Environment Variables (TLS):
-  HARVEST_TSDB_TLS_INSECURE Skip TLS certificate verification (true/false, default: false)
-                           WARNING: Only use for development/testing
+  HARVEST_TSDB_TLS_INSECURE     Skip TLS certificate verification (true/false, default: false)
+                                WARNING: Only use for development/testing
 
 Optional Environment Variables (Timeout):
-  HARVEST_TSDB_TIMEOUT      Request timeout duration (e.g., '30s', '1m', '90s', default: 30s)
+  HARVEST_TSDB_TIMEOUT          Request timeout duration (e.g., '30s', '1m', '90s', default: 30s)
 
 Optional Environment Variables (Logging):
   LOG_LEVEL                 Log level: DEBUG, INFO, WARN, ERROR (default: INFO)
 
 Transport Options:
-  --http                    Enable HTTP transport (default: stdio)
-  --port                    Port for HTTP transport (default: 8080)
-  --host                    Host for HTTP transport (default: localhost)
+  --http                        Enable HTTP transport (default: stdio)
+  --port                        Port for HTTP transport (default: 8080)
+  --host                        Host for HTTP transport (default: localhost)
 
 Prometheus Reload Control:
-  HARVEST_TSDB_AUTO_RELOAD  Enable automatic reload after rule changes: true/false (default: true)
+  HARVEST_TSDB_AUTO_RELOAD      Enable automatic reload after rule changes: true/false (default: true)
+  HARVEST_TSDB_AUTO_RELOAD_URL  URL called to reload rules (default: <HARVEST_TSDB_URL>/-/reload)
 
 Examples:
   # Start with stdio transport (default)
@@ -174,11 +175,9 @@ func makePrometheusAPICall(endpoint string) ([]byte, error) {
 	if err != nil {
 		return nil, fmt.Errorf("request failed: %w", err)
 	}
-	defer func() {
-		if closeErr := resp.Body.Close(); closeErr != nil {
-			logger.Warn("failed to close response body", slog.Any("error", closeErr))
-		}
-	}()
+
+	//goland:noinspection GoUnhandledErrorResult
+	defer resp.Body.Close()
 
 	return io.ReadAll(resp.Body)
 }
@@ -211,6 +210,7 @@ func executeTSDBQuery(queryURL string, params url.Values) (*mcptypes.MetricsResp
 	if err != nil {
 		return nil, fmt.Errorf("request failed: %w", err)
 	}
+
 	//goland:noinspection GoUnhandledErrorResult
 	defer resp.Body.Close()
 
@@ -345,11 +345,9 @@ func makePrometheusAPICallWithMatches(endpoint string, matches []string) ([]byte
 	if err != nil {
 		return nil, fmt.Errorf("request failed: %w", err)
 	}
-	defer func() {
-		if closeErr := resp.Body.Close(); closeErr != nil {
-			logger.Warn("failed to close response body", slog.Any("error", closeErr))
-		}
-	}()
+
+	//goland:noinspection GoUnhandledErrorResult
+	defer resp.Body.Close()
 
 	return io.ReadAll(resp.Body)
 }
@@ -494,11 +492,9 @@ func GetActiveAlerts(_ context.Context, _ *mcp.CallToolRequest, _ any) (*mcp.Cal
 			IsError: true,
 		}, nil, nil
 	}
-	defer func() {
-		if closeErr := resp.Body.Close(); closeErr != nil {
-			logger.Warn("failed to close response body", slog.Any("error", closeErr))
-		}
-	}()
+
+	//goland:noinspection GoUnhandledErrorResult
+	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -705,9 +701,17 @@ func getResourcePath(resource string) string {
 		resource,                             // From mcp root or container
 	}
 
+	executable, err := os.Executable()
+	if err != nil {
+		logger.Error("failed to get executable path", slogx.Err(err))
+		return resource
+	}
+
 	for _, path := range paths {
-		if _, err := os.Stat(path); err == nil {
-			return path
+		fullPath := filepath.Join(executable, path)
+
+		if _, err := os.Stat(fullPath); err == nil {
+			return fullPath
 		}
 	}
 
@@ -723,11 +727,9 @@ func validateTSDBConnection(config auth.TSDBConfig) error {
 	if err != nil {
 		return fmt.Errorf("time-series database connection validation failed: %w", err)
 	}
-	defer func() {
-		if closeErr := resp.Body.Close(); closeErr != nil {
-			logger.Warn("failed to close validation response body", slog.Any("error", closeErr))
-		}
-	}()
+
+	//goland:noinspection GoUnhandledErrorResult
+	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		return fmt.Errorf("time-series database returned HTTP %d", resp.StatusCode)
