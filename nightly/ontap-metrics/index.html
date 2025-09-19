@@ -9148,6 +9148,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#nvm_mirror_write_throughput" class="md-nav__link">
+    <span class="md-ellipsis">
+      nvm_mirror_write_throughput
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#nvme_lif_avg_latency" class="md-nav__link">
     <span class="md-ellipsis">
       nvme_lif_avg_latency
@@ -23149,6 +23158,15 @@
   <a href="#ntpserver_labels" class="md-nav__link">
     <span class="md-ellipsis">
       ntpserver_labels
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nvm_mirror_write_throughput" class="md-nav__link">
+    <span class="md-ellipsis">
+      nvm_mirror_write_throughput
     </span>
   </a>
   
@@ -45392,27 +45410,6 @@ ONTAP Version: 9.16.1
 </tr>
 </tbody>
 </table>
-<p>The <code>iw_ops</code> metric is visualized in the following Grafana dashboards:</p>
-<div class="grafana-table">
-<table>
-<thead>
-<tr>
-<th>Dashboard</th>
-<th>Row</th>
-<th>Type</th>
-<th>Panel</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ONTAP: MetroCluster</td>
-<td>MetroCluster Iwarp</td>
-<td>timeseries</td>
-<td><a href="/d/cdot-metrocluster/ontap3a-metrocluster?orgId=1&amp;viewPanel=104">IOPs</a></td>
-</tr>
-</tbody>
-</table>
-</div>
 <h3 id="iw_read_ops">iw_read_ops<a class="headerlink" href="#iw_read_ops" title="Permanent link">&para;</a></h3>
 <p>Number of RDMA read I/Os issued.</p>
 <table>
@@ -45439,27 +45436,6 @@ ONTAP Version: 9.16.1
 </tr>
 </tbody>
 </table>
-<p>The <code>iw_read_ops</code> metric is visualized in the following Grafana dashboards:</p>
-<div class="grafana-table">
-<table>
-<thead>
-<tr>
-<th>Dashboard</th>
-<th>Row</th>
-<th>Type</th>
-<th>Panel</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ONTAP: MetroCluster</td>
-<td>MetroCluster Iwarp</td>
-<td>timeseries</td>
-<td><a href="/d/cdot-metrocluster/ontap3a-metrocluster?orgId=1&amp;viewPanel=108">Read IOPs</a></td>
-</tr>
-</tbody>
-</table>
-</div>
 <h3 id="iw_write_ops">iw_write_ops<a class="headerlink" href="#iw_write_ops" title="Permanent link">&para;</a></h3>
 <p>Number of RDMA write I/Os issued.</p>
 <table>
@@ -64203,6 +64179,47 @@ ONTAP Version: 9.16.1
 <td>Cluster Compliance</td>
 <td>table</td>
 <td><a href="/d/cdot-security/ontap3a-security?orgId=1&amp;viewPanel=219">Cluster Compliance</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="nvm_mirror_write_throughput">nvm_mirror_write_throughput<a class="headerlink" href="#nvm_mirror_write_throughput" title="Permanent link">&para;</a></h3>
+<p>Mirror throughput in Bytes per second</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ZAPI</td>
+<td><code>perf-object-get-instances nvm_mirror</code></td>
+<td><code>write_throughput</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
+<td>conf/zapiperf/cdot/9.8.0/nvm_mirror.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>nvm_mirror_write_throughput</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ONTAP: MetroCluster</td>
+<td>MetroCluster NVM Mirror</td>
+<td>timeseries</td>
+<td><a href="/d/cdot-metrocluster/ontap3a-metrocluster?orgId=1&amp;viewPanel=104">Write Throughput</a></td>
 </tr>
 </tbody>
 </table>
