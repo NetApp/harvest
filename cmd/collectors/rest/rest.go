@@ -25,6 +25,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/snapmirror"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/snapshotpolicy"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/snapshotviolation"
+	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/storageunit"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/svm"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/systemnode"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/tag"
@@ -553,6 +554,9 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return workload.New(abc)
 	case "VscanPool":
 		return vscanpool.New(abc)
+	// These plugins are for ASAr2
+	case "StorageUnit":
+		return storageunit.New(abc)
 	default:
 		r.Logger.Warn("no rest plugin found", slog.String("kind", kind))
 	}
