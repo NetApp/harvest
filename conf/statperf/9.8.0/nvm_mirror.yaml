@@ -1,0 +1,14 @@
+name:                     NvmMirror
+query:                    nvm_mirror
+object:                   nvm_mirror
+
+counters:
+  - ^^instance_uuid
+  - ^instance_name        =>    name
+  - ^node_name            =>    node
+  - write_throughput
+
+export_options:
+  instance_keys:
+    - name
+    - node

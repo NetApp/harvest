@@ -105,6 +105,7 @@ var excludeCounters = []string{
 	"node_nfs",
 	"node_nvmf_ops",
 	"nvme_lif",
+	"nvm_mirror_",
 	"ontaps3_svm_",
 	"path_",
 	"poller",

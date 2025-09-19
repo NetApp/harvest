@@ -27,6 +27,7 @@ objects:
   NVMfLif:                  nvmf_lif.yaml
   Namespace:                namespace.yaml
   NicCommon:                nic_common.yaml
+  NvmMirror:                nvm_mirror.yaml
 #  ObjectStoreClient:        object_store_client_op.yaml
   Path:                     path.yaml
 #  Qtree:                    qtree.yaml           #Enabling `qtree.yaml` may slow down data collection
