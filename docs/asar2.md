@@ -1,7 +1,7 @@
 Since Harvest 24.11.1, NetApp ASA r2 systems monitoring is supported. We recommend using the latest Harvest version to ensure compatibility with ASA r2 systems.
 
 
-## Prepare ARA r2 cluster
+## Prepare ASA r2 cluster
 
 You need to prepare your ASA r2 cluster for monitoring by following the steps outlined in [monitoring ONTAP systems](prepare-cdot-clusters.md#rest-least-privilege-role), and then perform the following steps.
 

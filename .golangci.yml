@@ -29,6 +29,7 @@ linters:
     - iface
     - ineffassign
     - intrange
+    - iotamixing
     - makezero
     - mirror
     - misspell
