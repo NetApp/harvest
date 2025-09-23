@@ -2,15 +2,15 @@ package main
 
 import (
 	"errors"
-	"github.com/netapp/harvest/v2/assert"
-	"strings"
-	"testing"
-
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
+	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/collectors"
+	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	"strings"
+	"testing"
 )
 
 func TestUnion2(t *testing.T) {
@@ -121,11 +121,11 @@ func TestCollectorUpgrade(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			collector := conf.Collector{
+			c := conf.Collector{
 				Name: tt.askFor,
 			}
 
-			newCollector := poller.upgradeCollector(collector, tt.remote)
+			newCollector := poller.upgradeCollector(c, tt.remote)
 			assert.Equal(t, newCollector.Name, tt.wantCollector)
 		})
 	}
@@ -231,6 +231,256 @@ func objectCollectorMap(constructors ...string) map[string][]objectCollector {
 	return objectsToCollectors
 }
 
+func TestUpgradeObjectCollector(t *testing.T) {
+	poller := &Poller{
+		options: &options.Options{
+			ConfPaths: []string{"testdata", "../../conf"},
+		},
+		params: &conf.Poller{
+			Collectors: []conf.Collector{
+				{Name: "KeyPerf", Templates: &[]string{"default.yaml", "custom.yaml"}},
+				{Name: "RestPerf", Templates: &[]string{"default.yaml", "custom.yaml"}},
+			},
+		},
+		remote: conf.Remote{
+			Version: "9.15.0", // Use a version that supports KeyPerf for this test
+		},
+	}
+
+	tests := []struct {
+		name           string
+		inputClass     string
+		inputObject    string
+		templateYAML   string
+		expectedClass  string
+		expectedObject string
+		expectUpgrade  bool
+	}{
+		{
+			name:        "no_dsl_delegation",
+			inputClass:  "RestPerf",
+			inputObject: "Volume",
+			templateYAML: `
+collector: RestPerf
+objects:
+  Volume: volume.yaml
+`,
+			expectedClass:  "RestPerf",
+			expectedObject: "Volume",
+			expectUpgrade:  false,
+		},
+		{
+			name:        "dsl_delegation_keyperf",
+			inputClass:  "RestPerf",
+			inputObject: "Volume",
+			templateYAML: `
+collector: RestPerf
+objects:
+  Volume: KeyPerf:volume.yaml
+  Aggregate: aggr.yaml
+`,
+			expectedClass:  "KeyPerf",
+			expectedObject: "Volume",
+			expectUpgrade:  true,
+		},
+		{
+			name:        "invalid_dsl_format",
+			inputClass:  "RestPerf",
+			inputObject: "Volume",
+			templateYAML: `
+collector: RestPerf
+objects:
+  Volume: InvalidFormat
+`,
+			expectedClass:  "RestPerf",
+			expectedObject: "Volume",
+			expectUpgrade:  false,
+		},
+		{
+			name:        "empty_object_value",
+			inputClass:  "RestPerf",
+			inputObject: "Volume",
+			templateYAML: `
+collector: RestPerf
+objects:
+  Volume: ""
+`,
+			expectedClass:  "RestPerf",
+			expectedObject: "Volume",
+			expectUpgrade:  false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			template := node.NewS("")
+			template.NewChildS("collector", tt.inputClass)
+			objectsNode := template.NewChildS("objects", "")
+
+			lines := strings.Split(tt.templateYAML, "\n")
+			var objectValue string
+			for _, line := range lines {
+				line = strings.TrimSpace(line)
+				if strings.HasPrefix(line, tt.inputObject+":") {
+					objectValue = strings.TrimSpace(strings.TrimPrefix(line, tt.inputObject+":"))
+					break
+				}
+			}
+
+			objectsNode.NewChildS(tt.inputObject, objectValue)
+
+			oc := objectCollector{
+				class:    tt.inputClass,
+				object:   tt.inputObject,
+				template: template,
+			}
+
+			result := poller.upgradeObjectCollector(oc)
+
+			assert.Equal(t, result.class, tt.expectedClass)
+			assert.Equal(t, result.object, tt.expectedObject)
+
+			if tt.expectUpgrade {
+				if templateObjects := result.template.GetChildS("objects"); templateObjects != nil {
+					if objDef := templateObjects.GetChildS(result.object); objDef != nil {
+						objectValue := objDef.GetContentS()
+						assert.False(t, strings.Contains(objectValue, ":"))
+					}
+				}
+			}
+		})
+	}
+}
+
+func TestUpgradeObjectCollectorVersionAware(t *testing.T) {
+	tests := []struct {
+		name           string
+		ontapVersion   string
+		inputClass     string
+		inputObject    string
+		templateYAML   string
+		expectedClass  string
+		expectedObject string
+		expectUpgrade  bool
+		description    string
+	}{
+		{
+			name:         "volume_keyperf_upgrade_ontap_9_10",
+			ontapVersion: "9.10.0",
+			inputClass:   "ZapiPerf",
+			inputObject:  "Volume",
+			templateYAML: `
+collector: ZapiPerf
+objects:
+  Volume: KeyPerf:volume.yaml
+`,
+			expectedClass:  "KeyPerf",
+			expectedObject: "Volume",
+			expectUpgrade:  true,
+			description:    "ONTAP 9.10+ should allow volume KeyPerf upgrades",
+		},
+		{
+			name:         "non_volume_keyperf_upgrade_ontap_9_6_allowed",
+			ontapVersion: "9.6.0",
+			inputClass:   "RestPerf",
+			inputObject:  "Aggregate",
+			templateYAML: `
+collector: RestPerf
+objects:
+  Aggregate: KeyPerf:aggr.yaml
+`,
+			expectedClass:  "KeyPerf",
+			expectedObject: "Aggregate",
+			expectUpgrade:  true,
+			description:    "Non-volume objects should upgrade to KeyPerf regardless of version",
+		},
+		{
+			name:         "volume_keyperf_upgrade_ontap_9_6_blocked",
+			ontapVersion: "9.6.0",
+			inputClass:   "ZapiPerf",
+			inputObject:  "Volume",
+			templateYAML: `
+collector: ZapiPerf
+objects:
+  Volume: KeyPerf:volume.yaml
+`,
+			expectedClass:  "ZapiPerf",
+			expectedObject: "Volume",
+			expectUpgrade:  false,
+			description:    "Volume objects should NOT upgrade to KeyPerf on ONTAP 9.6",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			poller := &Poller{
+				options: &options.Options{
+					ConfPaths: []string{"../../conf"},
+				},
+				params: &conf.Poller{
+					Collectors: []conf.Collector{
+						{Name: "KeyPerf", Templates: &[]string{"default.yaml"}},
+						{Name: "RestPerf", Templates: &[]string{"default.yaml"}},
+						{Name: "ZapiPerf", Templates: &[]string{"default.yaml"}},
+					},
+				},
+				remote: conf.Remote{
+					Version: tt.ontapVersion,
+				},
+			}
+
+			template := node.NewS("")
+			template.NewChildS("collector", tt.inputClass)
+			objectsNode := template.NewChildS("objects", "")
+
+			lines := strings.Split(tt.templateYAML, "\n")
+			var objectValue string
+			for _, line := range lines {
+				line = strings.TrimSpace(line)
+				if strings.HasPrefix(line, tt.inputObject+":") {
+					objectValue = strings.TrimSpace(strings.TrimPrefix(line, tt.inputObject+":"))
+					break
+				}
+			}
+
+			objectsNode.NewChildS(tt.inputObject, objectValue)
+
+			oc := objectCollector{
+				class:    tt.inputClass,
+				object:   tt.inputObject,
+				template: template,
+			}
+
+			result := poller.upgradeObjectCollector(oc)
+
+			assert.Equal(t, result.class, tt.expectedClass)
+			assert.Equal(t, result.object, tt.expectedObject)
+
+			if tt.expectUpgrade {
+				// Verify upgrade happened by checking class changed
+				assert.NotEqual(t, result.class, tt.inputClass)
+			} else {
+				// Verify no upgrade happened
+				assert.Equal(t, result.class, tt.inputClass)
+
+				// For blocked volume upgrades, verify the KeyPerf: prefix was removed from template
+				if strings.Contains(strings.ToLower(tt.inputObject), "volume") &&
+					strings.Contains(tt.templateYAML, "KeyPerf:") {
+					if templateObjects := result.template.GetChildS("objects"); templateObjects != nil {
+						if objDef := templateObjects.GetChildS(result.object); objDef != nil {
+							objectValue := objDef.GetContentS()
+							// Should not contain KeyPerf: prefix anymore
+							assert.False(t, strings.Contains(objectValue, "KeyPerf:"))
+							// Should just be the template name
+							assert.Equal(t, "volume.yaml", objectValue)
+						}
+					}
+				}
+			}
+		})
+	}
+}
+
 func TestMergeRemotes(t *testing.T) {
 
 	type test struct {
@@ -300,6 +550,54 @@ func TestMergeRemotes(t *testing.T) {
 			if diff := cmp.Diff(gotRemote, tt.want); diff != "" {
 				t.Errorf("MergeRemotes() mismatch (-gotRemote +want):\n%s", diff)
 			}
+		})
+	}
+}
+
+func TestGetTemplatesForCollector(t *testing.T) {
+	tests := []struct {
+		name              string
+		collectors        []conf.Collector
+		collectorClass    string
+		expectedTemplates []string
+	}{
+		{
+			name: "collector_with_custom_templates",
+			collectors: []conf.Collector{
+				{Name: "KeyPerf", Templates: &[]string{"custom1.yaml", "custom2.yaml"}},
+				{Name: "RestPerf", Templates: &[]string{"default.yaml", "custom.yaml"}},
+			},
+			collectorClass:    "KeyPerf",
+			expectedTemplates: []string{"custom1.yaml", "custom2.yaml"},
+		},
+		{
+			name: "collector_with_default_templates",
+			collectors: []conf.Collector{
+				{Name: "RestPerf", Templates: conf.DefaultTemplates},
+			},
+			collectorClass:    "RestPerf",
+			expectedTemplates: []string{"default.yaml", "custom.yaml"},
+		},
+		{
+			name: "collector_not_configured",
+			collectors: []conf.Collector{
+				{Name: "RestPerf", Templates: &[]string{"default.yaml", "custom.yaml"}},
+			},
+			collectorClass:    "KeyPerf",
+			expectedTemplates: []string{"default.yaml", "custom.yaml"},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			poller := &Poller{
+				params: &conf.Poller{
+					Collectors: tt.collectors,
+				},
+			}
+
+			result := poller.fetchCollectorTemplates(tt.collectorClass)
+			assert.Equal(t, result, tt.expectedTemplates)
 		})
 	}
 }

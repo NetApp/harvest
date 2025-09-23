@@ -99,7 +99,7 @@
       },
       "id": 91,
       "options": {
-        "content": "Volume latencies are missing some latencies from NAS protocols. Use the workload volume metrics in the QoS row for a more detailed breakdown. <br>[Details in ONTAP Performance KB article](https://kb.netapp.com/on-prem/ontap/Perf/Perf-KBs/What_is_the_difference_in_latency_of_the_same_volume_between_statistics_volume_show_and_qos_statistics_volume_latency_show_commands)",
+        "content": "Volume performance metrics in this dashboard use the KeyPerf collector to collect metrics for ONTAP version 9.10+. <br>**More details**: [GitHub Discussion](https://github.com/NetApp/harvest/discussions/3900) ",
         "mode": "markdown"
       },
       "pluginVersion": "8.1.8",
@@ -7486,7 +7486,7 @@
           },
           "id": 155,
           "options": {
-            "content": "<br>\n\nTop clients panels are disabled by default and are supported by the Volume Template in RestPerf Collector starting from ONTAP version 9.13.1. For more details on how to enable them, please refer to the discussion at https://github.com/NetApp/harvest/discussions/3130.",
+            "content": "<br>\n\nTop clients panels are disabled by default and are supported by the Volume Template in KeyPerf Collector starting from ONTAP version 9.13.1. For more details on how to enable them, please refer to the discussion at https://github.com/NetApp/harvest/discussions/3904.",
             "mode": "markdown"
           },
           "pluginVersion": "8.1.8",

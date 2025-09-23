@@ -3113,7 +3113,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "node_vol_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}",
+              "expr": "node_volume_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}",
               "hide": false,
               "interval": "",
               "legendFormat": "{{node}}",

@@ -290,3 +290,25 @@ func RecordKeepLast(n *node.Node, logger *slog.Logger) int {
 
 	return DefaultRecordsToSave
 }
+
+// ParseTemplateRef parses template references like "KeyPerf:volume.yaml"
+func ParseTemplateRef(v string) (string, string, bool) {
+	if v == "" {
+		return "", "", false
+	}
+
+	parts := strings.Split(v, ":")
+	if len(parts) != 2 {
+		return "", "", false
+	}
+
+	collectorName := strings.TrimSpace(parts[0])
+	templateName := strings.TrimSpace(parts[1])
+	_, ok := conf.IsCollector[collectorName]
+
+	if collectorName == "" || templateName == "" || !ok {
+		return "", "", false
+	}
+
+	return collectorName, templateName, true
+}

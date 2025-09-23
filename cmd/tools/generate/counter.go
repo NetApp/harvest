@@ -128,7 +128,10 @@ var (
 		"security_audit_destination_port":  {},
 		"storage_unit_":                    {},
 		"wafl_reads_from_pmem":             {},
+		"node_volume_nfs_":                 {},
 		"nvm_mirror_":                      {},
+		"volume_nfs_":                      {},
+		"svm_vol_nfs":                      {},
 	}
 
 	knownMappingGapsSG = map[string]struct{}{
@@ -146,6 +149,7 @@ var (
 		"cifs_session_idle_duration",
 		"cluster_software",
 		"ems_events",
+		"ethernet_switch_port_",
 		"export_rule_labels",
 		"fcvi_",
 		"flashpool_",
@@ -163,6 +167,7 @@ var (
 		"nvmf_",
 		"ontaps3_svm_",
 		"path_",
+		"qtree_",
 		"smb2_",
 		"snapshot_volume_violation_count",
 		"snapshot_volume_violation_total_size",
@@ -1960,6 +1965,8 @@ func fetchAndCategorizePrometheusMetrics(promURL string) (map[string]bool, map[s
 			restMetrics[metricName] = true
 		case "ZAPI":
 			zapiMetrics[metricName] = true
+		case "KeyPerf":
+			restMetrics[metricName] = true
 		}
 	}
 
@@ -2100,6 +2107,8 @@ func categorizeCounters(counters map[string]Counter) (map[string]Counter, map[st
 				restCounters[counter.Name] = counter
 			case "ZAPI":
 				zapiCounters[counter.Name] = counter
+			case "KeyPerf":
+				restCounters[counter.Name] = counter
 			}
 		}
 	}

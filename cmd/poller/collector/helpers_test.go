@@ -56,3 +56,66 @@ func Test_HARVEST_CONF(t *testing.T) {
 	name := template.GetChildContentS("collector")
 	assert.Equal(t, name, "Test")
 }
+
+func TestParseTemplateRef(t *testing.T) {
+	tests := []struct {
+		name                string
+		input               string
+		expectedClass       string
+		expectedTemplate    string
+		expectedIsDelegated bool
+	}{
+		{
+			name:                "valid_keyperf_dsl",
+			input:               "KeyPerf:volume.yaml",
+			expectedClass:       "KeyPerf",
+			expectedTemplate:    "volume.yaml",
+			expectedIsDelegated: true,
+		},
+		{
+			name:                "valid_with_spaces",
+			input:               " KeyPerf : volume.yaml ",
+			expectedClass:       "KeyPerf",
+			expectedTemplate:    "volume.yaml",
+			expectedIsDelegated: true,
+		},
+		{
+			name:                "invalid_no_colon",
+			input:               "KeyPerfvolume.yaml",
+			expectedClass:       "",
+			expectedTemplate:    "",
+			expectedIsDelegated: false,
+		},
+		{
+			name:                "invalid_empty_class",
+			input:               ":volume.yaml",
+			expectedClass:       "",
+			expectedTemplate:    "",
+			expectedIsDelegated: false,
+		},
+		{
+			name:                "invalid_too_many_colons",
+			input:               "KeyPerf:volume:yaml",
+			expectedClass:       "",
+			expectedTemplate:    "",
+			expectedIsDelegated: false,
+		},
+		{
+			name:                "invalid_empty_string",
+			input:               "",
+			expectedClass:       "",
+			expectedTemplate:    "",
+			expectedIsDelegated: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			class, template, isDelegated := ParseTemplateRef(tt.input)
+
+			assert.Equal(t, class, tt.expectedClass)
+			assert.Equal(t, template, tt.expectedTemplate)
+			assert.Equal(t, isDelegated, tt.expectedIsDelegated)
+		})
+	}
+}
