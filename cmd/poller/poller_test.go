@@ -321,8 +321,8 @@ objects:
 			var objectValue string
 			for _, line := range lines {
 				line = strings.TrimSpace(line)
-				if strings.HasPrefix(line, tt.inputObject+":") {
-					objectValue = strings.TrimSpace(strings.TrimPrefix(line, tt.inputObject+":"))
+				if after, ok := strings.CutPrefix(line, tt.inputObject+":"); ok {
+					objectValue = strings.TrimSpace(after)
 					break
 				}
 			}
@@ -437,8 +437,8 @@ objects:
 			var objectValue string
 			for _, line := range lines {
 				line = strings.TrimSpace(line)
-				if strings.HasPrefix(line, tt.inputObject+":") {
-					objectValue = strings.TrimSpace(strings.TrimPrefix(line, tt.inputObject+":"))
+				if after, ok := strings.CutPrefix(line, tt.inputObject+":"); ok {
+					objectValue = strings.TrimSpace(after)
 					break
 				}
 			}
