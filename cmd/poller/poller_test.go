@@ -2,6 +2,9 @@ package main
 
 import (
 	"errors"
+	"strings"
+	"testing"
+
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/netapp/harvest/v2/assert"
@@ -9,8 +12,6 @@ import (
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"strings"
-	"testing"
 )
 
 func TestUnion2(t *testing.T) {
@@ -309,6 +310,32 @@ objects:
 			expectedObject: "Volume",
 			expectUpgrade:  false,
 		},
+		{
+			name:        "zapiperrf_to_keyperf_strips_extended_templates",
+			inputClass:  "ZapiPerf",
+			inputObject: "Volume",
+			templateYAML: `
+collector: ZapiPerf
+objects:
+  Volume: KeyPerf:volume.yaml,exclude_transient_volumes.yaml
+`,
+			expectedClass:  "KeyPerf",
+			expectedObject: "Volume",
+			expectUpgrade:  true,
+		},
+		{
+			name:        "zapiperrf_to_keyperf_strips_multiple_extended_templates",
+			inputClass:  "ZapiPerf",
+			inputObject: "Volume",
+			templateYAML: `
+collector: ZapiPerf
+objects:
+  Volume: KeyPerf:volume.yaml,custom1.yaml,custom2.yaml
+`,
+			expectedClass:  "KeyPerf",
+			expectedObject: "Volume",
+			expectUpgrade:  true,
+		},
 	}
 
 	for _, tt := range tests {
@@ -345,6 +372,21 @@ objects:
 					if objDef := templateObjects.GetChildS(result.object); objDef != nil {
 						objectValue := objDef.GetContentS()
 						assert.False(t, strings.Contains(objectValue, ":"))
+
+						// Special check for ZapiPerf to KeyPerf upgrade: ensure extended templates are stripped
+						if tt.name == "zapiperrf_to_keyperf_strips_extended_templates" {
+							// Should only have the first template (volume.yaml), any extended templates stripped
+							assert.Equal(t, objectValue, "volume.yaml")
+							assert.False(t, strings.Contains(objectValue, ","))
+						}
+						// Special check for ZapiPerf to KeyPerf with multiple extended templates
+						if tt.name == "zapiperrf_to_keyperf_strips_multiple_extended_templates" {
+							// Should only have the first template (volume.yaml), all extended templates stripped
+							assert.Equal(t, objectValue, "volume.yaml")
+							assert.False(t, strings.Contains(objectValue, ","))
+							assert.False(t, strings.Contains(objectValue, "custom1.yaml"))
+							assert.False(t, strings.Contains(objectValue, "custom2.yaml"))
+						}
 					}
 				}
 			}

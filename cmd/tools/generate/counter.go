@@ -2107,7 +2107,7 @@ func categorizeCounters(counters map[string]Counter) (map[string]Counter, map[st
 				restCounters[counter.Name] = counter
 			case "ZAPI":
 				zapiCounters[counter.Name] = counter
-			case "keyperf":
+			case "KeyPerf":
 				restCounters[counter.Name] = counter
 			}
 		}

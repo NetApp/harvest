@@ -1513,6 +1513,13 @@ func (p *Poller) upgradeObjectCollector(oc objectCollector) objectCollector {
 		}
 	}
 
+	// When upgrading from ZapiPerf to KeyPerf, strip any extended templates
+	// as it's not needed/supported in KeyPerf.
+	if oc.class == "ZapiPerf" && collectorName == "KeyPerf" {
+		parts := strings.SplitN(templateName, ",", 2)
+		templateName = strings.TrimSpace(parts[0])
+	}
+
 	// Find the appropriate default templates for the target collector class
 	targetTemplates := p.fetchCollectorTemplates(collectorName)
 
