@@ -90,30 +90,13 @@
   ],
   "panels": [
     {
-      "datasource": "${DS_PROMETHEUS}",
-      "gridPos": {
-        "h": 3,
-        "w": 24,
-        "x": 0,
-        "y": 0
-      },
-      "id": 1,
-      "options": {
-        "content": "This dashboard requires the storage_unit asar2 template enabled and an ONTAP 9.15+ cluster.",
-        "mode": "markdown"
-      },
-      "pluginVersion": "8.1.8",
-      "title": "Important Information about Storage Unit dashboard",
-      "type": "text"
-    },
-    {
       "collapsed": false,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 3
+        "y": 0
       },
       "id": 2,
       "panels": [],
@@ -159,7 +142,7 @@
         "h": 5,
         "w": 5,
         "x": 0,
-        "y": 4
+        "y": 1
       },
       "id": 3,
       "links": [],
@@ -235,7 +218,7 @@
         "h": 5,
         "w": 5,
         "x": 5,
-        "y": 4
+        "y": 1
       },
       "id": 4,
       "links": [],
@@ -311,7 +294,7 @@
         "h": 5,
         "w": 5,
         "x": 10,
-        "y": 4
+        "y": 1
       },
       "id": 5,
       "links": [],
@@ -359,6 +342,7 @@
             "filterable": true
           },
           "mappings": [],
+          "noValue": "-",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -371,6 +355,18 @@
           "unit": "none"
         },
         "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "storage_unit"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Storage Unit"
+              }
+            ]
+          },
           {
             "matcher": {
               "id": "byName",
@@ -388,28 +384,6 @@
                     "targetBlank": true,
                     "title": "",
                     "url": "/d/cdot-svm/ontap-svm?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-SVM=${__value.raw}"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "name"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Name"
-              },
-              {
-                "id": "links",
-                "value": [
-                  {
-                    "targetBlank": true,
-                    "title": "",
-                    "url": "/d/cdot-volume/ontap-volume?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${SVM:queryparam}&${__url_time_range}&var-Volume=${__value.raw}"
                   }
                 ]
               }
@@ -510,36 +484,6 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "state"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "State"
-              },
-              {
-                "id": "mappings",
-                "value": [
-                  {
-                    "options": {
-                      "offline": {
-                        "index": 1,
-                        "text": "Offline"
-                      },
-                      "online": {
-                        "index": 0,
-                        "text": "Online"
-                      }
-                    },
-                    "type": "value"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
               "options": "type"
             },
             "properties": [
@@ -614,6 +558,102 @@
                 ]
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Latency"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "µs"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "orange",
+                      "value": 20000
+                    },
+                    {
+                      "color": "red",
+                      "value": 30000
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "IOPs"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "iops"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Throughput"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "Bps"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "state"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "State"
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "offline": {
+                        "color": "red",
+                        "index": 1,
+                        "text": "Offline"
+                      },
+                      "online": {
+                        "color": "green",
+                        "index": 0,
+                        "text": "Online"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              }
+            ]
           }
         ]
       },
@@ -621,7 +661,7 @@
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 9
+        "y": 6
       },
       "id": 6,
       "interval": "1m",
@@ -631,14 +671,14 @@
         "sortBy": [
           {
             "desc": true,
-            "displayName": "Space Used %"
+            "displayName": "Used"
           }
         ]
       },
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "storage_unit_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",host_group=~\"$HostGroup\",name=~\"$Name\",svm=~\"$SVM\"}",
+          "expr": "storage_unit_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",host_group=~\"$HostGroup\",storage_unit=~\"$StorageUnit\",svm=~\"$SVM\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -648,7 +688,7 @@
         },
         {
           "exemplar": false,
-          "expr": "storage_unit_space_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",host_group=~\"$HostGroup\",name=~\"$Name\",svm=~\"$SVM\"}",
+          "expr": "storage_unit_space_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",host_group=~\"$HostGroup\",storage_unit=~\"$StorageUnit\",svm=~\"$SVM\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -658,7 +698,7 @@
         },
         {
           "exemplar": false,
-          "expr": "storage_unit_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",host_group=~\"$HostGroup\",name=~\"$Name\",svm=~\"$SVM\"}",
+          "expr": "storage_unit_space_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",host_group=~\"$HostGroup\",storage_unit=~\"$StorageUnit\",svm=~\"$SVM\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -668,7 +708,7 @@
         },
         {
           "exemplar": false,
-          "expr": "storage_unit_space_efficiency_ratio{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",host_group=~\"$HostGroup\",name=~\"$Name\",svm=~\"$SVM\"}",
+          "expr": "storage_unit_space_efficiency_ratio{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",host_group=~\"$HostGroup\",storage_unit=~\"$StorageUnit\",svm=~\"$SVM\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -678,13 +718,43 @@
         },
         {
           "exemplar": false,
-          "expr": "storage_unit_space_physical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",host_group=~\"$HostGroup\",name=~\"$Name\",svm=~\"$SVM\"}",
+          "expr": "storage_unit_space_physical_used{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",host_group=~\"$HostGroup\",storage_unit=~\"$StorageUnit\",svm=~\"$SVM\"}",
           "format": "table",
           "hide": false,
           "instant": true,
           "interval": "",
           "legendFormat": "",
           "refId": "E"
+        },
+        {
+          "exemplar": false,
+          "expr": "storage_unit_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",storage_unit=~\"$StorageUnit\",svm=~\"$SVM\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "F"
+        },
+        {
+          "exemplar": false,
+          "expr": "storage_unit_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",storage_unit=~\"$StorageUnit\",svm=~\"$SVM\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "G"
+        },
+        {
+          "exemplar": false,
+          "expr": "storage_unit_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",storage_unit=~\"$StorageUnit\",svm=~\"$SVM\"}",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "H"
         }
       ],
       "timeFrom": null,
@@ -700,7 +770,7 @@
                 "cluster",
                 "datacenter",
                 "host_group",
-                "name",
+                "storage_unit",
                 "os_type",
                 "state",
                 "svm",
@@ -709,7 +779,10 @@
                 "Value #C",
                 "Value #D",
                 "Value #E",
-                "cg_name"
+                "cg_name",
+                "Value #F",
+                "Value #G",
+                "Value #H"
               ]
             }
           }
@@ -744,9 +817,9 @@
               "cluster": 1,
               "datacenter": 0,
               "host_group": 10,
-              "name": 3,
               "os_type": 11,
               "state": 4,
+              "storage_unit": 3,
               "svm": 2,
               "type": 12
             },
@@ -755,8 +828,11 @@
               "Value #C": "Used",
               "Value #D": "Data Reduction",
               "Value #E": "Physical Used Space",
+              "Value #F": "Latency",
+              "Value #G": "Throughput",
+              "Value #H": "IOPs",
               "cg_name": "Consistency Group",
-              "host_group": "Host mapping"
+              "host_group": "Host Group"
             }
           }
         }
@@ -903,17 +979,17 @@
         "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(storage_unit_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}, name)",
+        "definition": "label_values(storage_unit_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}, storage_unit)",
         "description": null,
         "error": null,
         "hide": 0,
         "includeAll": true,
         "label": null,
         "multi": true,
-        "name": "Name",
+        "name": "StorageUnit",
         "options": [],
         "query": {
-          "query": "label_values(storage_unit_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}, name)",
+          "query": "label_values(storage_unit_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\",svm=~\"$SVM\"}, storage_unit)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -945,7 +1021,7 @@
     ]
   },
   "timezone": "",
-  "title": "ONTAP: Storage Unit",
+  "title": "ASAr2: Storage Unit",
   "uid": "asar2-storage-unit",
   "version": 1
 }

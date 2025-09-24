@@ -5,6 +5,8 @@ import (
 	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
+	"slices"
+	"strings"
 )
 
 type StorageUnit struct {
@@ -17,12 +19,18 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 
 func (s *StorageUnit) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[s.Object]
+	var hostGroups []string
 	for _, instance := range data.GetInstances() {
-		mapsData := gjson.Result{Type: gjson.JSON, Raw: instance.GetLabel("maps")}
-		if mapsData.Exists() && mapsData.Get("host_group").Exists() {
-			hostGroup := mapsData.Get("host_group").Get("name").ClonedString()
-			instance.SetLabel("host_group", hostGroup)
+		hostGroups = make([]string, 0)
+		mapsData := gjson.Result{Type: gjson.JSON, Raw: "[" + instance.GetLabel("maps") + "]"}
+		if mapsData.Exists() {
+			for _, mapData := range mapsData.Array() {
+				hostGroup := mapData.Get("host_group").Get("name").ClonedString()
+				hostGroups = append(hostGroups, hostGroup)
+			}
 		}
+		slices.Sort(hostGroups)
+		instance.SetLabel("host_group", strings.Join(hostGroups, ","))
 	}
 	return nil, nil, nil
 }
