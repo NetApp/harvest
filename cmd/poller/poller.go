@@ -1459,65 +1459,30 @@ func (p *Poller) upgradeObjectCollector(oc objectCollector) objectCollector {
 		return oc
 	}
 
-	// Check version compatibility for KeyPerf upgrades on older ONTAP versions
-	// Don't upgrade to KeyPerf for versions below 9.10
-	if collectorName == "KeyPerf" {
-		// This check is needed because KeyPerf uses an endpoint /api/storage/volumes
-		// which requires is_constituent parameter which is not available prior to 9.10.
-		// For versions below 9.10, we skip the KeyPerf upgrade and fall back to the original collector.
+	// Handle KeyPerf upgrades from ZapiPerf
+	if oc.class == "ZapiPerf" && collectorName == "KeyPerf" {
+		// Check version compatibility for KeyPerf upgrades on older ONTAP versions
+		// Don't upgrade to KeyPerf for versions below 9.10
 		if supported, err := version2.AtLeast(p.remote.Version, "9.10.0"); err != nil || !supported {
-			// Check if object name contains "volume" and verify it's actually a volume template
+			// This check is needed because KeyPerf uses an endpoint /api/storage/volumes
+			// which requires is_constituent parameter which is not available prior to 9.10.
+			// For versions below 9.10, we skip the KeyPerf upgrade and fall back to the original collector.
+			// Check if object name contains "volume"
 			if strings.Contains(strings.ToLower(oc.object), "volume") {
-				var models []string
-				if p.remote.IsASAr2() {
-					models = []string{conf.ASAr2, ""}
-				} else {
-					models = []string{""}
-				}
-
-				ac := &collector.AbstractCollector{
-					Options: p.options,
-					Logger:  logger,
-					Name:    collectorName,
-					Object:  oc.object,
-				}
-
-				// Extract the first template name from comma-separated list in case
-				firstTemplate := strings.Split(templateName, ",")[0]
-				targetTemplate, _, err := ac.ImportSubTemplate(models, firstTemplate, "", p.remote.Version)
-				if err == nil && targetTemplate != nil {
-					if query := targetTemplate.GetChildContentS("query"); strings.Contains(query, "storage/volumes") || query == "volume" {
-						// Remove the KeyPerf: prefix from the template so it falls back to the original collector's template
-						object.SetContentS(templateName)
-						logger.Warn(
-							"volume KeyPerf upgrade skipped due to ONTAP version",
-							slog.String("object", oc.object),
-							slog.String("template", templateName),
-							slog.String("ontapVersion", p.remote.Version),
-							slog.String("requiredVersion", "9.10.0+"),
-							slog.String("query", query),
-						)
-						return oc
-					}
-				} else {
-					object.SetContentS(templateName)
-					logger.Warn(
-						"volume KeyPerf upgrade skipped due to ONTAP version (template load failed)",
-						slog.String("object", oc.object),
-						slog.String("template", templateName),
-						slog.String("ontapVersion", p.remote.Version),
-						slog.String("requiredVersion", "9.10.0+"),
-						slogx.Err(err),
-					)
-					return oc
-				}
+				object.SetContentS(templateName)
+				logger.Warn(
+					"volume KeyPerf upgrade skipped due to ONTAP version",
+					slog.String("object", oc.object),
+					slog.String("template", templateName),
+					slog.String("ontapVersion", p.remote.Version),
+					slog.String("requiredVersion", "9.10.0+"),
+				)
+				return oc
 			}
 		}
-	}
 
-	// When upgrading from ZapiPerf to KeyPerf, strip any extended templates
-	// as it's not needed/supported in KeyPerf.
-	if oc.class == "ZapiPerf" && collectorName == "KeyPerf" {
+		// When upgrading from ZapiPerf to KeyPerf, strip any extended templates
+		// as it's not needed/supported in KeyPerf.
 		parts := strings.SplitN(templateName, ",", 2)
 		templateName = strings.TrimSpace(parts[0])
 	}

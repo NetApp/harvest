@@ -63,6 +63,24 @@ endpoints:
           - is_constituent=*
 
 plugins:
+  - Aggregator:
+      # plugin will create summary/average for each object
+      # any names after the object names will be treated as label names that will be added to instances
+      - node
+      - svm<>svm_vol
+  - Volume:
+      include_constituents: false
+
+  - LabelAgent:
+      # Ignore transient volumes, e.g. SnapProtect, SnapManager, SnapCenter, CommVault, Clone, and Metadata volumes
+      exclude_regex:
+        - volume `.+_CVclone`
+        - volume `.+(0[1-9]|[12][0-9]|3[01])(0[1-9]|1[012])\d\d[0-9]{6}`
+        - volume `cl_.+_(19|20)\d\d(0[1-9]|1[012])( 0[1-9]|[12][0-9]|3[01])[0-9]{6}`
+        - volume `sdw_cl_.+`
+        - volume `MDV_CRS_.+`
+        - volume `MDV_aud_.+`
+
 #  - VolumeTopClients:
 #      # `max_volumes` is the maximum number of volumes to consider for top client metrics. This value is capped at 50, even if a higher number is specified.
 #      # When enabled, this plugin will collect read/write operations and throughput metrics for the top clients of each volume.
@@ -72,13 +90,6 @@ plugins:
 #      - objects:
 #          - client  # collect read/write operations and throughput metrics for the top clients.
 #          - file    # collect read/write operations and throughput metrics for the top files
-  - Aggregator:
-      # plugin will create summary/average for each object
-      # any names after the object names will be treated as label names that will be added to instances
-      - node
-      - svm<>svm_vol
-  - Volume:
-      include_constituents: false
 
 export_options:
   instance_keys:
