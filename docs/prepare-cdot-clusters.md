@@ -204,7 +204,7 @@ security login role create -role harvest2-role -access readonly -cmddirname "vol
 security login role create -role harvest2-role -access readonly -cmddirname "vserver"
 ```
 
-**Associate the ZAPI role with the harvest user**
+##### Associate the ZAPI role with the harvest user {: .prominent-subsection}
 
 Use this for password authentication
 
@@ -230,6 +230,20 @@ If there are no matching entries, enable access by running the following.
 ```bash
 vserver services web access create -role harvest2-role -name ontapi 
 ```
+
+##### ONTAP 9.10+ volume performance metrics {: .prominent-subsection}
+
+Starting with ONTAP 9.10 the Zapi based collection needs a REST read permission on the volumes endpoint so Harvest can
+look up volume data required to collect performance metrics. If you already created the full [REST least-privilege role](#rest-least-privilege-role),
+you already have this (`/api/storage/volumes`) and can skip the commands below. Otherwise add just this minimal permission and associate the HTTP application
+with the REST role:
+
+```bash
+security login rest-role create -role harvest-rest-role -access readonly -api /api/storage/volumes
+security login create -user-or-group-name harvest2 -application http -role harvest-rest-role -authentication-method password
+```
+
+Use `-authentication-method cert` instead of `password` if using certificate auth.
 
 #### StatPerf least-privilege role
 

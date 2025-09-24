@@ -1459,8 +1459,12 @@ func (p *Poller) upgradeObjectCollector(oc objectCollector) objectCollector {
 		return oc
 	}
 
-	// check version compatibility for KeyPerf upgrades on older ONTAP versions
+	// Check version compatibility for KeyPerf upgrades on older ONTAP versions
+	// Don't upgrade to KeyPerf for versions below 9.10
 	if collectorName == "KeyPerf" {
+		// This check is needed because KeyPerf uses an endpoint /api/storage/volumes
+		// which requires is_constituent parameter which is not available prior to 9.10.
+		// For versions below 9.10, we skip the KeyPerf upgrade and fall back to the original collector.
 		if supported, err := version2.AtLeast(p.remote.Version, "9.10.0"); err != nil || !supported {
 			// Check if object name contains "volume" and verify it's actually a volume template
 			if strings.Contains(strings.ToLower(oc.object), "volume") {

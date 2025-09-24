@@ -21378,6 +21378,7 @@ Performance metric aggregated over all types of I/O operations. svm_vol_total_da
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.total`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
 

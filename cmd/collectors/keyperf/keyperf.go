@@ -179,30 +179,52 @@ func (kp *KeyPerf) buildCounters() {
 		kp.Logger.Error("Failed to load static counter definitions", slogx.Err(err))
 	}
 
-	// Check if the statistics.timestamp metric exists; if not, create it
-	_, exists := kp.Prop.Metrics["statistics.timestamp"]
-	if !exists {
-		kp.Prop.Metrics["statistics.timestamp"] = &rest.Metric{
-			Label:      "timestamp",
-			Name:       "statistics.timestamp",
-			Exportable: true,
+	var timestampMetric string
+	for metricName := range kp.Prop.Metrics {
+		if strings.Contains(metricName, "timestamp") {
+			timestampMetric = metricName
+			break
 		}
 	}
 
-	// handle statistics.timestamp for endpoints
+	// Only create timestamp metric if one was found in the template
+	if timestampMetric != "" {
+		// Ensure the timestamp metric exists in Prop.Metrics
+		if _, exists := kp.Prop.Metrics[timestampMetric]; !exists {
+			kp.Prop.Metrics[timestampMetric] = &rest.Metric{
+				Label:      "timestamp",
+				Name:       timestampMetric,
+				Exportable: true,
+			}
+		}
+	}
+
+	// handle timestamp metric for endpoints
 	for _, endpoint := range kp.Endpoints {
 		eProp := endpoint.Prop
-		_, exists = eProp.Metrics["statistics.timestamp"]
-		if !exists {
-			eProp.Metrics["statistics.timestamp"] = &rest.Metric{
-				Label:      "timestamp",
-				Name:       "statistics.timestamp",
-				Exportable: true,
+
+		// Find timestamp metric for this endpoint
+		var endpointTimestampMetric string
+		for metricName := range eProp.Metrics {
+			if strings.Contains(metricName, "timestamp") {
+				endpointTimestampMetric = metricName
+				break
+			}
+		}
+
+		// Only create if found in endpoint metrics
+		if endpointTimestampMetric != "" {
+			if _, exists := eProp.Metrics[endpointTimestampMetric]; !exists {
+				eProp.Metrics[endpointTimestampMetric] = &rest.Metric{
+					Label:      "timestamp",
+					Name:       endpointTimestampMetric,
+					Exportable: true,
+				}
 			}
 		}
 
 		for k, v := range eProp.Metrics {
-			if _, exists = kp.Prop.Metrics[k]; !exists {
+			if _, exists := kp.Prop.Metrics[k]; !exists {
 				kp.Prop.Metrics[k] = v
 			}
 		}
