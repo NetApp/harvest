@@ -1445,153 +1445,157 @@ func (p *Poller) upgradeCollector(c conf.Collector, remote conf.Remote) conf.Col
 }
 
 func (p *Poller) upgradeObjectCollector(oc objectCollector) objectCollector {
-	if templateObjects := oc.template.GetChildS("objects"); templateObjects != nil {
-		if object := templateObjects.GetChildS(oc.object); object != nil {
-			objectValue := object.GetContentS()
-			if collectorName, templateName, isUpgraded := collector.ParseTemplateRef(objectValue); isUpgraded {
+	templateObjects := oc.template.GetChildS("objects")
+	if templateObjects == nil {
+		return oc
+	}
+	object := templateObjects.GetChildS(oc.object)
+	if object == nil {
+		return oc
+	}
+	objectValue := object.GetContentS()
+	collectorName, templateName, isUpgraded := collector.ParseTemplateRef(objectValue)
+	if !isUpgraded {
+		return oc
+	}
 
-				// check version compatibility for KeyPerf upgrades on older ONTAP versions
-				if collectorName == "KeyPerf" {
-					if supported, err := version2.AtLeast(p.remote.Version, "9.10.0"); err != nil || !supported {
-						// Check if object name contains "volume" and verify it's actually a volume template
-						if strings.Contains(strings.ToLower(oc.object), "volume") {
-							var models []string
-							if p.remote.IsASAr2() {
-								models = []string{conf.ASAr2, ""}
-							} else {
-								models = []string{""}
-							}
-
-							ac := &collector.AbstractCollector{
-								Options: p.options,
-								Logger:  logger,
-								Name:    collectorName,
-								Object:  oc.object,
-							}
-
-							targetTemplate, _, err := ac.ImportSubTemplate(models, templateName, "", p.remote.Version)
-							if err == nil && targetTemplate != nil {
-								if query := targetTemplate.GetChildContentS("query"); strings.Contains(query, "storage/volumes") {
-									// Remove the KeyPerf: prefix from the template so it falls back to the original collector's template
-									object.SetContentS(templateName)
-									logger.Warn(
-										"volume KeyPerf upgrade skipped due to ONTAP version",
-										slog.String("object", oc.object),
-										slog.String("template", templateName),
-										slog.String("ontapVersion", p.remote.Version),
-										slog.String("requiredVersion", "9.10.0+"),
-										slog.String("query", query),
-									)
-									return oc
-								}
-							} else {
-								object.SetContentS(templateName)
-								logger.Warn(
-									"volume KeyPerf upgrade skipped due to ONTAP version (template load failed)",
-									slog.String("object", oc.object),
-									slog.String("template", templateName),
-									slog.String("ontapVersion", p.remote.Version),
-									slog.String("requiredVersion", "9.10.0+"),
-									slogx.Err(err),
-								)
-								return oc
-							}
-						}
-					}
+	// check version compatibility for KeyPerf upgrades on older ONTAP versions
+	if collectorName == "KeyPerf" {
+		if supported, err := version2.AtLeast(p.remote.Version, "9.10.0"); err != nil || !supported {
+			// Check if object name contains "volume" and verify it's actually a volume template
+			if strings.Contains(strings.ToLower(oc.object), "volume") {
+				var models []string
+				if p.remote.IsASAr2() {
+					models = []string{conf.ASAr2, ""}
+				} else {
+					models = []string{""}
 				}
 
-				// Find the appropriate default templates for the target collector class
-				targetTemplates := p.fetchCollectorTemplates(collectorName)
-
-				var upgradedTemplate *node.Node
-				var err error
-				for _, t := range targetTemplates {
-					upgradedTemplate, err = collector.ImportTemplate(p.options.ConfPaths, t, collectorName)
-					if err == nil {
-						break
-					}
+				ac := &collector.AbstractCollector{
+					Options: p.options,
+					Logger:  logger,
+					Name:    collectorName,
+					Object:  oc.object,
 				}
 
-				if err != nil || upgradedTemplate == nil {
-					logger.Warn(
-						"failed to load upgraded template",
-						slogx.Err(err),
-						slog.String("class", collectorName),
-						slog.String("object", oc.object),
-						slog.Any("templates", targetTemplates),
-					)
-					return oc
-				}
-
-				// Validate that the upgraded template contains the target object
-				if templatesObjects := upgradedTemplate.GetChildS("objects"); templatesObjects != nil {
-					if templatesObjects.GetChildS(oc.object) == nil {
+				targetTemplate, _, err := ac.ImportSubTemplate(models, templateName, "", p.remote.Version)
+				if err == nil && targetTemplate != nil {
+					if query := targetTemplate.GetChildContentS("query"); strings.Contains(query, "storage/volumes") {
+						// Remove the KeyPerf: prefix from the template so it falls back to the original collector's template
+						object.SetContentS(templateName)
 						logger.Warn(
-							"target template does not contain required object",
+							"volume KeyPerf upgrade skipped due to ONTAP version",
 							slog.String("object", oc.object),
-							slog.String("class", collectorName),
 							slog.String("template", templateName),
+							slog.String("ontapVersion", p.remote.Version),
+							slog.String("requiredVersion", "9.10.0+"),
+							slog.String("query", query),
 						)
 						return oc
 					}
 				} else {
+					object.SetContentS(templateName)
 					logger.Warn(
-						"target template has no objects section",
-						slog.String("class", collectorName),
-						slog.String("template", templateName),
-					)
-					return oc
-				}
-
-				// Create a new template with only the specific object we want
-				newTemplate := upgradedTemplate.Copy()
-
-				// Merge poller parameters into upgraded template
-				err = p.mergePollerParametersIntoTemplate(newTemplate)
-				if err != nil {
-					logger.Warn(
-						"failed to merge poller parameters into upgraded template",
-						slogx.Err(err),
+						"volume KeyPerf upgrade skipped due to ONTAP version (template load failed)",
 						slog.String("object", oc.object),
-						slog.String("class", collectorName),
+						slog.String("template", templateName),
+						slog.String("ontapVersion", p.remote.Version),
+						slog.String("requiredVersion", "9.10.0+"),
+						slogx.Err(err),
 					)
 					return oc
-				}
-
-				if templatesObjects := newTemplate.GetChildS("objects"); templatesObjects != nil {
-					// Filter children to keep only the target object
-					var filteredChildren []*node.Node
-					for _, child := range templatesObjects.GetChildren() {
-						if child.GetNameS() == oc.object {
-							filteredChildren = append(filteredChildren, child)
-						}
-					}
-					templatesObjects.Children = filteredChildren
-
-					// Update the object definition to use the specified template name
-					if objDef := templatesObjects.GetChildS(oc.object); objDef != nil {
-						objDef.SetContentS(templateName)
-					}
-				}
-
-				logger.Info(
-					"object upgraded",
-					slog.String("object", oc.object),
-					slog.String("from", oc.class),
-					slog.String("to", collectorName),
-					slog.String("template", templateName),
-				)
-
-				return objectCollector{
-					class:    collectorName,
-					object:   oc.object,
-					template: newTemplate,
 				}
 			}
 		}
 	}
 
-	return oc
+	// Find the appropriate default templates for the target collector class
+	targetTemplates := p.fetchCollectorTemplates(collectorName)
+
+	var upgradedTemplate *node.Node
+	var err error
+	for _, t := range targetTemplates {
+		upgradedTemplate, err = collector.ImportTemplate(p.options.ConfPaths, t, collectorName)
+		if err == nil {
+			break
+		}
+	}
+
+	if err != nil || upgradedTemplate == nil {
+		logger.Warn(
+			"failed to load upgraded template",
+			slogx.Err(err),
+			slog.String("class", collectorName),
+			slog.String("object", oc.object),
+			slog.Any("templates", targetTemplates),
+		)
+		return oc
+	}
+
+	// Validate that the upgraded template contains the target object
+	if templatesObjects := upgradedTemplate.GetChildS("objects"); templatesObjects != nil {
+		if templatesObjects.GetChildS(oc.object) == nil {
+			logger.Warn(
+				"target template does not contain required object",
+				slog.String("object", oc.object),
+				slog.String("class", collectorName),
+				slog.String("template", templateName),
+			)
+			return oc
+		}
+	} else {
+		logger.Warn(
+			"target template has no objects section",
+			slog.String("class", collectorName),
+			slog.String("template", templateName),
+		)
+		return oc
+	}
+
+	// Create a new template with only the specific object we want
+	newTemplate := upgradedTemplate.Copy()
+
+	// Merge poller parameters into upgraded template
+	err = p.mergePollerParametersIntoTemplate(newTemplate)
+	if err != nil {
+		logger.Warn(
+			"failed to merge poller parameters into upgraded template",
+			slogx.Err(err),
+			slog.String("object", oc.object),
+			slog.String("class", collectorName),
+		)
+		return oc
+	}
+
+	if templatesObjects := newTemplate.GetChildS("objects"); templatesObjects != nil {
+		// Filter children to keep only the target object
+		var filteredChildren []*node.Node
+		for _, child := range templatesObjects.GetChildren() {
+			if child.GetNameS() == oc.object {
+				filteredChildren = append(filteredChildren, child)
+			}
+		}
+		templatesObjects.Children = filteredChildren
+
+		// Update the object definition to use the specified template name
+		if objDef := templatesObjects.GetChildS(oc.object); objDef != nil {
+			objDef.SetContentS(templateName)
+		}
+	}
+
+	logger.Info(
+		"object upgraded",
+		slog.String("object", oc.object),
+		slog.String("from", oc.class),
+		slog.String("to", collectorName),
+		slog.String("template", templateName),
+	)
+
+	return objectCollector{
+		class:    collectorName,
+		object:   oc.object,
+		template: newTemplate,
+	}
 }
 
 func (p *Poller) fetchCollectorTemplates(collectorClass string) []string {
