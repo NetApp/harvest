@@ -1965,7 +1965,7 @@ func fetchAndCategorizePrometheusMetrics(promURL string) (map[string]bool, map[s
 			restMetrics[metricName] = true
 		case "ZAPI":
 			zapiMetrics[metricName] = true
-		case "KeyPerf":
+		case "keyperf":
 			restMetrics[metricName] = true
 		}
 	}
@@ -2107,7 +2107,7 @@ func categorizeCounters(counters map[string]Counter) (map[string]Counter, map[st
 				restCounters[counter.Name] = counter
 			case "ZAPI":
 				zapiCounters[counter.Name] = counter
-			case "KeyPerf":
+			case "keyperf":
 				restCounters[counter.Name] = counter
 			}
 		}
