@@ -1482,7 +1482,9 @@ func (p *Poller) upgradeObjectCollector(oc objectCollector) objectCollector {
 					Object:  oc.object,
 				}
 
-				targetTemplate, _, err := ac.ImportSubTemplate(models, templateName, "", p.remote.Version)
+				// Extract the first template name from comma-separated list in case
+				firstTemplate := strings.Split(templateName, ",")[0]
+				targetTemplate, _, err := ac.ImportSubTemplate(models, firstTemplate, "", p.remote.Version)
 				if err == nil && targetTemplate != nil {
 					if query := targetTemplate.GetChildContentS("query"); strings.Contains(query, "storage/volumes") || query == "volume" {
 						// Remove the KeyPerf: prefix from the template so it falls back to the original collector's template
