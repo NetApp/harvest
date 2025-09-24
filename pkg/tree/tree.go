@@ -20,6 +20,10 @@ func ImportYaml(filepath string) (*node.Node, error) {
 		return nil, err
 	}
 
+	// treat an empty file as an error
+	if len(data) == 0 {
+		return nil, errs.New(errs.ErrConfig, "template file is empty or does not exist")
+	}
 	return LoadYaml(data)
 }
 
@@ -27,10 +31,6 @@ func LoadYaml(data []byte) (*node.Node, error) {
 	astFile, err := parser.ParseBytes(data, 0)
 	if err != nil {
 		return nil, err
-	}
-	// treat an empty file as an error
-	if len(astFile.Docs) == 0 {
-		return nil, errs.New(errs.ErrConfig, "template file is empty or does not exist")
 	}
 
 	r := node.New([]byte("Root"))
