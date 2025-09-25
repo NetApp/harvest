@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Sep-17
+Creation Date : 2025-Sep-25
 ONTAP Version: 9.16.1
 ```
 
@@ -2005,6 +2005,17 @@ The `cluster_software_validation` metric is visualized in the following Grafana 
 |--------|----------|--------|--------|
 | ONTAP: Cluster | Software | table | [Cluster Software Validation](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=530) |
 ///
+
+
+
+### cluster_space_available
+
+Available space across the cluster.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/cluster` | `block_storage.available` | conf/rest/asar2/9.16.0/cluster.yaml |
+| Rest | `api/storage/cluster` | `block_storage.available` | conf/rest/asar2/9.16.0/cluster.yaml |
 
 
 
@@ -18548,6 +18559,16 @@ The `snapshot_volume_violation_total_size` metric is visualized in the following
 
 
 
+### storage_unit_avg_latency
+
+Performance metric aggregated over all types of I/O operations.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/storage-units` | `statistics.latency_raw.total`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> storage_unit_statistics.iops_raw.total | conf/keyperf/asar2/9.16.0/storage_unit.yaml |
+
+
+
 ### storage_unit_labels
 
 This metric provides information about StorageUnit
@@ -18558,6 +18579,66 @@ This metric provides information about StorageUnit
 
 
 
+### storage_unit_other_data
+
+Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/storage-units` | `statistics.throughput_raw.other`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/asar2/9.16.0/storage_unit.yaml |
+
+
+
+### storage_unit_other_latency
+
+Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/storage-units` | `statistics.latency_raw.other`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> storage_unit_statistics.iops_raw.other | conf/keyperf/asar2/9.16.0/storage_unit.yaml |
+
+
+
+### storage_unit_other_ops
+
+Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/storage-units` | `statistics.iops_raw.other`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/asar2/9.16.0/storage_unit.yaml |
+
+
+
+### storage_unit_read_data
+
+Performance metric for read I/O operations.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/storage-units` | `statistics.throughput_raw.read`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/asar2/9.16.0/storage_unit.yaml |
+
+
+
+### storage_unit_read_latency
+
+Performance metric for read I/O operations.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/storage-units` | `statistics.latency_raw.read`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> storage_unit_statistics.iops_raw.read | conf/keyperf/asar2/9.16.0/storage_unit.yaml |
+
+
+
+### storage_unit_read_ops
+
+Performance metric for read I/O operations.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/storage-units` | `statistics.iops_raw.read`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/asar2/9.16.0/storage_unit.yaml |
+
+
+
 ### storage_unit_space_efficiency_ratio
 
 
@@ -18565,6 +18646,17 @@ This metric provides information about StorageUnit
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/storage/storage-units` | `space.efficiency_ratio` | conf/rest/asar2/9.16.0/storage_unit.yaml |
+
+
+
+### storage_unit_space_physical_used
+
+The number of bytes consumed on the disk by the storage unit, excluding snapshots.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/storage-units` | `space.physical_used` | conf/rest/asar2/9.16.0/storage_unit.yaml |
+| KeyPerf | `api/storage/storage-units` | `space.physical_used` | conf/rest/asar2/9.16.0/storage_unit.yaml |
 
 
 
@@ -18585,6 +18677,56 @@ This metric provides information about StorageUnit
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/storage/storage-units` | `space.used` | conf/rest/asar2/9.16.0/storage_unit.yaml |
+
+
+
+### storage_unit_total_data
+
+Performance metric aggregated over all types of I/O operations.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/storage-units` | `statistics.throughput_raw.total`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/asar2/9.16.0/storage_unit.yaml |
+
+
+
+### storage_unit_total_ops
+
+Performance metric aggregated over all types of I/O operations.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/storage-units` | `statistics.iops_raw.total`<br><span class="key">Unit:</span> per_sec | conf/rest/asar2/9.16.0/storage_unit.yaml | 
+
+
+
+### storage_unit_write_data
+
+Performance metric for write I/O operations.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/storage-units` | `statistics.throughput_raw.write`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/asar2/9.16.0/storage_unit.yaml |
+
+
+
+### storage_unit_write_latency
+
+Performance metric for write I/O operations.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/storage-units` | `statistics.latency_raw.write`<br><span class="key">Unit:</span> microsec | conf/rest/asar2/9.16.0/storage_unit.yaml | 
+
+
+
+### storage_unit_write_ops
+
+Performance metric for write I/O operations.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| KeyPerf | `api/storage/storage-units` | `statistics.iops_raw.write`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/asar2/9.16.0/storage_unit.yaml |
 
 
 

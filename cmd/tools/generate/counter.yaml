@@ -2257,3 +2257,104 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/volume.yaml
+
+  # ASAr2 cluster metrics
+  - Name: cluster_space_available
+    Description: Available space across the cluster.
+    APIs:
+      - API: Rest
+        Endpoint: api/storage/cluster
+        ONTAPCounter: block_storage.available
+        Template: conf/rest/asar2/9.16.0/cluster.yaml
+  - Name: storage_unit_avg_latency
+    Description: Performance metric aggregated over all types of I/O operations.
+    APIs:
+      - API: KeyPerf
+        Endpoint: api/storage/storage-units
+        ONTAPCounter: statistics.latency_raw.total
+        Template: conf/keyperf/asar2/9.16.0/storage_unit.yaml
+  - Name: storage_unit_other_data
+    Description: Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.
+    APIs:
+      - API: KeyPerf
+        Endpoint: api/storage/storage-units
+        ONTAPCounter: statistics.throughput_raw.other
+        Template: conf/keyperf/asar2/9.16.0/storage_unit.yaml
+  - Name: storage_unit_other_latency
+    Description: Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.
+    APIs:
+      - API: KeyPerf
+        Endpoint: api/storage/storage-units
+        ONTAPCounter: statistics.latency_raw.other
+        Template: conf/keyperf/asar2/9.16.0/storage_unit.yaml
+  - Name: storage_unit_other_ops
+    Description: Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.
+    APIs:
+      - API: KeyPerf
+        Endpoint: api/storage/storage-units
+        ONTAPCounter: statistics.iops_raw.other
+        Template: conf/keyperf/asar2/9.16.0/storage_unit.yaml
+  - Name: storage_unit_read_data
+    Description: Performance metric for read I/O operations.
+    APIs:
+      - API: KeyPerf
+        Endpoint: api/storage/storage-units
+        ONTAPCounter: statistics.throughput_raw.read
+        Template: conf/keyperf/asar2/9.16.0/storage_unit.yaml
+  - Name: storage_unit_read_latency
+    Description: Performance metric for read I/O operations.
+    APIs:
+      - API: KeyPerf
+        Endpoint: api/storage/storage-units
+        ONTAPCounter: statistics.latency_raw.read
+        Template: conf/keyperf/asar2/9.16.0/storage_unit.yaml
+  - Name: storage_unit_read_ops
+    Description: Performance metric for read I/O operations.
+    APIs:
+      - API: KeyPerf
+        Endpoint: api/storage/storage-units
+        ONTAPCounter: statistics.iops_raw.read
+        Template: conf/keyperf/asar2/9.16.0/storage_unit.yaml
+  - Name: storage_unit_space_physical_used
+    Description: The number of bytes consumed on the disk by the storage unit, excluding snapshots.
+    APIs:
+      - API: KeyPerf
+        Endpoint: api/storage/storage-units
+        ONTAPCounter: space.physical_used
+        Template: conf/rest/asar2/9.16.0/storage_unit.yaml
+  - Name: storage_unit_total_data
+    Description: Performance metric aggregated over all types of I/O operations.
+    APIs:
+      - API: KeyPerf
+        Endpoint: api/storage/storage-units
+        ONTAPCounter: statistics.throughput_raw.total
+        Template: conf/keyperf/asar2/9.16.0/storage_unit.yaml
+  - Name: storage_unit_total_ops
+    Description: Performance metric aggregated over all types of I/O operations.
+    APIs:
+      - API: KeyPerf
+        Endpoint: api/storage/storage-units
+        ONTAPCounter: statistics.iops_raw.total
+        Template: conf/rest/asar2/9.16.0/storage_unit.yaml
+
+  - Name: storage_unit_write_data
+    Description: Performance metric for write I/O operations.
+    APIs:
+      - API: KeyPerf
+        Endpoint: api/storage/storage-units
+        ONTAPCounter:  statistics.throughput_raw.write
+        Template: conf/keyperf/asar2/9.16.0/storage_unit.yaml
+  - Name: storage_unit_write_latency
+    Description: Performance metric for write I/O operations.
+    APIs:
+      - API: KeyPerf
+        Endpoint: api/storage/storage-units
+        ONTAPCounter: statistics.latency_raw.write
+        Template: conf/rest/asar2/9.16.0/storage_unit.yaml
+  - Name: storage_unit_write_ops
+    Description: Performance metric for write I/O operations.
+    APIs:
+      - API: KeyPerf
+        Endpoint: api/storage/storage-units
+        ONTAPCounter: statistics.iops_raw.write
+        Template: conf/keyperf/asar2/9.16.0/storage_unit.yaml

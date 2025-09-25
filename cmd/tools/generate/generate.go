@@ -142,6 +142,7 @@ func doGenerateMetrics(cmd *cobra.Command, _ []string) {
 	panelKeyMap = make(map[string]bool)
 	visitDashboard(
 		[]string{
+			"grafana/dashboards/asar2",
 			"grafana/dashboards/cmode",
 			"grafana/dashboards/cmode-details",
 			"grafana/dashboards/cisco",

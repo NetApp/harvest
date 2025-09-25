@@ -144,6 +144,7 @@ var (
 		"aggr_hybrid_disk_count",
 		"availability_zone_",
 		"cifs_session_idle_duration",
+		"cluster_space_available",
 		"cluster_software",
 		"ems_events",
 		"export_rule_labels",
@@ -192,6 +193,7 @@ var (
 	// Exclude extra metrics for REST
 	excludeNotDocumentedRestMetrics = []string{
 		"ALERTS",
+		"cluster_space_",
 		"flexcache_",
 		"hist_",
 		"storage_unit_",
