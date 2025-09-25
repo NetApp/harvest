@@ -34,6 +34,7 @@ pipeline {
         harvestPath = "harvest"
         imageName = "rahulguptajss/harvest"
         ghcrImage = "ghcr.io/netapp/harvest"
+        ghcrMcpImage = "ghcr.io/netapp/harvest-mcp"
         DOCKERHUB_USERNAME = "rahulguptajss"
         COMMIT_ID = sh(returnStdout: true, script: 'git rev-parse HEAD')
     }
@@ -191,6 +192,24 @@ pipeline {
             }
         }
 
+        stage('Build MCP Docker Image') {
+            steps {
+                withCredentials([string(credentialsId: 'GIT_TOKEN', variable: 'GIT_TOKEN')]) {
+                    script {
+                        def gitTokenFile = "${env.WORKSPACE}/git_token"
+                        currentStage = 'Build MCP Docker Image'
+                        writeFile file: gitTokenFile, text: env.GIT_TOKEN
+
+                        sh '''
+                        targetLocation=$targetParentLocation$VERSION-$RELEASE-$BRANCH
+                        docker build -f mcp/Dockerfile --build-arg GO_VERSION=${GO_VERSION} --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE -t ${ghcrMcpImage}:latest -t ${ghcrMcpImage}:$VERSION-$RELEASE . --no-cache
+                        docker save -o ${targetLocation}/docker_harvest_mcp.tar ${ghcrMcpImage}:latest
+                        '''
+                    }
+                }
+            }
+        }
+
         stage('Trivy Image Scan') {
             when {
                 expression {
@@ -206,6 +225,7 @@ pipeline {
                 export PATH=/usr/local/bin:$PATH
                 trivy image --db-repository public.ecr.aws/aquasecurity/trivy-db --exit-code 1 ${ghcrImage}:latest
                 trivy image --db-repository public.ecr.aws/aquasecurity/trivy-db --exit-code 1 ${ghcrImage}:latest-fips
+                trivy image --db-repository public.ecr.aws/aquasecurity/trivy-db --exit-code 1 ${ghcrMcpImage}:latest
                 '''
             }
         }
@@ -302,6 +322,31 @@ pipeline {
             }
         }
 
+        stage('Publish MCP Docker Image') {
+            when {
+                expression {
+                    return env.DOCKER_PUBLISH == 'true';
+                }
+            }
+            steps {
+                script {
+                    currentStage = 'Publish MCP Docker Image'
+                }
+                sh '''
+                echo $GIT_TOKEN | docker login ghcr.io -u $DOCKERHUB_USERNAME --password-stdin
+                docker push ${ghcrMcpImage}:$VERSION-$RELEASE
+                '''
+                script {
+                    currentStage = 'Publish MCP Docker Image'
+                    if (OVERWRITE_DOCKER_LATEST_TAG == 'true') {
+                        sh '''
+                        docker push ${ghcrMcpImage}:latest
+                        '''
+                    }
+                }
+            }
+        }
+
         stage('Publish Nightly Build to GitHub') {
             when {
                 expression {
@@ -329,9 +374,11 @@ pipeline {
                         /opt/home/gh_2.8.0_linux_386/bin/gh release create nightly $targetLocation/*.rpm $targetLocation/*.deb $targetLocation/*.gz --notes "Nightly builds may include bugs and other issues. You might want to use the stable releases instead." --title "Harvest Nightly Release" --prerelease --target main
                         docker build --secret id=git_token,src=${gitTokenFile} -f container/onePollerPerContainer/Dockerfile --build-arg GO_VERSION=${GO_VERSION} --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET -t ${imageName}:latest -t ${imageName}:nightly -t ${ghcrImage}:latest -t ${ghcrImage}:nightly . --no-cache
                         docker build --secret id=git_token,src=${gitTokenFile} -f container/onePollerPerContainer/Dockerfile --build-arg GO_VERSION=${GO_VERSION} --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET --build-arg GODEBUG=fips140=on -t ${imageName}:latest-fips -t ${imageName}:nightly-fips -t ${ghcrImage}:latest-fips -t ${ghcrImage}:nightly-fips . --no-cache
+                        docker build -f mcp/Dockerfile --build-arg GO_VERSION=${GO_VERSION} --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE -t ${ghcrMcpImage}:latest -t ${ghcrMcpImage}:nightly . --no-cache
                         echo $GIT_TOKEN | docker login ghcr.io -u $DOCKERHUB_USERNAME --password-stdin
                         docker push ${ghcrImage}:nightly-fips
                         docker push ${ghcrImage}:nightly
+                        docker push ${ghcrMcpImage}:nightly
                         # Add a dummy user/email for mike deploy to work
                         git config user.name harvest
                         git config user.email harvest
