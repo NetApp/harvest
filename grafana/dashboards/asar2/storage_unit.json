@@ -140,7 +140,7 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 5,
+        "w": 6,
         "x": 0,
         "y": 1
       },
@@ -165,9 +165,9 @@
       "targets": [
         {
           "expr": "count(storage_unit_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
-          "format": "time_series",
+          "format": "table",
           "hide": false,
-          "instant": false,
+          "instant": true,
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "",
@@ -182,7 +182,7 @@
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Number of online storage units.",
+      "description": "Number of available space in Cluster.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -210,14 +210,14 @@
               }
             ]
           },
-          "unit": "short"
+          "unit": "bytes"
         },
         "overrides": []
       },
       "gridPos": {
         "h": 5,
-        "w": 5,
-        "x": 5,
+        "w": 6,
+        "x": 6,
         "y": 1
       },
       "id": 4,
@@ -240,10 +240,10 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "count(storage_unit_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",state=~\"online\"})",
-          "format": "time_series",
+          "expr": "cluster_space_available{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
+          "format": "table",
           "hide": false,
-          "instant": false,
+          "instant": true,
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "",
@@ -252,36 +252,25 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Online",
+      "title": "Available",
       "type": "stat"
     },
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Number of offline storage units.",
+      "description": "Number of online storage units.",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "color": "rgb(21, 118, 171)",
-                  "text": "0"
-                }
-              },
-              "type": "special"
-            }
-          ],
+          "mappings": [],
           "noValue": "0",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "rgb(21, 118, 171)",
+                "color": "semi-dark-green",
                 "value": null
               }
             ]
@@ -292,8 +281,8 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 5,
-        "x": 10,
+        "w": 6,
+        "x": 12,
         "y": 1
       },
       "id": 5,
@@ -316,10 +305,75 @@
       "pluginVersion": "8.1.8",
       "targets": [
         {
-          "expr": "count(storage_unit_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",state=~\"offline\"})",
-          "format": "time_series",
+          "expr": "count(storage_unit_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",state=~\"online\"})",
+          "format": "table",
           "hide": false,
-          "instant": false,
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Online",
+      "type": "stat"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Number of offline storage units.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-red",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 18,
+        "y": 1
+      },
+      "id": 6,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "expr": "count(storage_unit_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",state=~\"offline\"})",
+          "format": "table",
+          "hide": false,
+          "instant": true,
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "",
@@ -442,6 +496,10 @@
               {
                 "id": "unit",
                 "value": "bytes"
+              },
+              {
+                "id": "decimals",
+                "value": 1
               }
             ]
           },
@@ -454,6 +512,10 @@
               {
                 "id": "unit",
                 "value": "bytes"
+              },
+              {
+                "id": "decimals",
+                "value": 1
               }
             ]
           },
@@ -478,6 +540,10 @@
               {
                 "id": "unit",
                 "value": "bytes"
+              },
+              {
+                "id": "decimals",
+                "value": 1
               }
             ]
           },
@@ -570,6 +636,10 @@
                 "value": "µs"
               },
               {
+                "id": "decimals",
+                "value": 2
+              },
+              {
                 "id": "thresholds",
                 "value": {
                   "mode": "absolute",
@@ -604,6 +674,10 @@
               {
                 "id": "unit",
                 "value": "iops"
+              },
+              {
+                "id": "decimals",
+                "value": 2
               }
             ]
           },
@@ -616,6 +690,10 @@
               {
                 "id": "unit",
                 "value": "Bps"
+              },
+              {
+                "id": "decimals",
+                "value": 2
               }
             ]
           },
@@ -663,7 +741,7 @@
         "x": 0,
         "y": 6
       },
-      "id": 6,
+      "id": 7,
       "interval": "1m",
       "maxDataPoints": 2,
       "options": {
