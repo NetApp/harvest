@@ -836,9 +836,10 @@ func (p *Poller) readObjects(c conf.Collector) ([]objectCollector, error) {
 }
 
 type objectCollector struct {
-	class    string
-	object   string
-	template *node.Node
+	class          string
+	object         string
+	template       *node.Node
+	viaRedirection bool // true if this collector was created by redirecting from another collector type
 }
 
 // dynamically load and initialize a collector
@@ -937,6 +938,18 @@ func nonOverlappingCollectors(objectCollectors []objectCollector) []objectCollec
 		"KeyPerf":  {"ZapiPerf", "RestPerf", "StatPerf"},
 		"StatPerf": {"ZapiPerf", "RestPerf", "KeyPerf"},
 	}
+
+	// Sort collectors so native ones (viaRedirection=false) come before redirected ones
+	// This ensures native collectors take precedence in conflict resolution
+	slices.SortFunc(objectCollectors, func(a, b objectCollector) int {
+		if a.viaRedirection == b.viaRedirection {
+			return 0
+		}
+		if a.viaRedirection {
+			return 1 // a comes after b (native comes first)
+		}
+		return -1 // a comes before b
+	})
 
 	for _, c := range objectCollectors {
 		conflict, ok := conflicts[c.class]
@@ -1570,9 +1583,10 @@ func (p *Poller) upgradeObjectCollector(oc objectCollector) objectCollector {
 	)
 
 	return objectCollector{
-		class:    collectorName,
-		object:   oc.object,
-		template: newTemplate,
+		class:          collectorName,
+		object:         oc.object,
+		template:       newTemplate,
+		viaRedirection: true, // this collector was created via redirection from another type
 	}
 }
 

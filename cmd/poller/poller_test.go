@@ -155,6 +155,45 @@ func Test_nonOverlappingCollectors(t *testing.T) {
 		{name: "w overlap StatPerf3", args: ocs("KeyPerf", "StatPerf"), want: ocs("KeyPerf")},
 		{name: "no overlap StatPerf", args: ocs("Rest", "StatPerf"), want: ocs("Rest", "StatPerf")},
 		{name: "overlap statperf", args: ocs("StatPerf", "StatPerf"), want: ocs("StatPerf")},
+
+		// Test cases for viaRedirection flag behavior
+		{name: "native wins over redirected - same class",
+			args: []objectCollector{
+				{class: "KeyPerf", viaRedirection: true},  // Redirected collector (RestPerf->KeyPerf)
+				{class: "KeyPerf", viaRedirection: false}, // Native KeyPerf collector
+			},
+			want: []objectCollector{{class: "KeyPerf", viaRedirection: false}}},
+		{name: "native wins over redirected - conflicting classes",
+			args: []objectCollector{
+				{class: "KeyPerf", viaRedirection: true},   // Redirected collector (RestPerf->KeyPerf)
+				{class: "RestPerf", viaRedirection: false}, // Native RestPerf collector
+			},
+			want: []objectCollector{{class: "RestPerf", viaRedirection: false}}},
+		{name: "only redirected collectors - no conflict",
+			args: []objectCollector{
+				{class: "KeyPerf", viaRedirection: true}, // RestPerf->KeyPerf
+				{class: "Rest", viaRedirection: false},   // Native Rest (no conflict)
+			},
+			want: []objectCollector{{class: "Rest", viaRedirection: false}, {class: "KeyPerf", viaRedirection: true}}},
+		{name: "multiple redirected with native override",
+			args: []objectCollector{
+				{class: "KeyPerf", viaRedirection: true},  // RestPerf->KeyPerf
+				{class: "KeyPerf", viaRedirection: true},  // ZapiPerf->KeyPerf
+				{class: "KeyPerf", viaRedirection: false}, // Native KeyPerf
+			},
+			want: []objectCollector{{class: "KeyPerf", viaRedirection: false}}},
+		{name: "redirected collectors only - first wins",
+			args: []objectCollector{
+				{class: "KeyPerf", viaRedirection: true},  // RestPerf->KeyPerf
+				{class: "StatPerf", viaRedirection: true}, // ZapiPerf->StatPerf (conflicts with KeyPerf)
+			},
+			want: []objectCollector{{class: "KeyPerf", viaRedirection: true}}},
+		{name: "RestPerf upgraded, then native KeyPerf",
+			args: []objectCollector{
+				{class: "KeyPerf", viaRedirection: true, object: "Volume"},  // RestPerf->KeyPerf upgrade
+				{class: "KeyPerf", viaRedirection: false, object: "Volume"}, // Native KeyPerf with custom template
+			},
+			want: []objectCollector{{class: "KeyPerf", viaRedirection: false, object: "Volume"}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
