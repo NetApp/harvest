@@ -182,8 +182,13 @@ func (s *StatPerf) parseInstances(input string) ([]InstanceInfo, error) {
 			continue
 		}
 		inst := InstanceInfo{
-			Instance:     strings.TrimSpace(fields[2]),
-			InstanceUUID: strings.TrimSpace(fields[4]),
+			Instance: strings.TrimSpace(fields[2]),
+			// Remove quotes from InstanceUUID when present. UUIDs may be quoted in input data,
+			// but during poll-data calls we receive InstanceUUID without quotes due to the
+			// tabular format, so we remove surrounding quotes here.
+			// Do not modify instance names: they are used as filter values in data-fetch calls
+			// and must retain their quotes.
+			InstanceUUID: strings.Trim(strings.TrimSpace(fields[4]), "\""),
 		}
 		results = append(results, inst)
 	}
@@ -277,14 +282,25 @@ func (s *StatPerf) parseRows(input string) ([]map[string]any, error) {
 			if curRowLine == "" || strings.Contains(curRowLine, "entries were displayed") {
 				continue
 			}
-			tokens := strings.Fields(curRowLine)
-
-			if len(tokens) < 2 {
-				s.Logger.Warn("skipping unexpected line", slog.String("row", curRowLine))
+			// Split on first space - counter name has no spaces, value can have spaces
+			spaceIndex := strings.Index(curRowLine, " ")
+			if spaceIndex == -1 {
+				s.Logger.Warn("skipping unexpected line - no space found", slog.String("row", curRowLine))
 				continue
 			}
-			counter := strings.Join(tokens[:len(tokens)-1], " ")
-			value := tokens[len(tokens)-1]
+
+			if spaceIndex >= len(curRowLine)-1 {
+				s.Logger.Warn("skipping line - space at end", slog.String("row", curRowLine))
+				continue
+			}
+
+			counter := strings.TrimSpace(curRowLine[:spaceIndex])
+			value := strings.TrimSpace(curRowLine[spaceIndex+1:])
+
+			if counter == "" {
+				s.Logger.Warn("skipping line - empty counter", slog.String("row", curRowLine))
+				continue
+			}
 
 			// Check if the counter is an array-like element
 			if s.perfProp != nil && s.perfProp.counterInfo != nil {

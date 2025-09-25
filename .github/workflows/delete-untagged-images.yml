@@ -20,3 +20,11 @@ jobs:
           package_name: 'harvest'
           untagged_only: true
           owner_type: user
+
+      - name: Delete all containers from harvest-mcp repository without tags
+        uses: Chizkiyahu/delete-untagged-ghcr-action@cbb5ffeb3e19c91ca5b98afd5a7818daeb3cd689
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+          package_name: 'harvest-mcp'
+          untagged_only: true
+          owner_type: user

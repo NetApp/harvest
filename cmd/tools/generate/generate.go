@@ -153,7 +153,8 @@ func doGenerateMetrics(cmd *cobra.Command, _ []string) {
 		})
 	counters, cluster := BuildMetrics("", "", opts.Poller)
 	generateOntapCounterTemplate(counters, cluster.Version)
-	generateCounterTemplate(counters)
+	sgCounters, ciscoCounters := generateCounterTemplate()
+	generateMetadataFiles(counters, sgCounters, ciscoCounters)
 }
 
 func doDescription(cmd *cobra.Command, _ []string) {

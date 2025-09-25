@@ -128,6 +128,7 @@ var (
 		"security_audit_destination_port":  {},
 		"storage_unit_":                    {},
 		"wafl_reads_from_pmem":             {},
+		"nvm_mirror_":                      {},
 	}
 
 	knownMappingGapsSG = map[string]struct{}{
@@ -183,6 +184,7 @@ var (
 		"flexcache_",
 		"fpolicy_svm_failedop_notifications",
 		"netstat_",
+		"nvm_mirror_",
 		"quota_disk_used_pct_threshold",
 		"snapshot_volume_violation_count",
 		"snapshot_volume_violation_total_size",
@@ -1109,11 +1111,73 @@ func updateDescription(description string) string {
 	return s
 }
 
-func generateCounterTemplate(counters map[string]Counter) {
-	sgCounters := generateCounters("", counters, "storagegrid")
+func generateCounterTemplate() (map[string]Counter, map[string]Counter) {
+	sgCounters := generateCounters("", make(map[string]Counter), "storagegrid")
 	generateStorageGridCounterTemplate(sgCounters, SgVersion)
-	ciscoCounters := generateCounters("", counters, "cisco")
+	ciscoCounters := generateCounters("", make(map[string]Counter), "cisco")
 	generateCiscoSwitchCounterTemplate(ciscoCounters, CiscoVersion)
+	return sgCounters, ciscoCounters
+}
+
+// generateMetadataFiles generates JSON metadata files for MCP server consumption
+func generateMetadataFiles(ontapCounters, sgCounters, ciscoCounters map[string]Counter) {
+	metadataDir := "mcp/metadata"
+	if err := os.MkdirAll(metadataDir, 0750); err != nil {
+		fmt.Printf("Error creating metadata directory: %v\n", err)
+		return
+	}
+
+	// Generate ONTAP metadata
+	ontapMetadata := extractMetricDescriptions(ontapCounters)
+	ontapPath := filepath.Join(metadataDir, "ontap_metrics.json")
+	if err := writeMetadataFile(ontapPath, ontapMetadata); err != nil {
+		fmt.Printf("Error writing ONTAP metadata: %v\n", err)
+	} else {
+		fmt.Printf("ONTAP metadata file generated at %s with %d metrics\n", ontapPath, len(ontapMetadata))
+	}
+
+	// Generate StorageGrid metadata
+	sgMetadata := extractMetricDescriptions(sgCounters)
+	sgPath := filepath.Join(metadataDir, "storagegrid_metrics.json")
+	if err := writeMetadataFile(sgPath, sgMetadata); err != nil {
+		fmt.Printf("Error writing StorageGrid metadata: %v\n", err)
+	} else {
+		fmt.Printf("StorageGrid metadata file generated at %s with %d metrics\n", sgPath, len(sgMetadata))
+	}
+
+	// Generate Cisco metadata
+	ciscoMetadata := extractMetricDescriptions(ciscoCounters)
+	ciscoPath := filepath.Join(metadataDir, "cisco_metrics.json")
+	if err := writeMetadataFile(ciscoPath, ciscoMetadata); err != nil {
+		fmt.Printf("Error writing Cisco metadata: %v\n", err)
+	} else {
+		fmt.Printf("Cisco metadata file generated at %s with %d metrics\n", ciscoPath, len(ciscoMetadata))
+	}
+}
+
+// extractMetricDescriptions extracts just the name->description mapping
+func extractMetricDescriptions(counters map[string]Counter) map[string]string {
+	metadata := make(map[string]string)
+	for _, counter := range counters {
+		// Only include counters with descriptions
+		if counter.Description != "" {
+			metadata[counter.Name] = counter.Description
+		}
+	}
+	return metadata
+}
+
+// writeMetadataFile writes metadata to a JSON file
+func writeMetadataFile(path string, metadata map[string]string) error {
+	file, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	encoder := json.NewEncoder(file)
+	encoder.SetIndent("", "  ")
+	return encoder.Encode(metadata)
 }
 
 func generateOntapCounterTemplate(counters map[string]Counter, version string) {
