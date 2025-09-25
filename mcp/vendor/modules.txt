@@ -9,13 +9,13 @@ github.com/goccy/go-yaml/parser
 github.com/goccy/go-yaml/printer
 github.com/goccy/go-yaml/scanner
 github.com/goccy/go-yaml/token
-# github.com/google/jsonschema-go v0.2.3
+# github.com/google/jsonschema-go v0.3.0
 ## explicit; go 1.23.0
 github.com/google/jsonschema-go/jsonschema
 # github.com/inconshreveable/mousetrap v1.1.0
 ## explicit; go 1.18
 github.com/inconshreveable/mousetrap
-# github.com/modelcontextprotocol/go-sdk v0.6.0
+# github.com/modelcontextprotocol/go-sdk v0.7.0
 ## explicit; go 1.23.0
 github.com/modelcontextprotocol/go-sdk/auth
 github.com/modelcontextprotocol/go-sdk/internal/jsonrpc2
@@ -23,7 +23,7 @@ github.com/modelcontextprotocol/go-sdk/internal/util
 github.com/modelcontextprotocol/go-sdk/internal/xcontext
 github.com/modelcontextprotocol/go-sdk/jsonrpc
 github.com/modelcontextprotocol/go-sdk/mcp
-# github.com/netapp/harvest/v2 v2.0.0-20250919114527-c70c45a3327c => ../
+# github.com/netapp/harvest/v2 v2.0.0-20250924134400-8ec20693c555 => ../
 ## explicit; go 1.24.0
 github.com/netapp/harvest/v2/pkg/slogx
 # github.com/spf13/cobra v1.10.1
