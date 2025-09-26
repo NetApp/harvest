@@ -45,6 +45,10 @@ nav:
   - Manage Harvest Pollers: 'manage-harvest.md'
   - Configure Harvest (advanced): 'configure-harvest-advanced.md'
   - Monitor Harvest: 'monitor-harvest.md'
+  - MCP Server:
+      - 'Overview': 'mcp/overview.md'
+      - 'Installation': 'mcp/installation.md'
+      - 'Usage Examples': 'mcp/examples.md'
   - Help:
       - 'Troubleshooting': 'help/troubleshooting.md'
       - 'FAQ': 'help/faq.md'
