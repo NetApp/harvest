@@ -15,9 +15,9 @@ import (
 )
 
 func TestZapiPerfPollCounter(t *testing.T) {
-	z := NewZapiPerf("Volume", "volume.yaml")
+	z := NewZapiPerf("Lun", "lun.yaml")
 
-	expectedCounter := 27
+	expectedCounter := 20
 
 	z.testFilePath = "testdata/pollCounter.xml"
 	if _, err := z.PollCounter(); err != nil {
@@ -40,7 +40,7 @@ func TestZapiPerfPollCounter(t *testing.T) {
 
 func TestZapiPerfSequence(t *testing.T) {
 	// Initialize the ZapiPerf collector for Volume object
-	z := NewZapiPerf("Volume", "volume.yaml")
+	z := NewZapiPerf("Lun", "lun.yaml")
 
 	// PollCounter to update the counter detail in cache
 	z.testFilePath = "testdata/pollCounter.xml"
@@ -55,23 +55,23 @@ func TestZapiPerfSequence(t *testing.T) {
 		t.Fatal("First poll failed")
 	}
 
-	// Case1: pollInstance has 5 records and pollData has 5 records, expected exported instances are 5
+	// Case1: pollInstance has 12 records and pollData has 12 records, expected exported instances are 12
 	t.Log("Running Case 1")
-	z.testPollInstanceAndData(t, "testdata/pollInstance1.xml", "testdata/pollData1.xml", 5)
+	z.testPollInstanceAndData(t, "testdata/pollInstance1.xml", "testdata/pollData1.xml", 12)
 	if t.Failed() {
 		t.Fatal("Case 1 failed")
 	}
 
-	// Case2: pollInstance has 6 records and pollData has 7 records, expected exported instances are 6
+	// Case2: pollInstance has 13 records and pollData has 12 records, expected exported instances are 13
 	t.Log("Running Case 2")
-	z.testPollInstanceAndData(t, "testdata/pollInstance2.xml", "testdata/pollData2.xml", 6)
+	z.testPollInstanceAndData(t, "testdata/pollInstance2.xml", "testdata/pollData2.xml", 13)
 	if t.Failed() {
 		t.Fatal("Case 2 failed")
 	}
 
-	// Case3: pollInstance has 5 records and pollData has 3 records, expected exported instances are 3
+	// Case3: pollInstance has 12 records and pollData has 11 records, expected exported instances are 11
 	t.Log("Running Case 3")
-	z.testPollInstanceAndData(t, "testdata/pollInstance3.xml", "testdata/pollData3.xml", 3)
+	z.testPollInstanceAndData(t, "testdata/pollInstance3.xml", "testdata/pollData3.xml", 11)
 	if t.Failed() {
 		t.Fatal("Case 3 failed")
 	}

@@ -59,11 +59,10 @@ objects:
 #  NvmfTcpPort:              nvmf_tcp_port.yaml
 #  OntapS3SVM:               ontap_s3_svm.yaml
   SMB2:                     smb2.yaml
-  Volume:                   volume.yaml
-  VolumeSvm:                volume_svm.yaml
+  Volume:                   KeyPerf:volume.yaml
   WAFLCompBin:              wafl_comp_aggr_vol_bin.yaml
   Vscan:                    vscan.yaml
   VscanSVM:                 vscan_svm.yaml
 
-  Workload:             workload.yaml
-  WorkloadVolume:       workload_volume.yaml
+  Workload:                 workload.yaml
+  WorkloadVolume:           workload_volume.yaml

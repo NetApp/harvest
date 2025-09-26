@@ -1,6 +1,10 @@
 # Change Log
 ## [Releases](https://github.com/NetApp/harvest/releases)
 
+## 25.11.0 / 2025-11- Release
+Volume performance metrics changes: https://github.com/NetApp/harvest/discussions/3900
+
+
 ## 25.08.1 / 2025-08-18 Release
 :pushpin: This release is the same as version 25.08.0, with a fix for an issue where the ONTAP REST collector fails to start if ZAPIs are disabled on the cluster.
 

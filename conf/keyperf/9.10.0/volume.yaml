@@ -1,0 +1,100 @@
+name:                     Volume
+query:                    api/storage/volumes
+object:                   volume
+
+counters:
+  - ^^name                                    => volume
+  - ^^svm.name                                => svm
+  - ^statistics.status                        => status
+  - ^style                                    => style
+  - statistics.iops_raw.other                 => other_ops
+  - statistics.iops_raw.read                  => read_ops
+  - statistics.iops_raw.total                 => total_ops
+  - statistics.iops_raw.write                 => write_ops
+  - statistics.latency_raw.other              => other_latency
+  - statistics.latency_raw.read               => read_latency
+  - statistics.latency_raw.total              => avg_latency
+  - statistics.latency_raw.write              => write_latency
+  - statistics.throughput_raw.other           => other_data
+  - statistics.throughput_raw.read            => read_data
+  - statistics.throughput_raw.total           => total_data
+  - statistics.throughput_raw.write           => write_data
+  - statistics.timestamp(timestamp)           => timestamp
+  - hidden_fields:
+      - statistics
+  - filter:
+      - statistics.timestamp=!"-"
+      - style=!flexgroup     # collected via endpoints
+
+endpoints:
+  - query: api/storage/volumes
+    instance_add: true
+    counters:
+      - ^^name                                => volume
+      - ^^svm.name                            => svm
+      - ^statistics.status                    => status
+      - ^style                                => style
+      - statistics.iops_raw.other             => other_ops
+      - statistics.iops_raw.read              => read_ops
+      - statistics.iops_raw.total             => total_ops
+      - statistics.iops_raw.write             => write_ops
+      - statistics.latency_raw.other          => other_latency
+      - statistics.latency_raw.read           => read_latency
+      - statistics.latency_raw.total          => avg_latency
+      - statistics.latency_raw.write          => write_latency
+      - statistics.throughput_raw.other       => other_data
+      - statistics.throughput_raw.read        => read_data
+      - statistics.throughput_raw.total       => total_data
+      - statistics.throughput_raw.write       => write_data
+      - statistics.timestamp(timestamp)       => timestamp
+      - hidden_fields:
+          - statistics
+      - filter:
+          - statistics.timestamp=!"-"
+          - is_constituent=true
+
+  - query: api/private/cli/volume
+    counters:
+      - ^^volume                              => volume
+      - ^^vserver                             => svm
+      - ^aggr_list                            => aggr
+      - ^nodes                                => node
+      - filter:
+          - is_constituent=*
+
+plugins:
+  - Aggregator:
+      # plugin will create summary/average for each object
+      # any names after the object names will be treated as label names that will be added to instances
+      - node
+      - svm<>svm_vol
+  - Volume:
+      include_constituents: false
+
+  - LabelAgent:
+      # Ignore transient volumes, e.g. SnapProtect, SnapManager, SnapCenter, CommVault, Clone, and Metadata volumes
+      exclude_regex:
+        - volume `.+_CVclone`
+        - volume `.+(0[1-9]|[12][0-9]|3[01])(0[1-9]|1[012])\d\d[0-9]{6}`
+        - volume `cl_.+_(19|20)\d\d(0[1-9]|1[012])( 0[1-9]|[12][0-9]|3[01])[0-9]{6}`
+        - volume `sdw_cl_.+`
+        - volume `MDV_CRS_.+`
+        - volume `MDV_aud_.+`
+
+#  - VolumeTopClients:
+#      # `max_volumes` is the maximum number of volumes to consider for top client metrics. This value is capped at 50, even if a higher number is specified.
+#      # When enabled, this plugin will collect read/write operations and throughput metrics for the top clients of each volume.
+#      - schedule:
+#          - data: 1h  # This value should be a multiple of the poll duration. By default, Harvest will check once an hour to see how many volumes have activity_tracking.state set to on.
+#      - max_volumes: 5
+#      - objects:
+#          - client  # collect read/write operations and throughput metrics for the top clients.
+#          - file    # collect read/write operations and throughput metrics for the top files
+
+export_options:
+  instance_keys:
+    - aggr
+    - node
+    - style
+    - svm
+    - volume

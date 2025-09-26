@@ -2257,3 +2257,10 @@ counters:
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/volume.yaml
+
+  - Name: svm_vol_total_data
+    APIs:
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapiperf/cdot/9.8.0/volume.yaml

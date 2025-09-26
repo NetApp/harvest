@@ -93,7 +93,7 @@
       },
       "id": 29,
       "options": {
-        "content": "You must modify the `include_constituents` flag to `true` in all volume.yaml templates. Please see [FlexGroup dashboard](https://github.com/NetApp/harvest/wiki/FAQ#flexgroup-dashboard) for more details. Enabling FlexGroup constituents counters may slow down data collection due to a high number of constituents metrics.",
+        "content": "You must modify the `include_constituents` flag to `true` in KeyPerf volume.yaml templates. Please see [Enabling FlexGroup Constituents](https://github.com/NetApp/harvest/discussions/3905) for more details. Enabling FlexGroup constituents counters may slow down data collection due to a high number of constituents metrics.",
         "mode": "markdown"
       },
       "pluginVersion": "8.1.8",
