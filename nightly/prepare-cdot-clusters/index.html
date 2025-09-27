@@ -718,6 +718,30 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Zapi least-privilege role">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#associate-the-zapi-role-with-the-harvest-user" class="md-nav__link">
+    <span class="md-ellipsis">
+      Associate the ZAPI role with the harvest user
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ontap-910-volume-performance-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      ONTAP 9.10+ volume performance metrics
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -2006,6 +2030,30 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Zapi least-privilege role">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#associate-the-zapi-role-with-the-harvest-user" class="md-nav__link">
+    <span class="md-ellipsis">
+      Associate the ZAPI role with the harvest user
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ontap-910-volume-performance-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      ONTAP 9.10+ volume performance metrics
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -2383,7 +2431,7 @@ security<span class="w"> </span>login<span class="w"> </span>role<span class="w"
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;volume&quot;</span>
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;vserver&quot;</span>
 </code></pre></div>
-<p><strong>Associate the ZAPI role with the harvest user</strong></p>
+<h5 class="prominent-subsection" id="associate-the-zapi-role-with-the-harvest-user">Associate the ZAPI role with the harvest user<a class="headerlink" href="#associate-the-zapi-role-with-the-harvest-user" title="Permanent link">&para;</a></h5>
 <p>Use this for password authentication</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># If the harvest2 user does not exist, you will be prompted to enter a password</span>
 security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>ontapi<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-authentication-method<span class="w"> </span>password
@@ -2397,6 +2445,15 @@ security<span class="w"> </span>login<span class="w"> </span>create<span class="
 <p>If there are no matching entries, enable access by running the following.</p>
 <div class="highlight"><pre><span></span><code>vserver<span class="w"> </span>services<span class="w"> </span>web<span class="w"> </span>access<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-name<span class="w"> </span>ontapi<span class="w"> </span>
 </code></pre></div>
+<h5 class="prominent-subsection" id="ontap-910-volume-performance-metrics">ONTAP 9.10+ volume performance metrics<a class="headerlink" href="#ontap-910-volume-performance-metrics" title="Permanent link">&para;</a></h5>
+<p>Starting with ONTAP 9.10 the Zapi based collection needs a REST read permission on the volumes endpoint so Harvest can
+look up volume data required to collect performance metrics. If you already created the full <a href="#rest-least-privilege-role">REST least-privilege role</a>,
+you already have this (<code>/api/storage/volumes</code>) and can skip the commands below. Otherwise add just this minimal permission and associate the HTTP application
+with the REST role:</p>
+<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/storage/volumes
+security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-authentication-method<span class="w"> </span>password
+</code></pre></div>
+<p>Use <code>-authentication-method cert</code> instead of <code>password</code> if using certificate auth.</p>
 <h4 id="statperf-least-privilege-role">StatPerf least-privilege role<a class="headerlink" href="#statperf-least-privilege-role" title="Permanent link">&para;</a></h4>
 <p>Verify there are no errors when you copy/paste these.
 Warnings are fine.</p>
