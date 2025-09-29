@@ -2366,3 +2366,10 @@ counters:
         Endpoint: api/storage/storage-units
         ONTAPCounter: statistics.iops_raw.write
         Template: conf/keyperf/asar2/9.16.0/storage_unit.yaml
+  - Name: igroup_labels
+    Description: Details of Igroups in the cluster.
+    APIs:
+      - API: Rest
+        Endpoint: api/protocols/san/igroups
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/asar2/9.16.0/igroup.yaml

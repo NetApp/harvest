@@ -446,6 +446,11 @@ func toPluginPath(path string, pluginName string) string {
 		return before + "cmd/collectors/volume.go"
 	}
 
+	// Both REST and KeyPerf storage_unit.yaml templates uses a single plugin defined in volume.go
+	if strings.Contains(path, "storage_unit.yaml") {
+		return before + "cmd/collectors/storageunit.go"
+	}
+
 	base := strings.Split(after, "/")
 	p := fmt.Sprintf("%scmd/collectors/%s/plugins/%s/%s.go", before, base[0], pluginName, pluginName)
 

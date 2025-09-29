@@ -1,4 +1,4 @@
-package storageunit
+package collectors
 
 import (
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
@@ -13,7 +13,7 @@ type StorageUnit struct {
 	*plugin.AbstractPlugin
 }
 
-func New(p *plugin.AbstractPlugin) plugin.Plugin {
+func NewStorageUnit(p *plugin.AbstractPlugin) plugin.Plugin {
 	return &StorageUnit{AbstractPlugin: p}
 }
 

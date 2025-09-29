@@ -6,6 +6,7 @@ counters:
   - ^^uuid
   - ^location.node.name                       => node
   - ^location.volume.name                     => volume
+  - ^maps                                     => maps
   - ^name                                     => storage_unit
   - ^svm.name                                 => svm
   - statistics.iops_raw.other                 => other_ops
@@ -24,9 +25,12 @@ counters:
   - hidden_fields:
       - statistics
 
+plugins:
+  - StorageUnit
 
 export_options:
   instance_keys:
+    - host_group
     - node
     - storage_unit
     - svm

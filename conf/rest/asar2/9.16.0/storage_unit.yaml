@@ -28,6 +28,7 @@ plugins:
 
 export_options:
   instance_keys:
+    - host_group
     - node
     - storage_unit
     - svm
@@ -36,7 +37,6 @@ export_options:
     - arw_state
     - cg_name
     - class
-    - host_group
     - os_type
     - state
     - type
