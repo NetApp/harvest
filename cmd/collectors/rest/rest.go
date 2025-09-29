@@ -13,6 +13,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/clustersoftware"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/disk"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/health"
+	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/igroup"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/mav"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/metroclustercheck"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/netroute"
@@ -557,6 +558,8 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 	// These plugins are for ASAr2
 	case "StorageUnit":
 		return storageunit.New(abc)
+	case "Igroup":
+		return igroup.New(abc)
 	default:
 		r.Logger.Warn("no rest plugin found", slog.String("kind", kind))
 	}

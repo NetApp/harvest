@@ -8,4 +8,5 @@ schedule:
 objects:
   AvailabilityZone:               availability_zone.yaml
   Cluster:                        cluster.yaml
+  Igroup:                         igroup.yaml
   StorageUnit:                    storage_unit.yaml
