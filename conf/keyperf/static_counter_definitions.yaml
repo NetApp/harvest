@@ -1,17 +1,4 @@
 objects:
-  node:
-    counter_definitions:
-      - name: statistics.processor_utilization_raw
-        type: percent
-        base_counter: statistics.processor_utilization_base
-      - name: statistics.processor_utilization_base
-        type: delta
-  flexcache:
-    counter_definitions:
-      - name: statistics.flexcache_raw.client_requested_blocks
-        type: delta
-      - name: statistics.flexcache_raw.cache_miss_blocks
-        type: delta
   ethernet_switch_port:
     counter_definitions:
       - name: statistics.receive_raw.errors
@@ -26,3 +13,48 @@ objects:
         type: delta
       - name: statistics.transmit_raw.packets
         type: delta
+  flexcache:
+    counter_definitions:
+      - name: statistics.flexcache_raw.client_requested_blocks
+        type: delta
+      - name: statistics.flexcache_raw.cache_miss_blocks
+        type: delta
+  node:
+    counter_definitions:
+      - name: statistics.processor_utilization_raw
+        type: percent
+        base_counter: statistics.processor_utilization_base
+      - name: statistics.processor_utilization_base
+        type: delta
+  volume:
+    counter_definitions:
+      - name: statistics.nfs_ops_raw.access.count
+        type: rate
+      - name: statistics.nfs_ops_raw.access.total_time
+        type: average
+        base_counter: statistics.nfs_ops_raw.access.count
+      - name: statistics.nfs_ops_raw.getattr.count
+        type: rate
+      - name: statistics.nfs_ops_raw.getattr.total_time
+        type: average
+        base_counter: statistics.nfs_ops_raw.getattr.count
+      - name: statistics.nfs_ops_raw.lookup.count
+        type: rate
+      - name: statistics.nfs_ops_raw.lookup.total_time
+        type: average
+        base_counter: statistics.nfs_ops_raw.lookup.count
+      - name: statistics.nfs_ops_raw.read.count
+        type: rate
+      - name: statistics.nfs_ops_raw.read.total_time
+        type: average
+        base_counter: statistics.nfs_ops_raw.read.count
+      - name: statistics.nfs_ops_raw.setattr.count
+        type: rate
+      - name: statistics.nfs_ops_raw.setattr.total_time
+        type: average
+        base_counter: statistics.nfs_ops_raw.setattr.count
+      - name: statistics.nfs_ops_raw.write.count
+        type: rate
+      - name: statistics.nfs_ops_raw.write.total_time
+        type: average
+        base_counter: statistics.nfs_ops_raw.write.count

@@ -6,6 +6,7 @@ import (
 	"github.com/goccy/go-yaml/ast"
 	"github.com/goccy/go-yaml/parser"
 	"github.com/netapp/harvest/v2/assert"
+	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	template2 "github.com/netapp/harvest/v2/pkg/template"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"io/fs"
@@ -73,8 +74,18 @@ func TestTemplateNamesMatchDefault(t *testing.T) {
 	}, allTemplatesButEms...)
 
 	for kind, om := range defaults {
-		templates := modelsByTemplate[kind]
 		for name, templatePath := range om {
+			// Parse the templatePath to check if it's a cross-collector reference like "KeyPerf:volume.yaml"
+			collectorClass, _, isDelegated := collector.ParseTemplateRef(templatePath)
+
+			var targetCollector string
+			if isDelegated {
+				targetCollector = strings.ToLower(collectorClass)
+			} else {
+				targetCollector = kind
+			}
+
+			templates := modelsByTemplate[targetCollector]
 			_, ok := templates[name]
 			if !ok {
 				t.Errorf("template %s/default.yaml defines object=[%s] but %s does not include that name",
@@ -86,27 +97,39 @@ func TestTemplateNamesMatchDefault(t *testing.T) {
 	// Ensure files contained in default.yaml exist and are parseable
 	for kind, om := range defaults {
 		for _, fileRef := range om {
-			kindDir := filepath.Join(toConf, kind)
-			// find all templates named fileRef
+			collectorClass, templateName, isDelegated := collector.ParseTemplateRef(fileRef)
+
+			var searchDir string
+			var searchFileName string
+
+			if isDelegated {
+				searchDir = filepath.Join(toConf, strings.ToLower(collectorClass))
+				searchFileName = templateName
+			} else {
+				searchDir = filepath.Join(toConf, kind)
+				searchFileName = fileRef
+			}
+
+			// find all templates named searchFileName
 			var matchingTemplates []string
-			err := filepath.WalkDir(kindDir, func(path string, _ fs.DirEntry, _ error) error {
-				if strings.Contains(path, fileRef) {
+			err := filepath.WalkDir(searchDir, func(path string, _ fs.DirEntry, _ error) error {
+				if strings.Contains(path, searchFileName) {
 					matchingTemplates = append(matchingTemplates, path)
 				}
 				return nil
 			})
 			if err != nil {
-				t.Errorf("failed to walk dir=%s err=%v", shortPath(kindDir), err)
+				t.Errorf("failed to walk dir=%s err=%v", shortPath(searchDir), err)
 				continue
 			}
 			if len(matchingTemplates) == 0 {
-				t.Errorf("no templates matching file ref=%s from %s/default.yaml", fileRef, shortPath(kindDir))
+				t.Errorf("no templates matching file ref=%s from %s/default.yaml", fileRef, shortPath(searchDir))
 				continue
 			}
 			for _, template := range matchingTemplates {
 				_, err = parser.ParseFile(template, 0)
 				if err != nil {
-					t.Errorf("failed to parse template file=%s from %s/default.yaml", template, shortPath(kindDir))
+					t.Errorf("failed to parse template file=%s from %s/default.yaml", template, shortPath(searchDir))
 				}
 			}
 		}

@@ -79,6 +79,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
+	version2 "github.com/netapp/harvest/v2/pkg/version"
 	goversion "github.com/netapp/harvest/v2/third_party/go-version"
 	"github.com/spf13/cobra"
 )
@@ -326,7 +327,8 @@ func (p *Poller) Init() error {
 			continue
 		}
 		for _, oc := range objects {
-			objectsToCollectors[oc.object] = append(objectsToCollectors[oc.object], oc)
+			upgradedOC := p.upgradeObjectCollector(oc)
+			objectsToCollectors[oc.object] = append(objectsToCollectors[oc.object], upgradedOC)
 		}
 	}
 
@@ -803,12 +805,12 @@ func (p *Poller) readObjects(c conf.Collector) ([]objectCollector, error) {
 	if template == nil {
 		return nil, fmt.Errorf("no templates loaded for %s", c.Name)
 	}
+
 	// add the poller's parameters to the collector's parameters
-	err = Union2(template, p.params)
+	err = p.mergePollerParametersIntoTemplate(template)
 	if err != nil {
 		return nil, err
 	}
-	template.NewChildS("poller_name", p.params.Name)
 
 	objects := make([]objectCollector, 0)
 	templateObject := template.GetChildContentS("object")
@@ -834,9 +836,10 @@ func (p *Poller) readObjects(c conf.Collector) ([]objectCollector, error) {
 }
 
 type objectCollector struct {
-	class    string
-	object   string
-	template *node.Node
+	class          string
+	object         string
+	template       *node.Node
+	viaRedirection bool // true if this collector was created by redirecting from another collector type
 }
 
 // dynamically load and initialize a collector
@@ -936,6 +939,18 @@ func nonOverlappingCollectors(objectCollectors []objectCollector) []objectCollec
 		"StatPerf": {"ZapiPerf", "RestPerf", "KeyPerf"},
 	}
 
+	// Sort collectors so native ones (viaRedirection=false) come before redirected ones
+	// This ensures native collectors take precedence in conflict resolution
+	slices.SortFunc(objectCollectors, func(a, b objectCollector) int {
+		if a.viaRedirection == b.viaRedirection {
+			return 0
+		}
+		if a.viaRedirection {
+			return 1 // a comes after b (native comes first)
+		}
+		return -1 // a comes before b
+	})
+
 	for _, c := range objectCollectors {
 		conflict, ok := conflicts[c.class]
 		if ok {
@@ -959,6 +974,15 @@ func collectorContains(unique []objectCollector, conflicts []string, search stri
 		}
 	}
 	return false
+}
+
+func (p *Poller) mergePollerParametersIntoTemplate(template *node.Node) error {
+	err := Union2(template, p.params)
+	if err != nil {
+		return fmt.Errorf("failed to merge poller parameters: %w", err)
+	}
+	template.NewChildS("poller_name", p.params.Name)
+	return nil
 }
 
 // Union2 merges the fields of a Poller with the fields of a node.
@@ -1431,6 +1455,149 @@ func (p *Poller) upgradeCollector(c conf.Collector, remote conf.Remote) conf.Col
 	}
 
 	return c
+}
+
+func (p *Poller) upgradeObjectCollector(oc objectCollector) objectCollector {
+	templateObjects := oc.template.GetChildS("objects")
+	if templateObjects == nil {
+		return oc
+	}
+	object := templateObjects.GetChildS(oc.object)
+	if object == nil {
+		return oc
+	}
+	objectValue := object.GetContentS()
+	collectorName, templateName, isUpgraded := collector.ParseTemplateRef(objectValue)
+	if !isUpgraded {
+		return oc
+	}
+
+	// Handle KeyPerf upgrades from ZapiPerf
+	if oc.class == "ZapiPerf" && collectorName == "KeyPerf" {
+		// Check version compatibility for KeyPerf upgrades on older ONTAP versions
+		// Don't upgrade to KeyPerf for versions below 9.10
+		if supported, err := version2.AtLeast(p.remote.Version, "9.10.0"); err != nil || !supported {
+			// This check is needed because KeyPerf uses an endpoint /api/storage/volumes
+			// which requires is_constituent parameter which is not available prior to 9.10.
+			// For versions below 9.10, we skip the KeyPerf upgrade and fall back to the original collector.
+			// Check if object name contains "volume"
+			if strings.Contains(strings.ToLower(oc.object), "volume") {
+				object.SetContentS(templateName)
+				logger.Warn(
+					"volume KeyPerf upgrade skipped due to ONTAP version",
+					slog.String("object", oc.object),
+					slog.String("template", templateName),
+					slog.String("ontapVersion", p.remote.Version),
+					slog.String("requiredVersion", "9.10.0+"),
+				)
+				return oc
+			}
+		}
+
+		// When upgrading from ZapiPerf to KeyPerf, strip any extended templates
+		// as it's not needed/supported in KeyPerf.
+		parts := strings.SplitN(templateName, ",", 2)
+		templateName = strings.TrimSpace(parts[0])
+	}
+
+	// Find the appropriate default templates for the target collector class
+	targetTemplates := p.fetchCollectorTemplates(collectorName)
+
+	var upgradedTemplate *node.Node
+	var err error
+	for _, t := range targetTemplates {
+		upgradedTemplate, err = collector.ImportTemplate(p.options.ConfPaths, t, collectorName)
+		if err == nil {
+			break
+		}
+	}
+
+	if err != nil || upgradedTemplate == nil {
+		logger.Warn(
+			"failed to load upgraded template",
+			slogx.Err(err),
+			slog.String("class", collectorName),
+			slog.String("object", oc.object),
+			slog.Any("templates", targetTemplates),
+		)
+		return oc
+	}
+
+	// Validate that the upgraded template contains the target object
+	if templatesObjects := upgradedTemplate.GetChildS("objects"); templatesObjects != nil {
+		if templatesObjects.GetChildS(oc.object) == nil {
+			logger.Warn(
+				"target template does not contain required object",
+				slog.String("object", oc.object),
+				slog.String("class", collectorName),
+				slog.String("template", templateName),
+			)
+			return oc
+		}
+	} else {
+		logger.Warn(
+			"target template has no objects section",
+			slog.String("class", collectorName),
+			slog.String("template", templateName),
+		)
+		return oc
+	}
+
+	// Create a new template with only the specific object we want
+	newTemplate := upgradedTemplate.Copy()
+
+	// Merge poller parameters into upgraded template
+	err = p.mergePollerParametersIntoTemplate(newTemplate)
+	if err != nil {
+		logger.Warn(
+			"failed to merge poller parameters into upgraded template",
+			slogx.Err(err),
+			slog.String("object", oc.object),
+			slog.String("class", collectorName),
+		)
+		return oc
+	}
+
+	if templatesObjects := newTemplate.GetChildS("objects"); templatesObjects != nil {
+		// Filter children to keep only the target object
+		var filteredChildren []*node.Node
+		for _, child := range templatesObjects.GetChildren() {
+			if child.GetNameS() == oc.object {
+				filteredChildren = append(filteredChildren, child)
+			}
+		}
+		templatesObjects.Children = filteredChildren
+
+		// Update the object definition to use the specified template name
+		if objDef := templatesObjects.GetChildS(oc.object); objDef != nil {
+			objDef.SetContentS(templateName)
+		}
+	}
+
+	logger.Info(
+		"object upgraded",
+		slog.String("object", oc.object),
+		slog.String("from", oc.class),
+		slog.String("to", collectorName),
+		slog.String("template", templateName),
+	)
+
+	return objectCollector{
+		class:          collectorName,
+		object:         oc.object,
+		template:       newTemplate,
+		viaRedirection: true, // this collector was created via redirection from another type
+	}
+}
+
+func (p *Poller) fetchCollectorTemplates(collectorClass string) []string {
+	for _, col := range p.params.Collectors {
+		if col.Name == collectorClass && col.Templates != nil {
+			return *col.Templates
+		}
+	}
+
+	return *conf.DefaultTemplates
 }
 
 // set the poller's confPath using the following precedence:

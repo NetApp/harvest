@@ -25,7 +25,7 @@ func (s *StorageUnit) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, 
 		mapsData := gjson.Result{Type: gjson.JSON, Raw: "[" + instance.GetLabel("maps") + "]"}
 		if mapsData.Exists() {
 			for _, mapData := range mapsData.Array() {
-				hostGroup := mapData.Get("host_group").Get("name").ClonedString()
+				hostGroup := mapData.Get("host_group.name").ClonedString()
 				hostGroups = append(hostGroups, hostGroup)
 			}
 		}

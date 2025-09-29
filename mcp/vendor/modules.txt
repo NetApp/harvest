@@ -15,7 +15,7 @@ github.com/google/jsonschema-go/jsonschema
 # github.com/inconshreveable/mousetrap v1.1.0
 ## explicit; go 1.18
 github.com/inconshreveable/mousetrap
-# github.com/modelcontextprotocol/go-sdk v0.7.0
+# github.com/modelcontextprotocol/go-sdk v0.8.0
 ## explicit; go 1.23.0
 github.com/modelcontextprotocol/go-sdk/auth
 github.com/modelcontextprotocol/go-sdk/internal/jsonrpc2
@@ -23,7 +23,7 @@ github.com/modelcontextprotocol/go-sdk/internal/util
 github.com/modelcontextprotocol/go-sdk/internal/xcontext
 github.com/modelcontextprotocol/go-sdk/jsonrpc
 github.com/modelcontextprotocol/go-sdk/mcp
-# github.com/netapp/harvest/v2 v2.0.0-20250924134400-8ec20693c555 => ../
+# github.com/netapp/harvest/v2 v2.0.0-20250926123748-9f797d803ad9 => ../
 ## explicit; go 1.24.0
 github.com/netapp/harvest/v2/pkg/slogx
 # github.com/spf13/cobra v1.10.1

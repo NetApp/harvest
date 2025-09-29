@@ -140,7 +140,7 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 6,
+        "w": 4,
         "x": 0,
         "y": 1
       },
@@ -216,8 +216,8 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 6,
-        "x": 6,
+        "w": 4,
+        "x": 4,
         "y": 1
       },
       "id": 4,
@@ -281,8 +281,8 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 6,
-        "x": 12,
+        "w": 4,
+        "x": 8,
         "y": 1
       },
       "id": 5,
@@ -346,8 +346,8 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 6,
-        "x": 18,
+        "w": 4,
+        "x": 12,
         "y": 1
       },
       "id": 6,
@@ -386,6 +386,136 @@
       "type": "stat"
     },
     {
+      "cacheTimeout": null,
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Number of SCSI.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgb(21, 118, 171)",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 16,
+        "y": 1
+      },
+      "id": 7,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "expr": "count(igroup_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "SCSI",
+      "type": "stat"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Number of nvme.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgb(21, 118, 171)",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 20,
+        "y": 1
+      },
+      "id": 8,
+      "links": [],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "expr": "count(nvme_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"})",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "NVMe",
+      "type": "stat"
+    },
+    {
       "collapsed": true,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
@@ -394,7 +524,7 @@
         "x": 0,
         "y": 6
       },
-      "id": 7,
+      "id": 9,
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
@@ -752,7 +882,7 @@
             "x": 0,
             "y": 7
           },
-          "id": 8,
+          "id": 10,
           "interval": "1m",
           "maxDataPoints": 2,
           "options": {
@@ -941,7 +1071,7 @@
         "x": 0,
         "y": 16
       },
-      "id": 9,
+      "id": 11,
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
@@ -1194,7 +1324,7 @@
             "x": 0,
             "y": 17
           },
-          "id": 10,
+          "id": 12,
           "interval": "1m",
           "maxDataPoints": 2,
           "options": {
