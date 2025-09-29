@@ -947,7 +947,7 @@
             },
             {
               "exemplar": false,
-              "expr": "storage_unit_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",storage_unit=~\"$StorageUnit\",svm=~\"$SVM\"}",
+              "expr": "storage_unit_avg_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",host_group=~\"$HostGroup\",storage_unit=~\"$StorageUnit\",svm=~\"$SVM\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -957,7 +957,7 @@
             },
             {
               "exemplar": false,
-              "expr": "storage_unit_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",storage_unit=~\"$StorageUnit\",svm=~\"$SVM\"}",
+              "expr": "storage_unit_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",host_group=~\"$HostGroup\",storage_unit=~\"$StorageUnit\",svm=~\"$SVM\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -967,7 +967,7 @@
             },
             {
               "exemplar": false,
-              "expr": "storage_unit_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",storage_unit=~\"$StorageUnit\",svm=~\"$SVM\"}",
+              "expr": "storage_unit_total_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",host_group=~\"$HostGroup\",storage_unit=~\"$StorageUnit\",svm=~\"$SVM\"}",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -1587,7 +1587,7 @@
     ]
   },
   "timezone": "",
-  "title": "ASAr2: Storage Unit",
-  "uid": "asar2-storage-unit",
+  "title": "ASAr2: Overview",
+  "uid": "asar2-overview",
   "version": 1
 }
