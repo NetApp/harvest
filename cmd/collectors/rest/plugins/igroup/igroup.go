@@ -21,13 +21,12 @@ func (i *Igroup) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *coll
 	data := dataMap[i.Object]
 	var initiators []string
 	for _, instance := range data.GetInstances() {
-		initiators = make([]string, 0)
 		initiatorsData := gjson.Result{Type: gjson.JSON, Raw: "[" + instance.GetLabel("initiators") + "]"}
-		if initiatorsData.Exists() {
-			for _, mapData := range initiatorsData.Array() {
-				initiator := mapData.Get("name").ClonedString()
-				initiators = append(initiators, initiator)
-			}
+		array := initiatorsData.Array()
+		initiators = make([]string, 0, len(array))
+		for _, mapData := range array {
+			initiator := mapData.Get("name").ClonedString()
+			initiators = append(initiators, initiator)
 		}
 		slices.Sort(initiators)
 		instance.SetLabel("initiator", strings.Join(initiators, ","))

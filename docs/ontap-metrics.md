@@ -2015,14 +2015,13 @@ Available space across the cluster.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/storage/cluster` | `block_storage.available` | conf/rest/asar2/9.16.0/cluster.yaml |
-| Rest | `api/storage/cluster` | `block_storage.available` | conf/rest/asar2/9.16.0/cluster.yaml |
 
 The `cluster_space_available` metric is visualized in the following Grafana dashboards:
 
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
-| ASAr2: Storage Unit | Highlights | stat | [Available](/d/asar2-storage-unit/asar23a-storage unit?orgId=1&viewPanel=4) |
+| ASAr2: Overview | Highlights | stat | [Available](/d/asar2-overview/asar23a-overview?orgId=1&viewPanel=4) |
 ///
 
 
@@ -6234,7 +6233,7 @@ The `hostadapter_bytes_written` metric is visualized in the following Grafana da
 
 ### igroup_labels
 
-This metric provides information about Igroup
+Details of Igroups in the cluster.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -6245,8 +6244,8 @@ The `igroup_labels` metric is visualized in the following Grafana dashboards:
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
-| ASAr2: Storage Unit | Highlights | stat | [SCSI](/d/asar2-storage-unit/asar23a-storage unit?orgId=1&viewPanel=7) |
-| ASAr2: Storage Unit | Hosts | table | [Hosts in Cluster](/d/asar2-storage-unit/asar23a-storage unit?orgId=1&viewPanel=12) |
+| ASAr2: Overview | Highlights | stat | [SCSI](/d/asar2-overview/asar23a-overview?orgId=1&viewPanel=7) |
+| ASAr2: Overview | Hosts | table | [Hosts in Cluster](/d/asar2-overview/asar23a-overview?orgId=1&viewPanel=12) |
 ///
 
 

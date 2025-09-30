@@ -2270,7 +2270,7 @@ counters:
   - Name: cluster_space_available
     Description: Available space across the cluster.
     APIs:
-      - API: Rest
+      - API: REST
         Endpoint: api/storage/cluster
         ONTAPCounter: block_storage.available
         Template: conf/rest/asar2/9.16.0/cluster.yaml
@@ -2326,7 +2326,7 @@ counters:
   - Name: storage_unit_space_physical_used
     Description: The number of bytes consumed on the disk by the storage unit, excluding snapshots.
     APIs:
-      - API: KeyPerf
+      - API: REST
         Endpoint: api/storage/storage-units
         ONTAPCounter: space.physical_used
         Template: conf/rest/asar2/9.16.0/storage_unit.yaml
@@ -2343,7 +2343,7 @@ counters:
       - API: KeyPerf
         Endpoint: api/storage/storage-units
         ONTAPCounter: statistics.iops_raw.total
-        Template: conf/rest/asar2/9.16.0/storage_unit.yaml
+        Template: conf/keyperf/asar2/9.16.0/storage_unit.yaml
 
   - Name: storage_unit_write_data
     Description: Performance metric for write I/O operations.
@@ -2369,7 +2369,7 @@ counters:
   - Name: igroup_labels
     Description: Details of Igroups in the cluster.
     APIs:
-      - API: Rest
+      - API: REST
         Endpoint: api/protocols/san/igroups
         ONTAPCounter: Harvest generated
         Template: conf/rest/asar2/9.16.0/igroup.yaml
