@@ -1,28 +1,20 @@
 # Usage Examples
 
-This section provides practical example questions you can ask your MCP client (GitHub Copilot, Claude Desktop, etc.) when using the Harvest MCP Server.
+This section provides example queries you can ask your MCP client (GitHub Copilot, Claude Desktop, etc.) when using the Harvest MCP Server. For more examples and community discussions about MCP usage, see: [Harvest MCP Discussion](https://github.com/NetApp/harvest/discussions/3902) 
+
+Higher-capability language models provide better analysis and insights. When possible use the latest model versions with larger context windows.
 
 ## Getting the Best Results
 
 ### Use Harvest MCP Provided Prompt
 
-For optimal analysis and insights, always start by setting the **Analysis Expert** prompt available in the Harvest MCP server. This prompt provides your MCP client with best practices for analyzing Harvest data.
+For optimal analysis and insights, always start by setting the **Analysis Expert** prompt available in the Harvest MCP server. This prompt provides your MCP client with instructions for analyzing Harvest data.
 
 **Access the prompt**: Most MCP clients support prompts - look for a `/mcp` command or prompts menu to select the "Analysis Expert" prompt.
 
-### Use Advanced Language Models
-
-Higher-capability language models provide significantly better analysis and insights:
-
-- **Recommended**: GPT-4, Claude 3.5 Sonnet, or equivalent advanced models
-- **Good**: GPT-3.5, Claude 3 Haiku for basic queries
-- **Best Results**: Latest model versions with larger context windows
-
 ## Reference Questions
 
-Here are example questions organized by complexity that work well with the Harvest MCP Server:
-
-For more examples and community discussions about MCP usage, see: [Harvest MCP Discussion](https://github.com/NetApp/harvest/discussions/3902)
+Below are example questions that work well with the Harvest MCP Server:
 
 ### Infrastructure Health
 
@@ -69,7 +61,3 @@ Common MCP clients that work with Harvest MCP Server:
 - **GitHub Copilot**: Integrated in VS Code, supports MCP connections
 - **Claude Desktop**: Anthropic's desktop application with MCP support
 - **Custom MCP Clients**: Any application implementing the MCP standard
-
-## Next Steps
-
-- [Installation Guide](installation.md)

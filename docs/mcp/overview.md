@@ -1,16 +1,15 @@
-# Harvest MCP Server
+# Harvest Model Context Protocol Server
 
-The Harvest MCP (Model Context Protocol) Server provides MCP clients (like GitHub Copilot, Claude Desktop, and other LLMs) with intelligent access to your infrastructure monitoring data collected by Harvest from ONTAP, StorageGRID, and Cisco systems.
+The Harvest Model Context Protocol (MCP) server provides MCP clients like GitHub Copilot, Claude Desktop, and other large language models (LLMs) access to your infrastructure monitoring data collected by Harvest from ONTAP, StorageGRID, and Cisco systems.
 
 ## What is MCP?
 
-The Model Context Protocol (MCP) is an open standard that enables interactions between MCP clients and external data sources.
-Harvest MCP Server acts as a bridge between MCP clients and your infrastructure monitoring data stored in Prometheus or
-VictoriaMetrics, allowing for intelligent analysis and insights.
+The [Model Context Protocol](https://modelcontextprotocol.io/docs/getting-started/intro) (MCP) is an open standard that enables interactions between MCP clients and external data sources.
+The Harvest MCP server provides APIs for large language models (LLMs) to query your Harvest-collected open-metrics data. These APIs enable intelligent data analysis and insights.
 
 ## What You Can Ask
 
-Transform your monitoring data into actionable insights through natural language questions:
+The Harvest MCP server allows you to ask natural language questions about your infrastructure monitoring data. Here are some example queries:
 
 **Simple Health Checks**
 
@@ -21,15 +20,12 @@ Transform your monitoring data into actionable insights through natural language
 
 - "Which volumes are running out of space?"
 - "Show me the top 5 volumes by utilization"
+- "Analyze storage growth trends over the past month"
 
 **Performance Investigation**
 
 - "Which systems are experiencing high latency?"
-- "Find volumes with performance issues"
-
-**Advanced Analytics**
-
-- "Analyze storage growth trends over the past month"
+- "Which volumes have performance issues"
 - "Show me performance bottlenecks across my clusters"
 
 ## Architecture
@@ -39,7 +35,6 @@ The Harvest MCP Server operates as a lightweight service that:
 1. Connects to your existing Prometheus/VictoriaMetrics instance containing Harvest data
 2. Provides a standardized MCP interface for MCP clients (GitHub Copilot, Claude Desktop, etc.)
 3. Enables natural language queries against your infrastructure data
-4. Returns structured insights suitable for decision making
 
 ```mermaid
 graph LR
@@ -53,10 +48,9 @@ graph LR
 
 ## Prerequisites
 
-- Running Harvest
 - Prometheus or VictoriaMetrics instance with Harvest data
 - Docker environment for running the MCP server
-- Network connectivity from MCP server to your TSDB
+- Network connectivity from MCP server to your time series database
 
 For information about Harvest deployment and configuration, see:
 

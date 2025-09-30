@@ -45,7 +45,7 @@ nav:
   - Manage Harvest Pollers: 'manage-harvest.md'
   - Configure Harvest (advanced): 'configure-harvest-advanced.md'
   - Monitor Harvest: 'monitor-harvest.md'
-  - MCP Server:
+  - Model Context Protocol (MCP) Server:
       - 'Overview': 'mcp/overview.md'
       - 'Installation': 'mcp/installation.md'
       - 'Usage Examples': 'mcp/examples.md'
