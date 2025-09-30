@@ -11,12 +11,6 @@ Harvest MCP Server is available as pre-built container images:
 | `ghcr.io/netapp/harvest-mcp:latest` | Stable release version |
 | `ghcr.io/netapp/harvest-mcp:nightly` | Latest development builds |
 
-## Prerequisites
-
-- Docker or compatible container runtime
-- Network access to your Prometheus/VictoriaMetrics instance
-- Running Harvest deployment with data in your TSDB (Prometheus/Victoriametrics)
-
 ## MCP Client Integration
 
 For MCP clients like GitHub Copilot, add to your mcp.json:
@@ -87,9 +81,9 @@ docker run --rm -i \
 ```
 
 
-## Monitoring
+## Logs
 
-To monitor the MCP server logs:
+To view the MCP server logs:
 
 ```bash
 docker logs <container-id>
