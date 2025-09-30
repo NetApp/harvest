@@ -25,7 +25,7 @@ The Harvest MCP server allows you to ask natural language questions about your i
 **Performance Investigation**
 
 - "Which systems are experiencing high latency?"
-- "Which volumes have performance issues"
+- "Which volumes have performance issues?"
 - "Show me performance bottlenecks across my clusters"
 
 ## Architecture
