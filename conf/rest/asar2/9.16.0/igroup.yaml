@@ -1,0 +1,25 @@
+name:                     Igroup
+query:                    api/protocols/san/igroups
+object:                   igroup
+
+counters:
+  - ^^uuid
+  - ^initiators
+  - ^name                                    => igroup
+  - ^os_type
+  - ^protocol
+  - ^svm.name                                => svm
+  - ^type
+
+
+plugins:
+  - Igroup
+
+export_options:
+  instance_keys:
+    - igroup
+    - svm
+  instance_labels:
+    - os_type
+    - protocol
+    - initiator

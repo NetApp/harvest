@@ -2,6 +2,7 @@ package keyperf
 
 import (
 	"fmt"
+	"github.com/netapp/harvest/v2/cmd/collectors"
 	"github.com/netapp/harvest/v2/cmd/collectors/keyperf/plugins/volume"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest"
 	"github.com/netapp/harvest/v2/cmd/collectors/restperf/plugins/volumetopmetrics"
@@ -155,6 +156,9 @@ func (kp *KeyPerf) LoadPlugin(kind string, p *plugin.AbstractPlugin) plugin.Plug
 		return volume.New(p)
 	case "VolumeTopClients":
 		return volumetopmetrics.New(p)
+	// These plugins are for ASAr2
+	case "StorageUnit":
+		return collectors.NewStorageUnit(p)
 	default:
 		kp.Logger.Info("no KeyPerf plugin found", slog.String("kind", kind))
 	}

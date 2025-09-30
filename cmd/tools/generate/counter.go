@@ -147,6 +147,7 @@ var (
 		"aggr_hybrid_disk_count",
 		"availability_zone_",
 		"cifs_session_idle_duration",
+		"cluster_space_available",
 		"cluster_software",
 		"ems_events",
 		"ethernet_switch_port_",
@@ -154,6 +155,7 @@ var (
 		"fcvi_",
 		"flashpool_",
 		"health_",
+		"igroup_labels",
 		"iw_",
 		"mav_request_",
 		"mediator_labels",
@@ -197,8 +199,10 @@ var (
 	// Exclude extra metrics for REST
 	excludeNotDocumentedRestMetrics = []string{
 		"ALERTS",
+		"cluster_space_",
 		"flexcache_",
 		"hist_",
+		"igroup_",
 		"storage_unit_",
 		"volume_aggr_labels",
 		"volume_arw_status",

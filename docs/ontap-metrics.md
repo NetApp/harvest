@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Sep-23
+Creation Date : 2025-Sep-29
 ONTAP Version: 9.16.1
 ```
 
@@ -2004,6 +2004,24 @@ The `cluster_software_validation` metric is visualized in the following Grafana 
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | ONTAP: Cluster | Software | table | [Cluster Software Validation](/d/cdot-cluster/ontap3a-cluster?orgId=1&viewPanel=530) |
+///
+
+
+
+### cluster_space_available
+
+Available space across the cluster.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/storage/cluster` | `block_storage.available` | conf/rest/asar2/9.16.0/cluster.yaml |
+
+The `cluster_space_available` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ASAr2: Overview | Highlights | stat | [Available](/d/asar2-overview/asar23a-overview?orgId=1&viewPanel=4) |
 ///
 
 
@@ -6209,6 +6227,25 @@ The `hostadapter_bytes_written` metric is visualized in the following Grafana da
 | ONTAP: Disk | Disk Utilization | timeseries | [Disk and Tape Drives Throughput by Node](/d/cdot-disk/ontap3a-disk?orgId=1&viewPanel=34) |
 | ONTAP: Disk | Disk Utilization | timeseries | [Top $TopResources Disk and Tape Drives Throughput by Host Adapter](/d/cdot-disk/ontap3a-disk?orgId=1&viewPanel=62) |
 | ONTAP: MetroCluster | Disk and Tape Adapter | timeseries | [Top $TopResources Adapters by Write Data](/d/cdot-metrocluster/ontap3a-metrocluster?orgId=1&viewPanel=76) |
+///
+
+
+
+### igroup_labels
+
+Details of Igroups in the cluster.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/protocols/san/igroups` | `Harvest generated` | conf/rest/asar2/9.16.0/igroup.yaml |
+
+The `igroup_labels` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ASAr2: Overview | Highlights | stat | [SCSI](/d/asar2-overview/asar23a-overview?orgId=1&viewPanel=7) |
+| ASAr2: Overview | Hosts | table | [Hosts in Cluster](/d/asar2-overview/asar23a-overview?orgId=1&viewPanel=12) |
 ///
 
 

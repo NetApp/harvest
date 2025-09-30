@@ -1871,6 +1871,7 @@ func TestTags(t *testing.T) {
 
 func checkTags(t *testing.T, path string, data []byte) {
 	allowedTagsMap := map[string]bool{
+		"asar2":       true,
 		"cdot":        true,
 		"cisco":       true,
 		"fsx":         true,
