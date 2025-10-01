@@ -21,7 +21,11 @@ func GatherClusterInfo(pollerName string, cred *auth.Credentials, cols []conf.Co
 	})
 
 	if !hasZapi {
-		return checkRest(pollerName, cred)
+		remote, err := checkRest(pollerName, cred)
+		if err == nil {
+			remote.ZAPIsChecked = false
+		}
+		return remote, err
 	}
 
 	remoteZapi, errZapi := checkZapi(pollerName, cred)
@@ -40,6 +44,7 @@ func GatherStorageGridInfo(pollerName string, cred *auth.Credentials) (conf.Remo
 
 func MergeRemotes(remoteZapi conf.Remote, remoteRest conf.Remote, errZapi error, errRest error) (conf.Remote, error) {
 	remoteRest.ZAPIsExist = remoteZapi.ZAPIsExist
+	remoteRest.ZAPIsChecked = remoteZapi.ZAPIsChecked
 
 	// If both failed, return the combined error
 	if errZapi != nil && errRest != nil {
@@ -123,8 +128,8 @@ func checkZapi(pollerName string, cred *auth.Credentials) (conf.Remote, error) {
 	}
 
 	remote := client.Remote()
-	remote.ZAPIsExist = zapisExist
 	remote.ZAPIsChecked = true
+	remote.ZAPIsExist = zapisExist
 
 	return remote, nil
 }
