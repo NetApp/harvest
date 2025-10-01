@@ -31,6 +31,10 @@ and GitHub [discussions](https://github.com/NetApp/harvest/discussions). Come jo
 - [Why Harvest](https://youtu.be/04-66_9egJc)
 - [Harvest Quick Start: Docker Compose](https://youtu.be/4cbDKzwjGHI)
 
+# Model Context Protocol (MCP)
+
+:sparkles: Query your Harvest-collected ONTAP, StorageGRID, and Cisco metric with [Harvest's MCP server](https://netapp.github.io/harvest/nightly/mcp/overview/)
+
 ---
 
 <p align="center">
