@@ -12,6 +12,7 @@ type Remote struct {
 	IsSanOptimized  bool
 	IsDisaggregated bool
 	ZAPIsExist      bool
+	ZAPIsChecked    bool
 	HasREST         bool
 	IsClustered     bool
 }
