@@ -1720,7 +1720,7 @@ func (p *Poller) negotiateAPI(cols []conf.Collector) []conf.Collector {
 	var validCollectors []conf.Collector
 
 	if len(ontapCols) > 0 {
-		if p.negotiateConnection("ONTAP") {
+		if p.negotiateConnection("ONTAP", ontapCols) {
 			if p.remote.IsASAr2() {
 				for _, col := range ontapCols {
 					if slices.Equal(*col.Templates, *conf.DefaultTemplates) {
@@ -1740,7 +1740,7 @@ func (p *Poller) negotiateAPI(cols []conf.Collector) []conf.Collector {
 	}
 
 	if len(ciscoCols) > 0 {
-		if p.negotiateConnection("Cisco") {
+		if p.negotiateConnection("Cisco", ciscoCols) {
 			validCollectors = append(validCollectors, ciscoCols...)
 		} else {
 			logger.Warn("Cisco connection failed, skipping Cisco collectors")
@@ -1748,7 +1748,7 @@ func (p *Poller) negotiateAPI(cols []conf.Collector) []conf.Collector {
 	}
 
 	if len(sgCols) > 0 {
-		if p.negotiateConnection("StorageGrid") {
+		if p.negotiateConnection("StorageGrid", sgCols) {
 			validCollectors = append(validCollectors, sgCols...)
 		} else {
 			logger.Warn("Storage Grid connection failed, skipping StorageGrid collectors")
@@ -1779,13 +1779,13 @@ func (p *Poller) filterOtherCollectors(cols []conf.Collector) []conf.Collector {
 	return otherCollectors
 }
 
-func (p *Poller) negotiateConnection(connectionType string) bool {
+func (p *Poller) negotiateConnection(connectionType string, cols []conf.Collector) bool {
 	var remote conf.Remote
 	var err error
 
 	switch connectionType {
 	case "ONTAP":
-		remote, err = collectors.GatherClusterInfo(opts.Poller, p.auth)
+		remote, err = collectors.GatherClusterInfo(opts.Poller, p.auth, cols)
 	case "Cisco":
 		remote, err = collectors.GatherCiscoSwitchInfo(opts.Poller, p.auth)
 	case "StorageGrid":

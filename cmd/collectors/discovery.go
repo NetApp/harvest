@@ -2,6 +2,7 @@ package collectors
 
 import (
 	"errors"
+	"slices"
 	"time"
 
 	ciscorest "github.com/netapp/harvest/v2/cmd/collectors/cisco/rest"
@@ -13,7 +14,16 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 )
 
-func GatherClusterInfo(pollerName string, cred *auth.Credentials) (conf.Remote, error) {
+func GatherClusterInfo(pollerName string, cred *auth.Credentials, cols []conf.Collector) (conf.Remote, error) {
+	// If the customer does not have a ZAPI collector, skip the checkZapi call
+	hasZapi := slices.ContainsFunc(cols, func(c conf.Collector) bool {
+		return c.Name == "Zapi" || c.Name == "ZapiPerf"
+	})
+
+	if !hasZapi {
+		return checkRest(pollerName, cred)
+	}
+
 	remoteZapi, errZapi := checkZapi(pollerName, cred)
 	remoteRest, errRest := checkRest(pollerName, cred)
 
@@ -108,12 +118,13 @@ func checkZapi(pollerName string, cred *auth.Credentials) (conf.Remote, error) {
 
 		if returnErr {
 			// Assume that ZAPIs exist so we don't upgrade ZAPI to REST when there is an error
-			return conf.Remote{ZAPIsExist: true}, err
+			return conf.Remote{ZAPIsExist: true, ZAPIsChecked: true}, err
 		}
 	}
 
 	remote := client.Remote()
 	remote.ZAPIsExist = zapisExist
+	remote.ZAPIsChecked = true
 
 	return remote, nil
 }
