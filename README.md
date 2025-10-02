@@ -33,7 +33,7 @@ and GitHub [discussions](https://github.com/NetApp/harvest/discussions). Come jo
 
 # Model Context Protocol (MCP)
 
-:sparkles: Query your Harvest-collected ONTAP, StorageGRID, and Cisco metric with [Harvest's MCP server](https://netapp.github.io/harvest/nightly/mcp/overview/)
+:sparkles: Query your Harvest-collected ONTAP, StorageGRID, and Cisco metrics with [Harvest's MCP server](https://netapp.github.io/harvest/nightly/mcp/overview/)
 
 ---
 
