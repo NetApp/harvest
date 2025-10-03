@@ -133,7 +133,7 @@ See [#2991](https://github.com/NetApp/harvest/issues/2991) for more information.
 Using password authentication
 
 ```bash
-security login create -user-or-group-name harvest2 -application http -role harvest2-rest-role -authentication-method password
+security login create -user-or-group-name harvest2 -application http -role harvest-rest-role -authentication-method password
 ```
 
 ??? failure "If you get an error `command failed: duplicate entry` when running the previous command"
@@ -141,13 +141,13 @@ security login create -user-or-group-name harvest2 -application http -role harve
 
     ```bash
     security login delete -user-or-group-name harvest2 -application http -authentication-method *
-    security login create -user-or-group-name harvest2 -application http -role harvest2-rest-role -authentication-method password
+    security login create -user-or-group-name harvest2 -application http -role harvest-rest-role -authentication-method password
     ```
 
 Using certificate authentication
 
 ```bash
-security login create -user-or-group-name harvest2 -application http -role harvest2-rest-role -authentication-method cert
+security login create -user-or-group-name harvest2 -application http -role harvest-rest-role -authentication-method cert
 ```
 
 ??? failure "If you get an error `command failed: duplicate entry` when running the previous command"
@@ -155,7 +155,7 @@ security login create -user-or-group-name harvest2 -application http -role harve
 
     ```bash
     security login delete -user-or-group-name harvest2 -application http -authentication-method *
-    security login create -user-or-group-name harvest2 -application http -role harvest2-rest-role -authentication-method cert
+    security login create -user-or-group-name harvest2 -application http -role harvest-rest-role -authentication-method cert
     ```
 
 #### Zapi least-privilege role
@@ -254,10 +254,10 @@ Warnings are fine.
 security login role create -role harvest2-role -access all -cmddirname "set"
 security login role create -role harvest2-role -access readonly -cmddirname "statistics"
 
-security login rest-role create -role harvest2-rest-role -access readonly -api /api/cluster
-security login rest-role create -role harvest2-rest-role -access read_create -api /api/private/cli
+security login rest-role create -role harvest-rest-role -access readonly -api /api/cluster
+security login rest-role create -role harvest-rest-role -access read_create -api /api/private/cli
 security login create -user-or-group-name harvest2 -application ssh -authentication-method password -role harvest2-role
-security login create -user-or-group-name harvest2 -application http -authentication-method password -role harvest2-rest-role
+security login create -user-or-group-name harvest2 -application http -authentication-method password -role harvest-rest-role
 ```
 
 **Note:** If you are monitoring an FSx system with the `fsxadmin` role, you only need to give the following permission for StatPerf to work:
