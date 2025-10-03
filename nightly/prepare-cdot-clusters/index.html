@@ -2477,23 +2477,23 @@ security<span class="w"> </span>login<span class="w"> </span>rest-role<span clas
 <p>See <a href="https://github.com/NetApp/harvest/issues/2991">#2991</a> for more information.</p>
 <p><strong>Associate the REST role with the harvest user</strong></p>
 <p>Using password authentication</p>
-<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-role<span class="w"> </span>harvest2-rest-role<span class="w"> </span>-authentication-method<span class="w"> </span>password
+<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-authentication-method<span class="w"> </span>password
 </code></pre></div>
 <details class="failure">
 <summary>If you get an error <code>command failed: duplicate entry</code> when running the previous command</summary>
 <p>Remove the previous entry and recreate like so:</p>
 <div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>delete<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-authentication-method<span class="w"> </span>*
-security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-role<span class="w"> </span>harvest2-rest-role<span class="w"> </span>-authentication-method<span class="w"> </span>password
+security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-authentication-method<span class="w"> </span>password
 </code></pre></div>
 </details>
 <p>Using certificate authentication</p>
-<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-role<span class="w"> </span>harvest2-rest-role<span class="w"> </span>-authentication-method<span class="w"> </span>cert
+<div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-authentication-method<span class="w"> </span>cert
 </code></pre></div>
 <details class="failure">
 <summary>If you get an error <code>command failed: duplicate entry</code> when running the previous command</summary>
 <p>Remove the previous entry and recreate like so:</p>
 <div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>delete<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-authentication-method<span class="w"> </span>*
-security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-role<span class="w"> </span>harvest2-rest-role<span class="w"> </span>-authentication-method<span class="w"> </span>cert
+security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-authentication-method<span class="w"> </span>cert
 </code></pre></div>
 </details>
 <h4 id="zapi-least-privilege-role">Zapi least-privilege role<a class="headerlink" href="#zapi-least-privilege-role" title="Permanent link">&para;</a></h4>
@@ -2567,10 +2567,10 @@ Warnings are fine.</p>
 <div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span>all<span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;set&quot;</span>
 security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;statistics&quot;</span>
 
-security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/cluster
-security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest2-rest-role<span class="w"> </span>-access<span class="w"> </span>read_create<span class="w"> </span>-api<span class="w"> </span>/api/private/cli
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>-api<span class="w"> </span>/api/cluster
+security<span class="w"> </span>login<span class="w"> </span>rest-role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role<span class="w"> </span>-access<span class="w"> </span>read_create<span class="w"> </span>-api<span class="w"> </span>/api/private/cli
 security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>ssh<span class="w"> </span>-authentication-method<span class="w"> </span>password<span class="w"> </span>-role<span class="w"> </span>harvest2-role
-security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-authentication-method<span class="w"> </span>password<span class="w"> </span>-role<span class="w"> </span>harvest2-rest-role
+security<span class="w"> </span>login<span class="w"> </span>create<span class="w"> </span>-user-or-group-name<span class="w"> </span>harvest2<span class="w"> </span>-application<span class="w"> </span>http<span class="w"> </span>-authentication-method<span class="w"> </span>password<span class="w"> </span>-role<span class="w"> </span>harvest-rest-role
 </code></pre></div>
 <p><strong>Note:</strong> If you are monitoring an FSx system with the <code>fsxadmin</code> role, you only need to give the following permission for StatPerf to work:</p>
 <div class="highlight"><pre><span></span><code>security<span class="w"> </span>login<span class="w"> </span>role<span class="w"> </span>create<span class="w"> </span>-role<span class="w"> </span>fsxadmin<span class="w"> </span>-cmddirname<span class="w"> </span><span class="s2">&quot;system node run&quot;</span>
