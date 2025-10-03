@@ -1015,7 +1015,7 @@
         },
         {
           "exemplar": false,
-          "expr": "aggr_labels{aggr=~\"$Aggregate\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}",
+          "expr": "aggr_labels{aggr=~\"$Aggregate\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"} * on(datacenter, cluster, node) group_left(model) node_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1075,21 +1075,23 @@
               "type": true
             },
             "indexByName": {
-              "Value #A": 4,
-              "Value #B": 6,
-              "Value #C": 7,
-              "Value #D": 8,
-              "Value #E": 9,
-              "Value #F": 11,
-              "Value #G": 14,
-              "Value #H": 10,
-              "aggr": 3,
+              "Value #A": 5,
+              "Value #B": 7,
+              "Value #C": 8,
+              "Value #D": 9,
+              "Value #E": 10,
+              "Value #F": 12,
+              "Value #G": 15,
+              "Value #H": 11,
+              "aggr": 4,
+              "cloud_stores": 16,
               "cluster": 1,
               "datacenter": 0,
-              "is_encrypted": 5,
+              "is_encrypted": 6,
+              "model": 3,
               "node": 2,
-              "state": 12,
-              "type": 13
+              "state": 13,
+              "type": 14
             },
             "renameByName": {
               "Value #A": "Status",
@@ -1098,8 +1100,12 @@
               "Value #D": "Space",
               "Value #E": "Used",
               "Value #F": "Used %",
+              "Value #G": "",
               "Value #H": "Available",
-              "is_encrypted": "Encrypted"
+              "aggr": "",
+              "is_encrypted": "Encrypted",
+              "model": "Node Model",
+              "node": ""
             }
           }
         }
