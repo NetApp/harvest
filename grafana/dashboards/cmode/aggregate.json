@@ -1015,7 +1015,7 @@
         },
         {
           "exemplar": false,
-          "expr": "aggr_labels{aggr=~\"$Aggregate\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"} * on(datacenter, cluster, node) group_left(model) node_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}",
+          "expr": "aggr_labels{aggr=~\"$Aggregate\",cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}\n* on (datacenter, cluster, node) group_left (model)\n  node_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"}",
           "format": "table",
           "hide": false,
           "instant": true,
