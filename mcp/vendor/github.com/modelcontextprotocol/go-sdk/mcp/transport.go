@@ -104,8 +104,12 @@ func (t *InMemoryTransport) Connect(context.Context) (Connection, error) {
 	return newIOConn(t.rwc), nil
 }
 
-// NewInMemoryTransports returns two [InMemoryTransports] that connect to each
-// other.
+// NewInMemoryTransports returns two [InMemoryTransport] objects that connect
+// to each other.
+//
+// The resulting transports are symmetrical: use either to connect to a server,
+// and then the other to connect to a client. Servers must be connected before
+// clients, as the client initializes the MCP session during connection.
 func NewInMemoryTransports() (*InMemoryTransport, *InMemoryTransport) {
 	c1, c2 := net.Pipe()
 	return &InMemoryTransport{c1}, &InMemoryTransport{c2}
@@ -230,7 +234,7 @@ func (s *loggingConn) Read(ctx context.Context) (jsonrpc.Message, error) {
 
 	if err != nil {
 		s.mu.Lock()
-		fmt.Fprintf(s.w, "read error: %v", err)
+		fmt.Fprintf(s.w, "read error: %v\n", err)
 		s.mu.Unlock()
 	} else {
 		data, err := jsonrpc2.EncodeMessage(msg)
@@ -250,7 +254,7 @@ func (s *loggingConn) Write(ctx context.Context, msg jsonrpc.Message) error {
 	err := s.delegate.Write(ctx, msg)
 	if err != nil {
 		s.mu.Lock()
-		fmt.Fprintf(s.w, "write error: %v", err)
+		fmt.Fprintf(s.w, "write error: %v\n", err)
 		s.mu.Unlock()
 	} else {
 		data, err := jsonrpc2.EncodeMessage(msg)
