@@ -1,0 +1,30 @@
+name:             Snapshot
+query:            api/private/cli/snapshot
+object:           snapshot
+
+counters:
+  - ^^snapshot                                   => snapshot
+  - ^^volume                                     => volume
+  - ^^vserver                                    => svm
+  - ^create_time                                 => create_time
+  - ^owners                                      => owners
+  - ^snapmirror_label                            => snapmirror_label
+  - ^tags                                        => tags
+  - afs_used                                     => restore_size
+  - snaplock_expiry_time(timestamp)              => snaplock_expiry_time
+  - filter:
+      - privilege_level=diagnostic
+      - snapmirror_label=anti-ransomware-main-backup
+
+plugins:
+  - Snapshot
+
+export_options:
+  instance_keys:
+    - snapshot
+    - svm
+    - volume
+  instance_labels:
+    - create_time
+    - owners
+    - snapmirror_label
