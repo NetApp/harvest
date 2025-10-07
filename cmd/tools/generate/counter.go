@@ -171,6 +171,7 @@ var (
 		"path_",
 		"qtree_",
 		"smb2_",
+		"snapshot_snaplock_expiry_time",
 		"snapshot_volume_violation_count",
 		"snapshot_volume_violation_total_size",
 		"storage_unit_",
