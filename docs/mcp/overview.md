@@ -61,5 +61,5 @@ For information about Harvest deployment and configuration, see:
 ## Next Steps
 
 - [Install the MCP Server](installation.md)
-- [Configure Environment Variables](configuration.md)
+- [Configure Environment Variables](installation.md#configuration)
 - Try the [Usage Examples](examples.md)
