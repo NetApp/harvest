@@ -2726,7 +2726,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Restore Size"
+                  "options": "Restore size"
                 },
                 "properties": [
                   {
