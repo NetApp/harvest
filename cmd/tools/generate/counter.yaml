@@ -1403,6 +1403,31 @@ counters:
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/qos_workload.yaml
 
+  - Name: qos_workload_min_throughput_iops
+    Description: Minimum throughput IOPs allowed for the workload.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/qos_workload.yaml
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapi/cdot/9.8.0/qos_workload.yaml
+
+
+  - Name: qos_workload_min_throughput_mbps
+    Description: Minimum throughput Mbps allowed for the workload.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/qos_workload.yaml
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapi/cdot/9.8.0/qos_workload.yaml
+
   - Name: shelf_fan_rpm
     Description: Fan Rotation Per Minute.
     APIs:

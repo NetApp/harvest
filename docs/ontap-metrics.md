@@ -16294,6 +16294,36 @@ The `qos_workload_max_throughput_mbps` metric is visualized in the following Gra
 
 
 
+### qos_workload_min_throughput_iops
+
+Minimum throughput IOPs allowed for the workload.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/qos_workload.yaml |
+| ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/qos_workload.yaml |
+
+The `qos_workload_min_throughput_iops` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Workload | Adaptive QoS Workload Utilization | table | [Adaptive QoS Workload IOPs Utilization (%)](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=239) |
+///
+
+
+
+### qos_workload_min_throughput_mbps
+
+Minimum throughput Mbps allowed for the workload.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/qos_workload.yaml |
+| ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/qos_workload.yaml |
+
+
+
 ### qos_write_data
 
 This is the amount of data written per second to the filer by the workload.

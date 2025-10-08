@@ -13,6 +13,8 @@ import (
 var metrics = []string{
 	"max_throughput_iops",
 	"max_throughput_mbps",
+	"min_throughput_iops",
+	"min_throughput_mbps",
 }
 
 type Workload struct {
@@ -55,6 +57,7 @@ func (w *Workload) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *co
 			continue
 		}
 		collectors.SetThroughput(data, instance, "max_xput", "max_throughput_iops", "max_throughput_mbps", w.SLogger)
+		collectors.SetThroughput(data, instance, "min_xput", "min_throughput_iops", "min_throughput_mbps", w.SLogger)
 	}
 
 	return nil, nil, nil
