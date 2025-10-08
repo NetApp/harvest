@@ -1721,6 +1721,8 @@
   "style": "dark",
   "tags": [
     "harvest",
+    "ontap",
+    "cdot",
     "storagegrid"
   ],
   "templating": {
