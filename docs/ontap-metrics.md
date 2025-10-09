@@ -18587,13 +18587,21 @@ The `snapshot_restore_size` metric is visualized in the following Grafana dashbo
 
 
 
-### snapshot_snaplock_expiry_time
+### snapshot_create_time
 
-SnapLock expiry time for the snapshot, if the snapshot is taken on a SnapLock volume. A snapshot is not allowed to be deleted or renamed until the SnapLock ComplianceClock time goes beyond this retention time. This option can be set during snapshot POST and snapshot PATCH on snapshot locking enabled volumes. This field will no longer be supported in a future release. Use snaplock.expiry_time instead.
+Creation time of the snapshot. It is the volume access time when the snapshot was created.
 
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/private/cli/snapshot` | `snaplock_expiry_time` | conf/rest/9.6.0/snapshot.yaml |
+| API    | Endpoint | Metric        | Template |
+|--------|----------|---------------|---------|
+| REST | `api/private/cli/snapshot` | `create_time` | conf/rest/9.6.0/snapshot.yaml |
+
+The `snapshot_create_time` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Security | Volume Encryption & Anti-ransomware Status | table | [Anti-ransomware Snapshots](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=156) |
+///
 
 
 

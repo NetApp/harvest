@@ -2273,6 +2273,14 @@ counters:
         ONTAPCounter: afs_used
         Template: conf/rest/9.6.0/snapshot.yaml
 
+  - Name: snapshot_create_time
+    Description: Creation time of the snapshot. It is the volume access time when the snapshot was created.
+    APIs:
+      - API: REST
+        Endpoint: api/private/cli/snapshot
+        ONTAPCounter: create_time
+        Template: conf/rest/9.6.0/snapshot.yaml
+
 
   # ASAr2 cluster metrics
   - Name: cluster_space_available

@@ -120,7 +120,7 @@ var excludeCounters = []string{
 	"snapmirror_",
 	"snapshot_labels",
 	"snapshot_restore_size",
-	"snapshot_snaplock_expiry_time",
+	"snapshot_create_time",
 	"snapshot_volume_violation_count",
 	"snapshot_volume_violation_total_size",
 	"support_auto_update_labels",
