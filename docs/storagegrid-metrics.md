@@ -5,7 +5,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 [#1577](https://github.com/NetApp/harvest/issues/1577#issue-1471478260) for details.
 
 ```
-Creation Date : 2025-Sep-23
+Creation Date : 2025-Oct-08
 StorageGrid Version: 11.6.0
 ```
 
@@ -40,6 +40,44 @@ The logical size of all objects for the tenant. <span class="key">Description of
 ## Metrics
 
 
+### storagegrid_content_buckets_and_containers
+
+Total number of S3 buckets and Swift containers
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `prometheus` | `storagegrid_content_buckets_and_containers` | conf/storagegrid/11.6.0/storagegrid_metrics.yaml |
+
+The `storagegrid_content_buckets_and_containers` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| StorageGrid: S3 | Content | timeseries | [Top $TopResources Nodes by S3 Buckets and Swift Containers](/d/storagegrid-s3/storagegrid3a-s3?orgId=1&viewPanel=10) |
+///
+
+
+
+### storagegrid_content_objects
+
+Total number of S3 and Swift objects (excluding empty objects)
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `prometheus` | `storagegrid_content_objects` | conf/storagegrid/11.6.0/storagegrid_metrics.yaml |
+
+The `storagegrid_content_objects` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| StorageGrid: S3 | Content | timeseries | [Top $TopResources Nodes by S3 and Swift Objects (excluding empty objects)](/d/storagegrid-s3/storagegrid3a-s3?orgId=1&viewPanel=9) |
+///
+
+
+
 ### storagegrid_ilm_awaiting_client_objects
 
 Total number of objects on this node awaiting ILM evaluation because of client operation (for example, ingest)
@@ -55,6 +93,26 @@ The `storagegrid_ilm_awaiting_client_objects` metric is visualized in the follow
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | StorageGrid: Overview | Information Lifecycle Management (ILM) | timeseries | [ILM queue (Objects)](/d/storagegrid-overview/storagegrid3a-overview?orgId=1&viewPanel=16) |
+| StorageGrid: S3 | ILM | timeseries | [Top $TopResources Nodes by ILM Awaiting Object Evaluation (incoming from clients)](/d/storagegrid-s3/storagegrid3a-s3?orgId=1&viewPanel=12) |
+///
+
+
+
+### storagegrid_ilm_awaiting_total_objects
+
+Total number of objects on this node awaiting ILM evaluation
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `prometheus` | `storagegrid_ilm_awaiting_total_objects` | conf/storagegrid/11.6.0/storagegrid_metrics.yaml |
+
+The `storagegrid_ilm_awaiting_total_objects` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| StorageGrid: S3 | ILM | timeseries | [Top $TopResources Nodes by ILM Awaiting Object Evaluation](/d/storagegrid-s3/storagegrid3a-s3?orgId=1&viewPanel=13) |
 ///
 
 
@@ -74,6 +132,44 @@ The `storagegrid_ilm_objects_processed` metric is visualized in the following Gr
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | StorageGrid: Overview | Information Lifecycle Management (ILM) | timeseries | [ILM evaluation rate (objects/second)](/d/storagegrid-overview/storagegrid3a-overview?orgId=1&viewPanel=18) |
+///
+
+
+
+### storagegrid_ilm_scan_objects_per_second
+
+ILM scan rate (objects per second)
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `prometheus` | `storagegrid_ilm_scan_objects_per_second` | conf/storagegrid/11.6.0/storagegrid_metrics.yaml |
+
+The `storagegrid_ilm_scan_objects_per_second` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| StorageGrid: S3 | ILM | timeseries | [Top $TopResources Nodes by ILM Scan Rate](/d/storagegrid-s3/storagegrid3a-s3?orgId=1&viewPanel=11) |
+///
+
+
+
+### storagegrid_metadata_queries_average_latency_milliseconds
+
+Average metadata query latency in milliseconds
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `prometheus` | `storagegrid_metadata_queries_average_latency_milliseconds` | conf/storagegrid/11.6.0/storagegrid_metrics.yaml |
+
+The `storagegrid_metadata_queries_average_latency_milliseconds` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| StorageGrid: S3 | Content | timeseries | [Top $TopResources Nodes by Metadata Query Latency](/d/storagegrid-s3/storagegrid3a-s3?orgId=1&viewPanel=6) |
 ///
 
 
@@ -273,6 +369,49 @@ The `storagegrid_private_s3_total_requests` metric is visualized in the followin
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | StorageGrid: Overview | Performance | timeseries | [S3 operations](/d/storagegrid-overview/storagegrid3a-overview?orgId=1&viewPanel=24) |
+| StorageGrid: S3 | Highlights | timeseries | [Top $TopResources Nodes by GET Operations](/d/storagegrid-s3/storagegrid3a-s3?orgId=1&viewPanel=201) |
+| StorageGrid: S3 | Highlights | timeseries | [Top $TopResources Nodes by DELETE Operations](/d/storagegrid-s3/storagegrid3a-s3?orgId=1&viewPanel=203) |
+| StorageGrid: S3 | Highlights | timeseries | [Top $TopResources Nodes by POST Operations](/d/storagegrid-s3/storagegrid3a-s3?orgId=1&viewPanel=205) |
+| StorageGrid: S3 | Highlights | timeseries | [Top $TopResources Nodes by PUT Operations](/d/storagegrid-s3/storagegrid3a-s3?orgId=1&viewPanel=202) |
+| StorageGrid: S3 | Highlights | timeseries | [Top $TopResources Nodes by HEAD Operations](/d/storagegrid-s3/storagegrid3a-s3?orgId=1&viewPanel=204) |
+///
+
+
+
+### storagegrid_s3_data_transfers_bytes_ingested
+
+S3 data upload rate (ingestion) in bytes
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `prometheus` | `storagegrid_s3_data_transfers_bytes_ingested` | conf/storagegrid/11.6.0/storagegrid_metrics.yaml |
+
+The `storagegrid_s3_data_transfers_bytes_ingested` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| StorageGrid: S3 | Highlights | timeseries | [Top $TopResources Nodes by S3 Upload Rate](/d/storagegrid-s3/storagegrid3a-s3?orgId=1&viewPanel=4) |
+///
+
+
+
+### storagegrid_s3_data_transfers_bytes_retrieved
+
+S3 data download rate (retrieval) in bytes
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `prometheus` | `storagegrid_s3_data_transfers_bytes_retrieved` | conf/storagegrid/11.6.0/storagegrid_metrics.yaml |
+
+The `storagegrid_s3_data_transfers_bytes_retrieved` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| StorageGrid: S3 | Highlights | timeseries | [Top $TopResources Nodes by S3 Download Rate](/d/storagegrid-s3/storagegrid3a-s3?orgId=1&viewPanel=5) |
 ///
 
 
@@ -292,6 +431,7 @@ The `storagegrid_s3_operations_failed` metric is visualized in the following Gra
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | StorageGrid: Overview | Performance | timeseries | [S3 API requests](/d/storagegrid-overview/storagegrid3a-overview?orgId=1&viewPanel=28) |
+| StorageGrid: S3 | Highlights | timeseries | [Top $TopResources Nodes by S3 Operations per Second (failed)](/d/storagegrid-s3/storagegrid3a-s3?orgId=1&viewPanel=2) |
 ///
 
 
@@ -311,6 +451,7 @@ The `storagegrid_s3_operations_successful` metric is visualized in the following
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | StorageGrid: Overview | Performance | timeseries | [S3 API requests](/d/storagegrid-overview/storagegrid3a-overview?orgId=1&viewPanel=28) |
+| StorageGrid: S3 | Highlights | timeseries | [Top $TopResources Nodes by S3 Successful Operations](/d/storagegrid-s3/storagegrid3a-s3?orgId=1&viewPanel=1) |
 ///
 
 
@@ -330,6 +471,7 @@ The `storagegrid_s3_operations_unauthorized` metric is visualized in the followi
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | StorageGrid: Overview | Performance | timeseries | [S3 API requests](/d/storagegrid-overview/storagegrid3a-overview?orgId=1&viewPanel=28) |
+| StorageGrid: S3 | Highlights | timeseries | [Top $TopResources Nodes by S3 Operations per Second (unauthorized)](/d/storagegrid-s3/storagegrid3a-s3?orgId=1&viewPanel=3) |
 ///
 
 
@@ -351,6 +493,7 @@ The `storagegrid_storage_utilization_data_bytes` metric is visualized in the fol
 | StorageGrid: Overview | Highlights | table | [Data space usage breakdown](/d/storagegrid-overview/storagegrid3a-overview?orgId=1&viewPanel=37) |
 | StorageGrid: Overview | Highlights | timeseries | [Data storage over time](/d/storagegrid-overview/storagegrid3a-overview?orgId=1&viewPanel=40) |
 | StorageGrid: Overview | Nodes | timeseries | [Top $TopResources nodes by data usage](/d/storagegrid-overview/storagegrid3a-overview?orgId=1&viewPanel=20) |
+| StorageGrid: S3 | Capacity | timeseries | [Top $TopResources Nodes by Used Storage for Data](/d/storagegrid-s3/storagegrid3a-s3?orgId=1&viewPanel=8) |
 ///
 
 
@@ -393,6 +536,25 @@ The `storagegrid_storage_utilization_metadata_bytes` metric is visualized in the
 
 
 
+### storagegrid_storage_utilization_total_space_bytes
+
+Total storage space available in bytes
+
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `prometheus` | `storagegrid_storage_utilization_total_space_bytes` | conf/storagegrid/11.6.0/storagegrid_metrics.yaml |
+
+The `storagegrid_storage_utilization_total_space_bytes` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| StorageGrid: S3 | Capacity | timeseries | [Top $TopResources Nodes by Percent Usable Space](/d/storagegrid-s3/storagegrid3a-s3?orgId=1&viewPanel=7) |
+///
+
+
+
 ### storagegrid_storage_utilization_usable_space_bytes
 
 The total amount of object storage space remaining
@@ -409,6 +571,7 @@ The `storagegrid_storage_utilization_usable_space_bytes` metric is visualized in
 |--------|----------|--------|--------|
 | StorageGrid: Overview | Highlights | table | [Data space usage breakdown](/d/storagegrid-overview/storagegrid3a-overview?orgId=1&viewPanel=37) |
 | StorageGrid: Overview | Nodes | timeseries | [Top $TopResources nodes by data usage](/d/storagegrid-overview/storagegrid3a-overview?orgId=1&viewPanel=20) |
+| StorageGrid: S3 | Capacity | timeseries | [Top $TopResources Nodes by Percent Usable Space](/d/storagegrid-s3/storagegrid3a-s3?orgId=1&viewPanel=7) |
 ///
 
 
