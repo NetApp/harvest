@@ -2807,6 +2807,15 @@
               "interval": "",
               "legendFormat": "",
               "refId": "B"
+            },
+            {
+              "exemplar": false,
+              "expr": "snapshot_create_time{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "C"
             }
           ],
           "title": "Anti-ransomware Snapshots",
@@ -2824,7 +2833,7 @@
                     "svm",
                     "volume",
                     "Value #B",
-                    "create_time"
+                    "Value #C"
                   ]
                 }
               }
@@ -2834,9 +2843,27 @@
               "options": {}
             },
             {
+              "id": "calculateField",
+              "options": {
+                "alias": "create_time",
+                "binary": {
+                  "left": "Value #C",
+                  "operator": "*",
+                  "reducer": "sum",
+                  "right": "1000"
+                },
+                "mode": "binary",
+                "reduce": {
+                  "reducer": "sum"
+                },
+                "replaceFields": false
+              }
+            },
+            {
               "id": "organize",
               "options": {
                 "excludeByName": {
+                  "Value #C": true,
                   "isEncrypted": true,
                   "isHardwareEncrypted": true
                 },
@@ -2853,7 +2880,6 @@
                 },
                 "renameByName": {
                   "Value #B": "Restore size",
-                  "Value #C": "Creation time",
                   "antiRansomwareState": "Anti-ransomware Status",
                   "create_time": "Creation time",
                   "owners": "Owners",

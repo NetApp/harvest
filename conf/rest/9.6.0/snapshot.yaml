@@ -6,12 +6,11 @@ counters:
   - ^^snapshot                                   => snapshot
   - ^^volume                                     => volume
   - ^^vserver                                    => svm
-  - ^create_time                                 => create_time
   - ^owners                                      => owners
   - ^snapmirror_label                            => snapmirror_label
   - ^tags                                        => tags
   - afs_used                                     => restore_size
-  - snaplock_expiry_time(timestamp)              => snaplock_expiry_time
+  - create_time(timestamp)                       => create_time
   - filter:
       - privilege_level=diagnostic
       - snapmirror_label=anti-ransomware-main-backup
