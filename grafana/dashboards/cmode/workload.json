@@ -3197,7 +3197,7 @@
             },
             {
               "exemplar": false,
-              "expr": "label_join(\n        1024 * 1024 * 1024 * 1024\n      *\n        qos_workload_min_throughput_iops{cluster=\"umeng-aff300-01-02\",datacenter=\"rest\"}\n    / on (policy_group, svm) group_left ()\n      label_replace(\n        qos_policy_adaptive_peak_iops{cluster=\"umeng-aff300-01-02\",datacenter=\"rest\"},\n        \"policy_group\",\n        \"$1\",\n        \"name\",\n        \"(.*)\"\n      )\n  unless on (policy_group, svm)\n    (\n          qos_workload_min_throughput_iops{cluster=\"umeng-aff300-01-02\",datacenter=\"rest\"}\n        - on (policy_group, svm)\n          label_replace(\n            qos_policy_adaptive_absolute_min_iops{cluster=\"umeng-aff300-01-02\",datacenter=\"rest\"},\n            \"policy_group\",\n            \"$1\",\n            \"name\",\n            \"(.*)\"\n          )\n      ==\n        0\n    ),\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"workload\"\n)",
+              "expr": "label_join(\n        1024 * 1024 * 1024 * 1024\n      *\n        qos_workload_max_throughput_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}\n    / on (policy_group, svm) group_left ()\n      label_replace(\n        qos_policy_adaptive_peak_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n        \"policy_group\",\n        \"$1\",\n        \"name\",\n        \"(.*)\"\n      )\n  unless on (policy_group, svm)\n    (\n          qos_workload_min_throughput_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}\n        - on (policy_group, svm)\n          label_replace(\n            qos_policy_adaptive_absolute_min_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n            \"policy_group\",\n            \"$1\",\n            \"name\",\n            \"(.*)\"\n          )\n      ==\n        0\n    ),\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"workload\"\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -3254,6 +3254,7 @@
                   "datacenter 5": true,
                   "file 2": true,
                   "file 3": true,
+                  "file 4": true,
                   "instance": true,
                   "instance 2": true,
                   "instance 3": true,
