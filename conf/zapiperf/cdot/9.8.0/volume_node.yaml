@@ -1,3 +1,6 @@
+# This template is disabled by default. The ONTAP volume metrics provided via ZapiPerf and RestPerf may be incomplete.
+#  ONTAP volume metrics may be missing other ops, including NAS protocol ops.
+# See: https://github.com/NetApp/harvest/discussions/3900
 
 name:                     VolumeNode
 query:                    volume:node

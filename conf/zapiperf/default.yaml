@@ -34,7 +34,6 @@ objects:
   Rwctx:                    rwctx.yaml
   SystemNode:               system_node.yaml
 #  TokenManager:             token_manager.yaml
-  VolumeNode:               volume_node.yaml
   WAFL:                     wafl.yaml
   WAFLAggr:                 wafl_hya_per_aggr.yaml
   WAFLSizer:                wafl_hya_sizer.yaml

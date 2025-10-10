@@ -1,3 +1,7 @@
+# This template is disabled by default. For ONTAP 9.10+, volume performance metrics are collected via KeyPerf instead for more complete data.
+# This template is disabled by default. The ONTAP volume metrics provided via ZapiPerf and RestPerf may be incomplete.
+#  ONTAP volume metrics may be missing other ops, including NAS protocol ops.
+# See: https://github.com/NetApp/harvest/discussions/3900
 
 name:                     VolumeNode
 query:                    api/cluster/counter/tables/volume:node
