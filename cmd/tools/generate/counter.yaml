@@ -2265,6 +2265,22 @@ counters:
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/volume.yaml
 
+  - Name: snapshot_restore_size
+    Description: Size of the active file system at the time the snapshot is captured. The actual size of the snapshot also includes those blocks trapped by other snapshots.
+    APIs:
+      - API: REST
+        Endpoint: api/private/cli/snapshot
+        ONTAPCounter: afs_used
+        Template: conf/rest/9.6.0/snapshot.yaml
+
+  - Name: snapshot_create_time
+    Description: Creation time of the snapshot. It is the volume access time when the snapshot was created.
+    APIs:
+      - API: REST
+        Endpoint: api/private/cli/snapshot
+        ONTAPCounter: create_time
+        Template: conf/rest/9.6.0/snapshot.yaml
+
 
   # ASAr2 cluster metrics
   - Name: cluster_space_available

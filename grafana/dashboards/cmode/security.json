@@ -605,7 +605,7 @@
           "refId": "A"
         }
       ],
-      "title": "Volume Anti-ransomware Status %",
+      "title": "Volume Autonomous Ransomware Protection %",
       "transformations": [
         {
           "id": "calculateField",
@@ -698,7 +698,7 @@
           "refId": "A"
         }
       ],
-      "title": "SVM Anti-ransomware Status %",
+      "title": "SVM Autonomous Ransomware Protection %",
       "transformations": [
         {
           "id": "calculateField",
@@ -1279,7 +1279,7 @@
           "refId": "E"
         }
       ],
-      "title": "Volume Anti-ransomware Status",
+      "title": "Volume Autonomous Ransomware Protection",
       "transformations": [],
       "type": "piechart"
     },
@@ -1356,7 +1356,7 @@
           "refId": "B"
         }
       ],
-      "title": "SVM Anti-ransomware Status",
+      "title": "SVM Autonomous Ransomware Protection",
       "transformations": [],
       "type": "piechart"
     },
@@ -2219,7 +2219,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Volume encryption & anti-ransomware status.",
+          "description": "Volume encryption & Autonomous ransomware Protection.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2294,7 +2294,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Anti-ransomware Status"
+                  "options": "Autonomous Ransomware Protection"
                 },
                 "properties": [
                   {
@@ -2504,7 +2504,7 @@
               "refId": "A"
             }
           ],
-          "title": "Volume Encryption & Anti-ransomware Status",
+          "title": "Volume Encryption & Autonomous Ransomware Protection",
           "transformations": [
             {
               "id": "filterFieldsByName",
@@ -2566,7 +2566,7 @@
                   "volume": 2
                 },
                 "renameByName": {
-                  "antiRansomwareState": "Anti-ransomware Status",
+                  "antiRansomwareState": "Autonomous Ransomware Protection",
                   "isEncrypted": "",
                   "isHardwareEncrypted": "",
                   "state": "State"
@@ -2575,9 +2575,325 @@
             }
           ],
           "type": "table"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Detail of anti-ransomware snapshot.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "transparent",
+                "mode": "fixed"
+              },
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "locale"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "cluster"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Cluster"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 160
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-cluster/ontap-cluster?orgId=1&${Datacenter:queryparam}&${__url_time_range}&var-Cluster=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "svm"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "SVM"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 130
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-svm/ontap-svm?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-SVM=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "volume"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Volume"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 150
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-volume/ontap-volume?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${SVM:queryparam}&${__url_time_range}&var-Volume=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "datacenter"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Datacenter"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 140
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-datacenter/ontap-datacenter?orgId=1&${__url_time_range}&var-Datacenter=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Creation time"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 155
+                  },
+                  {
+                    "id": "unit",
+                    "value": "dateTimeAsIso"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Restore size"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 134
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "snapshot"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 310
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "snapmirror_label"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 220
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "create_time"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 210
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 7,
+            "w": 24,
+            "x": 0,
+            "y": 41
+          },
+          "id": 156,
+          "options": {
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "snapshot_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "snapshot_restore_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "B"
+            },
+            {
+              "exemplar": false,
+              "expr": "snapshot_create_time{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",svm=~\"$SVM\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "C"
+            }
+          ],
+          "title": "Anti-ransomware Snapshots",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "cluster",
+                    "datacenter",
+                    "owners",
+                    "snapmirror_label",
+                    "snapshot",
+                    "svm",
+                    "volume",
+                    "Value #B",
+                    "Value #C"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "merge",
+              "options": {}
+            },
+            {
+              "id": "calculateField",
+              "options": {
+                "alias": "create_time",
+                "binary": {
+                  "left": "Value #C",
+                  "operator": "*",
+                  "reducer": "sum",
+                  "right": "1000"
+                },
+                "mode": "binary",
+                "reduce": {
+                  "reducer": "sum"
+                },
+                "replaceFields": false
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Value #C": true,
+                  "isEncrypted": true,
+                  "isHardwareEncrypted": true
+                },
+                "indexByName": {
+                  "Value #B": 7,
+                  "cluster": 1,
+                  "create_time": 5,
+                  "datacenter": 0,
+                  "owners": 8,
+                  "snapmirror_label": 6,
+                  "snapshot": 4,
+                  "svm": 2,
+                  "volume": 3
+                },
+                "renameByName": {
+                  "Value #B": "Restore size",
+                  "antiRansomwareState": "Autonomous Ransomware Protection",
+                  "create_time": "Creation time",
+                  "owners": "Owners",
+                  "snapmirror_label": "SnapMirror label",
+                  "snapshot": "Snapshot",
+                  "state": "State"
+                }
+              }
+            }
+          ],
+          "type": "table"
         }
       ],
-      "title": "Volume Encryption & Anti-ransomware Status",
+      "title": "Volume Encryption & Autonomous Ransomware Protection",
       "type": "row"
     },
     {
@@ -4779,7 +5095,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Anti-ransomware Status"
+                  "options": "Autonomous Ransomware Protection"
                 },
                 "properties": [
                   {
@@ -4997,7 +5313,7 @@
                   "Value #G": "LDAP Payload Signing",
                   "Value #I": "LDAP Encryption",
                   "activediruser": "Active Directory Users",
-                  "anti_ransomware_state": "Anti-ransomware Status",
+                  "anti_ransomware_state": "Autonomous Ransomware Protection",
                   "asupEnabled": "",
                   "asupHttpsConfigured": "",
                   "audit_protocol_enabled": "Audit Log",
