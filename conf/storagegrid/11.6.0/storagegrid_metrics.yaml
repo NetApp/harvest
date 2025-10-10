@@ -7,8 +7,13 @@ schedule:
 
 counters:
   - node_cpu_seconds_total                                                => storagegrid_node_cpu_seconds_total
+  - storagegrid_content_buckets_and_containers
+  - storagegrid_content_objects
   - storagegrid_ilm_awaiting_client_objects
+  - storagegrid_ilm_awaiting_total_objects
   - storagegrid_ilm_objects_processed
+  - storagegrid_ilm_scan_objects_per_second
+  - storagegrid_metadata_queries_average_latency_milliseconds
   - storagegrid_network_received_bytes
   - storagegrid_network_transmitted_bytes
   - storagegrid_node_cpu_utilization_percentage
@@ -19,12 +24,15 @@ counters:
   - storagegrid_private_load_balancer_storage_rx_bytes
   - storagegrid_private_load_balancer_storage_tx_bytes
   - storagegrid_private_s3_total_requests
+  - storagegrid_s3_data_transfers_bytes_ingested
+  - storagegrid_s3_data_transfers_bytes_retrieved
   - storagegrid_s3_operations_failed
-  - storagegrid_s3_operations_successful                                 
+  - storagegrid_s3_operations_successful
   - storagegrid_s3_operations_unauthorized
   - storagegrid_storage_utilization_data_bytes
   - storagegrid_storage_utilization_metadata_allowed_bytes
   - storagegrid_storage_utilization_metadata_bytes
+  - storagegrid_storage_utilization_total_space_bytes
   - storagegrid_storage_utilization_usable_space_bytes
 
 plugins:
