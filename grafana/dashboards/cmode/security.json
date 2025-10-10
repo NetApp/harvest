@@ -605,7 +605,7 @@
           "refId": "A"
         }
       ],
-      "title": "Volume Anti-ransomware Status %",
+      "title": "Volume Autonomous Ransomware Protection %",
       "transformations": [
         {
           "id": "calculateField",
@@ -698,7 +698,7 @@
           "refId": "A"
         }
       ],
-      "title": "SVM Anti-ransomware Status %",
+      "title": "SVM Autonomous Ransomware Protection %",
       "transformations": [
         {
           "id": "calculateField",
@@ -1279,7 +1279,7 @@
           "refId": "E"
         }
       ],
-      "title": "Volume Anti-ransomware Status",
+      "title": "Volume Autonomous Ransomware Protection",
       "transformations": [],
       "type": "piechart"
     },
@@ -1356,7 +1356,7 @@
           "refId": "B"
         }
       ],
-      "title": "SVM Anti-ransomware Status",
+      "title": "SVM Autonomous Ransomware Protection",
       "transformations": [],
       "type": "piechart"
     },
@@ -2219,7 +2219,7 @@
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Volume encryption & anti-ransomware status.",
+          "description": "Volume encryption & Autonomous ransomware Protection.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2294,7 +2294,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Anti-ransomware Status"
+                  "options": "Autonomous Ransomware Protection"
                 },
                 "properties": [
                   {
@@ -2504,7 +2504,7 @@
               "refId": "A"
             }
           ],
-          "title": "Volume Encryption & Anti-ransomware Status",
+          "title": "Volume Encryption & Autonomous Ransomware Protection",
           "transformations": [
             {
               "id": "filterFieldsByName",
@@ -2566,7 +2566,7 @@
                   "volume": 2
                 },
                 "renameByName": {
-                  "antiRansomwareState": "Anti-ransomware Status",
+                  "antiRansomwareState": "Autonomous Ransomware Protection",
                   "isEncrypted": "",
                   "isHardwareEncrypted": "",
                   "state": "State"
@@ -2880,7 +2880,7 @@
                 },
                 "renameByName": {
                   "Value #B": "Restore size",
-                  "antiRansomwareState": "Anti-ransomware Status",
+                  "antiRansomwareState": "Autonomous Ransomware Protection",
                   "create_time": "Creation time",
                   "owners": "Owners",
                   "snapmirror_label": "SnapMirror label",
@@ -2893,7 +2893,7 @@
           "type": "table"
         }
       ],
-      "title": "Volume Encryption & Anti-ransomware Status",
+      "title": "Volume Encryption & Autonomous Ransomware Protection",
       "type": "row"
     },
     {
@@ -5095,7 +5095,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Anti-ransomware Status"
+                  "options": "Autonomous Ransomware Protection"
                 },
                 "properties": [
                   {
@@ -5313,7 +5313,7 @@
                   "Value #G": "LDAP Payload Signing",
                   "Value #I": "LDAP Encryption",
                   "activediruser": "Active Directory Users",
-                  "anti_ransomware_state": "Anti-ransomware Status",
+                  "anti_ransomware_state": "Autonomous Ransomware Protection",
                   "asupEnabled": "",
                   "asupHttpsConfigured": "",
                   "audit_protocol_enabled": "Audit Log",
