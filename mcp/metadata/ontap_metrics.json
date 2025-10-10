@@ -1066,6 +1066,8 @@
   "qos_workload_labels": "This metric provides information about QosWorkload",
   "qos_workload_max_throughput_iops": "Maximum throughput IOPs allowed for the workload.",
   "qos_workload_max_throughput_mbps": "Maximum throughput Mbps allowed for the workload.",
+  "qos_workload_min_throughput_iops": "Minimum throughput IOPs allowed for the workload.",
+  "qos_workload_min_throughput_mbps": "Minimum throughput Mbps allowed for the workload.",
   "qos_write_data": "This is the amount of data written per second to the filer by the workload.",
   "qos_write_latency": "This is the average response time for write requests that were initiated by the workload.",
   "qos_write_ops": "This is the workload's write operations that completed during the measurement interval; measured per second.",

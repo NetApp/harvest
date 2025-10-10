@@ -23,7 +23,7 @@ var unitToMb = map[string]float32{
 	"tb": 1000 * 1000,
 }
 
-type MaxXput struct {
+type Xput struct {
 	IOPS string
 	Mbps string
 }
@@ -56,9 +56,9 @@ func QosSetLabel(labelName string, data *matrix.Matrix, instance *matrix.Instanc
 	}
 }
 
-func ZapiXputToRest(zapi string) (MaxXput, error) {
+func ZapiXputToRest(zapi string) (Xput, error) {
 	lower := strings.ToLower(zapi)
-	empty := MaxXput{IOPS: "", Mbps: ""}
+	empty := Xput{IOPS: "", Mbps: ""}
 	if lower == "inf" || lower == "0" || lower == "" {
 		return empty, nil
 	}
@@ -71,7 +71,7 @@ func ZapiXputToRest(zapi string) (MaxXput, error) {
 		if err1 != nil || err2 != nil {
 			return empty, errors.Join(err1, err2)
 		}
-		return MaxXput{
+		return Xput{
 			IOPS: l.IOPS,
 			Mbps: r.Mbps,
 		}, nil
@@ -89,13 +89,13 @@ func ZapiXputToRest(zapi string) (MaxXput, error) {
 			// Convert from IOPS/GB to IOPS/TB. ONTAP default is IOPS/TB
 			iops *= 1000
 		}
-		return MaxXput{IOPS: strconv.Itoa(iops), Mbps: ""}, nil
+		return Xput{IOPS: strconv.Itoa(iops), Mbps: ""}, nil
 	}
 
 	// check for iops
 	matches = iopsRe.FindStringSubmatch(lower)
 	if len(matches) == 2 {
-		return MaxXput{IOPS: matches[1], Mbps: ""}, nil
+		return Xput{IOPS: matches[1], Mbps: ""}, nil
 	}
 
 	// check for bps and normalize units to Mbps
@@ -119,5 +119,5 @@ func ZapiXputToRest(zapi string) (MaxXput, error) {
 	// Trim unnecessary trailing zeros and decimal points
 	mbpsStr = strings.TrimRight(mbpsStr, "0")
 	mbpsStr = strings.TrimRight(mbpsStr, ".")
-	return MaxXput{Mbps: mbpsStr, IOPS: ""}, nil
+	return Xput{Mbps: mbpsStr, IOPS: ""}, nil
 }
