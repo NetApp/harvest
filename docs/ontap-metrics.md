@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Oct-07
+Creation Date : 2025-Oct-08
 ONTAP Version: 9.16.1
 ```
 
@@ -18526,24 +18526,6 @@ The `snapmirror_update_successful_count` metric is visualized in the following G
 
 
 
-### snapshot_labels
-
-This metric provides information about Snapshot
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/private/cli/snapshot` | `Harvest generated` | conf/rest/9.6.0/snapshot.yaml |
-
-The `snapshot_labels` metric is visualized in the following Grafana dashboards:
-    
-/// html | div.grafana-table
-| Dashboard | Row | Type | Panel |
-|--------|----------|--------|--------|
-| ONTAP: Security | Volume Encryption & Autonomous Ransomware Protection | table | [Anti-ransomware Snapshots](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=156) |
-///
-
-
-
 ### snapshot_policy_labels
 
 This metric provides information about SnapshotPolicy
@@ -18565,42 +18547,6 @@ The `snapshot_policy_labels` metric is visualized in the following Grafana dashb
 | ONTAP: Data Protection | Snapshot Copies | table | [Volume count by the number of Snapshot copies](/d/cdot-data-protection/ontap3a-data protection?orgId=1&viewPanel=94) |
 | ONTAP: Data Protection | Local Policy | table | [Snapshot policies](/d/cdot-data-protection/ontap3a-data protection?orgId=1&viewPanel=101) |
 | ONTAP: Datacenter | Snapshots | piechart | [Snapshot Copies](/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=632) |
-///
-
-
-
-### snapshot_restore_size
-
-Size of the active file system at the time the snapshot is captured. The actual size of the snapshot also includes those blocks trapped by other snapshots.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/private/cli/snapshot` | `afs_used` | conf/rest/9.6.0/snapshot.yaml |
-
-The `snapshot_restore_size` metric is visualized in the following Grafana dashboards:
-    
-/// html | div.grafana-table
-| Dashboard | Row | Type | Panel |
-|--------|----------|--------|--------|
-| ONTAP: Security | Volume Encryption & Autonomous Ransomware Protection | table | [Anti-ransomware Snapshots](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=156) |
-///
-
-
-
-### snapshot_create_time
-
-Creation time of the snapshot. It is the volume access time when the snapshot was created.
-
-| API    | Endpoint | Metric        | Template |
-|--------|----------|---------------|---------|
-| REST | `api/private/cli/snapshot` | `create_time` | conf/rest/9.6.0/snapshot.yaml |
-
-The `snapshot_create_time` metric is visualized in the following Grafana dashboards:
-
-/// html | div.grafana-table
-| Dashboard | Row | Type | Panel |
-|--------|----------|--------|--------|
-| ONTAP: Security | Volume Encryption & Autonomous Ransomware Protection | table | [Anti-ransomware Snapshots](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=156) |
 ///
 
 
@@ -19197,10 +19143,10 @@ The `svm_labels` metric is visualized in the following Grafana dashboards:
 | ONTAP: Datacenter | Highlights | table | [Object Count](/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=660) |
 | ONTAP: Security | Highlights | stat | [Cluster Compliant %](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=214) |
 | ONTAP: Security | Highlights | stat | [SVM Compliant %](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=216) |
-| ONTAP: Security | Highlights | stat | [SVM Autonomous Ransomware Protection %](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=210) |
+| ONTAP: Security | Highlights | stat | [SVM Anti-ransomware Status %](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=210) |
 | ONTAP: Security | Highlights | piechart | [Cluster Compliant](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=215) |
 | ONTAP: Security | Highlights | piechart | [SVM Compliant](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=217) |
-| ONTAP: Security | Highlights | piechart | [SVM Autonomous Ransomware Protection](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=209) |
+| ONTAP: Security | Highlights | piechart | [SVM Anti-ransomware Status](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=209) |
 | ONTAP: Security | Cluster Compliance | table | [Cluster Compliance](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=219) |
 | ONTAP: Security | SVM Compliance | table | [SVM Compliance](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=225) |
 ///
@@ -22475,10 +22421,10 @@ The `volume_labels` metric is visualized in the following Grafana dashboards:
 | ONTAP: Quota | Space Usage | timeseries | [Top $TopResources Quotas by Files Used %](/d/cdot-quota/ontap3a-quota?orgId=1&viewPanel=10) |
 | ONTAP: S3 Object Storage | Highlights | table | [Bucket Overview](/d/cdot-s3-object-storage/ontap3a-s3 object storage?orgId=1&viewPanel=5) |
 | ONTAP: Security | Highlights | stat | [Volume Encryption %](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=207) |
-| ONTAP: Security | Highlights | stat | [Volume Autonomous Ransomware Protection %](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=208) |
+| ONTAP: Security | Highlights | stat | [Volume Anti-ransomware Status %](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=208) |
 | ONTAP: Security | Highlights | piechart | [Volume Encryption](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=204) |
-| ONTAP: Security | Highlights | piechart | [Volume Autonomous Ransomware Protection](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=205) |
-| ONTAP: Security | Volume Encryption & Autonomous Ransomware Protection | table | [Volume Encryption & Autonomous Ransomware Protection](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=155) |
+| ONTAP: Security | Highlights | piechart | [Volume Anti-ransomware Status](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=205) |
+| ONTAP: Security | Volume Encryption & Anti-ransomware Status | table | [Volume Encryption & Anti-ransomware Status](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=155) |
 | ONTAP: Security | Cluster Compliance | table | [Cluster Compliance](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=219) |
 | ONTAP: SnapMirror Sources | Highlights | stat | [Unprotected Volumes](/d/cdot-snapmirror/ontap3a-snapmirror sources?orgId=1&viewPanel=148) |
 | ONTAP: SnapMirror Sources | Highlights | stat | [Protected Volumes](/d/cdot-snapmirror/ontap3a-snapmirror sources?orgId=1&viewPanel=145) |

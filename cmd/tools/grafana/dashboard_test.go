@@ -2,8 +2,6 @@ package grafana
 
 import (
 	"fmt"
-	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
-	"github.com/netapp/harvest/v2/third_party/tidwall/sjson"
 	"maps"
 	"net/url"
 	"os"
@@ -15,6 +13,9 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+
+	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
+	"github.com/netapp/harvest/v2/third_party/tidwall/sjson"
 )
 
 const (
@@ -1001,7 +1002,7 @@ func checkTopKRange(t *testing.T, path string, data []byte) {
 var lookBackRe = regexp.MustCompile(`\[(.*?)]`)
 
 // ensureLookBack ensures that the look-back for a topk query is either 4m or 3h.
-// If the query contains a rate or deriv function, the look-back should be 4m
+// If the query contains a rate, deriv, or increase function, the look-back should be 4m
 // otherwise, the look-back should be 3h.
 // If the look-back is incorrect, the function returns a string describing the correct look-back
 func ensureLookBack(text string) string {
@@ -1027,9 +1028,9 @@ func ensureLookBack(text string) string {
 		if strings.Contains(text, "code=~\"[45].*\"") {
 			continue
 		}
-		if strings.Contains(function, "rate") || strings.Contains(function, "deriv") {
+		if strings.Contains(function, "rate") || strings.Contains(function, "deriv") || strings.Contains(function, "increase") {
 			if match[1] != "4m" {
-				return "rate/deriv want=[4m]"
+				return "rate/deriv/increase want=[4m]"
 			}
 		} else if match[1] != "3h" {
 			return "range lookback want=[3h]"
