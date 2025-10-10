@@ -397,6 +397,7 @@ func (r *Rest) PollData() (map[string]*matrix.Matrix, error) {
 		return nil
 	}
 
+	r.Logger.Debug("Fetching data", slog.String("href", r.Prop.Href))
 	startTime := time.Now()
 	if err := rest.FetchAllStream(r.Client, r.Prop.Href, processBatch); err != nil {
 		_, err2 := r.handleError(err)
