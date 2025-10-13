@@ -106,11 +106,6 @@ func (m *MetroclusterCheck) update(objectInfo string, object string, localCluste
 			newDetailInstance.SetLabel("volume", volumeName.ClonedString())
 			newDetailInstance.SetLabel("aggregate", aggregateName.ClonedString())
 			newDetailInstance.SetLabel("node", nodeName.ClonedString())
-			if localClusterName == clusterName {
-				newDetailInstance.SetLabel("type", "local")
-			} else {
-				newDetailInstance.SetLabel("type", "remote")
-			}
 
 			switch object {
 			case "volume":
@@ -120,6 +115,11 @@ func (m *MetroclusterCheck) update(objectInfo string, object string, localCluste
 			case "node":
 				m.setValue("node_status", newDetailInstance, result)
 			case "cluster":
+				if localClusterName == clusterName {
+					newDetailInstance.SetLabel("type", "local")
+				} else {
+					newDetailInstance.SetLabel("type", "remote")
+				}
 				m.setValue("cluster_status", newDetailInstance, result)
 			}
 		}
