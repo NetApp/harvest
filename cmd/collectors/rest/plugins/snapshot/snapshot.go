@@ -23,7 +23,9 @@ func (s *Snapshot) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *co
 			tagArray := strings.SplitSeq(tags, ",")
 			for tag := range tagArray {
 				if strings.Contains(tag, "VOPL_owner") {
-					instance.SetLabel("owners", strings.Split(tag, "=")[1])
+					if _, owners, found := strings.Cut(tag, "="); found {
+						instance.SetLabel("owners", owners)
+					}
 				}
 			}
 		}
