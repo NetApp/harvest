@@ -2897,7 +2897,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel displays the percentage of Input/Output Operations Per Second (IOPs) currently in use relative to the dynamically adjusted IOPs threshold, which is set by an adaptive QoS policy. Unlike fixed QoS settings, adaptive QoS policies allow the IOPs threshold to fluctuate based on predefined criteria and workload demands. The utilization percentage is determined by taking the current IOPs usage, dividing it by the adaptive IOPs threshold at that moment, and then multiplying by 100 to get a percentage.",
+          "description": "This panel displays the percentage of Input/Output Operations Per Second (IOPs) currently in use relative to the dynamically adjusted IOPs threshold, which is set by an adaptive QoS policy. Unlike fixed QoS settings, adaptive QoS policies allow the IOPs threshold to fluctuate based on predefined criteria and workload demands. The utilization percentage is determined by taking the current IOPs usage, dividing it by the adaptive IOPs threshold at that moment, and then multiplying by 100 to get a percentage.\n\n`Workload size` would be calculated only when the minimum IOPs exists and it's value is higher than absolute IOPs. \n\nWorkload size = Max IOPs/ Peak IOPs.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3129,10 +3129,6 @@
                   {
                     "id": "unit",
                     "value": "bytes"
-                  },
-                  {
-                    "id": "noValue",
-                    "value": "N/A"
                   }
                 ]
               }
@@ -3177,7 +3173,7 @@
             },
             {
               "exemplar": false,
-              "expr": "label_join(\n  qos_workload_max_throughput_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"workload\"\n)",
+              "expr": "label_join(\n    (qos_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"} * 0)\n  + on (cluster, datacenter, workload) group_right ()\n    qos_workload_max_throughput_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"workload\"\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -3187,7 +3183,7 @@
             },
             {
               "exemplar": false,
-              "expr": "label_join(\n  qos_workload_min_throughput_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"workload\"\n)",
+              "expr": "label_join(\n    (qos_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"} * 0)\n  + on (cluster, datacenter, workload) group_right ()\n    qos_workload_min_throughput_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"workload\"\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -3197,7 +3193,7 @@
             },
             {
               "exemplar": false,
-              "expr": "label_join(\n    (\n        qos_workload_min_throughput_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}\n      *\n        0\n    )\n  + on (workload) group_right ()\n    (\n            1024 * 1024 * 1024 * 1024\n          *\n            qos_workload_max_throughput_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}\n        / on (policy_group, svm) group_left ()\n          label_replace(\n            qos_policy_adaptive_peak_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n            \"policy_group\",\n            \"$1\",\n            \"name\",\n            \"(.*)\"\n          )\n      unless on (policy_group, svm)\n        (\n              qos_workload_min_throughput_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}\n            - on (policy_group, svm)\n              label_replace(\n                qos_policy_adaptive_absolute_min_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n                \"policy_group\",\n                \"$1\",\n                \"name\",\n                \"(.*)\"\n              )\n          ==\n            0\n        )\n    ),\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"workload\"\n)",
+              "expr": "label_join(\n    (\n        qos_workload_min_throughput_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}\n      *\n        0\n    )\n  + on (cluster, datacenter, workload) group_right ()\n    (\n            1024 * 1024 * 1024 * 1024\n          *\n            qos_workload_max_throughput_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}\n        / on (cluster, datacenter, policy_group, svm) group_left ()\n          label_replace(\n            qos_policy_adaptive_peak_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n            \"policy_group\",\n            \"$1\",\n            \"name\",\n            \"(.*)\"\n          )\n      unless on (cluster, datacenter, policy_group, svm)\n        (\n              qos_workload_min_throughput_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}\n            - on (cluster, datacenter, policy_group, svm)\n              label_replace(\n                qos_policy_adaptive_absolute_min_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n                \"policy_group\",\n                \"$1\",\n                \"name\",\n                \"(.*)\"\n              )\n          ==\n            0\n        )\n    ),\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"workload\"\n)",
               "format": "table",
               "hide": false,
               "instant": true,
