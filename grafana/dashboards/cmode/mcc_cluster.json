@@ -3423,7 +3423,7 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Type"
+                  "options": "Site"
                 },
                 "properties": [
                   {
@@ -3433,11 +3433,11 @@
                         "options": {
                           "local": {
                             "index": 1,
-                            "text": "local-site"
+                            "text": "Local"
                           },
                           "remote": {
                             "index": 0,
-                            "text": "remote-site"
+                            "text": "Remote"
                           }
                         },
                         "type": "value"
@@ -3511,7 +3511,7 @@
                   "job": "",
                   "name": "Checks",
                   "result": "Result",
-                  "type": "Type"
+                  "type": "Site"
                 }
               }
             }
