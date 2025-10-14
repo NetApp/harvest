@@ -23,7 +23,7 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 func (m *MetroclusterCheck) Init(conf.Remote) error {
 
 	pluginMetrics := []string{"cluster_status", "node_status", "aggr_status", "volume_status"}
-	pluginLabels := []string{"result", "name", "node", "aggregate", "volume"}
+	pluginLabels := []string{"result", "name", "node", "aggregate", "volume", "type"}
 
 	if err := m.InitAbc(); err != nil {
 		return err
@@ -52,20 +52,21 @@ func (m *MetroclusterCheck) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Ma
 
 	// Set all global labels
 	data := dataMap[m.Object]
+	localClusterName := data.GetGlobalLabels()["cluster"]
 	m.data.SetGlobalLabels(data.GetGlobalLabels())
 
 	for _, instance := range data.GetInstances() {
 		instance.SetExportable(false)
-		m.update(instance.GetLabel("cluster"), "cluster")
-		m.update(instance.GetLabel("node"), "node")
-		m.update(instance.GetLabel("aggregate"), "aggregate")
-		m.update(instance.GetLabel("volume"), "volume")
+		m.update(instance.GetLabel("cluster"), "cluster", localClusterName)
+		m.update(instance.GetLabel("node"), "node", localClusterName)
+		m.update(instance.GetLabel("aggregate"), "aggregate", localClusterName)
+		m.update(instance.GetLabel("volume"), "volume", localClusterName)
 	}
 
 	return []*matrix.Matrix{m.data}, nil, nil
 }
 
-func (m *MetroclusterCheck) update(objectInfo string, object string) {
+func (m *MetroclusterCheck) update(objectInfo string, object string, localClusterName string) {
 	var (
 		newDetailInstance *matrix.Instance
 		key               string
@@ -114,6 +115,11 @@ func (m *MetroclusterCheck) update(objectInfo string, object string) {
 			case "node":
 				m.setValue("node_status", newDetailInstance, result)
 			case "cluster":
+				if localClusterName == clusterName {
+					newDetailInstance.SetLabel("type", "local")
+				} else {
+					newDetailInstance.SetLabel("type", "remote")
+				}
 				m.setValue("cluster_status", newDetailInstance, result)
 			}
 		}
