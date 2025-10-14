@@ -260,11 +260,7 @@ security login create -user-or-group-name harvest2 -application ssh -authenticat
 security login create -user-or-group-name harvest2 -application http -authentication-method password -role harvest-rest-role
 ```
 
-**Note:** If you are monitoring an FSx system with the `fsxadmin` role, you only need to give the following permission for StatPerf to work:
-
-```bash
-security login role create -role fsxadmin -cmddirname "system node run"
-```
+**Note:** StatPerf Collector is not supported for FSx systems.
 
 #### 7-Mode CLI
 
