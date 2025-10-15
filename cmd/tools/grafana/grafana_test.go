@@ -163,7 +163,7 @@ func TestChainedParsing(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			wrappedInDef := `"definition": "` + tt.json + `"`
-			got := toChainedVar(wrappedInDef, "foo")
+			got := toChainedVar(wrappedInDef, "foo", "Foo")
 			assert.Equal(t, got, tt.want)
 		})
 	}
@@ -586,7 +586,7 @@ func TestAddLabel(t *testing.T) {
 
 			data := []byte(wrappedInDef)
 			for i := len(tt.labels) - 1; i >= 0; i-- {
-				data = addLabel(data, tt.labels[i], labelMap)
+				data = addLabel(data, tt.labels[i], cases.Title(language.Und).String(tt.labels[i]), labelMap)
 			}
 
 			formattedGot, err := formatJSON(data)
@@ -684,6 +684,39 @@ func TestValidateVarDefaults(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.input, func(t *testing.T) {
 			got := validateVarDefaults(tt.input)
+			assert.Equal(t, got, tt.want)
+		})
+	}
+}
+
+func TestConvertToCamelCase(t *testing.T) {
+	type test struct {
+		name  string
+		input string
+		want  string
+	}
+
+	tests := []test{
+		{
+			name:  "name with underscore",
+			input: `netapp_cluster`,
+			want:  `NetappCluster`,
+		},
+		{
+			name:  "name with space",
+			input: `netapp cluster`,
+			want:  `NetappCluster`,
+		},
+		{
+			name:  "name in lowercase",
+			input: `netappcluster`,
+			want:  `Netappcluster`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := convertToCamelCase(tt.input)
 			assert.Equal(t, got, tt.want)
 		})
 	}
