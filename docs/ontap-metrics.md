@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Oct-08
+Creation Date : 2025-Oct-15
 ONTAP Version: 9.16.1
 ```
 
@@ -12442,387 +12442,12 @@ The `node_uptime` metric is visualized in the following Grafana dashboards:
 
 
 
-### node_vol_cifs_other_latency
-
-Average time for the WAFL filesystem to process other CIFS operations to the volume; not including CIFS protocol request processing or network communication time which will also be included in client observed CIFS request latency
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `cifs.other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cifs.other_ops | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `cifs_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cifs_other_ops | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_cifs_other_ops
-
-Number of other CIFS operations per second to the volume
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `cifs.other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `cifs_other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_cifs_read_data
-
-Bytes read per second via CIFS
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `cifs.read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `cifs_read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_cifs_read_latency
-
-Average time for the WAFL filesystem to process CIFS read requests to the volume; not including CIFS protocol request processing or network communication time which will also be included in client observed CIFS request latency
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `cifs.read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cifs.read_ops | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `cifs_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cifs_read_ops | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_cifs_read_ops
-
-Number of CIFS read operations per second from the volume
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `cifs.read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `cifs_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_cifs_write_data
-
-Bytes written per second via CIFS
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `cifs.write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `cifs_write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_cifs_write_latency
-
-Average time for the WAFL filesystem to process CIFS write requests to the volume; not including CIFS protocol request processing or network communication time which will also be included in client observed CIFS request latency
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `cifs.write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cifs.write_ops | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `cifs_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> cifs_write_ops | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_cifs_write_ops
-
-Number of CIFS write operations per second to the volume
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `cifs.write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `cifs_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_fcp_other_latency
-
-Average time for the WAFL filesystem to process other FCP protocol operations to the volume; not including FCP protocol request processing or network communication time which will also be included in client observed FCP protocol request latency
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `fcp.other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> fcp.other_ops | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `fcp_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> fcp_other_ops | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_fcp_other_ops
-
-Number of other block protocol operations per second to the volume
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `fcp.other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `fcp_other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_fcp_read_data
-
-Bytes read per second via block protocol
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `fcp.read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `fcp_read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_fcp_read_latency
-
-Average time for the WAFL filesystem to process FCP protocol read operations to the volume; not including FCP protocol request processing or network communication time which will also be included in client observed FCP protocol request latency
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `fcp.read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> fcp.read_ops | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `fcp_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> fcp_read_ops | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_fcp_read_ops
-
-Number of block protocol read operations per second from the volume
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `fcp.read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `fcp_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_fcp_write_data
-
-Bytes written per second via block protocol
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `fcp.write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `fcp_write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_fcp_write_latency
-
-Average time for the WAFL filesystem to process FCP protocol write operations to the volume; not including FCP protocol request processing or network communication time which will also be included in client observed FCP protocol request latency
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `fcp.write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> fcp.write_ops | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `fcp_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> fcp_write_ops | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_fcp_write_ops
-
-Number of block protocol write operations per second to the volume
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `fcp.write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `fcp_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_iscsi_other_latency
-
-Average time for the WAFL filesystem to process other iSCSI protocol operations to the volume; not including iSCSI protocol request processing or network communication time which will also be included in client observed iSCSI protocol request latency
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `iscsi.other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> iscsi.other_ops | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `iscsi_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> iscsi_other_ops | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_iscsi_other_ops
-
-Number of other block protocol operations per second to the volume
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `iscsi.other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `iscsi_other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_iscsi_read_data
-
-Bytes read per second via block protocol
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `iscsi.read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `iscsi_read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_iscsi_read_latency
-
-Average time for the WAFL filesystem to process iSCSI protocol read operations to the volume; not including iSCSI protocol request processing or network communication time which will also be included in client observed iSCSI protocol request latency
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `iscsi.read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> iscsi.read_ops | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `iscsi_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> iscsi_read_ops | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_iscsi_read_ops
-
-Number of block protocol read operations per second from the volume
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `iscsi.read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `iscsi_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_iscsi_write_data
-
-Bytes written per second via block protocol
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `iscsi.write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `iscsi_write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_iscsi_write_latency
-
-Average time for the WAFL filesystem to process iSCSI protocol write operations to the volume; not including iSCSI protocol request processing or network communication time which will also be included in client observed iSCSI request latency
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `iscsi.write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> iscsi.write_ops | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `iscsi_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> iscsi_write_ops | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_iscsi_write_ops
-
-Number of block protocol write operations per second to the volume
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `iscsi.write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `iscsi_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_nfs_other_latency
-
-Average time for the WAFL filesystem to process other NFS operations to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `nfs.other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.other_ops | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `nfs_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_other_ops | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_nfs_other_ops
-
-Number of other NFS operations per second to the volume
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `nfs.other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `nfs_other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_nfs_read_data
-
-Bytes read per second via NFS
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `nfs.read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `nfs_read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_nfs_read_latency
-
-Average time for the WAFL filesystem to process NFS protocol read requests to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `nfs.read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.read_ops | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `nfs_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_read_ops | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_nfs_read_ops
-
-Number of NFS read operations per second from the volume
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `nfs.read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `nfs_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_nfs_write_data
-
-Bytes written per second via NFS
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `nfs.write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `nfs_write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_nfs_write_latency
-
-Average time for the WAFL filesystem to process NFS protocol write requests to the volume; not including NFS protocol request processing or network communication time, which will also be included in client observed NFS request latency
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `nfs.write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.write_ops | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `nfs_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_write_ops | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_nfs_write_ops
-
-Number of NFS write operations per second to the volume
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `nfs.write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `nfs_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_read_latency
-
-Average latency in microseconds for the WAFL filesystem to process read request to the volume; not including request processing or network communication time
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_read_ops | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
-### node_vol_write_latency
-
-Average latency in microseconds for the WAFL filesystem to process write request to the volume; not including request processing or network communication time
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume:node` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_write_ops | conf/restperf/9.12.0/volume_node.yaml |
-| ZAPI | `perf-object-get-instances volume:node` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/volume_node.yaml |
-
-
-
 ### node_volume_avg_latency
 
-Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time. node_volume_avg_latency is [volume_avg_latency](#volume_avg_latency) aggregated by `node`.
+Performance metric aggregated over all types of I/O operations. node_volume_avg_latency is [volume_avg_latency](#volume_avg_latency) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.latency_raw.total`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.total | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -12841,11 +12466,10 @@ The `node_volume_avg_latency` metric is visualized in the following Grafana dash
 
 ### node_volume_nfs_access_latency
 
-Average time for the WAFL filesystem to process NFS protocol access requests to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency. node_volume_nfs_access_latency is [volume_nfs_access_latency](#volume_nfs_access_latency) aggregated by `node`.
+The raw data component latency in microseconds measured within ONTAP for all operations of the given type. node_volume_nfs_access_latency is [volume_nfs_access_latency](#volume_nfs_access_latency) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.access_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.access_ops | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.nfs_ops_raw.access.total_time`<br><span class="key">Unit:</span> statistics.nfs_ops_raw.access.count<br><span class="key">Type:</span> average<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_access_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_access_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -12853,11 +12477,10 @@ Average time for the WAFL filesystem to process NFS protocol access requests to 
 
 ### node_volume_nfs_access_ops
 
-Number of NFS accesses per second to the volume. node_volume_nfs_access_ops is [volume_nfs_access_ops](#volume_nfs_access_ops) aggregated by `node`.
+Number of operations of the given type performed on this volume. node_volume_nfs_access_ops is [volume_nfs_access_ops](#volume_nfs_access_ops) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.access_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.nfs_ops_raw.access.count`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_access_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -12865,11 +12488,10 @@ Number of NFS accesses per second to the volume. node_volume_nfs_access_ops is [
 
 ### node_volume_nfs_getattr_latency
 
-Average time for the WAFL filesystem to process NFS protocol getattr requests to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency. node_volume_nfs_getattr_latency is [volume_nfs_getattr_latency](#volume_nfs_getattr_latency) aggregated by `node`.
+The raw data component latency in microseconds measured within ONTAP for all operations of the given type. node_volume_nfs_getattr_latency is [volume_nfs_getattr_latency](#volume_nfs_getattr_latency) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.getattr_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.getattr_ops | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.nfs_ops_raw.getattr.total_time`<br><span class="key">Unit:</span> statistics.nfs_ops_raw.getattr.count<br><span class="key">Type:</span> average<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_getattr_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_getattr_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -12877,11 +12499,10 @@ Average time for the WAFL filesystem to process NFS protocol getattr requests to
 
 ### node_volume_nfs_getattr_ops
 
-Number of NFS getattr per second to the volume. node_volume_nfs_getattr_ops is [volume_nfs_getattr_ops](#volume_nfs_getattr_ops) aggregated by `node`.
+Number of operations of the given type performed on this volume. node_volume_nfs_getattr_ops is [volume_nfs_getattr_ops](#volume_nfs_getattr_ops) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.getattr_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.nfs_ops_raw.getattr.count`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_getattr_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -12889,11 +12510,10 @@ Number of NFS getattr per second to the volume. node_volume_nfs_getattr_ops is [
 
 ### node_volume_nfs_lookup_latency
 
-Average time for the WAFL filesystem to process NFS protocol lookup requests to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency. node_volume_nfs_lookup_latency is [volume_nfs_lookup_latency](#volume_nfs_lookup_latency) aggregated by `node`.
+The raw data component latency in microseconds measured within ONTAP for all operations of the given type. node_volume_nfs_lookup_latency is [volume_nfs_lookup_latency](#volume_nfs_lookup_latency) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.lookup_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.lookup_ops | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.nfs_ops_raw.lookup.total_time`<br><span class="key">Unit:</span> statistics.nfs_ops_raw.lookup.count<br><span class="key">Type:</span> average<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_lookup_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_lookup_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -12901,11 +12521,10 @@ Average time for the WAFL filesystem to process NFS protocol lookup requests to 
 
 ### node_volume_nfs_lookup_ops
 
-Number of NFS lookups per second to the volume. node_volume_nfs_lookup_ops is [volume_nfs_lookup_ops](#volume_nfs_lookup_ops) aggregated by `node`.
+Number of operations of the given type performed on this volume. node_volume_nfs_lookup_ops is [volume_nfs_lookup_ops](#volume_nfs_lookup_ops) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.lookup_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.nfs_ops_raw.lookup.count`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_lookup_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -12913,55 +12532,50 @@ Number of NFS lookups per second to the volume. node_volume_nfs_lookup_ops is [v
 
 ### node_volume_nfs_other_latency
 
-Average time for the WAFL filesystem to process other NFS operations to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency. node_volume_nfs_other_latency is [volume_nfs_other_latency](#volume_nfs_other_latency) aggregated by `node`.
+Average time for the WAFL filesystem to process other NFS operations to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency (Note: This is applicable only for ONTAP 9.9 and below. Harvest uses KeyPerf collector for ONTAP 9.10 onwards.). node_volume_nfs_other_latency is [volume_nfs_other_latency](#volume_nfs_other_latency) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.other_ops | conf/restperf/9.12.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_other_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
 
 ### node_volume_nfs_other_ops
 
-Number of other NFS operations per second to the volume. node_volume_nfs_other_ops is [volume_nfs_other_ops](#volume_nfs_other_ops) aggregated by `node`.
+Number of other NFS operations per second to the volume (Note: This is applicable only for ONTAP 9.9 and below. Harvest uses KeyPerf collector for ONTAP 9.10 onwards.). node_volume_nfs_other_ops is [volume_nfs_other_ops](#volume_nfs_other_ops) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
 
 ### node_volume_nfs_punch_hole_latency
 
-Average time for the WAFL filesystem to process NFS protocol hole-punch requests to the volume. node_volume_nfs_punch_hole_latency is [volume_nfs_punch_hole_latency](#volume_nfs_punch_hole_latency) aggregated by `node`.
+Average time for the WAFL filesystem to process NFS protocol hole-punch requests to the volume (Note: This is applicable only for ONTAP 9.9 and below. Harvest uses KeyPerf collector for ONTAP 9.10 onwards.). node_volume_nfs_punch_hole_latency is [volume_nfs_punch_hole_latency](#volume_nfs_punch_hole_latency) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.punch_hole_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.punch_hole_ops | conf/restperf/9.12.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_punch_hole_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_punch_hole_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
 
 ### node_volume_nfs_punch_hole_ops
 
-Number of NFS hole-punch requests per second to the volume. node_volume_nfs_punch_hole_ops is [volume_nfs_punch_hole_ops](#volume_nfs_punch_hole_ops) aggregated by `node`.
+Number of NFS hole-punch requests per second to the volume (Note: This is applicable only for ONTAP 9.9 and below. Harvest uses KeyPerf collector for ONTAP 9.10 onwards.). node_volume_nfs_punch_hole_ops is [volume_nfs_punch_hole_ops](#volume_nfs_punch_hole_ops) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.punch_hole_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_punch_hole_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
 
 ### node_volume_nfs_read_latency
 
-Average time for the WAFL filesystem to process NFS protocol read requests to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency. node_volume_nfs_read_latency is [volume_nfs_read_latency](#volume_nfs_read_latency) aggregated by `node`.
+The raw data component latency in microseconds measured within ONTAP for all operations of the given type. node_volume_nfs_read_latency is [volume_nfs_read_latency](#volume_nfs_read_latency) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.read_ops | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.nfs_ops_raw.read.total_time`<br><span class="key">Unit:</span> statistics.nfs_ops_raw.read.count<br><span class="key">Type:</span> average<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_read_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -12969,11 +12583,10 @@ Average time for the WAFL filesystem to process NFS protocol read requests to th
 
 ### node_volume_nfs_read_ops
 
-Number of NFS read operations per second from the volume. node_volume_nfs_read_ops is [volume_nfs_read_ops](#volume_nfs_read_ops) aggregated by `node`.
+Number of operations of the given type performed on this volume. node_volume_nfs_read_ops is [volume_nfs_read_ops](#volume_nfs_read_ops) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.nfs_ops_raw.read.count`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -12981,11 +12594,10 @@ Number of NFS read operations per second from the volume. node_volume_nfs_read_o
 
 ### node_volume_nfs_setattr_latency
 
-Average time for the WAFL filesystem to process NFS protocol setattr requests to the volume. node_volume_nfs_setattr_latency is [volume_nfs_setattr_latency](#volume_nfs_setattr_latency) aggregated by `node`.
+The raw data component latency in microseconds measured within ONTAP for all operations of the given type. node_volume_nfs_setattr_latency is [volume_nfs_setattr_latency](#volume_nfs_setattr_latency) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.setattr_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.setattr_ops | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.nfs_ops_raw.setattr.total_time`<br><span class="key">Unit:</span> statistics.nfs_ops_raw.setattr.count<br><span class="key">Type:</span> average<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_setattr_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_setattr_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -12993,11 +12605,10 @@ Average time for the WAFL filesystem to process NFS protocol setattr requests to
 
 ### node_volume_nfs_setattr_ops
 
-Number of NFS setattr requests per second to the volume. node_volume_nfs_setattr_ops is [volume_nfs_setattr_ops](#volume_nfs_setattr_ops) aggregated by `node`.
+Number of operations of the given type performed on this volume. node_volume_nfs_setattr_ops is [volume_nfs_setattr_ops](#volume_nfs_setattr_ops) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.setattr_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.nfs_ops_raw.setattr.count`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_setattr_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -13005,22 +12616,20 @@ Number of NFS setattr requests per second to the volume. node_volume_nfs_setattr
 
 ### node_volume_nfs_total_ops
 
-Number of total NFS operations per second to the volume. node_volume_nfs_total_ops is [volume_nfs_total_ops](#volume_nfs_total_ops) aggregated by `node`.
+Number of total NFS operations per second to the volume (Note: This is applicable only for ONTAP 9.9 and below. Harvest uses KeyPerf collector for ONTAP 9.10 onwards.). node_volume_nfs_total_ops is [volume_nfs_total_ops](#volume_nfs_total_ops) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
 
 ### node_volume_nfs_write_latency
 
-Average time for the WAFL filesystem to process NFS protocol write requests to the volume; not including NFS protocol request processing or network communication time, which will also be included in client observed NFS request latency. node_volume_nfs_write_latency is [volume_nfs_write_latency](#volume_nfs_write_latency) aggregated by `node`.
+The raw data component latency in microseconds measured within ONTAP for all operations of the given type. node_volume_nfs_write_latency is [volume_nfs_write_latency](#volume_nfs_write_latency) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.write_ops | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.nfs_ops_raw.write.total_time`<br><span class="key">Unit:</span> statistics.nfs_ops_raw.write.count<br><span class="key">Type:</span> average<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_write_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -13028,11 +12637,10 @@ Average time for the WAFL filesystem to process NFS protocol write requests to t
 
 ### node_volume_nfs_write_ops
 
-Number of NFS write operations per second to the volume. node_volume_nfs_write_ops is [volume_nfs_write_ops](#volume_nfs_write_ops) aggregated by `node`.
+Number of operations of the given type performed on this volume. node_volume_nfs_write_ops is [volume_nfs_write_ops](#volume_nfs_write_ops) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.nfs_ops_raw.write.count`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -13050,11 +12658,10 @@ Performance metric for other I/O operations. Other I/O operations can be metadat
 
 ### node_volume_other_latency
 
-Average latency in microseconds for the WAFL filesystem to process other operations to the volume; not including request processing or network communication time. node_volume_other_latency is [volume_other_latency](#volume_other_latency) aggregated by `node`.
+Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on. node_volume_other_latency is [volume_other_latency](#volume_other_latency) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_other_ops | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.latency_raw.other`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.other | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -13070,11 +12677,10 @@ The `node_volume_other_latency` metric is visualized in the following Grafana da
 
 ### node_volume_other_ops
 
-Number of other operations per second to the volume. node_volume_other_ops is [volume_other_ops](#volume_other_ops) aggregated by `node`.
+Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on. node_volume_other_ops is [volume_other_ops](#volume_other_ops) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `total_other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.iops_raw.other`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -13090,11 +12696,10 @@ The `node_volume_other_ops` metric is visualized in the following Grafana dashbo
 
 ### node_volume_read_data
 
-Bytes read per second. node_volume_read_data is [volume_read_data](#volume_read_data) aggregated by `node`.
+Performance metric for read I/O operations. node_volume_read_data is [volume_read_data](#volume_read_data) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `bytes_read`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.read`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -13113,11 +12718,10 @@ The `node_volume_read_data` metric is visualized in the following Grafana dashbo
 
 ### node_volume_read_latency
 
-Average latency in microseconds for the WAFL filesystem to process read request to the volume; not including request processing or network communication time. node_volume_read_latency is [volume_read_latency](#volume_read_latency) aggregated by `node`.
+Performance metric for read I/O operations. node_volume_read_latency is [volume_read_latency](#volume_read_latency) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_read_ops | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.latency_raw.read`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.read | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -13134,11 +12738,10 @@ The `node_volume_read_latency` metric is visualized in the following Grafana das
 
 ### node_volume_read_ops
 
-Number of read operations per second from the volume. node_volume_read_ops is [volume_read_ops](#volume_read_ops) aggregated by `node`.
+Performance metric for read I/O operations. node_volume_read_ops is [volume_read_ops](#volume_read_ops) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `total_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.iops_raw.read`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -13174,11 +12777,10 @@ The `node_volume_total_data` metric is visualized in the following Grafana dashb
 
 ### node_volume_total_ops
 
-Number of operations per second serviced by the volume. node_volume_total_ops is [volume_total_ops](#volume_total_ops) aggregated by `node`.
+Performance metric aggregated over all types of I/O operations. node_volume_total_ops is [volume_total_ops](#volume_total_ops) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.iops_raw.total`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -13197,11 +12799,10 @@ The `node_volume_total_ops` metric is visualized in the following Grafana dashbo
 
 ### node_volume_write_data
 
-Bytes written per second. node_volume_write_data is [volume_write_data](#volume_write_data) aggregated by `node`.
+Performance metric for write I/O operations. node_volume_write_data is [volume_write_data](#volume_write_data) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `bytes_written`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.write`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -13220,11 +12821,10 @@ The `node_volume_write_data` metric is visualized in the following Grafana dashb
 
 ### node_volume_write_latency
 
-Average latency in microseconds for the WAFL filesystem to process write request to the volume; not including request processing or network communication time. node_volume_write_latency is [volume_write_latency](#volume_write_latency) aggregated by `node`.
+Performance metric for write I/O operations. node_volume_write_latency is [volume_write_latency](#volume_write_latency) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_write_ops | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.latency_raw.write`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.write | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -13242,11 +12842,10 @@ The `node_volume_write_latency` metric is visualized in the following Grafana da
 
 ### node_volume_write_ops
 
-Number of write operations per second to the volume. node_volume_write_ops is [volume_write_ops](#volume_write_ops) aggregated by `node`.
+Performance metric for write I/O operations. node_volume_write_ops is [volume_write_ops](#volume_write_ops) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `total_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.iops_raw.write`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -21406,7 +21005,7 @@ Number of operations of the given type performed on this volume. svm_vol_nfs_loo
 
 ### svm_vol_nfs_other_latency
 
-Average time for the WAFL filesystem to process other NFS operations to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency. svm_vol_nfs_other_latency is [volume_nfs_other_latency](#volume_nfs_other_latency) aggregated by `svm`.
+Average time for the WAFL filesystem to process other NFS operations to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency (Note: This is applicable only for ONTAP 9.9 and below. Harvest uses KeyPerf collector for ONTAP 9.10 onwards.). svm_vol_nfs_other_latency is [volume_nfs_other_latency](#volume_nfs_other_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -21416,7 +21015,7 @@ Average time for the WAFL filesystem to process other NFS operations to the volu
 
 ### svm_vol_nfs_other_ops
 
-Number of other NFS operations per second to the volume. svm_vol_nfs_other_ops is [volume_nfs_other_ops](#volume_nfs_other_ops) aggregated by `svm`.
+Number of other NFS operations per second to the volume (Note: This is applicable only for ONTAP 9.9 and below. Harvest uses KeyPerf collector for ONTAP 9.10 onwards.). svm_vol_nfs_other_ops is [volume_nfs_other_ops](#volume_nfs_other_ops) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -21426,7 +21025,7 @@ Number of other NFS operations per second to the volume. svm_vol_nfs_other_ops i
 
 ### svm_vol_nfs_punch_hole_latency
 
-Average time for the WAFL filesystem to process NFS protocol hole-punch requests to the volume. svm_vol_nfs_punch_hole_latency is [volume_nfs_punch_hole_latency](#volume_nfs_punch_hole_latency) aggregated by `svm`.
+Average time for the WAFL filesystem to process NFS protocol hole-punch requests to the volume (Note: This is applicable only for ONTAP 9.9 and below. Harvest uses KeyPerf collector for ONTAP 9.10 onwards.). svm_vol_nfs_punch_hole_latency is [volume_nfs_punch_hole_latency](#volume_nfs_punch_hole_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -21436,7 +21035,7 @@ Average time for the WAFL filesystem to process NFS protocol hole-punch requests
 
 ### svm_vol_nfs_punch_hole_ops
 
-Number of NFS hole-punch requests per second to the volume. svm_vol_nfs_punch_hole_ops is [volume_nfs_punch_hole_ops](#volume_nfs_punch_hole_ops) aggregated by `svm`.
+Number of NFS hole-punch requests per second to the volume (Note: This is applicable only for ONTAP 9.9 and below. Harvest uses KeyPerf collector for ONTAP 9.10 onwards.). svm_vol_nfs_punch_hole_ops is [volume_nfs_punch_hole_ops](#volume_nfs_punch_hole_ops) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -21490,7 +21089,7 @@ Number of operations of the given type performed on this volume. svm_vol_nfs_set
 
 ### svm_vol_nfs_total_ops
 
-Number of total NFS operations per second to the volume. svm_vol_nfs_total_ops is [volume_nfs_total_ops](#volume_nfs_total_ops) aggregated by `svm`.
+Number of total NFS operations per second to the volume (Note: This is applicable only for ONTAP 9.9 and below. Harvest uses KeyPerf collector for ONTAP 9.10 onwards.). svm_vol_nfs_total_ops is [volume_nfs_total_ops](#volume_nfs_total_ops) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -22137,11 +21736,10 @@ The `volume_autosize_shrink_threshold_percent` metric is visualized in the follo
 
 ### volume_avg_latency
 
-Average latency in microseconds for the WAFL filesystem to process all the operations on the volume; not including request processing or network communication time
+Performance metric aggregated over all types of I/O operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `average_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.latency_raw.total`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.total | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `avg_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -22574,11 +22172,10 @@ The `volume_new_status` metric is visualized in the following Grafana dashboards
 
 ### volume_nfs_access_latency
 
-Average time for the WAFL filesystem to process NFS protocol access requests to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency.
+The raw data component latency in microseconds measured within ONTAP for all operations of the given type.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.access_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.access_ops | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.nfs_ops_raw.access.total_time`<br><span class="key">Unit:</span> statistics.nfs_ops_raw.access.count<br><span class="key">Type:</span> average<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_access_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_access_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -22586,11 +22183,10 @@ Average time for the WAFL filesystem to process NFS protocol access requests to 
 
 ### volume_nfs_access_ops
 
-Number of NFS accesses per second to the volume.
+Number of operations of the given type performed on this volume.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.access_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.nfs_ops_raw.access.count`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_access_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -22598,11 +22194,10 @@ Number of NFS accesses per second to the volume.
 
 ### volume_nfs_getattr_latency
 
-Average time for the WAFL filesystem to process NFS protocol getattr requests to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency.
+The raw data component latency in microseconds measured within ONTAP for all operations of the given type.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.getattr_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.getattr_ops | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.nfs_ops_raw.getattr.total_time`<br><span class="key">Unit:</span> statistics.nfs_ops_raw.getattr.count<br><span class="key">Type:</span> average<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_getattr_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_getattr_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -22610,11 +22205,10 @@ Average time for the WAFL filesystem to process NFS protocol getattr requests to
 
 ### volume_nfs_getattr_ops
 
-Number of NFS getattr per second to the volume.
+Number of operations of the given type performed on this volume.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.getattr_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.nfs_ops_raw.getattr.count`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_getattr_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -22622,11 +22216,10 @@ Number of NFS getattr per second to the volume.
 
 ### volume_nfs_lookup_latency
 
-Average time for the WAFL filesystem to process NFS protocol lookup requests to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency.
+The raw data component latency in microseconds measured within ONTAP for all operations of the given type.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.lookup_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.lookup_ops | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.nfs_ops_raw.lookup.total_time`<br><span class="key">Unit:</span> statistics.nfs_ops_raw.lookup.count<br><span class="key">Type:</span> average<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_lookup_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_lookup_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -22634,11 +22227,10 @@ Average time for the WAFL filesystem to process NFS protocol lookup requests to 
 
 ### volume_nfs_lookup_ops
 
-Number of NFS lookups per second to the volume.
+Number of operations of the given type performed on this volume.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.lookup_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.nfs_ops_raw.lookup.count`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_lookup_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -22646,55 +22238,50 @@ Number of NFS lookups per second to the volume.
 
 ### volume_nfs_other_latency
 
-Average time for the WAFL filesystem to process other NFS operations to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency
+Average time for the WAFL filesystem to process other NFS operations to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency (Note: This is applicable only for ONTAP 9.9 and below. Harvest uses KeyPerf collector for ONTAP 9.10 onwards.)
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.other_ops | conf/restperf/9.12.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_other_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
 
 ### volume_nfs_other_ops
 
-Number of other NFS operations per second to the volume
+Number of other NFS operations per second to the volume (Note: This is applicable only for ONTAP 9.9 and below. Harvest uses KeyPerf collector for ONTAP 9.10 onwards.)
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
 
 ### volume_nfs_punch_hole_latency
 
-Average time for the WAFL filesystem to process NFS protocol hole-punch requests to the volume.
+Average time for the WAFL filesystem to process NFS protocol hole-punch requests to the volume (Note: This is applicable only for ONTAP 9.9 and below. Harvest uses KeyPerf collector for ONTAP 9.10 onwards.)
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.punch_hole_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.punch_hole_ops | conf/restperf/9.12.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_punch_hole_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_punch_hole_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
 
 ### volume_nfs_punch_hole_ops
 
-Number of NFS hole-punch requests per second to the volume.
+Number of NFS hole-punch requests per second to the volume (Note: This is applicable only for ONTAP 9.9 and below. Harvest uses KeyPerf collector for ONTAP 9.10 onwards.)
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.punch_hole_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_punch_hole_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
 
 ### volume_nfs_read_latency
 
-Average time for the WAFL filesystem to process NFS protocol read requests to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency
+The raw data component latency in microseconds measured within ONTAP for all operations of the given type.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.read_ops | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.nfs_ops_raw.read.total_time`<br><span class="key">Unit:</span> statistics.nfs_ops_raw.read.count<br><span class="key">Type:</span> average<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_read_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -22702,11 +22289,10 @@ Average time for the WAFL filesystem to process NFS protocol read requests to th
 
 ### volume_nfs_read_ops
 
-Number of NFS read operations per second from the volume
+Number of operations of the given type performed on this volume.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.nfs_ops_raw.read.count`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -22714,11 +22300,10 @@ Number of NFS read operations per second from the volume
 
 ### volume_nfs_setattr_latency
 
-Average time for the WAFL filesystem to process NFS protocol setattr requests to the volume.
+The raw data component latency in microseconds measured within ONTAP for all operations of the given type.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.setattr_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.setattr_ops | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.nfs_ops_raw.setattr.total_time`<br><span class="key">Unit:</span> statistics.nfs_ops_raw.setattr.count<br><span class="key">Type:</span> average<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_setattr_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_setattr_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -22726,11 +22311,10 @@ Average time for the WAFL filesystem to process NFS protocol setattr requests to
 
 ### volume_nfs_setattr_ops
 
-Number of NFS setattr requests per second to the volume.
+Number of operations of the given type performed on this volume.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.setattr_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.nfs_ops_raw.setattr.count`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_setattr_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -22738,22 +22322,20 @@ Number of NFS setattr requests per second to the volume.
 
 ### volume_nfs_total_ops
 
-Number of total NFS operations per second to the volume.
+Number of total NFS operations per second to the volume (Note: This is applicable only for ONTAP 9.9 and below. Harvest uses KeyPerf collector for ONTAP 9.10 onwards.)
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
 
 
 ### volume_nfs_write_latency
 
-Average time for the WAFL filesystem to process NFS protocol write requests to the volume; not including NFS protocol request processing or network communication time, which will also be included in client observed NFS request latency
+The raw data component latency in microseconds measured within ONTAP for all operations of the given type.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs.write_ops | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.nfs_ops_raw.write.total_time`<br><span class="key">Unit:</span> statistics.nfs_ops_raw.write.count<br><span class="key">Type:</span> average<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> nfs_write_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -22761,11 +22343,10 @@ Average time for the WAFL filesystem to process NFS protocol write requests to t
 
 ### volume_nfs_write_ops
 
-Number of NFS write operations per second to the volume
+Number of operations of the given type performed on this volume.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `nfs.write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.nfs_ops_raw.write.count`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `nfs_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -22821,11 +22402,10 @@ Performance metric for other I/O operations. Other I/O operations can be metadat
 
 ### volume_other_latency
 
-Average latency in microseconds for the WAFL filesystem to process other operations to the volume; not including request processing or network communication time
+Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_other_ops | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.latency_raw.other`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.other | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `other_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> other_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -22842,11 +22422,10 @@ The `volume_other_latency` metric is visualized in the following Grafana dashboa
 
 ### volume_other_ops
 
-Number of other operations per second to the volume
+Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `total_other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.iops_raw.other`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `other_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -22942,11 +22521,10 @@ The `volume_performance_tier_footprint_percent` metric is visualized in the foll
 
 ### volume_read_data
 
-Bytes read per second
+Performance metric for read I/O operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `bytes_read`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.read`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `read_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -22977,11 +22555,10 @@ The `volume_read_data` metric is visualized in the following Grafana dashboards:
 
 ### volume_read_latency
 
-Average latency in microseconds for the WAFL filesystem to process read request to the volume; not including request processing or network communication time
+Performance metric for read I/O operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_read_ops | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.latency_raw.read`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.read | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `read_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> read_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -23003,11 +22580,10 @@ The `volume_read_latency` metric is visualized in the following Grafana dashboar
 
 ### volume_read_ops
 
-Number of read operations per second from the volume
+Performance metric for read I/O operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `total_read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.iops_raw.read`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `read_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -23821,7 +23397,6 @@ This metric represents the total amount of data that has been read from and writ
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `bytes_read, bytes_written`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.total`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `volume` | `read_data, write_data`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -23882,11 +23457,10 @@ The `volume_total_metadata_footprint` metric is visualized in the following Graf
 
 ### volume_total_ops
 
-Number of operations per second serviced by the volume
+Performance metric aggregated over all types of I/O operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.iops_raw.total`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -23914,11 +23488,10 @@ The `volume_total_ops` metric is visualized in the following Grafana dashboards:
 
 ### volume_write_data
 
-Bytes written per second
+Performance metric for write I/O operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `bytes_written`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.throughput_raw.write`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `write_data`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -23949,11 +23522,10 @@ The `volume_write_data` metric is visualized in the following Grafana dashboards
 
 ### volume_write_latency
 
-Average latency in microseconds for the WAFL filesystem to process write request to the volume; not including request processing or network communication time
+Performance metric for write I/O operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> total_write_ops | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.latency_raw.write`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> volume_statistics.iops_raw.write | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `write_latency`<br><span class="key">Unit:</span> microsec<br><span class="key">Type:</span> average<br><span class="key">Base:</span> write_ops | conf/zapiperf/cdot/9.8.0/volume.yaml |
 
@@ -23975,11 +23547,10 @@ The `volume_write_latency` metric is visualized in the following Grafana dashboa
 
 ### volume_write_ops
 
-Number of write operations per second to the volume
+Performance metric for write I/O operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/volume` | `total_write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/volume.yaml |
 | KeyPerf | `api/storage/volumes` | `statistics.iops_raw.write`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/volume.yaml |
 | ZAPI | `perf-object-get-instances volume` | `write_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/volume.yaml |
 

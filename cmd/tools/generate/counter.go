@@ -4,6 +4,23 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"log"
+	"log/slog"
+	"maps"
+	"net/http"
+	"net/http/httputil"
+	"net/url"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"regexp"
+	"slices"
+	"sort"
+	"strings"
+	"text/template"
+	"time"
+
 	"github.com/goccy/go-yaml"
 	"github.com/netapp/harvest/v2/cmd/collectors/keyperf"
 	"github.com/netapp/harvest/v2/cmd/collectors/statperf"
@@ -23,22 +40,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	tw "github.com/netapp/harvest/v2/third_party/olekukonko/tablewriter"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
-	"io"
-	"log"
-	"log/slog"
-	"maps"
-	"net/http"
-	"net/http/httputil"
-	"net/url"
-	"os"
-	"os/exec"
-	"path/filepath"
-	"regexp"
-	"slices"
-	"sort"
-	"strings"
-	"text/template"
-	"time"
 )
 
 const (
@@ -65,8 +66,12 @@ var (
 	}
 	swaggerBytes         []byte
 	excludePerfTemplates = map[string]struct{}{
+		"volume_node.yaml":            {}, // Similar metrics node_volume_* are generated via KeyPerf volume.yaml
 		"workload_detail.yaml":        {},
 		"workload_detail_volume.yaml": {},
+	}
+	excludeRestPerfTemplates = map[string]struct{}{
+		"volume.yaml": {}, // Volume performance metrics now collected via KeyPerf
 	}
 	excludeCounters = map[string]struct{}{
 		"latency_histogram":       {},
@@ -455,6 +460,9 @@ func processRestCounters(dir string, client *rest.Client) map[string]Counter {
 
 	restPerfCounters := visitRestTemplates(filepath.Join(dir, "conf", "restperf"), client, func(path string, client *rest.Client) map[string]Counter {
 		if _, ok := excludePerfTemplates[filepath.Base(path)]; ok {
+			return nil
+		}
+		if _, ok := excludeRestPerfTemplates[filepath.Base(path)]; ok {
 			return nil
 		}
 		return processRestPerfCounters(path, client)
@@ -882,10 +890,17 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 					continue
 				}
 				if zapiTypeMap[name] != "string" {
+					description := zapiDescMap[name]
+					if strings.Contains(path, "volume.yaml") && model.Object == "volume" {
+						if description != "" {
+							description += " "
+						}
+						description += "(Note: This is applicable only for ONTAP 9.9 and below. Harvest uses KeyPerf collector for ONTAP 9.10 onwards.)"
+					}
 					co := Counter{
 						Object:      model.Object,
 						Name:        harvestName,
-						Description: zapiDescMap[name],
+						Description: description,
 						APIs: []MetricDef{
 							{
 								API:          "ZAPI",
