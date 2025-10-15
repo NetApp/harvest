@@ -18125,6 +18125,24 @@ The `snapmirror_update_successful_count` metric is visualized in the following G
 
 
 
+### snapshot_labels
+
+This metric provides information about Snapshot
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/snapshot` | `Harvest generated` | conf/rest/9.6.0/snapshot.yaml |
+
+The `snapshot_labels` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Security | Volume Encryption & Autonomous Ransomware Protection | table | [Anti-ransomware Snapshots](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=156) |
+///
+
+
+
 ### snapshot_policy_labels
 
 This metric provides information about SnapshotPolicy
@@ -18146,6 +18164,42 @@ The `snapshot_policy_labels` metric is visualized in the following Grafana dashb
 | ONTAP: Data Protection | Snapshot Copies | table | [Volume count by the number of Snapshot copies](/d/cdot-data-protection/ontap3a-data protection?orgId=1&viewPanel=94) |
 | ONTAP: Data Protection | Local Policy | table | [Snapshot policies](/d/cdot-data-protection/ontap3a-data protection?orgId=1&viewPanel=101) |
 | ONTAP: Datacenter | Snapshots | piechart | [Snapshot Copies](/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=632) |
+///
+
+
+
+### snapshot_restore_size
+
+Size of the active file system at the time the snapshot is captured. The actual size of the snapshot also includes those blocks trapped by other snapshots.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/snapshot` | `afs_used` | conf/rest/9.6.0/snapshot.yaml |
+
+The `snapshot_restore_size` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Security | Volume Encryption & Autonomous Ransomware Protection | table | [Anti-ransomware Snapshots](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=156) |
+///
+
+
+
+### snapshot_create_time
+
+Creation time of the snapshot. It is the volume access time when the snapshot was created.
+
+| API    | Endpoint | Metric        | Template |
+|--------|----------|---------------|---------|
+| REST | `api/private/cli/snapshot` | `create_time` | conf/rest/9.6.0/snapshot.yaml |
+
+The `snapshot_create_time` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Security | Volume Encryption & Autonomous Ransomware Protection | table | [Anti-ransomware Snapshots](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=156) |
 ///
 
 

@@ -24,6 +24,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/securityaccount"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/shelf"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/snapmirror"
+	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/snapshot"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/snapshotpolicy"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/snapshotviolation"
 	"github.com/netapp/harvest/v2/cmd/collectors/rest/plugins/svm"
@@ -531,6 +532,8 @@ func (r *Rest) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin
 		return collectors.NewSensor(abc)
 	case "Shelf":
 		return shelf.New(abc)
+	case "Snapshot":
+		return snapshot.New(abc)
 	case "SnapshotPolicy":
 		return snapshotpolicy.New(abc)
 	case "SnapshotViolation":
