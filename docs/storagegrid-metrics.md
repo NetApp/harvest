@@ -5,7 +5,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 [#1577](https://github.com/NetApp/harvest/issues/1577#issue-1471478260) for details.
 
 ```
-Creation Date : 2025-Oct-08
+Creation Date : 2025-Oct-15
 StorageGrid Version: 11.6.0
 ```
 
@@ -371,7 +371,6 @@ The `storagegrid_private_s3_total_requests` metric is visualized in the followin
 | StorageGrid: Overview | Performance | timeseries | [S3 operations](/d/storagegrid-overview/storagegrid3a-overview?orgId=1&viewPanel=24) |
 | StorageGrid: S3 | Highlights | timeseries | [Top $TopResources Nodes by GET Operations](/d/storagegrid-s3/storagegrid3a-s3?orgId=1&viewPanel=201) |
 | StorageGrid: S3 | Highlights | timeseries | [Top $TopResources Nodes by DELETE Operations](/d/storagegrid-s3/storagegrid3a-s3?orgId=1&viewPanel=203) |
-| StorageGrid: S3 | Highlights | timeseries | [Top $TopResources Nodes by POST Operations](/d/storagegrid-s3/storagegrid3a-s3?orgId=1&viewPanel=205) |
 | StorageGrid: S3 | Highlights | timeseries | [Top $TopResources Nodes by PUT Operations](/d/storagegrid-s3/storagegrid3a-s3?orgId=1&viewPanel=202) |
 | StorageGrid: S3 | Highlights | timeseries | [Top $TopResources Nodes by HEAD Operations](/d/storagegrid-s3/storagegrid3a-s3?orgId=1&viewPanel=204) |
 ///
