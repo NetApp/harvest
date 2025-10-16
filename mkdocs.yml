@@ -41,7 +41,9 @@ nav:
       - 'Unix': 'configure-unix.md'
       - 'CiscoRest': 'configure-cisco-rest.md'
   - Templates: 'configure-templates.md'
-  - Dashboards: 'dashboards.md'
+  - Dashboards:
+      - 'Dashboards': 'dashboards.md'
+      - 'StorageGRID Dashboard Integration': 'storagegrid-dashboard-integration.md'
   - Manage Harvest Pollers: 'manage-harvest.md'
   - Configure Harvest (advanced): 'configure-harvest-advanced.md'
   - Monitor Harvest: 'monitor-harvest.md'
