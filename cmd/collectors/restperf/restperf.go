@@ -1,6 +1,7 @@
 package restperf
 
 import (
+	"errors"
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
@@ -717,6 +718,22 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	startTime = time.Now()
 	r.Client.Metadata.Reset()
 
+	isWorkloadObj := isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query)
+	prevMat = r.Matrix[r.Object]
+
+	// Track old instances before processing batches
+	oldInstances := set.New()
+	// workload are handled in pollInstance
+	if !isWorkloadObj {
+		for key := range prevMat.GetInstances() {
+			oldInstances.Add(key)
+		}
+	}
+
+	// clone matrix without numeric data
+	curMat = prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
+	curMat.Reset()
+
 	dataQuery := path.Join(r.Prop.Query, "rows")
 
 	var filter []string
@@ -773,15 +790,19 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 	}
 
+	var lastErr error
+
 	for _, idBatch := range idBatches {
+		batchFilter := make([]string, 0, len(filter)+1)
+		batchFilter = append(batchFilter, filter...)
 		if idBatch != nil {
 			idFilter := "id=" + strings.Join(idBatch, "|")
-			filter = append(filter, idFilter)
+			batchFilter = append(batchFilter, idFilter)
 		}
 		href := rest.NewHrefBuilder().
 			APIPath(dataQuery).
 			Fields([]string{"*"}).
-			Filter(filter).
+			Filter(batchFilter).
 			MaxRecords(r.BatchSize).
 			ReturnTimeout(r.Prop.ReturnTimeOut).
 			Build()
@@ -809,20 +830,6 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 			}
 		}
 
-		// Track old instances before processing batches
-		oldInstances := set.New()
-		// The creation and deletion of objects with an instance schedule are managed through pollInstance.
-		if !r.hasInstanceSchedule {
-			for key := range r.Matrix[r.Object].GetInstances() {
-				oldInstances.Add(key)
-			}
-		}
-
-		prevMat = r.Matrix[r.Object]
-		// clone matrix without numeric data
-		curMat = prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
-		curMat.Reset()
-
 		processBatch := func(perfRecords []rest.PerfRecord) error {
 			if len(perfRecords) == 0 {
 				return nil
@@ -840,15 +847,25 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		apiD += time.Since(startTime)
 
 		if err != nil {
-			return nil, err
-		}
-
-		if !r.hasInstanceSchedule {
-			// Remove old instances that are not found in new instances
-			for key := range oldInstances.Iter() {
-				curMat.RemoveInstance(key)
+			if !errors.Is(err, errs.ErrNoInstance) {
+				return nil, err
 			}
+			lastErr = err
+			continue
 		}
+	}
+
+	// workload are handled in pollInstance
+	if !isWorkloadObj {
+		// Remove old instances that are not found in new instances
+		for key := range oldInstances.Iter() {
+			curMat.RemoveInstance(key)
+		}
+	}
+
+	// This error block is only for no instances
+	if lastErr != nil && len(curMat.GetInstances()) == 0 {
+		return nil, lastErr
 	}
 
 	if isWorkloadDetailObject(r.Prop.Query) {
