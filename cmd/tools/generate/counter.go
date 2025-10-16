@@ -906,7 +906,7 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 						Description: description,
 						APIs: []MetricDef{
 							{
-								API:          "ZAPI",
+								API:          "ZapiPerf",
 								Endpoint:     "perf-object-get-instances" + " " + model.Query,
 								Template:     path,
 								ONTAPCounter: name,
@@ -931,7 +931,7 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 							Description: zapiDescMap[rName],
 							APIs: []MetricDef{
 								{
-									API:          "ZAPI",
+									API:          "ZapiPerf",
 									Endpoint:     "perf-object-get-instances" + " " + model.Query,
 									Template:     path,
 									ONTAPCounter: rName,
@@ -965,7 +965,7 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 			Name:   model.Object + "_" + metric.Name,
 			APIs: []MetricDef{
 				{
-					API:          "ZAPI",
+					API:          "ZapiPerf",
 					Endpoint:     model.Query,
 					Template:     path,
 					ONTAPCounter: metric.Source,
@@ -1611,7 +1611,7 @@ func processRestPerfCounters(path string, client *rest.Client) map[string]Counte
 				Description: description,
 				APIs: []MetricDef{
 					{
-						API:          "REST",
+						API:          "RestPerf",
 						Endpoint:     model.Query,
 						Template:     path,
 						ONTAPCounter: ontapCounterName,
@@ -2009,7 +2009,7 @@ func validateMetrics(documentedRest, documentedZapi map[string]Counter, promethe
 		}
 
 		for _, api := range apis {
-			if api.API == "ZAPI" {
+			if api.API == "ZAPI" || api.API == "ZapiPerf" {
 				return true
 			}
 		}
@@ -2026,7 +2026,7 @@ func validateMetrics(documentedRest, documentedZapi map[string]Counter, promethe
 		}
 
 		for _, api := range apis {
-			if api.API == "REST" {
+			if api.API == "REST" || api.API == "RestPerf" {
 				return true
 			}
 		}
@@ -2127,7 +2127,11 @@ func categorizeCounters(counters map[string]Counter) (map[string]Counter, map[st
 			switch api.API {
 			case "REST":
 				restCounters[counter.Name] = counter
+			case "RestPerf":
+				restCounters[counter.Name] = counter
 			case "ZAPI":
+				zapiCounters[counter.Name] = counter
+			case "ZapiPerf":
 				zapiCounters[counter.Name] = counter
 			case "KeyPerf":
 				restCounters[counter.Name] = counter
