@@ -4,6 +4,23 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"log"
+	"log/slog"
+	"maps"
+	"net/http"
+	"net/http/httputil"
+	"net/url"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"regexp"
+	"slices"
+	"sort"
+	"strings"
+	"text/template"
+	"time"
+
 	"github.com/goccy/go-yaml"
 	"github.com/netapp/harvest/v2/cmd/collectors/keyperf"
 	"github.com/netapp/harvest/v2/cmd/collectors/statperf"
@@ -23,22 +40,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	tw "github.com/netapp/harvest/v2/third_party/olekukonko/tablewriter"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
-	"io"
-	"log"
-	"log/slog"
-	"maps"
-	"net/http"
-	"net/http/httputil"
-	"net/url"
-	"os"
-	"os/exec"
-	"path/filepath"
-	"regexp"
-	"slices"
-	"sort"
-	"strings"
-	"text/template"
-	"time"
 )
 
 const (
@@ -65,8 +66,12 @@ var (
 	}
 	swaggerBytes         []byte
 	excludePerfTemplates = map[string]struct{}{
+		"volume_node.yaml":            {}, // Similar metrics node_volume_* are generated via KeyPerf volume.yaml
 		"workload_detail.yaml":        {},
 		"workload_detail_volume.yaml": {},
+	}
+	excludeRestPerfTemplates = map[string]struct{}{
+		"volume.yaml": {}, // Volume performance metrics now collected via KeyPerf
 	}
 	excludeCounters = map[string]struct{}{
 		"latency_histogram":       {},
@@ -171,6 +176,9 @@ var (
 		"path_",
 		"qtree_",
 		"smb2_",
+		"snapshot_labels",
+		"snapshot_restore_size",
+		"snapshot_create_time",
 		"snapshot_volume_violation_count",
 		"snapshot_volume_violation_total_size",
 		"storage_unit_",
@@ -455,6 +463,9 @@ func processRestCounters(dir string, client *rest.Client) map[string]Counter {
 
 	restPerfCounters := visitRestTemplates(filepath.Join(dir, "conf", "restperf"), client, func(path string, client *rest.Client) map[string]Counter {
 		if _, ok := excludePerfTemplates[filepath.Base(path)]; ok {
+			return nil
+		}
+		if _, ok := excludeRestPerfTemplates[filepath.Base(path)]; ok {
 			return nil
 		}
 		return processRestPerfCounters(path, client)
@@ -882,13 +893,20 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 					continue
 				}
 				if zapiTypeMap[name] != "string" {
+					description := zapiDescMap[name]
+					if strings.Contains(path, "volume.yaml") && model.Object == "volume" {
+						if description != "" {
+							description += " "
+						}
+						description += "(Note: This is applicable only for ONTAP 9.9 and below. Harvest uses KeyPerf collector for ONTAP 9.10 onwards.)"
+					}
 					co := Counter{
 						Object:      model.Object,
 						Name:        harvestName,
-						Description: zapiDescMap[name],
+						Description: description,
 						APIs: []MetricDef{
 							{
-								API:          "ZAPI",
+								API:          "ZapiPerf",
 								Endpoint:     "perf-object-get-instances" + " " + model.Query,
 								Template:     path,
 								ONTAPCounter: name,
@@ -913,7 +931,7 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 							Description: zapiDescMap[rName],
 							APIs: []MetricDef{
 								{
-									API:          "ZAPI",
+									API:          "ZapiPerf",
 									Endpoint:     "perf-object-get-instances" + " " + model.Query,
 									Template:     path,
 									ONTAPCounter: rName,
@@ -947,7 +965,7 @@ func processZAPIPerfCounters(path string, client *zapi.Client) map[string]Counte
 			Name:   model.Object + "_" + metric.Name,
 			APIs: []MetricDef{
 				{
-					API:          "ZAPI",
+					API:          "ZapiPerf",
 					Endpoint:     model.Query,
 					Template:     path,
 					ONTAPCounter: metric.Source,
@@ -1593,7 +1611,7 @@ func processRestPerfCounters(path string, client *rest.Client) map[string]Counte
 				Description: description,
 				APIs: []MetricDef{
 					{
-						API:          "REST",
+						API:          "RestPerf",
 						Endpoint:     model.Query,
 						Template:     path,
 						ONTAPCounter: ontapCounterName,
@@ -1991,7 +2009,7 @@ func validateMetrics(documentedRest, documentedZapi map[string]Counter, promethe
 		}
 
 		for _, api := range apis {
-			if api.API == "ZAPI" {
+			if api.API == "ZAPI" || api.API == "ZapiPerf" {
 				return true
 			}
 		}
@@ -2008,7 +2026,7 @@ func validateMetrics(documentedRest, documentedZapi map[string]Counter, promethe
 		}
 
 		for _, api := range apis {
-			if api.API == "REST" {
+			if api.API == "REST" || api.API == "RestPerf" {
 				return true
 			}
 		}
@@ -2109,7 +2127,11 @@ func categorizeCounters(counters map[string]Counter) (map[string]Counter, map[st
 			switch api.API {
 			case "REST":
 				restCounters[counter.Name] = counter
+			case "RestPerf":
+				restCounters[counter.Name] = counter
 			case "ZAPI":
+				zapiCounters[counter.Name] = counter
+			case "ZapiPerf":
 				zapiCounters[counter.Name] = counter
 			case "KeyPerf":
 				restCounters[counter.Name] = counter

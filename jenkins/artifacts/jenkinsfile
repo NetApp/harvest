@@ -372,9 +372,12 @@ pipeline {
                             git push https://$GIT_TOKEN@github.com/NetApp/harvest.git --delete nightly
                         fi
                         /opt/home/gh_2.8.0_linux_386/bin/gh release create nightly $targetLocation/*.rpm $targetLocation/*.deb $targetLocation/*.gz --notes "Nightly builds may include bugs and other issues. You might want to use the stable releases instead." --title "Harvest Nightly Release" --prerelease --target main
-                        docker build --secret id=git_token,src=${gitTokenFile} -f container/onePollerPerContainer/Dockerfile --build-arg GO_VERSION=${GO_VERSION} --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET -t ${imageName}:latest -t ${imageName}:nightly -t ${ghcrImage}:latest -t ${ghcrImage}:nightly . --no-cache
-                        docker build --secret id=git_token,src=${gitTokenFile} -f container/onePollerPerContainer/Dockerfile --build-arg GO_VERSION=${GO_VERSION} --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE --build-arg ASUP_MAKE_TARGET=$ASUP_MAKE_TARGET --build-arg GODEBUG=fips140=on -t ${imageName}:latest-fips -t ${imageName}:nightly-fips -t ${ghcrImage}:latest-fips -t ${ghcrImage}:nightly-fips . --no-cache
-                        docker build -f mcp/Dockerfile --build-arg GO_VERSION=${GO_VERSION} --build-arg VERSION=$VERSION --build-arg RELEASE=$RELEASE -t ${ghcrMcpImage}:latest -t ${ghcrMcpImage}:nightly . --no-cache
+                        # Reuse already built Docker images and tag them with 'nightly'
+                        docker tag ${ghcrImage}:latest ${ghcrImage}:nightly
+                        docker tag ${imageName}:latest ${imageName}:nightly
+                        docker tag ${ghcrImage}:latest-fips ${ghcrImage}:nightly-fips
+                        docker tag ${imageName}:latest-fips ${imageName}:nightly-fips
+                        docker tag ${ghcrMcpImage}:latest ${ghcrMcpImage}:nightly
                         echo $GIT_TOKEN | docker login ghcr.io -u $DOCKERHUB_USERNAME --password-stdin
                         docker push ${ghcrImage}:nightly-fips
                         docker push ${ghcrImage}:nightly

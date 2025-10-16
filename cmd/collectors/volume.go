@@ -214,7 +214,7 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 						if opsValue, ok := ops.GetValueFloat64(i); ok && opsValue != 0 {
 							m.SetValueFloat64(i, value/opsValue)
 						} else {
-							m.SetValueNAN(i)
+							m.SetValueFloat64(i, 0)
 						}
 					}
 				}

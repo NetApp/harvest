@@ -3419,6 +3419,32 @@
                     ]
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Site"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "local": {
+                            "index": 1,
+                            "text": "Local"
+                          },
+                          "remote": {
+                            "index": 0,
+                            "text": "Remote"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  }
+                ]
               }
             ]
           },
@@ -3484,7 +3510,8 @@
                 "renameByName": {
                   "job": "",
                   "name": "Checks",
-                  "result": "Result"
+                  "result": "Result",
+                  "type": "Site"
                 }
               }
             }

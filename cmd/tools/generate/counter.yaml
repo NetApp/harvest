@@ -25,11 +25,11 @@ counters:
   - Name: aggr_power
     Description: Power consumed by aggregate in Watts.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
@@ -511,23 +511,23 @@ counters:
 
   - Name: node_nfs_read_throughput
     APIs:
-      - API: REST
+      - API: RestPerf
         Unit: b_per_sec
-      - API: ZAPI
+      - API: ZapiPerf
         Unit: b_per_sec
 
   - Name: node_nfs_throughput
     APIs:
-      - API: REST
+      - API: RestPerf
         Unit: b_per_sec
-      - API: ZAPI
+      - API: ZapiPerf
         Unit: b_per_sec
 
   - Name: node_nfs_write_throughput
     APIs:
-      - API: REST
+      - API: RestPerf
         Unit: b_per_sec
-      - API: ZAPI
+      - API: ZapiPerf
         Unit: b_per_sec
 
   - Name: quota_disk_limit
@@ -672,6 +672,10 @@ counters:
         Endpoint: quota-report-iter
         ONTAPCounter: threshold
         Template: conf/zapi/cdot/9.8.0/qtree.yaml
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/quota.yaml
 
   - Name: security_audit_destination_port
     Description: The destination port used to forward the message.
@@ -679,11 +683,11 @@ counters:
   - Name: shelf_average_ambient_temperature
     Description: Average temperature of all ambient sensors for shelf in Celsius.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
@@ -691,11 +695,11 @@ counters:
   - Name: shelf_average_fan_speed
     Description: Average fan speed for shelf in rpm.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
@@ -703,11 +707,11 @@ counters:
   - Name: shelf_average_temperature
     Description: Average temperature of all non-ambient sensors for shelf in Celsius.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
@@ -718,11 +722,11 @@ counters:
   - Name: shelf_max_fan_speed
     Description: Maximum fan speed for shelf in rpm.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
@@ -730,11 +734,11 @@ counters:
   - Name: shelf_max_temperature
     Description: Maximum temperature of all non-ambient sensors for shelf in Celsius.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
@@ -742,11 +746,11 @@ counters:
   - Name: shelf_min_ambient_temperature
     Description: Minimum temperature of all ambient sensors for shelf in Celsius.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
@@ -754,11 +758,11 @@ counters:
   - Name: shelf_min_fan_speed
     Description: Minimum fan speed for shelf in rpm.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
@@ -766,11 +770,11 @@ counters:
   - Name: shelf_min_temperature
     Description: Minimum temperature of all non-ambient sensors for shelf in Celsius.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
@@ -778,11 +782,11 @@ counters:
   - Name: shelf_power
     Description: Power consumed by shelf in Watts.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
@@ -828,23 +832,23 @@ counters:
 
   - Name: svm_nfs_read_throughput
     APIs:
-      - API: REST
+      - API: RestPerf
         Unit: b_per_sec
-      - API: ZAPI
+      - API: ZapiPerf
         Unit: b_per_sec
 
   - Name: svm_nfs_throughput
     APIs:
-      - API: REST
+      - API: RestPerf
         Unit: b_per_sec
-      - API: ZAPI
+      - API: ZapiPerf
         Unit: b_per_sec
 
   - Name: svm_nfs_write_throughput
     APIs:
-      - API: REST
+      - API: RestPerf
         Unit: b_per_sec
-      - API: ZAPI
+      - API: ZapiPerf
         Unit: b_per_sec
 
   - Name: volume_inode_files_total
@@ -970,37 +974,37 @@ counters:
 
   - Name: flashpool_hya_read_hit_latency_average
     APIs:
-      - API: REST
+      - API: RestPerf
         Unit: millisec
-      - API: ZAPI
+      - API: ZapiPerf
         Unit: millisec
 
   - Name: flashpool_hya_read_miss_latency_average
     APIs:
-      - API: REST
+      - API: RestPerf
         Unit: millisec
-      - API: ZAPI
+      - API: ZapiPerf
         Unit: millisec
 
   - Name: flashpool_hya_write_hdd_latency_average
     APIs:
-      - API: REST
+      - API: RestPerf
         Unit: millisec
-      - API: ZAPI
+      - API: ZapiPerf
         Unit: millisec
 
   - Name: flashpool_hya_write_ssd_latency_average
     APIs:
-      - API: REST
+      - API: RestPerf
         Unit: millisec
-      - API: ZAPI
+      - API: ZapiPerf
         Unit: millisec
 
   - Name: fabricpool_cloud_bin_op_latency_average
     APIs:
-      - API: REST
+      - API: RestPerf
         Unit: millisec
-      - API: ZAPI
+      - API: ZapiPerf
         Unit: millisec
 
   - Name: volume_autosize_grow_threshold_percent
@@ -1110,13 +1114,6 @@ counters:
 
   - Name: node_nvmf_data_recv
     Description: NVMe/FC kilobytes (KB) received per second.
-
-  - Name: quota_threshold
-    APIs:
-      - API: REST
-        Endpoint: NA
-        ONTAPCounter: Harvest generated
-        Template: conf/rest/9.12.0/quota.yaml
 
   - Name: volume_space_performance_tier_inactive_user_data
     Description: The size that is physically used in the performance tier of the volume and has a cold temperature. This parameter is only supported if the volume is in an aggregate that is either attached to object store or could be attached to an object store.
@@ -1431,11 +1428,11 @@ counters:
   - Name: shelf_fan_rpm
     Description: Fan Rotation Per Minute.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
@@ -1443,11 +1440,11 @@ counters:
   - Name: shelf_fan_status
     Description: Fan Operational Status.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
@@ -1468,11 +1465,11 @@ counters:
   - Name: shelf_psu_power_drawn
     Description: Power Drawn From PSU In Watts.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
@@ -1480,11 +1477,11 @@ counters:
   - Name: shelf_psu_power_rating
     Description: Power Supply Power Ratings In Watts.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
@@ -1492,11 +1489,11 @@ counters:
   - Name: shelf_psu_status
     Description: Operational Status.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
@@ -1504,11 +1501,11 @@ counters:
   - Name: shelf_sensor_reading
     Description: Current Sensor Reading.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
@@ -1516,11 +1513,11 @@ counters:
   - Name: shelf_sensor_status
     Description: Operational Status.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
@@ -1528,11 +1525,11 @@ counters:
   - Name: shelf_temperature_reading
     Description:  Temperature Reading.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
@@ -1540,11 +1537,11 @@ counters:
   - Name: shelf_temperature_status
     Description: Operational Status.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
@@ -1552,11 +1549,11 @@ counters:
   - Name: shelf_voltage_reading
     Description: Voltage Current Reading.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
@@ -1564,11 +1561,11 @@ counters:
   - Name: shelf_voltage_status
     Description: Operational Status.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
@@ -1664,10 +1661,10 @@ counters:
   - Name: volume_top_clients_read_ops
     Description: This metric tracks the number of read operations performed by the top clients on a specific volume.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: api/storage/volumes/*/top-metrics/clients
         ONTAPCounter: iops.read
-        Template: conf/rest/9.12.0/volume.yaml
+        Template: conf/restperf/9.12.0/volume.yaml
       - API: KeyPerf
         Endpoint: api/storage/volumes/*/top-metrics/clients
         ONTAPCounter: iops.read
@@ -1676,10 +1673,10 @@ counters:
   - Name: volume_top_clients_write_ops
     Description: This metric tracks the number of write operations performed by the top clients on a specific volume.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: api/storage/volumes/*/top-metrics/clients
         ONTAPCounter: iops.write
-        Template: conf/rest/9.12.0/volume.yaml
+        Template: conf/restperf/9.12.0/volume.yaml
       - API: KeyPerf
         Endpoint: api/storage/volumes/*/top-metrics/clients
         ONTAPCounter: iops.write
@@ -1688,10 +1685,10 @@ counters:
   - Name: volume_top_clients_read_data
     Description: This metric measures the amount of data read by the top clients to a specific volume.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: api/storage/volumes/*/top-metrics/clients
         ONTAPCounter: throughput.read
-        Template: conf/rest/9.12.0/volume.yaml
+        Template: conf/restperf/9.12.0/volume.yaml
       - API: KeyPerf
         Endpoint: api/storage/volumes/*/top-metrics/clients
         ONTAPCounter: throughput.read
@@ -1700,10 +1697,10 @@ counters:
   - Name: volume_top_clients_write_data
     Description: This metric measures the amount of data written by the top clients to a specific volume.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: api/storage/volumes/*/top-metrics/clients
         ONTAPCounter: throughput.write
-        Template: conf/rest/9.12.0/volume.yaml
+        Template: conf/restperf/9.12.0/volume.yaml
       - API: KeyPerf
         Endpoint: api/storage/volumes/*/top-metrics/files
         ONTAPCounter: throughput.write
@@ -1712,10 +1709,10 @@ counters:
   - Name: volume_top_files_read_ops
     Description: This metric tracks the number of read operations performed on the files of a specific volume.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: api/storage/volumes/*/top-metrics/files
         ONTAPCounter: iops.read
-        Template: conf/rest/9.12.0/volume.yaml
+        Template: conf/restperf/9.12.0/volume.yaml
       - API: KeyPerf
         Endpoint: api/storage/volumes/*/top-metrics/files
         ONTAPCounter: iops.read
@@ -1724,10 +1721,10 @@ counters:
   - Name: volume_top_files_write_ops
     Description: This metric tracks the number of write operations performed on the files of a specific volume.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: api/storage/volumes/*/top-metrics/files
         ONTAPCounter: iops.write
-        Template: conf/rest/9.12.0/volume.yaml
+        Template: conf/restperf/9.12.0/volume.yaml
       - API: KeyPerf
         Endpoint: api/storage/volumes/*/top-metrics/files
         ONTAPCounter: iops.write
@@ -1736,10 +1733,10 @@ counters:
   - Name: volume_top_files_read_data
     Description: This metric measures the amount of data read from the files of a specific volume.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: api/storage/volumes/*/top-metrics/files
         ONTAPCounter: throughput.read
-        Template: conf/rest/9.12.0/volume.yaml
+        Template: conf/restperf/9.12.0/volume.yaml
       - API: KeyPerf
         Endpoint: api/storage/volumes/*/top-metrics/files
         ONTAPCounter: throughput.read
@@ -1748,10 +1745,10 @@ counters:
   - Name: volume_top_files_write_data
     Description: This metric measures the amount of data written to the top files of a specific volume.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: api/storage/volumes/*/top-metrics/files
         ONTAPCounter: throughput.write
-        Template: conf/rest/9.12.0/volume.yaml
+        Template: conf/restperf/9.12.0/volume.yaml
       - API: KeyPerf
         Endpoint: api/storage/volumes/*/top-metrics/files
         ONTAPCounter: throughput.write
@@ -1858,11 +1855,11 @@ counters:
   - Name: node_volume_total_data
     Description: This metric represents the total amount of data that has been read from and written to volumes aggregated by node.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/volume.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/volume.yaml
@@ -1871,11 +1868,11 @@ counters:
   - Name: nic_ifgrp_rx_bytes
     Description: Link Aggregation Group (LAG) Bytes received.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/nic_common.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/nic_common.yaml
@@ -1883,11 +1880,11 @@ counters:
   - Name: nic_ifgrp_tx_bytes
     Description: Link Aggregation Group (LAG) Bytes sent.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/nic_common.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/nic_common.yaml
@@ -1895,11 +1892,11 @@ counters:
   - Name: nic_rx_percent
     Description: Bytes received percentage.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/nic_common.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/nic_common.yaml
@@ -1907,11 +1904,11 @@ counters:
   - Name: nic_tx_percent
     Description: Bytes sent percentage.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/nic_common.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/nic_common.yaml
@@ -1919,11 +1916,11 @@ counters:
   - Name: nic_util_percent
     Description: Max of Bytes received percentage and Bytes sent percentage.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/nic_common.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/nic_common.yaml
@@ -1944,11 +1941,11 @@ counters:
   - Name: nic_new_status
     Description: This metric indicates a value of 1 if the NIC state is up (indicating the NIC is operational) and a value of 0 for any other state.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/nic_common.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/nic_common.yaml
@@ -2078,11 +2075,11 @@ counters:
   - Name: shelf_module_status
     Description: Displays the shelf module labels with their status.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
@@ -2090,11 +2087,11 @@ counters:
   - Name: shelf_fan_labels
     Description: This metric provides information about shelf fans.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
@@ -2102,11 +2099,11 @@ counters:
   - Name: shelf_module_labels
     Description: This metric provides information about shelf module.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
@@ -2114,11 +2111,11 @@ counters:
   - Name: shelf_psu_labels
     Description: This metric provides information about shelf psu.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
@@ -2126,11 +2123,11 @@ counters:
   - Name: shelf_sensor_labels
     Description: This metric provides information about shelf sensor.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
@@ -2138,11 +2135,11 @@ counters:
   - Name: shelf_temperature_labels
     Description: This metric provides information about shelf temperature.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
@@ -2150,11 +2147,11 @@ counters:
   - Name: shelf_voltage_labels
     Description: This metric provides information about shelf voltage.
     APIs:
-      - API: REST
+      - API: RestPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/restperf/9.12.0/disk.yaml
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/disk.yaml
@@ -2285,10 +2282,26 @@ counters:
 
   - Name: svm_vol_total_data
     APIs:
-      - API: ZAPI
+      - API: ZapiPerf
         Endpoint: NA
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/volume.yaml
+
+  - Name: snapshot_restore_size
+    Description: Size of the active file system at the time the snapshot is captured. The actual size of the snapshot also includes those blocks trapped by other snapshots.
+    APIs:
+      - API: REST
+        Endpoint: api/private/cli/snapshot
+        ONTAPCounter: afs_used
+        Template: conf/rest/9.6.0/snapshot.yaml
+
+  - Name: snapshot_create_time
+    Description: Creation time of the snapshot. It is the volume access time when the snapshot was created.
+    APIs:
+      - API: REST
+        Endpoint: api/private/cli/snapshot
+        ONTAPCounter: create_time
+        Template: conf/rest/9.6.0/snapshot.yaml
 
 
   # ASAr2 cluster metrics

@@ -1,4 +1,19 @@
 counters:
+  - Name: storagegrid_content_buckets_and_containers
+    Description: Total number of S3 buckets and Swift containers
+    APIs:
+      - API: REST
+        Endpoint: prometheus
+        SGCounter: storagegrid_content_buckets_and_containers
+        Template: conf/storagegrid/11.6.0/storagegrid_metrics.yaml
+
+  - Name: storagegrid_content_objects
+    Description: Total number of S3 and Swift objects (excluding empty objects)
+    APIs:
+      - API: REST
+        Endpoint: prometheus
+        SGCounter: storagegrid_content_objects
+        Template: conf/storagegrid/11.6.0/storagegrid_metrics.yaml
 
   - Name: storagegrid_ilm_awaiting_client_objects
     Description: Total number of objects on this node awaiting ILM evaluation because of client operation (for example, ingest)
@@ -8,12 +23,36 @@ counters:
         SGCounter: storagegrid_ilm_awaiting_client_objects
         Template: conf/storagegrid/11.6.0/storagegrid_metrics.yaml
 
+  - Name: storagegrid_ilm_awaiting_total_objects
+    Description: Total number of objects on this node awaiting ILM evaluation
+    APIs:
+      - API: REST
+        Endpoint: prometheus
+        SGCounter: storagegrid_ilm_awaiting_total_objects
+        Template: conf/storagegrid/11.6.0/storagegrid_metrics.yaml
+
   - Name: storagegrid_ilm_objects_processed
     Description: Objects processed by ILM that actually had work done
     APIs:
       - API: REST
         Endpoint: prometheus
         SGCounter: storagegrid_ilm_objects_processed
+        Template: conf/storagegrid/11.6.0/storagegrid_metrics.yaml
+
+  - Name: storagegrid_ilm_scan_objects_per_second
+    Description: ILM scan rate (objects per second)
+    APIs:
+      - API: REST
+        Endpoint: prometheus
+        SGCounter: storagegrid_ilm_scan_objects_per_second
+        Template: conf/storagegrid/11.6.0/storagegrid_metrics.yaml
+
+  - Name: storagegrid_metadata_queries_average_latency_milliseconds
+    Description: Average metadata query latency in milliseconds
+    APIs:
+      - API: REST
+        Endpoint: prometheus
+        SGCounter: storagegrid_metadata_queries_average_latency_milliseconds
         Template: conf/storagegrid/11.6.0/storagegrid_metrics.yaml
 
   - Name: storagegrid_network_received_bytes
@@ -96,6 +135,22 @@ counters:
         SGCounter: storagegrid_private_s3_total_requests
         Template: conf/storagegrid/11.6.0/storagegrid_metrics.yaml
 
+  - Name: storagegrid_s3_data_transfers_bytes_ingested
+    Description: S3 data upload rate (ingestion) in bytes
+    APIs:
+      - API: REST
+        Endpoint: prometheus
+        SGCounter: storagegrid_s3_data_transfers_bytes_ingested
+        Template: conf/storagegrid/11.6.0/storagegrid_metrics.yaml
+
+  - Name: storagegrid_s3_data_transfers_bytes_retrieved
+    Description: S3 data download rate (retrieval) in bytes
+    APIs:
+      - API: REST
+        Endpoint: prometheus
+        SGCounter: storagegrid_s3_data_transfers_bytes_retrieved
+        Template: conf/storagegrid/11.6.0/storagegrid_metrics.yaml
+
   - Name: storagegrid_s3_operations_failed
     Description: The total number of failed S3 operations (HTTP status codes 4xx and 5xx), excluding those caused by S3 authorization failure
     APIs:
@@ -142,6 +197,14 @@ counters:
       - API: REST
         Endpoint: prometheus
         SGCounter: storagegrid_storage_utilization_metadata_bytes
+        Template: conf/storagegrid/11.6.0/storagegrid_metrics.yaml
+
+  - Name: storagegrid_storage_utilization_total_space_bytes
+    Description: Total storage space available in bytes
+    APIs:
+      - API: REST
+        Endpoint: prometheus
+        SGCounter: storagegrid_storage_utilization_total_space_bytes
         Template: conf/storagegrid/11.6.0/storagegrid_metrics.yaml
 
   - Name: storagegrid_storage_utilization_usable_space_bytes

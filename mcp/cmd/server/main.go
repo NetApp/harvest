@@ -816,30 +816,24 @@ func runMcpServer(_ *cobra.Command, _ []string) {
 }
 
 func createMCPServer() *mcp.Server {
-	server := mcp.NewServer(&mcp.Implementation{Name: AppName, Version: version.Info()}, nil)
+	instructions := "IMPORTANT:" + instructions
+
+	server := mcp.NewServer(&mcp.Implementation{Name: AppName, Version: version.Info()}, &mcp.ServerOptions{
+		Instructions: instructions,
+	})
 
 	metricDescriptions = loader.LoadMetricDescriptions(getResourcePath("metadata"), logger)
 
-	addTool(server, "get_metric_description", "Get description and metadata for a specific metric by name", GetMetricDescription)
-	addTool(server, "search_metrics", "Search for metrics by name, description, or object type using a pattern", SearchMetrics)
-
-	addTool(server, "metrics_query",
-		"Execute instant PromQL queries against Prometheus or VictoriaMetrics to get current metric values at a specific point in time.\n"+
-			"\t\tReturns immediate snapshots of system state, perfect for real-time monitoring and validation.\n"+
-			"\t\tApproach: Start with simple metric queries, then add label filters to narrow scope. Use aggregation functions (sum, avg, max) for infrastructure-wide views.\n"+
-			"\t\tContext: Always combine with range queries to understand trends and historical patterns.\n"+
-			"\t\tState Queries: For status metrics (*_new_status), 0 = offline, 1 = online", MetricsQuery)
-	addTool(server, "metrics_range_query", "Execute a PromQL range query against Prometheus or VictoriaMetrics to get time series data over a period", MetricsRangeQuery)
-	addTool(server, "list_metrics", "List all available metrics from Prometheus or VictoriaMetrics with advanced filtering and optional descriptions. When 'match' or 'matches' filters are applied, metric descriptions are automatically included. Use 1) 'match' for simple/regex patterns, 2) 'matches' for efficient server-side label matchers", ListMetrics)
-	addTool(server, "get_active_alerts", "Get active alerts from Prometheus or VictoriaMetrics with summary by severity level", GetActiveAlerts)
-	addTool(server, "infrastructure_health",
-		"Perform comprehensive automated health assessment with actionable insights across ONTAP infrastructure.\n"+
-			"\t\tCombines multiple health indicators into a unified operational status view.\n"+
-			"\t\tCoverage: system availability, capacity utilization, performance baselines, known failure patterns.\n"+
-			"\t\tOutput: Current status with trending indicators for operational planning.\n"+
-			"\t\tWorkflow: Excellent starting point for infrastructure analysis and assessment.", InfrastructureHealth)
-	addTool(server, "list_label_values", "Get all available values for a specific label (e.g., cluster names, node names, volume names) with optional regex filtering", ListLabelValues)
-	addTool(server, "list_all_label_names", "Get all available label names (dimensions) that can be used to filter metrics in Prometheus or VictoriaMetrics", ListAllLabelNames)
+	addTool(server, "get_metric_description", getMetricDescriptionDesc, GetMetricDescription)
+	addTool(server, "search_metrics", searchMetricsDesc, SearchMetrics)
+	addTool(server, "metrics_query", metricsQueryDesc, MetricsQuery)
+	addTool(server, "metrics_range_query", metricsRangeQueryDesc, MetricsRangeQuery)
+	addTool(server, "list_metrics", listMetricsDesc, ListMetrics)
+	addTool(server, "get_active_alerts", getActiveAlertsDesc, GetActiveAlerts)
+	addTool(server, "infrastructure_health", infrastructureHealthDesc, InfrastructureHealth)
+	addTool(server, "list_label_values", listLabelValuesDesc, ListLabelValues)
+	addTool(server, "list_all_label_names", listAllLabelNamesDesc, ListAllLabelNames)
+	addTool(server, "get_response_format_template", getResponseFormatTemplateDesc, GetResponseFormatTemplate)
 
 	// Initialize rule manager
 	var err error
@@ -1045,6 +1039,14 @@ func SearchMetrics(_ context.Context, _ *mcp.CallToolRequest, params SearchMetri
 	return &mcp.CallToolResult{
 		Content: []mcp.Content{
 			&mcp.TextContent{Text: responseBuilder.String()},
+		},
+	}, nil, nil
+}
+
+func GetResponseFormatTemplate(_ context.Context, _ *mcp.CallToolRequest, _ struct{}) (*mcp.CallToolResult, any, error) {
+	return &mcp.CallToolResult{
+		Content: []mcp.Content{
+			&mcp.TextContent{Text: coreResponseFormat},
 		},
 	}, nil, nil
 }
