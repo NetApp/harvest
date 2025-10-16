@@ -848,8 +848,8 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 		if err != nil {
 			// When requesting batches, ONTAP sometimes returns no instances for a batch.
-			//We need to continue requesting batches when that happens since subsequent batches may still have existing instances.
-			//We should not stop batch iteration on errs.ErrNoInstance.
+			// We need to continue requesting batches when that happens since subsequent batches may still have existing instances.
+			// We should not stop batch iteration on errs.ErrNoInstance.
 			if !errors.Is(err, errs.ErrNoInstance) {
 				return nil, err
 			}
