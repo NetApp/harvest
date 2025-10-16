@@ -790,7 +790,7 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		}
 	}
 
-	var lastErr error
+	var noInstanceErr error
 
 	for _, idBatch := range idBatches {
 		batchFilter := make([]string, 0, len(filter)+1)
@@ -847,10 +847,13 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 		apiD += time.Since(startTime)
 
 		if err != nil {
+			// When requesting batches, ONTAP sometimes returns no instances for a batch.
+			//We need to continue requesting batches when that happens since subsequent batches may still have existing instances.
+			//We should not stop batch iteration on errs.ErrNoInstance.
 			if !errors.Is(err, errs.ErrNoInstance) {
 				return nil, err
 			}
-			lastErr = err
+			noInstanceErr = err
 			continue
 		}
 	}
@@ -864,8 +867,8 @@ func (r *RestPerf) PollData() (map[string]*matrix.Matrix, error) {
 	}
 
 	// This error block is only for no instances
-	if lastErr != nil && len(curMat.GetInstances()) == 0 {
-		return nil, lastErr
+	if noInstanceErr != nil && len(curMat.GetInstances()) == 0 {
+		return nil, noInstanceErr
 	}
 
 	if isWorkloadDetailObject(r.Prop.Query) {
