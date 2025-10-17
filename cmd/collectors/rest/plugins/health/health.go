@@ -262,7 +262,7 @@ func (h *Health) collectVolumeMoveAlerts() int {
 		instance *matrix.Instance
 	)
 	// The volume move command is not available for these systems.
-	if h.client.Remote().IsCustomSystem() || h.client.Remote().IsASAr2() {
+	if h.client.Remote().IsAFX() || h.client.Remote().IsASAr2() {
 		return 0
 	}
 	volumeMoveAlertCount := 0
@@ -497,7 +497,7 @@ func (h *Health) collectHAAlerts() int {
 	)
 	HAAlertCount := 0
 	possible := "possible"
-	if h.client.Remote().IsCustomSystem() {
+	if h.client.Remote().IsAFX() {
 		possible = "takeover_of_possible"
 	}
 	records, err := h.getHADown(possible)
@@ -761,7 +761,11 @@ func (h *Health) getNodes() ([]gjson.Result, error) {
 }
 
 func (h *Health) getHADown(possible string) ([]gjson.Result, error) {
-	fields := []string{possible, "partner_name,state_description,partner_state,mode"}
+	fields := []string{possible, "partner_name,state_description,partner_state"}
+	// mode field is not available in AFX. We reply on partner mapping for HA Alerts
+	if !h.client.Remote().IsAFX() {
+		fields = append(fields, "mode")
+	}
 	query := "api/private/cli/storage/failover"
 	href := rest.NewHrefBuilder().
 		APIPath(query).
