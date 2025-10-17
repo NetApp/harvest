@@ -1,8 +1,8 @@
-This guide walks you through the process of integrating StorageGrid's built-in Grafana dashboards with Harvest.
+This guide walks you through the process of creating custom Grafana dashboards in Harvest that are similar to StorageGRID's built-in dashboards.
 
 ## Step 1: Identify StorageGrid Dashboard Metrics
 
-First examine the metrics used in StorageGrid's native dashboards to understand what needs to be collected by Harvest.
+First examine the metrics used in StorageGrid's built-in dashboards to understand what needs to be collected by Harvest.
 
 ### Access StorageGrid's Native Dashboards
 
@@ -38,9 +38,9 @@ Before adding metrics to your template verify they're available from your Storag
 
 After updating the template, restart your Harvest poller to collect the new metrics. Verify that the metrics are available in your time-series database (Prometheus, InfluxDB, etc.)
 
-## Step 4: Create Harvest-Compatible Dashboards
+## Step 4: Create Similar Dashboards in Harvest Grafana
 
-Now create dashboards in your Harvest Grafana instance using the metrics being collected.
+Now create dashboards in your Harvest Grafana instance that mirror the functionality of StorageGRID's built-in dashboards, using the metrics being collected by Harvest.
 
 For detailed guidance on creating dashboards with Harvest metrics, refer to the [Creating a Custom Grafana Dashboard](dashboards.md#creating-a-custom-grafana-dashboard-with-harvest-metrics-stored-in-prometheus) guide.
 

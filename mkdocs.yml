@@ -41,9 +41,7 @@ nav:
       - 'Unix': 'configure-unix.md'
       - 'CiscoRest': 'configure-cisco-rest.md'
   - Templates: 'configure-templates.md'
-  - Dashboards:
-      - 'Dashboards': 'dashboards.md'
-      - 'StorageGRID Dashboard Integration': 'storagegrid-dashboard-integration.md'
+  - Dashboards: 'dashboards.md'
   - Manage Harvest Pollers: 'manage-harvest.md'
   - Configure Harvest (advanced): 'configure-harvest-advanced.md'
   - Monitor Harvest: 'monitor-harvest.md'
@@ -67,6 +65,7 @@ nav:
       - 'REST Perf Metrics': 'resources/rest-perf-metrics.md'
       - 'REST Strategy': 'architecture/rest-strategy.md'
       - 'Templates And Metrics': 'resources/templates-and-metrics.md'
+      - 'Create StorageGRID Dashboard': 'create-storagegrid-dashboard.md'
       - 'ZAPI and REST gaps': 'resources/zapi-and-rest-gap.md'
   - About:
       - 'License': 'license.md'
