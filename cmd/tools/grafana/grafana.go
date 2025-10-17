@@ -75,6 +75,7 @@ type options struct {
 	customizeDir        string
 	customAllValue      string
 	customCluster       string
+	addCluster          string
 	varDefaults         string
 	defaultDropdownMap  map[string][]string
 	isDebug             bool
@@ -660,6 +661,11 @@ func importFiles(dir string, folder *Folder) {
 			data = changeClusterLabel(data, opts.customCluster)
 		}
 
+		// add new cluster label if needed
+		if opts.addCluster != "" {
+			data = addClusterLabel(data, opts.addCluster)
+		}
+
 		// Set default dropdown values if provided
 		if len(opts.defaultDropdownMap) > 0 {
 			data = setDefaultDropdownValues(data, opts.defaultDropdownMap)
@@ -768,9 +774,143 @@ func setDefaultDropdownValues(data []byte, defaultValues map[string][]string) []
 // Example:
 // sum(write_data{datacenter=~"$Datacenter",cluster=~"$Cluster",svm=~"$SVM"})
 // with --cluster-label=na_cluster will become
-// sum(write_data{datacenter=~"$Datacenter",cluster=~"$Cluster",na_cluster=~"$NaCluster",svm=~"$SVM"})
+// sum(write_data{datacenter=~"$Datacenter",na_cluster=~"$Cluster",svm=~"$SVM"})
 // See https://github.com/NetApp/harvest/issues/3131
 func changeClusterLabel(data []byte, cluster string) []byte {
+	// Change all panel expressions
+	VisitAllPanels(data, func(path string, _, value gjson.Result) {
+
+		// Rewrite expressions and legends
+		value.Get("targets").ForEach(func(targetKey, target gjson.Result) bool {
+			expr := target.Get("expr")
+			if expr.Exists() {
+				newExpression := rewriteCluster(expr.ClonedString(), cluster)
+
+				data, _ = sjson.SetBytes(data, path+".targets."+targetKey.ClonedString()+".expr", []byte(newExpression))
+			}
+
+			legendFormat := target.Get("legendFormat")
+			if legendFormat.Exists() {
+				newLegendFormat := rewriteCluster(legendFormat.ClonedString(), cluster)
+
+				data, _ = sjson.SetBytes(data, path+".targets."+targetKey.ClonedString()+".legendFormat", []byte(newLegendFormat))
+			}
+
+			return true
+		})
+
+		// Rewrite tables columns
+		panelType := value.Get("type")
+		if panelType.ClonedString() == "table" {
+			value.Get("transformations").ForEach(func(transKey, value gjson.Result) bool {
+				id := value.Get("id")
+				if id.ClonedString() == "organize" {
+
+					// Check if the cluster exists in renameByName, and if so, rename it to the new cluster label
+					clusterTrans := value.Get("options.renameByName.cluster")
+					if clusterTrans.Exists() {
+						data, _ = sjson.SetBytes(data, path+".transformations."+transKey.ClonedString()+".options.renameByName."+cluster, []byte(clusterTrans.ClonedString()))
+					}
+
+					// If the cluster column exists, remove the column, and add the new cluster label at the same index
+					clusterIndex := value.Get("options.indexByName.cluster")
+					if clusterIndex.Exists() {
+						data, _ = sjson.SetBytes(data, path+".transformations."+transKey.ClonedString()+".options.indexByName."+cluster, clusterIndex.Int())
+						data, _ = sjson.DeleteBytes(data, path+".transformations."+transKey.ClonedString()+".options.indexByName.cluster")
+					}
+					// Handle the case where the cluster column is named "cluster 1", "cluster 2", etc.
+					for i := range 10 {
+						clusterN := "cluster " + strconv.Itoa(i)
+						clusterIndexI := value.Get("options.indexByName." + clusterN)
+						if clusterIndexI.Exists() {
+							data, _ = sjson.SetBytes(data, path+".transformations."+transKey.ClonedString()+".options.indexByName."+cluster+" "+strconv.Itoa(i), clusterIndexI.Int())
+							data, _ = sjson.DeleteBytes(data, path+".transformations."+transKey.ClonedString()+".options.indexByName."+clusterN)
+						}
+					}
+
+					// If cluster is excluded from the table, exclude the new cluster label too
+					excludeByName := value.Get("options.excludeByName")
+					if excludeByName.Exists() {
+						clusterIndex := value.Get("options.excludeByName.cluster")
+						if clusterIndex.Exists() {
+							data, _ = sjson.SetBytes(data, path+".transformations."+transKey.ClonedString()+".options.excludeByName."+cluster, clusterIndex.Int())
+							data, _ = sjson.DeleteBytes(data, path+".transformations."+transKey.ClonedString()+".options.excludeByName.cluster")
+						}
+						// Handle the case where the cluster column is named "cluster 1", "cluster 2", etc.
+						for i := range 10 {
+							clusterN := "cluster " + strconv.Itoa(i)
+							clusterIndexI := value.Get("options.excludeByName." + clusterN)
+							if clusterIndexI.Exists() {
+								data, _ = sjson.SetBytes(data, path+".transformations."+transKey.ClonedString()+".options.excludeByName."+cluster+" "+strconv.Itoa(i), true)
+								data, _ = sjson.DeleteBytes(data, path+".transformations."+transKey.ClonedString()+".options.excludeByName."+clusterN)
+							}
+						}
+					}
+				} else if id.ClonedString() == "filterFieldsByName" {
+					// Check if the cluster exists in filterFieldsByName, and if so, rename it to the new cluster label
+					names := value.Get("options.include.names")
+					if names.Exists() {
+						var nameValues []string
+						hasCluster := false
+						for _, name := range names.Array() {
+							if name.ClonedString() == "cluster" {
+								hasCluster = true
+								nameValues = append(nameValues, cluster)
+								continue
+							}
+							nameValues = append(nameValues, name.ClonedString())
+						}
+
+						if hasCluster {
+							data, _ = sjson.SetBytes(data, path+".transformations."+transKey.ClonedString()+".options.include.names", nameValues)
+						}
+					}
+				}
+
+				return true
+			})
+
+			// Change all fieldConfig overrides that contain cluster
+			value.Get("fieldConfig.overrides").ForEach(func(overrideKey, override gjson.Result) bool {
+				if override.Get("matcher.id").ClonedString() == "byName" && override.Get("matcher.options").ClonedString() == "cluster" {
+					data, _ = sjson.SetBytes(data, path+".fieldConfig.overrides."+overrideKey.ClonedString()+".matcher.options", cluster)
+				}
+				return true
+			})
+		}
+	})
+
+	// Change all templating variables that contain cluster
+	gjson.GetBytes(data, "templating.list").ForEach(func(key, value gjson.Result) bool {
+
+		// Change definition
+		definition := value.Get("definition")
+		if definition.Exists() {
+			newDefinition := rewriteCluster(definition.ClonedString(), cluster)
+
+			data, _ = sjson.SetBytes(data, "templating.list."+key.ClonedString()+".definition", []byte(newDefinition))
+		}
+
+		// Change query
+		query := value.Get("query.query")
+		if query.Exists() {
+			newQuery := rewriteCluster(query.ClonedString(), cluster)
+			data, _ = sjson.SetBytes(data, "templating.list."+key.ClonedString()+".query.query", []byte(newQuery))
+		}
+
+		return true
+	})
+
+	return data
+}
+
+// This function will rewrite all panel expressions in the dashboard to add the new cluster label.
+// Example:
+// sum(write_data{datacenter=~"$Datacenter",cluster=~"$Cluster",svm=~"$SVM"})
+// with --cluster-label=na_cluster will become
+// sum(write_data{datacenter=~"$Datacenter",cluster=~"$Cluster",na_cluster=~"$NaCluster",svm=~"$SVM"})
+// See https://github.com/NetApp/harvest/issues/3826
+func addClusterLabel(data []byte, cluster string) []byte {
 	varName := convertToCamelCase(cluster)
 
 	// clusterLabelMap is used to ensure we don't modify the query of one of the new labels we're adding
@@ -1631,6 +1771,8 @@ func addImportCustomizeFlags(commands ...*cobra.Command) {
 		cmd.PersistentFlags().BoolVar(&opts.forceImport, "force", false,
 			"Import even if the datasource name is not defined in Grafana")
 		cmd.PersistentFlags().StringVar(&opts.customCluster, "cluster-label", "",
+			"Rewrite all panel expressions to use the specified cluster label instead of the default 'cluster'")
+		cmd.PersistentFlags().StringVar(&opts.addCluster, "add-cluster-label", "",
 			"Rewrite all panel expressions to add the specified cluster label and specified cluster variable along with the default 'cluster'")
 		cmd.PersistentFlags().BoolVar(&opts.showDatasource, "show-datasource", false,
 			"Show datasource variable dropdown in dashboards, useful for multi-datasource setups")
