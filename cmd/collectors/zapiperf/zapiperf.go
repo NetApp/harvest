@@ -61,7 +61,7 @@ const (
 	// default parameter values
 	instanceKey   = "uuid"
 	batchSize     = 500
-	latencyIoReqd = 10
+	latencyIoReqd = 0
 	keyToken      = "?#"
 	// objects that need special handling
 	objWorkload             = "workload"

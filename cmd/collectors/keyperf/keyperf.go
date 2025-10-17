@@ -23,7 +23,7 @@ import (
 )
 
 const (
-	latencyIoReqd = 10
+	latencyIoReqd = 0
 )
 
 type KeyPerf struct {

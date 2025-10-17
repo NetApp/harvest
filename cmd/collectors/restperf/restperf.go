@@ -39,7 +39,7 @@ import (
 )
 
 const (
-	latencyIoReqd          = 10
+	latencyIoReqd          = 0
 	arrayKeyToken          = "#"
 	objWorkloadClass       = "user_defined|system_defined"
 	objWorkloadVolumeClass = "autovolume"
