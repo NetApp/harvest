@@ -32,6 +32,7 @@ BINARY_NAME  := harvest-mcp
 BIN_DIR      := bin
 DIST         := dist
 PACKAGE_NAME := harvest-mcp-${VERSION}-${RELEASE}_${GOOS}_${GOARCH}
+DOCKER_TAG   ?= harvest-mcp:latest
 
 help: ## Display this help
 	@echo "    _  _                     _     ___   __   "
@@ -100,8 +101,8 @@ package: clean deps build test ## Package MCP server binary with documentation
 all: package ## Build, test, and package everything
 	@echo "✅ All tasks complete"
 
-docker-build: ## Build Docker image
+docker-build: ## Build Docker image (use DOCKER_TAG to customize tag, e.g., make docker-build DOCKER_TAG=harvest-mcp:dev)
 	@echo "Building Docker image..."
-	@cd .. && docker build -f mcp/Dockerfile --build-arg GO_VERSION=$(GO_VERSION) -t harvest-mcp:latest .
-	@echo "✅ Docker image built: harvest-mcp:latest"
+	@cd .. && docker build -f mcp/Dockerfile --build-arg GO_VERSION=$(GO_VERSION) -t $(DOCKER_TAG) .
+	@echo "✅ Docker image built: $(DOCKER_TAG)"
 
