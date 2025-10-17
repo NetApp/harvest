@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Oct-15
+Creation Date : 2025-Oct-17
 ONTAP Version: 9.16.1
 ```
 
@@ -12209,7 +12209,6 @@ NVMe/FC kilobytes (KB) received per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | RestPerf | `api/cluster/counter/tables/system:node` | `nvme_fc_data_received`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
-| StatPerf | `system:node` | `nvme_fc_data_recv`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.15.1/system_node.yaml |
 | ZapiPerf | `perf-object-get-instances system:node` | `nvme_fc_data_recv`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.15.1/system_node.yaml |
 
 
@@ -12245,7 +12244,6 @@ NVMe/FC kilobytes (KB) received per second.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `nvme_fc_data_received, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
-| StatPerf | `system:node` | `nvme_fc_data_recv, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.15.1/system_node.yaml |
 | ZapiPerf | `perf-object-get-instances system:node` | `nvmf_data_recv`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -12257,7 +12255,6 @@ NVMe/FC kilobytes (KB) sent per second.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `nvme_fc_data_sent, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
-| StatPerf | `system:node` | `nvme_fc_data_sent, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.15.1/system_node.yaml |
 | ZapiPerf | `perf-object-get-instances system:node` | `nvmf_data_sent`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -12269,7 +12266,6 @@ NVMe/FC operations per second.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `nvme_fc_ops, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
-| StatPerf | `system:node` | `nvme_fc_ops, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.15.1/system_node.yaml |
 | ZapiPerf | `perf-object-get-instances system:node` | `nvmf_ops`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 The `node_nvmf_ops` metric is visualized in the following Grafana dashboards:
@@ -15575,6 +15571,14 @@ Specifies the absolute minimum IOPS that is used as an override when the expecte
 | REST | `NA` | `Harvest generated` | conf/rest/9.12.0/qos_policy_adaptive.yaml |
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/qos_policy_adaptive.yaml |
 
+The `qos_policy_adaptive_absolute_min_iops` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Workload | Adaptive QoS Workload Utilization | table | [Adaptive QoS Workload IOPs Utilization (%)](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=239) |
+///
+
 
 
 ### qos_policy_adaptive_expected_iops
@@ -15607,6 +15611,14 @@ Specifies the maximum possible IOPS per TB allocated based on the storage object
 |--------|----------|--------|---------|
 | REST | `NA` | `Harvest generated` | conf/rest/9.12.0/qos_policy_adaptive.yaml |
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/qos_policy_adaptive.yaml |
+
+The `qos_policy_adaptive_peak_iops` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Workload | Adaptive QoS Workload Utilization | table | [Adaptive QoS Workload IOPs Utilization (%)](/d/cdot-workload/ontap3a-workload?orgId=1&viewPanel=239) |
+///
 
 
 
@@ -15931,7 +15943,7 @@ Minimum throughput IOPs allowed for the workload.
 | ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/qos_workload.yaml |
 
 The `qos_workload_min_throughput_iops` metric is visualized in the following Grafana dashboards:
-
+    
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
@@ -18155,6 +18167,24 @@ The `snapmirror_update_successful_count` metric is visualized in the following G
 
 
 
+### snapshot_create_time
+
+Creation time of the snapshot. It is the volume access time when the snapshot was created.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `api/private/cli/snapshot` | `create_time` | conf/rest/9.6.0/snapshot.yaml |
+
+The `snapshot_create_time` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Security | Volume Encryption & Autonomous Ransomware Protection | table | [Anti-ransomware Snapshots](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=156) |
+///
+
+
+
 ### snapshot_labels
 
 This metric provides information about Snapshot
@@ -18164,7 +18194,7 @@ This metric provides information about Snapshot
 | REST | `api/private/cli/snapshot` | `Harvest generated` | conf/rest/9.6.0/snapshot.yaml |
 
 The `snapshot_labels` metric is visualized in the following Grafana dashboards:
-
+    
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
@@ -18207,25 +18237,7 @@ Size of the active file system at the time the snapshot is captured. The actual 
 | REST | `api/private/cli/snapshot` | `afs_used` | conf/rest/9.6.0/snapshot.yaml |
 
 The `snapshot_restore_size` metric is visualized in the following Grafana dashboards:
-
-/// html | div.grafana-table
-| Dashboard | Row | Type | Panel |
-|--------|----------|--------|--------|
-| ONTAP: Security | Volume Encryption & Autonomous Ransomware Protection | table | [Anti-ransomware Snapshots](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=156) |
-///
-
-
-
-### snapshot_create_time
-
-Creation time of the snapshot. It is the volume access time when the snapshot was created.
-
-| API    | Endpoint | Metric        | Template |
-|--------|----------|---------------|---------|
-| REST | `api/private/cli/snapshot` | `create_time` | conf/rest/9.6.0/snapshot.yaml |
-
-The `snapshot_create_time` metric is visualized in the following Grafana dashboards:
-
+    
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
@@ -18826,10 +18838,10 @@ The `svm_labels` metric is visualized in the following Grafana dashboards:
 | ONTAP: Datacenter | Highlights | table | [Object Count](/d/cdot-datacenter/ontap3a-datacenter?orgId=1&viewPanel=660) |
 | ONTAP: Security | Highlights | stat | [Cluster Compliant %](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=214) |
 | ONTAP: Security | Highlights | stat | [SVM Compliant %](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=216) |
-| ONTAP: Security | Highlights | stat | [SVM Anti-ransomware Status %](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=210) |
+| ONTAP: Security | Highlights | stat | [SVM Autonomous Ransomware Protection %](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=210) |
 | ONTAP: Security | Highlights | piechart | [Cluster Compliant](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=215) |
 | ONTAP: Security | Highlights | piechart | [SVM Compliant](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=217) |
-| ONTAP: Security | Highlights | piechart | [SVM Anti-ransomware Status](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=209) |
+| ONTAP: Security | Highlights | piechart | [SVM Autonomous Ransomware Protection](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=209) |
 | ONTAP: Security | Cluster Compliance | table | [Cluster Compliance](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=219) |
 | ONTAP: Security | SVM Compliance | table | [SVM Compliance](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=225) |
 ///
@@ -22103,10 +22115,10 @@ The `volume_labels` metric is visualized in the following Grafana dashboards:
 | ONTAP: Quota | Space Usage | timeseries | [Top $TopResources Quotas by Files Used %](/d/cdot-quota/ontap3a-quota?orgId=1&viewPanel=10) |
 | ONTAP: S3 Object Storage | Highlights | table | [Bucket Overview](/d/cdot-s3-object-storage/ontap3a-s3 object storage?orgId=1&viewPanel=5) |
 | ONTAP: Security | Highlights | stat | [Volume Encryption %](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=207) |
-| ONTAP: Security | Highlights | stat | [Volume Anti-ransomware Status %](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=208) |
+| ONTAP: Security | Highlights | stat | [Volume Autonomous Ransomware Protection %](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=208) |
 | ONTAP: Security | Highlights | piechart | [Volume Encryption](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=204) |
-| ONTAP: Security | Highlights | piechart | [Volume Anti-ransomware Status](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=205) |
-| ONTAP: Security | Volume Encryption & Anti-ransomware Status | table | [Volume Encryption & Anti-ransomware Status](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=155) |
+| ONTAP: Security | Highlights | piechart | [Volume Autonomous Ransomware Protection](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=205) |
+| ONTAP: Security | Volume Encryption & Autonomous Ransomware Protection | table | [Volume Encryption & Autonomous Ransomware Protection](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=155) |
 | ONTAP: Security | Cluster Compliance | table | [Cluster Compliance](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=219) |
 | ONTAP: SnapMirror Sources | Highlights | stat | [Unprotected Volumes](/d/cdot-snapmirror/ontap3a-snapmirror sources?orgId=1&viewPanel=148) |
 | ONTAP: SnapMirror Sources | Highlights | stat | [Protected Volumes](/d/cdot-snapmirror/ontap3a-snapmirror sources?orgId=1&viewPanel=145) |

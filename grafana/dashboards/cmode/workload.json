@@ -3623,7 +3623,7 @@
             },
             {
               "exemplar": false,
-              "expr": "label_join(\n  qos_workload_max_throughput_mbps{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"workload\"\n)",
+              "expr": "label_join(\n    (qos_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"} * 0)\n  + on (cluster, datacenter, workload) group_right ()\n    qos_workload_max_throughput_mbps{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"workload\"\n)",
               "format": "table",
               "hide": false,
               "instant": true,

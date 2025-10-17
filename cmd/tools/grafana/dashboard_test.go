@@ -305,7 +305,7 @@ func TestUnitsAndExprMatch(t *testing.T) {
 		"volume_space_physical_used": {"bytes", "binBps"}, // Growth rate uses bytes/sec unit
 		"volume_space_logical_used":  {"bytes", "binBps"}, // Growth rate uses bytes/sec unit
 		"qos_ops":                    {"iops", "percent"},
-		"qos_total_data":             {"Bps", "percent"},
+		"qos_total_data":             {"Bps", "percent", "MBs"}, // Max Throughput uses MBs unit
 		"aggr_space_used":            {"bytes", "percent"},
 		"volume_size_used":           {"bytes", "percent"},
 		"shelf_power":                {"watt", "watth"},
