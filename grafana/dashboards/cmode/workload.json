@@ -2897,7 +2897,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "This panel displays the percentage of Input/Output Operations Per Second (IOPs) currently in use relative to the dynamically adjusted IOPs threshold, which is set by an adaptive QoS policy. Unlike fixed QoS settings, adaptive QoS policies allow the IOPs threshold to fluctuate based on predefined criteria and workload demands. The utilization percentage is determined by taking the current IOPs usage, dividing it by the adaptive IOPs threshold at that moment, and then multiplying by 100 to get a percentage.",
+          "description": "This panel displays the percentage of Input/Output Operations Per Second (IOPs) currently in use relative to the dynamically adjusted IOPs threshold, which is set by an adaptive QoS policy. Unlike fixed QoS settings, adaptive QoS policies allow the IOPs threshold to fluctuate based on predefined criteria and workload demands. The utilization percentage is determined by taking the current IOPs usage, dividing it by the adaptive IOPs threshold at that moment, and then multiplying by 100 to get a percentage.\n\n`Workload size` would be calculated only when the minimum IOPs exists and it's value is higher than absolute IOPs. \n\nWorkload size = Max IOPs/ Peak IOPs.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -3107,6 +3107,30 @@
                     ]
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Min IOPs"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "iops"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Workload size"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
               }
             ]
           },
@@ -3149,13 +3173,33 @@
             },
             {
               "exemplar": false,
-              "expr": "label_join(\n  qos_workload_max_throughput_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"workload\"\n)",
+              "expr": "label_join(\n    qos_workload_max_throughput_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}\n  and on (cluster, datacenter, workload)\n    qos_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"workload\"\n)",
               "format": "table",
               "hide": false,
               "instant": true,
               "interval": "",
               "legendFormat": "",
               "refId": "C"
+            },
+            {
+              "exemplar": false,
+              "expr": "label_join(\n    qos_workload_min_throughput_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}\n  and on (cluster, datacenter, workload)\n    qos_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"workload\"\n)",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "D"
+            },
+            {
+              "exemplar": false,
+              "expr": "label_join(\n    (\n            1024 * 1024 * 1024 * 1024\n          *\n            qos_workload_max_throughput_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}\n        / on (cluster, datacenter, policy_group, svm) group_left ()\n          label_replace(\n            qos_policy_adaptive_peak_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n            \"policy_group\",\n            \"$1\",\n            \"name\",\n            \"(.*)\"\n          )\n      unless on (cluster, datacenter, policy_group, svm)\n        (\n              qos_workload_min_throughput_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}\n            - on (cluster, datacenter, policy_group, svm)\n              label_replace(\n                qos_policy_adaptive_absolute_min_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"},\n                \"policy_group\",\n                \"$1\",\n                \"name\",\n                \"(.*)\"\n              )\n          ==\n            0\n        )\n    ),\n    \"unique_id\",\n    \"-\",\n    \"datacenter\",\n    \"cluster\",\n    \"workload\"\n  )\nand on (cluster, datacenter, workload)\n  qos_workload_min_throughput_iops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "E"
             }
           ],
           "title": "Adaptive QoS Workload IOPs Utilization (%)",
@@ -3188,58 +3232,135 @@
                   "Time": true,
                   "Time 2": true,
                   "Time 3": true,
+                  "Time 4": true,
+                  "Time 5": true,
                   "Value #C": false,
                   "__name__": true,
+                  "__name__ 2": true,
                   "class": true,
+                  "class 2": true,
+                  "class 3": true,
                   "cluster 2": true,
                   "cluster 3": true,
+                  "cluster 4": true,
+                  "cluster 5": true,
                   "datacenter 2": true,
                   "datacenter 3": true,
+                  "datacenter 4": true,
+                  "datacenter 5": true,
                   "file 2": true,
                   "file 3": true,
+                  "file 4": true,
                   "instance": true,
+                  "instance 2": true,
+                  "instance 3": true,
                   "is_adaptive": true,
+                  "is_adaptive 2": true,
+                  "is_adaptive 3": true,
                   "job": true,
+                  "job 2": true,
+                  "job 3": true,
                   "lun 2": true,
                   "lun 3": true,
+                  "lun 4": true,
                   "policy_group 2": true,
                   "policy_group 3": true,
+                  "policy_group 4": true,
+                  "policy_group 5": true,
                   "svm 2": true,
                   "svm 3": true,
+                  "svm 4": true,
+                  "svm 5": true,
                   "unique_id": true,
                   "volume 2": true,
                   "volume 3": true,
+                  "volume 4": true,
+                  "volume 5": true,
                   "wid": true,
                   "wid 2": true,
                   "wid 3": true,
+                  "wid 4": true,
+                  "wid 5": true,
                   "workload 2": true,
-                  "workload 3": true
+                  "workload 3": true,
+                  "workload 4": true,
+                  "workload 5": true
                 },
                 "indexByName": {
                   "Time": 1,
+                  "Time 2": 21,
+                  "Time 3": 32,
+                  "Time 4": 41,
+                  "Time 5": 55,
                   "Value #A": 9,
                   "Value #B": 11,
                   "Value #C": 12,
-                  "__name__": 13,
-                  "class": 14,
+                  "Value #D": 13,
+                  "Value #E": 14,
+                  "__name__": 15,
+                  "__name__ 2": 42,
+                  "class": 16,
+                  "class 2": 43,
+                  "class 3": 56,
                   "cluster": 3,
+                  "cluster 2": 22,
+                  "cluster 3": 33,
+                  "cluster 4": 44,
+                  "cluster 5": 57,
                   "datacenter": 2,
+                  "datacenter 2": 23,
+                  "datacenter 3": 34,
+                  "datacenter 4": 45,
+                  "datacenter 5": 58,
                   "file": 6,
-                  "instance": 16,
-                  "is_adaptive": 17,
-                  "job": 18,
+                  "file 2": 24,
+                  "file 3": 35,
+                  "instance": 18,
+                  "instance 2": 46,
+                  "instance 3": 60,
+                  "is_adaptive": 19,
+                  "is_adaptive 2": 47,
+                  "is_adaptive 3": 61,
+                  "job": 20,
+                  "job 2": 48,
+                  "job 3": 62,
                   "lun": 7,
+                  "lun 2": 25,
+                  "lun 3": 36,
+                  "lun 4": 49,
                   "policy_group": 10,
+                  "policy_group 2": 26,
+                  "policy_group 3": 37,
+                  "policy_group 4": 50,
+                  "policy_group 5": 63,
                   "svm": 4,
+                  "svm 2": 27,
+                  "svm 3": 38,
+                  "svm 4": 51,
+                  "svm 5": 64,
                   "unique_id": 0,
                   "volume": 5,
-                  "wid": 15,
-                  "workload": 8
+                  "volume 2": 28,
+                  "volume 3": 39,
+                  "volume 4": 52,
+                  "volume 5": 59,
+                  "wid": 17,
+                  "wid 2": 29,
+                  "wid 3": 40,
+                  "wid 4": 53,
+                  "wid 5": 65,
+                  "workload": 8,
+                  "workload 2": 31,
+                  "workload 3": 30,
+                  "workload 4": 54,
+                  "workload 5": 66
                 },
                 "renameByName": {
                   "Value #A": "Used %",
                   "Value #B": "IOPs",
                   "Value #C": "Max IOPs",
+                  "Value #D": "Min IOPs",
+                  "Value #E": "Workload size",
                   "file": "File",
                   "policy_group": "Policy"
                 }
@@ -3502,7 +3623,7 @@
             },
             {
               "exemplar": false,
-              "expr": "label_join(\n  qos_workload_max_throughput_mbps{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"workload\"\n)",
+              "expr": "label_join(\n    qos_workload_max_throughput_mbps{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",is_adaptive=\"Yes\",workload=~\"$Workload\"}\n  and on (cluster, datacenter, workload)\n    qos_total_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",workload=~\"$Workload\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"workload\"\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -4776,5 +4897,5 @@
   "timezone": "",
   "title": "ONTAP: Workload",
   "uid": "cdot-workload",
-  "version": 15
+  "version": 16
 }
