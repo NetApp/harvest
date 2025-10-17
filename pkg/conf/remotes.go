@@ -30,7 +30,7 @@ func (r Remote) IsKeyPerf() bool {
 	return r.IsDisaggregated
 }
 
-func (r Remote) IsCustomSystem() bool {
+func (r Remote) IsAFX() bool {
 	return r.IsDisaggregated && !r.IsSanOptimized
 }
 
