@@ -10929,6 +10929,24 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#qos_workload_min_throughput_iops" class="md-nav__link">
+    <span class="md-ellipsis">
+      qos_workload_min_throughput_iops
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#qos_workload_min_throughput_mbps" class="md-nav__link">
+    <span class="md-ellipsis">
+      qos_workload_min_throughput_mbps
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#qos_write_data" class="md-nav__link">
     <span class="md-ellipsis">
       qos_write_data
@@ -15445,6 +15463,27 @@
   
   <span class="md-ellipsis">
     Templates And Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../create-storagegrid-dashboard/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Create StorageGRID Dashboard
   </span>
   
 
@@ -24948,6 +24987,24 @@
   <a href="#qos_workload_max_throughput_mbps" class="md-nav__link">
     <span class="md-ellipsis">
       qos_workload_max_throughput_mbps
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#qos_workload_min_throughput_iops" class="md-nav__link">
+    <span class="md-ellipsis">
+      qos_workload_min_throughput_iops
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#qos_workload_min_throughput_mbps" class="md-nav__link">
+    <span class="md-ellipsis">
+      qos_workload_min_throughput_mbps
     </span>
   </a>
   
@@ -69920,6 +69977,27 @@ ONTAP Version: 9.16.1
 </tr>
 </tbody>
 </table>
+<p>The <code>qos_policy_adaptive_absolute_min_iops</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ONTAP: Workload</td>
+<td>Adaptive QoS Workload Utilization</td>
+<td>table</td>
+<td><a href="/d/cdot-workload/ontap3a-workload?orgId=1&amp;viewPanel=239">Adaptive QoS Workload IOPs Utilization (%)</a></td>
+</tr>
+</tbody>
+</table>
+</div>
 <h3 id="qos_policy_adaptive_expected_iops">qos_policy_adaptive_expected_iops<a class="headerlink" href="#qos_policy_adaptive_expected_iops" title="Permanent link">&para;</a></h3>
 <p>Specifies the size to be used to calculate expected IOPS per TB.</p>
 <table>
@@ -69998,6 +70076,27 @@ ONTAP Version: 9.16.1
 </tr>
 </tbody>
 </table>
+<p>The <code>qos_policy_adaptive_peak_iops</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ONTAP: Workload</td>
+<td>Adaptive QoS Workload Utilization</td>
+<td>table</td>
+<td><a href="/d/cdot-workload/ontap3a-workload?orgId=1&amp;viewPanel=239">Adaptive QoS Workload IOPs Utilization (%)</a></td>
+</tr>
+</tbody>
+</table>
+</div>
 <h3 id="qos_policy_fixed_labels">qos_policy_fixed_labels<a class="headerlink" href="#qos_policy_fixed_labels" title="Permanent link">&para;</a></h3>
 <p>This metric provides information about QosPolicyFixed</p>
 <table>
@@ -70913,6 +71012,79 @@ ONTAP Version: 9.16.1
 </tbody>
 </table>
 </div>
+<h3 id="qos_workload_min_throughput_iops">qos_workload_min_throughput_iops<a class="headerlink" href="#qos_workload_min_throughput_iops" title="Permanent link">&para;</a></h3>
+<p>Minimum throughput IOPs allowed for the workload.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/rest/9.12.0/qos_workload.yaml</td>
+</tr>
+<tr>
+<td>ZAPI</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/zapi/cdot/9.8.0/qos_workload.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>qos_workload_min_throughput_iops</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ONTAP: Workload</td>
+<td>Adaptive QoS Workload Utilization</td>
+<td>table</td>
+<td><a href="/d/cdot-workload/ontap3a-workload?orgId=1&amp;viewPanel=239">Adaptive QoS Workload IOPs Utilization (%)</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="qos_workload_min_throughput_mbps">qos_workload_min_throughput_mbps<a class="headerlink" href="#qos_workload_min_throughput_mbps" title="Permanent link">&para;</a></h3>
+<p>Minimum throughput Mbps allowed for the workload.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REST</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/rest/9.12.0/qos_workload.yaml</td>
+</tr>
+<tr>
+<td>ZAPI</td>
+<td><code>NA</code></td>
+<td><code>Harvest generated</code></td>
+<td>conf/zapi/cdot/9.8.0/qos_workload.yaml</td>
+</tr>
+</tbody>
+</table>
 <h3 id="qos_write_data">qos_write_data<a class="headerlink" href="#qos_write_data" title="Permanent link">&para;</a></h3>
 <p>This is the amount of data written per second to the filer by the workload.</p>
 <table>
