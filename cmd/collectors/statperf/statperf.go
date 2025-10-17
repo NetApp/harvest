@@ -25,7 +25,7 @@ import (
 )
 
 const (
-	latencyIoReqd       = 10
+	latencyIoReqd       = 0
 	defaultBatchSize    = 500
 	arrayKeyToken       = "#"
 	subLabelToken       = "."
