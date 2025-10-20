@@ -1335,6 +1335,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#stdio-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      Stdio Mode
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#http-mode" class="md-nav__link">
     <span class="md-ellipsis">
       HTTP Mode
@@ -1349,11 +1358,86 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#basic-configuration" class="md-nav__link">
+  <a href="#building-from-source" class="md-nav__link">
     <span class="md-ellipsis">
-      Basic Configuration
+      Building from Source
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Building from Source">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prerequisites
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clone-the-repository" class="md-nav__link">
+    <span class="md-ellipsis">
+      Clone the Repository
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-docker-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      Build Docker Image
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#running-the-built-docker-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      Running the Built Docker Image
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-native-binary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Build Native Binary
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#running-the-native-binary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Running the Native Binary
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Running the Native Binary">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configure-in-mcpjson" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configure in mcp.json
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1977,6 +2061,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#stdio-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      Stdio Mode
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#http-mode" class="md-nav__link">
     <span class="md-ellipsis">
       HTTP Mode
@@ -1991,11 +2084,86 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#basic-configuration" class="md-nav__link">
+  <a href="#building-from-source" class="md-nav__link">
     <span class="md-ellipsis">
-      Basic Configuration
+      Building from Source
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Building from Source">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prerequisites
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clone-the-repository" class="md-nav__link">
+    <span class="md-ellipsis">
+      Clone the Repository
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-docker-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      Build Docker Image
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#running-the-built-docker-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      Running the Built Docker Image
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-native-binary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Build Native Binary
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#running-the-native-binary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Running the Native Binary
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Running the Native Binary">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configure-in-mcpjson" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configure in mcp.json
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2042,7 +2210,7 @@
 
 
 <h1 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h1>
-<p>Harvest MCP Server is distributed as a Docker container image.</p>
+<p>Harvest MCP Server is distributed as a Docker container image, or you can build it from source.</p>
 <h2 id="container-images">Container Images<a class="headerlink" href="#container-images" title="Permanent link">&para;</a></h2>
 <p>Harvest MCP Server is available as pre-built container images:</p>
 <table>
@@ -2064,6 +2232,7 @@
 </tbody>
 </table>
 <h2 id="mcp-client-integration">MCP Client Integration<a class="headerlink" href="#mcp-client-integration" title="Permanent link">&para;</a></h2>
+<h3 id="stdio-mode">Stdio Mode<a class="headerlink" href="#stdio-mode" title="Permanent link">&para;</a></h3>
 <p>For MCP clients like GitHub Copilot, add to your mcp.json:</p>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
 <span class="w">  </span><span class="nt">&quot;servers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -2108,11 +2277,77 @@
 <span class="w">  </span><span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
-<h2 id="basic-configuration">Basic Configuration<a class="headerlink" href="#basic-configuration" title="Permanent link">&para;</a></h2>
-<p>The simplest way to run Harvest MCP Server:</p>
-<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-i<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--env<span class="w"> </span><span class="nv">HARVEST_TSDB_URL</span><span class="o">=</span>http://your-prometheus:9090<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>ghcr.io/netapp/harvest-mcp:latest
+<h2 id="building-from-source">Building from Source<a class="headerlink" href="#building-from-source" title="Permanent link">&para;</a></h2>
+<h3 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Go(check <code>.harvest.env</code> in the repository root for the exact required version)</li>
+<li>Git</li>
+<li>Make</li>
+<li>Docker (optional, for building Docker images)</li>
+</ul>
+<h3 id="clone-the-repository">Clone the Repository<a class="headerlink" href="#clone-the-repository" title="Permanent link">&para;</a></h3>
+<p>First, clone the Harvest repository:</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/NetApp/harvest.git
+<span class="nb">cd</span><span class="w"> </span>harvest
+</code></pre></div>
+<h3 id="build-docker-image">Build Docker Image<a class="headerlink" href="#build-docker-image" title="Permanent link">&para;</a></h3>
+<p>Build your own Docker image from source:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Navigate to the mcp directory</span>
+<span class="nb">cd</span><span class="w"> </span>mcp
+
+<span class="c1"># Build the Docker image using make (creates harvest-mcp:latest by default)</span>
+make<span class="w"> </span>docker-build
+
+<span class="c1"># Or specify a custom tag</span>
+make<span class="w"> </span>docker-build<span class="w"> </span><span class="nv">DOCKER_TAG</span><span class="o">=</span>harvest-mcp:local
+</code></pre></div>
+<p>Alternatively, build directly with Docker:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># From the harvest repository root</span>
+docker<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>mcp/Dockerfile<span class="w"> </span>-t<span class="w"> </span>harvest-mcp:local<span class="w"> </span>.
+</code></pre></div>
+<h3 id="running-the-built-docker-image">Running the Built Docker Image<a class="headerlink" href="#running-the-built-docker-image" title="Permanent link">&para;</a></h3>
+<p>After building, use your local image in your MCP client configuration. See <a href="#mcp-client-integration">MCP Client Integration</a> above for configuration examples - just replace <code>ghcr.io/netapp/harvest-mcp:latest</code> with your local image tag (e.g., <code>harvest-mcp:local</code>).</p>
+<h3 id="build-native-binary">Build Native Binary<a class="headerlink" href="#build-native-binary" title="Permanent link">&para;</a></h3>
+<p>Create a standalone binary package:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Navigate to the mcp directory</span>
+<span class="nb">cd</span><span class="w"> </span>mcp
+
+<span class="c1"># build for specific platforms:</span>
+<span class="nv">GOOS</span><span class="o">=</span>linux<span class="w"> </span><span class="nv">GOARCH</span><span class="o">=</span>amd64<span class="w"> </span>make<span class="w"> </span>package<span class="w">    </span><span class="c1"># Linux AMD64</span>
+<span class="nv">GOOS</span><span class="o">=</span>darwin<span class="w"> </span><span class="nv">GOARCH</span><span class="o">=</span>arm64<span class="w"> </span>make<span class="w"> </span>package<span class="w">   </span><span class="c1"># macOS ARM64 (Apple Silicon)</span>
+
+<span class="c1"># Creates: dist/harvest-mcp-&lt;version&gt;-&lt;release&gt;_&lt;os&gt;_&lt;arch&gt;.tar.gz</span>
+</code></pre></div>
+<h3 id="running-the-native-binary">Running the Native Binary<a class="headerlink" href="#running-the-native-binary" title="Permanent link">&para;</a></h3>
+<p>After extracting the package, configure it in mcp.json for MCP clients.</p>
+<h4 id="configure-in-mcpjson">Configure in mcp.json<a class="headerlink" href="#configure-in-mcpjson" title="Permanent link">&para;</a></h4>
+<p>For MCP clients like GitHub Copilot, add to your mcp.json:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;servers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;harvest-mcp&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;stdio&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/path/to/harvest-mcp/bin/harvest-mcp&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;env&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;HARVEST_TSDB_URL&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://your-prometheus:9090&quot;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>For HTTP mode, start the server first:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Start the server</span>
+<span class="nv">HARVEST_TSDB_URL</span><span class="o">=</span>http://your-prometheus:9090<span class="w"> </span>/path/to/harvest-mcp/bin/harvest-mcp<span class="w"> </span>start<span class="w"> </span>--http<span class="w"> </span>--port<span class="w"> </span><span class="m">8082</span>
+</code></pre></div>
+<p>Then configure your mcp.json:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;servers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;harvest-mcp&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://localhost:8082&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
 </code></pre></div>
 <h2 id="logs">Logs<a class="headerlink" href="#logs" title="Permanent link">&para;</a></h2>
 <p>To view the MCP server logs:</p>
