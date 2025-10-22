@@ -1023,8 +1023,7 @@ func addClusterLabel(data []byte, cluster string) []byte {
 					if excludeByName.Exists() {
 						clusterIndex := value.Get("options.excludeByName.cluster")
 						if clusterIndex.Exists() {
-							newContent, _ = sjson.SetBytes(newContent, path+".transformations."+transKey.ClonedString()+".options.excludeByName."+cluster, clusterIndex.Int())
-							newContent, _ = sjson.DeleteBytes(newContent, path+".transformations."+transKey.ClonedString()+".options.excludeByName.cluster")
+							newContent, _ = sjson.SetBytes(newContent, path+".transformations."+transKey.ClonedString()+".options.excludeByName."+cluster, true)
 						}
 						// Handle the case where the cluster column is named "cluster 1", "cluster 2", etc.
 						for i := range 10 {
@@ -1032,7 +1031,6 @@ func addClusterLabel(data []byte, cluster string) []byte {
 							clusterIndexI := value.Get("options.excludeByName." + clusterN)
 							if clusterIndexI.Exists() {
 								newContent, _ = sjson.SetBytes(newContent, path+".transformations."+transKey.ClonedString()+".options.excludeByName."+cluster+" "+strconv.Itoa(i), true)
-								newContent, _ = sjson.DeleteBytes(newContent, path+".transformations."+transKey.ClonedString()+".options.excludeByName."+clusterN)
 							}
 						}
 					}
@@ -1555,7 +1553,7 @@ func convertToCamelCase(snakeCaseStr string) string {
 	// Replace all underscores with spaces
 	snakeCaseStr = strings.ReplaceAll(snakeCaseStr, "_", " ")
 	// Title case s
-	snakeCaseStr = cases.Title(language.AmericanEnglish, cases.NoLower).String(snakeCaseStr)
+	snakeCaseStr = cases.Title(language.Und, cases.NoLower).String(snakeCaseStr)
 	// Remove all spaces
 	return strings.ReplaceAll(snakeCaseStr, " ", "")
 }
