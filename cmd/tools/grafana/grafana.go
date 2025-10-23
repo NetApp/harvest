@@ -927,13 +927,24 @@ func addClusterLabel(data []byte, cluster string) []byte {
 		return data
 	}
 	vars := templateList.Array()
+	clusterIndex := 0
+	for i, a := range templateList.Array() {
+		if a.Get("name").ClonedString() == "Cluster" {
+			clusterIndex = i
+			break
+		}
+	}
 
+	// If cluster var is not exist then skip to add new var
+	if clusterIndex == 0 {
+		return data
+	}
 	// create a new list of vars and copy the existing ones into it, duplicate the fourth var after cluster var since we're going to overwrite it
 	var newVars []gjson.Result
-	newVars = append(newVars, vars[:3]...)
-	newVars = append(newVars, vars[2:]...)
+	newVars = append(newVars, vars[:clusterIndex+1]...)
+	newVars = append(newVars, vars[clusterIndex:]...)
 
-	newVars[3] = gjson.ParseBytes(newClusterLabelVar(varName, cluster))
+	newVars[clusterIndex+1] = gjson.ParseBytes(newClusterLabelVar(varName, cluster))
 
 	// Write the variables into a string builder
 	// Modify the existing variables by adding the new label query
@@ -958,8 +969,10 @@ func addClusterLabel(data []byte, cluster string) []byte {
 		return data
 	}
 
-	// Rewrite all panel expressions to include the new label
+	// Change all panel expressions
 	VisitAllPanels(newContent, func(path string, _, value gjson.Result) {
+
+		// Rewrite all panel expressions to include the new label
 		value.Get("targets").ForEach(func(targetKey, target gjson.Result) bool {
 			expr := target.Get("expr")
 			if expr.Exists() {
@@ -973,10 +986,6 @@ func addClusterLabel(data []byte, cluster string) []byte {
 			}
 			return true
 		})
-	})
-
-	// Change all panel expressions
-	VisitAllPanels(newContent, func(path string, _, value gjson.Result) {
 
 		// Rewrite expressions and legends
 		value.Get("targets").ForEach(func(targetKey, target gjson.Result) bool {
@@ -1023,14 +1032,14 @@ func addClusterLabel(data []byte, cluster string) []byte {
 					if excludeByName.Exists() {
 						clusterIndex := value.Get("options.excludeByName.cluster")
 						if clusterIndex.Exists() {
-							newContent, _ = sjson.SetBytes(newContent, path+".transformations."+transKey.ClonedString()+".options.excludeByName."+cluster, true)
+							newContent, _ = sjson.SetBytes(newContent, path+".transformations."+transKey.ClonedString()+".options.excludeByName."+cluster, clusterIndex.Bool())
 						}
 						// Handle the case where the cluster column is named "cluster 1", "cluster 2", etc.
 						for i := range 10 {
 							clusterN := "cluster " + strconv.Itoa(i)
 							clusterIndexI := value.Get("options.excludeByName." + clusterN)
 							if clusterIndexI.Exists() {
-								newContent, _ = sjson.SetBytes(newContent, path+".transformations."+transKey.ClonedString()+".options.excludeByName."+cluster+" "+strconv.Itoa(i), true)
+								newContent, _ = sjson.SetBytes(newContent, path+".transformations."+transKey.ClonedString()+".options.excludeByName."+cluster+" "+strconv.Itoa(i), clusterIndexI.Bool())
 							}
 						}
 					}
