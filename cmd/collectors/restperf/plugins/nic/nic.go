@@ -33,9 +33,11 @@ import (
 
 type Nic struct {
 	*plugin.AbstractPlugin
-	data         *matrix.Matrix
-	client       *rest.Client
-	testFilePath string // Used only from unit test
+	data              *matrix.Matrix
+	client            *rest.Client
+	testFilePath      string // Used only from unit test
+	receiveBytesName  string // name of the receive bytes counter (varies by collector)
+	transmitBytesName string // name of the transmit bytes counter (varies by collector)
 }
 
 var ifgrpMetrics = []string{
@@ -61,6 +63,15 @@ func (n *Nic) Init(remote conf.Remote) error {
 	instanceKeys.NewChildS("", "ifgroup")
 	instanceKeys.NewChildS("", "ports")
 	n.data.SetExportOptions(exportOptions)
+
+	// StatPerf uses "rx_bytes" and "tx_bytes" while RestPerf uses "receive_bytes" and "transmit_bytes"
+	if n.Parent == "StatPerf" {
+		n.receiveBytesName = "rx_bytes"
+		n.transmitBytesName = "tx_bytes"
+	} else {
+		n.receiveBytesName = "receive_bytes"
+		n.transmitBytesName = "transmit_bytes"
+	}
 
 	for _, obj := range ifgrpMetrics {
 		metricName, display, _, _ := template.ParseMetric(obj)
@@ -105,12 +116,12 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collect
 	// Set all global labels from zapi.go if already not exist
 	n.data.SetGlobalLabels(data.GetGlobalLabels())
 
-	if read = data.GetMetric("receive_bytes"); read == nil {
-		return nil, nil, errs.New(errs.ErrNoMetric, "receive_bytes")
+	if read = data.GetMetric(n.receiveBytesName); read == nil {
+		return nil, nil, errs.New(errs.ErrNoMetric, n.receiveBytesName)
 	}
 
-	if write = data.GetMetric("transmit_bytes"); write == nil {
-		return nil, nil, errs.New(errs.ErrNoMetric, "transmit_bytes")
+	if write = data.GetMetric(n.transmitBytesName); write == nil {
+		return nil, nil, errs.New(errs.ErrNoMetric, n.transmitBytesName)
 	}
 
 	if rx = data.GetMetric("rx_percent"); rx == nil {
@@ -145,12 +156,16 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collect
 		s = instance.GetLabel("speed")
 		nodeName = instance.GetLabel("node")
 
-		// example name = cluster_name:e0a
-		// nic          = e0a
-		if i := instance.GetLabel("id"); i != "" {
-			if split := strings.Split(instance.GetLabel("id"), ":"); len(split) >= 2 {
-				instance.SetLabel("nic", split[1])
-				port = instance.GetLabel("nic")
+		if n.Parent == "StatPerf" {
+			port = instance.GetLabel("nic")
+		} else {
+			// example name = cluster_name:e0a
+			// nic          = e0a
+			if i := instance.GetLabel("id"); i != "" {
+				if split := strings.Split(instance.GetLabel("id"), ":"); len(split) >= 2 {
+					instance.SetLabel("nic", split[1])
+					port = instance.GetLabel("nic")
+				}
 			}
 		}
 

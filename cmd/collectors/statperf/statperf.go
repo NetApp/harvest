@@ -4,7 +4,12 @@ import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	rest2 "github.com/netapp/harvest/v2/cmd/collectors/rest"
+	"github.com/netapp/harvest/v2/cmd/collectors/statperf/plugins/disk"
+	"github.com/netapp/harvest/v2/cmd/collectors/statperf/plugins/fcp"
+	"github.com/netapp/harvest/v2/cmd/collectors/statperf/plugins/fcvi"
 	"github.com/netapp/harvest/v2/cmd/collectors/statperf/plugins/flexcache"
+	"github.com/netapp/harvest/v2/cmd/collectors/statperf/plugins/headroom"
+	"github.com/netapp/harvest/v2/cmd/collectors/statperf/plugins/nic"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
@@ -951,8 +956,18 @@ func (s *StatPerf) cookCounters(curMat *matrix.Matrix, prevMat *matrix.Matrix) (
 
 func (s *StatPerf) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin {
 	switch kind {
+	case "Disk":
+		return disk.New(abc)
+	case "Fcp":
+		return fcp.New(abc)
+	case "FCVI":
+		return fcvi.New(abc)
 	case "FlexCache":
 		return flexcache.New(abc)
+	case "Nic":
+		return nic.New(abc)
+	case "Headroom":
+		return headroom.New(abc)
 	default:
 		s.Logger.Info("no StatPerf plugin found for %s", slog.String("kind", kind))
 	}

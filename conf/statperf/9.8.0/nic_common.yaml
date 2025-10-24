@@ -25,6 +25,7 @@ override:
   - link_speed: string
 
 plugins:
+  - Nic
   - LabelAgent:
     # metric label zapi_value rest_value `default_value`
     value_to_num:
@@ -38,4 +39,3 @@ export_options:
     - speed
     - state
     - type
-

@@ -259,6 +259,9 @@ func TestExportLabelsExist(t *testing.T) {
 	ignoreTemplates := []string{
 		"perf/.*/workload.*.yaml",
 		"zapi/cdot/9.8.0/qos_policy_fixed.yaml",
+		"statperf/9.8.0/fcvi.yaml",
+		"statperf/9.8.0/resource_headroom_aggr.yaml",
+		"statperf/9.8.0/resource_headroom_aggr.yaml",
 	}
 
 	visitTemplates(t, func(path string, model Model) {

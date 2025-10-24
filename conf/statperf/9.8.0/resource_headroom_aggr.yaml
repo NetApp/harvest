@@ -18,6 +18,11 @@ counters:
   - optimal_point_ops
   - optimal_point_utilization
 
+plugins:
+  - Headroom
+
 export_options:
   instance_keys:
+    - aggr
+    - disk_type
     - node
