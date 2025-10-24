@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/netapp/harvest/v2/assert"
+	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"testing"
@@ -719,5 +721,91 @@ func TestConvertToCamelCase(t *testing.T) {
 			got := convertToCamelCase(tt.input)
 			assert.Equal(t, got, tt.want)
 		})
+	}
+}
+
+func TestAddClusterLabel(t *testing.T) {
+	tests := []struct {
+		dashboardName string
+		expectedVars  []string
+	}{
+		{dashboardName: "normal_dashboard.json", expectedVars: []string{"DS_PROMETHEUS", "Datacenter", "Cluster", "NetCluster", "Node", "Aggregate", "TopResources"}},
+		{dashboardName: "last_cluster_var.json", expectedVars: []string{"DS_PROMETHEUS", "Datacenter", "Cluster", "NetCluster"}},
+		{dashboardName: "no_cluster_var.json", expectedVars: []string{"DS_PROMETHEUS", "Datacenter"}},
+		{dashboardName: "custom_var.json", expectedVars: []string{"DS_PROMETHEUS", "Datacenter", "CustomVar", "Cluster", "NetCluster"}},
+	}
+
+	newClusterLabel := "net_cluster"
+	for _, tt := range tests {
+		var (
+			gotVars     []string
+			data        []byte
+			updatedData []byte
+			err         error
+		)
+		if data, err = os.ReadFile(filepath.Join("testdata", tt.dashboardName)); err != nil {
+			fmt.Printf("error reading file [%s]\n", tt.dashboardName)
+			return
+		}
+
+		updatedData = addClusterLabel(data, newClusterLabel)
+		templateList := gjson.GetBytes(updatedData, "templating.list")
+		if !templateList.Exists() {
+			fmt.Printf("No template variables found, ignoring add label")
+			return
+		}
+
+		// Validate the new and existing cluster filters are applied in other variables.
+		for _, varData := range templateList.Array() {
+			varName := varData.Get("name").ClonedString()
+			varDefinition := varData.Get("definition").ClonedString()
+			gotVars = append(gotVars, varName)
+			newVarCheck(t, varName, varDefinition, "Datacenter", "net_cluster=~\"$NetCluster\"", false)
+			newVarCheck(t, varName, varDefinition, "Cluster", "net_cluster=~\"$NetCluster\"", false)
+			newVarCheck(t, varName, varDefinition, "Node", "cluster=~\"$Cluster\"", true)
+			newVarCheck(t, varName, varDefinition, "Node", "net_cluster=~\"$NetCluster\"", true)
+			newVarCheck(t, varName, varDefinition, "Aggregate", "cluster=~\"$Cluster\"", true)
+			newVarCheck(t, varName, varDefinition, "Aggregate", "net_cluster=~\"$NetCluster\"", true)
+			newVarCheck(t, varName, varDefinition, "CustomVar", "net_cluster=~\"$NetCluster\"", false)
+		}
+
+		// Validate the order of variables
+		assert.Equal(t, gotVars, tt.expectedVars)
+
+		// Validate legendFormat and filter in expressions are applied
+		VisitAllPanels(updatedData, func(_ string, _, value gjson.Result) {
+			value.Get("targets").ForEach(func(_, target gjson.Result) bool {
+				legendFormat := target.Get("legendFormat")
+				legendFormatData := legendFormat.ClonedString()
+				if legendFormat.Exists() && legendFormatData != "" {
+					// Validate legendFormat
+					if strings.Contains(legendFormatData, "{{cluster}}") {
+						assert.Equal(t, legendFormatData, "{{net_cluster}} - {{aggr}}")
+					}
+					if expr := target.Get("expr"); expr.Exists() {
+						// Validate filter in expressions
+						if strings.Contains(legendFormatData, "cluster=~\"$Cluster\"") && !strings.Contains(expr.ClonedString(), "net_cluster=~\"$NetCluster\"") {
+							t.Errorf("%s %s query should contain new added cluster var", tt.dashboardName, expr.ClonedString())
+						}
+					}
+				}
+				return true
+			})
+		})
+	}
+}
+
+func newVarCheck(t *testing.T, varName, definition, name, varFilter string, shouldExist bool) {
+	if varName == name {
+		switch shouldExist {
+		case true:
+			if !strings.Contains(definition, varFilter) {
+				t.Errorf("%s var should contain new added cluster var", varName)
+			}
+		case false:
+			if strings.Contains(definition, varFilter) {
+				t.Errorf("%s var should not contain new added cluster var", varName)
+			}
+		}
 	}
 }

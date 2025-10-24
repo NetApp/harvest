@@ -916,9 +916,6 @@ func addClusterLabel(data []byte, cluster string) []byte {
 	// clusterLabelMap is used to ensure we don't modify the query of one of the new labels we're adding
 	clusterLabelMap := make(map[string]string)
 	clusterLabelMap[varName] = cluster
-	// This is special case of new cluster label addition, we ensure not to modify the query of parent labels
-	clusterLabelMap["Datacenter"] = ""
-	clusterLabelMap["Cluster"] = ""
 
 	// extract the list of variables
 	templateList := gjson.GetBytes(data, "templating.list")
@@ -928,8 +925,8 @@ func addClusterLabel(data []byte, cluster string) []byte {
 	}
 	vars := templateList.Array()
 	clusterIndex := 0
-	for i, a := range templateList.Array() {
-		if a.Get("name").ClonedString() == "Cluster" {
+	for i, varData := range vars {
+		if varData.Get("name").ClonedString() == "Cluster" {
 			clusterIndex = i
 			break
 		}
@@ -939,6 +936,12 @@ func addClusterLabel(data []byte, cluster string) []byte {
 	if clusterIndex == 0 {
 		return data
 	}
+
+	// This is special case of new cluster label addition, we ensure not to modify the query of parent labels
+	for i := 0; i <= clusterIndex; i++ {
+		clusterLabelMap[vars[i].Get("name").ClonedString()] = ""
+	}
+
 	// create a new list of vars and copy the existing ones into it, duplicate the fourth var after cluster var since we're going to overwrite it
 	var newVars []gjson.Result
 	newVars = append(newVars, vars[:clusterIndex+1]...)
