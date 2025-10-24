@@ -137,7 +137,7 @@ func (d *Disk) Init(remote conf.Remote) error {
 	d.instanceLabels = make(map[string]map[string]string)
 
 	// StatPerf uses "total_transfers" while RestPerf uses "total_transfer_count"
-	if d.Parent == "StatPerf" {
+	if d.IsStatPerfCollector() {
 		d.totalTransfersCounter = "total_transfers"
 	} else {
 		d.totalTransfersCounter = "total_transfer_count"

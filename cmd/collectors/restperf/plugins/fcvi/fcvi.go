@@ -69,7 +69,7 @@ func (f *FCVI) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collec
 		// Fetch instance and add port label
 		// StatPerf uses "node:kernel:adapter" format while RestPerf uses "node:adapter"
 		var instanceKey string
-		if f.Parent == "StatPerf" {
+		if f.IsStatPerfCollector() {
 			instanceKey = node + ":kernel:" + adapter
 		} else {
 			instanceKey = node + ":" + adapter
