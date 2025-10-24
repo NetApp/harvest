@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/netapp/harvest/v2/assert"
+	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"testing"
@@ -56,41 +58,12 @@ func TestHttpsAddr(t *testing.T) {
 }
 
 func TestAddPrefixToMetricNames(t *testing.T) {
-
-	var (
-		dashboard                      map[string]any
-		oldExpressions, newExpressions []string
-		updatedData                    []byte
-		err                            error
-	)
-
 	prefix := "xx_"
 	VisitDashboards(
 		[]string{"../../../grafana/dashboards/cisco", "../../../grafana/dashboards/cmode", "../../../grafana/dashboards/cmode-details", "../../../grafana/dashboards/storagegrid"},
 		func(path string, data []byte) {
-			oldExpressions = readExprs(data)
-			if err = json.Unmarshal(data, &dashboard); err != nil {
-				fmt.Printf("error parsing file [%s] %+v\n", path, err)
-				fmt.Println("-------------------------------")
-				fmt.Println(string(data))
-				fmt.Println("-------------------------------")
+			if _, err := expressionCheck(t, data, path, prefix); err != nil {
 				return
-			}
-			addGlobalPrefix(dashboard, prefix)
-
-			if updatedData, err = json.Marshal(dashboard); err != nil {
-				fmt.Printf("error parsing file [%s] %+v\n", path, err)
-				fmt.Println("-------------------------------")
-				fmt.Println(string(updatedData))
-				fmt.Println("-------------------------------")
-				return
-			}
-			newExpressions = readExprs(updatedData)
-
-			for i := range newExpressions {
-				if newExpressions[i] != prefix+oldExpressions[i] {
-					t.Errorf("path: %s \nExpected: [%s]\n     Got: [%s]", path, prefix+oldExpressions[i], newExpressions[i])
-				}
 			}
 		})
 }
@@ -163,7 +136,7 @@ func TestChainedParsing(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			wrappedInDef := `"definition": "` + tt.json + `"`
-			got := toChainedVar(wrappedInDef, "foo")
+			got := toChainedVar(wrappedInDef, "foo", "Foo")
 			assert.Equal(t, got, tt.want)
 		})
 	}
@@ -586,7 +559,7 @@ func TestAddLabel(t *testing.T) {
 
 			data := []byte(wrappedInDef)
 			for i := len(tt.labels) - 1; i >= 0; i-- {
-				data = addLabel(data, tt.labels[i], labelMap)
+				data = addLabel(data, tt.labels[i], cases.Title(language.Und).String(tt.labels[i]), labelMap)
 			}
 
 			formattedGot, err := formatJSON(data)
@@ -687,4 +660,175 @@ func TestValidateVarDefaults(t *testing.T) {
 			assert.Equal(t, got, tt.want)
 		})
 	}
+}
+
+func TestConvertToCamelCase(t *testing.T) {
+	type test struct {
+		name  string
+		input string
+		want  string
+	}
+
+	tests := []test{
+		{
+			name:  "name with underscore",
+			input: `netapp_cluster`,
+			want:  `NetappCluster`,
+		},
+		{
+			name:  "name with space",
+			input: `netapp cluster`,
+			want:  `NetappCluster`,
+		},
+		{
+			name:  "name in lowercase",
+			input: `netappcluster`,
+			want:  `Netappcluster`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := convertToCamelCase(tt.input)
+			assert.Equal(t, got, tt.want)
+		})
+	}
+}
+
+func TestAddClusterLabel(t *testing.T) {
+	tests := []struct {
+		dashboardName string
+		expectedVars  []string
+	}{
+		{dashboardName: "normal_dashboard.json", expectedVars: []string{"DS_PROMETHEUS", "Datacenter", "Cluster", "NetCluster", "Node", "Aggregate", "TopResources"}},
+		{dashboardName: "last_cluster_var.json", expectedVars: []string{"DS_PROMETHEUS", "Datacenter", "Cluster", "NetCluster"}},
+		{dashboardName: "no_cluster_var.json", expectedVars: []string{"DS_PROMETHEUS", "Datacenter"}},
+		{dashboardName: "custom_var.json", expectedVars: []string{"DS_PROMETHEUS", "Datacenter", "CustomVar", "Cluster", "NetCluster"}},
+	}
+
+	newClusterLabel := "net_cluster"
+	varRegex := regexp.MustCompile(`\(([^{]*)\{`)
+	for _, tt := range tests {
+		var (
+			gotVars     []string
+			data        []byte
+			updatedData []byte
+			err         error
+		)
+		if data, err = os.ReadFile(filepath.Join("testdata", tt.dashboardName)); err != nil {
+			fmt.Printf("error reading file [%s]\n", tt.dashboardName)
+			return
+		}
+
+		updatedData = addClusterLabel(data, newClusterLabel)
+
+		// Validate prefix with new added cluster label
+		prefix := "abc_"
+		updatedData, err = expressionCheck(t, updatedData, tt.dashboardName, prefix)
+		if err != nil {
+			return
+		}
+
+		templateList := gjson.GetBytes(updatedData, "templating.list")
+		if !templateList.Exists() {
+			fmt.Printf("No template variables found, ignoring add label")
+			return
+		}
+
+		// Validate the new and existing cluster filters are applied in other variables.
+		for _, varData := range templateList.Array() {
+			varName := varData.Get("name").ClonedString()
+			varDefinition := varData.Get("definition").ClonedString()
+			allMatches := varRegex.FindAllStringSubmatch(varDefinition, -1)
+			for _, match := range allMatches {
+				// Validate all variables metric name contains prefix
+				if !strings.HasPrefix(match[1], prefix) {
+					t.Errorf("%s %s query should contain prefix %s", tt.dashboardName, match[1], prefix)
+				}
+			}
+
+			gotVars = append(gotVars, varName)
+			newVarCheck(t, varName, varDefinition, "Datacenter", "net_cluster=~\"$NetCluster\"", false)
+			newVarCheck(t, varName, varDefinition, "Cluster", "net_cluster=~\"$NetCluster\"", false)
+			newVarCheck(t, varName, varDefinition, "Node", "cluster=~\"$Cluster\"", true)
+			newVarCheck(t, varName, varDefinition, "Node", "net_cluster=~\"$NetCluster\"", true)
+			newVarCheck(t, varName, varDefinition, "Aggregate", "cluster=~\"$Cluster\"", true)
+			newVarCheck(t, varName, varDefinition, "Aggregate", "net_cluster=~\"$NetCluster\"", true)
+			newVarCheck(t, varName, varDefinition, "CustomVar", "net_cluster=~\"$NetCluster\"", false)
+		}
+
+		// Validate the order of variables
+		assert.Equal(t, gotVars, tt.expectedVars)
+
+		// Validate legendFormat and filter in expressions are applied
+		VisitAllPanels(updatedData, func(_ string, _, value gjson.Result) {
+			value.Get("targets").ForEach(func(_, target gjson.Result) bool {
+				legendFormat := target.Get("legendFormat")
+				legendFormatData := legendFormat.ClonedString()
+				if legendFormat.Exists() && legendFormatData != "" {
+					// Validate legendFormat
+					if strings.Contains(legendFormatData, "{{cluster}}") {
+						assert.Equal(t, legendFormatData, "{{net_cluster}} - {{aggr}}")
+					}
+					if expr := target.Get("expr"); expr.Exists() {
+						// Validate filter in expressions
+						if strings.Contains(legendFormatData, "cluster=~\"$Cluster\"") && !strings.Contains(expr.ClonedString(), "net_cluster=~\"$NetCluster\"") {
+							t.Errorf("%s %s query should contain new added cluster var", tt.dashboardName, expr.ClonedString())
+						}
+					}
+				}
+				return true
+			})
+		})
+	}
+}
+
+func newVarCheck(t *testing.T, varName, definition, name, varFilter string, shouldExist bool) {
+	if varName == name {
+		switch shouldExist {
+		case true:
+			if !strings.Contains(definition, varFilter) {
+				t.Errorf("%s var should contain new added cluster var", varName)
+			}
+		case false:
+			if strings.Contains(definition, varFilter) {
+				t.Errorf("%s var should not contain new added cluster var", varName)
+			}
+		}
+	}
+}
+
+func expressionCheck(t *testing.T, data []byte, filename string, prefix string) ([]byte, error) {
+	var (
+		dashboard                      map[string]any
+		oldExpressions, newExpressions []string
+		updatedData                    []byte
+		err                            error
+	)
+
+	oldExpressions = readExprs(data)
+	if err = json.Unmarshal(data, &dashboard); err != nil {
+		fmt.Printf("error parsing file [%s] %+v\n", filename, err)
+		fmt.Println("-------------------------------")
+		fmt.Println(string(data))
+		fmt.Println("-------------------------------")
+		return data, err
+	}
+	addGlobalPrefix(dashboard, prefix)
+
+	if updatedData, err = json.Marshal(dashboard); err != nil {
+		fmt.Printf("error parsing file [%s] %+v\n", filename, err)
+		fmt.Println("-------------------------------")
+		fmt.Println(string(updatedData))
+		fmt.Println("-------------------------------")
+		return data, err
+	}
+	newExpressions = readExprs(updatedData)
+
+	for i := range newExpressions {
+		if newExpressions[i] != prefix+oldExpressions[i] {
+			t.Errorf("file: %s \nExpected: [%s]\n     Got: [%s]", filename, prefix+oldExpressions[i], newExpressions[i])
+		}
+	}
+	return updatedData, nil
 }

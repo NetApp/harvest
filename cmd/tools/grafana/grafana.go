@@ -75,6 +75,7 @@ type options struct {
 	customizeDir        string
 	customAllValue      string
 	customCluster       string
+	addCluster          string
 	varDefaults         string
 	defaultDropdownMap  map[string][]string
 	isDebug             bool
@@ -233,7 +234,7 @@ func addSvmRegex(content []byte, val string) []byte {
 	return content
 }
 
-func addLabel(content []byte, label string, labelMap map[string]string) []byte {
+func addLabel(content []byte, label string, title string, labelMap map[string]string) []byte {
 	// extract the list of variables
 	templateList := gjson.GetBytes(content, "templating.list")
 	if !templateList.Exists() {
@@ -250,14 +251,14 @@ func addLabel(content []byte, label string, labelMap map[string]string) []byte {
 
 	// Assume Datasource is first and insert the new label var as the second element.
 	// If we're wrong, that's OK, no harm
-	newVars[1] = gjson.ParseBytes(newLabelVar(label))
+	newVars[1] = gjson.ParseBytes(newLabelVar(label, title))
 
 	// Write the variables into a string builder
 	// Modify the existing variables by adding the new label query
 	varsString := strings.Builder{}
 	varsString.WriteString("[")
 	for i, result := range newVars {
-		aStr := addChainedVar(result, label, labelMap)
+		aStr := addChainedVar(result, label, title, labelMap)
 		if aStr == "" {
 			varsString.WriteString(result.ClonedString())
 		} else {
@@ -321,7 +322,7 @@ func rewriteExprWith(input string, label string, forLabel string) string {
 	return result
 }
 
-func addChainedVar(result gjson.Result, label string, labelMap map[string]string) string {
+func addChainedVar(result gjson.Result, label string, title string, labelMap map[string]string) string {
 	varName := result.Get("name")
 	definition := result.Get("definition")
 	query := result.Get("query.query")
@@ -338,7 +339,7 @@ func addChainedVar(result gjson.Result, label string, labelMap map[string]string
 	if defStr != query.ClonedString() {
 		return ""
 	}
-	chained := toChainedVar(defStr, label)
+	chained := toChainedVar(defStr, label, title)
 	if chained == "" {
 		return ""
 	}
@@ -372,12 +373,11 @@ func addChainedVar(result gjson.Result, label string, labelMap map[string]string
 	return rString
 }
 
-func toChainedVar(defStr string, label string) string {
+func toChainedVar(defStr string, label string, title string) string {
 	if !strings.Contains(defStr, "label_values") {
 		return ""
 	}
 
-	title := cases.Title(language.Und).String(label)
 	lastBracket := strings.LastIndex(defStr, "}")
 	if lastBracket == -1 {
 		lastParen := strings.LastIndex(defStr, ")")
@@ -412,7 +412,7 @@ func toChainedVar(defStr string, label string) string {
 	return defStr[0:lastBracket] + "," + label + `=~"$` + title + `"` + defStr[lastBracket:]
 }
 
-func newLabelVar(label string) []byte {
+func newLabelVar(label string, title string) []byte {
 	return fmt.Appendf(nil, `{
   "allValue": ".*",
   "current": {
@@ -433,7 +433,36 @@ func newLabelVar(label string) []byte {
   "skipUrlSync": false,
   "sort": 0,
   "type": "query"
-}`, label, cases.Title(language.Und).String(label), label)
+}`, label, title, label)
+}
+
+func newClusterLabelVar(varName string, label string) []byte {
+	return fmt.Appendf(nil, `{
+	"allValue": ".*",
+	"current": {},
+	"datasource": "${DS_PROMETHEUS}",
+	"definition": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, %s)",
+	"description": null,
+	"error": null,
+	"hide": 0,
+	"includeAll": true,
+	"label": null,
+	"multi": true,
+	"name": "%s",
+	"options": [],
+	"query": {
+	"query": "label_values(cluster_new_status{system_type!=\"7mode\",datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, %s)",
+	"refId": "StandardVariableQuery"
+	},
+	"refresh": 2,
+	"regex": "",
+	"skipUrlSync": false,
+	"sort": 1,
+	"tagValuesQuery": "",
+	"tagsQuery": "",
+	"type": "query",
+	"useTags": false
+    }`, label, varName, label)
 }
 
 func doImport(_ *cobra.Command, _ []string) {
@@ -632,6 +661,11 @@ func importFiles(dir string, folder *Folder) {
 			data = changeClusterLabel(data, opts.customCluster)
 		}
 
+		// add new cluster label if needed
+		if opts.addCluster != "" {
+			data = addClusterLabel(data, opts.addCluster)
+		}
+
 		// Set default dropdown values if provided
 		if len(opts.defaultDropdownMap) > 0 {
 			data = setDefaultDropdownValues(data, opts.defaultDropdownMap)
@@ -645,7 +679,7 @@ func importFiles(dir string, folder *Folder) {
 		// The label is inserted in the list of variables first
 		// Iterate backwards so the labels keep the same order as cmdline
 		for i := len(opts.labels) - 1; i >= 0; i-- {
-			data = addLabel(data, opts.labels[i], labelMap)
+			data = addLabel(data, opts.labels[i], cases.Title(language.Und).String(opts.labels[i]), labelMap)
 		}
 
 		if opts.showDatasource {
@@ -743,7 +777,6 @@ func setDefaultDropdownValues(data []byte, defaultValues map[string][]string) []
 // sum(write_data{datacenter=~"$Datacenter",na_cluster=~"$Cluster",svm=~"$SVM"})
 // See https://github.com/NetApp/harvest/issues/3131
 func changeClusterLabel(data []byte, cluster string) []byte {
-
 	// Change all panel expressions
 	VisitAllPanels(data, func(path string, _, value gjson.Result) {
 
@@ -869,6 +902,185 @@ func changeClusterLabel(data []byte, cluster string) []byte {
 	})
 
 	return data
+}
+
+// This function will rewrite all panel expressions in the dashboard to add the new cluster label.
+// Example:
+// sum(write_data{datacenter=~"$Datacenter",cluster=~"$Cluster",svm=~"$SVM"})
+// with --cluster-label=na_cluster will become
+// sum(write_data{datacenter=~"$Datacenter",cluster=~"$Cluster",na_cluster=~"$NaCluster",svm=~"$SVM"})
+// See https://github.com/NetApp/harvest/issues/3826
+func addClusterLabel(data []byte, cluster string) []byte {
+	varName := convertToCamelCase(cluster)
+
+	// clusterLabelMap is used to ensure we don't modify the query of one of the new labels we're adding
+	clusterLabelMap := make(map[string]string)
+	clusterLabelMap[varName] = cluster
+
+	// extract the list of variables
+	templateList := gjson.GetBytes(data, "templating.list")
+	if !templateList.Exists() {
+		fmt.Printf("No template variables found, ignoring add label")
+		return data
+	}
+	vars := templateList.Array()
+	clusterIndex := 0
+	for i, varData := range vars {
+		if varData.Get("name").ClonedString() == "Cluster" {
+			clusterIndex = i
+			break
+		}
+	}
+
+	// If cluster var is not exist then skip to add new var
+	if clusterIndex == 0 {
+		return data
+	}
+
+	// This is special case of new cluster label addition, we ensure not to modify the query of parent labels
+	for i := 0; i <= clusterIndex; i++ {
+		clusterLabelMap[vars[i].Get("name").ClonedString()] = ""
+	}
+
+	// create a new list of vars and copy the existing ones into it, duplicate the fourth var after cluster var since we're going to overwrite it
+	var newVars []gjson.Result
+	newVars = append(newVars, vars[:clusterIndex+1]...)
+	newVars = append(newVars, vars[clusterIndex:]...)
+
+	newVars[clusterIndex+1] = gjson.ParseBytes(newClusterLabelVar(varName, cluster))
+
+	// Write the variables into a string builder
+	// Modify the existing variables by adding the new label query
+	varsString := strings.Builder{}
+	varsString.WriteString("[")
+	for i, result := range newVars {
+		aStr := addChainedVar(result, cluster, varName, clusterLabelMap)
+		if aStr == "" {
+			varsString.WriteString(result.ClonedString())
+		} else {
+			varsString.WriteString(aStr)
+		}
+		if i < len(newVars)-1 {
+			varsString.WriteString(",\n")
+		}
+	}
+	varsString.WriteString("]")
+
+	newContent, err := sjson.SetRawBytes(data, "templating.list", []byte(varsString.String()))
+	if err != nil {
+		fmt.Printf("error inserting label=[%s] into dashboard, err: %+v", cluster, err)
+		return data
+	}
+
+	// Change all panel expressions
+	VisitAllPanels(newContent, func(path string, _, value gjson.Result) {
+
+		// Rewrite all panel expressions to include the new label
+		value.Get("targets").ForEach(func(targetKey, target gjson.Result) bool {
+			expr := target.Get("expr")
+			if expr.Exists() {
+				newExpression := rewriteExprWith(expr.ClonedString(), cluster, varName)
+				loc := path + ".targets." + targetKey.ClonedString() + ".expr"
+				newContent, err = sjson.SetBytes(newContent, loc, []byte(newExpression))
+				if err != nil {
+					fmt.Printf("error rewriting expr at=[%s] for label=[%s], err: %+v", loc, cluster, err)
+					return false
+				}
+			}
+			return true
+		})
+
+		// Rewrite expressions and legends
+		value.Get("targets").ForEach(func(targetKey, target gjson.Result) bool {
+			legendFormat := target.Get("legendFormat")
+			if legendFormat.Exists() {
+				newLegendFormat := rewriteCluster(legendFormat.ClonedString(), cluster)
+				newContent, _ = sjson.SetBytes(newContent, path+".targets."+targetKey.ClonedString()+".legendFormat", []byte(newLegendFormat))
+			}
+
+			return true
+		})
+
+		// Rewrite tables columns
+		panelType := value.Get("type")
+		if panelType.ClonedString() == "table" {
+			value.Get("transformations").ForEach(func(transKey, value gjson.Result) bool {
+				id := value.Get("id")
+				if id.ClonedString() == "organize" {
+
+					// Check if the cluster exists in renameByName, and if so, rename it to the new cluster label
+					clusterTrans := value.Get("options.renameByName.cluster")
+					if clusterTrans.Exists() {
+						newContent, _ = sjson.SetBytes(newContent, path+".transformations."+transKey.ClonedString()+".options.renameByName."+cluster, []byte(clusterTrans.ClonedString()))
+					}
+
+					// If the cluster column exists, remove the column, and add the new cluster label at the same index
+					clusterIndex := value.Get("options.indexByName.cluster")
+					if clusterIndex.Exists() {
+						newContent, _ = sjson.SetBytes(newContent, path+".transformations."+transKey.ClonedString()+".options.indexByName."+cluster, clusterIndex.Int())
+						newContent, _ = sjson.DeleteBytes(newContent, path+".transformations."+transKey.ClonedString()+".options.indexByName.cluster")
+					}
+					// Handle the case where the cluster column is named "cluster 1", "cluster 2", etc.
+					for i := range 10 {
+						clusterN := "cluster " + strconv.Itoa(i)
+						clusterIndexI := value.Get("options.indexByName." + clusterN)
+						if clusterIndexI.Exists() {
+							newContent, _ = sjson.SetBytes(newContent, path+".transformations."+transKey.ClonedString()+".options.indexByName."+cluster+" "+strconv.Itoa(i), clusterIndexI.Int())
+							newContent, _ = sjson.DeleteBytes(newContent, path+".transformations."+transKey.ClonedString()+".options.indexByName."+clusterN)
+						}
+					}
+
+					// If cluster is excluded from the table, exclude the new cluster label too
+					excludeByName := value.Get("options.excludeByName")
+					if excludeByName.Exists() {
+						clusterIndex := value.Get("options.excludeByName.cluster")
+						if clusterIndex.Exists() {
+							newContent, _ = sjson.SetBytes(newContent, path+".transformations."+transKey.ClonedString()+".options.excludeByName."+cluster, clusterIndex.Bool())
+						}
+						// Handle the case where the cluster column is named "cluster 1", "cluster 2", etc.
+						for i := range 10 {
+							clusterN := "cluster " + strconv.Itoa(i)
+							clusterIndexI := value.Get("options.excludeByName." + clusterN)
+							if clusterIndexI.Exists() {
+								newContent, _ = sjson.SetBytes(newContent, path+".transformations."+transKey.ClonedString()+".options.excludeByName."+cluster+" "+strconv.Itoa(i), clusterIndexI.Bool())
+							}
+						}
+					}
+				} else if id.ClonedString() == "filterFieldsByName" {
+					// Check if the cluster exists in filterFieldsByName, and if so, rename it to the new cluster label
+					names := value.Get("options.include.names")
+					if names.Exists() {
+						var nameValues []string
+						hasCluster := false
+						for _, name := range names.Array() {
+							if name.ClonedString() == "cluster" {
+								hasCluster = true
+								nameValues = append(nameValues, cluster)
+								continue
+							}
+							nameValues = append(nameValues, name.ClonedString())
+						}
+
+						if hasCluster {
+							newContent, _ = sjson.SetBytes(newContent, path+".transformations."+transKey.ClonedString()+".options.include.names", nameValues)
+						}
+					}
+				}
+
+				return true
+			})
+
+			// Change all fieldConfig overrides that contain cluster
+			value.Get("fieldConfig.overrides").ForEach(func(overrideKey, override gjson.Result) bool {
+				if override.Get("matcher.id").ClonedString() == "byName" && override.Get("matcher.options").ClonedString() == "cluster" {
+					newContent, _ = sjson.SetBytes(newContent, path+".fieldConfig.overrides."+overrideKey.ClonedString()+".matcher.options", cluster)
+				}
+				return true
+			})
+		}
+	})
+
+	return newContent
 }
 
 var clusterRegex = regexp.MustCompile(`\bcluster\b`)
@@ -1347,6 +1559,17 @@ func createServerFolders(folder *Folder) error {
 	return nil
 }
 
+func convertToCamelCase(snakeCaseStr string) string {
+	// Remove all characters that are not alphanumeric or spaces or underscores
+	snakeCaseStr = regexp.MustCompile("[^a-zA-Z0-9_ ]+").ReplaceAllString(snakeCaseStr, "")
+	// Replace all underscores with spaces
+	snakeCaseStr = strings.ReplaceAll(snakeCaseStr, "_", " ")
+	// Title case s
+	snakeCaseStr = cases.Title(language.Und, cases.NoLower).String(snakeCaseStr)
+	// Remove all spaces
+	return strings.ReplaceAll(snakeCaseStr, " ", "")
+}
+
 func sendRequest(opts *options, method, url string, query map[string]any) (map[string]any, string, int, error) {
 
 	var result map[string]any
@@ -1559,6 +1782,8 @@ func addImportCustomizeFlags(commands ...*cobra.Command) {
 			"Import even if the datasource name is not defined in Grafana")
 		cmd.PersistentFlags().StringVar(&opts.customCluster, "cluster-label", "",
 			"Rewrite all panel expressions to use the specified cluster label instead of the default 'cluster'")
+		cmd.PersistentFlags().StringVar(&opts.addCluster, "add-cluster-label", "",
+			"Rewrite all panel expressions to add the specified cluster label and specified cluster variable along with the default 'cluster'")
 		cmd.PersistentFlags().BoolVar(&opts.showDatasource, "show-datasource", false,
 			"Show datasource variable dropdown in dashboards, useful for multi-datasource setups")
 
