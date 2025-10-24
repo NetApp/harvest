@@ -47,16 +47,17 @@ const (
 
 type Disk struct {
 	*plugin.AbstractPlugin
-	shelfData      map[string]*matrix.Matrix
-	powerData      map[string]*matrix.Matrix
-	instanceKeys   map[string][]string
-	instanceLabels map[string]map[string]string
-	client         *rest.Client
-	query          string
-	aggrMap        map[string]*aggregate
-	diskMap        map[string]*disk  // disk UID to disk info containing shelf name
-	diskNameMap    map[string]*disk  // disk Name to disk info containing shelf name. Used for 9.12 versions where disk uuid is absent rest perf response
-	ShelfMap       map[string]*shelf // shelf id to power mapping
+	shelfData             map[string]*matrix.Matrix
+	powerData             map[string]*matrix.Matrix
+	instanceKeys          map[string][]string
+	instanceLabels        map[string]map[string]string
+	client                *rest.Client
+	query                 string
+	aggrMap               map[string]*aggregate
+	diskMap               map[string]*disk  // disk UID to disk info containing shelf name
+	diskNameMap           map[string]*disk  // disk Name to disk info containing shelf name. Used for 9.12 versions where disk uuid is absent rest perf response
+	ShelfMap              map[string]*shelf // shelf id to power mapping
+	totalTransfersCounter string            // name of the counter for total transfers (varies by collector)
 }
 
 type shelf struct {
@@ -134,6 +135,13 @@ func (d *Disk) Init(remote conf.Remote) error {
 
 	d.instanceKeys = make(map[string][]string)
 	d.instanceLabels = make(map[string]map[string]string)
+
+	// StatPerf uses "total_transfers" while RestPerf uses "total_transfer_count"
+	if d.IsStatPerfCollector() {
+		d.totalTransfersCounter = "total_transfers"
+	} else {
+		d.totalTransfersCounter = "total_transfer_count"
+	}
 
 	objects := d.Params.GetChildS("objects")
 	if objects == nil {
@@ -410,9 +418,9 @@ func (d *Disk) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collec
 
 func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) ([]*matrix.Matrix, error) {
 
-	totalTransfers := data.GetMetric("total_transfer_count")
+	totalTransfers := data.GetMetric(d.totalTransfersCounter)
 	if totalTransfers == nil {
-		return output, errs.New(errs.ErrNoMetric, "total_transfer_count")
+		return output, errs.New(errs.ErrNoMetric, d.totalTransfersCounter)
 	}
 
 	// calculate power for returned disks in perf response
@@ -510,9 +518,9 @@ func (d *Disk) calculateAggrPower(data *matrix.Matrix, output []*matrix.Matrix) 
 
 func (d *Disk) populateShelfIOPS(data *matrix.Matrix) error {
 
-	totalTransfers := data.GetMetric("total_transfer_count")
+	totalTransfers := data.GetMetric(d.totalTransfersCounter)
 	if totalTransfers == nil {
-		return errs.New(errs.ErrNoMetric, "total_transfer_count")
+		return errs.New(errs.ErrNoMetric, d.totalTransfersCounter)
 	}
 
 	for _, instance := range data.GetInstances() {

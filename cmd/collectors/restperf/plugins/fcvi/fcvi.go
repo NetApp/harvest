@@ -67,7 +67,14 @@ func (f *FCVI) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collec
 		port := adapterData.Get("port_name").ClonedString()
 
 		// Fetch instance and add port label
-		if instance := data.GetInstance(node + ":" + adapter); instance != nil {
+		// StatPerf uses "node:kernel:adapter" format while RestPerf uses "node:adapter"
+		var instanceKey string
+		if f.IsStatPerfCollector() {
+			instanceKey = node + ":kernel:" + adapter
+		} else {
+			instanceKey = node + ":" + adapter
+		}
+		if instance := data.GetInstance(instanceKey); instance != nil {
 			instance.SetLabel("port", port)
 		}
 	}

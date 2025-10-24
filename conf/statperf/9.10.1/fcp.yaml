@@ -62,6 +62,9 @@ counters:
 override:
   - link_speed: string
 
+plugins:
+  - Fcp
+
 export_options:
   instance_keys:
     - node
