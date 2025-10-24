@@ -58,41 +58,12 @@ func TestHttpsAddr(t *testing.T) {
 }
 
 func TestAddPrefixToMetricNames(t *testing.T) {
-
-	var (
-		dashboard                      map[string]any
-		oldExpressions, newExpressions []string
-		updatedData                    []byte
-		err                            error
-	)
-
 	prefix := "xx_"
 	VisitDashboards(
 		[]string{"../../../grafana/dashboards/cisco", "../../../grafana/dashboards/cmode", "../../../grafana/dashboards/cmode-details", "../../../grafana/dashboards/storagegrid"},
 		func(path string, data []byte) {
-			oldExpressions = readExprs(data)
-			if err = json.Unmarshal(data, &dashboard); err != nil {
-				fmt.Printf("error parsing file [%s] %+v\n", path, err)
-				fmt.Println("-------------------------------")
-				fmt.Println(string(data))
-				fmt.Println("-------------------------------")
+			if _, err := expressionCheck(t, data, path, prefix); err != nil {
 				return
-			}
-			addGlobalPrefix(dashboard, prefix)
-
-			if updatedData, err = json.Marshal(dashboard); err != nil {
-				fmt.Printf("error parsing file [%s] %+v\n", path, err)
-				fmt.Println("-------------------------------")
-				fmt.Println(string(updatedData))
-				fmt.Println("-------------------------------")
-				return
-			}
-			newExpressions = readExprs(updatedData)
-
-			for i := range newExpressions {
-				if newExpressions[i] != prefix+oldExpressions[i] {
-					t.Errorf("path: %s \nExpected: [%s]\n     Got: [%s]", path, prefix+oldExpressions[i], newExpressions[i])
-				}
 			}
 		})
 }
@@ -736,6 +707,7 @@ func TestAddClusterLabel(t *testing.T) {
 	}
 
 	newClusterLabel := "net_cluster"
+	varRegex := regexp.MustCompile(`\(([^{]*)\{`)
 	for _, tt := range tests {
 		var (
 			gotVars     []string
@@ -749,6 +721,14 @@ func TestAddClusterLabel(t *testing.T) {
 		}
 
 		updatedData = addClusterLabel(data, newClusterLabel)
+
+		// Validate prefix with new added cluster label
+		prefix := "abc_"
+		updatedData, err = expressionCheck(t, updatedData, tt.dashboardName, prefix)
+		if err != nil {
+			return
+		}
+
 		templateList := gjson.GetBytes(updatedData, "templating.list")
 		if !templateList.Exists() {
 			fmt.Printf("No template variables found, ignoring add label")
@@ -759,6 +739,14 @@ func TestAddClusterLabel(t *testing.T) {
 		for _, varData := range templateList.Array() {
 			varName := varData.Get("name").ClonedString()
 			varDefinition := varData.Get("definition").ClonedString()
+			allMatches := varRegex.FindAllStringSubmatch(varDefinition, -1)
+			for _, match := range allMatches {
+				// Validate all variables metric name contains prefix
+				if !strings.HasPrefix(match[1], prefix) {
+					t.Errorf("%s %s query should contain prefix %s", tt.dashboardName, match[1], prefix)
+				}
+			}
+
 			gotVars = append(gotVars, varName)
 			newVarCheck(t, varName, varDefinition, "Datacenter", "net_cluster=~\"$NetCluster\"", false)
 			newVarCheck(t, varName, varDefinition, "Cluster", "net_cluster=~\"$NetCluster\"", false)
@@ -808,4 +796,39 @@ func newVarCheck(t *testing.T, varName, definition, name, varFilter string, shou
 			}
 		}
 	}
+}
+
+func expressionCheck(t *testing.T, data []byte, filename string, prefix string) ([]byte, error) {
+	var (
+		dashboard                      map[string]any
+		oldExpressions, newExpressions []string
+		updatedData                    []byte
+		err                            error
+	)
+
+	oldExpressions = readExprs(data)
+	if err = json.Unmarshal(data, &dashboard); err != nil {
+		fmt.Printf("error parsing file [%s] %+v\n", filename, err)
+		fmt.Println("-------------------------------")
+		fmt.Println(string(data))
+		fmt.Println("-------------------------------")
+		return data, err
+	}
+	addGlobalPrefix(dashboard, prefix)
+
+	if updatedData, err = json.Marshal(dashboard); err != nil {
+		fmt.Printf("error parsing file [%s] %+v\n", filename, err)
+		fmt.Println("-------------------------------")
+		fmt.Println(string(updatedData))
+		fmt.Println("-------------------------------")
+		return data, err
+	}
+	newExpressions = readExprs(updatedData)
+
+	for i := range newExpressions {
+		if newExpressions[i] != prefix+oldExpressions[i] {
+			t.Errorf("file: %s \nExpected: [%s]\n     Got: [%s]", filename, prefix+oldExpressions[i], newExpressions[i])
+		}
+	}
+	return updatedData, nil
 }
