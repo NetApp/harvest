@@ -126,7 +126,7 @@ func (a *AuditLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *co
 		a.volumeCache.hasCacheRefreshed = false
 		// process volume rootConfig
 		volume := a.rootConfig.AuditLog.Volume
-		var actions = make([]string, len(volume.Action))
+		var actions = make([]string, 0, len(volume.Action))
 		for _, action := range volume.Action {
 			actions = append(actions, fmt.Sprintf("*%s*", action))
 		}
