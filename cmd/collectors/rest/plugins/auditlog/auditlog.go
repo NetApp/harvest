@@ -170,8 +170,6 @@ func (a *AuditLog) constructAuditLogURL(actions []string, state string, timestam
 		Filter([]string{timestampFilter, actionFilter, stateFilter}).
 		Build()
 
-	fmt.Println(href)
-
 	return href
 }
 
