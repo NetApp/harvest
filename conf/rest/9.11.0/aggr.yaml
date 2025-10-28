@@ -51,11 +51,25 @@ counters:
   - hidden_fields:
       - space
 
+endpoints:
+  - query: api/private/cli/aggr
+    instance_add: true
+    counters:
+      - ^^uuid                                                     => uuid
+      - ^aggregate                                                 => aggr
+      - ^node                                                      => node
+      - ^root                                                      => is_root
+      - ^state                                                     => state
+      - filter:
+          - root=true
+
 plugins:
   - Aggregate
   - LabelAgent:
       value_to_num:
         - new_status state online online `0`
+      exclude_equals:
+        - is_root `true`
   - MetricAgent:
       compute_metric:
         - snapshot_maxfiles_possible ADD snapshot.max_files_available snapshot.max_files_used
