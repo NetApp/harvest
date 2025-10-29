@@ -211,10 +211,6 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]vo
 		volume.SetLabel("isHardwareEncrypted", strconv.FormatBool(v.aggrsMap[volume.GetLabel("aggr")]))
 
 		if vInfo, ok := volumeMap[volume.GetLabel("volume")+volume.GetLabel("svm")]; ok {
-			if vInfo.isObjectStoreVolume {
-				volume.SetExportable(false)
-				continue
-			}
 			volume.SetLabel("anti_ransomware_start_time", vInfo.arwStartTime)
 			volume.SetLabel("antiRansomwareState", vInfo.arwState)
 			volume.SetLabel("isProtected", vInfo.isProtected)
@@ -225,9 +221,9 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]vo
 				volume.SetLabel("clone_parent_snapshot", vInfo.cloneSnapshotName)
 				cloneSplitEstimateMetric.SetValueFloat64(volume, vInfo.cloneSplitEstimateMetric)
 			}
-		} else {
-			// The public API does not include node root and temp volumes, while the private CLI does include them. Harvest will exclude them the same as the public API by not exporting them.
-			volume.SetExportable(false)
+		} else if volume.GetLabel("node") == svm {
+			// Node root volumes have same svm name as node name.
+			volume.SetLabel("node_root", "true")
 		}
 
 		// Calculate Hot data metric, where hot data = total footprint - cold data

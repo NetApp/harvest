@@ -124,6 +124,10 @@ plugins:
         - volume `sdw_cl_.+`
         - volume `MDV_CRS_.+`
         - volume `MDV_aud_.+`
+        - volume `^fg_oss_`
+      exclude_equals:
+        - type `tmp`
+        - node_root `true`
 #  - ChangeLog
 #  - TagMapper
 
