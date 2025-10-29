@@ -27,13 +27,22 @@ export CONFIG_FILE_NAME=harvest.yml
 docker run --rm --entrypoint "bin/harvest" --volume "$(pwd)/$CONFIG_FILE_NAME:/opt/harvest/harvest.yml" ghcr.io/netapp/harvest doctor --print
 ```
 
-## NABox
+## NABox3
 
-If you're using NABox, you'll need to [ssh](https://nabox.org/documentation/configuration/) into your NABox instance.
+If you're using NABox3, you'll need to [ssh](https://nabox.org/documentation/configuration/) into your NABox instance.
 Then, use the following command to print a redacted version of your Harvest configuration to the console:
 
 ```bash
 dc exec -w /conf nabox-harvest2 /netapp-harvest/bin/harvest doctor --print
+```
+
+## NABox4
+
+If you're using NABox4, you'll need to [ssh](https://nabox.org/documentation/configuration/) into your NABox instance.
+Then, use the following command to print a redacted version of your Harvest configuration to the console:
+
+```bash
+dc exec -w /harvest -e HARVEST_CONF=/harvest-conf harvest /harvest/bin/harvest doctor --print
 ```
 
 If your configuration file name is different from the default `harvest.yml`,
