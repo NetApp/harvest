@@ -93,6 +93,13 @@ func calculateSHA256s(path string) ([]checksumSHA256, error) {
 			return nil
 		}
 
+		// Skip Docker tar files - they are not published as release assets
+		filename := d.Name()
+		if strings.HasPrefix(filename, "docker_") && strings.HasSuffix(filename, ".tar") {
+			slog.Debug("Skipping Docker tar file", slog.String("file", filename))
+			return nil
+		}
+
 		file, err := os.Open(filepath)
 		if err != nil {
 			return err
