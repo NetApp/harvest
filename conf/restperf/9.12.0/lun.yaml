@@ -35,11 +35,16 @@ override:
 
 
 plugins:
-  LabelAgent:
+  - LabelAgent:
     #Example: /vol/osc_iscsi_vol01/osc_iscsi_vol01:d32abf06-0327-4d06-bb9d-1c19c8eeea01
     split_regex:
       - lunfull `^/[^/]*/([^/]*)/?.*\/([^/:]*):` volume,lun
       - lunfull `^([^/:]+).*?$` lun
+  - MetricAgent:
+      compute_metric:
+        - total_data ADD read_data write_data
+        - total_ops ADD read_ops write_ops
+        - block_size DIVIDE total_data total_ops
 
 export_options:
   instance_keys:
