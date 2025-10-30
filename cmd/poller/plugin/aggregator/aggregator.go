@@ -167,10 +167,12 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 				values := slices.Collect(maps.Keys(instance.GetLabels()))
 				objKey = strings.Join(values, ".")
 			case len(rule.includeLabels) != 0:
-				objKey = objName
+				var ob strings.Builder
+				ob.WriteString(objName)
 				for _, k := range rule.includeLabels {
-					objKey += "." + instance.GetLabel(k)
+					ob.WriteString("." + instance.GetLabel(k))
 				}
+				objKey = ob.String()
 			default:
 				objKey = objName
 			}

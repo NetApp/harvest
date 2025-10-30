@@ -295,7 +295,8 @@ func (s *StatPerf) parseRows(input string) ([]map[string]any, error) {
 			}
 
 			counter := strings.TrimSpace(curRowLine[:spaceIndex])
-			value := strings.TrimSpace(curRowLine[spaceIndex+1:])
+			var valueBuilder strings.Builder
+			valueBuilder.WriteString(strings.TrimSpace(curRowLine[spaceIndex+1:]))
 
 			if counter == "" {
 				s.Logger.Warn("skipping line - empty counter", slog.String("row", curRowLine))
@@ -323,6 +324,8 @@ func (s *StatPerf) parseRows(input string) ([]map[string]any, error) {
 			}
 
 			// Check for continuation lines.
+			var cb strings.Builder
+			cb.WriteString(counter)
 			for i+1 < len(tableLines) {
 				nextLineRaw := tableLines[i+1]
 				nextTokens := strings.Fields(nextLineRaw)
@@ -331,12 +334,14 @@ func (s *StatPerf) parseRows(input string) ([]map[string]any, error) {
 				}
 				indent := getIndent(nextLineRaw)
 				if dividerWidth > 0 && indent < dividerWidth {
-					counter += nextTokens[0]
+					cb.WriteString(nextTokens[0])
 				} else {
-					value += nextTokens[0]
+					valueBuilder.WriteString(nextTokens[0])
 				}
 				i++
 			}
+			counter = cb.String()
+			value := valueBuilder.String()
 
 			// Check for duplicate counters
 			// The objects `object_store_server` and `smb2` have a different table format where multiple node

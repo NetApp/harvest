@@ -916,7 +916,8 @@ func (r *RestPerf) processPerfRecords(perfRecords []rest.PerfRecord, curMat *mat
 
 		pr.ForEach(func(_, instanceData gjson.Result) bool {
 			var (
-				instanceKey     string
+				instanceKey     strings.Builder
+				instKey         string
 				instance        *matrix.Instance
 				isHistogram     bool
 				histogramMetric *matrix.Metric
@@ -934,13 +935,14 @@ func (r *RestPerf) processPerfRecords(perfRecords []rest.PerfRecord, curMat *mat
 				for _, k := range instanceKeys {
 					value, ok := props[k]
 					if ok {
-						instanceKey += value.ClonedString()
+						instanceKey.WriteString(value.ClonedString())
 					} else {
 						r.Logger.Warn("missing key", slog.String("key", k))
 					}
 				}
 
-				if instanceKey == "" {
+				instKey = instanceKey.String()
+				if instKey == "" {
 					return true
 				}
 			}
@@ -952,14 +954,14 @@ func (r *RestPerf) processPerfRecords(perfRecords []rest.PerfRecord, curMat *mat
 			if isWorkloadDetailObject(r.Prop.Query) {
 
 				// example instanceKey : umeng-aff300-02:test-wid12022.CPU_dblade
-				i := strings.Index(instanceKey, ":")
-				instanceKey = instanceKey[i+1:]
-				before, after, found := strings.Cut(instanceKey, ".")
+				i := strings.Index(instKey, ":")
+				instKey = instKey[i+1:]
+				before, after, found := strings.Cut(instKey, ".")
 				if found {
-					instanceKey = before
+					instKey = before
 					layer = after
 				} else {
-					r.Logger.Warn("instanceKey has unexpected format", slog.String("instanceKey", instanceKey))
+					r.Logger.Warn("instanceKey has unexpected format", slog.String("instanceKey", instKey))
 					return true
 				}
 
@@ -972,24 +974,24 @@ func (r *RestPerf) processPerfRecords(perfRecords []rest.PerfRecord, curMat *mat
 			}
 
 			if r.Params.GetChildContentS("only_cluster_instance") != "true" {
-				if instanceKey == "" {
+				if instKey == "" {
 					return true
 				}
 			}
 
-			instance = curMat.GetInstance(instanceKey)
+			instance = curMat.GetInstance(instKey)
 			if instance == nil {
 				if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
 					return true
 				}
-				instance, err = curMat.NewInstance(instanceKey)
+				instance, err = curMat.NewInstance(instKey)
 				if err != nil {
-					r.Logger.Error("add instance", slogx.Err(err), slog.String("instanceKey", instanceKey))
+					r.Logger.Error("add instance", slogx.Err(err), slog.String("instanceKey", instKey))
 					return true
 				}
 			}
 
-			oldInstances.Remove(instanceKey)
+			oldInstances.Remove(instKey)
 
 			// check for partial aggregation
 			if instanceData.Get("aggregation.complete").ClonedString() == "false" {
@@ -1033,9 +1035,9 @@ func (r *RestPerf) processPerfRecords(perfRecords []rest.PerfRecord, curMat *mat
 					} else {
 						// ignore physical_disk_id logging as in some of 9.12 versions, this field may be absent
 						if r.Prop.Query == "api/cluster/counter/tables/disk:constituent" && label == "physical_disk_id" {
-							r.Logger.Debug("Missing label value", slog.String("instanceKey", instanceKey), slog.String("label", label))
+							r.Logger.Debug("Missing label value", slog.String("instanceKey", instKey), slog.String("label", label))
 						} else {
-							r.Logger.Error("Missing label value", slog.String("instanceKey", instanceKey), slog.String("label", label))
+							r.Logger.Error("Missing label value", slog.String("instanceKey", instKey), slog.String("label", label))
 						}
 					}
 				}
@@ -1660,6 +1662,8 @@ func (r *RestPerf) pollInstance(mat *matrix.Matrix, records iter.Seq[gjson.Resul
 		}
 
 		// extract instance key(s)
+		var ib strings.Builder
+		ib.WriteString(instanceKey)
 		for _, k := range instanceKeys {
 			var value gjson.Result
 			if isWorkloadObject(r.Prop.Query) || isWorkloadDetailObject(r.Prop.Query) {
@@ -1668,12 +1672,13 @@ func (r *RestPerf) pollInstance(mat *matrix.Matrix, records iter.Seq[gjson.Resul
 				value = parseProperties(instanceData, k)
 			}
 			if value.Exists() {
-				instanceKey += value.ClonedString()
+				ib.WriteString(value.ClonedString())
 			} else {
 				r.Logger.Warn("skip instance, missing key", slog.String("key", k))
 				break
 			}
 		}
+		instanceKey = ib.String()
 
 		if oldInstances.Has(instanceKey) {
 			// instance already in cache

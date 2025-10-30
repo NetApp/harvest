@@ -362,8 +362,8 @@ func (a *LabelAgent) parseReplaceRegexRule(rule string) {
 						}
 					}
 					if ch == "$" {
-						if strings.HasSuffix(r.format, `\`) {
-							r.format = strings.TrimSuffix(r.format, `\`) + "$"
+						if before, ok := strings.CutSuffix(r.format, `\`); ok {
+							r.format = before + "$"
 						} else {
 							insideNum = true
 						}

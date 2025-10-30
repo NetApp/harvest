@@ -578,7 +578,9 @@ func countAlertsBySeverity(alerts []any) (int, int, int) {
 }
 
 func InfrastructureHealth(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.InfrastructureHealthArgs) (*mcp.CallToolResult, any, error) {
-	healthReport := "## ONTAP Infrastructure Health Report\n\n"
+	healthReport := strings.Builder{}
+	var report string
+	healthReport.WriteString("## ONTAP Infrastructure Health Report\n\n")
 	issuesFound := false
 
 	// Health checks to perform
@@ -611,7 +613,7 @@ func InfrastructureHealth(_ context.Context, _ *mcp.CallToolRequest, args mcptyp
 
 		promResp, err := executeTSDBQuery(queryURL, urlValues)
 		if err != nil {
-			healthReport += fmt.Sprintf("❌ **%s**: Error querying - %v\n", check.name, err)
+			healthReport.WriteString(fmt.Sprintf("❌ **%s**: Error querying - %v\n", check.name, err))
 			continue
 		}
 
@@ -623,32 +625,32 @@ func InfrastructureHealth(_ context.Context, _ *mcp.CallToolRequest, args mcptyp
 				icon = "🚨"
 			}
 
-			healthReport += fmt.Sprintf("%s **%s**: %d issues found - %s\n", icon, check.name, len(resultSlice), check.description)
+			healthReport.WriteString(fmt.Sprintf("%s **%s**: %d issues found - %s\n", icon, check.name, len(resultSlice), check.description))
 
 			// Add details if requested
 			if args.IncludeDetails {
-				healthReport += "   Details:\n"
+				healthReport.WriteString("   Details:\n")
 				for i, result := range resultSlice {
 					if i >= 5 { // Limit to first 5 for readability
-						healthReport += fmt.Sprintf("   ... and %d more\n", len(resultSlice)-5)
+						healthReport.WriteString(fmt.Sprintf("   ... and %d more\n", len(resultSlice)-5))
 						break
 					}
 					if resultMap, ok := result.(map[string]any); ok {
 						if metric, ok := resultMap["metric"].(map[string]any); ok {
 							name := extractIdentifiers(metric)
-							healthReport += fmt.Sprintf("   - %s\n", name)
+							healthReport.WriteString(fmt.Sprintf("   - %s\n", name))
 						}
 					}
 				}
 			}
 		} else {
-			healthReport += fmt.Sprintf("✅ **%s**: No issues found\n", check.name)
+			healthReport.WriteString(fmt.Sprintf("✅ **%s**: No issues found\n", check.name))
 		}
 	}
 
 	// Summary
 	if issuesFound {
-		healthReport = "🚨 **HEALTH ISSUES DETECTED** 🚨\n\n" + healthReport +
+		report = "🚨 **HEALTH ISSUES DETECTED** 🚨\n\n" + healthReport.String() +
 			"\n**Recommendation**: Review and address the issues above, prioritizing critical (🚨) alerts.\n\n" +
 			"**Health Monitoring Context**: \n" +
 			"- Status metrics (cluster_new_status, node_new_status, aggr_new_status, volume_new_status): 1 = healthy/online, 0 = unhealthy/offline\n" +
@@ -656,13 +658,13 @@ func InfrastructureHealth(_ context.Context, _ *mcp.CallToolRequest, args mcptyp
 			"- Health metrics (health_*): Any value ≥ 1 indicates an active alert or issue\n" +
 			"- Capacity metrics: Monitor volume_size_used_percent and aggr_inode_used_percent for space issues\n"
 	} else {
-		healthReport = "✅ **ALL SYSTEMS HEALTHY** ✅\n\n" + healthReport +
+		report = "✅ **ALL SYSTEMS HEALTHY** ✅\n\n" + healthReport.String() +
 			"\n**Status**: Your ONTAP infrastructure appears to be operating normally.\n"
 	}
 
 	return &mcp.CallToolResult{
 		Content: []mcp.Content{
-			&mcp.TextContent{Text: healthReport},
+			&mcp.TextContent{Text: report},
 		},
 	}, nil, nil
 }
