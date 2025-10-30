@@ -1483,9 +1483,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#nabox" class="md-nav__link">
+  <a href="#nabox3" class="md-nav__link">
     <span class="md-ellipsis">
-      NABox
+      NABox3
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nabox4" class="md-nav__link">
+    <span class="md-ellipsis">
+      NABox4
     </span>
   </a>
   
@@ -1934,9 +1943,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#nabox" class="md-nav__link">
+  <a href="#nabox3" class="md-nav__link">
     <span class="md-ellipsis">
-      NABox
+      NABox3
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nabox4" class="md-nav__link">
+    <span class="md-ellipsis">
+      NABox4
     </span>
   </a>
   
@@ -1976,10 +1994,15 @@ bin/harvest<span class="w"> </span>doctor<span class="w"> </span>--print<span cl
 <span class="nb">export</span><span class="w"> </span><span class="nv">CONFIG_FILE_NAME</span><span class="o">=</span>harvest.yml
 docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>--entrypoint<span class="w"> </span><span class="s2">&quot;bin/harvest&quot;</span><span class="w"> </span>--volume<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">/</span><span class="nv">$CONFIG_FILE_NAME</span><span class="s2">:/opt/harvest/harvest.yml&quot;</span><span class="w"> </span>ghcr.io/netapp/harvest<span class="w"> </span>doctor<span class="w"> </span>--print
 </code></pre></div>
-<h2 id="nabox">NABox<a class="headerlink" href="#nabox" title="Permanent link">&para;</a></h2>
-<p>If you're using NABox, you'll need to <a href="https://nabox.org/documentation/configuration/">ssh</a> into your NABox instance.
+<h2 id="nabox3">NABox3<a class="headerlink" href="#nabox3" title="Permanent link">&para;</a></h2>
+<p>If you're using NABox3, you'll need to <a href="https://nabox.org/documentation/configuration/">ssh</a> into your NABox instance.
 Then, use the following command to print a redacted version of your Harvest configuration to the console:</p>
 <div class="highlight"><pre><span></span><code>dc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-w<span class="w"> </span>/conf<span class="w"> </span>nabox-harvest2<span class="w"> </span>/netapp-harvest/bin/harvest<span class="w"> </span>doctor<span class="w"> </span>--print
+</code></pre></div>
+<h2 id="nabox4">NABox4<a class="headerlink" href="#nabox4" title="Permanent link">&para;</a></h2>
+<p>If you're using NABox4, you'll need to <a href="https://nabox.org/documentation/configuration/">ssh</a> into your NABox instance.
+Then, use the following command to print a redacted version of your Harvest configuration to the console:</p>
+<div class="highlight"><pre><span></span><code>dc<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-w<span class="w"> </span>/harvest<span class="w"> </span>-e<span class="w"> </span><span class="nv">HARVEST_CONF</span><span class="o">=</span>/harvest-conf<span class="w"> </span>harvest<span class="w"> </span>/harvest/bin/harvest<span class="w"> </span>doctor<span class="w"> </span>--print
 </code></pre></div>
 <p>If your configuration file name is different from the default <code>harvest.yml</code>,
 remember to change the <code>CONFIG_FILE_NAME</code> environment variable to match your file name.</p>
