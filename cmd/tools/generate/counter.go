@@ -1550,7 +1550,7 @@ func processRestPerfCounters(path string, client *rest.Client) map[string]Counte
 			Description: description,
 			APIs: []MetricDef{
 				{
-					API:          "REST",
+					API:          "RestPerf",
 					Endpoint:     model.Query,
 					Template:     path,
 					ONTAPCounter: "Harvest generated",
@@ -1644,7 +1644,7 @@ func processRestPerfCounters(path string, client *rest.Client) map[string]Counte
 			Name:   model.Object + "_" + metric.Name,
 			APIs: []MetricDef{
 				{
-					API:          "REST",
+					API:          "RestPerf",
 					Endpoint:     model.Query,
 					Template:     path,
 					ONTAPCounter: metric.Source,

@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Oct-17
+Creation Date : 2025-Oct-30
 ONTAP Version: 9.16.1
 ```
 
@@ -6708,6 +6708,25 @@ Average latency in microseconds for xcopy requests
 
 
 
+### lun_block_size
+
+Represent the block size being used
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| RestPerf | `api/cluster/counter/tables/lun` | `total_data, total_ops`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/lun.yaml |
+| ZapiPerf | `lun` | `total_data, total_ops`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml |
+
+The `lun_block_size` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: LUN | LUN Table | table | [LUNS in Cluster](/d/cdot-lun/ontap3a-lun?orgId=1&viewPanel=18) |
+///
+
+
+
 ### lun_caw_reqs
 
 Number of compare and write requests
@@ -6994,11 +7013,13 @@ The `lun_size_used_percent` metric is visualized in the following Grafana dashbo
 
 ### lun_total_data
 
-Performance metric aggregated over all types of I/O operations.
+Total of Read and write bytes
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| RestPerf | `api/cluster/counter/tables/lun` | `read_data, write_data`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/lun.yaml |
 | KeyPerf | `api/storage/luns` | `statistics.throughput_raw.total`<br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/lun.yaml |
+| ZapiPerf | `lun` | `read_data, write_data`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml |
 
 
 
@@ -7014,11 +7035,13 @@ Performance metric aggregated over all types of I/O operations.
 
 ### lun_total_ops
 
-Performance metric aggregated over all types of I/O operations.
+Total number of read and write operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
+| RestPerf | `api/cluster/counter/tables/lun` | `read_ops, write_ops`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/lun.yaml |
 | KeyPerf | `api/storage/luns` | `statistics.iops_raw.total`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/keyperf/9.15.0/lun.yaml |
+| ZapiPerf | `lun` | `read_ops, write_ops`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/lun.yaml |
 
 
 
@@ -8945,7 +8968,7 @@ This metric provides information about NicCommon
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/nic_common` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml |
+| RestPerf | `api/cluster/counter/tables/nic_common` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml |
 | ZAPI | `nic_common` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
 
 The `nic_labels` metric is visualized in the following Grafana dashboards:
@@ -12209,6 +12232,7 @@ NVMe/FC kilobytes (KB) received per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | RestPerf | `api/cluster/counter/tables/system:node` | `nvme_fc_data_received`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `nvme_fc_data_recv`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.15.1/system_node.yaml |
 | ZapiPerf | `perf-object-get-instances system:node` | `nvme_fc_data_recv`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.15.1/system_node.yaml |
 
 
@@ -12243,7 +12267,8 @@ NVMe/FC kilobytes (KB) received per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/system:node` | `nvme_fc_data_received, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| RestPerf | `api/cluster/counter/tables/system:node` | `nvme_fc_data_received, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `nvme_fc_data_recv, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.15.1/system_node.yaml |
 | ZapiPerf | `perf-object-get-instances system:node` | `nvmf_data_recv`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -12254,7 +12279,8 @@ NVMe/FC kilobytes (KB) sent per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/system:node` | `nvme_fc_data_sent, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| RestPerf | `api/cluster/counter/tables/system:node` | `nvme_fc_data_sent, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `nvme_fc_data_sent, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.15.1/system_node.yaml |
 | ZapiPerf | `perf-object-get-instances system:node` | `nvmf_data_sent`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -12265,7 +12291,8 @@ NVMe/FC operations per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/cluster/counter/tables/system:node` | `nvme_fc_ops, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| RestPerf | `api/cluster/counter/tables/system:node` | `nvme_fc_ops, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `nvme_fc_ops, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.15.1/system_node.yaml |
 | ZapiPerf | `perf-object-get-instances system:node` | `nvmf_ops`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 The `node_nvmf_ops` metric is visualized in the following Grafana dashboards:

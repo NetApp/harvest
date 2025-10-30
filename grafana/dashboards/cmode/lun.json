@@ -1659,7 +1659,7 @@
                   },
                   {
                     "id": "displayName",
-                    "value": "size"
+                    "value": "Size"
                   }
                 ]
               },
@@ -1671,7 +1671,7 @@
                 "properties": [
                   {
                     "id": "displayName",
-                    "value": "size used"
+                    "value": "Size Used"
                   },
                   {
                     "id": "unit",
@@ -1774,6 +1774,26 @@
                     ]
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #E"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "decbytes"
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "Block Size"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 0
+                  }
+                ]
               }
             ]
           },
@@ -1846,6 +1866,17 @@
               "intervalFactor": 1,
               "legendFormat": "",
               "refId": "D"
+            },
+            {
+              "exemplar": false,
+              "expr": "lun_block_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",lun=~\"$LUN\",svm=~\"$SVM\",volume=~\"$Volume|\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "E"
             }
           ],
           "title": "LUNS in Cluster",
@@ -1896,6 +1927,7 @@
                     "Value #A",
                     "Value #C",
                     "Value #D",
+                    "Value #E",
                     "volume"
                   ]
                 }
