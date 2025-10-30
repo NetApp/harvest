@@ -211,11 +211,11 @@ func calculateEnvironmentMetrics(data *matrix.Matrix, logger *slog.Logger, value
 	}
 
 	if len(excludedSensors) > 0 {
-		var excludedSensorStr string
+		var excludedSensorStr strings.Builder
 		for k, v := range excludedSensors {
-			excludedSensorStr += " node:" + k + " sensor:" + fmt.Sprintf("%v", v)
+			excludedSensorStr.WriteString(" node:" + k + " sensor:" + fmt.Sprintf("%v", v))
 		}
-		logger.Info("sensor excluded", slog.String("sensor", excludedSensorStr))
+		logger.Info("sensor excluded", slog.String("sensor", excludedSensorStr.String()))
 	}
 
 	whrSensors := make(map[string]*sensorValue)
@@ -355,11 +355,11 @@ func calculateEnvironmentMetrics(data *matrix.Matrix, logger *slog.Logger, value
 	}
 
 	if len(whrSensors) > 0 {
-		var whrSensorsStr string
+		var whrSensor strings.Builder
 		for _, v := range whrSensors {
-			whrSensorsStr += " sensor:" + fmt.Sprintf("%v", *v)
+			whrSensor.WriteString(" sensor:" + fmt.Sprintf("%v", *v))
 		}
-		logger.Info("sensor with *hr units", slog.String("sensor", whrSensorsStr))
+		logger.Info("sensor with *hr units", slog.String("sensor", whrSensor.String()))
 	}
 
 	return []*matrix.Matrix{myData}

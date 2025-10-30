@@ -147,8 +147,8 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collect
 		nodeName = instance.GetLabel("node")
 
 		if s != "" {
-			if strings.HasSuffix(s, "M") {
-				base, err = strconv.Atoi(strings.TrimSuffix(s, "M"))
+			if before, ok := strings.CutSuffix(s, "M"); ok {
+				base, err = strconv.Atoi(before)
 				if err != nil {
 					n.SLogger.Warn("convert", slog.String("speed", s))
 					n.SLogger.Warn("convert", slog.String("speed", s))

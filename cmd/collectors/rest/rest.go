@@ -582,7 +582,7 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 
 	for _, instanceData := range result {
 		var (
-			instanceKey string
+			instanceKey strings.Builder
 			instance    *matrix.Instance
 		)
 
@@ -596,16 +596,17 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 			for _, k := range prop.InstanceKeys {
 				value := instanceData.Get(k)
 				if value.Exists() {
-					instanceKey += value.ClonedString()
+					instanceKey.WriteString(value.ClonedString())
 				}
 			}
 
-			if instanceKey == "" {
+			if instanceKey.String() == "" {
 				continue
 			}
 		}
 
-		instance = mat.GetInstance(instanceKey)
+		instKey := instanceKey.String()
+		instance = mat.GetInstance(instKey)
 
 		// Used for endpoints as we don't want to create additional instances
 		if isImmutable && instance == nil {
@@ -614,23 +615,23 @@ func (r *Rest) HandleResults(mat *matrix.Matrix, result []gjson.Result, prop *pr
 		}
 
 		if instance == nil {
-			if instance, err = mat.NewInstance(instanceKey); err != nil {
-				r.Logger.Error("Failed to create new instance", slogx.Err(err), slog.String("instKey", instanceKey))
+			if instance, err = mat.NewInstance(instKey); err != nil {
+				r.Logger.Error("Failed to create new instance", slogx.Err(err), slog.String("instKey", instKey))
 				continue
 			}
 		}
 
 		instance.SetExportable(true)
 
-		if currentInstances.Has(instanceKey) {
-			r.Logger.Error("This instance is already processed. instKey is not unique", slog.String("instKey", instanceKey))
+		if currentInstances.Has(instKey) {
+			r.Logger.Error("This instance is already processed. instKey is not unique", slog.String("instKey", instKey))
 		} else {
-			currentInstances.Add(instanceKey)
+			currentInstances.Add(instKey)
 		}
 		// clear all instance labels as there are some fields which may be missing between polls
 		// Don't remove instance labels when endpoints are being processed because endpoints uses parent instance only.
 		if !isImmutable {
-			oldInstances.Remove(instanceKey)
+			oldInstances.Remove(instKey)
 			instance.ClearLabels()
 		}
 		for label, display := range prop.InstanceLabels {

@@ -150,8 +150,8 @@ func exportCounters(item *node.Node, c *client.Client, args *Args) error {
 }
 
 func renderObjectName(rawName string) string {
-
-	name := strings.ToUpper(string(rawName[0]))
+	var name strings.Builder
+	name.WriteString(strings.ToUpper(string(rawName[0])))
 	i := 1
 	size := len(rawName)
 
@@ -161,14 +161,14 @@ func renderObjectName(rawName string) string {
 
 		if c == "_" || c == ":" || c == "-" {
 			if i < size-1 {
-				name += strings.ToUpper(string(rawName[i+1]))
+				name.WriteString(strings.ToUpper(string(rawName[i+1])))
 			}
 			i += 2
 		} else {
-			name += c
+			name.WriteString(c)
 			i++
 		}
 	}
 
-	return name
+	return name.String()
 }

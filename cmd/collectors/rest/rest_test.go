@@ -292,20 +292,21 @@ func TestQuotas(t *testing.T) {
 	assert.Nil(t, err)
 
 	for _, quotaInstanceData := range result {
-		var instanceKey string
+		var instanceKey strings.Builder
 		if len(r.Prop.InstanceKeys) != 0 {
 			// extract instance key(s)
 			for _, k := range r.Prop.InstanceKeys {
 				value := quotaInstanceData.Get(k)
 				if value.Exists() {
-					instanceKey += value.ClonedString()
+					instanceKey.WriteString(value.ClonedString())
 				}
 			}
 
-			if instanceKey == "" {
+			instKey := instanceKey.String()
+			if instKey == "" {
 				continue
 			}
-			instanceKeys = append(instanceKeys, instanceKey)
+			instanceKeys = append(instanceKeys, instKey)
 		}
 	}
 

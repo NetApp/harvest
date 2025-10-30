@@ -17,6 +17,7 @@ import (
 	"net/http"
 	url2 "net/url"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -324,11 +325,14 @@ func (e *InfluxDB) Render(data *matrix.Matrix) ([][]byte, exporter.Stats, error)
 			}
 
 			fieldName := metric.GetName()
+			var fnb strings.Builder
+			fnb.WriteString(fieldName)
 
 			if metric.HasLabels() {
 				for _, label := range metric.GetLabels() {
-					fieldName += "_" + label
+					fnb.WriteString("_" + label)
 				}
+				fieldName = fnb.String()
 			}
 
 			if rename, has := protectedFieldNames[fieldName]; has {

@@ -33,6 +33,7 @@ linters:
     - makezero
     - mirror
     - misspell
+    - modernize
     - nakedret
     - nilerr
     - nilnesserr

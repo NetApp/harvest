@@ -317,6 +317,7 @@ func (s *StorageGrid) handleResults(result []gjson.Result) uint64 {
 
 	for _, instanceData := range result {
 		var (
+			instKey     strings.Builder
 			instanceKey string
 			instance    *matrix.Instance
 		)
@@ -330,12 +331,14 @@ func (s *StorageGrid) handleResults(result []gjson.Result) uint64 {
 		for _, k := range s.Props.InstanceKeys {
 			value := instanceData.Get(k)
 			if value.Exists() {
-				instanceKey += value.ClonedString()
+				instKey.WriteString(value.ClonedString())
 			} else {
 				s.Logger.Warn("skip instance, missing key", slog.String("key", k))
 				break
 			}
 		}
+
+		instanceKey = instKey.String()
 
 		if instanceKey == "" {
 			if s.Params.GetChildContentS("only_cluster_instance") == "true" {
