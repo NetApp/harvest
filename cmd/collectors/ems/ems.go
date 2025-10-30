@@ -689,18 +689,18 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 }
 
 func (e *Ems) getInstanceKeys(p *emsProp, instanceData gjson.Result) string {
-	var instanceKey string
+	var instanceKey strings.Builder
 	// extract instance key(s)
 	for _, k := range p.InstanceKeys {
 		value := parseProperties(instanceData, k)
 		if value.Exists() {
-			instanceKey += Hyphen + value.ClonedString()
+			instanceKey.WriteString(Hyphen + value.ClonedString())
 		} else {
 			e.Logger.Error("skip instance, missing key", slog.String("key", k))
 			break
 		}
 	}
-	return instanceKey
+	return instanceKey.String()
 }
 
 func (e *Ems) updateMatrix(begin time.Time) {
