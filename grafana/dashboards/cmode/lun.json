@@ -1567,7 +1567,184 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "LUN details.",
+          "description": "Represent the block size being used.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "decbytes"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "svm"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "SVM"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-svm/ontap-svm?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${__url_time_range}&var-SVM=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "volume"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Volume"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-volume/ontap-volume?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${SVM:queryparam}&${__url_time_range}&var-Volume=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "lun"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "LUN"
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "",
+                        "url": "/d/cdot-lun/ontap-lun?orgId=1&${Datacenter:queryparam}&${Cluster:queryparam}&${SVM:queryparam}&${Volume:queryparam}&${__url_time_range}&var-LUN=${__value.raw}"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 0,
+            "y": 23
+          },
+          "id": 49,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": true,
+                "displayName": "Block Size"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "lun_block_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",lun=~\"$LUN\",svm=~\"$SVM\",volume=~\"$Volume|\"}\nand\n  topk(\n    $TopResources,\n    lun_block_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",lun=~\"$LUN\",svm=~\"$SVM\",volume=~\"$Volume|\"} @ end()\n  )",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Top $TopResources Luns by Block Size",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "cluster",
+                    "datacenter",
+                    "instance",
+                    "job",
+                    "lun",
+                    "svm",
+                    "volume",
+                    "Value"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "cluster": true,
+                  "datacenter": true,
+                  "instance": true,
+                  "job": true
+                },
+                "indexByName": {
+                  "Value": 7,
+                  "cluster": 0,
+                  "datacenter": 1,
+                  "instance": 2,
+                  "job": 3,
+                  "lun": 6,
+                  "svm": 4,
+                  "volume": 5
+                },
+                "renameByName": {
+                  "Value": "Block Size",
+                  "svm": "",
+                  "volume": ""
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "LUN details.\n\nNote: Block Size would be blank when there are no iops or throughput.",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -1801,7 +1978,7 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 23
+            "y": 31
           },
           "id": 18,
           "interval": "1m",
@@ -1882,6 +2059,27 @@
           "title": "LUNS in Cluster",
           "transformations": [
             {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "node",
+                    "svm",
+                    "lun",
+                    "Value #A",
+                    "Value #C",
+                    "Value #D",
+                    "Value #E",
+                    "volume"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "merge",
+              "options": {}
+            },
+            {
               "id": "organize",
               "options": {
                 "excludeByName": {
@@ -1910,27 +2108,6 @@
                   "volume": 10
                 },
                 "renameByName": {}
-              }
-            },
-            {
-              "id": "merge",
-              "options": {}
-            },
-            {
-              "id": "filterFieldsByName",
-              "options": {
-                "include": {
-                  "names": [
-                    "node",
-                    "svm",
-                    "lun",
-                    "Value #A",
-                    "Value #C",
-                    "Value #D",
-                    "Value #E",
-                    "volume"
-                  ]
-                }
               }
             }
           ],

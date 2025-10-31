@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Oct-30
+Creation Date : 2025-Oct-31
 ONTAP Version: 9.16.1
 ```
 
@@ -6722,6 +6722,7 @@ The `lun_block_size` metric is visualized in the following Grafana dashboards:
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
+| ONTAP: LUN | LUN Table | table | [Top $TopResources Luns by Block Size](/d/cdot-lun/ontap3a-lun?orgId=1&viewPanel=49) |
 | ONTAP: LUN | LUN Table | table | [LUNS in Cluster](/d/cdot-lun/ontap3a-lun?orgId=1&viewPanel=18) |
 ///
 
