@@ -12,12 +12,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"iter"
+	"log/slog"
 	"maps"
 	"net/url"
 	"path/filepath"
 	"reflect"
 	"slices"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/google/jsonschema-go/jsonschema"
@@ -54,6 +56,8 @@ type Server struct {
 type ServerOptions struct {
 	// Optional instructions for connected clients.
 	Instructions string
+	// If non-nil, log server activity.
+	Logger *slog.Logger
 	// If non-nil, called when "notifications/initialized" is received.
 	InitializedHandler func(context.Context, *InitializedRequest)
 	// PageSize is the maximum number of items to return in a single page for
@@ -130,6 +134,10 @@ func NewServer(impl *Implementation, options *ServerOptions) *Server {
 		opts.GetSessionID = randText
 	}
 
+	if opts.Logger == nil { // ensure we have a logger
+		opts.Logger = ensureLogger(nil)
+	}
+
 	return &Server{
 		impl:                    impl,
 		opts:                    opts,
@@ -190,8 +198,10 @@ func (s *Server) AddTool(t *Tool, h ToolHandler) {
 		// discovered until runtime, when the LLM sent bad data.
 		panic(fmt.Errorf("AddTool %q: missing input schema", t.Name))
 	}
-	if s, ok := t.InputSchema.(*jsonschema.Schema); ok && s.Type != "object" {
-		panic(fmt.Errorf(`AddTool %q: input schema must have type "object"`, t.Name))
+	if s, ok := t.InputSchema.(*jsonschema.Schema); ok {
+		if s.Type != "object" {
+			panic(fmt.Errorf(`AddTool %q: input schema must have type "object"`, t.Name))
+		}
 	} else {
 		var m map[string]any
 		if err := remarshal(t.InputSchema, &m); err != nil {
@@ -202,8 +212,10 @@ func (s *Server) AddTool(t *Tool, h ToolHandler) {
 		}
 	}
 	if t.OutputSchema != nil {
-		if s, ok := t.OutputSchema.(*jsonschema.Schema); ok && s.Type != "object" {
-			panic(fmt.Errorf(`AddTool %q: output schema must have type "object"`, t.Name))
+		if s, ok := t.OutputSchema.(*jsonschema.Schema); ok {
+			if s.Type != "object" {
+				panic(fmt.Errorf(`AddTool %q: output schema must have type "object"`, t.Name))
+			}
 		} else {
 			var m map[string]any
 			if err := remarshal(t.OutputSchema, &m); err != nil {
@@ -363,10 +375,8 @@ func setSchema[T any](sfield *any, rfield **jsonschema.Resolved) (zero any, err 
 		if err == nil {
 			*sfield = internalSchema
 		}
-	} else {
-		if err := remarshal(*sfield, &internalSchema); err != nil {
-			return zero, err
-		}
+	} else if err := remarshal(*sfield, &internalSchema); err != nil {
+		return zero, err
 	}
 	if err != nil {
 		return zero, err
@@ -695,6 +705,7 @@ func (s *Server) ResourceUpdated(ctx context.Context, params *ResourceUpdatedNot
 	sessions := slices.Collect(maps.Keys(subscribedSessions))
 	s.mu.Unlock()
 	notifySessions(sessions, notificationResourceUpdated, params)
+	s.opts.Logger.Info("resource updated notification sent", "uri", params.URI, "subscriber_count", len(sessions))
 	return nil
 }
 
@@ -712,6 +723,7 @@ func (s *Server) subscribe(ctx context.Context, req *SubscribeRequest) (*emptyRe
 		s.resourceSubscriptions[req.Params.URI] = make(map[*ServerSession]bool)
 	}
 	s.resourceSubscriptions[req.Params.URI][req.Session] = true
+	s.opts.Logger.Info("resource subscribed", "uri", req.Params.URI, "session_id", req.Session.ID())
 
 	return &emptyResult{}, nil
 }
@@ -733,6 +745,7 @@ func (s *Server) unsubscribe(ctx context.Context, req *UnsubscribeRequest) (*emp
 			delete(s.resourceSubscriptions, req.Params.URI)
 		}
 	}
+	s.opts.Logger.Info("resource unsubscribed", "uri", req.Params.URI, "session_id", req.Session.ID())
 
 	return &emptyResult{}, nil
 }
@@ -751,8 +764,10 @@ func (s *Server) unsubscribe(ctx context.Context, req *UnsubscribeRequest) (*emp
 // It need not be called on servers that are used for multiple concurrent connections,
 // as with [StreamableHTTPHandler].
 func (s *Server) Run(ctx context.Context, t Transport) error {
+	s.opts.Logger.Info("server run start")
 	ss, err := s.Connect(ctx, t, nil)
 	if err != nil {
+		s.opts.Logger.Error("server connect failed", "error", err)
 		return err
 	}
 
@@ -764,8 +779,15 @@ func (s *Server) Run(ctx context.Context, t Transport) error {
 	select {
 	case <-ctx.Done():
 		ss.Close()
+		<-ssClosed // wait until waiting go routine above actually completes
+		s.opts.Logger.Error("server run cancelled", "error", ctx.Err())
 		return ctx.Err()
 	case err := <-ssClosed:
+		if err != nil {
+			s.opts.Logger.Error("server session ended with error", "error", err)
+		} else {
+			s.opts.Logger.Info("server session ended")
+		}
 		return err
 	}
 }
@@ -781,6 +803,7 @@ func (s *Server) bind(mcpConn Connection, conn *jsonrpc2.Connection, state *Serv
 	s.mu.Lock()
 	s.sessions = append(s.sessions, ss)
 	s.mu.Unlock()
+	s.opts.Logger.Info("server session connected", "session_id", ss.ID())
 	return ss
 }
 
@@ -796,13 +819,14 @@ func (s *Server) disconnect(cc *ServerSession) {
 	for _, subscribedSessions := range s.resourceSubscriptions {
 		delete(subscribedSessions, cc)
 	}
+	s.opts.Logger.Info("server session disconnected", "session_id", cc.ID())
 }
 
 // ServerSessionOptions configures the server session.
 type ServerSessionOptions struct {
 	State *ServerSessionState
 
-	onClose func()
+	onClose func() // used to clean up associated resources
 }
 
 // Connect connects the MCP server over the given transport and starts handling
@@ -820,7 +844,14 @@ func (s *Server) Connect(ctx context.Context, t Transport, opts *ServerSessionOp
 		state = opts.State
 		onClose = opts.onClose
 	}
-	return connect(ctx, t, s, state, onClose)
+
+	s.opts.Logger.Info("server connecting")
+	ss, err := connect(ctx, t, s, state, onClose)
+	if err != nil {
+		s.opts.Logger.Error("server connect error", "error", err)
+		return nil, err
+	}
+	return ss, nil
 }
 
 // TODO: (nit) move all ServerSession methods below the ServerSession declaration.
@@ -840,9 +871,11 @@ func (ss *ServerSession) initialized(ctx context.Context, params *InitializedPar
 	})
 
 	if !wasInit {
+		ss.server.opts.Logger.Error("initialized before initialize")
 		return nil, fmt.Errorf("%q before %q", notificationInitialized, methodInitialize)
 	}
 	if wasInitd {
+		ss.server.opts.Logger.Error("duplicate initialized notification")
 		return nil, fmt.Errorf("duplicate %q received", notificationInitialized)
 	}
 	if ss.server.opts.KeepAlive > 0 {
@@ -851,6 +884,7 @@ func (ss *ServerSession) initialized(ctx context.Context, params *InitializedPar
 	if h := ss.server.opts.InitializedHandler; h != nil {
 		h(ctx, serverRequestFor(ss, params))
 	}
+	ss.server.opts.Logger.Info("session initialized")
 	return nil, nil
 }
 
@@ -887,7 +921,11 @@ func newServerRequest[P Params](ss *ServerSession, params P) *ServerRequest[P] {
 // Call [ServerSession.Close] to close the connection, or await client
 // termination with [ServerSession.Wait].
 type ServerSession struct {
-	onClose func()
+	// Ensure that onClose is called at most once.
+	// We defensively use an atomic CompareAndSwap rather than a sync.Once, in case the
+	// onClose callback triggers a re-entrant call to Close.
+	calledOnClose atomic.Bool
+	onClose       func()
 
 	server          *Server
 	conn            *jsonrpc2.Connection
@@ -1088,6 +1126,7 @@ func (ss *ServerSession) handle(ctx context.Context, req *jsonrpc.Request) (any,
 	case methodInitialize, methodPing, notificationInitialized:
 	default:
 		if !initialized {
+			ss.server.opts.Logger.Error("method invalid during initialization", "method", req.Method)
 			return nil, fmt.Errorf("method %q is invalid during session initialization", req.Method)
 		}
 	}
@@ -1106,7 +1145,13 @@ func (ss *ServerSession) handle(ctx context.Context, req *jsonrpc.Request) (any,
 	return handleReceive(ctx, ss, req)
 }
 
-func (ss *ServerSession) InitializeParams() *InitializeParams { return ss.state.InitializeParams }
+// InitializeParams returns the InitializeParams provided during the client's
+// initial connection.
+func (ss *ServerSession) InitializeParams() *InitializeParams {
+	ss.mu.Lock()
+	defer ss.mu.Unlock()
+	return ss.state.InitializeParams
+}
 
 func (ss *ServerSession) initialize(ctx context.Context, params *InitializeParams) (*InitializeResult, error) {
 	if params == nil {
@@ -1144,12 +1189,15 @@ func (ss *ServerSession) setLevel(_ context.Context, params *SetLoggingLevelPara
 	ss.updateState(func(state *ServerSessionState) {
 		state.LogLevel = params.Level
 	})
+	ss.server.opts.Logger.Info("client log level set", "level", params.Level)
 	return &emptyResult{}, nil
 }
 
 // Close performs a graceful shutdown of the connection, preventing new
 // requests from being handled, and waiting for ongoing requests to return.
 // Close then terminates the connection.
+//
+// Close is idempotent and concurrency safe.
 func (ss *ServerSession) Close() error {
 	if ss.keepaliveCancel != nil {
 		// Note: keepaliveCancel access is safe without a mutex because:
@@ -1161,7 +1209,7 @@ func (ss *ServerSession) Close() error {
 	}
 	err := ss.conn.Close()
 
-	if ss.onClose != nil {
+	if ss.onClose != nil && ss.calledOnClose.CompareAndSwap(false, true) {
 		ss.onClose()
 	}
 
