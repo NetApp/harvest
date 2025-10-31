@@ -36,12 +36,17 @@ override:
 
 
 plugins:
-  LabelAgent:
+  - LabelAgent:
     # There are two flavors of lun names
     # /vol/vol_georg_fcp401/lun401
     # /vol/vol_georg_fcp401/lun401/lun401
     split_regex:
       - lun `^/[^/]+/([^/]+)(?:/.*?|)/([^/]+)$` volume,lun
+  - MetricAgent:
+      compute_metric:
+        - total_data ADD read_data write_data
+        - total_ops ADD read_ops write_ops
+        - block_size DIVIDE total_data total_ops
 
 export_options:
   instance_keys:
