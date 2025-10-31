@@ -6722,8 +6722,8 @@ The `lun_block_size` metric is visualized in the following Grafana dashboards:
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
-| ONTAP: LUN | LUN Table | table | [Top $TopResources Luns by Block Size](/d/cdot-lun/ontap3a-lun?orgId=1&viewPanel=49) |
 | ONTAP: LUN | LUN Table | table | [LUNS in Cluster](/d/cdot-lun/ontap3a-lun?orgId=1&viewPanel=18) |
+| ONTAP: LUN | Top LUN Performance | timeseries | [Top $TopResources Luns by Block Size](/d/cdot-lun/ontap3a-lun?orgId=1&viewPanel=49) |
 ///
 
 
