@@ -2357,6 +2357,52 @@ sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w
 <div class="highlight"><pre><span></span><code>systemctl<span class="w"> </span>status<span class="w"> </span><span class="s2">&quot;poller*&quot;</span>
 </code></pre></div>
 <details>
+  <summary>Optional: Log to File Instead of journald</summary>
+
+  By default, the systemd service logs to stdout, which means log messages are captured by journald (and on some systems like RHEL8, also in `/var/log/messages`).
+
+  If you want Harvest to log directly to files instead, you can modify the service file to use the `--logtofile` flag and set the `HARVEST_LOGS` environment variable to specify the log directory.
+
+  Modify the poller service file like below:
+
+  <div class="highlight"><pre><span></span><code>cat<span class="w"> </span><span class="s">&lt;&lt; EOF | sudo tee /etc/systemd/system/poller@.service</span>
+<span class="s">[Unit]</span>
+<span class="s">Description=&quot;NetApp Harvest Poller instance %I&quot;</span>
+<span class="s">PartOf=harvest.target</span>
+<span class="s">After=network-online.target</span>
+<span class="s">Wants=network-online.target</span>
+
+<span class="s">[Service]</span>
+<span class="s">User=harvest</span>
+<span class="s">Group=harvest</span>
+<span class="s">Type=simple</span>
+<span class="s">Restart=on-failure</span>
+<span class="s">Environment=&quot;HARVEST_LOGS=/opt/harvest/logs&quot;</span>
+<span class="s">WorkingDirectory=${HARVEST_INSTALL_PATH}/harvest-${HARVEST_VERSION}-1_linux_amd64</span>
+<span class="s">ExecStart=${HARVEST_INSTALL_PATH}/harvest-${HARVEST_VERSION}-1_linux_amd64/bin/harvest --config ${HARVEST_INSTALL_PATH}/harvest-${HARVEST_VERSION}-1_linux_amd64/harvest.yml start --logtofile -f %i</span>
+
+<span class="s">[Install]</span>
+<span class="s">WantedBy=harvest.target</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+  **Create the log directory**:
+
+  <div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/opt/harvest/logs
+sudo<span class="w"> </span>chown<span class="w"> </span>harvest:harvest<span class="w"> </span>/opt/harvest/logs
+</code></pre></div>
+
+  **Reload and restart**:
+
+  <div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>daemon-reload
+sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>harvest.target
+</code></pre></div>
+
+  Logs will be written to `/opt/harvest/logs/poller_<poller-name>.log` (e.g., `/opt/harvest/logs/poller_jamaica.log`).
+
+</details>
+
+<details>
   <summary>Alternative: Start Harvest Directly</summary>
 
   If you would rather start Harvest directly and kick the tires before creating a service file, you can run the following command to start Harvest:
