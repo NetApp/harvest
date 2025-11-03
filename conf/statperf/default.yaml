@@ -8,5 +8,7 @@ schedule:
 
 objects:
   FlexCache:                flexcache.yaml
+  FcpPort:                  fcp.yaml
   SystemNode:               system_node.yaml
+  NicCommon:                nic_common.yaml
   NvmMirror:                nvm_mirror.yaml
