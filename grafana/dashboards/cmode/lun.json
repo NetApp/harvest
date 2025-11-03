@@ -1567,7 +1567,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "LUN details.\n\nNote: Block Size would be blank when there are no iops or throughput.",
+          "description": "LUN details.\n\nNote: Block Size will be blank when there are no iops or throughput on the lun.",
           "fieldConfig": {
             "defaults": {
               "custom": {
