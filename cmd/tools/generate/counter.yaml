@@ -2303,6 +2303,15 @@ counters:
         ONTAPCounter: create_time
         Template: conf/rest/9.6.0/snapshot.yaml
 
+  - Name: lun_total_data
+    Description: Total of Read and write bytes
+
+  - Name: lun_total_ops
+    Description: Total number of read and write operations
+
+  - Name: lun_block_size
+    Description: Represents the block size being used
+
 
   # ASAr2 cluster metrics
   - Name: cluster_space_available

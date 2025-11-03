@@ -1567,7 +1567,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "LUN details.",
+          "description": "LUN details.\n\nNote: Block Size will be blank when there are no iops or throughput on the lun.",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -1659,7 +1659,7 @@
                   },
                   {
                     "id": "displayName",
-                    "value": "size"
+                    "value": "Size"
                   }
                 ]
               },
@@ -1671,7 +1671,7 @@
                 "properties": [
                   {
                     "id": "displayName",
-                    "value": "size used"
+                    "value": "Size Used"
                   },
                   {
                     "id": "unit",
@@ -1774,6 +1774,26 @@
                     ]
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #E"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "decbytes"
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "Block Size"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 0
+                  }
+                ]
               }
             ]
           },
@@ -1846,10 +1866,42 @@
               "intervalFactor": 1,
               "legendFormat": "",
               "refId": "D"
+            },
+            {
+              "exemplar": false,
+              "expr": "lun_block_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",lun=~\"$LUN\",svm=~\"$SVM\",volume=~\"$Volume|\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "E"
             }
           ],
           "title": "LUNS in Cluster",
           "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "node",
+                    "svm",
+                    "lun",
+                    "Value #A",
+                    "Value #C",
+                    "Value #D",
+                    "Value #E",
+                    "volume"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "merge",
+              "options": {}
+            },
             {
               "id": "organize",
               "options": {
@@ -1879,26 +1931,6 @@
                   "volume": 10
                 },
                 "renameByName": {}
-              }
-            },
-            {
-              "id": "merge",
-              "options": {}
-            },
-            {
-              "id": "filterFieldsByName",
-              "options": {
-                "include": {
-                  "names": [
-                    "node",
-                    "svm",
-                    "lun",
-                    "Value #A",
-                    "Value #C",
-                    "Value #D",
-                    "volume"
-                  ]
-                }
               }
             }
           ],
@@ -2466,6 +2498,98 @@
           "timeFrom": null,
           "timeShift": null,
           "title": "Top $TopResources Luns by Write IOPs",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Represents the block size being used.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "decbytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 8,
+            "x": 0,
+            "y": 26
+          },
+          "id": 49,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "lun_block_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",lun=~\"$LUN\",svm=~\"$SVM\",volume=~\"$Volume|\"}\nand\n  topk(\n    $TopResources,\n    avg_over_time(\n      lun_block_size{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",lun=~\"$LUN\",svm=~\"$SVM\",volume=~\"$Volume|\"}[3h] @ end()\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{svm}} / {{volume}} / {{lun}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Luns by Block Size",
           "transformations": [],
           "type": "timeseries"
         }
