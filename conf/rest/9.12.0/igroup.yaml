@@ -4,13 +4,12 @@ object:                   igroup
 
 counters:
   - ^^uuid
+  - ^connectivity_tracking.connection_state  => connection_state
   - ^initiators
   - ^name                                    => igroup
   - ^os_type
   - ^protocol
   - ^svm.name                                => svm
-  - ^type
-
 
 plugins:
   - Igroup
@@ -20,6 +19,7 @@ export_options:
     - igroup
     - svm
   instance_labels:
+    - connection_state
     - os_type
     - protocol
     - initiator

@@ -1046,6 +1046,7 @@ func TestOnlyHighlightsExpanded(t *testing.T) {
 		"cmode/flexcache.json":          2,
 		"cmode/fsa.json":                2,
 		"cmode/health.json":             2,
+		"cmode/hosts.json":              2,
 		"cmode/nfsTroubleshooting.json": 3,
 		"cmode/power.json":              2,
 		"cmode/quotaReport.json":        2,
