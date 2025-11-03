@@ -33,18 +33,6 @@
       "name": "Table",
       "type": "panel",
       "version": ""
-    },
-    {
-      "id": "text",
-      "name": "Text",
-      "type": "panel",
-      "version": ""
-    },
-    {
-      "id": "timeseries",
-      "name": "Time series",
-      "type": "panel",
-      "version": ""
     }
   ],
   "annotations": {
@@ -71,7 +59,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1752221944847,
+  "iteration": 1762156242841,
   "links": [
     {
       "asDropdown": true,
@@ -1069,13 +1057,13 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 16
+        "y": 7
       },
       "id": 11,
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Hosts details.",
+          "description": "SAN initiator groups.",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -1178,32 +1166,6 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "type"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Type"
-                  },
-                  {
-                    "id": "mappings",
-                    "value": [
-                      {
-                        "options": {
-                          "lun": {
-                            "index": 0,
-                            "text": "LUN"
-                          }
-                        },
-                        "type": "value"
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
                   "options": "os_type"
                 },
                 "properties": [
@@ -1283,27 +1245,38 @@
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "state"
+                  "options": "Connection Status"
                 },
                 "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "State"
-                  },
                   {
                     "id": "mappings",
                     "value": [
                       {
                         "options": {
-                          "offline": {
-                            "color": "red",
-                            "index": 1,
-                            "text": "Offline"
-                          },
-                          "online": {
+                          "full": {
                             "color": "green",
+                            "index": 3,
+                            "text": "OK"
+                          },
+                          "no_initiators": {
+                            "color": "text",
+                            "index": 4,
+                            "text": "No initiators added"
+                          },
+                          "no_lun_maps": {
+                            "color": "text",
+                            "index": 1,
+                            "text": "No LUNs mapped"
+                          },
+                          "none": {
+                            "color": "dark-orange",
+                            "index": 2,
+                            "text": "None connected"
+                          },
+                          "partial": {
+                            "color": "dark-orange",
                             "index": 0,
-                            "text": "Online"
+                            "text": "Partially connected"
                           }
                         },
                         "type": "value"
@@ -1312,19 +1285,19 @@
                   },
                   {
                     "id": "custom.displayMode",
-                    "value": "color-background"
+                    "value": "color-text"
                   }
                 ]
               }
             ]
           },
           "gridPos": {
-            "h": 9,
+            "h": 13,
             "w": 24,
             "x": 0,
-            "y": 17
+            "y": 8
           },
-          "id": 12,
+          "id": 13,
           "interval": "1m",
           "maxDataPoints": 2,
           "options": {
@@ -1332,7 +1305,7 @@
             "sortBy": [
               {
                 "desc": true,
-                "displayName": "Used"
+                "displayName": "Connection Status"
               }
             ]
           },
@@ -1350,20 +1323,21 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Hosts in Cluster",
+          "title": "SAN initiator groups",
           "transformations": [
             {
               "id": "filterFieldsByName",
               "options": {
                 "include": {
                   "names": [
-                    "igroup",
-                    "datacenter",
                     "cluster",
+                    "datacenter",
+                    "igroup",
+                    "initiator",
                     "os_type",
                     "protocol",
                     "svm",
-                    "initiator"
+                    "connection_state"
                   ]
                 }
               }
@@ -1386,14 +1360,16 @@
                 },
                 "indexByName": {
                   "cluster": 1,
+                  "connection_state": 4,
                   "datacenter": 0,
                   "igroup": 3,
-                  "initiator": 6,
-                  "os_type": 4,
-                  "protocol": 5,
+                  "initiator": 7,
+                  "os_type": 5,
+                  "protocol": 6,
                   "svm": 2
                 },
                 "renameByName": {
+                  "connection_state": "Connection Status",
                   "initiator": "Initiator"
                 }
               }

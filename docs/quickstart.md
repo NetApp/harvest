@@ -298,6 +298,55 @@ systemctl status "poller*"
 ```
 
 <details>
+  <summary>Optional: Log to File Instead of journald</summary>
+
+  By default, the systemd service logs to stdout, which means log messages are captured by journald (and on some systems like RHEL8, also in `/var/log/messages`).
+
+  If you want Harvest to log directly to files instead, you can modify the service file to use the `--logtofile` flag and set the `HARVEST_LOGS` environment variable to specify the log directory.
+
+  Modify the poller service file like below:
+
+  ```bash
+  cat << EOF | sudo tee /etc/systemd/system/poller@.service
+  [Unit]
+  Description="NetApp Harvest Poller instance %I"
+  PartOf=harvest.target
+  After=network-online.target
+  Wants=network-online.target
+
+  [Service]
+  User=harvest
+  Group=harvest
+  Type=simple
+  Restart=on-failure
+  Environment="HARVEST_LOGS=/opt/harvest/logs"
+  WorkingDirectory=${HARVEST_INSTALL_PATH}/harvest-${HARVEST_VERSION}-1_linux_amd64
+  ExecStart=${HARVEST_INSTALL_PATH}/harvest-${HARVEST_VERSION}-1_linux_amd64/bin/harvest --config ${HARVEST_INSTALL_PATH}/harvest-${HARVEST_VERSION}-1_linux_amd64/harvest.yml start --logtofile -f %i
+
+  [Install]
+  WantedBy=harvest.target
+  EOF
+  ```
+
+  **Create the log directory**:
+
+  ```bash
+  sudo mkdir -p /opt/harvest/logs
+  sudo chown harvest:harvest /opt/harvest/logs
+  ```
+
+  **Reload and restart**:
+
+  ```bash
+  sudo systemctl daemon-reload
+  sudo systemctl restart harvest.target
+  ```
+
+  Logs will be written to `/opt/harvest/logs/poller_<poller-name>.log` (e.g., `/opt/harvest/logs/poller_jamaica.log`).
+
+</details>
+
+<details>
   <summary>Alternative: Start Harvest Directly</summary>
 
   If you would rather start Harvest directly and kick the tires before creating a service file, you can run the following command to start Harvest:
