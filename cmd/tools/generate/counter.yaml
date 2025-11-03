@@ -2310,7 +2310,7 @@ counters:
     Description: Total number of read and write operations
 
   - Name: lun_block_size
-    Description: Represent the block size being used
+    Description: Represents the block size being used
 
 
   # ASAr2 cluster metrics

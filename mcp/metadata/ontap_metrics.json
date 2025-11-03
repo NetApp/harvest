@@ -412,7 +412,7 @@
   "lun_avg_read_latency": "Average read latency in microseconds for all operations on the LUN",
   "lun_avg_write_latency": "Average write latency in microseconds for all operations on the LUN",
   "lun_avg_xcopy_latency": "Average latency in microseconds for xcopy requests",
-  "lun_block_size": "Represent the block size being used",
+  "lun_block_size": "Represents the block size being used",
   "lun_caw_reqs": "Number of compare and write requests",
   "lun_enospc": "Number of operations receiving ENOSPC errors",
   "lun_labels": "This metric provides information about Lun",

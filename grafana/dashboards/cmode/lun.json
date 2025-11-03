@@ -2503,7 +2503,7 @@
         },
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Represent the block size being used.",
+          "description": "Represents the block size being used.",
           "fieldConfig": {
             "defaults": {
               "color": {
