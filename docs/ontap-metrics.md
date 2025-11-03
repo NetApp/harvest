@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Oct-17
+Creation Date : 2025-Nov-03
 ONTAP Version: 9.16.1
 ```
 
@@ -6245,7 +6245,8 @@ The `igroup_labels` metric is visualized in the following Grafana dashboards:
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | ASAr2: Overview | Highlights | stat | [SCSI](/d/asar2-overview/asar23a-overview?orgId=1&viewPanel=7) |
-| ASAr2: Overview | Hosts | table | [Hosts in Cluster](/d/asar2-overview/asar23a-overview?orgId=1&viewPanel=12) |
+| ASAr2: Overview | Hosts | table | [SAN initiator groups](/d/asar2-overview/asar23a-overview?orgId=1&viewPanel=13) |
+| ONTAP: Hosts | Highlights | table | [SAN initiator groups](/d/cdot-host/ontap3a-hosts?orgId=1&viewPanel=2) |
 ///
 
 
@@ -12209,6 +12210,7 @@ NVMe/FC kilobytes (KB) received per second
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | RestPerf | `api/cluster/counter/tables/system:node` | `nvme_fc_data_received`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `nvme_fc_data_recv`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.15.1/system_node.yaml |
 | ZapiPerf | `perf-object-get-instances system:node` | `nvme_fc_data_recv`<br><span class="key">Unit:</span> kb_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.15.1/system_node.yaml |
 
 
@@ -12244,6 +12246,7 @@ NVMe/FC kilobytes (KB) received per second.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `nvme_fc_data_received, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `nvme_fc_data_recv, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.15.1/system_node.yaml |
 | ZapiPerf | `perf-object-get-instances system:node` | `nvmf_data_recv`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -12255,6 +12258,7 @@ NVMe/FC kilobytes (KB) sent per second.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `nvme_fc_data_sent, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `nvme_fc_data_sent, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.15.1/system_node.yaml |
 | ZapiPerf | `perf-object-get-instances system:node` | `nvmf_data_sent`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 
@@ -12266,6 +12270,7 @@ NVMe/FC operations per second.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/cluster/counter/tables/system:node` | `nvme_fc_ops, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/system_node.yaml |
+| StatPerf | `system:node` | `nvme_fc_ops, 1`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/statperf/9.15.1/system_node.yaml |
 | ZapiPerf | `perf-object-get-instances system:node` | `nvmf_ops`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/system_node.yaml |
 
 The `node_nvmf_ops` metric is visualized in the following Grafana dashboards:

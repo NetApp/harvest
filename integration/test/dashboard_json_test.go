@@ -36,6 +36,7 @@ var zapiCounterMap = map[string]struct{}{
 	"cluster_tags":                           {},
 	"fpolicy_svm_failedop_notifications":     {},
 	"fru_status":                             {},
+	"igroup_labels":                          {},
 	"net_route_labels":                       {},
 	"ontaps3_labels":                         {},
 	"ontaps3_logical_used_size":              {},

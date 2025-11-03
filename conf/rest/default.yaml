@@ -29,6 +29,7 @@ objects:
   LIF:                         lif.yaml
 #  Lock:                        lock.yaml
   Health:                      health.yaml
+  Igroup:                      igroup.yaml
   Lun:                         lun.yaml
 #  MAVRequest:                  mav_request.yaml
   MetroclusterCheck:           metrocluster_check.yaml
