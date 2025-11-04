@@ -808,11 +808,11 @@
                     "options": {
                       "false": {
                         "index": 1,
-                        "text": "False"
+                        "text": "No"
                       },
                       "true": {
                         "index": 0,
-                        "text": "True"
+                        "text": "Yes"
                       }
                     },
                     "type": "value"
