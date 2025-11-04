@@ -7,6 +7,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/collector"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"log/slog"
 	"slices"
@@ -23,6 +24,7 @@ type LLDP struct {
 	matrix         *matrix.Matrix
 	client         *rest.Client
 	templateObject string // object name from the template
+	RemoteSerial   string
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -50,6 +52,7 @@ func (l *LLDP) Init(remote conf.Remote) error {
 	}
 
 	l.client = client
+	l.RemoteSerial = client.Remote().Serial
 	l.templateObject = l.ParentParams.GetChildContentS("object")
 
 	l.matrix = matrix.New(l.Parent+".LLDP", l.templateObject, l.templateObject)
@@ -118,10 +121,10 @@ func (l *LLDP) parseLLDP(output gjson.Result, mat *matrix.Matrix) {
 	})
 
 	for _, model := range models {
-		instanceKey := model.ChassisID
+		instanceKey := model.ChassisID + "-" + model.LocalPort
 		instance, err := mat.NewInstance(instanceKey)
 		if err != nil {
-			l.SLogger.Warn("Failed to create lldp instance", slog.String("key", instanceKey))
+			l.SLogger.Warn("Failed to create lldp instance", slog.String("key", instanceKey), slogx.Err(err))
 			continue
 		}
 
@@ -131,7 +134,7 @@ func (l *LLDP) parseLLDP(output gjson.Result, mat *matrix.Matrix) {
 		instance.SetLabel("local_port", model.LocalPort)
 		instance.SetLabel("remote_port", model.RemotePort)
 		instance.SetLabel("capabilities", strings.Join(model.Capabilities, ","))
-		instance.SetLabel("local_platform", l.client.Remote().Serial)
+		instance.SetLabel("local_platform", l.RemoteSerial)
 
 		mat.GetMetric(labels).SetValueFloat64(instance, 1.0)
 	}
