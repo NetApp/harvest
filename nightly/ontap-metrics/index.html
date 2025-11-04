@@ -5340,6 +5340,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#lun_block_size" class="md-nav__link">
+    <span class="md-ellipsis">
+      lun_block_size
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#lun_caw_reqs" class="md-nav__link">
     <span class="md-ellipsis">
       lun_caw_reqs
@@ -19404,6 +19413,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#lun_block_size" class="md-nav__link">
+    <span class="md-ellipsis">
+      lun_block_size
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#lun_caw_reqs" class="md-nav__link">
     <span class="md-ellipsis">
       lun_caw_reqs
@@ -29408,7 +29426,7 @@ These can be generated on demand by running <code>bin/harvest grafana metrics</c
 <p>More information about ONTAP REST performance counters can be found <a href="https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html">here</a>.</p>
 </li>
 </ul>
-<div class="highlight"><pre><span></span><code>Creation Date : 2025-Nov-03
+<div class="highlight"><pre><span></span><code>Creation Date : 2025-Nov-04
 ONTAP Version: 9.16.1
 </code></pre></div>
 <details>
@@ -46263,6 +46281,59 @@ ONTAP Version: 9.16.1
 </tr>
 </tbody>
 </table>
+<h3 id="lun_block_size">lun_block_size<a class="headerlink" href="#lun_block_size" title="Permanent link">&para;</a></h3>
+<p>Represents the block size being used</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Endpoint</th>
+<th>Metric</th>
+<th>Template</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RestPerf</td>
+<td><code>api/cluster/counter/tables/lun</code></td>
+<td><code>total_data, total_ops</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/restperf/9.12.0/lun.yaml</td>
+</tr>
+<tr>
+<td>ZapiPerf</td>
+<td><code>lun</code></td>
+<td><code>total_data, total_ops</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/zapiperf/cdot/9.8.0/lun.yaml</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>lun_block_size</code> metric is visualized in the following Grafana dashboards:</p>
+<div class="grafana-table">
+<table>
+<thead>
+<tr>
+<th>Dashboard</th>
+<th>Row</th>
+<th>Type</th>
+<th>Panel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ONTAP: LUN</td>
+<td>LUN Table</td>
+<td>table</td>
+<td><a href="/d/cdot-lun/ontap3a-lun?orgId=1&amp;viewPanel=18">LUNS in Cluster</a></td>
+</tr>
+<tr>
+<td>ONTAP: LUN</td>
+<td>Top LUN Performance</td>
+<td>timeseries</td>
+<td><a href="/d/cdot-lun/ontap3a-lun?orgId=1&amp;viewPanel=49">Top $TopResources Luns by Block Size</a></td>
+</tr>
+</tbody>
+</table>
+</div>
 <h3 id="lun_caw_reqs">lun_caw_reqs<a class="headerlink" href="#lun_caw_reqs" title="Permanent link">&para;</a></h3>
 <p>Number of compare and write requests</p>
 <table>
@@ -46991,7 +47062,7 @@ ONTAP Version: 9.16.1
 </table>
 </div>
 <h3 id="lun_total_data">lun_total_data<a class="headerlink" href="#lun_total_data" title="Permanent link">&para;</a></h3>
-<p>Performance metric aggregated over all types of I/O operations.</p>
+<p>Total of Read and write bytes</p>
 <table>
 <thead>
 <tr>
@@ -47003,10 +47074,22 @@ ONTAP Version: 9.16.1
 </thead>
 <tbody>
 <tr>
+<td>RestPerf</td>
+<td><code>api/cluster/counter/tables/lun</code></td>
+<td><code>read_data, write_data</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/restperf/9.12.0/lun.yaml</td>
+</tr>
+<tr>
 <td>KeyPerf</td>
 <td><code>api/storage/luns</code></td>
 <td><code>statistics.throughput_raw.total</code><br><span class="key">Unit:</span> b_per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/lun.yaml</td>
+</tr>
+<tr>
+<td>ZapiPerf</td>
+<td><code>lun</code></td>
+<td><code>read_data, write_data</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/zapiperf/cdot/9.8.0/lun.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -47031,7 +47114,7 @@ ONTAP Version: 9.16.1
 </tbody>
 </table>
 <h3 id="lun_total_ops">lun_total_ops<a class="headerlink" href="#lun_total_ops" title="Permanent link">&para;</a></h3>
-<p>Performance metric aggregated over all types of I/O operations.</p>
+<p>Total number of read and write operations</p>
 <table>
 <thead>
 <tr>
@@ -47043,10 +47126,22 @@ ONTAP Version: 9.16.1
 </thead>
 <tbody>
 <tr>
+<td>RestPerf</td>
+<td><code>api/cluster/counter/tables/lun</code></td>
+<td><code>read_ops, write_ops</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/restperf/9.12.0/lun.yaml</td>
+</tr>
+<tr>
 <td>KeyPerf</td>
 <td><code>api/storage/luns</code></td>
 <td><code>statistics.iops_raw.total</code><br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span></td>
 <td>conf/keyperf/9.15.0/lun.yaml</td>
+</tr>
+<tr>
+<td>ZapiPerf</td>
+<td><code>lun</code></td>
+<td><code>read_ops, write_ops</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
+<td>conf/zapiperf/cdot/9.8.0/lun.yaml</td>
 </tr>
 </tbody>
 </table>
@@ -52019,7 +52114,7 @@ ONTAP Version: 9.16.1
 </thead>
 <tbody>
 <tr>
-<td>REST</td>
+<td>RestPerf</td>
 <td><code>api/cluster/counter/tables/nic_common</code></td>
 <td><code>Harvest generated</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
 <td>conf/restperf/9.12.0/nic_common.yaml</td>
@@ -61746,7 +61841,7 @@ ONTAP Version: 9.16.1
 </thead>
 <tbody>
 <tr>
-<td>REST</td>
+<td>RestPerf</td>
 <td><code>api/cluster/counter/tables/system:node</code></td>
 <td><code>nvme_fc_data_received, 1</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
 <td>conf/restperf/9.12.0/system_node.yaml</td>
@@ -61778,7 +61873,7 @@ ONTAP Version: 9.16.1
 </thead>
 <tbody>
 <tr>
-<td>REST</td>
+<td>RestPerf</td>
 <td><code>api/cluster/counter/tables/system:node</code></td>
 <td><code>nvme_fc_data_sent, 1</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
 <td>conf/restperf/9.12.0/system_node.yaml</td>
@@ -61810,7 +61905,7 @@ ONTAP Version: 9.16.1
 </thead>
 <tbody>
 <tr>
-<td>REST</td>
+<td>RestPerf</td>
 <td><code>api/cluster/counter/tables/system:node</code></td>
 <td><code>nvme_fc_ops, 1</code><br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span></td>
 <td>conf/restperf/9.12.0/system_node.yaml</td>
