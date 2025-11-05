@@ -3,7 +3,10 @@ package lldp
 import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/netapp/harvest/v2/assert"
+	"github.com/netapp/harvest/v2/cmd/poller/plugin"
+	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
+	"log/slog"
 	"os"
 	"testing"
 )
@@ -42,4 +45,21 @@ func TestNewLLDPModel(t *testing.T) {
 			assert.Equal(t, diff1, "")
 		})
 	}
+}
+
+func TestParse(t *testing.T) {
+	// Read the file from the testdata directory
+	filename := "testdata/lldp2.json"
+	data, err := os.ReadFile(filename)
+	assert.Nil(t, err)
+
+	result := gjson.ParseBytes(data)
+	output := result.Get("ins_api.outputs")
+	l := New(&plugin.AbstractPlugin{SLogger: slog.Default()}).(*LLDP)
+
+	m := matrix.New("lldp", "lldp", "lldp")
+	_, _ = m.NewMetricFloat64("labels")
+	l.parseLLDP(output, m)
+
+	assert.Equal(t, len(m.GetInstances()), 13)
 }
