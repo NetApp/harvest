@@ -1,0 +1,7 @@
+
+
+object·objectname·instance·outputName·instanceUUID·
+Object·Object·Instance Name·Instance Name·Instance UUID·
+nvm_mirror·nvm_mirror·"NVM Mirror"·"NVM Mirror"·"sa-tme-flexpod-a800-rdma-01:kernel:NVM Mirror"·
+nvm_mirror·nvm_mirror·"NVM Mirror"·"NVM Mirror"·"sa-tme-flexpod-a800-rdma-02:kernel:NVM Mirror"·
+

@@ -156,6 +156,20 @@ func TestParseCounters(t *testing.T) {
 			},
 			expectedCount: 74,
 		},
+		{
+			name:     "space",
+			fileName: "testdata/newline/counters.txt",
+			expectedCounter: CounterProperty{
+				Counter:     "write_throughput",
+				BaseCounter: "-",
+				Properties:  "rate",
+				Type:        "-",
+				Deprecated:  "false",
+				ReplacedBy:  "-",
+				LabelCount:  0,
+			},
+			expectedCount: 74,
+		},
 	}
 
 	for _, tc := range testCases {
