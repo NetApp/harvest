@@ -21,6 +21,9 @@ var arrayOneToManyRegex = regexp.MustCompile(`^([^,]+),"([^"]+)"$`)
 var arrayManyToManyRegex = regexp.MustCompile(`^"([^"]+)","([^"]+)"$`)
 var arrayRegex = regexp.MustCompile(`^"([^"]+)"$`)
 
+// a regular expression to match a colon with newline followed by one or more spaces
+var uuidNewLineRegex = regexp.MustCompile(`:\n\s+`)
+
 type CounterProperty struct {
 	Counter     string
 	Name        string
@@ -222,7 +225,11 @@ func getIndent(s string) int {
 // FilterNonEmpty splits input into lines and returns only nonblank ones.
 func FilterNonEmpty(input string) []string {
 	var lines []string
-	for line := range strings.Lines(input) {
+	// Replace the matched pattern with a colon character
+	// input: `instance_uuid                        sa-tme-flexpod-a800-rdma-01:\n                                                    kernel:NVM Mirror\n`
+	// output: `instance_uuid                        sa-tme-flexpod-a800-rdma-01:kernel:NVM Mirror\n`
+	output := uuidNewLineRegex.ReplaceAllString(input, ":")
+	for line := range strings.Lines(output) {
 		line = strings.TrimSuffix(line, "\n")
 		if strings.TrimSpace(line) != "" {
 			lines = append(lines, line)
