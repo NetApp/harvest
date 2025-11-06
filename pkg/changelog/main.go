@@ -165,7 +165,7 @@ func (c pr) linkToIssue() string {
 }
 
 // * docs: improve security panel info for ONTAP 9.10+ by @foo in https://github.com/NetApp/harvest/pull/1238
-var prRegex = regexp.MustCompile(`\* (.*?): (.*?) by @(\w+) in (https://.*)$`)
+var prRegex = regexp.MustCompile(`\* (.*?): (.*?) by @(.*?) in (https://.*)$`)
 
 func (c *cli) readPrs(notes []byte) {
 	scanner := bufio.NewScanner(bytes.NewReader(notes))
