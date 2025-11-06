@@ -236,6 +236,13 @@ func TestParseData(t *testing.T) {
 			expectedMinGroupNum: 1,
 		},
 		{
+			name:                "multiline2",
+			fileName:            "testdata/newline/data_1.txt",
+			expectedInstance:    "NVM Mirror",
+			expectedMetric:      "write_throughput",
+			expectedMinGroupNum: 1,
+		},
+		{
 			name:                "array",
 			fileName:            "testdata/array/lun_data.txt",
 			expectedInstance:    "/vol/osc_iscsi_vol01/osc_iscsi_vol01",

@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode"
 )
 
 var unitRegex = regexp.MustCompile(`^([\d.]+)(us|ms|%)$`)
@@ -20,9 +21,6 @@ var dividedRegex = regexp.MustCompile(`^[-\s]+$`)
 var arrayOneToManyRegex = regexp.MustCompile(`^([^,]+),"([^"]+)"$`)
 var arrayManyToManyRegex = regexp.MustCompile(`^"([^"]+)","([^"]+)"$`)
 var arrayRegex = regexp.MustCompile(`^"([^"]+)"$`)
-
-// a regular expression to match a colon with newline followed by one or more spaces
-var uuidNewLineRegex = regexp.MustCompile(`:\n\s+`)
 
 type CounterProperty struct {
 	Counter     string
@@ -225,11 +223,7 @@ func getIndent(s string) int {
 // FilterNonEmpty splits input into lines and returns only nonblank ones.
 func FilterNonEmpty(input string) []string {
 	var lines []string
-	// Replace the matched pattern with a colon character
-	// input: `instance_uuid                        sa-tme-flexpod-a800-rdma-01:\n                                                    kernel:NVM Mirror\n`
-	// output: `instance_uuid                        sa-tme-flexpod-a800-rdma-01:kernel:NVM Mirror\n`
-	output := uuidNewLineRegex.ReplaceAllString(input, ":")
-	for line := range strings.Lines(output) {
+	for line := range strings.Lines(input) {
 		line = strings.TrimSuffix(line, "\n")
 		if strings.TrimSpace(line) != "" {
 			lines = append(lines, line)
@@ -285,10 +279,12 @@ func (s *StatPerf) parseRows(input string) ([]map[string]any, error) {
 
 		for i := 0; i < len(tableLines); i++ {
 			line := tableLines[i]
+
 			curRowLine := strings.TrimSpace(line)
 			if curRowLine == "" || strings.Contains(curRowLine, "entries were displayed") {
 				continue
 			}
+
 			// Split on first space - counter name has no spaces, value can have spaces
 			spaceIndex := strings.Index(curRowLine, " ")
 			if spaceIndex == -1 {
@@ -336,14 +332,16 @@ func (s *StatPerf) parseRows(input string) ([]map[string]any, error) {
 			for i+1 < len(tableLines) {
 				nextLineRaw := tableLines[i+1]
 				nextTokens := strings.Fields(nextLineRaw)
-				if len(nextTokens) != 1 {
+				v := findFirstNonSpaceIndex(nextLineRaw)
+				// check on first non space - counter name has no spaces, value can have spaces
+				if len(nextTokens) != 1 && v < (dividerWidth/2) {
 					break
 				}
 				indent := getIndent(nextLineRaw)
 				if dividerWidth > 0 && indent < dividerWidth {
 					cb.WriteString(nextTokens[0])
 				} else {
-					valueBuilder.WriteString(nextTokens[0])
+					valueBuilder.WriteString(strings.Join(nextTokens, " "))
 				}
 				i++
 			}
@@ -469,4 +467,13 @@ func preprocessArrayLine(line string) string {
 	number := parts[len(parts)-1]
 	result := modifiedText + " " + number
 	return result
+}
+
+func findFirstNonSpaceIndex(s string) int {
+	for i, r := range s {
+		if !unicode.IsSpace(r) {
+			return i
+		}
+	}
+	return -1
 }
