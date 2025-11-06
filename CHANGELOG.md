@@ -2,9 +2,10 @@
 ## [Releases](https://github.com/NetApp/harvest/releases)
 
 ## 25.11.0 / 2025-11-10 Release
+:pushpin: Highlights of this major release include:
 ## :star: New Features
 
-- :star: We've created a [Harvest Model Context Protocol](https://netapp.github.io/harvest/latest/mcp/overview/) (MCP) server. The Harvest MCP server provides MCP clients like GitHub Copilot, Claude Desktop, and other large language models (LLMs) access to your infrastructure monitoring data collected by Harvest from ONTAP, StorageGRID, and Cisco systems.
+- We've created a [Harvest Model Context Protocol](https://netapp.github.io/harvest/latest/mcp/overview/) (MCP) server. The Harvest MCP server provides MCP clients like GitHub Copilot, Claude Desktop, and other large language models (LLMs) access to your infrastructure monitoring data collected by Harvest from ONTAP, StorageGRID, and Cisco systems.
 
 - :gem: New dashboards and additional panels:
     - Harvest includes an ASAr2 dashboard with storage units and SAN initiator group panels.
@@ -57,16 +58,138 @@ read [how to migrate your Prometheus volume](https://github.com/NetApp/harvest/b
 
 :metal: Thanks to all the people who've opened issues, asked questions on Discord, and contributed code or dashboards for this release:
 
-- @BrendonA667
-- @CJLvU
-- @Falcon667
-- @jowanw
-- @mamoep
-- @ofu48167
-- @RockSolidScripts
-- @roybatty2019
-- @ybizeul
+@BrendonA667, @CJLvU, @Falcon667, @RockSolidScripts, @jowanw, @mamoep, @ofu48167, @roybatty2019, @ybizeul
 
+:seedling: This release includes 34 features, 19 bug fixes, 16 documentation, 1 testing, 8 refactoring, 20 miscellaneous, and 14 ci pull requests.
+
+<details>
+<summary>Expand for full list of pull requests</summary>
+### :rocket: Features
+- Allow Partial Aggregation For Node Scoped Objects ([#3811](https://github.com/NetApp/harvest/pull/3811))
+- Grafana Import Should Include Option To Show Datasource Var ([#3830](https://github.com/NetApp/harvest/pull/3830))
+- Adding Description And Versioning Enable In Tenant Dashboard ([#3833](https://github.com/NetApp/harvest/pull/3833))
+- Adding Volume Autosize Details In Volume Dashboard ([#3851](https://github.com/NetApp/harvest/pull/3851))
+- Network Dashboard Ethernet Port Errors Should Show All Errors ([#3852](https://github.com/NetApp/harvest/pull/3852))
+- Datacenter Dashboard Should Include Links To System Manager ([#3853](https://github.com/NetApp/harvest/pull/3853))
+- Monitor Snapshot Policy Compliance ([#3857](https://github.com/NetApp/harvest/pull/3857))
+- Display Hot/Cold Data Of Volumes ([#3858](https://github.com/NetApp/harvest/pull/3858))
+- Adding Storage-Units Rest Call In Asar2 ([#3867](https://github.com/NetApp/harvest/pull/3867))
+- Adding Availability-Zones Rest Call In Asar2 ([#3870](https://github.com/NetApp/harvest/pull/3870))
+- Harvest Should Load Asar2 Templates When Monitoring Asar2 Clusters ([#3871](https://github.com/NetApp/harvest/pull/3871))
+- Add Health Endpoint To Harvest Poller ([#3879](https://github.com/NetApp/harvest/pull/3879))
+- Adding Total Throughput Panel Of Destination Volume Of Sm-Sv ([#3880](https://github.com/NetApp/harvest/pull/3880))
+- Collect Volume Snaplock Information ([#3883](https://github.com/NetApp/harvest/pull/3883))
+- Adding Nvm_mirror Zapiperf Object And Removed Read_ops And Ops From Iwarp ([#3884](https://github.com/NetApp/harvest/pull/3884))
+- Honour Volume Filter In Top Client/File In Volume ([#3888](https://github.com/NetApp/harvest/pull/3888))
+- Harvest Mcp ([#3895](https://github.com/NetApp/harvest/pull/3895))
+- Asar2 Storage Unit Dashboard ([#3898](https://github.com/NetApp/harvest/pull/3898))
+- Use Keyperf Collector For Volume Performance Metrics ([#3909](https://github.com/NetApp/harvest/pull/3909))
+- Include Node Model In Aggregate Dashboard ([#3929](https://github.com/NetApp/harvest/pull/3929))
+- Arw Snapshot Template With Private Cli ([#3933](https://github.com/NetApp/harvest/pull/3933))
+- Adding Static Counter File For Keyperf Asar2 Folder ([#3934](https://github.com/NetApp/harvest/pull/3934))
+- Adding Min Iops And Workload Size In Adaptive Qos ([#3937](https://github.com/NetApp/harvest/pull/3937))
+- Storagegrid S3 Dashboard ([#3940](https://github.com/NetApp/harvest/pull/3940))
+- Disable Volumenode Metrics ([#3941](https://github.com/NetApp/harvest/pull/3941))
+- Adding Unique Type Field In Metroclustercheck ([#3948](https://github.com/NetApp/harvest/pull/3948))
+- Add Mcp Tool Details ([#3950](https://github.com/NetApp/harvest/pull/3950))
+- Cluster-Label Flag Adds New Cluster Var/Label And Update All Panels ([#3955](https://github.com/NetApp/harvest/pull/3955))
+- Add Plugins For Statperf Collector ([#3969](https://github.com/NetApp/harvest/pull/3969))
+- Root Volume Enable/Disable Handled In Template ([#3975](https://github.com/NetApp/harvest/pull/3975))
+- Include Tiering_minimum_cooling_days In Volume Template ([#3977](https://github.com/NetApp/harvest/pull/3977))
+- Adding Block_size In Lun Perf ([#3982](https://github.com/NetApp/harvest/pull/3982))
+- Add Nic And Fcp Port Support In Statperf ([#3989](https://github.com/NetApp/harvest/pull/3989))
+- Hosts Dashboard ([#3994](https://github.com/NetApp/harvest/pull/3994))
+
+### :bug: Bug Fixes
+- Check Asup For All Pollers In Docker-Ci ([#3836](https://github.com/NetApp/harvest/pull/3836))
+- Don't Fail Poller Startup When Zapi Is Disabled ([#3839](https://github.com/NetApp/harvest/pull/3839))
+- Handle Ha Alerts For Non Ha Nodes ([#3881](https://github.com/NetApp/harvest/pull/3881))
+- Cluster Label Rewriting Should Not Modify Metrics That Contain T… ([#3896](https://github.com/NetApp/harvest/pull/3896))
+- Ignore Empty Templates ([#3911](https://github.com/NetApp/harvest/pull/3911))
+- Indent Aggregate Json ([#3932](https://github.com/NetApp/harvest/pull/3932))
+- Remove Cdot Tags From Storagegrid Fabricpool Dashboard ([#3938](https://github.com/NetApp/harvest/pull/3938))
+- Include User And Group Columns In Quota Dashboard ([#3944](https://github.com/NetApp/harvest/pull/3944))
+- Update Flexgroup Latency To 0 In Case Of No Ops ([#3952](https://github.com/NetApp/harvest/pull/3952))
+- Handle Workload Filter Batch And Instance Removal ([#3958](https://github.com/NetApp/harvest/pull/3958))
+- Handle Afx Ha Error ([#3960](https://github.com/NetApp/harvest/pull/3960))
+- Disable `Latency_io_reqd` ([#3963](https://github.com/NetApp/harvest/pull/3963))
+- Join With Group_left And Adding Workload Field ([#3968](https://github.com/NetApp/harvest/pull/3968))
+- Auditlog Dashboard Duplicate Count In Victoriametrics ([#3973](https://github.com/NetApp/harvest/pull/3973))
+- Fix Versioning Mapping In Dashboard ([#4000](https://github.com/NetApp/harvest/pull/4000))
+- Correct Query With Group_left ([#4001](https://github.com/NetApp/harvest/pull/4001))
+- Harvest Target File Should Use Soft Dependency ([#4002](https://github.com/NetApp/harvest/pull/4002))
+- Cisco Lldp Should Handle Instances With The Same Chassisid ([#4004](https://github.com/NetApp/harvest/pull/4004))
+- Storagegrid Cached Credential Script Tokens Not Expired On 401 ([#4010](https://github.com/NetApp/harvest/pull/4010))
+
+### :closed_book: Documentation
+- Remove Invalid Api Url From Permissions ([#3835](https://github.com/NetApp/harvest/pull/3835))
+- Fix Asar2 Spelling ([#3906](https://github.com/NetApp/harvest/pull/3906))
+- Mcp Documentation ([#3916](https://github.com/NetApp/harvest/pull/3916))
+- Update Readme To Mention Mcp ([#3923](https://github.com/NetApp/harvest/pull/3923))
+- Use Consistent Role Name In Documentation ([#3928](https://github.com/NetApp/harvest/pull/3928))
+- Add Configuration Link For Mcp ([#3931](https://github.com/NetApp/harvest/pull/3931))
+- Update Statperf Permissions ([#3949](https://github.com/NetApp/harvest/pull/3949))
+- Update Volume Metric Doc ([#3954](https://github.com/NetApp/harvest/pull/3954))
+- Update Ontap Metrics With Actual Api ([#3956](https://github.com/NetApp/harvest/pull/3956))
+- Tutorial To Add Storagegrid Supplied Dashboards Into Harvest ([#3957](https://github.com/NetApp/harvest/pull/3957))
+- Add Afx Testing In Release Checklist ([#3961](https://github.com/NetApp/harvest/pull/3961))
+- Build From Source Instructions For Mcp ([#3964](https://github.com/NetApp/harvest/pull/3964))
+- Add Nabox4 Config Collection ([#3978](https://github.com/NetApp/harvest/pull/3978))
+- Remove Statperf For Fsx ([#3981](https://github.com/NetApp/harvest/pull/3981))
+- Add Log File Location Change Steps To Quickstart ([#3993](https://github.com/NetApp/harvest/pull/3993))
+- Add Flexcache As Supported With Fsx ([#4005](https://github.com/NetApp/harvest/pull/4005))
+
+### :wrench: Testing
+- Use Asserts In Tests ([#3863](https://github.com/NetApp/harvest/pull/3863))
+
+### Refactoring
+- Rename Tag Mapper Part 1 ([#3864](https://github.com/NetApp/harvest/pull/3864))
+- Rename Tag Mapper Part 2 ([#3865](https://github.com/NetApp/harvest/pull/3865))
+- Rename Asar2 Dashboard To Overview ([#3920](https://github.com/NetApp/harvest/pull/3920))
+- Only Check If Zapis Exist When A Zapi Collector Is Desired ([#3921](https://github.com/NetApp/harvest/pull/3921))
+- Only Check If Zapis Exist When A Zapi Collector Is Desired ([#3924](https://github.com/NetApp/harvest/pull/3924))
+- Add Debug Logging For Rest Href ([#3943](https://github.com/NetApp/harvest/pull/3943))
+- Remove Checksum Generation Since Github Provides Digests Now ([#3983](https://github.com/NetApp/harvest/pull/3983))
+- Use Strings.builder To Improve Performance ([#3984](https://github.com/NetApp/harvest/pull/3984))
+
+### Miscellaneous
+- Merge Release/25.08.0 To Main ([#3831](https://github.com/NetApp/harvest/pull/3831))
+- Update All Dependencies ([#3841](https://github.com/NetApp/harvest/pull/3841))
+- Merge Release/25.08.1 To Main ([#3848](https://github.com/NetApp/harvest/pull/3848))
+- Update All Dependencies ([#3856](https://github.com/NetApp/harvest/pull/3856))
+- Track Upstream Gopsutil Changes ([#3872](https://github.com/NetApp/harvest/pull/3872))
+- Go Bump ([#3873](https://github.com/NetApp/harvest/pull/3873))
+- Update All Dependencies ([#3876](https://github.com/NetApp/harvest/pull/3876))
+- Update Astral-Sh/Setup-Uv Digest To B75a909 ([#3887](https://github.com/NetApp/harvest/pull/3887))
+- Update Astral-Sh/Setup-Uv Digest To 208B0c0 ([#3903](https://github.com/NetApp/harvest/pull/3903))
+- Update All Dependencies ([#3918](https://github.com/NetApp/harvest/pull/3918))
+- Track Upstream Gopsutil Changes ([#3922](https://github.com/NetApp/harvest/pull/3922))
+- Update All Dependencies ([#3930](https://github.com/NetApp/harvest/pull/3930))
+- Bump Go ([#3936](https://github.com/NetApp/harvest/pull/3936))
+- Update All Dependencies ([#3945](https://github.com/NetApp/harvest/pull/3945))
+- Update All Dependencies ([#3965](https://github.com/NetApp/harvest/pull/3965))
+- Update All Dependencies ([#3971](https://github.com/NetApp/harvest/pull/3971))
+- Bump Modelcontextprotocol/Go-Sdk ([#3987](https://github.com/NetApp/harvest/pull/3987))
+- Update All Dependencies ([#3991](https://github.com/NetApp/harvest/pull/3991))
+- Bump Modelcontextprotocol/Go-Sdk ([#3996](https://github.com/NetApp/harvest/pull/3996))
+- Track Upstream Gopsutil Changes ([#3997](https://github.com/NetApp/harvest/pull/3997))
+
+### :hammer: CI
+- Update Integration Dependency ([#3818](https://github.com/NetApp/harvest/pull/3818))
+- Bump Go ([#3834](https://github.com/NetApp/harvest/pull/3834))
+- Disable Fips Check For Clusters That Don't Support Fips ([#3837](https://github.com/NetApp/harvest/pull/3837))
+- Update Makefile Go Version ([#3850](https://github.com/NetApp/harvest/pull/3850))
+- Fix Ci Issues ([#3877](https://github.com/NetApp/harvest/pull/3877))
+- Enable The Gopls Modernize Analyzer ([#3890](https://github.com/NetApp/harvest/pull/3890))
+- Update Mcp Version ([#3913](https://github.com/NetApp/harvest/pull/3913))
+- Mcp Container Publish ([#3914](https://github.com/NetApp/harvest/pull/3914))
+- Bump Go ([#3951](https://github.com/NetApp/harvest/pull/3951))
+- Reduce Nightly Build Time ([#3953](https://github.com/NetApp/harvest/pull/3953))
+- Add Sha File To Nightly Builds ([#3980](https://github.com/NetApp/harvest/pull/3980))
+- Update Ci Machine ([#3985](https://github.com/NetApp/harvest/pull/3985))
+- Bump Go ([#4008](https://github.com/NetApp/harvest/pull/4008))
+- Handle Renovate[Bot] Pull Requests In Changelog ([#4012](https://github.com/NetApp/harvest/pull/4012))
+</details>
 ---
 
 ## 25.08.1 / 2025-08-18 Release
