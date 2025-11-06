@@ -67,7 +67,7 @@ bin/harvest generate metrics --poller POLLERNAME
 
 ### The day of the release
 
-- [ ] Create a new build from [Jenkins](http://harvest-jenkins.rtp.openenglab.netapp.com:8080/job/harvest2_0/job/BuildHarvestArtifacts/) ([details](https://github.com/NetApp/harvest-private/wiki/Release-Checklist#jenkins))
+- [ ] Create a new build from [Jenkins](http://harvest-ci.rtp.openenglab.netapp.com:8080/job/harvest2_0/job/BuildHarvestArtifacts/) ([details](https://github.com/NetApp/harvest-private/wiki/Release-Checklist#jenkins))
   - [ ] Click `Build with Parameters` and fill in the appropriate fields. Here's an example, where `RELEASE=23.02.0`
 
 | Field                       | Value           |
