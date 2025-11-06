@@ -209,6 +209,17 @@ func (c *Client) invoke() ([]byte, error) {
 		var storageGridErr errs.StorageGridError
 		if errors.As(err, &storageGridErr) {
 			if storageGridErr.IsAuthErr() {
+				// If using authToken from credential script, expire cache before retry
+				// so fetchTokenWithAuthRetry gets fresh token instead of cached expired one
+				pollerAuth, authErr := c.auth.GetPollerAuth()
+				if authErr != nil {
+					return nil, authErr
+				}
+				if pollerAuth.HasCredentialScript && pollerAuth.AuthToken != "" {
+					c.Logger.Debug("Expiring cached credential script token after 401 response")
+					c.auth.Expire()
+				}
+
 				err2 := c.fetchTokenWithAuthRetry()
 				if err2 != nil {
 					return nil, err2
