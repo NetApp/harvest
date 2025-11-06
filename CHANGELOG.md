@@ -1,9 +1,73 @@
 # Change Log
 ## [Releases](https://github.com/NetApp/harvest/releases)
 
-## 25.11.0 / 2025-11- Release
-Volume performance metrics changes: https://github.com/NetApp/harvest/discussions/3900
+## 25.11.0 / 2025-11-10 Release
+## :star: New Features
 
+- :star: We've created a [Harvest Model Context Protocol](https://netapp.github.io/harvest/latest/mcp/overview/) (MCP) server. The Harvest MCP server provides MCP clients like GitHub Copilot, Claude Desktop, and other large language models (LLMs) access to your infrastructure monitoring data collected by Harvest from ONTAP, StorageGRID, and Cisco systems.
+
+- :gem: New dashboards and additional panels:
+    - Harvest includes an ASAr2 dashboard with storage units and SAN initiator group panels.
+    - Harvest includes a StorageGRID S3 dashboard. Thanks to @ofu48167 for raising!
+    - Harvest includes a Hosts dashboard with SAN initiator groups. Thanks to @CJLvU for raising!
+    - Harvest collects FlexCache metrics from FSx.
+    - The StorageGRID Tenants dashboard includes tenant descriptions and bucket versioning. Thanks to @jowanw for raising!
+    - The Volume dashboard includes an autosize table panel. Thanks to @roybatty2019 for raising!
+    - The Network dashboard shows all ethernet port errors. Thanks to RobertWatson for raising!
+    - The Datacenter dashboard includes a System Manager panel with links to ONTAP System Manager. Thanks to Ed Barron for raising!
+    - The Data Protection dashboard includes a Snapshot Policy Violations panel that shows the number of snapshots outside the defined policy scope. Thanks to Lora NeyMan for raising!
+    - The Volume dashboard includes panels on hot and cold data. Thanks to prime_kiwi_05259 for raising!
+    - The Snapmirror Destination dashboard includes a "TopN Destination Volumes by Average Throughput" panel. Thanks to @roybatty2019 for raising!
+    - The Volume dashboard includes a Snaplock panel. Thanks to @BrendonA667 for raising!
+    - The MetroCluster dashboard includes IWarp and NVM mirror metrics. Thanks to @mamoep for raising!
+    - The Security dashboard includes an anti-ransomware snapshots table. Thanks to @ybizeul for raising!
+    - The Workload dashboard includes min IOPs and workload size in the adaptive QoS workload table. Thanks to Paqui for raising!
+    - The LUN dashboard includes a LUN's block size in the LUN table. Thanks to Venumadhu for raising!
+
+- :ear_of_rice: `harvest grafana import` includes a new command-line interface option (`show-datasource`) to show the datasource variable dropdown in dashboards, useful for multi-datasource setups. Thanks to @RockSolidScripts for raising!
+
+- `harvest grafana import` includes a new command-line interface option (`add-cluster-label`) to rewrite all panel expressions to add the specified cluster label and variable. Thanks to @RockSolidScripts for raising!
+
+- :closed_book: Documentation additions:
+    - Added a tutorial for how to include StorageGRID-supplied dashboards into Harvest. Thanks to @ofu48167 for raising!
+    - Included [ONTAP permissions](https://netapp.github.io/harvest/latest/prepare-cdot-clusters/#statperf-least-privilege-role) required for the [StatPerf collector](https://netapp.github.io/harvest/latest/configure-statperf/).
+    - Clarified which APIs are used to collect each metric.
+    - Clarified that the StatPerf collector does not work for FSx clusters due to ONTAP limitations.
+
+- Harvest reports node-scoped metrics even when some nodes are down.
+
+- Harvest's poller includes a `/health` endpoint for liveness checks. Thanks to @RockSolidScripts for raising!
+
+## Announcements
+
+:bangbang: **IMPORTANT** We've made changes to how volume performance metrics are collected. These changes are automatic and require no action from you unless you've customized Harvest's default `volume.yaml` templates. Continue reading for more details on the reasons behind this change and how to accommodate it.
+
+By default, Harvest will now use the `KeyPerf` collector for volume performance metrics. This better aligns with ONTAP's recommendations and what System Manager shows.
+
+The `default.yaml` files for `ZapiPerf` and `RestPerf` now include a `KeyPerf:` prefix for the volume template (e.g., `KeyPerf:volume.yaml`). This instructs Harvest to use the `KeyPerf` collector for volumes. More details are available at: #3900
+
+:bangbang: **IMPORTANT** If you are using Docker Compose and want to keep your historical Prometheus data, please
+read [how to migrate your Prometheus volume](https://github.com/NetApp/harvest/blob/main/docs/MigratePrometheusDocker.md).
+
+:bulb: **IMPORTANT** After upgrading, don't forget to re-import your dashboards to get all the new enhancements and fixes. You can import them via the `bin/harvest grafana import` CLI, from the Grafana UI, or from the 'Maintenance > Reset Harvest Dashboards' button in NAbox3. For NAbox4, this step is not needed.
+
+## Known Issues
+
+## Thanks to all the awesome contributors
+
+:metal: Thanks to all the people who've opened issues, asked questions on Discord, and contributed code or dashboards for this release:
+
+- @BrendonA667
+- @CJLvU
+- @Falcon667
+- @jowanw
+- @mamoep
+- @ofu48167
+- @RockSolidScripts
+- @roybatty2019
+- @ybizeul
+
+---
 
 ## 25.08.1 / 2025-08-18 Release
 :pushpin: This release is the same as version 25.08.0, with a fix for an issue where the ONTAP REST collector fails to start if ZAPIs are disabled on the cluster.
