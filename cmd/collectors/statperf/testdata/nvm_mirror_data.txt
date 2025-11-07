@@ -1,0 +1,33 @@
+Last login time: 11/7/2025 10:37:26
+
+
+
+
+Object: nvm_mirror
+Instance: NVM Mirror
+Start-time: 11/7/2025 12:16:52
+End-time: 11/7/2025 12:16:52
+Scope: sa-tme-flexpod-a800-rdma-01
+
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    instance_name                                          NVM Mirror
+    instance_uuid                        sa-tme-flexpod-a800-rdma-01:
+                                                    kernel:NVM Mirror
+    node_name                             sa-tme-flexpod-a800-rdma-01
+    write_throughput                                   13847639326958
+
+Object: nvm_mirror
+Instance: NVM Mirror
+Start-time: 11/7/2025 12:16:52
+End-time: 11/7/2025 12:16:52
+Scope: sa-tme-flexpod-a800-rdma-02
+
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    instance_name                                          NVM Mirror
+    instance_uuid                        sa-tme-flexpod-a800-rdma-02:
+                                                    kernel:NVM Mirror
+    node_name                             sa-tme-flexpod-a800-rdma-02
+    write_throughput                                     629627001678
+8 entries were displayed.

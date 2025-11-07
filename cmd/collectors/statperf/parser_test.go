@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"os"
 	"slices"
+	"strings"
 	"testing"
 )
 
@@ -361,4 +362,225 @@ flexcache_per_volume·Test·blocks_requested_from_client·637069129383·`,
 			assert.True(t, slices.Equal(result, tc.expected))
 		})
 	}
+}
+
+func TestParseRows_MultiLineContinuations(t *testing.T) {
+	tests := []struct {
+		name                  string
+		input                 string
+		expectedGroups        int
+		expectedCounter       string
+		expectedCounterValue  string
+		expectedInstanceValue string
+	}{
+		{
+			name: "single_token_value_continuation",
+			input: `Object: volume
+Instance: test_volume
+Start-time: 11/7/2025 10:00:00
+End-time: 11/7/2025 10:00:00
+Scope: cluster-01
+
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    instance_name                     trident_pvc_12d750da_fd62_4f3a_
+                                                    a711_70688b3844cb
+    read_data                                                   104KB
+3 entries were displayed.`,
+			expectedGroups:        1,
+			expectedCounter:       "instance_name",
+			expectedInstanceValue: "trident_pvc_12d750da_fd62_4f3a_a711_70688b3844cb",
+		},
+		{
+			name: "multi_token_value_continuation",
+			input: `Object: nvm_mirror
+Instance: NVM Mirror
+Start-time: 11/7/2025 12:16:52
+End-time: 11/7/2025 12:16:52
+Scope: sa-tme-flexpod-a800-rdma-01
+
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    instance_name                                          NVM Mirror
+    instance_uuid                        sa-tme-flexpod-a800-rdma-01:
+                                                    kernel:NVM Mirror
+    node_name                             sa-tme-flexpod-a800-rdma-01
+4 entries were displayed.`,
+			expectedGroups:        1,
+			expectedCounter:       "instance_uuid",
+			expectedInstanceValue: "sa-tme-flexpod-a800-rdma-01:kernel:NVM Mirror",
+		},
+		{
+			name: "single_token_counter_continuation",
+			input: `Object: volume
+Instance: test_volume
+Start-time: 11/7/2025 10:00:00
+End-time: 11/7/2025 10:00:00
+Scope: cluster-01
+
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    instance_name                                        test_volume
+    wvblk_saved_fsinfo_private_inos_                             1638
+    reserve
+3 entries were displayed.`,
+			expectedGroups:       1,
+			expectedCounter:      "wvblk_saved_fsinfo_private_inos_reserve",
+			expectedCounterValue: "1638",
+		},
+		{
+			name: "multiple_instances_with_continuations",
+			input: `Object: nvm_mirror
+Instance: NVM Mirror
+Start-time: 11/7/2025 12:16:52
+End-time: 11/7/2025 12:16:52
+Scope: sa-tme-flexpod-a800-rdma-01
+
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    instance_name                                          NVM Mirror
+    instance_uuid                        sa-tme-flexpod-a800-rdma-01:
+                                                    kernel:NVM Mirror
+    write_throughput                                   13847639326958
+
+Object: nvm_mirror
+Instance: NVM Mirror
+Start-time: 11/7/2025 12:16:52
+End-time: 11/7/2025 12:16:52
+Scope: sa-tme-flexpod-a800-rdma-02
+
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    instance_name                                          NVM Mirror
+    instance_uuid                        sa-tme-flexpod-a800-rdma-02:
+                                                    kernel:NVM Mirror
+    write_throughput                                     629627001678
+8 entries were displayed.`,
+			expectedGroups: 2,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			s := &StatPerf{
+				Rest: &rest2.Rest{
+					AbstractCollector: &collector.AbstractCollector{},
+				},
+			}
+			s.Logger = slog.Default()
+			s.perfProp = &perfProp{
+				counterInfo: map[string]*counter{
+					"instance_name":    {name: "instance_name"},
+					"instance_uuid":    {name: "instance_uuid"},
+					"node_name":        {name: "node_name"},
+					"write_throughput": {name: "write_throughput"},
+					"read_data":        {name: "read_data"},
+					"wvblk_saved_fsinfo_private_inos_reserve": {name: "wvblk_saved_fsinfo_private_inos_reserve"},
+				},
+			}
+
+			groups, err := s.parseRows(tc.input)
+			assert.Nil(t, err)
+			assert.Equal(t, len(groups), tc.expectedGroups)
+
+			if tc.expectedCounter != "" {
+				found := false
+				for _, group := range groups {
+					val, ok := group[tc.expectedCounter]
+					if !ok {
+						continue
+					}
+					found = true
+					valStr, _ := val.(string)
+					if tc.expectedCounterValue != "" {
+						assert.Equal(t, valStr, tc.expectedCounterValue)
+					}
+					if tc.expectedInstanceValue != "" {
+						assert.Equal(t, valStr, tc.expectedInstanceValue)
+					}
+					break
+				}
+				assert.True(t, found)
+			}
+		})
+	}
+}
+
+func TestParseRows_BothCounterAndValueContinuation(t *testing.T) {
+	// Test case where a continuation line has content in both columns
+	input := `Object: volume
+Instance: test_volume
+Start-time: 11/7/2025 10:00:00
+End-time: 11/7/2025 10:00:00
+Scope: cluster-01
+
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    very_long_counter_name_that_sp                  some_very_long_v
+    ans_multiple_lines                              alue_text_here
+    normal_counter                                              12345
+3 entries were displayed.`
+
+	s := &StatPerf{
+		Rest: &rest2.Rest{
+			AbstractCollector: &collector.AbstractCollector{},
+		},
+	}
+	s.Logger = slog.Default()
+	s.perfProp = &perfProp{
+		counterInfo: map[string]*counter{
+			"very_long_counter_name_that_spans_multiple_lines": {name: "very_long_counter_name_that_spans_multiple_lines"},
+			"normal_counter": {name: "normal_counter"},
+		},
+	}
+
+	groups, err := s.parseRows(input)
+	assert.Nil(t, err)
+	assert.Equal(t, len(groups), 1)
+
+	val1, ok1 := groups[0]["very_long_counter_name_that_spans_multiple_lines"]
+	assert.True(t, ok1)
+	assert.Equal(t, val1, "some_very_long_value_text_here")
+
+	val2, ok2 := groups[0]["normal_counter"]
+	assert.True(t, ok2)
+	assert.Equal(t, val2, "12345")
+}
+
+func TestParseRows_EntriesDisplayedLine(t *testing.T) {
+	input := `Object: volume
+Instance: test_volume
+Start-time: 11/7/2025 10:00:00
+End-time: 11/7/2025 10:00:00
+Scope: cluster-01
+
+    Counter                                                     Value
+    -------------------------------- --------------------------------
+    instance_name                                        test_volume
+    read_data                                                   104KB
+2 entries were displayed.`
+
+	s := &StatPerf{
+		Rest: &rest2.Rest{
+			AbstractCollector: &collector.AbstractCollector{},
+		},
+	}
+	s.Logger = slog.Default()
+	s.perfProp = &perfProp{
+		counterInfo: map[string]*counter{
+			"instance_name": {name: "instance_name"},
+			"read_data":     {name: "read_data"},
+		},
+	}
+
+	groups, err := s.parseRows(input)
+	assert.Nil(t, err)
+	assert.Equal(t, len(groups), 1)
+
+	val, ok := groups[0]["read_data"]
+	assert.True(t, ok)
+	assert.Equal(t, val, "104KB")
+	valStr, isString := val.(string)
+	assert.True(t, isString)
+	assert.False(t, strings.Contains(valStr, "entries"))
 }

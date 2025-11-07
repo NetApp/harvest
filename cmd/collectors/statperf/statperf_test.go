@@ -278,3 +278,24 @@ func processAndCookCounters(s *StatPerf, pollData []gjson.Result, prevMat *matri
 	got, err := s.cookCounters(curMat, prevMat)
 	return got, metricCount, err
 }
+
+func TestParseRows_MultiLineInstanceUUID(t *testing.T) {
+	s := newStatPerf("nvm_mirror", "nvm_mirror.yaml")
+
+	content, err := os.ReadFile("testdata/nvm_mirror_data.txt")
+	assert.Nil(t, err)
+
+	groups, err := s.parseRows(string(content))
+	assert.Nil(t, err)
+	assert.Equal(t, len(groups), 2)
+
+	assert.Equal(t, groups[0]["instance_name"], "NVM Mirror")
+	assert.Equal(t, groups[0]["instance_uuid"], "sa-tme-flexpod-a800-rdma-01:kernel:NVM Mirror")
+	assert.Equal(t, groups[0]["node_name"], "sa-tme-flexpod-a800-rdma-01")
+	assert.Equal(t, groups[0]["write_throughput"], "13847639326958")
+
+	assert.Equal(t, groups[1]["instance_name"], "NVM Mirror")
+	assert.Equal(t, groups[1]["instance_uuid"], "sa-tme-flexpod-a800-rdma-02:kernel:NVM Mirror")
+	assert.Equal(t, groups[1]["node_name"], "sa-tme-flexpod-a800-rdma-02")
+	assert.Equal(t, groups[1]["write_throughput"], "629627001678")
+}
