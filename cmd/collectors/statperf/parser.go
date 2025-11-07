@@ -324,21 +324,66 @@ func (s *StatPerf) parseRows(input string) ([]map[string]any, error) {
 			}
 
 			// Check for continuation lines.
+			// For single-token lines: use indent to determine counter vs value continuation
+			// For multi-token lines: check if merging with counter creates a valid counter name
 			var cb strings.Builder
 			cb.WriteString(counter)
 			for i+1 < len(tableLines) {
 				nextLineRaw := tableLines[i+1]
 				nextTokens := strings.Fields(nextLineRaw)
-				if len(nextTokens) != 1 {
+				if len(nextTokens) == 0 || strings.Contains(nextLineRaw, "entries were displayed") {
 					break
 				}
+
 				indent := getIndent(nextLineRaw)
-				if dividerWidth > 0 && indent < dividerWidth {
-					cb.WriteString(nextTokens[0])
+
+				if len(nextTokens) == 1 {
+					// Single token: use indent to determine counter vs value continuation
+					if dividerWidth > 0 && indent < dividerWidth {
+						cb.WriteString(nextTokens[0])
+					} else {
+						valueBuilder.WriteString(nextTokens[0])
+					}
+					i++
 				} else {
-					valueBuilder.WriteString(nextTokens[0])
+					// Multiple tokens: could be new row or continuation
+					leftPart := ""
+					if dividerWidth > 0 && len(nextLineRaw) > dividerWidth {
+						leftPart = strings.TrimSpace(nextLineRaw[:dividerWidth])
+					} else if indent < dividerWidth {
+						leftPart = nextTokens[0]
+					}
+
+					if leftPart != "" {
+						// Check if this would create a valid counter
+						potentialCounter := cb.String() + leftPart
+						if s.perfProp != nil && s.perfProp.counterInfo != nil {
+							// Check if left part + current counter forms a valid counter name
+							if _, exists := s.perfProp.counterInfo[potentialCounter]; exists {
+								// Valid counter continuation
+								cb.WriteString(leftPart)
+								// If there's also right part, add to value
+								if dividerWidth > 0 && len(nextLineRaw) > dividerWidth {
+									rightPart := strings.TrimSpace(nextLineRaw[dividerWidth:])
+									if rightPart != "" {
+										valueBuilder.WriteString(rightPart)
+									}
+								}
+								i++
+								continue
+							}
+						}
+					}
+
+					// Not a counter continuation - check if it's a value continuation
+					if dividerWidth > 0 && indent >= dividerWidth {
+						valueBuilder.WriteString(strings.TrimSpace(nextLineRaw))
+						i++
+					} else {
+						// Must be a new row - stop
+						break
+					}
 				}
-				i++
 			}
 			counter = cb.String()
 			value := valueBuilder.String()
