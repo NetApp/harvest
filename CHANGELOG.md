@@ -5,8 +5,10 @@
 :pushpin: Highlights of this major release include:
 ## :star: New Features
 
-- We've created a [Harvest Model Context Protocol](https://netapp.github.io/harvest/latest/mcp/overview/) (MCP) server. The Harvest MCP server provides MCP clients like GitHub Copilot, Claude Desktop, and other large language models (LLMs) access to your infrastructure monitoring data collected by Harvest from ONTAP, StorageGRID, and Cisco systems.
+- :medal_sports: We've created a [Harvest Model Context Protocol](https://netapp.github.io/harvest/latest/mcp/overview/) (MCP) server. The Harvest MCP server provides MCP clients like GitHub Copilot, Claude Desktop, and other large language models (LLMs) access to your infrastructure monitoring data collected by Harvest from ONTAP, StorageGRID, and Cisco systems.
 
+- :fire: Harvest supports monitoring NetApp AFX clusters with this release. Performance metrics with the API name KeyPerf or StatPerf in the [ONTAP metrics documentation](https://netapp.github.io/harvest/latest/ontap-metrics/) are supported in AFX systems. As a result, some panels in the dashboards may be missing information.
+ 
 - :gem: New dashboards and additional panels:
     - Harvest includes an ASAr2 dashboard with storage units and SAN initiator group panels.
     - Harvest includes a StorageGRID S3 dashboard. Thanks to @ofu48167 for raising!
@@ -39,6 +41,8 @@
 
 - Harvest's poller includes a `/health` endpoint for liveness checks. Thanks to @RockSolidScripts for raising!
 
+- The FcpPort and NicCommon templates work with the StatPerf collector. This means the Network dashboard works with AFX and ASAr2 clusters.
+
 ## Announcements
 
 :bangbang: **IMPORTANT** We've made changes to how volume performance metrics are collected. These changes are automatic and require no action from you unless you've customized Harvest's default `volume.yaml` templates. Continue reading for more details on the reasons behind this change and how to accommodate it.
@@ -54,13 +58,15 @@ read [how to migrate your Prometheus volume](https://github.com/NetApp/harvest/b
 
 ## Known Issues
 
+- #3941 disabled the `restperf/volume_node.yaml` and `zapiperf/volume_node.yaml` templates because ONTAP provided incomplete metrics for them. The `node_vol` prefixed metrics are not used in any Harvest dashboard. If you still need these metrics, you can re-enable the templates in their corresponding `default.yaml`. See #3900 for details.   
+
 ## Thanks to all the awesome contributors
 
 :metal: Thanks to all the people who've opened issues, asked questions on Discord, and contributed code or dashboards for this release:
 
 @BrendonA667, @CJLvU, @Falcon667, @RockSolidScripts, @jowanw, @mamoep, @ofu48167, @roybatty2019, @ybizeul
 
-:seedling: This release includes 34 features, 19 bug fixes, 16 documentation, 1 testing, 8 refactoring, 20 miscellaneous, and 14 ci pull requests.
+:seedling: This release includes 34 features, 20 bug fixes, 17 documentation, 1 testing, 8 refactoring, 21 miscellaneous, and 14 ci pull requests.
 
 <details>
 <summary>Expand for full list of pull requests</summary>
@@ -120,6 +126,7 @@ read [how to migrate your Prometheus volume](https://github.com/NetApp/harvest/b
 - Harvest Target File Should Use Soft Dependency ([#4002](https://github.com/NetApp/harvest/pull/4002))
 - Cisco Lldp Should Handle Instances With The Same Chassisid ([#4004](https://github.com/NetApp/harvest/pull/4004))
 - Storagegrid Cached Credential Script Tokens Not Expired On 401 ([#4010](https://github.com/NetApp/harvest/pull/4010))
+- Statperf Multi Line Handling ([#4017](https://github.com/NetApp/harvest/pull/4017)) 
 
 ### :closed_book: Documentation
 - Remove Invalid Api Url From Permissions ([#3835](https://github.com/NetApp/harvest/pull/3835))
@@ -138,6 +145,7 @@ read [how to migrate your Prometheus volume](https://github.com/NetApp/harvest/b
 - Remove Statperf For Fsx ([#3981](https://github.com/NetApp/harvest/pull/3981))
 - Add Log File Location Change Steps To Quickstart ([#3993](https://github.com/NetApp/harvest/pull/3993))
 - Add Flexcache As Supported With Fsx ([#4005](https://github.com/NetApp/harvest/pull/4005))
+- Update Metric Docs ([#4014](https://github.com/NetApp/harvest/pull/4014))
 
 ### :wrench: Testing
 - Use Asserts In Tests ([#3863](https://github.com/NetApp/harvest/pull/3863))
@@ -173,6 +181,7 @@ read [how to migrate your Prometheus volume](https://github.com/NetApp/harvest/b
 - Update All Dependencies ([#3991](https://github.com/NetApp/harvest/pull/3991))
 - Bump Modelcontextprotocol/Go-Sdk ([#3996](https://github.com/NetApp/harvest/pull/3996))
 - Track Upstream Gopsutil Changes ([#3997](https://github.com/NetApp/harvest/pull/3997))
+- Update Jenkins Href To New Server ([#4015](https://github.com/NetApp/harvest/pull/4015))
 
 ### :hammer: CI
 - Update Integration Dependency ([#3818](https://github.com/NetApp/harvest/pull/3818))
