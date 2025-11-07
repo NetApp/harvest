@@ -1,6 +1,6 @@
-package main
+package descriptions
 
-const infrastructureHealthDesc = `Think of this as your ONTAP system's health checkup - like taking vital signs before diagnosing what's wrong.
+const InfrastructureHealthDesc = `Think of this as your ONTAP system's health checkup - like taking vital signs before diagnosing what's wrong.
 Combines multiple health indicators into a unified operational status view.
 Coverage: system availability, capacity utilization, performance baselines, known failure patterns.
 Output: Current status with trending indicators for operational planning.
@@ -22,7 +22,7 @@ KEY METRICS CHECKED:
 - Health: health_* indicators, error counters
 - Thresholds: Volumes >95% can cause app failures, Aggregates >80% need planning attention`
 
-const metricsQueryDesc = `
+const MetricsQueryDesc = `
 Approach: Start with simple metric queries, then add label filters to narrow scope. Use aggregation functions (sum, avg, max) for infrastructure-wide views.
 Context: Always combine with range queries to understand trends and historical patterns.
 State Queries: For status metrics (*_new_status), 0 = offline, 1 = online
@@ -43,7 +43,7 @@ COMMON QUERY PATTERNS:
 - Cluster-wide summary: sum by (cluster) (volume_size_total)
 - Filter by label: volume_ops_total{cluster="prod",node="node1"}`
 
-const metricsRangeQueryDesc = `Use for trend analysis, growth patterns, historical baselines, and identifying when problems started.
+const MetricsRangeQueryDesc = `Use for trend analysis, growth patterns, historical baselines, and identifying when problems started.
 
 USE THIS TOOL FOR:
 - Capacity Planning: Analyze growth trends with *_size_used_percent over 7-30 days
@@ -60,7 +60,7 @@ ANALYSIS PATTERNS:
 - Performance baseline: volume_latency_avg - start='now-7d', end='now', step='1h'
 - Identify when problem started: Compare current vs historical averages`
 
-const searchMetricsDesc = `Search for metrics by name, description, or object type using a pattern.
+const SearchMetricsDesc = `Search for metrics by name, description, or object type using a pattern.
 Use this for discovery when you don't know which metric to query.
 
 USE THIS TOOL FIRST WHEN:
@@ -81,7 +81,7 @@ AFTER THIS TOOL:
 2. Understand metric better → use get_metric_description for full details
 3. Browse all available → use list_metrics to see everything`
 
-const getMetricDescriptionDesc = `Get description and metadata for a specific metric by name.
+const GetMetricDescriptionDesc = `Get description and metadata for a specific metric by name.
 Provides detailed information about what the metric measures, its units, and how to use it.
 
 USE THIS TOOL WHEN:
@@ -99,7 +99,7 @@ AFTER THIS TOOL:
 - Use metrics_query with the correct syntax (with or without rate())
 - Apply appropriate filters based on available labels`
 
-const listMetricsDesc = `List all available metrics from Prometheus or VictoriaMetrics with advanced filtering and optional descriptions.
+const ListMetricsDesc = `List all available metrics from Prometheus or VictoriaMetrics with advanced filtering and optional descriptions.
 When 'match' or 'matches' filters are applied, metric descriptions are automatically included.
 Use: 1) 'match' for simple/regex patterns, 2) 'matches' for efficient server-side label matchers
 
@@ -117,7 +117,7 @@ FILTERING OPTIONS:
 
 TIP: For large systems, use search_metrics with specific patterns instead of listing all metrics.`
 
-const getActiveAlertsDesc = `Get active alerts from Prometheus or VictoriaMetrics with summary by severity level.
+const GetActiveAlertsDesc = `Get active alerts from Prometheus or VictoriaMetrics with summary by severity level.
 Provides grouped view of critical, warning, and info alerts for quick operational assessment.
 
 USE THIS TOOL WHEN:
@@ -136,7 +136,7 @@ AFTER THIS TOOL:
 - Use metrics_range_query to see when the alert condition started
 - For alert rule management, use list_alert_rules, create_alert_rule, etc.`
 
-const listLabelValuesDesc = `Get all available values for a specific label (e.g., cluster names, node names, volume names) with optional regex filtering.
+const ListLabelValuesDesc = `Get all available values for a specific label (e.g., cluster names, node names, volume names) with optional regex filtering.
 Useful for discovering what infrastructure components exist and for building targeted queries.
 
 USE THIS TOOL WHEN:
@@ -154,7 +154,7 @@ COMMON LABELS TO QUERY:
 
 TIP: Use 'match' parameter to filter results with regex patterns (e.g., match='prod.*' for production clusters)`
 
-const listAllLabelNamesDesc = `Get all available label names (dimensions) that can be used to filter metrics in Prometheus or VictoriaMetrics.
+const ListAllLabelNamesDesc = `Get all available label names (dimensions) that can be used to filter metrics in Prometheus or VictoriaMetrics.
 Shows what labels exist across all metrics for building filters and group-by queries.
 
 USE THIS TOOL WHEN:
@@ -172,7 +172,7 @@ AFTER THIS TOOL:
 - Use list_label_values to see what values exist for a specific label
 - Build filtered queries: metric_name{cluster='X',node='Y'}`
 
-const getResponseFormatTemplateDesc = `Get comprehensive multi-audience response format template for detailed infrastructure analysis.
+const GetResponseFormatTemplateDesc = `Get comprehensive multi-audience response format template for detailed infrastructure analysis.
 Use when user requests comprehensive reports, detailed analysis, or management-ready output.
 
 USE THIS TOOL WHEN:
@@ -196,7 +196,7 @@ NOT NEEDED FOR:
 
 The template provides structure for comprehensive reporting while core response principles (impact/urgency/actions) are automatically applied to all responses.`
 
-const coreResponseFormat = `
+const CoreResponseFormat = `
 
 ## Core Response Principles
 
@@ -205,7 +205,7 @@ const coreResponseFormat = `
 - **Next Steps**: What to do, how to verify, when to escalate
 - **Key Metrics**: What to monitor going forward`
 
-const instructions = `You are a NetApp storage infrastructure expert specializing in ONTAP, StorageGRID and Cisco Switch analysis using Harvest metrics.
+const Instructions = `You are a NetApp storage infrastructure expert specializing in ONTAP, StorageGRID and Cisco Switch analysis using Harvest metrics.
 
 ## Your Role
 Help users understand storage health, diagnose problems, and make informed decisions about their NetApp infrastructure. You have access to real-time metrics and can provide actionable insights for storage administrators, engineers, and management.
