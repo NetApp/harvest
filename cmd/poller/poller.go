@@ -45,6 +45,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"syscall"
 	"time"
 
@@ -116,24 +117,25 @@ var deprecatedCollectors = map[string]string{
 // Poller is the instance that starts and monitors a
 // group of collectors and exporters as a single UNIX process
 type Poller struct {
-	name            string
-	target          string
-	options         *options.Options
-	schedule        *schedule.Schedule
-	collectors      []collector.Collector
-	exporters       []exporter.Exporter
-	exporterParams  map[string]conf.Exporter
-	params          *conf.Poller
-	metadata        *matrix.Matrix
-	metadataTarget  *matrix.Matrix // exported as metadata_target_
-	status          *matrix.Matrix // exported as poller_status
-	certPool        *x509.CertPool
-	client          *http.Client
-	auth            *auth.Credentials
-	hasPromExporter bool
-	maxRssBytes     uint64
-	startTime       time.Time
-	remote          conf.Remote
+	name                 string
+	target               string
+	options              *options.Options
+	schedule             *schedule.Schedule
+	collectors           []collector.Collector
+	exporters            []exporter.Exporter
+	exporterParams       map[string]conf.Exporter
+	params               *conf.Poller
+	metadata             *matrix.Matrix
+	metadataTarget       *matrix.Matrix // exported as metadata_target_
+	status               *matrix.Matrix // exported as poller_status
+	certPool             *x509.CertPool
+	client               *http.Client
+	auth                 *auth.Credentials
+	hasPromExporter      bool
+	maxRssBytes          uint64
+	startTime            time.Time
+	remote               conf.Remote
+	concurrentCollectors *atomic.Int32 // tracks the number of currently active collector tasks
 }
 
 // Init starts Poller, reads parameters, opens zeroLog handler, initializes metadata,
@@ -150,6 +152,7 @@ func (p *Poller) Init() error {
 	p.startTime = time.Now()
 	p.options = opts.SetDefaults()
 	p.name = opts.Poller
+	p.concurrentCollectors = &atomic.Int32{}
 
 	logLevel := logging.GetLogLevel(p.options.LogLevel)
 	// if we are a daemon, use file logging
@@ -509,16 +512,24 @@ func (p *Poller) startAsup() (map[string]*matrix.Matrix, error) {
 func (p *Poller) Start() {
 
 	var (
-		wg  sync.WaitGroup
-		col collector.Collector
+		wg        sync.WaitGroup
+		semaphore chan struct{}
+		col       collector.Collector
 	)
 
 	go p.startHeartBeat()
 
+	if p.params.Pool.IsEnabled() {
+		// Create a semaphore channel to limit concurrent collector execution.
+		// Buffered channel acts as a counting semaphore
+		semaphore = make(chan struct{}, p.params.Pool.Limit)
+		slog.Info("pool enabled", slog.Int("limit", p.params.Pool.Limit))
+	}
+
 	// start collectors
 	for _, col = range p.collectors {
 		wg.Add(1)
-		go col.Start(&wg)
+		go col.Start(&wg, semaphore, p.concurrentCollectors)
 	}
 
 	// run concurrently and update metadata
@@ -1167,6 +1178,7 @@ func (p *Poller) loadMetadata() {
 	newMemoryMetric(p.status, "memory", "rss")
 	newMemoryMetric(p.status, "memory", "vms")
 	newMemoryMetric(p.status, "memory", "swap")
+	_, _ = p.status.NewMetricFloat64("concurrent_collectors")
 
 	instance, _ := p.metadataTarget.NewInstance("host")
 	pInstance, _ := p.status.NewInstance("host")
@@ -1622,6 +1634,7 @@ func (p *Poller) addMemoryMetadata() {
 	_ = p.status.LazySetValueUint64("memory.vms", "host", memMetrics.VMSBytes/1024)
 	_ = p.status.LazySetValueUint64("memory.swap", "host", memMetrics.SwapBytes/1024)
 	_ = p.status.LazySetValueFloat64("memory_percent", "host", memMetrics.PercentageRssUsed)
+	_ = p.status.LazyAddValueInt64("concurrent_collectors", "host", int64(p.concurrentCollectors.Load()))
 
 	// Update maxRssBytes
 	p.maxRssBytes = max(p.maxRssBytes, memMetrics.RSSBytes)

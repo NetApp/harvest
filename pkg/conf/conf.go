@@ -600,6 +600,14 @@ type Recorder struct {
 	KeepLast string `yaml:"keep_last,omitempty"` // number of records to keep before overwriting
 }
 
+type Pool struct {
+	Limit int `yaml:"limit,omitempty"`
+}
+
+func (p Pool) IsEnabled() bool {
+	return p.Limit > 0
+}
+
 func (e *ExporterDef) UnmarshalYAML(n ast.Node) error {
 	if n.Type() == ast.MappingType {
 		var aExporter Exporter
@@ -638,6 +646,7 @@ type Poller struct {
 	Password          string               `yaml:"password,omitempty"`
 	PollerLogSchedule string               `yaml:"poller_log_schedule,omitempty"`
 	PollerSchedule    string               `yaml:"poller_schedule,omitempty"`
+	Pool              Pool                 `yaml:"pool,omitempty"`
 	PreferZAPI        bool                 `yaml:"prefer_zapi,omitempty"`
 	PromPort          int                  `yaml:"prom_port,omitempty"`
 	Recorder          Recorder             `yaml:"recorder,omitempty"`

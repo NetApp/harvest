@@ -9,7 +9,7 @@ All pollers are defined in `harvest.yml`, the main configuration file of Harvest
 | Poller name (header)   | **required**                                   | Poller name, user-defined value                                                                                                                                                                                                                                                                                                                                           |                  |
 | `datacenter`           | **required**                                   | Datacenter name, user-defined value                                                                                                                                                                                                                                                                                                                                       |                  |
 | `addr`                 | required by some collectors                    | IPv4, IPv6 or FQDN of the target system                                                                                                                                                                                                                                                                                                                                   |                  |
-| `collectors`           | **required**                                   | List of collectors to run for this poller. Possible values are `Zapi`, `ZapiPerf`, `Rest`, `RestPerf`, `KeyPerf`, `StatPerf`, `Ems`, `StorageGrid`, `CiscoRest`.                                                                                                                                                                                                                                                                                                                              |                  |
+| `collectors`           | **required**                                   | List of collectors to run for this poller. Possible values are `Zapi`, `ZapiPerf`, `Rest`, `RestPerf`, `KeyPerf`, `StatPerf`, `Ems`, `StorageGrid`, `CiscoRest`.                                                                                                                                                                                                          |                  |
 | `exporters`            | **required**                                   | List of exporter names from the `Exporters` section. Note: this should be the name of the exporter (e.g. `prometheus1`), not the value of the `exporter` key (e.g. `Prometheus`)                                                                                                                                                                                          |                  |
 | `auth_style`           | required by Zapi* collectors                   | Either `basic_auth` or `certificate_auth` See [authentication](#authentication) for details                                                                                                                                                                                                                                                                               | `basic_auth`     |
 | `username`, `password` | required if `auth_style` is `basic_auth`       |                                                                                                                                                                                                                                                                                                                                                                           |                  |
@@ -26,6 +26,7 @@ All pollers are defined in `harvest.yml`, the main configuration file of Harvest
 | `prefer_zapi`          | optional, bool                                 | Use the ZAPI API if the cluster supports it, otherwise allow Harvest to choose REST or ZAPI, whichever is appropriate to the ONTAP version. See [rest-strategy](https://github.com/NetApp/harvest/blob/main/docs/architecture/rest-strategy.md) for details.                                                                                                              |                  |
 | `conf_path`            | optional, `:` separated list of directories    | The search path Harvest uses to load its [templates](configure-templates.md). Harvest walks each directory in order, stopping at the first one that contains the desired template.                                                                                                                                                                                        | conf             |
 | `recorder`             | optional, section                              | Section that determines if Harvest should record or replay HTTP requests. See [here](configure-harvest-basic.md#http-recorder) for details.                                                                                                                                                                                                                               |                  |
+| `pool`                 | optional, section                              | Section that determines if Harvest should limit the number of concurrent collectors. See [here](configure-harvest-basic.md#pool) for details.                                                                                                                                                                                               |                  |
 
 ## Defaults
 
@@ -210,6 +211,25 @@ The `recorder` section in the `harvest.yml` file allows you to configure the HTT
 | `path`      | string **required** | Path to a directory. Recorded requests and responses will be stored here. Replaying will read the requests and responses from this directory. |         |
 | `mode`      | string **required** | `record` or `replay`                                                                                                                          |         |
 | `keep_last` | optional, int       | When mode is `record`, the number of records to keep before overwriting                                                                       |      60 |
+
+# Pool
+
+By default, Harvest does not limit the number of concurrent collectors.
+To limit the number of concurrent collectors, use the `pool` section in the `harvest.yaml` file.
+
+| parameter | type             | description                                         |
+|-----------|------------------|-----------------------------------------------------|
+| `limit`    | int **required** | The maximum number of allowed concurrent collectors |
+
+Here is an example:
+
+```yaml
+ cluster-03:
+    datacenter: DC-01
+    addr: 10.0.1.1
+    pool:
+      limit: 10 # no more than 10 concurrent collectors will run at a time
+```
 
 # Authentication
 
