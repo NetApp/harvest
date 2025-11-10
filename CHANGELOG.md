@@ -1,9 +1,205 @@
 # Change Log
 ## [Releases](https://github.com/NetApp/harvest/releases)
 
-## 25.11.0 / 2025-11- Release
-Volume performance metrics changes: https://github.com/NetApp/harvest/discussions/3900
+## 25.11.0 / 2025-11-10 Release
+:pushpin: Highlights of this major release include:
+## :star: New Features
 
+- :medal_sports: We've created a [Harvest Model Context Protocol](https://netapp.github.io/harvest/latest/mcp/overview/) (MCP) server. The Harvest MCP server provides MCP clients like GitHub Copilot, Claude Desktop, and other large language models (LLMs) access to your infrastructure monitoring data collected by Harvest from ONTAP, StorageGRID, and Cisco systems.
+
+- :fire: Harvest supports monitoring NetApp AFX clusters with this release. Performance metrics with the API name KeyPerf or StatPerf in the [ONTAP metrics documentation](https://netapp.github.io/harvest/latest/ontap-metrics/) are supported in AFX systems. As a result, some panels in the dashboards may be missing information.
+ 
+- :gem: New dashboards and additional panels:
+    - Harvest includes an ASAr2 dashboard with storage units and SAN initiator group panels.
+    - Harvest includes a StorageGRID S3 dashboard. Thanks to @ofu48167 for raising!
+    - Harvest includes a Hosts dashboard with SAN initiator groups. Thanks to @CJLvU for raising!
+    - Harvest collects FlexCache metrics from FSx.
+    - The StorageGRID Tenants dashboard includes tenant descriptions and bucket versioning. Thanks to @jowanw for raising!
+    - The Volume dashboard includes an autosize table panel. Thanks to @roybatty2019 for raising!
+    - The Network dashboard shows all ethernet port errors. Thanks to RobertWatson for raising!
+    - The Datacenter dashboard includes a System Manager panel with links to ONTAP System Manager. Thanks to Ed Barron for raising!
+    - The Data Protection dashboard includes a Snapshot Policy Violations panel that shows the number of snapshots outside the defined policy scope. Thanks to Lora NeyMan for raising!
+    - The Volume dashboard includes panels on hot and cold data. Thanks to prime_kiwi_05259 for raising!
+    - The Snapmirror Destination dashboard includes a "TopN Destination Volumes by Average Throughput" panel. Thanks to @roybatty2019 for raising!
+    - The Volume dashboard includes a Snaplock panel. Thanks to @BrendonA667 for raising!
+    - The MetroCluster dashboard includes IWarp and NVM mirror metrics. Thanks to @mamoep for raising!
+    - The Security dashboard includes an anti-ransomware snapshots table. Thanks to @ybizeul for raising!
+    - The Workload dashboard includes min IOPs and workload size in the adaptive QoS workload table. Thanks to Paqui for raising!
+    - The LUN dashboard includes a LUN's block size in the LUN table. Thanks to Venumadhu for raising!
+
+- :ear_of_rice: `harvest grafana import` includes a new command-line interface option (`show-datasource`) to show the datasource variable dropdown in dashboards, useful for multi-datasource setups. Thanks to @RockSolidScripts for raising!
+
+- `harvest grafana import` includes a new command-line interface option (`add-cluster-label`) to rewrite all panel expressions to add the specified cluster label and variable. Thanks to @RockSolidScripts for raising!
+
+- :closed_book: Documentation additions:
+    - Added a tutorial for how to include StorageGRID-supplied dashboards into Harvest. Thanks to @ofu48167 for raising!
+    - Included [ONTAP permissions](https://netapp.github.io/harvest/latest/prepare-cdot-clusters/#statperf-least-privilege-role) required for the [StatPerf collector](https://netapp.github.io/harvest/latest/configure-statperf/).
+    - Clarified which APIs are used to collect each metric.
+    - Clarified that the StatPerf collector does not work for FSx clusters due to ONTAP limitations.
+
+- Harvest reports node-scoped metrics even when some nodes are down.
+
+- Harvest's poller includes a `/health` endpoint for liveness checks. Thanks to @RockSolidScripts for raising!
+
+- The FcpPort and NicCommon templates work with the StatPerf collector. This means the Network dashboard works with AFX and ASAr2 clusters.
+
+## Announcements
+
+:bangbang: **IMPORTANT** We've made changes to how volume performance metrics are collected. These changes are automatic and require no action from you unless you've customized Harvest's default `volume.yaml` templates. Continue reading for more details on the reasons behind this change and how to accommodate it.
+
+By default, Harvest will now use the `KeyPerf` collector for volume performance metrics. This better aligns with ONTAP's recommendations and what System Manager shows.
+
+The `default.yaml` files for `ZapiPerf` and `RestPerf` now include a `KeyPerf:` prefix for the volume template (e.g., `KeyPerf:volume.yaml`). This instructs Harvest to use the `KeyPerf` collector for volumes. More details are available at: #3900
+
+:bangbang: **IMPORTANT** If you are using Docker Compose and want to keep your historical Prometheus data, please
+read [how to migrate your Prometheus volume](https://github.com/NetApp/harvest/blob/main/docs/MigratePrometheusDocker.md).
+
+:bulb: **IMPORTANT** After upgrading, don't forget to re-import your dashboards to get all the new enhancements and fixes. You can import them via the `bin/harvest grafana import` CLI, from the Grafana UI, or from the 'Maintenance > Reset Harvest Dashboards' button in NAbox3. For NAbox4, this step is not needed.
+
+## Known Issues
+
+- #3941 disabled the `restperf/volume_node.yaml` and `zapiperf/volume_node.yaml` templates because ONTAP provided incomplete metrics for them. The `node_vol` prefixed metrics are not used in any Harvest dashboard. If you still need these metrics, you can re-enable the templates in their corresponding `default.yaml`. See #3900 for details.   
+
+## Thanks to all the awesome contributors
+
+:metal: Thanks to all the people who've opened issues, asked questions on Discord, and contributed code or dashboards for this release:
+
+@BrendonA667, @CJLvU, @Falcon667, @RockSolidScripts, @jowanw, @mamoep, @ofu48167, @roybatty2019, @ybizeul
+
+:seedling: This release includes 34 features, 20 bug fixes, 17 documentation, 1 testing, 8 refactoring, 21 miscellaneous, and 14 ci pull requests.
+
+<details>
+<summary>Expand for full list of pull requests</summary>
+### :rocket: Features
+- Allow Partial Aggregation For Node Scoped Objects ([#3811](https://github.com/NetApp/harvest/pull/3811))
+- Grafana Import Should Include Option To Show Datasource Var ([#3830](https://github.com/NetApp/harvest/pull/3830))
+- Adding Description And Versioning Enable In Tenant Dashboard ([#3833](https://github.com/NetApp/harvest/pull/3833))
+- Adding Volume Autosize Details In Volume Dashboard ([#3851](https://github.com/NetApp/harvest/pull/3851))
+- Network Dashboard Ethernet Port Errors Should Show All Errors ([#3852](https://github.com/NetApp/harvest/pull/3852))
+- Datacenter Dashboard Should Include Links To System Manager ([#3853](https://github.com/NetApp/harvest/pull/3853))
+- Monitor Snapshot Policy Compliance ([#3857](https://github.com/NetApp/harvest/pull/3857))
+- Display Hot/Cold Data Of Volumes ([#3858](https://github.com/NetApp/harvest/pull/3858))
+- Adding Storage-Units Rest Call In Asar2 ([#3867](https://github.com/NetApp/harvest/pull/3867))
+- Adding Availability-Zones Rest Call In Asar2 ([#3870](https://github.com/NetApp/harvest/pull/3870))
+- Harvest Should Load Asar2 Templates When Monitoring Asar2 Clusters ([#3871](https://github.com/NetApp/harvest/pull/3871))
+- Add Health Endpoint To Harvest Poller ([#3879](https://github.com/NetApp/harvest/pull/3879))
+- Adding Total Throughput Panel Of Destination Volume Of Sm-Sv ([#3880](https://github.com/NetApp/harvest/pull/3880))
+- Collect Volume Snaplock Information ([#3883](https://github.com/NetApp/harvest/pull/3883))
+- Adding Nvm_mirror Zapiperf Object And Removed Read_ops And Ops From Iwarp ([#3884](https://github.com/NetApp/harvest/pull/3884))
+- Honour Volume Filter In Top Client/File In Volume ([#3888](https://github.com/NetApp/harvest/pull/3888))
+- Harvest Mcp ([#3895](https://github.com/NetApp/harvest/pull/3895))
+- Asar2 Storage Unit Dashboard ([#3898](https://github.com/NetApp/harvest/pull/3898))
+- Use Keyperf Collector For Volume Performance Metrics ([#3909](https://github.com/NetApp/harvest/pull/3909))
+- Include Node Model In Aggregate Dashboard ([#3929](https://github.com/NetApp/harvest/pull/3929))
+- Arw Snapshot Template With Private Cli ([#3933](https://github.com/NetApp/harvest/pull/3933))
+- Adding Static Counter File For Keyperf Asar2 Folder ([#3934](https://github.com/NetApp/harvest/pull/3934))
+- Adding Min Iops And Workload Size In Adaptive Qos ([#3937](https://github.com/NetApp/harvest/pull/3937))
+- Storagegrid S3 Dashboard ([#3940](https://github.com/NetApp/harvest/pull/3940))
+- Disable Volumenode Metrics ([#3941](https://github.com/NetApp/harvest/pull/3941))
+- Adding Unique Type Field In Metroclustercheck ([#3948](https://github.com/NetApp/harvest/pull/3948))
+- Add Mcp Tool Details ([#3950](https://github.com/NetApp/harvest/pull/3950))
+- Cluster-Label Flag Adds New Cluster Var/Label And Update All Panels ([#3955](https://github.com/NetApp/harvest/pull/3955))
+- Add Plugins For Statperf Collector ([#3969](https://github.com/NetApp/harvest/pull/3969))
+- Root Volume Enable/Disable Handled In Template ([#3975](https://github.com/NetApp/harvest/pull/3975))
+- Include Tiering_minimum_cooling_days In Volume Template ([#3977](https://github.com/NetApp/harvest/pull/3977))
+- Adding Block_size In Lun Perf ([#3982](https://github.com/NetApp/harvest/pull/3982))
+- Add Nic And Fcp Port Support In Statperf ([#3989](https://github.com/NetApp/harvest/pull/3989))
+- Hosts Dashboard ([#3994](https://github.com/NetApp/harvest/pull/3994))
+
+### :bug: Bug Fixes
+- Check Asup For All Pollers In Docker-Ci ([#3836](https://github.com/NetApp/harvest/pull/3836))
+- Don't Fail Poller Startup When Zapi Is Disabled ([#3839](https://github.com/NetApp/harvest/pull/3839))
+- Handle Ha Alerts For Non Ha Nodes ([#3881](https://github.com/NetApp/harvest/pull/3881))
+- Cluster Label Rewriting Should Not Modify Metrics That Contain T… ([#3896](https://github.com/NetApp/harvest/pull/3896))
+- Ignore Empty Templates ([#3911](https://github.com/NetApp/harvest/pull/3911))
+- Indent Aggregate Json ([#3932](https://github.com/NetApp/harvest/pull/3932))
+- Remove Cdot Tags From Storagegrid Fabricpool Dashboard ([#3938](https://github.com/NetApp/harvest/pull/3938))
+- Include User And Group Columns In Quota Dashboard ([#3944](https://github.com/NetApp/harvest/pull/3944))
+- Update Flexgroup Latency To 0 In Case Of No Ops ([#3952](https://github.com/NetApp/harvest/pull/3952))
+- Handle Workload Filter Batch And Instance Removal ([#3958](https://github.com/NetApp/harvest/pull/3958))
+- Handle Afx Ha Error ([#3960](https://github.com/NetApp/harvest/pull/3960))
+- Disable `Latency_io_reqd` ([#3963](https://github.com/NetApp/harvest/pull/3963))
+- Join With Group_left And Adding Workload Field ([#3968](https://github.com/NetApp/harvest/pull/3968))
+- Auditlog Dashboard Duplicate Count In Victoriametrics ([#3973](https://github.com/NetApp/harvest/pull/3973))
+- Fix Versioning Mapping In Dashboard ([#4000](https://github.com/NetApp/harvest/pull/4000))
+- Correct Query With Group_left ([#4001](https://github.com/NetApp/harvest/pull/4001))
+- Harvest Target File Should Use Soft Dependency ([#4002](https://github.com/NetApp/harvest/pull/4002))
+- Cisco Lldp Should Handle Instances With The Same Chassisid ([#4004](https://github.com/NetApp/harvest/pull/4004))
+- Storagegrid Cached Credential Script Tokens Not Expired On 401 ([#4010](https://github.com/NetApp/harvest/pull/4010))
+- Statperf Multi Line Handling ([#4017](https://github.com/NetApp/harvest/pull/4017)) 
+
+### :closed_book: Documentation
+- Remove Invalid Api Url From Permissions ([#3835](https://github.com/NetApp/harvest/pull/3835))
+- Fix Asar2 Spelling ([#3906](https://github.com/NetApp/harvest/pull/3906))
+- Mcp Documentation ([#3916](https://github.com/NetApp/harvest/pull/3916))
+- Update Readme To Mention Mcp ([#3923](https://github.com/NetApp/harvest/pull/3923))
+- Use Consistent Role Name In Documentation ([#3928](https://github.com/NetApp/harvest/pull/3928))
+- Add Configuration Link For Mcp ([#3931](https://github.com/NetApp/harvest/pull/3931))
+- Update Statperf Permissions ([#3949](https://github.com/NetApp/harvest/pull/3949))
+- Update Volume Metric Doc ([#3954](https://github.com/NetApp/harvest/pull/3954))
+- Update Ontap Metrics With Actual Api ([#3956](https://github.com/NetApp/harvest/pull/3956))
+- Tutorial To Add Storagegrid Supplied Dashboards Into Harvest ([#3957](https://github.com/NetApp/harvest/pull/3957))
+- Add Afx Testing In Release Checklist ([#3961](https://github.com/NetApp/harvest/pull/3961))
+- Build From Source Instructions For Mcp ([#3964](https://github.com/NetApp/harvest/pull/3964))
+- Add Nabox4 Config Collection ([#3978](https://github.com/NetApp/harvest/pull/3978))
+- Remove Statperf For Fsx ([#3981](https://github.com/NetApp/harvest/pull/3981))
+- Add Log File Location Change Steps To Quickstart ([#3993](https://github.com/NetApp/harvest/pull/3993))
+- Add Flexcache As Supported With Fsx ([#4005](https://github.com/NetApp/harvest/pull/4005))
+- Update Metric Docs ([#4014](https://github.com/NetApp/harvest/pull/4014))
+
+### :wrench: Testing
+- Use Asserts In Tests ([#3863](https://github.com/NetApp/harvest/pull/3863))
+
+### Refactoring
+- Rename Tag Mapper Part 1 ([#3864](https://github.com/NetApp/harvest/pull/3864))
+- Rename Tag Mapper Part 2 ([#3865](https://github.com/NetApp/harvest/pull/3865))
+- Rename Asar2 Dashboard To Overview ([#3920](https://github.com/NetApp/harvest/pull/3920))
+- Only Check If Zapis Exist When A Zapi Collector Is Desired ([#3921](https://github.com/NetApp/harvest/pull/3921))
+- Only Check If Zapis Exist When A Zapi Collector Is Desired ([#3924](https://github.com/NetApp/harvest/pull/3924))
+- Add Debug Logging For Rest Href ([#3943](https://github.com/NetApp/harvest/pull/3943))
+- Remove Checksum Generation Since Github Provides Digests Now ([#3983](https://github.com/NetApp/harvest/pull/3983))
+- Use Strings.builder To Improve Performance ([#3984](https://github.com/NetApp/harvest/pull/3984))
+
+### Miscellaneous
+- Merge Release/25.08.0 To Main ([#3831](https://github.com/NetApp/harvest/pull/3831))
+- Update All Dependencies ([#3841](https://github.com/NetApp/harvest/pull/3841))
+- Merge Release/25.08.1 To Main ([#3848](https://github.com/NetApp/harvest/pull/3848))
+- Update All Dependencies ([#3856](https://github.com/NetApp/harvest/pull/3856))
+- Track Upstream Gopsutil Changes ([#3872](https://github.com/NetApp/harvest/pull/3872))
+- Go Bump ([#3873](https://github.com/NetApp/harvest/pull/3873))
+- Update All Dependencies ([#3876](https://github.com/NetApp/harvest/pull/3876))
+- Update Astral-Sh/Setup-Uv Digest To B75a909 ([#3887](https://github.com/NetApp/harvest/pull/3887))
+- Update Astral-Sh/Setup-Uv Digest To 208B0c0 ([#3903](https://github.com/NetApp/harvest/pull/3903))
+- Update All Dependencies ([#3918](https://github.com/NetApp/harvest/pull/3918))
+- Track Upstream Gopsutil Changes ([#3922](https://github.com/NetApp/harvest/pull/3922))
+- Update All Dependencies ([#3930](https://github.com/NetApp/harvest/pull/3930))
+- Bump Go ([#3936](https://github.com/NetApp/harvest/pull/3936))
+- Update All Dependencies ([#3945](https://github.com/NetApp/harvest/pull/3945))
+- Update All Dependencies ([#3965](https://github.com/NetApp/harvest/pull/3965))
+- Update All Dependencies ([#3971](https://github.com/NetApp/harvest/pull/3971))
+- Bump Modelcontextprotocol/Go-Sdk ([#3987](https://github.com/NetApp/harvest/pull/3987))
+- Update All Dependencies ([#3991](https://github.com/NetApp/harvest/pull/3991))
+- Bump Modelcontextprotocol/Go-Sdk ([#3996](https://github.com/NetApp/harvest/pull/3996))
+- Track Upstream Gopsutil Changes ([#3997](https://github.com/NetApp/harvest/pull/3997))
+- Update Jenkins Href To New Server ([#4015](https://github.com/NetApp/harvest/pull/4015))
+
+### :hammer: CI
+- Update Integration Dependency ([#3818](https://github.com/NetApp/harvest/pull/3818))
+- Bump Go ([#3834](https://github.com/NetApp/harvest/pull/3834))
+- Disable Fips Check For Clusters That Don't Support Fips ([#3837](https://github.com/NetApp/harvest/pull/3837))
+- Update Makefile Go Version ([#3850](https://github.com/NetApp/harvest/pull/3850))
+- Fix Ci Issues ([#3877](https://github.com/NetApp/harvest/pull/3877))
+- Enable The Gopls Modernize Analyzer ([#3890](https://github.com/NetApp/harvest/pull/3890))
+- Update Mcp Version ([#3913](https://github.com/NetApp/harvest/pull/3913))
+- Mcp Container Publish ([#3914](https://github.com/NetApp/harvest/pull/3914))
+- Bump Go ([#3951](https://github.com/NetApp/harvest/pull/3951))
+- Reduce Nightly Build Time ([#3953](https://github.com/NetApp/harvest/pull/3953))
+- Add Sha File To Nightly Builds ([#3980](https://github.com/NetApp/harvest/pull/3980))
+- Update Ci Machine ([#3985](https://github.com/NetApp/harvest/pull/3985))
+- Bump Go ([#4008](https://github.com/NetApp/harvest/pull/4008))
+- Handle Renovate[Bot] Pull Requests In Changelog ([#4012](https://github.com/NetApp/harvest/pull/4012))
+</details>
+---
 
 ## 25.08.1 / 2025-08-18 Release
 :pushpin: This release is the same as version 25.08.0, with a fix for an issue where the ONTAP REST collector fails to start if ZAPIs are disabled on the cluster.
