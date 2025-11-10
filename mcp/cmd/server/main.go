@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"mcp-server/cmd/descriptions"
 	"mcp-server/cmd/loader"
 	"mcp-server/cmd/version"
 	"mcp-server/pkg/mcptypes"
@@ -818,7 +819,7 @@ func runMcpServer(_ *cobra.Command, _ []string) {
 }
 
 func createMCPServer() *mcp.Server {
-	instructions := "IMPORTANT:" + instructions
+	instructions := "IMPORTANT:" + descriptions.Instructions
 
 	server := mcp.NewServer(&mcp.Implementation{Name: AppName, Version: version.Info()}, &mcp.ServerOptions{
 		Instructions: instructions,
@@ -826,16 +827,16 @@ func createMCPServer() *mcp.Server {
 
 	metricDescriptions = loader.LoadMetricDescriptions(getResourcePath("metadata"), logger)
 
-	addTool(server, "get_metric_description", getMetricDescriptionDesc, GetMetricDescription)
-	addTool(server, "search_metrics", searchMetricsDesc, SearchMetrics)
-	addTool(server, "metrics_query", metricsQueryDesc, MetricsQuery)
-	addTool(server, "metrics_range_query", metricsRangeQueryDesc, MetricsRangeQuery)
-	addTool(server, "list_metrics", listMetricsDesc, ListMetrics)
-	addTool(server, "get_active_alerts", getActiveAlertsDesc, GetActiveAlerts)
-	addTool(server, "infrastructure_health", infrastructureHealthDesc, InfrastructureHealth)
-	addTool(server, "list_label_values", listLabelValuesDesc, ListLabelValues)
-	addTool(server, "list_all_label_names", listAllLabelNamesDesc, ListAllLabelNames)
-	addTool(server, "get_response_format_template", getResponseFormatTemplateDesc, GetResponseFormatTemplate)
+	addTool(server, "get_metric_description", descriptions.GetMetricDescriptionDesc, GetMetricDescription)
+	addTool(server, "search_metrics", descriptions.SearchMetricsDesc, SearchMetrics)
+	addTool(server, "metrics_query", descriptions.MetricsQueryDesc, MetricsQuery)
+	addTool(server, "metrics_range_query", descriptions.MetricsRangeQueryDesc, MetricsRangeQuery)
+	addTool(server, "list_metrics", descriptions.ListMetricsDesc, ListMetrics)
+	addTool(server, "get_active_alerts", descriptions.GetActiveAlertsDesc, GetActiveAlerts)
+	addTool(server, "infrastructure_health", descriptions.InfrastructureHealthDesc, InfrastructureHealth)
+	addTool(server, "list_label_values", descriptions.ListLabelValuesDesc, ListLabelValues)
+	addTool(server, "list_all_label_names", descriptions.ListAllLabelNamesDesc, ListAllLabelNames)
+	addTool(server, "get_response_format_template", descriptions.GetResponseFormatTemplateDesc, GetResponseFormatTemplate)
 
 	// Initialize rule manager
 	var err error
@@ -1048,7 +1049,7 @@ func SearchMetrics(_ context.Context, _ *mcp.CallToolRequest, params SearchMetri
 func GetResponseFormatTemplate(_ context.Context, _ *mcp.CallToolRequest, _ struct{}) (*mcp.CallToolResult, any, error) {
 	return &mcp.CallToolResult{
 		Content: []mcp.Content{
-			&mcp.TextContent{Text: coreResponseFormat},
+			&mcp.TextContent{Text: descriptions.CoreResponseFormat},
 		},
 	}, nil, nil
 }
