@@ -1963,6 +1963,20 @@ counters:
         ONTAPCounter: Harvest generated
         Template: conf/zapi/cdot/9.8.0/svm.yaml
 
+  - Name: poller_concurrent_collectors
+    Description: Tracks the number of concurrent collectors running.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+        Unit: bytes
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+        Unit: bytes
+
   - Name: poller_memory
     Description: Tracks the memory usage of the poller process, including Resident Set Size (RSS), swap memory, and Virtual Memory Size (VMS).
     APIs:

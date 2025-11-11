@@ -31,6 +31,7 @@ import (
 	"runtime/debug"
 	"strconv"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/netapp/harvest/v2/pkg/errs"
@@ -52,7 +53,7 @@ import (
 // are only there to facilitate "inheritance" through AbstractCollector.
 type Collector interface {
 	Init(*AbstractCollector) error
-	Start(*sync.WaitGroup)
+	Start(*sync.WaitGroup, chan struct{}, *atomic.Int32)
 	GetName() string
 	GetObject() string
 	GetLogger() *slog.Logger
@@ -297,7 +298,11 @@ func (c *AbstractCollector) GetRemote() conf.Remote {
 }
 
 // Start will run the collector in an infinite loop
-func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
+func (c *AbstractCollector) Start(
+	wg *sync.WaitGroup, // lifecycle: wait for completion
+	semaphore chan struct{}, // concurrency: limit active collectors
+	activeCollectors *atomic.Int32, // monitoring: track active collector count
+) {
 	defer wg.Done()
 	defer func() {
 		if r := recover(); r != nil {
@@ -324,6 +329,14 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 
 		// We can't reset metadata here because autosupport metadata is reset
 		// https://github.com/NetApp/harvest-private/issues/114 for details
+
+		if semaphore != nil {
+			// Acquire semaphore before running all scheduled tasks - limits collector concurrency
+			semaphore <- struct{}{}
+		}
+
+		// Track concurrent collector execution after acquiring semaphore
+		activeCollectors.Add(1)
 
 		results := make([]*matrix.Matrix, 0)
 
@@ -501,6 +514,12 @@ func (c *AbstractCollector) Start(wg *sync.WaitGroup) {
 			}
 		}
 
+		// Collector execution complete (all tasks done)
+		activeCollectors.Add(-1)
+		if semaphore != nil {
+			// Release semaphore after all scheduled tasks complete
+			<-semaphore
+		}
 		// pass results to exporters
 
 		exportStart = time.Now()
