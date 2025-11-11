@@ -69,7 +69,9 @@ read [how to migrate your Prometheus volume](https://github.com/NetApp/harvest/b
 :seedling: This release includes 34 features, 20 bug fixes, 17 documentation, 1 testing, 8 refactoring, 21 miscellaneous, and 14 ci pull requests.
 
 <details>
+
 <summary>Expand for full list of pull requests</summary>
+
 ### :rocket: Features
 - Allow Partial Aggregation For Node Scoped Objects ([#3811](https://github.com/NetApp/harvest/pull/3811))
 - Grafana Import Should Include Option To Show Datasource Var ([#3830](https://github.com/NetApp/harvest/pull/3830))
