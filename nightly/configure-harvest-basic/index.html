@@ -961,6 +961,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pool" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pool
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#authentication" class="md-nav__link">
     <span class="md-ellipsis">
       Authentication
@@ -2259,6 +2268,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pool" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pool
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#authentication" class="md-nav__link">
     <span class="md-ellipsis">
       Authentication
@@ -2490,6 +2508,12 @@
 <td>Section that determines if Harvest should record or replay HTTP requests. See <a href="./#http-recorder">here</a> for details.</td>
 <td></td>
 </tr>
+<tr>
+<td><code>pool</code></td>
+<td>optional, section</td>
+<td>Section that determines if Harvest should limit the number of concurrent collectors. See <a href="./#pool">here</a> for details.</td>
+<td></td>
+</tr>
 </tbody>
 </table>
 <h2 id="defaults">Defaults<a class="headerlink" href="#defaults" title="Permanent link">&para;</a></h2>
@@ -2671,6 +2695,32 @@ to prevent sensitive information from being stored on disk.</p>
 </tr>
 </tbody>
 </table>
+<h1 id="pool">Pool<a class="headerlink" href="#pool" title="Permanent link">&para;</a></h1>
+<p>By default, Harvest does not limit the number of concurrent collectors.
+To limit the number of concurrent collectors, use the <code>pool</code> section in the <code>harvest.yaml</code> file.</p>
+<table>
+<thead>
+<tr>
+<th>parameter</th>
+<th>type</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>limit</code></td>
+<td>int <strong>required</strong></td>
+<td>The maximum number of allowed concurrent collectors</td>
+</tr>
+</tbody>
+</table>
+<p>Here is an example:</p>
+<div class="highlight"><pre><span></span><code><span class="w"> </span><span class="nt">cluster-03</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">datacenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DC-01</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0.1.1</span>
+<span class="w">    </span><span class="nt">pool</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">limit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span><span class="w"> </span><span class="c1"># no more than 10 concurrent collectors will run at a time</span>
+</code></pre></div>
 <h1 id="authentication">Authentication<a class="headerlink" href="#authentication" title="Permanent link">&para;</a></h1>
 <p>When authenticating with ONTAP and StorageGRID clusters,
 Harvest supports both client certificates and basic authentication.</p>
