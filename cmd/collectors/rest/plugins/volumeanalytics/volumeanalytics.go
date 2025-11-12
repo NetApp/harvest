@@ -203,7 +203,7 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 						}
 						m.SetLabel("time", mtBytesUsedLabels[i])
 						m.SetLabel("order", strconv.Itoa(i))
-						m.SetLabel("activity", v.getLabelBucket(atBytesUsedLabels[i]))
+						m.SetLabel("activity", v.getLabelBucket(mtBytesUsedLabels[i]))
 						if err = m.SetValueString(instance, mv); err != nil {
 							v.SLogger.Error("set metric", slogx.Err(err), slog.String("value", mv))
 						}
@@ -222,7 +222,7 @@ func (v *VolumeAnalytics) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 						}
 						m.SetLabel("time", mtBytesUsedLabels[i])
 						m.SetLabel("order", strconv.Itoa(i))
-						m.SetLabel("activity", v.getLabelBucket(atBytesUsedLabels[i]))
+						m.SetLabel("activity", v.getLabelBucket(mtBytesUsedLabels[i]))
 						if err = m.SetValueString(instance, mp); err != nil {
 							v.SLogger.Error("set metric", slogx.Err(err), slog.String("value", mp))
 						}
