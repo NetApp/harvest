@@ -8,15 +8,15 @@ import (
 	"strings"
 )
 
-type ClusterScheule struct {
+type ClusterSchedule struct {
 	*plugin.AbstractPlugin
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
-	return &ClusterScheule{AbstractPlugin: p}
+	return &ClusterSchedule{AbstractPlugin: p}
 }
 
-func (c *ClusterScheule) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
+func (c *ClusterSchedule) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[c.Object]
 	localClusterName := data.GetGlobalLabels()["cluster"]
 	for _, instance := range data.GetInstances() {
