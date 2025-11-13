@@ -17,7 +17,9 @@ func New(p *plugin.AbstractPlugin) plugin.Plugin {
 }
 
 func (c *ClusterScheule) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
-	for _, instance := range dataMap[c.Object].GetInstances() {
+	data := dataMap[c.Object]
+	localClusterName := data.GetGlobalLabels()["cluster"]
+	for _, instance := range data.GetInstances() {
 		if cron := instance.GetLabel("cron"); cron != "" {
 			updateDetailsJSON := gjson.Result{Type: gjson.JSON, Raw: cron}
 			var minStr, hourStr, dayStr, monthStr, weekDayStr string
@@ -35,6 +37,11 @@ func (c *ClusterScheule) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 		}
 		if interval := instance.GetLabel("interval"); interval != "" {
 			instance.SetLabel("schedule", interval)
+		}
+		if localClusterName == instance.GetLabel("clusterName") {
+			instance.SetLabel("site", "local")
+		} else {
+			instance.SetLabel("site", "remote")
 		}
 	}
 	return nil, nil, nil

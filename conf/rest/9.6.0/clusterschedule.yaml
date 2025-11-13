@@ -4,6 +4,7 @@ object:                       cluster_schedule
 
 counters:
   - ^^uuid                       => uuid
+  - ^cluster.name                => clusterName
   - ^cron                        => cron
   - ^interval(duration)          => interval
   - ^name                        => name
@@ -23,5 +24,6 @@ export_options:
     - interval
     - schedule
     - scope
+    - site
     - svm
 
