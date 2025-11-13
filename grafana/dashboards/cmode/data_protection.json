@@ -3171,6 +3171,32 @@
                     ]
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Site"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "local": {
+                            "index": 1,
+                            "text": "Local"
+                          },
+                          "remote": {
+                            "index": 0,
+                            "text": "Remote"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  }
+                ]
               }
             ]
           },
@@ -3216,7 +3242,8 @@
                     "datacenter",
                     "name",
                     "type",
-                    "scope"
+                    "scope",
+                    "site"
                   ]
                 }
               }
@@ -3241,6 +3268,7 @@
                   "schedule": "Schedule",
                   "schedule_name": "Transfer Schedule",
                   "scope": "Scope",
+                  "site": "Site",
                   "type": "Type",
                   "volume": ""
                 }
