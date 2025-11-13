@@ -38,7 +38,7 @@ func (c *ClusterSchedule) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 		if interval := instance.GetLabel("interval"); interval != "" {
 			instance.SetLabel("schedule", interval)
 		}
-		if localClusterName == instance.GetLabel("clusterName") {
+		if localClusterName == instance.GetLabel("cluster_name") {
 			instance.SetLabel("site", "local")
 		} else {
 			instance.SetLabel("site", "remote")

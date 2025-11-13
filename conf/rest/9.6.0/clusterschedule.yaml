@@ -4,7 +4,7 @@ object:                       cluster_schedule
 
 counters:
   - ^^uuid                       => uuid
-  - ^cluster.name                => clusterName
+  - ^cluster.name                => cluster_name
   - ^cron                        => cron
   - ^interval(duration)          => interval
   - ^name                        => name
