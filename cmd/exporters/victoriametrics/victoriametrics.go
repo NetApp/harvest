@@ -1,37 +1,19 @@
-/*
- * Copyright NetApp Inc, 2021 All rights reserved
-
-Package Description:
-
-   The Prometheus exporter exposes metrics to the Prometheus DB
-   over an HTTP server. It consists of two concurrent components:
-
-      - the "actual" exporter (this file): receives metrics from collectors,
-        renders into the Prometheus format and stores in cache
-
-      - the HTTP daemon (httpd.go): will listen for incoming requests and
-        will serve metrics from that cache.
-
-   Strictly speaking this is an HTTP-exporter, simply using the exposition
-   format accepted by Prometheus.
-
-   Special thanks Yann Bizeul who helped to identify that having no lock
-   on the cache creates a race-condition (not caught on all Linux systems).
-*/
-
-package prometheus
+package victoriametrics
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/netapp/harvest/v2/cmd/exporters"
 	"github.com/netapp/harvest/v2/cmd/poller/exporter"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin/changelog"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
+	"github.com/netapp/harvest/v2/pkg/requests"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/slogx"
+	"io"
 	"log/slog"
-	"regexp"
+	"net/http"
 	"slices"
 	"sort"
 	"strconv"
@@ -39,226 +21,199 @@ import (
 	"time"
 )
 
-// Default parameters
 const (
-	// the maximum amount of time to keep metrics in the cache
-	cacheMaxKeep = "5m"
-	// apply a prefix to metrics globally (default none)
-	globalPrefix = ""
+	defaultPort          = 8428
+	defaultTimeout       = 5
+	defaultAPIVersion    = "1"
+	globalPrefix         = ""
+	expectedResponseCode = 204
 )
 
-type Prometheus struct {
+type VictoriaMetrics struct {
 	*exporter.AbstractExporter
-	cache           *cache
-	allowAddrs      []string
-	allowAddrsRegex []*regexp.Regexp
-	cacheAddrs      map[string]bool
-	checkAddrs      bool
-	addMetaTags     bool
-	globalPrefix    string
-	replacer        *strings.Replacer
+	client       *http.Client
+	url          string
+	addMetaTags  bool
+	globalPrefix string
+	replacer     *strings.Replacer
 }
 
 func New(abc *exporter.AbstractExporter) exporter.Exporter {
-	return &Prometheus{AbstractExporter: abc}
+	return &VictoriaMetrics{AbstractExporter: abc}
 }
 
-func (p *Prometheus) Init() error {
+func (v *VictoriaMetrics) Init() error {
 
-	if err := p.InitAbc(); err != nil {
+	if err := v.InitAbc(); err != nil {
 		return err
 	}
 
-	// from abstract class, we get "export" and "render" time
-	// some additional metadata instances
-	if instance, err := p.Metadata.NewInstance("http"); err == nil {
+	var (
+		url, addr, version *string
+		port               *int
+	)
+
+	if instance, err := v.Metadata.NewInstance("http"); err == nil {
 		instance.SetLabel("task", "http")
 	} else {
 		return err
 	}
 
-	p.replacer = exporters.NewReplacer()
+	v.replacer = exporters.NewReplacer()
 
-	if instance, err := p.Metadata.NewInstance("info"); err == nil {
+	if instance, err := v.Metadata.NewInstance("info"); err == nil {
 		instance.SetLabel("task", "info")
 	} else {
 		return err
 	}
 
-	if x := p.Params.GlobalPrefix; x != nil {
-		p.Logger.Debug("use global prefix", slog.String("prefix", *x))
-		p.globalPrefix = *x
-		if !strings.HasSuffix(p.globalPrefix, "_") {
-			p.globalPrefix += "_"
+	if x := v.Params.GlobalPrefix; x != nil {
+		v.Logger.Debug("use global prefix", slog.String("prefix", *x))
+		v.globalPrefix = *x
+		if !strings.HasSuffix(v.globalPrefix, "_") {
+			v.globalPrefix += "_"
 		}
 	} else {
-		p.globalPrefix = globalPrefix
+		v.globalPrefix = globalPrefix
 	}
 
-	// add HELP and TYPE tags to exported metrics if requested
-	if p.Params.ShouldAddMetaTags != nil && *p.Params.ShouldAddMetaTags {
-		p.addMetaTags = true
+	// Checking the required/optional params
+	// customer should either provide url or addr
+	// url is expected to be the full write URL api/v1/import/prometheus
+	// when url is defined, addr and port are ignored
+
+	// addr is expected to include host only (no port)
+	// when addr is defined, port is required
+
+	dbEndpoint := "addr"
+	if url = v.Params.URL; url != nil {
+		v.url = *url
+		dbEndpoint = "url"
+	} else {
+		if addr = v.Params.Addr; addr == nil {
+			v.Logger.Error("missing url or addr")
+			return errs.New(errs.ErrMissingParam, "url or addr")
+		}
+		if port = v.Params.Port; port == nil {
+			v.Logger.Debug("using default port", slog.Int("default", defaultPort))
+			defPort := defaultPort
+			port = &defPort
+		}
+		if version = v.Params.Version; version == nil {
+			v := defaultAPIVersion
+			version = &v
+		}
+		v.Logger.Debug("using api version", slog.String("version", *version))
+
+		//goland:noinspection HttpUrlsUsage
+		urlToUSe := "http://" + *addr + ":" + strconv.Itoa(*port)
+		url = &urlToUSe
+		v.url = fmt.Sprintf("%s/api/v%s/import/prometheus", *url, *version)
 	}
 
-	// all other parameters are only relevant to the HTTP daemon
-	if x := p.Params.CacheMaxKeep; x != nil {
-		if d, err := time.ParseDuration(*x); err == nil {
-			p.Logger.Debug("using custom cache_max_keep", slog.String("cacheMaxKeep", *x))
-			p.cache = newCache(d)
+	// timeout parameter
+	timeout := time.Duration(defaultTimeout) * time.Second
+	if ct := v.Params.ClientTimeout; ct != nil {
+		if t, err := strconv.Atoi(*ct); err == nil {
+			timeout = time.Duration(t) * time.Second
 		} else {
-			p.Logger.Error("cache_max_keep", slogx.Err(err), slog.String("x", *x))
+			v.Logger.Warn(
+				"invalid client_timeout, using default",
+				slog.String("client_timeout", *ct),
+				slog.Int("default", defaultTimeout),
+			)
 		}
+	} else {
+		v.Logger.Debug("using default client_timeout", slog.Int("default", defaultTimeout))
 	}
 
-	if p.cache == nil {
-		p.Logger.Debug("using default cache_max_keep", slog.String("cacheMaxKeep", cacheMaxKeep))
-		if d, err := time.ParseDuration(cacheMaxKeep); err == nil {
-			p.cache = newCache(d)
-		} else {
-			return err
-		}
-	}
+	v.Logger.Debug("initializing exporter", slog.String("endpoint", dbEndpoint), slog.String("url", v.url))
 
-	// allow access to metrics only from the given plain addresses
-	if x := p.Params.AllowedAddrs; x != nil {
-		p.allowAddrs = *x
-		if len(p.allowAddrs) == 0 {
-			p.Logger.Error("allow_addrs without any")
-			return errs.New(errs.ErrInvalidParam, "allow_addrs")
-		}
-		p.checkAddrs = true
-		p.Logger.Debug("added plain allow rules", slog.Int("count", len(p.allowAddrs)))
-	}
-
-	// allow access only from addresses matching one of defined regular expressions
-	if x := p.Params.AllowedAddrsRegex; x != nil {
-		p.allowAddrsRegex = make([]*regexp.Regexp, 0)
-		for _, r := range *x {
-			r = strings.TrimPrefix(strings.TrimSuffix(r, "`"), "`")
-			if reg, err := regexp.Compile(r); err == nil {
-				p.allowAddrsRegex = append(p.allowAddrsRegex, reg)
-			} else {
-				p.Logger.Error("parse regex", slogx.Err(err))
-				return errs.New(errs.ErrInvalidParam, "allow_addrs_regex")
-			}
-		}
-		if len(p.allowAddrsRegex) == 0 {
-			p.Logger.Error("allow_addrs_regex without any")
-			return errs.New(errs.ErrInvalidParam, "allow_addrs")
-		}
-		p.checkAddrs = true
-		p.Logger.Debug("added regex allow rules", slog.Int("count", len(p.allowAddrsRegex)))
-	}
-
-	// cache addresses that have been allowed or denied already
-	if p.checkAddrs {
-		p.cacheAddrs = make(map[string]bool)
-	}
-
-	// Finally, the most important and only required parameter: port
-	// can be passed to us either as an option or as a parameter
-	port := p.Options.PromPort
-	if port == 0 {
-		if promPort := p.Params.Port; promPort == nil {
-			p.Logger.Error("missing Prometheus port")
-		} else {
-			port = *promPort
-		}
-	}
-
-	// Make sure port is valid
-	if port == 0 {
-		return errs.New(errs.ErrMissingParam, "port")
-	} else if port < 0 {
-		return errs.New(errs.ErrInvalidParam, "port")
-	}
-
-	// The optional parameter LocalHTTPAddr is the address of the HTTP service, valid values are:
-	// - "localhost" or "127.0.0.1", this limits access to local machine
-	// - "" (default) or "0.0.0.0", allows access from network
-	addr := p.Params.LocalHTTPAddr
-	if addr != "" {
-		p.Logger.Debug("using custom local addr", slog.String("addr", addr))
-	}
-
-	if !p.Params.IsTest {
-		go p.startHTTPD(addr, port)
-	}
-
-	// @TODO: implement error checking to enter failed state if HTTPd failed
-	// (like we did in Alpha)
-
-	p.Logger.Debug("initialized HTTP daemon started", slog.String("addr", addr), slog.Int("port", port))
+	// construct HTTP client
+	v.client = &http.Client{Timeout: timeout}
 
 	return nil
 }
 
-// Export - Unlike other Harvest exporters, we don't export data
-// but put it in cache. The HTTP daemon serves that cache on request.
-//
-// An important aspect of the whole mechanism is that all incoming
-// data should have a unique UUID and object pair, otherwise they'll
-// overwrite other data in the cache.
-// This key is also used by the HTTP daemon to trace back the name
-// of the collectors and plugins where the metrics come from (for the info page)
-func (p *Prometheus) Export(data *matrix.Matrix) (exporter.Stats, error) {
+func (v *VictoriaMetrics) Export(data *matrix.Matrix) (exporter.Stats, error) {
 
 	var (
 		metrics [][]byte
-		stats   exporter.Stats
 		err     error
+		s       time.Time
+		stats   exporter.Stats
 	)
 
-	// lock the exporter, to prevent other collectors from writing to us
-	p.Lock()
-	defer p.Unlock()
+	v.Lock()
+	defer v.Unlock()
 
-	// render metrics into Prometheus format
-	start := time.Now()
-	metrics, stats = p.render(data)
+	s = time.Now()
 
-	// fix render time for metadata
-	d := time.Since(start)
+	// render metrics into open metrics format
+	metrics, stats = v.Render(data)
 
-	// store metrics in cache
-	key := data.UUID + "." + data.Object + "." + data.Identifier
+	// fix render time
+	if err = v.Metadata.LazyAddValueInt64("time", "render", time.Since(s).Microseconds()); err != nil {
+		v.Logger.Error("metadata render time", slogx.Err(err))
+	}
+	// in test mode, don't emit metrics
+	if v.Options.IsTest {
+		return stats, nil
+		// otherwise, to the actual export: send to the DB
+	} else if err = v.Emit(metrics); err != nil {
+		return stats, fmt.Errorf("unable to emit object: %s, uuid: %s, err=%w", data.Object, data.UUID, err)
+	}
 
-	// lock cache, to prevent HTTPd reading while we are mutating it
-	p.cache.Lock()
-	p.cache.Put(key, metrics)
-	p.cache.Unlock()
+	v.Logger.Debug(
+		"exported",
+		slog.String("object", data.Object),
+		slog.String("uuid", data.UUID),
+		slog.Int("numMetric", len(metrics)),
+	)
 
 	// update metadata
-	p.AddExportCount(uint64(len(metrics)))
-	err = p.Metadata.LazyAddValueInt64("time", "render", d.Microseconds())
-	if err != nil {
-		p.Logger.Error("error", slogx.Err(err))
+	if err = v.Metadata.LazySetValueInt64("time", "export", time.Since(s).Microseconds()); err != nil {
+		v.Logger.Error("metadata export time", slogx.Err(err))
 	}
-	err = p.Metadata.LazyAddValueInt64("time", "export", time.Since(start).Microseconds())
-	if err != nil {
-		p.Logger.Error("error", slogx.Err(err))
+
+	if metrics, stats = v.Render(v.Metadata); err != nil {
+		v.Logger.Error("render metadata", slogx.Err(err))
+	} else if err = v.Emit(metrics); err != nil {
+		v.Logger.Error("emit metadata", slogx.Err(err))
 	}
 
 	return stats, nil
 }
 
-// Render metrics and labels into the exposition format, as described in
-// https://prometheus.io/docs/instrumenting/exposition_formats/
-//
-// All metrics are implicitly "Gauge" counters. If requested, we also submit
-// HELP and TYPE metadata (see add_meta_tags in config).
-//
-// Metric name is concatenation of the collector object (e.g. "volume",
-// "fcp_lif") + the metric name (e.g. "read_ops" => "volume_read_ops").
-// We do this since the same metrics for different objects can have
-// different sets of labels, and Prometheus does not allow this.
-//
-// Example outputs:
-//
-// volume_read_ops{node="my-node",vol="some_vol"} 2523
-// fcp_lif_read_ops{vserver="nas_svm",port_id="e02"} 771
+func (v *VictoriaMetrics) Emit(data [][]byte) error {
+	var buffer *bytes.Buffer
+	var request *http.Request
+	var response *http.Response
+	var err error
 
-func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
+	buffer = bytes.NewBuffer(bytes.Join(data, []byte("\n")))
+
+	if request, err = requests.New("POST", v.url, buffer); err != nil {
+		return err
+	}
+
+	if response, err = v.client.Do(request); err != nil {
+		return err
+	}
+
+	//goland:noinspection GoUnhandledErrorResult
+	defer response.Body.Close()
+	if response.StatusCode != expectedResponseCode {
+		body, err := io.ReadAll(response.Body)
+		if err != nil {
+			return errs.New(errs.ErrAPIResponse, err.Error())
+		}
+		return fmt.Errorf("%w: %s", errs.ErrAPIRequestRejected, string(body))
+	}
+	return nil
+}
+
+func (v *VictoriaMetrics) Render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 	var (
 		rendered          [][]byte
 		tagged            *set.Set
@@ -279,7 +234,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 	globalLabels := make([]string, 0, len(data.GetGlobalLabels()))
 	normalizedLabels = make(map[string][]string)
 
-	if p.addMetaTags {
+	if v.addMetaTags {
 		tagged = set.New()
 	}
 
@@ -298,24 +253,24 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 
 	if x := options.GetChildContentS("include_all_labels"); x != "" {
 		if includeAllLabels, err = strconv.ParseBool(x); err != nil {
-			p.Logger.Error("parameter: include_all_labels", slogx.Err(err))
+			v.Logger.Error("parameter: include_all_labels", slogx.Err(err))
 		}
 	}
 
 	if x := options.GetChildContentS("require_instance_keys"); x != "" {
 		if requireInstanceKeys, err = strconv.ParseBool(x); err != nil {
-			p.Logger.Error("parameter: require_instance_keys", slogx.Err(err))
+			v.Logger.Error("parameter: require_instance_keys", slogx.Err(err))
 		}
 	}
 
 	if data.Object == "" {
-		prefix = strings.TrimSuffix(p.globalPrefix, "_")
+		prefix = strings.TrimSuffix(v.globalPrefix, "_")
 	} else {
-		prefix = p.globalPrefix + data.Object
+		prefix = v.globalPrefix + data.Object
 	}
 
 	for key, value := range data.GetGlobalLabels() {
-		globalLabels = append(globalLabels, exporters.Escape(p.replacer, key, value))
+		globalLabels = append(globalLabels, exporters.Escape(v.replacer, key, value))
 	}
 
 	// Count the number of metrics so the rendered slice can be sized without reallocation
@@ -339,7 +294,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 	}
 
 	numMetrics += exportableInstances * exportableMetrics
-	if p.addMetaTags {
+	if v.addMetaTags {
 		numMetrics += exportableMetrics * 2 // for help and type
 	}
 
@@ -366,11 +321,11 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 		// The ChangeLog plugin tracks metric values and publishes the names of metrics that have changed.
 		// For example, it might indicate that 'volume_size_total' has been updated.
 		// If a global prefix for the exporter is defined, we need to amend the metric name with this prefix.
-		if p.globalPrefix != "" && data.Object == changelog.ObjectChangeLog {
+		if v.globalPrefix != "" && data.Object == changelog.ObjectChangeLog {
 			if categoryValue, ok := instance.GetLabels()[changelog.Category]; ok {
 				if categoryValue == changelog.Metric {
 					if tracked, ok := instance.GetLabels()[changelog.Track]; ok {
-						instance.GetLabels()[changelog.Track] = p.globalPrefix + tracked
+						instance.GetLabels()[changelog.Track] = v.globalPrefix + tracked
 					}
 				}
 			}
@@ -384,14 +339,14 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 				// instance label (even though it's already a global label for 7modes)
 				_, ok := data.GetGlobalLabels()[label]
 				if !ok {
-					escaped := exporters.Escape(p.replacer, label, value)
+					escaped := exporters.Escape(v.replacer, label, value)
 					instanceKeys = append(instanceKeys, escaped)
 				}
 			}
 		} else {
 			for _, key := range keysToInclude {
 				value := instance.GetLabel(key)
-				escaped := exporters.Escape(p.replacer, key, value)
+				escaped := exporters.Escape(v.replacer, key, value)
 				instanceKeys = append(instanceKeys, escaped)
 				if !instanceKeysOk && value != "" {
 					instanceKeysOk = true
@@ -400,7 +355,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 
 			for _, label := range labelsToInclude {
 				value := instance.GetLabel(label)
-				kv := exporters.Escape(p.replacer, label, value)
+				kv := exporters.Escape(v.replacer, label, value)
 				_, ok := instanceLabelsSet[kv]
 				if ok {
 					continue
@@ -409,12 +364,10 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 				instanceLabels = append(instanceLabels, kv)
 			}
 
-			// @TODO, probably be strict, and require all keys to be present
 			if !instanceKeysOk && requireInstanceKeys {
 				continue
 			}
 
-			// @TODO, check at least one label is found?
 			if len(instanceLabels) != 0 {
 				allLabels := make([]string, 0, len(instanceLabels)+len(instanceKeys))
 				allLabels = append(allLabels, instanceLabels...)
@@ -427,7 +380,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 					instanceLabelsSet[instanceKey] = struct{}{}
 					allLabels = append(allLabels, instanceKey)
 				}
-				if p.Params.SortLabels {
+				if v.Params.SortLabels {
 					sort.Strings(allLabels)
 				}
 
@@ -455,7 +408,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 			}
 		}
 
-		if p.Params.SortLabels {
+		if v.Params.SortLabels {
 			sort.Strings(instanceKeys)
 		}
 
@@ -477,7 +430,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 						// the flattened metrics and export them in order
 						bucketMetric := data.GetMetric(metric.GetLabel("bucket"))
 						if bucketMetric == nil {
-							p.Logger.Debug(
+							v.Logger.Debug(
 								"Unable to find bucket for metric, skip",
 								slog.String("metric", metric.GetName()),
 							)
@@ -486,7 +439,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 						metricIndex := metric.GetLabel("comment")
 						index, err := strconv.Atoi(metricIndex)
 						if err != nil {
-							p.Logger.Error(
+							v.Logger.Error(
 								"Unable to find index of metric, skip",
 								slog.String("metric", metric.GetName()),
 								slog.String("index", metricIndex),
@@ -497,10 +450,10 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 						continue
 					}
 					metricLabels := make([]string, 0, len(metric.GetLabels()))
-					for k, v := range metric.GetLabels() {
-						metricLabels = append(metricLabels, exporters.Escape(p.replacer, k, v))
+					for k, l := range metric.GetLabels() {
+						metricLabels = append(metricLabels, exporters.Escape(v.replacer, k, l))
 					}
-					if p.Params.SortLabels {
+					if v.Params.SortLabels {
 						sort.Strings(metricLabels)
 					}
 					x := prefix + "_" + metric.GetName() + "{" + joinedKeys + "," + strings.Join(metricLabels, ",") + "} " + value
@@ -636,7 +589,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 				if canNormalize {
 					x = prefix + "_" + metric.GetName() + "_bucket{" + joinedKeys + `,le="` + normalizedNames[i] + `"} ` + value
 				} else {
-					x = prefix + "_" + metric.GetName() + "{" + joinedKeys + `,` + exporters.Escape(p.replacer, "metric", bucketName) + "} " + value
+					x = prefix + "_" + metric.GetName() + "{" + joinedKeys + `,` + exporters.Escape(v.replacer, "metric", bucketName) + "} " + value
 				}
 				rendered = append(rendered, []byte(x))
 				renderedBytes += uint64(len(x))
