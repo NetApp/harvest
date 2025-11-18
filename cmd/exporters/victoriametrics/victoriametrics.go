@@ -106,8 +106,8 @@ func (v *VictoriaMetrics) Init() error {
 		v.Logger.Debug("using api version", slog.String("version", *version))
 
 		//goland:noinspection HttpUrlsUsage
-		urlToUSe := "http://" + *addr + ":" + strconv.Itoa(*port)
-		url = &urlToUSe
+		urlToUse := "http://" + *addr + ":" + strconv.Itoa(*port)
+		url = &urlToUse
 		v.url = fmt.Sprintf("%s/api/v%s/import/prometheus", *url, *version)
 	}
 
@@ -176,9 +176,9 @@ func (v *VictoriaMetrics) Export(data *matrix.Matrix) (exporter.Stats, error) {
 		v.Logger.Error("metadata export time", slogx.Err(err))
 	}
 
-	if metrics, stats = v.Render(v.Metadata); err != nil {
-		v.Logger.Error("render metadata", slogx.Err(err))
-	} else if err = v.Emit(metrics); err != nil {
+	// render metadata metrics into open metrics format
+	metrics, stats = v.Render(v.Metadata)
+	if err = v.Emit(metrics); err != nil {
 		v.Logger.Error("emit metadata", slogx.Err(err))
 	}
 
