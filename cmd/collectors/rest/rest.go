@@ -333,11 +333,7 @@ func (r *Rest) PollCounter() (map[string]*matrix.Matrix, error) {
 		return nil, err
 	}
 	// Check the version if it is 9.11.1 then pass relevant fields and not *
-	if v {
-		r.isIgnoreUnknownFieldsEnabled = true
-	} else {
-		r.isIgnoreUnknownFieldsEnabled = false
-	}
+	r.isIgnoreUnknownFieldsEnabled = v
 	r.updateHref()
 	parseD := time.Since(startTime)
 
