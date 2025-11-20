@@ -10,8 +10,6 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/netapp/harvest/v2/pkg/set"
-	"github.com/netapp/harvest/v2/pkg/slogx"
 	"io"
 	"log/slog"
 	"net"
@@ -22,6 +20,9 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/netapp/harvest/v2/pkg/set"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 )
 
 func (p *Prometheus) startHTTPD(addr string, port int) {
@@ -323,7 +324,7 @@ func (p *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 		uniqueData = stats.UniqueData
 
 	default:
-		p.Logger.Error("unexpected cache type", slog.Any("type", fmt.Sprintf("%T", c)))
+		p.Logger.Error("unexpected cache type")
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
