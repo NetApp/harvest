@@ -30,6 +30,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
+	"path/filepath"
 	"regexp"
 	"slices"
 	"sort"
@@ -48,7 +49,7 @@ const (
 
 type Prometheus struct {
 	*exporter.AbstractExporter
-	cache           *cache
+	cache           cacher
 	allowAddrs      []string
 	allowAddrsRegex []*regexp.Regexp
 	cacheAddrs      map[string]bool
@@ -56,10 +57,38 @@ type Prometheus struct {
 	addMetaTags     bool
 	globalPrefix    string
 	replacer        *strings.Replacer
+	useDiskCache    bool
 }
 
 func New(abc *exporter.AbstractExporter) exporter.Exporter {
 	return &Prometheus{AbstractExporter: abc}
+}
+
+func (p *Prometheus) createCache(d time.Duration) cacher {
+	if p.useDiskCache {
+		// Path is mandatory when disk cache is enabled
+		if p.Params.DiskCache == nil || p.Params.DiskCache.Path == "" {
+			p.Logger.Error("disk cache enabled but path is not specified")
+			return nil
+		}
+
+		cacheDir := p.Params.DiskCache.Path
+
+		// Include poller name in cache directory to avoid collisions between multiple pollers
+		if p.Options.Poller != "" {
+			cacheDir = filepath.Join(cacheDir, p.Options.Poller)
+		}
+
+		dc := newDiskCache(d, cacheDir, p.Logger)
+
+		if dc != nil {
+			p.Logger.Debug("disk cache configured",
+				slog.String("cacheDir", cacheDir))
+		}
+
+		return dc
+	}
+	return newCache(d)
 }
 
 func (p *Prometheus) Init() error {
@@ -99,11 +128,21 @@ func (p *Prometheus) Init() error {
 		p.addMetaTags = true
 	}
 
+	// Check if disk cache is enabled (path is mandatory)
+	if p.Params.DiskCache != nil && p.Params.DiskCache.Path != "" {
+		p.useDiskCache = true
+		p.Logger.Debug("disk cache enabled - will use disk-based caching for RSS optimization",
+			slog.String("path", p.Params.DiskCache.Path))
+	} else {
+		p.useDiskCache = false
+		p.Logger.Debug("disk cache disabled - using memory-based caching")
+	}
+
 	// all other parameters are only relevant to the HTTP daemon
 	if x := p.Params.CacheMaxKeep; x != nil {
 		if d, err := time.ParseDuration(*x); err == nil {
 			p.Logger.Debug("using custom cache_max_keep", slog.String("cacheMaxKeep", *x))
-			p.cache = newCache(d)
+			p.cache = p.createCache(d)
 		} else {
 			p.Logger.Error("cache_max_keep", slogx.Err(err), slog.String("x", *x))
 		}
@@ -112,10 +151,14 @@ func (p *Prometheus) Init() error {
 	if p.cache == nil {
 		p.Logger.Debug("using default cache_max_keep", slog.String("cacheMaxKeep", cacheMaxKeep))
 		if d, err := time.ParseDuration(cacheMaxKeep); err == nil {
-			p.cache = newCache(d)
+			p.cache = p.createCache(d)
 		} else {
 			return err
 		}
+	}
+
+	if p.cache == nil {
+		return errs.New(errs.ErrInvalidParam, "cache initialization failed")
 	}
 
 	// allow access to metrics only from the given plain addresses
@@ -223,13 +266,35 @@ func (p *Prometheus) Export(data *matrix.Matrix) (exporter.Stats, error) {
 	// fix render time for metadata
 	d := time.Since(start)
 
+	// Extract metric names from matrix for cache statistics
+	var prefix string
+	if data.Object == "" {
+		prefix = strings.TrimSuffix(p.globalPrefix, "_")
+	} else {
+		prefix = p.globalPrefix + data.Object
+	}
+
+	metricNames := set.New()
+	for _, metric := range data.GetMetrics() {
+		if metric.IsExportable() {
+			metricNames.Add(prefix + "_" + metric.GetName())
+		}
+	}
+
 	// store metrics in cache
 	key := data.UUID + "." + data.Object + "." + data.Identifier
 
 	// lock cache, to prevent HTTPd reading while we are mutating it
-	p.cache.Lock()
-	p.cache.Put(key, metrics)
-	p.cache.Unlock()
+	switch c := p.cache.(type) {
+	case *cache:
+		c.Lock()
+		p.cache.Put(key, metrics, metricNames)
+		c.Unlock()
+	case *diskCache:
+		c.Lock()
+		p.cache.Put(key, metrics, metricNames)
+		c.Unlock()
+	}
 
 	// update metadata
 	p.AddExportCount(uint64(len(metrics)))
@@ -506,7 +571,21 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 					if p.Params.SortLabels {
 						sort.Strings(metricLabels)
 					}
-					x := prefix + "_" + metric.GetName() + "{" + joinedKeys + "," + strings.Join(metricLabels, ",") + "} " + value
+
+					buf.Reset()
+					buf.WriteString(prefix)
+					buf.WriteString("_")
+					buf.WriteString(metric.GetName())
+					buf.WriteString("{")
+					buf.WriteString(joinedKeys)
+					buf.WriteString(",")
+					buf.WriteString(strings.Join(metricLabels, ","))
+					buf.WriteString("} ")
+					buf.WriteString(value)
+
+					xbr := buf.Bytes()
+					metricLine := make([]byte, len(xbr))
+					copy(metricLine, xbr)
 
 					prefixedName := prefix + "_" + metric.GetName()
 					if tagged != nil && !tagged.Has(prefixedName) {
@@ -517,8 +596,8 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 						renderedBytes += uint64(len(help)) + uint64(len(typeT))
 					}
 
-					rendered = append(rendered, []byte(x))
-					renderedBytes += uint64(len(x))
+					rendered = append(rendered, metricLine)
+					renderedBytes += uint64(len(metricLine))
 					// scalar metric
 				} else {
 					buf.Reset()

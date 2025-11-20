@@ -138,22 +138,35 @@ func (p *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	p.cache.Lock()
-	tagsSeen := make(map[string]struct{})
-
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 
-	for _, metrics := range p.cache.Get() {
-		count += p.writeMetrics(w, metrics, tagsSeen)
+	tagsSeen := make(map[string]struct{})
+
+	if p.useDiskCache {
+		if diskcache, ok := p.cache.(*diskCache); ok {
+			diskcache.Lock()
+			count = diskcache.GetMetricCount()
+			err := diskcache.StreamToWriter(w)
+			diskcache.Unlock()
+			if err != nil {
+				p.Logger.Error("failed to stream metrics from disk cache", slogx.Err(err))
+			}
+		}
+	} else {
+		if memCache, ok := p.cache.(*cache); ok {
+			memCache.Lock()
+			for _, metrics := range memCache.Get() {
+				count += p.writeMetrics(w, metrics, tagsSeen)
+			}
+			memCache.Unlock()
+		}
 	}
 
 	// serve our own metadata
 	// notice that some values are always taken from previous session
 	md, _ := p.render(p.Metadata)
 	count += p.writeMetrics(w, md, tagsSeen)
-
-	p.cache.Unlock()
 
 	// update metadata
 	p.Metadata.Reset()
@@ -250,45 +263,69 @@ func (p *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 
 	uniqueData := map[string]map[string][]string{}
 
-	// copy cache so we don't lock it
-	p.cache.Lock()
-	cache := make(map[string][][]byte)
-	for key, data := range p.cache.Get() {
-		cache[key] = make([][]byte, len(data))
-		copy(cache[key], data)
-	}
-	p.cache.Unlock()
-
-	p.Logger.Debug("fetching cached elements", slog.Int("count", len(cache)))
-
-	for key, data := range cache {
-		var collector, object string
-
-		if keys := strings.Split(key, "."); len(keys) == 3 {
-			collector = keys[0]
-			object = keys[1]
-		} else {
-			continue
+	switch c := p.cache.(type) {
+	case *cache:
+		c.Lock()
+		cacheData := make(map[string][][]byte)
+		for key, data := range c.Get() {
+			cacheData[key] = make([][]byte, len(data))
+			copy(cacheData[key], data)
 		}
+		c.Unlock()
 
-		// skip metadata
-		if strings.HasPrefix(object, "metadata_") {
-			continue
-		}
+		p.Logger.Debug("fetching cached elements", slog.Int("count", len(cacheData)))
 
-		metricNames := set.New()
-		for _, m := range data {
-			if x := strings.Split(string(m), "{"); len(x) >= 2 && x[0] != "" {
-				metricNames.Add(x[0])
+		for key, data := range cacheData {
+			var collector, object string
+
+			if keys := strings.Split(key, "."); len(keys) == 3 {
+				collector = keys[0]
+				object = keys[1]
+			} else {
+				continue
 			}
-		}
-		numMetrics += metricNames.Size()
 
-		if _, exists := uniqueData[collector]; !exists {
-			uniqueData[collector] = make(map[string][]string)
-		}
-		uniqueData[collector][object] = metricNames.Values()
+			// skip metadata
+			if strings.HasPrefix(object, "metadata_") {
+				continue
+			}
 
+			metricNames := set.New()
+			for _, m := range data {
+				if x := strings.Split(string(m), "{"); len(x) >= 2 && x[0] != "" {
+					metricNames.Add(x[0])
+				}
+			}
+			numMetrics += metricNames.Size()
+
+			if _, exists := uniqueData[collector]; !exists {
+				uniqueData[collector] = make(map[string][]string)
+				numCollectors++
+			}
+			if _, exists := uniqueData[collector][object]; !exists {
+				numObjects++
+			}
+			uniqueData[collector][object] = metricNames.Values()
+		}
+	case *diskCache:
+		c.Lock()
+		stats, err := c.GetStats()
+		c.Unlock()
+		if err != nil {
+			p.Logger.Error("failed to get cache statistics", slogx.Err(err))
+			http.Error(w, "Failed to collect cache statistics", http.StatusInternalServerError)
+			return
+		}
+
+		numCollectors = stats.NumCollectors
+		numObjects = stats.NumObjects
+		numMetrics = stats.NumMetrics
+		uniqueData = stats.UniqueData
+
+	default:
+		p.Logger.Error("unexpected cache type", slog.Any("type", fmt.Sprintf("%T", c)))
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
 	}
 
 	for col, perObject := range uniqueData {
@@ -301,11 +338,9 @@ func (p *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 			objects = append(objects, fmt.Sprintf(objectTemplate, obj, strings.Join(metrics, "\n")))
-			numObjects++
 		}
 
 		body = append(body, fmt.Sprintf(collectorTemplate, col, strings.Join(objects, "\n")))
-		numCollectors++
 	}
 
 	poller := p.Options.Poller
