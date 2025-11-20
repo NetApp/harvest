@@ -30,6 +30,7 @@ nav:
   - Configure Exporters:
       - 'Prometheus': 'prometheus-exporter.md'
       - 'InfluxDB': 'influxdb-exporter.md'
+      - 'VictoriaMetrics': 'victoriametrics-exporter.md'
   - Configure Grafana: 'configure-grafana.md'
   - Configure Collectors:
       - 'ZAPI': 'configure-zapi.md'

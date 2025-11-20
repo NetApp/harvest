@@ -10,6 +10,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"github.com/netapp/harvest/v2/cmd/exporters"
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"io"
@@ -150,7 +151,7 @@ func (p *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 
 	// serve our own metadata
 	// notice that some values are always taken from previous session
-	md, _ := p.render(p.Metadata)
+	md, _ := exporters.Render(p.Metadata, p.addMetaTags, p.Params.SortLabels, p.globalPrefix, p.Logger, "")
 	count += p.writeMetrics(w, md, tagsSeen)
 
 	p.cache.Unlock()
