@@ -785,6 +785,10 @@ func ZapiPoller(n *node.Node) *Poller {
 	return &p
 }
 
+type DiskCacheConfig struct {
+	Path string `yaml:"path"`
+}
+
 type Exporter struct {
 	Port              *int      `yaml:"port,omitempty"`
 	PortRange         *IntRange `yaml:"port_range,omitempty"`
@@ -804,12 +808,13 @@ type Exporter struct {
 	TLS          TLS    `yaml:"tls,omitempty"`
 
 	// InfluxDB specific
-	Bucket        *string `yaml:"bucket,omitempty"`
-	Org           *string `yaml:"org,omitempty"`
-	Token         *string `yaml:"token,omitempty"`
-	Precision     *string `yaml:"precision,omitempty"`
-	ClientTimeout *string `yaml:"client_timeout,omitempty"`
-	Version       *string `yaml:"version,omitempty"`
+	Bucket        *string          `yaml:"bucket,omitempty"`
+	Org           *string          `yaml:"org,omitempty"`
+	Token         *string          `yaml:"token,omitempty"`
+	Precision     *string          `yaml:"precision,omitempty"`
+	ClientTimeout *string          `yaml:"client_timeout,omitempty"`
+	Version       *string          `yaml:"version,omitempty"`
+	DiskCache     *DiskCacheConfig `yaml:"disk_cache,omitempty"`
 
 	IsTest     bool `yaml:"-"` // true when run from unit tests
 	IsEmbedded bool `yaml:"-"` // true when the exporter is embedded in a poller

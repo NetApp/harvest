@@ -5,6 +5,7 @@
 package prometheus
 
 import (
+	"github.com/netapp/harvest/v2/pkg/set"
 	"sync"
 	"time"
 )
@@ -15,6 +16,8 @@ type cache struct {
 	timers map[string]time.Time
 	expire time.Duration
 }
+
+var _ memoryCacher = (*cache)(nil)
 
 func newCache(d time.Duration) *cache {
 	c := cache{Mutex: &sync.Mutex{}, expire: d}
@@ -28,7 +31,7 @@ func (c *cache) Get() map[string][][]byte {
 	return c.data
 }
 
-func (c *cache) Put(key string, data [][]byte) {
+func (c *cache) Put(key string, data [][]byte, _ *set.Set) {
 	c.data[key] = data
 	c.timers[key] = time.Now()
 }

@@ -147,9 +147,12 @@ net_app_bike_max_speed{} 3`, "bike"},
 
 			prom := p.(*Prometheus)
 			var lines []string
-			for _, metrics := range prom.cache.Get() {
-				for _, metric := range metrics {
-					lines = append(lines, string(metric))
+
+			if memCache, ok := prom.cache.(*cache); ok {
+				for _, metrics := range memCache.Get() {
+					for _, metric := range metrics {
+						lines = append(lines, string(metric))
+					}
 				}
 			}
 
@@ -184,9 +187,12 @@ netapp_change_log{category="metric",cluster="umeng-aff300-01-02",object="volume"
 
 			prom := p.(*Prometheus)
 			var lines []string
-			for _, metrics := range prom.cache.Get() {
-				for _, metric := range metrics {
-					lines = append(lines, string(metric))
+
+			if memCache, ok := prom.cache.(*cache); ok {
+				for _, metrics := range memCache.Get() {
+					for _, metric := range metrics {
+						lines = append(lines, string(metric))
+					}
 				}
 			}
 
@@ -258,11 +264,14 @@ func TestRenderHistogramExample(t *testing.T) {
 
 	prom := p.(*Prometheus)
 	var lines []string
-	for _, metrics := range prom.cache.Get() {
-		for _, metricLine := range metrics {
-			sline := string(metricLine)
-			if !strings.HasPrefix(sline, "#") {
-				lines = append(lines, sline)
+
+	if memCache, ok := prom.cache.(*cache); ok {
+		for _, metrics := range memCache.Get() {
+			for _, metricLine := range metrics {
+				sline := string(metricLine)
+				if !strings.HasPrefix(sline, "#") {
+					lines = append(lines, sline)
+				}
 			}
 		}
 	}

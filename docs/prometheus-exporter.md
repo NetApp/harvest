@@ -58,6 +58,7 @@ An overview of all parameters:
 | [`allow_addrs`](#allow_addrs)             | list of strings, optional                      | allow access only if host matches any of the provided addresses                                                                                                                                                               |                                                                                                                                                |
 | [`allow_addrs_regex`](#allow_addrs_regex) | list of strings, optional                      | allow access only if host address matches at least one of the regular expressions                                                                                                                                             |                                                                                                                                                |
 | `cache_max_keep`                          | string (Go duration format), optional          | maximum amount of time metrics are cached (in case Prometheus does not timely collect the metrics)                                                                                                                            | `5m`                                                                                                                                           |
+| [`disk_cache`](#disk_cache)               | object, optional                               | disk-based cache configuration                                                                                                                                                                        |                                                                                                                                                |
 | `global_prefix`                           | string, optional                               | add a prefix to all metrics (e.g. `netapp_`)                                                                                                                                                                                  |                                                                                                                                                |
 | `local_http_addr`                         | string, optional                               | address of the HTTP server Harvest starts for Prometheus to scrape:<br />use `localhost` to serve only on the local machine<br />use `0.0.0.0` (default) if Prometheus is scrapping from another machine                      | `0.0.0.0`                                                                                                                                      |
 | `port_range`                              | int-int (range), overrides `port` if specified | lower port to upper port (inclusive) of the HTTP end-point to create when a poller specifies this exporter. Starting at lower port, each free port will be tried sequentially up to the upper port.                           |                                                                                                                                                |
@@ -220,6 +221,45 @@ Exporters:
 ```
 
 Access will only be allowed from the IP4 range `192.168.0.0`-`192.168.0.255`.
+
+### disk_cache
+The `disk_cache` parameter enables disk-based staging of metrics before they are served to Prometheus. Instead of storing formatted metrics in memory, Harvest flushes them to disk files. When Prometheus scrapes the `/metrics` endpoint, Harvest reads these cached files from disk and streams them directly to Prometheus. This approach reduces memory overhead, making it ideal for large deployments with many metrics.
+
+**Configuration:**
+
+The `disk_cache` parameter requires a `path` field that specifies the directory where cache files will be stored. The path is **mandatory** when using disk cache.
+
+**Notes:**
+
+- The `path` is **required** when using `disk_cache`
+- Harvest will automatically create a subdirectory for each poller to avoid conflicts between multiple pollers
+- The cache directory is cleared on startup
+- Ensure the specified directory is writable by the Harvest process
+
+**Example:**
+
+```yaml
+Exporters:
+  prom_disk:
+    exporter: Prometheus
+    port_range: 13000-13100
+    disk_cache:
+      path: /var/lib/harvest/cache
+
+Pollers:
+  cluster-01:
+    addr: 10.0.1.1
+    exporters:
+      - prom_disk
+  cluster-02:
+    addr: 10.0.1.2
+    exporters:
+      - prom_disk
+```
+
+In this example, cache files will be created in:
+- `/var/lib/harvest/cache/cluster-01/`
+- `/var/lib/harvest/cache/cluster-02/`
 
 ## Configure Prometheus to scrape Harvest pollers
 
