@@ -8114,86 +8114,6 @@ The `net_route_labels` metric is visualized in the following Grafana dashboards:
 
 
 
-### netstat_bytes_recvd
-
-Number of bytes received by a TCP connection
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| ZapiPerf | `perf-object-get-instances netstat` | `bytes_recvd`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
-
-
-
-### netstat_bytes_sent
-
-Number of bytes sent by a TCP connection
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| ZapiPerf | `perf-object-get-instances netstat` | `bytes_sent`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
-
-
-
-### netstat_cong_win
-
-Congestion window of a TCP connection
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| ZapiPerf | `perf-object-get-instances netstat` | `cong_win`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
-
-
-
-### netstat_cong_win_th
-
-Congestion window threshold of a TCP connection
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| ZapiPerf | `perf-object-get-instances netstat` | `cong_win_th`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
-
-
-
-### netstat_ooorcv_pkts
-
-Number of out-of-order packets received by this TCP connection
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| ZapiPerf | `perf-object-get-instances netstat` | `ooorcv_pkts`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
-
-
-
-### netstat_recv_window
-
-Receive window size of a TCP connection
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| ZapiPerf | `perf-object-get-instances netstat` | `recv_window`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
-
-
-
-### netstat_rexmit_pkts
-
-Number of packets retransmitted by this TCP connection
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| ZapiPerf | `perf-object-get-instances netstat` | `rexmit_pkts`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
-
-
-
-### netstat_send_window
-
-Send window size of a TCP connection
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| ZapiPerf | `perf-object-get-instances netstat` | `send_window`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
-
-
-
 ### nfs_clients_idle_duration
 
 Specifies an ISO-8601 format of date and time to retrieve the idle time duration in hours, minutes, and seconds format.
@@ -15449,8 +15369,8 @@ Tracks the number of concurrent collectors running.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> bytes | NA |
-| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> bytes | NA |
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> bytes | NA | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> bytes | NA | 
 
 
 
