@@ -1,18 +1,20 @@
 
 name:                       Lun
-query:                      api/storage/luns
+query:                      api/private/cli/lun
 object:                     lun
 
 counters:
   - ^^uuid
-  - ^location.node.name     => node
-  - ^location.qtree.name    => qtree
-  - ^location.volume.name   => volume
-  - ^name                   => path
-  - ^status.state           => state
-  - ^svm.name               => svm
-  - space.size              => size
-  - space.used              => size_used
+  - ^node                   => node
+  - ^path                   => path
+  - ^qtree                  => qtree
+  - ^serial_hex             => serial_hex
+  - ^state                  => state
+  - ^volume                 => volume
+  - ^vserver                => svm
+  - size                    => size
+  - size_used               => size_used
+
 
 plugins:
   - MetricAgent:
@@ -37,4 +39,5 @@ export_options:
     - svm
     - volume
   instance_labels:
+    - serial_hex
     - state
