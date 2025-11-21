@@ -80,6 +80,15 @@ None of the [pollers](#poller) know anything about Prometheus. That's because Pr
 
 - [InfluxDB Exporter](influxdb-exporter.md)
 
+## VictoriaMetrics
+
+[VictoriaMetrics](https://docs.victoriametrics.com/victoriametrics/) is an open-source time-series database. Harvest ships with some sample Grafana dashboards that are designed to work with VictoriaMetrics. Unlike the Prometheus exporter, Harvest's VictoriaMetrics exporter pushes metrics from the poller to VictoriaMetrics via Prometheus exposition format. The exporter is compatible with VictoriaMetrics v1.129.1.
+
+
+**More information:**
+
+- [VictoriaMetrics Exporter](victoriametrics-exporter.md)
+
 ## Dashboards
 
 Harvest ships with a set of [Grafana](https://grafana.com/) dashboards that are primarily designed to work with Prometheus. The dashboards are located in the `grafana/dashboards` directory. Harvest does not include Grafana, only the dashboards for it. Grafana must be installed separately via Docker, NAbox, or other means.

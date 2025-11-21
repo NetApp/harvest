@@ -7,6 +7,7 @@ package prometheus
 import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/netapp/harvest/v2/assert"
+	"github.com/netapp/harvest/v2/cmd/exporters"
 	"github.com/netapp/harvest/v2/cmd/poller/exporter"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -48,7 +49,7 @@ some_other_metric{node="node_3"} 0.0
 }
 
 func TestEscape(t *testing.T) {
-	replacer := newReplacer()
+	replacer := exporters.NewReplacer()
 
 	type test struct {
 		key   string
@@ -65,16 +66,16 @@ func TestEscape(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.want, func(t *testing.T) {
-			got := escape(replacer, tc.key, tc.value)
+			got := exporters.Escape(replacer, tc.key, tc.value)
 			assert.Equal(t, got, tc.want)
 		})
 	}
 }
 
 func BenchmarkEscape(b *testing.B) {
-	replacer := newReplacer()
+	replacer := exporters.NewReplacer()
 	for b.Loop() {
-		escape(replacer, "abc", `a\c"foo"\ndef`)
+		exporters.Escape(replacer, "abc", `a\c"foo"\ndef`)
 	}
 }
 
