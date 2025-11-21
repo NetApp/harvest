@@ -46439,7 +46439,7 @@ ONTAP Version: 9.16.1
 <tbody>
 <tr>
 <td>REST</td>
-<td><code>api/storage/luns</code></td>
+<td><code>api/private/cli/lun</code></td>
 <td><code>Harvest generated</code></td>
 <td>conf/rest/9.12.0/lun.yaml</td>
 </tr>
@@ -46933,7 +46933,7 @@ ONTAP Version: 9.16.1
 </table>
 </div>
 <h3 id="lun_size">lun_size<a class="headerlink" href="#lun_size" title="Permanent link">&para;</a></h3>
-<p>The total provisioned size of the LUN. The LUN size can be increased but not be made smaller using the REST interface.<br/>The maximum and minimum sizes listed here are the absolute maximum and absolute minimum sizes in bytes. The actual minimum and maxiumum sizes vary depending on the ONTAP version, ONTAP platform and the available space in the containing volume and aggregate.<br/>For more information, see <em>Size properties</em> in the <em>docs</em> section of the ONTAP REST API documentation.</p>
+<p>The total provisioned size of the LUN. The LUN size can be increased but not decreased using the REST interface.<br/>The maximum and minimum sizes listed here are the absolute maximum and absolute minimum sizes, in bytes. The actual minimum and maximum sizes vary depending on the ONTAP version, ONTAP platform and the available space in the containing volume and aggregate.<br/>For more information, see <em>Size properties</em> in the <em>docs</em> section of the ONTAP REST API documentation.</p>
 <table>
 <thead>
 <tr>
@@ -46946,8 +46946,8 @@ ONTAP Version: 9.16.1
 <tbody>
 <tr>
 <td>REST</td>
-<td><code>api/storage/luns</code></td>
-<td><code>space.size</code></td>
+<td><code>api/private/cli/lun</code></td>
+<td><code>size</code></td>
 <td>conf/rest/9.12.0/lun.yaml</td>
 </tr>
 <tr>
@@ -46993,8 +46993,8 @@ ONTAP Version: 9.16.1
 <tbody>
 <tr>
 <td>REST</td>
-<td><code>api/storage/luns</code></td>
-<td><code>space.used</code></td>
+<td><code>api/private/cli/lun</code></td>
+<td><code>size_used</code></td>
 <td>conf/rest/9.12.0/lun.yaml</td>
 </tr>
 <tr>
@@ -47040,7 +47040,7 @@ ONTAP Version: 9.16.1
 <tbody>
 <tr>
 <td>REST</td>
-<td><code>api/storage/luns</code></td>
+<td><code>api/private/cli/lun</code></td>
 <td><code>size_used, size</code></td>
 <td>conf/rest/9.12.0/lun.yaml</td>
 </tr>
