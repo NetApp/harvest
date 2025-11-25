@@ -7,7 +7,7 @@ Accepted
 ## Context
 
 ONTAP has published a customer product communiqué [(CPC-00410)](https://mysupport.netapp.com/info/communications/ECMLP2880232.html?access=a)
-announcing that ZAPIs will reach end of availability (EOA) in ONTAP `9.13.1` released Q2 2023.
+(June 2024) announcing that the previously planned end of availability (EOA) for ZAPI has been **deferred indefinitely**.
 
 This document describes how Harvest handles the ONTAP transition from ZAPI to REST. 
 In most cases, no action is required on your part.
@@ -121,8 +121,6 @@ Table of ONTAP versions, dates and API notes.
 |------------------:|------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |          `9.11.1` | Q2 2022          | First version of ONTAP with [REST performance metrics](https://docs.netapp.com/us-en/ontap-automation/migrate/performance-counters.html#accessing-performance-counters-using-the-ontap-rest-api)                    |
 |          `9.12.1` | Q4 2022          | ZAPIs still supported - REST performance metrics have parity with Harvest `22.11` collected ZAPI performance metrics                                                                                                |
-|          `9.13.1` |                  | ZAPIs still supported                                                                                                                                                                                               |
-| `9.14.1`-`9.15.1` |                  | ZAPIs enabled if ONTAP upgrade detects they were being used earlier. New ONTAP installs default to REST only. ZAPIs may be enabled via CLI                                                                          |
-| `9.16.1`-`9.17.1` |                  | ZAPIs disabled. See [ONTAP communique](https://kb.netapp.com/onprem/ontap/dm/REST_API/FAQs_on_ZAPI_to_ONTAP_REST_API_transformation_for_CPC_(Customer_Product_Communiques)_notification) for details on re-enabling |
-|          `9.18.1` |                  | ZAPIs removed. No way to re-enable                                                                                                                                                                                  |
+|          `9.13.1` | Q2 2023          | ZAPIs still supported.                                                                                                                              |
+|          `9.14.1`+| Q2 2024+         | **ZAPI end of availability (EOA) deferred**: See [ONTAP communique](https://kb.netapp.com/onprem/ontap/dm/REST_API/FAQs_on_ZAPI_to_ONTAP_REST_API_transformation_for_CPC_(Customer_Product_Communiques)_notification) for details. ZAPIs remain active for 30 days following an upgrade. If unused during this period, they are automatically disabled but can be re-enabled using the command-line interface (CLI). NetApp recommends transitioning to REST APIs for all new automation projects.            |
 
