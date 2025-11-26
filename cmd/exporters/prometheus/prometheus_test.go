@@ -5,15 +5,16 @@
 package prometheus
 
 import (
+	"slices"
+	"strings"
+	"testing"
+
 	"github.com/google/go-cmp/cmp"
 	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/poller/exporter"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"slices"
-	"strings"
-	"testing"
 )
 
 func TestFilterMetaTags(t *testing.T) {
@@ -148,11 +149,9 @@ net_app_bike_max_speed{} 3`, "bike"},
 			prom := p.(*Prometheus)
 			var lines []string
 
-			if memCache, ok := prom.cache.(*cache); ok {
-				for _, metrics := range memCache.Get() {
-					for _, metric := range metrics {
-						lines = append(lines, string(metric))
-					}
+			for _, metrics := range prom.memoryCache.Get() {
+				for _, metric := range metrics {
+					lines = append(lines, string(metric))
 				}
 			}
 
@@ -188,11 +187,9 @@ netapp_change_log{category="metric",cluster="umeng-aff300-01-02",object="volume"
 			prom := p.(*Prometheus)
 			var lines []string
 
-			if memCache, ok := prom.cache.(*cache); ok {
-				for _, metrics := range memCache.Get() {
-					for _, metric := range metrics {
-						lines = append(lines, string(metric))
-					}
+			for _, metrics := range prom.memoryCache.Get() {
+				for _, metric := range metrics {
+					lines = append(lines, string(metric))
 				}
 			}
 
@@ -265,13 +262,11 @@ func TestRenderHistogramExample(t *testing.T) {
 	prom := p.(*Prometheus)
 	var lines []string
 
-	if memCache, ok := prom.cache.(*cache); ok {
-		for _, metrics := range memCache.Get() {
-			for _, metricLine := range metrics {
-				sline := string(metricLine)
-				if !strings.HasPrefix(sline, "#") {
-					lines = append(lines, sline)
-				}
+	for _, metrics := range prom.memoryCache.Get() {
+		for _, metricLine := range metrics {
+			sline := string(metricLine)
+			if !strings.HasPrefix(sline, "#") {
+				lines = append(lines, sline)
 			}
 		}
 	}

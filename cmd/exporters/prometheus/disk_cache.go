@@ -14,6 +14,14 @@ import (
 	"time"
 )
 
+// CacheStats holds statistics about cached metrics
+type CacheStats struct {
+	NumCollectors int
+	NumObjects    int
+	NumMetrics    int
+	UniqueData    map[string]map[string][]string
+}
+
 type diskCache struct {
 	*sync.Mutex
 	files        map[string]string    // key -> filepath
@@ -29,8 +37,6 @@ type diskCache struct {
 	readerPool   *sync.Pool
 	keyReplacer  *strings.Replacer
 }
-
-var _ diskCacher = (*diskCache)(nil)
 
 func newDiskCache(d time.Duration, baseDir string, logger *slog.Logger) *diskCache {
 	if d <= 0 {

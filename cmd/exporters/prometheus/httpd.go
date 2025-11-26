@@ -145,23 +145,19 @@ func (p *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 	tagsSeen := make(map[string]struct{})
 
 	if p.useDiskCache {
-		if diskcache, ok := p.cache.(*diskCache); ok {
-			diskcache.Lock()
-			count = diskcache.GetMetricCount()
-			err := diskcache.StreamToWriter(w)
-			diskcache.Unlock()
-			if err != nil {
-				p.Logger.Error("failed to stream metrics from disk cache", slogx.Err(err))
-			}
+		p.diskCache.Lock()
+		count = p.diskCache.GetMetricCount()
+		err := p.diskCache.StreamToWriter(w)
+		p.diskCache.Unlock()
+		if err != nil {
+			p.Logger.Error("failed to stream metrics from disk cache", slogx.Err(err))
 		}
 	} else {
-		if memCache, ok := p.cache.(*cache); ok {
-			memCache.Lock()
-			for _, metrics := range memCache.Get() {
-				count += p.writeMetrics(w, metrics, tagsSeen)
-			}
-			memCache.Unlock()
+		p.memoryCache.Lock()
+		for _, metrics := range p.memoryCache.Get() {
+			count += p.writeMetrics(w, metrics, tagsSeen)
 		}
+		p.memoryCache.Unlock()
 	}
 
 	// serve our own metadata
@@ -264,15 +260,28 @@ func (p *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 
 	uniqueData := map[string]map[string][]string{}
 
-	switch c := p.cache.(type) {
-	case *cache:
-		c.Lock()
+	if p.useDiskCache {
+		p.diskCache.Lock()
+		stats, err := p.diskCache.GetStats()
+		p.diskCache.Unlock()
+		if err != nil {
+			p.Logger.Error("failed to get cache statistics", slogx.Err(err))
+			http.Error(w, "Failed to collect cache statistics", http.StatusInternalServerError)
+			return
+		}
+
+		numCollectors = stats.NumCollectors
+		numObjects = stats.NumObjects
+		numMetrics = stats.NumMetrics
+		uniqueData = stats.UniqueData
+	} else {
+		p.memoryCache.Lock()
 		cacheData := make(map[string][][]byte)
-		for key, data := range c.Get() {
+		for key, data := range p.memoryCache.Get() {
 			cacheData[key] = make([][]byte, len(data))
 			copy(cacheData[key], data)
 		}
-		c.Unlock()
+		p.memoryCache.Unlock()
 
 		p.Logger.Debug("fetching cached elements", slog.Int("count", len(cacheData)))
 
@@ -308,25 +317,6 @@ func (p *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 			}
 			uniqueData[collector][object] = metricNames.Values()
 		}
-	case *diskCache:
-		c.Lock()
-		stats, err := c.GetStats()
-		c.Unlock()
-		if err != nil {
-			p.Logger.Error("failed to get cache statistics", slogx.Err(err))
-			http.Error(w, "Failed to collect cache statistics", http.StatusInternalServerError)
-			return
-		}
-
-		numCollectors = stats.NumCollectors
-		numObjects = stats.NumObjects
-		numMetrics = stats.NumMetrics
-		uniqueData = stats.UniqueData
-
-	default:
-		p.Logger.Error("unexpected cache type")
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
 	}
 
 	for col, perObject := range uniqueData {

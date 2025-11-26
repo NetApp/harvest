@@ -17,8 +17,6 @@ type cache struct {
 	expire time.Duration
 }
 
-var _ memoryCacher = (*cache)(nil)
-
 func newCache(d time.Duration) *cache {
 	c := cache{Mutex: &sync.Mutex{}, expire: d}
 	c.data = make(map[string][][]byte)

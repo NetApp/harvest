@@ -49,7 +49,8 @@ const (
 
 type Prometheus struct {
 	*exporter.AbstractExporter
-	cache           cacher
+	memoryCache     *cache
+	diskCache       *diskCache
 	allowAddrs      []string
 	allowAddrsRegex []*regexp.Regexp
 	cacheAddrs      map[string]bool
@@ -64,12 +65,12 @@ func New(abc *exporter.AbstractExporter) exporter.Exporter {
 	return &Prometheus{AbstractExporter: abc}
 }
 
-func (p *Prometheus) createCache(d time.Duration) cacher {
+func (p *Prometheus) createCache(d time.Duration) {
 	if p.useDiskCache {
 		// Path is mandatory when disk cache is enabled
 		if p.Params.DiskCache == nil || p.Params.DiskCache.Path == "" {
 			p.Logger.Error("disk cache enabled but path is not specified")
-			return nil
+			return
 		}
 
 		cacheDir := p.Params.DiskCache.Path
@@ -79,16 +80,15 @@ func (p *Prometheus) createCache(d time.Duration) cacher {
 			cacheDir = filepath.Join(cacheDir, p.Options.Poller)
 		}
 
-		dc := newDiskCache(d, cacheDir, p.Logger)
+		p.diskCache = newDiskCache(d, cacheDir, p.Logger)
 
-		if dc != nil {
+		if p.diskCache != nil {
 			p.Logger.Debug("disk cache configured",
 				slog.String("cacheDir", cacheDir))
 		}
-
-		return dc
+	} else {
+		p.memoryCache = newCache(d)
 	}
-	return newCache(d)
 }
 
 func (p *Prometheus) Init() error {
@@ -142,22 +142,22 @@ func (p *Prometheus) Init() error {
 	if x := p.Params.CacheMaxKeep; x != nil {
 		if d, err := time.ParseDuration(*x); err == nil {
 			p.Logger.Debug("using custom cache_max_keep", slog.String("cacheMaxKeep", *x))
-			p.cache = p.createCache(d)
+			p.createCache(d)
 		} else {
 			p.Logger.Error("cache_max_keep", slogx.Err(err), slog.String("x", *x))
 		}
 	}
 
-	if p.cache == nil {
+	if p.memoryCache == nil && p.diskCache == nil {
 		p.Logger.Debug("using default cache_max_keep", slog.String("cacheMaxKeep", cacheMaxKeep))
 		if d, err := time.ParseDuration(cacheMaxKeep); err == nil {
-			p.cache = p.createCache(d)
+			p.createCache(d)
 		} else {
 			return err
 		}
 	}
 
-	if p.cache == nil {
+	if p.memoryCache == nil && p.diskCache == nil {
 		return errs.New(errs.ErrInvalidParam, "cache initialization failed")
 	}
 
@@ -285,15 +285,14 @@ func (p *Prometheus) Export(data *matrix.Matrix) (exporter.Stats, error) {
 	key := data.UUID + "." + data.Object + "." + data.Identifier
 
 	// lock cache, to prevent HTTPd reading while we are mutating it
-	switch c := p.cache.(type) {
-	case *cache:
-		c.Lock()
-		p.cache.Put(key, metrics, metricNames)
-		c.Unlock()
-	case *diskCache:
-		c.Lock()
-		p.cache.Put(key, metrics, metricNames)
-		c.Unlock()
+	if p.useDiskCache {
+		p.diskCache.Lock()
+		p.diskCache.Put(key, metrics, metricNames)
+		p.diskCache.Unlock()
+	} else {
+		p.memoryCache.Lock()
+		p.memoryCache.Put(key, metrics, metricNames)
+		p.memoryCache.Unlock()
 	}
 
 	// update metadata
