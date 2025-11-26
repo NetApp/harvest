@@ -400,7 +400,6 @@ func TestQueryPrefix(t *testing.T) {
 // ZAPI parent attributes are sorted alphabetically
 // Tests that exported keys and labels are in sorted order
 func TestMetricsAreSortedAndNoDuplicates(t *testing.T) {
-
 	visitTemplates(t, func(path string, model Model) {
 		sortedCounters := checkSortedCounters(model.metrics)
 		if sortedCounters.got != sortedCounters.want {
