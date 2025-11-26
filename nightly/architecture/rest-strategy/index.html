@@ -2118,7 +2118,7 @@
 <p>Accepted</p>
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
 <p>ONTAP has published a customer product communiqué <a href="https://mysupport.netapp.com/info/communications/ECMLP2880232.html?access=a">(CPC-00410)</a>
-announcing that ZAPIs will reach end of availability (EOA) in ONTAP <code>9.13.1</code> released Q2 2023.</p>
+(June 2024) announcing that the previously planned end of availability (EOA) for ZAPI has been <strong>deferred indefinitely</strong>.</p>
 <p>This document describes how Harvest handles the ONTAP transition from ZAPI to REST. 
 In most cases, no action is required on your part.</p>
 <h2 id="harvest-api-transition">Harvest API Transition<a class="headerlink" href="#harvest-api-transition" title="Permanent link">&para;</a></h2>
@@ -2227,23 +2227,13 @@ or <a href="https://kb.netapp.com/Advice_and_Troubleshooting/Data_Storage_Softwa
 </tr>
 <tr>
 <td style="text-align: right;"><code>9.13.1</code></td>
-<td></td>
-<td>ZAPIs still supported</td>
+<td>Q2 2023</td>
+<td>ZAPIs still supported.</td>
 </tr>
 <tr>
-<td style="text-align: right;"><code>9.14.1</code>-<code>9.15.1</code></td>
-<td></td>
-<td>ZAPIs enabled if ONTAP upgrade detects they were being used earlier. New ONTAP installs default to REST only. ZAPIs may be enabled via CLI</td>
-</tr>
-<tr>
-<td style="text-align: right;"><code>9.16.1</code>-<code>9.17.1</code></td>
-<td></td>
-<td>ZAPIs disabled. See <a href="https://kb.netapp.com/onprem/ontap/dm/REST_API/FAQs_on_ZAPI_to_ONTAP_REST_API_transformation_for_CPC_(Customer_Product_Communiques)_notification">ONTAP communique</a> for details on re-enabling</td>
-</tr>
-<tr>
-<td style="text-align: right;"><code>9.18.1</code></td>
-<td></td>
-<td>ZAPIs removed. No way to re-enable</td>
+<td style="text-align: right;"><code>9.14.1</code>+</td>
+<td>Q2 2024+</td>
+<td><strong>ZAPI end of availability (EOA) deferred</strong>: See <a href="https://kb.netapp.com/onprem/ontap/dm/REST_API/FAQs_on_ZAPI_to_ONTAP_REST_API_transformation_for_CPC_(Customer_Product_Communiques)_notification">ONTAP communique</a> for details. ZAPIs remain active for 30 days following an upgrade. If unused during this period, they are automatically disabled but can be re-enabled using the command-line interface (CLI). NetApp recommends transitioning to REST APIs for all new automation projects.</td>
 </tr>
 </tbody>
 </table>
