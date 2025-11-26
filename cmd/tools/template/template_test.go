@@ -443,7 +443,7 @@ func TestZapiPerfMetricsHaveNoCaret(t *testing.T) {
 	visitTemplates(t, func(path string, model Model) {
 		for _, metric := range model.metrics {
 			if strings.HasPrefix(metric.line, "^") {
-				t.Errorf("counter %s should not have ^^ at path=[%s]", metric.line, shortPath(path))
+				t.Errorf("counter %s should not have ^ at path=[%s]", metric.line, shortPath(path))
 			}
 		}
 	}, []string{"zapiperf"}...)
