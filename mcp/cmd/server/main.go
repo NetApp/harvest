@@ -10,6 +10,8 @@ import (
 	"mcp-server/cmd/descriptions"
 	"mcp-server/cmd/loader"
 	"mcp-server/cmd/version"
+	"mcp-server/pkg/auth"
+	"mcp-server/pkg/helper"
 	"mcp-server/pkg/mcptypes"
 	"mcp-server/pkg/rules"
 	"net/http"
@@ -21,12 +23,8 @@ import (
 	"strings"
 	"time"
 
-	"mcp-server/pkg/auth"
-	"mcp-server/pkg/helper"
-
-	"github.com/netapp/harvest/v2/pkg/slogx"
-
 	"github.com/modelcontextprotocol/go-sdk/mcp"
+	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/spf13/cobra"
 )
 
@@ -167,12 +165,12 @@ func handleValidationError(message string) *mcp.CallToolResult {
 	}
 }
 
-func makePrometheusAPICall(endpoint string) ([]byte, error) {
-	fullURL := tsdbConfig.URL + endpoint
+func makePrometheusAPICall(config auth.TSDBConfig, endpoint string) ([]byte, error) {
+	fullURL := config.URL + endpoint
 
 	logger.Debug("Making Prometheus API call", slog.String("url", fullURL))
 
-	resp, err := auth.MakeRequest(tsdbConfig, fullURL)
+	resp, err := auth.MakeRequest(config, fullURL)
 	if err != nil {
 		return nil, fmt.Errorf("request failed: %w", err)
 	}
@@ -198,6 +196,36 @@ func formatDataResponse(data any) (*mcp.CallToolResult, any, error) {
 	return &mcp.CallToolResult{Content: content}, nil, nil
 }
 
+// resolveTSDBConfig returns the appropriate TSDBConfig to use for a request
+// If override parameters are provided, creates a new config otherwise uses default
+func resolveTSDBConfig(override *mcptypes.TSDBOverride) auth.TSDBConfig {
+	if override == nil || override.URL == "" {
+		return tsdbConfig
+	}
+
+	logger.Debug("using per-request TSDB URL override",
+		slog.String("url", override.URL),
+		slog.Bool("custom_auth", override.Username != ""))
+
+	config := auth.TSDBConfig{
+		URL:       override.URL,
+		Timeout:   tsdbConfig.Timeout,
+		RulesPath: tsdbConfig.RulesPath,
+		Auth: auth.Config{
+			Type:            auth.None,
+			InsecureSkipTLS: tsdbConfig.Auth.InsecureSkipTLS,
+		},
+	}
+
+	if override.Username != "" && override.Password != "" {
+		config.Auth.Type = auth.Basic
+		config.Auth.Username = override.Username
+		config.Auth.Password = override.Password
+	}
+
+	return config
+}
+
 func addTool[T any](server *mcp.Server, name, description string, handler func(context.Context, *mcp.CallToolRequest, T) (*mcp.CallToolResult, any, error)) {
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        name,
@@ -205,9 +233,9 @@ func addTool[T any](server *mcp.Server, name, description string, handler func(c
 	}, handler)
 }
 
-func executeTSDBQuery(queryURL string, params url.Values) (*mcptypes.MetricsResponse, error) {
+func executeTSDBQuery(config auth.TSDBConfig, queryURL string, params url.Values) (*mcptypes.MetricsResponse, error) {
 	fullURL := fmt.Sprintf("%s?%s", queryURL, params.Encode())
-	resp, err := auth.MakeRequest(tsdbConfig, fullURL)
+	resp, err := auth.MakeRequest(config, fullURL)
 	if err != nil {
 		return nil, fmt.Errorf("request failed: %w", err)
 	}
@@ -245,12 +273,14 @@ func formatJSONResponse(data any) ([]mcp.Content, error) {
 }
 
 // MetricsQuery executes a time series database instant query
-func MetricsQuery(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.QueryArgs) (*mcp.CallToolResult, any, error) {
+func MetricsQuery(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.QueryRequest) (*mcp.CallToolResult, any, error) {
 	if err := helper.ValidateQueryArgs(args.Query); err != nil {
 		return handleValidationError(err.Error()), nil, err
 	}
 
-	queryURL := tsdbConfig.URL + "/api/v1/query"
+	config := resolveTSDBConfig(args.TSDBOverride)
+
+	queryURL := config.URL + "/api/v1/query"
 	urlValues := url.Values{}
 	urlValues.Set("query", args.Query)
 
@@ -258,7 +288,7 @@ func MetricsQuery(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.Query
 		slog.String("query", args.Query),
 		slog.String("url", queryURL))
 
-	promResp, err := executeTSDBQuery(queryURL, urlValues)
+	promResp, err := executeTSDBQuery(config, queryURL, urlValues)
 	if err != nil {
 		logger.Error("Prometheus query failed", slogx.Err(err), slog.String("query", helper.TruncateString(args.Query, 100)))
 		return handlePrometheusError(err, "Prometheus query"), nil, nil
@@ -268,12 +298,14 @@ func MetricsQuery(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.Query
 }
 
 // MetricsRangeQuery executes a time series database range query
-func MetricsRangeQuery(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.RangeQueryArgs) (*mcp.CallToolResult, any, error) {
+func MetricsRangeQuery(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.RangeQueryRequest) (*mcp.CallToolResult, any, error) {
 	if err := helper.ValidateRangeQueryArgs(args.Query, args.Start, args.End, args.Step); err != nil {
 		return handleValidationError(err.Error()), nil, err
 	}
 
-	queryURL := tsdbConfig.URL + "/api/v1/query_range"
+	config := resolveTSDBConfig(args.TSDBOverride)
+
+	queryURL := config.URL + "/api/v1/query_range"
 	urlValues := url.Values{}
 	urlValues.Set("query", args.Query)
 	urlValues.Set("start", args.Start)
@@ -287,7 +319,7 @@ func MetricsRangeQuery(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.
 		slog.String("step", args.Step),
 		slog.String("url", queryURL))
 
-	promResp, err := executeTSDBQuery(queryURL, urlValues)
+	promResp, err := executeTSDBQuery(config, queryURL, urlValues)
 	if err != nil {
 		logger.Error("Prometheus range query failed", slogx.Err(err), slog.String("query", helper.TruncateString(args.Query, 100)))
 		return handlePrometheusError(err, "Prometheus range query"), nil, nil
@@ -325,7 +357,7 @@ func filterStrings(items []string, pattern string) []string {
 }
 
 // makePrometheusAPICallWithMatches performs API call with optional label matchers
-func makePrometheusAPICallWithMatches(endpoint string, matches []string) ([]byte, error) {
+func makePrometheusAPICallWithMatches(config auth.TSDBConfig, endpoint string, matches []string) ([]byte, error) {
 	var fullURL string
 	if len(matches) > 0 {
 		// Build URL with matches parameter
@@ -333,16 +365,16 @@ func makePrometheusAPICallWithMatches(endpoint string, matches []string) ([]byte
 		for _, match := range matches {
 			params.Add("match[]", match)
 		}
-		fullURL = tsdbConfig.URL + endpoint + "?" + params.Encode()
+		fullURL = config.URL + endpoint + "?" + params.Encode()
 	} else {
-		fullURL = tsdbConfig.URL + endpoint
+		fullURL = config.URL + endpoint
 	}
 
 	logger.Debug("Making Prometheus API call with matches",
 		slog.String("url", fullURL),
 		slog.Any("matches", matches))
 
-	resp, err := auth.MakeRequest(tsdbConfig, fullURL)
+	resp, err := auth.MakeRequest(config, fullURL)
 	if err != nil {
 		return nil, fmt.Errorf("request failed: %w", err)
 	}
@@ -354,15 +386,17 @@ func makePrometheusAPICallWithMatches(endpoint string, matches []string) ([]byte
 }
 
 // ListMetrics lists available metrics from time series database
-func ListMetrics(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.ListMetricsArgs) (*mcp.CallToolResult, any, error) {
+func ListMetrics(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.ListMetricsRequest) (*mcp.CallToolResult, any, error) {
 	var body []byte
 	var err error
 
+	config := resolveTSDBConfig(args.TSDBOverride)
+
 	if len(args.Matches) > 0 {
 		logger.Debug("Using server-side filtering with matches", slog.Any("matches", args.Matches))
-		body, err = makePrometheusAPICallWithMatches("/api/v1/label/__name__/values", args.Matches)
+		body, err = makePrometheusAPICallWithMatches(config, "/api/v1/label/__name__/values", args.Matches)
 	} else {
-		body, err = makePrometheusAPICall("/api/v1/label/__name__/values")
+		body, err = makePrometheusAPICall(config, "/api/v1/label/__name__/values")
 	}
 
 	if err != nil {
@@ -416,12 +450,14 @@ func ListMetrics(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.ListMe
 }
 
 // ListLabelValues lists available values for a specific label from Prometheus
-func ListLabelValues(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.ListLabelValuesArgs) (*mcp.CallToolResult, any, error) {
+func ListLabelValues(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.ListLabelValuesRequest) (*mcp.CallToolResult, any, error) {
 	if args.Label == "" {
 		return handleValidationError("label parameter is required"), nil, errors.New("label parameter is required")
 	}
 
-	body, err := makePrometheusAPICall("/api/v1/label/" + args.Label + "/values")
+	config := resolveTSDBConfig(args.TSDBOverride)
+
+	body, err := makePrometheusAPICall(config, "/api/v1/label/"+args.Label+"/values")
 	if err != nil {
 		logger.Error("Failed to query Prometheus label values", slogx.Err(err), slog.String("label", args.Label))
 		return handlePrometheusError(err, fmt.Sprintf("query label values for '%s'", args.Label)), nil, nil
@@ -454,8 +490,9 @@ func ListLabelValues(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.Li
 }
 
 // ListAllLabelNames lists all available label names (dimensions) from Prometheus
-func ListAllLabelNames(_ context.Context, _ *mcp.CallToolRequest, _ any) (*mcp.CallToolResult, any, error) {
-	body, err := makePrometheusAPICall("/api/v1/labels")
+func ListAllLabelNames(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.ListAllLabelNamesRequest) (*mcp.CallToolResult, any, error) {
+	config := resolveTSDBConfig(args.TSDBOverride)
+	body, err := makePrometheusAPICall(config, "/api/v1/labels")
 	if err != nil {
 		return handlePrometheusError(err, "query Prometheus label names"), nil, nil
 	}
@@ -480,10 +517,11 @@ func ListAllLabelNames(_ context.Context, _ *mcp.CallToolRequest, _ any) (*mcp.C
 	return formatDataResponse(response)
 }
 
-func GetActiveAlerts(_ context.Context, _ *mcp.CallToolRequest, _ any) (*mcp.CallToolResult, any, error) {
-	queryURL := tsdbConfig.URL + "/api/v1/alerts"
+func GetActiveAlerts(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.GetActiveAlertsRequest) (*mcp.CallToolResult, any, error) {
+	config := resolveTSDBConfig(args.TSDBOverride)
+	queryURL := config.URL + "/api/v1/alerts"
 
-	resp, err := auth.MakeRequest(tsdbConfig, queryURL)
+	resp, err := auth.MakeRequest(config, queryURL)
 	if err != nil {
 		logger.Error("Failed to query Prometheus alerts", slogx.Err(err))
 		return &mcp.CallToolResult{
@@ -578,7 +616,7 @@ func countAlertsBySeverity(alerts []any) (int, int, int) {
 	return critical, warning, info
 }
 
-func InfrastructureHealth(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.InfrastructureHealthArgs) (*mcp.CallToolResult, any, error) {
+func InfrastructureHealth(_ context.Context, _ *mcp.CallToolRequest, args mcptypes.InfrastructureHealthRequest) (*mcp.CallToolResult, any, error) {
 	healthReport := strings.Builder{}
 	var report string
 	healthReport.WriteString("## ONTAP Infrastructure Health Report\n\n")
@@ -601,8 +639,10 @@ func InfrastructureHealth(_ context.Context, _ *mcp.CallToolRequest, args mcptyp
 		{"Health Alerts", "{__name__=~\"health_.*\"}", "Active health alerts", true},
 	}
 
+	config := resolveTSDBConfig(args.TSDBOverride)
+
 	for _, check := range healthChecks {
-		queryURL := tsdbConfig.URL + "/api/v1/query"
+		queryURL := config.URL + "/api/v1/query"
 		urlValues := url.Values{}
 		urlValues.Set("query", check.query)
 
@@ -612,7 +652,7 @@ func InfrastructureHealth(_ context.Context, _ *mcp.CallToolRequest, args mcptyp
 			slog.String("query", check.query),
 			slog.String("url", queryURL))
 
-		promResp, err := executeTSDBQuery(queryURL, urlValues)
+		promResp, err := executeTSDBQuery(config, queryURL, urlValues)
 		if err != nil {
 			healthReport.WriteString(fmt.Sprintf("❌ **%s**: Error querying - %v\n", check.name, err))
 			continue
@@ -941,15 +981,7 @@ func runHTTPServer(server *mcp.Server) {
 	logger.Info("mcp server shutdown gracefully")
 }
 
-type GetMetricDescriptionRequest struct {
-	MetricName string `json:"metricName"`
-}
-
-type SearchMetricsRequest struct {
-	Pattern string `json:"pattern"`
-}
-
-func GetMetricDescription(_ context.Context, _ *mcp.CallToolRequest, params GetMetricDescriptionRequest) (*mcp.CallToolResult, any, error) {
+func GetMetricDescription(_ context.Context, _ *mcp.CallToolRequest, params mcptypes.GetMetricDescriptionRequest) (*mcp.CallToolResult, any, error) {
 	if len(metricDescriptions) == 0 {
 		return &mcp.CallToolResult{
 			Content: []mcp.Content{
@@ -986,7 +1018,7 @@ func GetMetricDescription(_ context.Context, _ *mcp.CallToolRequest, params GetM
 	}, nil, nil
 }
 
-func SearchMetrics(_ context.Context, _ *mcp.CallToolRequest, params SearchMetricsRequest) (*mcp.CallToolResult, any, error) {
+func SearchMetrics(_ context.Context, _ *mcp.CallToolRequest, params mcptypes.SearchMetricsRequest) (*mcp.CallToolResult, any, error) {
 	if len(metricDescriptions) == 0 {
 		return &mcp.CallToolResult{
 			Content: []mcp.Content{
