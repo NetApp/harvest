@@ -639,9 +639,9 @@ func InfrastructureHealth(_ context.Context, _ *mcp.CallToolRequest, args mcptyp
 		{"Health Alerts", "{__name__=~\"health_.*\"}", "Active health alerts", true},
 	}
 
-	for _, check := range healthChecks {
-		config := resolveTSDBConfig(args.TSDBOverride)
+	config := resolveTSDBConfig(args.TSDBOverride)
 
+	for _, check := range healthChecks {
 		queryURL := config.URL + "/api/v1/query"
 		urlValues := url.Values{}
 		urlValues.Set("query", check.query)
