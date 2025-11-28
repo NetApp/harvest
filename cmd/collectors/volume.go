@@ -245,9 +245,11 @@ func ProcessFlexGroupFootPrint(data *matrix.Matrix, logger *slog.Logger) *matrix
 
 	totalFootprintMetric := cache.GetMetric("total_footprint")
 	hotDataMetric := cache.GetMetric("hot_data")
-	if hotDataMetric == nil {
-		if hotDataMetric, err = cache.NewMetricFloat64("hot_data"); err != nil {
-			logger.Error("error while creating hot data metric", slogx.Err(err))
+	if capacityTierFootprintMetric != nil && totalFootprintMetric != nil {
+		if hotDataMetric == nil {
+			if hotDataMetric, err = cache.NewMetricFloat64("hot_data"); err != nil {
+				logger.Error("error while creating hot data metric", slogx.Err(err))
+			}
 		}
 	}
 
@@ -324,7 +326,7 @@ func ProcessFlexGroupFootPrint(data *matrix.Matrix, logger *slog.Logger) *matrix
 		}
 
 		// Calculate Hot data metric, where hot data = total footprint - cold data
-		if capacityTierFootprintMetric != nil {
+		if capacityTierFootprintMetric != nil && totalFootprintMetric != nil {
 			if capacityTierFootprintMetricValue, exist := capacityTierFootprintMetric.GetValueFloat64(fg); exist {
 				totalFootprintMetricValue, _ := totalFootprintMetric.GetValueFloat64(fg)
 				hotDataMetric.SetValueFloat64(fg, totalFootprintMetricValue-capacityTierFootprintMetricValue)
