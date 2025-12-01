@@ -1,4 +1,4 @@
-# github.com/goccy/go-yaml v1.18.0
+# github.com/goccy/go-yaml v1.19.0
 ## explicit; go 1.21.0
 github.com/goccy/go-yaml
 github.com/goccy/go-yaml/ast
@@ -23,7 +23,7 @@ github.com/modelcontextprotocol/go-sdk/internal/util
 github.com/modelcontextprotocol/go-sdk/internal/xcontext
 github.com/modelcontextprotocol/go-sdk/jsonrpc
 github.com/modelcontextprotocol/go-sdk/mcp
-# github.com/netapp/harvest/v2 v2.0.0-20251121123351-de7424b8f7be => ../
+# github.com/netapp/harvest/v2 v2.0.0-20251128120531-a65c2e49d436 => ../
 ## explicit; go 1.24.0
 github.com/netapp/harvest/v2/pkg/slogx
 # github.com/spf13/cobra v1.10.1
