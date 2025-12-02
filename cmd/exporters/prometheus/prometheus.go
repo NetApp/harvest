@@ -49,8 +49,7 @@ const (
 
 type Prometheus struct {
 	*exporter.AbstractExporter
-	memoryCache     *cache
-	diskCache       *diskCache
+	aCache          cacher
 	allowAddrs      []string
 	allowAddrsRegex []*regexp.Regexp
 	cacheAddrs      map[string]bool
@@ -58,37 +57,26 @@ type Prometheus struct {
 	addMetaTags     bool
 	globalPrefix    string
 	replacer        *strings.Replacer
-	useDiskCache    bool
 }
 
 func New(abc *exporter.AbstractExporter) exporter.Exporter {
 	return &Prometheus{AbstractExporter: abc}
 }
 
-func (p *Prometheus) createCache(d time.Duration) {
-	if p.useDiskCache {
-		// Path is mandatory when disk cache is enabled
-		if p.Params.DiskCache == nil || p.Params.DiskCache.Path == "" {
-			p.Logger.Error("disk cache enabled but path is not specified")
-			return
-		}
+func (p *Prometheus) createCacher(dur time.Duration) cacher {
+	if p.Params.DiskCache != nil && p.Params.DiskCache.Path != "" {
+		p.Logger.Debug("disk cache enabled - will use disk-based caching for RSS optimization",
+			slog.String("path", p.Params.DiskCache.Path))
 
 		cacheDir := p.Params.DiskCache.Path
-
 		// Include poller name in cache directory to avoid collisions between multiple pollers
 		if p.Options.Poller != "" {
 			cacheDir = filepath.Join(cacheDir, p.Options.Poller)
 		}
-
-		p.diskCache = newDiskCache(d, cacheDir, p.Logger)
-
-		if p.diskCache != nil {
-			p.Logger.Debug("disk cache configured",
-				slog.String("cacheDir", cacheDir))
-		}
-	} else {
-		p.memoryCache = newCache(d)
+		return newDiskCache(dur, cacheDir, p.Logger)
 	}
+
+	return newMemCache(p.Logger, dur)
 }
 
 func (p *Prometheus) Init() error {
@@ -128,36 +116,25 @@ func (p *Prometheus) Init() error {
 		p.addMetaTags = true
 	}
 
-	// Check if disk cache is enabled (path is mandatory)
-	if p.Params.DiskCache != nil && p.Params.DiskCache.Path != "" {
-		p.useDiskCache = true
-		p.Logger.Debug("disk cache enabled - will use disk-based caching for RSS optimization",
-			slog.String("path", p.Params.DiskCache.Path))
-	} else {
-		p.useDiskCache = false
-		p.Logger.Debug("disk cache disabled - using memory-based caching")
-	}
-
-	// all other parameters are only relevant to the HTTP daemon
+	maxKeep := cacheMaxKeep
+	var maxKeepDur time.Duration
 	if x := p.Params.CacheMaxKeep; x != nil {
-		if d, err := time.ParseDuration(*x); err == nil {
-			p.Logger.Debug("using custom cache_max_keep", slog.String("cacheMaxKeep", *x))
-			p.createCache(d)
-		} else {
-			p.Logger.Error("cache_max_keep", slogx.Err(err), slog.String("x", *x))
-		}
+		maxKeep = *x
+		p.Logger.Debug("using custom cache_max_keep", slog.String("cacheMaxKeep", maxKeep))
+	}
+	d, err := time.ParseDuration(maxKeep)
+	if err != nil {
+		p.Logger.Error("failed to use cache_max_keep duration. Using default", slogx.Err(err),
+			slog.String("maxKeep", maxKeep),
+			slog.String("default", cacheMaxKeep),
+		)
+		maxKeepDur, _ = time.ParseDuration(cacheMaxKeep)
+	} else {
+		maxKeepDur = d
 	}
 
-	if p.memoryCache == nil && p.diskCache == nil {
-		p.Logger.Debug("using default cache_max_keep", slog.String("cacheMaxKeep", cacheMaxKeep))
-		if d, err := time.ParseDuration(cacheMaxKeep); err == nil {
-			p.createCache(d)
-		} else {
-			return err
-		}
-	}
-
-	if p.memoryCache == nil && p.diskCache == nil {
+	p.aCache = p.createCacher(maxKeepDur)
+	if !p.aCache.isValid() {
 		return errs.New(errs.ErrInvalidParam, "cache initialization failed")
 	}
 
@@ -250,9 +227,10 @@ func newReplacer() *strings.Replacer {
 func (p *Prometheus) Export(data *matrix.Matrix) (exporter.Stats, error) {
 
 	var (
-		metrics [][]byte
-		stats   exporter.Stats
-		err     error
+		metrics     [][]byte
+		stats       exporter.Stats
+		err         error
+		metricNames *set.Set
 	)
 
 	// lock the exporter, to prevent other collectors from writing to us
@@ -261,39 +239,15 @@ func (p *Prometheus) Export(data *matrix.Matrix) (exporter.Stats, error) {
 
 	// render metrics into Prometheus format
 	start := time.Now()
-	metrics, stats = p.render(data)
+	metrics, stats, metricNames = p.render(data)
 
 	// fix render time for metadata
 	d := time.Since(start)
 
-	// Extract metric names from matrix for cache statistics
-	var prefix string
-	if data.Object == "" {
-		prefix = strings.TrimSuffix(p.globalPrefix, "_")
-	} else {
-		prefix = p.globalPrefix + data.Object
-	}
-
-	metricNames := set.New()
-	for _, metric := range data.GetMetrics() {
-		if metric.IsExportable() {
-			metricNames.Add(prefix + "_" + metric.GetName())
-		}
-	}
-
 	// store metrics in cache
 	key := data.UUID + "." + data.Object + "." + data.Identifier
 
-	// lock cache, to prevent HTTPd reading while we are mutating it
-	if p.useDiskCache {
-		p.diskCache.Lock()
-		p.diskCache.Put(key, metrics, metricNames)
-		p.diskCache.Unlock()
-	} else {
-		p.memoryCache.Lock()
-		p.memoryCache.Put(key, metrics, metricNames)
-		p.memoryCache.Unlock()
-	}
+	p.aCache.exportMetrics(key, metrics, metricNames)
 
 	// update metadata
 	p.AddExportCount(uint64(len(metrics)))
@@ -325,7 +279,7 @@ func (p *Prometheus) Export(data *matrix.Matrix) (exporter.Stats, error) {
 // volume_read_ops{node="my-node",vol="some_vol"} 2523
 // fcp_lif_read_ops{vserver="nas_svm",port_id="e02"} 771
 
-func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
+func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats, *set.Set) {
 	var (
 		rendered          [][]byte
 		tagged            *set.Set
@@ -345,6 +299,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 	buf.Grow(4096)
 	globalLabels := make([]string, 0, len(data.GetGlobalLabels()))
 	normalizedLabels = make(map[string][]string)
+	metricNames := set.New()
 
 	if p.addMetaTags {
 		tagged = set.New()
@@ -402,6 +357,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 		if !metric.IsExportable() {
 			continue
 		}
+		metricNames.Add(prefix + "_" + metric.GetName())
 		exportableMetrics++
 	}
 
@@ -735,7 +691,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 		RenderedBytes:     renderedBytes,
 	}
 
-	return rendered, stats
+	return rendered, stats, metricNames
 }
 
 var numAndUnitRe = regexp.MustCompile(`(\d+)\s*(\w+)`)

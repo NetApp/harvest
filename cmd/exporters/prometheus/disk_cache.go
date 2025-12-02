@@ -7,6 +7,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"io"
 	"log/slog"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
@@ -23,7 +24,7 @@ type CacheStats struct {
 }
 
 type diskCache struct {
-	*sync.Mutex
+	mu           *sync.Mutex
 	files        map[string]string    // key -> filepath
 	timers       map[string]time.Time // key -> timestamp
 	metricNames  map[string]*set.Set  // key -> metric names
@@ -36,6 +37,37 @@ type diskCache struct {
 	writerPool   *sync.Pool
 	readerPool   *sync.Pool
 	keyReplacer  *strings.Replacer
+}
+
+func (dc *diskCache) isValid() bool {
+	return dc != nil && dc.baseDir != ""
+}
+
+func (dc *diskCache) getOverview() (*CacheStats, error) {
+	dc.mu.Lock()
+	stats, err := dc.GetStats()
+	dc.mu.Unlock()
+	if err != nil {
+		return nil, err
+	}
+
+	return stats, nil
+}
+
+func (dc *diskCache) exportMetrics(key string, data [][]byte, metricNames *set.Set) {
+	dc.Put(key, data, metricNames)
+}
+
+func (dc *diskCache) streamMetrics(w http.ResponseWriter, _ map[string]struct{}, metrics [][]byte) (int, error) {
+	// since the disk cache streams all cached metrics including metadata, we ignore streaming when metrics is not nil
+	if metrics != nil {
+		return 0, nil
+	}
+	err := dc.streamToWriter(w)
+	if err != nil {
+		return 0, err
+	}
+	return dc.GetMetricCount(), nil
 }
 
 func newDiskCache(d time.Duration, baseDir string, logger *slog.Logger) *diskCache {
@@ -56,7 +88,7 @@ func newDiskCache(d time.Duration, baseDir string, logger *slog.Logger) *diskCac
 
 	ctx, cancel := context.WithCancel(context.Background())
 	dc := &diskCache{
-		Mutex:        &sync.Mutex{},
+		mu:           &sync.Mutex{},
 		files:        make(map[string]string),
 		timers:       make(map[string]time.Time),
 		metricNames:  make(map[string]*set.Set),
@@ -151,6 +183,9 @@ func (dc *diskCache) GetMetricCount() int {
 
 // Put stores metrics to disk and updates cache metadata.
 func (dc *diskCache) Put(key string, data [][]byte, metricNames *set.Set) {
+	dc.mu.Lock()
+	defer dc.mu.Unlock()
+
 	filePath := dc.generateFilepath(key)
 
 	if err := dc.writeToDisk(filePath, data); err != nil {
@@ -176,8 +211,8 @@ func (dc *diskCache) Put(key string, data [][]byte, metricNames *set.Set) {
 		slog.Int("metrics_count", len(data)))
 }
 
-// StreamToWriter streams all non-expired cache files to the writer.
-func (dc *diskCache) StreamToWriter(w io.Writer) error {
+// streamToWriter streams all non-expired cache files to the writer.
+func (dc *diskCache) streamToWriter(w io.Writer) error {
 	var resultErr error
 	errorCount := 0
 	totalCount := 0
@@ -240,8 +275,8 @@ func (dc *diskCache) streamFile(filePath string, w io.Writer) error {
 }
 
 func (dc *diskCache) Clean() {
-	dc.Lock()
-	defer dc.Unlock()
+	dc.mu.Lock()
+	defer dc.mu.Unlock()
 
 	for key, timestamp := range dc.timers {
 		if time.Since(timestamp) <= dc.expire {
