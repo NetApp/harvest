@@ -66,6 +66,21 @@ Exporters:
     exporter: Foo1
   foo2:
     exporter: Foo2
+  victoriametrics-test-addr:
+    exporter: VictoriaMetrics
+    addr: localhost
+  victoriametrics-test-url:
+    exporter: VictoriaMetrics
+    url: http://localhost:8428/api/v1/import/prometheus
+  victoriametrics-test-version:
+    exporter: VictoriaMetrics
+    addr: localhost
+    version: 4
+    port: 8400
+  victoriametrics-with-url:
+    exporter: VictoriaMetrics
+    addr: localhost
+    url: https://example.com:8428/api/v1/import/prometheus
 
 Defaults:
   collectors:

@@ -32,6 +32,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/netapp/harvest/v2/cmd/exporters/victoriametrics"
 	"io"
 	"log/slog"
 	"math"
@@ -1117,6 +1118,8 @@ func (p *Poller) loadExporter(name string) exporter.Exporter {
 		exp = prometheus.New(absExp)
 	case "InfluxDB":
 		exp = influxdb.New(absExp)
+	case "VictoriaMetrics":
+		exp = victoriametrics.New(absExp)
 	default:
 		logger.Error("no exporter of name:type", slog.String("name", name), slog.String("type", class))
 		return nil
