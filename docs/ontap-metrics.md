@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Nov-06
+Creation Date : 2025-Nov-21
 ONTAP Version: 9.16.1
 ```
 
@@ -6765,7 +6765,7 @@ This metric provides information about Lun
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/storage/luns` | `Harvest generated` | conf/rest/9.12.0/lun.yaml |
+| REST | `api/private/cli/lun` | `Harvest generated` | conf/rest/9.12.0/lun.yaml |
 | ZAPI | `lun-get-iter` | `Harvest generated` | conf/zapi/cdot/9.8.0/lun.yaml |
 
 The `lun_labels` metric is visualized in the following Grafana dashboards:
@@ -6961,7 +6961,7 @@ The total provisioned size of the LUN. The LUN size can be increased but not dec
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/storage/luns` | `space.size` | conf/rest/9.12.0/lun.yaml |
+| REST | `api/private/cli/lun` | `size` | conf/rest/9.12.0/lun.yaml |
 | ZAPI | `lun-get-iter` | `lun-info.size` | conf/zapi/cdot/9.8.0/lun.yaml |
 
 The `lun_size` metric is visualized in the following Grafana dashboards:
@@ -6980,7 +6980,7 @@ The amount of space consumed by the main data stream of the LUN.<br/>This value 
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/storage/luns` | `space.used` | conf/rest/9.12.0/lun.yaml |
+| REST | `api/private/cli/lun` | `size_used` | conf/rest/9.12.0/lun.yaml |
 | ZAPI | `lun-get-iter` | `lun-info.size-used` | conf/zapi/cdot/9.8.0/lun.yaml |
 
 The `lun_size_used` metric is visualized in the following Grafana dashboards:
@@ -6999,7 +6999,7 @@ This metric represents the percentage of a LUN that is currently being used.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
-| REST | `api/storage/luns` | `size_used, size` | conf/rest/9.12.0/lun.yaml |
+| REST | `api/private/cli/lun` | `size_used, size` | conf/rest/9.12.0/lun.yaml |
 | ZAPI | `lun-get-iter` | `size_used, size` | conf/zapi/cdot/9.8.0/lun.yaml |
 
 The `lun_size_used_percent` metric is visualized in the following Grafana dashboards:
@@ -8111,86 +8111,6 @@ The `net_route_labels` metric is visualized in the following Grafana dashboards:
 |--------|----------|--------|--------|
 | ONTAP: Network | Routes | table | [Routes](/d/cdot-network/ontap3a-network?orgId=1&viewPanel=112) |
 ///
-
-
-
-### netstat_bytes_recvd
-
-Number of bytes received by a TCP connection
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| ZapiPerf | `perf-object-get-instances netstat` | `bytes_recvd`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
-
-
-
-### netstat_bytes_sent
-
-Number of bytes sent by a TCP connection
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| ZapiPerf | `perf-object-get-instances netstat` | `bytes_sent`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
-
-
-
-### netstat_cong_win
-
-Congestion window of a TCP connection
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| ZapiPerf | `perf-object-get-instances netstat` | `cong_win`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
-
-
-
-### netstat_cong_win_th
-
-Congestion window threshold of a TCP connection
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| ZapiPerf | `perf-object-get-instances netstat` | `cong_win_th`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
-
-
-
-### netstat_ooorcv_pkts
-
-Number of out-of-order packets received by this TCP connection
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| ZapiPerf | `perf-object-get-instances netstat` | `ooorcv_pkts`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
-
-
-
-### netstat_recv_window
-
-Receive window size of a TCP connection
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| ZapiPerf | `perf-object-get-instances netstat` | `recv_window`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
-
-
-
-### netstat_rexmit_pkts
-
-Number of packets retransmitted by this TCP connection
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| ZapiPerf | `perf-object-get-instances netstat` | `rexmit_pkts`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
-
-
-
-### netstat_send_window
-
-Send window size of a TCP connection
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| ZapiPerf | `perf-object-get-instances netstat` | `send_window`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
 
 
 
@@ -15440,6 +15360,17 @@ The `plex_disk_user_writes` metric is visualized in the following Grafana dashbo
 |--------|----------|--------|--------|
 | ONTAP: MetroCluster | MetroCluster Disk | timeseries | [Top $TopResources Plexes by User Writes](/d/cdot-metrocluster/ontap3a-metrocluster?orgId=1&viewPanel=74) |
 ///
+
+
+
+### poller_concurrent_collectors
+
+Tracks the number of concurrent collectors running.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated`<br><span class="key">Unit:</span> bytes | NA | 
+| ZAPI | `NA` | `Harvest generated`<br><span class="key">Unit:</span> bytes | NA | 
 
 
 

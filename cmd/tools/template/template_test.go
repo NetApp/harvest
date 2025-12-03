@@ -438,6 +438,17 @@ func TestMetricsAreSortedAndNoDuplicates(t *testing.T) {
 	}, allTemplatesButEms...)
 }
 
+// Tests that zapiperf metrics should not have caret
+func TestZapiPerfMetricsHaveNoCaret(t *testing.T) {
+	visitTemplates(t, func(path string, model Model) {
+		for _, metric := range model.metrics {
+			if strings.HasPrefix(metric.line, "^") {
+				t.Errorf("counter %s should not have ^ at path=[%s]", metric.line, shortPath(path))
+			}
+		}
+	}, []string{"zapiperf"}...)
+}
+
 func checkForDuplicateMetrics(t *testing.T, model Model, path string) {
 	dupSet := make(map[string]bool)
 	for _, m := range model.metrics {

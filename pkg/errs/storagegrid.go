@@ -27,7 +27,9 @@ func NewStorageGridErr(statusCode int, jsonText []byte) error {
 	var e StorageGridError
 	err := json.Unmarshal(jsonText, &e)
 	if err != nil {
-		return New(err, "failed to unmarshal storage grid err")
+		truncated := string(jsonText)
+		truncated = truncated[:min(100, len(jsonText))]
+		return New(err, "failed to unmarshal storage grid err because text was "+truncated)
 	}
 	if statusCode == 401 {
 		e.Code = 401
