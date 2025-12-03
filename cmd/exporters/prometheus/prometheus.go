@@ -729,6 +729,10 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 		}
 	}
 
+	// Both memory and disk cache add a newline character after each metric line
+	// when serving via HTTP (see writeMetric() and writeToDisk())
+	renderedBytes += uint64(len(rendered)) // Add 1 byte per line for '\n'
+
 	stats := exporter.Stats{
 		InstancesExported: instancesExported,
 		MetricsExported:   uint64(len(rendered)),
