@@ -63,6 +63,9 @@ func (dc *diskCache) streamMetrics(w http.ResponseWriter, _ map[string]struct{},
 	if metrics != nil {
 		return 0, nil
 	}
+	dc.mu.Lock()
+	defer dc.mu.Unlock()
+
 	err := dc.streamToWriter(w)
 	if err != nil {
 		return 0, err
