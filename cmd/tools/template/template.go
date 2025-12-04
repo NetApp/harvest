@@ -281,9 +281,9 @@ func newMetric(n ast.Node, parents []string) Metric {
 }
 
 func trimComment(text string) string {
-	lastSink := strings.Index(text, "#")
-	if lastSink > -1 {
-		return strings.TrimSpace(text[:lastSink])
+	before, _, found := strings.Cut(text, "#")
+	if found {
+		return strings.TrimSpace(before)
 	}
 	return strings.TrimSpace(text)
 }

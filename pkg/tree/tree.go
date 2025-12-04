@@ -9,7 +9,7 @@ import (
 	"github.com/goccy/go-yaml/parser"
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
-	"github.com/netapp/harvest/v2/pkg/tree/xml"
+	"github.com/netapp/harvest/v2/pkg/tree/treexml"
 	"os"
 )
 
@@ -82,11 +82,11 @@ func isScalar(n ast.Node) bool {
 }
 
 func LoadXML(data []byte) (*node.Node, error) {
-	return xml.Load(data)
+	return treexml.Load(data)
 }
 
 func DumpXML(n *node.Node) ([]byte, error) {
-	return xml.Dump(n)
+	return treexml.Dump(n)
 }
 
 func ImportXML(filepath string) (*node.Node, error) {

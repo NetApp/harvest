@@ -591,9 +591,9 @@ func visitTemplates(t *testing.T, eachTemplate func(path string, model Model), d
 
 func collectorPath(path string) string {
 	const conf string = "conf/"
-	index := strings.Index(path, conf)
-	if index > 0 {
-		splits := strings.Split(path[index+len(conf):], "/")
+	before, after, found := strings.Cut(path, conf)
+	if found && before != "" {
+		splits := strings.Split(after, "/")
 		return splits[0]
 	}
 	return path
@@ -601,9 +601,9 @@ func collectorPath(path string) string {
 
 func shortPath(path string) string {
 	const conf string = "conf/"
-	index := strings.Index(path, conf)
-	if index > 0 {
-		return path[index+len(conf):]
+	before, after, found := strings.Cut(path, conf)
+	if found && before != "" {
+		return after
 	}
 	return path
 }

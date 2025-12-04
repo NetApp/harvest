@@ -88,11 +88,11 @@ func InvokeRestCall(client *rest.Client, href string) ([]gjson.Result, error) {
 }
 
 func TruncateURL(href string) string {
-	indexOfQuestionMark := strings.Index(href, "?")
-	if indexOfQuestionMark == -1 {
+	before, _, found := strings.Cut(href, "?")
+	if !found {
 		return href
 	}
-	return href[:indexOfQuestionMark] + "..."
+	return before + "..."
 }
 
 func GetClusterTime(client *rest.Client, returnTimeOut *int, logger *slog.Logger) (time.Time, error) {
