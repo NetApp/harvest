@@ -60,8 +60,16 @@ func TestPollerMetrics(t *testing.T) {
 			if strings.HasPrefix(row, "#") {
 				continue
 			}
-			openBracket := strings.Index(row, "{")
-			firstSpace := strings.Index(row, " ")
+			before, _, foundBracket := strings.Cut(row, "{")
+			openBracket := -1
+			if foundBracket {
+				openBracket = len(before)
+			}
+			beforeSpace, _, foundSpace := strings.Cut(row, " ")
+			firstSpace := -1
+			if foundSpace {
+				firstSpace = len(beforeSpace)
+			}
 			if openBracket == -1 {
 				// this means the metric has this form
 				// metric_without_labels 12.47
