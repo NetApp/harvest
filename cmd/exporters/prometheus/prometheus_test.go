@@ -5,47 +5,17 @@
 package prometheus
 
 import (
+	"slices"
+	"strings"
+	"testing"
+
 	"github.com/google/go-cmp/cmp"
 	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/poller/exporter"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
-	"slices"
-	"strings"
-	"testing"
 )
-
-func TestFilterMetaTags(t *testing.T) {
-
-	example := [][]byte{
-		[]byte(`# HELP some_metric help text`),
-		[]byte(`# TYPE some_metric type`),
-		[]byte(`some_metric{node="node_1"} 0.0`),
-		[]byte(`# HELP some_other_metric help text`),
-		[]byte(`# TYPE some_other_metric type`),
-		[]byte(`some_other_metric{node="node_2"} 0.0`),
-		[]byte(`# HELP some_other_metric DUPLICATE help text`),
-		[]byte(`# TYPE some_other_metric type`),
-		[]byte(`some_other_metric{node="node_3"} 0.0`),
-	}
-
-	expected := `# HELP some_metric help text
-# TYPE some_metric type
-some_metric{node="node_1"} 0.0
-# HELP some_other_metric help text
-# TYPE some_other_metric type
-some_other_metric{node="node_2"} 0.0
-some_other_metric{node="node_3"} 0.0
-`
-	p := Prometheus{}
-	seen := make(map[string]struct{})
-	var w strings.Builder
-	_ = p.writeMetrics(&w, example, seen)
-
-	diff := cmp.Diff(w.String(), expected)
-	assert.Equal(t, diff, "")
-}
 
 func TestEscape(t *testing.T) {
 	replacer := newReplacer()
@@ -147,7 +117,8 @@ net_app_bike_max_speed{} 3`, "bike"},
 
 			prom := p.(*Prometheus)
 			var lines []string
-			for _, metrics := range prom.cache.Get() {
+
+			for _, metrics := range prom.aCache.(*memCache).Get() {
 				for _, metric := range metrics {
 					lines = append(lines, string(metric))
 				}
@@ -184,7 +155,8 @@ netapp_change_log{category="metric",cluster="umeng-aff300-01-02",object="volume"
 
 			prom := p.(*Prometheus)
 			var lines []string
-			for _, metrics := range prom.cache.Get() {
+
+			for _, metrics := range prom.aCache.(*memCache).Get() {
 				for _, metric := range metrics {
 					lines = append(lines, string(metric))
 				}
@@ -258,7 +230,8 @@ func TestRenderHistogramExample(t *testing.T) {
 
 	prom := p.(*Prometheus)
 	var lines []string
-	for _, metrics := range prom.cache.Get() {
+
+	for _, metrics := range prom.aCache.(*memCache).Get() {
 		for _, metricLine := range metrics {
 			sline := string(metricLine)
 			if !strings.HasPrefix(sline, "#") {

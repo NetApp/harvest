@@ -30,6 +30,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"log/slog"
+	"path/filepath"
 	"regexp"
 	"slices"
 	"sort"
@@ -48,7 +49,7 @@ const (
 
 type Prometheus struct {
 	*exporter.AbstractExporter
-	cache           *cache
+	aCache          cacher
 	allowAddrs      []string
 	allowAddrsRegex []*regexp.Regexp
 	cacheAddrs      map[string]bool
@@ -60,6 +61,22 @@ type Prometheus struct {
 
 func New(abc *exporter.AbstractExporter) exporter.Exporter {
 	return &Prometheus{AbstractExporter: abc}
+}
+
+func (p *Prometheus) createCacher(dur time.Duration) cacher {
+	if p.Params.DiskCache != nil && p.Params.DiskCache.Path != "" {
+		p.Logger.Debug("disk cache enabled - will use disk-based caching for RSS optimization",
+			slog.String("path", p.Params.DiskCache.Path))
+
+		cacheDir := p.Params.DiskCache.Path
+		// Include poller name in cache directory to avoid collisions between multiple pollers
+		if p.Options.Poller != "" {
+			cacheDir = filepath.Join(cacheDir, p.Options.Poller)
+		}
+		return newDiskCache(dur, cacheDir, p.Logger)
+	}
+
+	return newMemCache(p.Logger, dur)
 }
 
 func (p *Prometheus) Init() error {
@@ -99,23 +116,26 @@ func (p *Prometheus) Init() error {
 		p.addMetaTags = true
 	}
 
-	// all other parameters are only relevant to the HTTP daemon
+	maxKeep := cacheMaxKeep
+	var maxKeepDur time.Duration
 	if x := p.Params.CacheMaxKeep; x != nil {
-		if d, err := time.ParseDuration(*x); err == nil {
-			p.Logger.Debug("using custom cache_max_keep", slog.String("cacheMaxKeep", *x))
-			p.cache = newCache(d)
-		} else {
-			p.Logger.Error("cache_max_keep", slogx.Err(err), slog.String("x", *x))
-		}
+		maxKeep = *x
+		p.Logger.Debug("using custom cache_max_keep", slog.String("cacheMaxKeep", maxKeep))
+	}
+	d, err := time.ParseDuration(maxKeep)
+	if err != nil {
+		p.Logger.Error("failed to use cache_max_keep duration. Using default", slogx.Err(err),
+			slog.String("maxKeep", maxKeep),
+			slog.String("default", cacheMaxKeep),
+		)
+		maxKeepDur, _ = time.ParseDuration(cacheMaxKeep)
+	} else {
+		maxKeepDur = d
 	}
 
-	if p.cache == nil {
-		p.Logger.Debug("using default cache_max_keep", slog.String("cacheMaxKeep", cacheMaxKeep))
-		if d, err := time.ParseDuration(cacheMaxKeep); err == nil {
-			p.cache = newCache(d)
-		} else {
-			return err
-		}
+	p.aCache = p.createCacher(maxKeepDur)
+	if !p.aCache.isValid() {
+		return errs.New(errs.ErrInvalidParam, "cache initialization failed")
 	}
 
 	// allow access to metrics only from the given plain addresses
@@ -207,9 +227,10 @@ func newReplacer() *strings.Replacer {
 func (p *Prometheus) Export(data *matrix.Matrix) (exporter.Stats, error) {
 
 	var (
-		metrics [][]byte
-		stats   exporter.Stats
-		err     error
+		metrics     [][]byte
+		stats       exporter.Stats
+		err         error
+		metricNames *set.Set
 	)
 
 	// lock the exporter, to prevent other collectors from writing to us
@@ -218,7 +239,7 @@ func (p *Prometheus) Export(data *matrix.Matrix) (exporter.Stats, error) {
 
 	// render metrics into Prometheus format
 	start := time.Now()
-	metrics, stats = p.render(data)
+	metrics, stats, metricNames = p.render(data)
 
 	// fix render time for metadata
 	d := time.Since(start)
@@ -226,10 +247,7 @@ func (p *Prometheus) Export(data *matrix.Matrix) (exporter.Stats, error) {
 	// store metrics in cache
 	key := data.UUID + "." + data.Object + "." + data.Identifier
 
-	// lock cache, to prevent HTTPd reading while we are mutating it
-	p.cache.Lock()
-	p.cache.Put(key, metrics)
-	p.cache.Unlock()
+	p.aCache.exportMetrics(key, metrics, metricNames)
 
 	// update metadata
 	p.AddExportCount(uint64(len(metrics)))
@@ -261,7 +279,7 @@ func (p *Prometheus) Export(data *matrix.Matrix) (exporter.Stats, error) {
 // volume_read_ops{node="my-node",vol="some_vol"} 2523
 // fcp_lif_read_ops{vserver="nas_svm",port_id="e02"} 771
 
-func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
+func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats, *set.Set) {
 	var (
 		rendered          [][]byte
 		tagged            *set.Set
@@ -281,6 +299,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 	buf.Grow(4096)
 	globalLabels := make([]string, 0, len(data.GetGlobalLabels()))
 	normalizedLabels = make(map[string][]string)
+	metricNames := set.New()
 
 	if p.addMetaTags {
 		tagged = set.New()
@@ -338,6 +357,7 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 		if !metric.IsExportable() {
 			continue
 		}
+		metricNames.Add(prefix + "_" + metric.GetName())
 		exportableMetrics++
 	}
 
@@ -506,7 +526,21 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 					if p.Params.SortLabels {
 						sort.Strings(metricLabels)
 					}
-					x := prefix + "_" + metric.GetName() + "{" + joinedKeys + "," + strings.Join(metricLabels, ",") + "} " + value
+
+					buf.Reset()
+					buf.WriteString(prefix)
+					buf.WriteString("_")
+					buf.WriteString(metric.GetName())
+					buf.WriteString("{")
+					buf.WriteString(joinedKeys)
+					buf.WriteString(",")
+					buf.WriteString(strings.Join(metricLabels, ","))
+					buf.WriteString("} ")
+					buf.WriteString(value)
+
+					xbr := buf.Bytes()
+					metricLine := make([]byte, len(xbr))
+					copy(metricLine, xbr)
 
 					prefixedName := prefix + "_" + metric.GetName()
 					if tagged != nil && !tagged.Has(prefixedName) {
@@ -517,8 +551,8 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 						renderedBytes += uint64(len(help)) + uint64(len(typeT))
 					}
 
-					rendered = append(rendered, []byte(x))
-					renderedBytes += uint64(len(x))
+					rendered = append(rendered, metricLine)
+					renderedBytes += uint64(len(metricLine))
 					// scalar metric
 				} else {
 					buf.Reset()
@@ -651,13 +685,17 @@ func (p *Prometheus) render(data *matrix.Matrix) ([][]byte, exporter.Stats) {
 		}
 	}
 
+	// Both memory and disk cache add a newline character after each metric line
+	// when serving via HTTP (see writeMetric() and writeToDisk())
+	renderedBytes += uint64(len(rendered)) // Add 1 byte per line for '\n'
+
 	stats := exporter.Stats{
 		InstancesExported: instancesExported,
 		MetricsExported:   uint64(len(rendered)),
 		RenderedBytes:     renderedBytes,
 	}
 
-	return rendered, stats
+	return rendered, stats, metricNames
 }
 
 var numAndUnitRe = regexp.MustCompile(`(\d+)\s*(\w+)`)
