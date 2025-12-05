@@ -230,3 +230,68 @@ counters:
         Endpoint: grid/accounts-cache
         SGCounter: policy.quotaObjectBytes
         Template: conf/storagegrid/11.6.0/tenant.yaml
+
+  - Name: bucket_bytes
+    Description: Represent the bytes read/write in the bucket
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/storagegrid/11.6.0/tenant.yaml
+  - Name: bucket_objects
+    Description: Represent the number of object count in the bucket
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/storagegrid/11.6.0/tenant.yaml
+  - Name: bucket_labels
+    Description: Represent the detail of bucket
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/storagegrid/11.6.0/tenant.yaml
+  - Name: bucket_quota_bytes
+    Description: Represent the bytes read/write in quota of the bucket
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/storagegrid/11.6.0/tenant.yaml
+
+  - Name: tenant_labels
+    Description: Represent the detail of tenant
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/storagegrid/11.6.0/tenant.yaml
+  - Name: tenant_logical_quota
+    Description: Represent the logical quota size in tenant
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/storagegrid/11.6.0/tenant.yaml
+  - Name: tenant_logical_used
+    Description: Represent the logical data used in tenant
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/storagegrid/11.6.0/tenant.yaml
+  - Name: tenant_objects
+    Description: Represent the number of object count in the tenant
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/storagegrid/11.6.0/tenant.yaml
+  - Name: tenant_used_percent
+    Description: Represent the data used percent in tenant
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/storagegrid/11.6.0/tenant.yaml
