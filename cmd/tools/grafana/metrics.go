@@ -2,9 +2,11 @@ package grafana
 
 import (
 	"fmt"
+	"github.com/netapp/harvest/v2/cmd/tools"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"github.com/spf13/cobra"
 	"log"
+	"maps"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -35,8 +37,15 @@ type Expression struct {
 func doMetrics(_ *cobra.Command, _ []string) {
 	adjustOptions()
 	validateImport()
+	// reset metricsPanelMap map
+	metricsPanelMap := make(map[string]tools.PanelData)
+	counters, _ := tools.BuildMetrics("", "", "", nil, metricsPanelMap)
+	sgCounters := tools.GenerateCounters("", make(map[string]tools.Counter), "storagegrid", metricsPanelMap)
+	ciscoCounters := tools.GenerateCounters("", make(map[string]tools.Counter), "cisco", metricsPanelMap)
+	maps.Copy(counters, sgCounters)
+	maps.Copy(counters, ciscoCounters)
 	VisitDashboards([]string{opts.dir}, func(path string, data []byte) {
-		visitExpressionsAndQueries(path, data)
+		visitExpressionsAndQueries(path, data, counters)
 	})
 }
 
@@ -50,7 +59,8 @@ type ExprP struct {
 	vars       []string
 }
 
-func visitExpressionsAndQueries(path string, data []byte) {
+func visitExpressionsAndQueries(path string, data []byte, restCounters map[string]tools.Counter) {
+	var templateNames string
 	// collect all expressions
 	expressions := make([]ExprP, 0)
 	gjson.GetBytes(data, "panels").ForEach(func(key, value gjson.Result) bool {
@@ -95,7 +105,22 @@ func visitExpressionsAndQueries(path string, data []byte) {
 	fmt.Printf("%s\n", ShortPath(path))
 	metrics := setToList(metricsSeen)
 	for _, metric := range metrics {
-		fmt.Printf("- %s\n", metric)
+		var pathSlice []string
+		apis := restCounters[metric].APIs
+		if len(apis) == 0 {
+			if strings.Contains(metric, "hist") {
+				templateNames = "not documented"
+			} else {
+				fmt.Printf("template not found for metric %s\n", metric)
+			}
+		} else {
+			for _, api := range apis {
+				pathSlice = append(pathSlice, api.Template)
+			}
+			templateNames = strings.Join(pathSlice, ",")
+		}
+
+		fmt.Printf("- %s template: %s\n", metric, templateNames)
 	}
 	fmt.Println()
 }

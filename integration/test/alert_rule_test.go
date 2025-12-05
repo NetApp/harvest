@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/Netapp/harvest-automation/test/cmds"
-	"github.com/netapp/harvest/v2/cmd/tools/generate"
+	"github.com/netapp/harvest/v2/cmd/tools"
 	"github.com/netapp/harvest/v2/pkg/template"
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -31,9 +31,9 @@ var exceptionMetrics = []string{
 
 func TestAlertRules(t *testing.T) {
 	cmds.SkipIfMissing(t, cmds.Regression)
-	metrics, _ := generate.BuildMetrics("../..", "integration/test/harvest.yml", "dc1")
+	metrics, _ := tools.BuildMetrics("../..", "integration/test/harvest.yml", "dc1", nil, make(map[string]tools.PanelData))
 	for pluginMetric, pluginLabels := range pluginGeneratedMetric {
-		metrics[pluginMetric] = generate.Counter{Name: pluginMetric, Labels: pluginLabels}
+		metrics[pluginMetric] = tools.Counter{Name: pluginMetric, Labels: pluginLabels}
 	}
 
 	alertRules := GetAllAlertRules("../../container/prometheus/", "alert_rules.yml", false)
