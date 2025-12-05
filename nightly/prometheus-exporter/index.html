@@ -958,6 +958,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#disk_cache" class="md-nav__link">
+    <span class="md-ellipsis">
+      disk_cache
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2207,6 +2216,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#disk_cache" class="md-nav__link">
+    <span class="md-ellipsis">
+      disk_cache
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2484,6 +2502,12 @@ You need to keep that order consistent otherwise it will appear that you have lo
 <td><code>5m</code></td>
 </tr>
 <tr>
+<td><a href="#disk_cache"><code>disk_cache</code></a></td>
+<td>object, optional</td>
+<td>disk-based cache configuration</td>
+<td></td>
+</tr>
+<tr>
 <td><code>global_prefix</code></td>
 <td>string, optional</td>
 <td>add a prefix to all metrics (e.g. <code>netapp_</code>)</td>
@@ -2647,6 +2671,38 @@ No need to define the exporter in the <code>Exporters</code> section.</p>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="err">`</span><span class="l l-Scalar l-Scalar-Plain">^192.168.0.\d+$`</span>
 </code></pre></div>
 <p>Access will only be allowed from the IP4 range <code>192.168.0.0</code>-<code>192.168.0.255</code>.</p>
+<h3 id="disk_cache">disk_cache<a class="headerlink" href="#disk_cache" title="Permanent link">&para;</a></h3>
+<p>The <code>disk_cache</code> parameter enables disk-based staging of metrics before they are served to Prometheus. Instead of storing formatted metrics in memory, Harvest flushes them to disk files. When Prometheus scrapes the <code>/metrics</code> endpoint, Harvest reads these cached files from disk and streams them directly to Prometheus. This approach reduces memory overhead, making it ideal for large deployments with many metrics.</p>
+<p><strong>Configuration:</strong></p>
+<p>The <code>disk_cache</code> parameter requires a <code>path</code> field that specifies the directory where cache files will be stored. The path is <strong>mandatory</strong> when using disk cache.</p>
+<p><strong>Notes:</strong></p>
+<ul>
+<li>The <code>path</code> is <strong>required</strong> when using <code>disk_cache</code></li>
+<li>Harvest will automatically create a subdirectory for each poller to avoid conflicts between multiple pollers</li>
+<li>The cache directory is cleared on startup</li>
+<li>Ensure the specified directory is writable by the Harvest process</li>
+</ul>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nt">Exporters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">prom_disk</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">exporter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prometheus</span>
+<span class="w">    </span><span class="nt">port_range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">13000-13100</span>
+<span class="w">    </span><span class="nt">disk_cache</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/var/lib/harvest/cache</span>
+
+<span class="nt">Pollers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">cluster-01</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0.1.1</span>
+<span class="w">    </span><span class="nt">exporters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prom_disk</span>
+<span class="w">  </span><span class="nt">cluster-02</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0.1.2</span>
+<span class="w">    </span><span class="nt">exporters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prom_disk</span>
+</code></pre></div>
+<p>In this example, cache files will be created in:
+- <code>/var/lib/harvest/cache/cluster-01/</code>
+- <code>/var/lib/harvest/cache/cluster-02/</code></p>
 <h2 id="configure-prometheus-to-scrape-harvest-pollers">Configure Prometheus to scrape Harvest pollers<a class="headerlink" href="#configure-prometheus-to-scrape-harvest-pollers" title="Permanent link">&para;</a></h2>
 <p>There are two ways to tell Prometheus how to scrape Harvest: using HTTP service discovery (SD) or listing each poller
 individually.</p>
