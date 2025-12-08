@@ -147,7 +147,7 @@ func (v *VictoriaMetrics) Export(data *matrix.Matrix) (exporter.Stats, error) {
 	timestamp := strconv.FormatFloat(float64(time.Now().UTC().Unix()), 'f', -1, 64) // Ex: "1762933202"
 
 	// render metrics into open metrics format with timestamp
-	metrics, stats = exporters.Render(data, v.addMetaTags, v.Params.SortLabels, v.globalPrefix, v.Logger, timestamp)
+	metrics, stats, _ = exporters.Render(data, v.addMetaTags, v.Params.SortLabels, v.globalPrefix, v.Logger, timestamp)
 
 	// fix render time
 	if err = v.Metadata.LazyAddValueInt64("time", "render", time.Since(s).Microseconds()); err != nil {
@@ -174,7 +174,7 @@ func (v *VictoriaMetrics) Export(data *matrix.Matrix) (exporter.Stats, error) {
 	}
 
 	// render metadata metrics into open metrics format with timestamp
-	metrics, stats = exporters.Render(v.Metadata, v.addMetaTags, v.Params.SortLabels, v.globalPrefix, v.Logger, timestamp)
+	metrics, stats, _ = exporters.Render(v.Metadata, v.addMetaTags, v.Params.SortLabels, v.globalPrefix, v.Logger, timestamp)
 	if err = v.Emit(metrics); err != nil {
 		v.Logger.Error("emit metadata", slogx.Err(err))
 	}
