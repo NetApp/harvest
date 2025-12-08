@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Dec-05
+Creation Date : 2025-Dec-08
 ONTAP Version: 9.16.1
 ```
 
@@ -8637,7 +8637,7 @@ The `nfs_diag_storePool_LayoutStateMax` metric is visualized in the following Gr
 
 ### nfs_diag_storePool_LockAlloc
 
-Represent the FCP utilization percentage
+Represent the current number of lock objects allocated
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8656,7 +8656,7 @@ The `nfs_diag_storePool_LockAlloc` metric is visualized in the following Grafana
 
 ### nfs_diag_storePool_LockMax
 
-Represent the FCP utilization percentage
+Represent the maximum number of lock objects
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|

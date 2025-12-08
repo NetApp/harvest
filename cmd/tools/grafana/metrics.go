@@ -3,6 +3,7 @@ package grafana
 import (
 	"fmt"
 	"github.com/netapp/harvest/v2/cmd/tools"
+	tw "github.com/netapp/harvest/v2/third_party/olekukonko/tablewriter"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 	"github.com/spf13/cobra"
 	"log"
@@ -102,8 +103,14 @@ func visitExpressionsAndQueries(path string, data []byte, restCounters map[strin
 		}
 	}
 
-	fmt.Printf("%s\n", ShortPath(path))
+	fmt.Printf("Dashboard Name: %s\n", ShortPath(path))
 	metrics := setToList(metricsSeen)
+	table := tw.NewWriter(os.Stdout)
+	table.SetBorder(false)
+	table.SetAutoFormatHeaders(false)
+	table.SetAutoWrapText(false)
+	table.SetHeader([]string{"Metric", "Template Path"})
+
 	for _, metric := range metrics {
 		var pathSlice []string
 		apis := restCounters[metric].APIs
@@ -111,17 +118,19 @@ func visitExpressionsAndQueries(path string, data []byte, restCounters map[strin
 			if strings.Contains(metric, "hist") {
 				templateNames = "not documented"
 			} else {
-				fmt.Printf("template not found for metric %s\n", metric)
+				fmt.Printf("template not found for metric: %s\n", metric)
 			}
 		} else {
 			for _, api := range apis {
 				pathSlice = append(pathSlice, api.Template)
 			}
+			slices.Sort(pathSlice)
 			templateNames = strings.Join(pathSlice, ",")
 		}
 
-		fmt.Printf("- %s template: %s\n", metric, templateNames)
+		table.Append([]string{metric, templateNames})
 	}
+	table.Render()
 	fmt.Println()
 }
 
