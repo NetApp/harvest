@@ -49,11 +49,7 @@ func (g *Mgr) Import() (bool, string) {
 		slog.Error("error", slogx.Err(err))
 		panic(err)
 	}
-	if re.MatchString(importOutput) {
-		status = false
-	} else {
-		status = true
-	}
+	status = !(re.MatchString(importOutput))
 	slog.Info("Grafana import status", slog.Bool("status", status))
 	return status, importOutput
 }

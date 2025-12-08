@@ -762,9 +762,8 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 	shelfEnvironmentMetricMap := make(map[string]*shelfEnvironmentMetric)
 	for _, o := range d.shelfData {
 		for k, instance := range o.GetInstances() {
-			firstInd := strings.Index(k, "#")
+			iKey, _, _ := strings.Cut(k, "#")
 			lastInd := strings.LastIndex(k, "#")
-			iKey := k[:firstInd]
 			iKey2 := k[lastInd+1:]
 			if _, ok := shelfEnvironmentMetricMap[iKey]; !ok {
 				shelfEnvironmentMetricMap[iKey] = &shelfEnvironmentMetric{key: iKey, ambientTemperature: []float64{}, nonAmbientTemperature: []float64{}, fanSpeed: []float64{}}

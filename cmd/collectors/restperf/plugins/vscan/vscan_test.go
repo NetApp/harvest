@@ -28,6 +28,7 @@ func runTest(t *testing.T, createRestVscan func(params *node.Node) plugin.Plugin
 	data := readTestFile(testFile)
 	if data == nil {
 		t.Fatalf("failed to read test file %s", testFile)
+		return
 	}
 
 	dataMap := map[string]*matrix.Matrix{

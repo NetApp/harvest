@@ -7,13 +7,8 @@
 package prometheus
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
-	"github.com/netapp/harvest/v2/cmd/exporters"
-	"github.com/netapp/harvest/v2/pkg/set"
-	"github.com/netapp/harvest/v2/pkg/slogx"
-	"io"
 	"log/slog"
 	"net"
 	"net/http"
@@ -23,6 +18,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/netapp/harvest/v2/pkg/slogx"
 )
 
 func (p *Prometheus) startHTTPD(addr string, port int) {
@@ -139,26 +136,27 @@ func (p *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	p.cache.Lock()
-	tagsSeen := make(map[string]struct{})
-
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 
-	for _, metrics := range p.cache.Get() {
-		count += p.writeMetrics(w, metrics, tagsSeen)
+	tagsSeen := make(map[string]struct{})
+
+	_, err := p.aCache.streamMetrics(w, tagsSeen, nil)
+	if err != nil {
+		p.Logger.Error("failed to stream metrics", slogx.Err(err))
 	}
 
 	// serve our own metadata
 	// notice that some values are always taken from previous session
-	md, _ := exporters.Render(p.Metadata, p.addMetaTags, p.Params.SortLabels, p.globalPrefix, p.Logger, "")
-	count += p.writeMetrics(w, md, tagsSeen)
-
-	p.cache.Unlock()
+	md, _, _ := p.render(p.Metadata)
+	_, err = p.aCache.streamMetrics(w, tagsSeen, md)
+	if err != nil {
+		p.Logger.Error("failed to stream metadata metrics", slogx.Err(err))
+	}
 
 	// update metadata
 	p.Metadata.Reset()
-	err := p.Metadata.LazySetValueInt64("time", "http", time.Since(start).Microseconds())
+	err = p.Metadata.LazySetValueInt64("time", "http", time.Since(start).Microseconds())
 	if err != nil {
 		p.Logger.Error("metadata time", slogx.Err(err))
 	}
@@ -168,72 +166,18 @@ func (p *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// writeMetrics writes metrics to the writer, skipping duplicates.
-// Normally Render() only adds one TYPE/HELP for each metric type.
-// Some metric types (e.g., metadata_collector_metrics) are submitted from multiple collectors.
-// That causes duplicates that are suppressed in this function.
-// The seen map is used to keep track of which metrics have been added.
-func (p *Prometheus) writeMetrics(w io.Writer, metrics [][]byte, tagsSeen map[string]struct{}) int {
-
-	var count int
-
-	for i := 0; i < len(metrics); i++ {
-		metric := metrics[i]
-		if bytes.HasPrefix(metric, []byte("# ")) {
-
-			// Find the metric name and check if it has been seen before
-			var (
-				spacesSeen  int
-				space2Index int
-			)
-
-			for j := range metric {
-				if metric[j] == ' ' {
-					spacesSeen++
-					if spacesSeen == 2 {
-						space2Index = j
-					} else if spacesSeen == 3 {
-						name := string(metric[space2Index+1 : j])
-						if _, ok := tagsSeen[name]; !ok {
-							tagsSeen[name] = struct{}{}
-							p.writeMetric(w, metric)
-							count++
-							if i+1 < len(metrics) {
-								p.writeMetric(w, metrics[i+1])
-								count++
-								i++
-							}
-						}
-						break
-					}
-				}
-			}
-		} else {
-			p.writeMetric(w, metric)
-			count++
-		}
-	}
-
-	return count
-}
-
-func (p *Prometheus) writeMetric(w io.Writer, data []byte) {
-	_, err := w.Write(data)
-	if err != nil {
-		p.Logger.Error("write metrics", slogx.Err(err))
-		return
-	}
-	_, err = w.Write([]byte("\n"))
-	if err != nil {
-		p.Logger.Error("write newline", slogx.Err(err))
-		return
-	}
-}
-
 // ServeInfo provides a human-friendly overview of metric types and source collectors
 // this is done in a very inefficient way, by "reverse engineering" the metrics.
 // That's probably ok, since we don't expect this to be called often.
 func (p *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
+
+	var (
+		numCollectors int
+		numObjects    int
+		numMetrics    int
+		uniqueData    map[string]map[string][]string
+	)
+
 	start := time.Now()
 
 	if !p.checkAddr(r.RemoteAddr) {
@@ -245,52 +189,16 @@ func (p *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 
 	body := make([]string, 0)
 
-	numCollectors := 0
-	numObjects := 0
-	numMetrics := 0
-
-	uniqueData := map[string]map[string][]string{}
-
-	// copy cache so we don't lock it
-	p.cache.Lock()
-	cache := make(map[string][][]byte)
-	for key, data := range p.cache.Get() {
-		cache[key] = make([][]byte, len(data))
-		copy(cache[key], data)
+	overview, err := p.aCache.getOverview()
+	if err != nil {
+		p.Logger.Error("failed to get cache statistics", slogx.Err(err))
+		http.Error(w, "Failed to collect cache statistics", http.StatusInternalServerError)
+		return
 	}
-	p.cache.Unlock()
-
-	p.Logger.Debug("fetching cached elements", slog.Int("count", len(cache)))
-
-	for key, data := range cache {
-		var collector, object string
-
-		if keys := strings.Split(key, "."); len(keys) == 3 {
-			collector = keys[0]
-			object = keys[1]
-		} else {
-			continue
-		}
-
-		// skip metadata
-		if strings.HasPrefix(object, "metadata_") {
-			continue
-		}
-
-		metricNames := set.New()
-		for _, m := range data {
-			if x := strings.Split(string(m), "{"); len(x) >= 2 && x[0] != "" {
-				metricNames.Add(x[0])
-			}
-		}
-		numMetrics += metricNames.Size()
-
-		if _, exists := uniqueData[collector]; !exists {
-			uniqueData[collector] = make(map[string][]string)
-		}
-		uniqueData[collector][object] = metricNames.Values()
-
-	}
+	numCollectors = overview.NumCollectors
+	numObjects = overview.NumObjects
+	numMetrics = overview.NumMetrics
+	uniqueData = overview.UniqueData
 
 	for col, perObject := range uniqueData {
 		objects := make([]string, 0)
@@ -302,11 +210,9 @@ func (p *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 			objects = append(objects, fmt.Sprintf(objectTemplate, obj, strings.Join(metrics, "\n")))
-			numObjects++
 		}
 
 		body = append(body, fmt.Sprintf(collectorTemplate, col, strings.Join(objects, "\n")))
-		numCollectors++
 	}
 
 	poller := p.Options.Poller
@@ -314,7 +220,7 @@ func (p *Prometheus) ServeInfo(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "text/html")
-	_, err := w.Write([]byte(bodyFlat))
+	_, err = w.Write([]byte(bodyFlat))
 	if err != nil {
 		p.Logger.Error("write info", slogx.Err(err))
 	}

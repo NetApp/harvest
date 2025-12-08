@@ -1643,7 +1643,7 @@
                   },
                   {
                     "id": "displayName",
-                    "value": "status"
+                    "value": "Status"
                   }
                 ]
               },
@@ -1887,6 +1887,7 @@
                 "include": {
                   "names": [
                     "node",
+                    "serial_hex",
                     "svm",
                     "lun",
                     "Value #A",
@@ -1930,7 +1931,9 @@
                   "svm": 3,
                   "volume": 10
                 },
-                "renameByName": {}
+                "renameByName": {
+                  "serial_hex": "Serial Hex"
+                }
               }
             }
           ],
@@ -4415,5 +4418,5 @@
   "timezone": "",
   "title": "ONTAP: LUN",
   "uid": "cdot-lun",
-  "version": 11
+  "version": 12
 }

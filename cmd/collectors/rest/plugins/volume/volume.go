@@ -177,12 +177,13 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]vo
 
 	capacityTierFootprintMetric := data.GetMetric("volume_blocks_footprint_bin1")
 	totalFootprintMetric := data.GetMetric("total_footprint")
-
 	hotDataMetric := data.GetMetric("hot_data")
-	if hotDataMetric == nil {
-		if hotDataMetric, err = data.NewMetricFloat64("hot_data"); err != nil {
-			v.SLogger.Error("error while creating hot data metric", slogx.Err(err))
-			return
+	if capacityTierFootprintMetric != nil && totalFootprintMetric != nil {
+		if hotDataMetric == nil {
+			if hotDataMetric, err = data.NewMetricFloat64("hot_data"); err != nil {
+				v.SLogger.Error("error while creating hot data metric", slogx.Err(err))
+				return
+			}
 		}
 	}
 
@@ -227,7 +228,7 @@ func (v *Volume) updateVolumeLabels(data *matrix.Matrix, volumeMap map[string]vo
 		}
 
 		// Calculate Hot data metric, where hot data = total footprint - cold data
-		if capacityTierFootprintMetric != nil {
+		if capacityTierFootprintMetric != nil && totalFootprintMetric != nil {
 			if capacityTierFootprintMetricValue, exist := capacityTierFootprintMetric.GetValueFloat64(volume); exist {
 				totalFootprintMetricValue, _ := totalFootprintMetric.GetValueFloat64(volume)
 				hotDataMetric.SetValueFloat64(volume, totalFootprintMetricValue-capacityTierFootprintMetricValue)

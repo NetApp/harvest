@@ -438,6 +438,17 @@ func TestMetricsAreSortedAndNoDuplicates(t *testing.T) {
 	}, allTemplatesButEms...)
 }
 
+// Tests that zapiperf metrics should not have caret
+func TestZapiPerfMetricsHaveNoCaret(t *testing.T) {
+	visitTemplates(t, func(path string, model Model) {
+		for _, metric := range model.metrics {
+			if strings.HasPrefix(metric.line, "^") {
+				t.Errorf("counter %s should not have ^ at path=[%s]", metric.line, shortPath(path))
+			}
+		}
+	}, []string{"zapiperf"}...)
+}
+
 func checkForDuplicateMetrics(t *testing.T, model Model, path string) {
 	dupSet := make(map[string]bool)
 	for _, m := range model.metrics {
@@ -580,9 +591,9 @@ func visitTemplates(t *testing.T, eachTemplate func(path string, model Model), d
 
 func collectorPath(path string) string {
 	const conf string = "conf/"
-	index := strings.Index(path, conf)
-	if index > 0 {
-		splits := strings.Split(path[index+len(conf):], "/")
+	before, after, found := strings.Cut(path, conf)
+	if found && before != "" {
+		splits := strings.Split(after, "/")
 		return splits[0]
 	}
 	return path
@@ -590,9 +601,9 @@ func collectorPath(path string) string {
 
 func shortPath(path string) string {
 	const conf string = "conf/"
-	index := strings.Index(path, conf)
-	if index > 0 {
-		return path[index+len(conf):]
+	before, after, found := strings.Cut(path, conf)
+	if found && before != "" {
+		return after
 	}
 	return path
 }
