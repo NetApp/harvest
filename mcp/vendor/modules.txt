@@ -23,10 +23,10 @@ github.com/modelcontextprotocol/go-sdk/internal/util
 github.com/modelcontextprotocol/go-sdk/internal/xcontext
 github.com/modelcontextprotocol/go-sdk/jsonrpc
 github.com/modelcontextprotocol/go-sdk/mcp
-# github.com/netapp/harvest/v2 v2.0.0-20251128120531-a65c2e49d436 => ../
+# github.com/netapp/harvest/v2 v2.0.0-20251204123859-73fef5b13629 => ../
 ## explicit; go 1.24.0
 github.com/netapp/harvest/v2/pkg/slogx
-# github.com/spf13/cobra v1.10.1
+# github.com/spf13/cobra v1.10.2
 ## explicit; go 1.15
 github.com/spf13/cobra
 # github.com/spf13/pflag v1.0.10
