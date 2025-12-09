@@ -3,10 +3,8 @@ package generate
 import (
 	"errors"
 	"fmt"
+	"github.com/netapp/harvest/v2/cmd/tools"
 	"github.com/netapp/harvest/v2/cmd/tools/grafana"
-	"github.com/netapp/harvest/v2/cmd/tools/rest"
-	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
-	"github.com/netapp/harvest/v2/pkg/auth"
 	"github.com/netapp/harvest/v2/pkg/color"
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
@@ -14,7 +12,6 @@ import (
 	"github.com/spf13/cobra"
 	"io"
 	"log"
-	"log/slog"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -22,7 +19,6 @@ import (
 	"strconv"
 	"strings"
 	"text/template"
-	"time"
 )
 
 type PollerInfo struct {
@@ -59,28 +55,7 @@ type PromTemplate struct {
 	PromPort    int
 }
 
-type options struct {
-	Poller      string
-	loglevel    int
-	image       string
-	filesdPath  string
-	showPorts   bool
-	outputPath  string
-	certDir     string
-	promPort    int
-	grafanaPort int
-	mounts      []string
-	configPath  string
-	confPath    string
-	promURL     string
-}
-
 var metricRe = regexp.MustCompile(`(\w+)\{`)
-
-var opts = &options{
-	loglevel: 2,
-	image:    "harvest:latest",
-}
 
 var Cmd = &cobra.Command{
 	Use:   "generate",
@@ -138,8 +113,9 @@ func doDockerCompose(cmd *cobra.Command, _ []string) {
 func doGenerateMetrics(cmd *cobra.Command, _ []string) {
 	addRootOptions(cmd)
 	// reset metricsPanelMap map
-	metricsPanelMap = make(map[string]PanelData)
+	metricsPanelMap := make(map[string]tools.PanelData)
 	panelKeyMap = make(map[string]bool)
+
 	visitDashboard(
 		[]string{
 			"grafana/dashboards/asar2",
@@ -147,19 +123,19 @@ func doGenerateMetrics(cmd *cobra.Command, _ []string) {
 			"grafana/dashboards/cmode-details",
 			"grafana/dashboards/cisco",
 			"grafana/dashboards/storagegrid",
-		},
-		func(data []byte) {
-			visitExpressions(data)
+		}, metricsPanelMap,
+		func(data []byte, metricsPanelMap map[string]tools.PanelData) {
+			visitExpressions(data, metricsPanelMap)
 		})
-	counters, cluster := BuildMetrics("", "", opts.Poller)
-	generateOntapCounterTemplate(counters, cluster.Version)
-	sgCounters, ciscoCounters := generateCounterTemplate()
+	counters, cluster := tools.BuildMetrics("", "", opts.Poller, opts, metricsPanelMap)
+	tools.GenerateOntapCounterTemplate(counters, cluster.Version)
+	sgCounters, ciscoCounters := generateCounterTemplate(metricsPanelMap)
 	generateMetadataFiles(counters, sgCounters, ciscoCounters)
 }
 
 func doDescription(cmd *cobra.Command, _ []string) {
 	addRootOptions(cmd)
-	counters, _ := BuildMetrics("", "", opts.Poller)
+	counters, _ := tools.BuildMetrics("", "", opts.Poller, opts, make(map[string]tools.PanelData))
 	grafana.VisitDashboards(
 		[]string{"grafana/dashboards/cmode"},
 		func(path string, data []byte) {
@@ -168,8 +144,8 @@ func doDescription(cmd *cobra.Command, _ []string) {
 }
 
 func addRootOptions(cmd *cobra.Command) {
-	opts.configPath = conf.ConfigPath(cmd.Root().PersistentFlags().Lookup("config").Value.String())
-	opts.confPath = cmd.Root().PersistentFlags().Lookup("confpath").Value.String()
+	opts.ConfigPath = conf.ConfigPath(cmd.Root().PersistentFlags().Lookup("config").Value.String())
+	opts.ConfPath = cmd.Root().PersistentFlags().Lookup("confpath").Value.String()
 }
 
 const (
@@ -193,15 +169,15 @@ func generateDocker(kind int) {
 
 	pollerTemplate = PollerTemplate{}
 	promTemplate := PromTemplate{
-		opts.grafanaPort,
-		opts.promPort,
+		opts.GrafanaPort,
+		opts.PromPort,
 	}
-	_, err := conf.LoadHarvestConfig(opts.configPath)
+	_, err := conf.LoadHarvestConfig(opts.ConfigPath)
 	if err != nil {
-		logErrAndExit(err)
+		tools.LogErrAndExit(err)
 	}
-	configFilePath = asComposePath(opts.configPath)
-	certDirPath = asComposePath(opts.certDir)
+	configFilePath = asComposePath(opts.ConfigPath)
+	certDirPath = asComposePath(opts.CertDir)
 	filesd := make([]string, 0, len(conf.Config.PollersOrdered))
 
 	for _, pollerName := range conf.Config.PollersOrdered {
@@ -215,10 +191,10 @@ func generateDocker(kind int) {
 			PollerName:    pollerName,
 			ConfigFile:    configFilePath,
 			Port:          port,
-			LogLevel:      opts.loglevel,
-			Image:         opts.image,
+			LogLevel:      opts.Loglevel,
+			Image:         opts.Image,
 			ContainerName: normalizeContainerNames("poller_" + pollerName),
-			ShowPorts:     opts.showPorts,
+			ShowPorts:     opts.ShowPorts,
 			IsFull:        kind == full,
 			CertDir:       certDirPath,
 			Mounts:        makeMounts(pollerName),
@@ -229,14 +205,14 @@ func generateDocker(kind int) {
 
 	t, err := template.New("docker-compose.tmpl").ParseFiles("container/onePollerPerContainer/docker-compose.tmpl")
 	if err != nil {
-		logErrAndExit(err)
+		tools.LogErrAndExit(err)
 	}
 
 	color.DetectConsole("")
 
-	out, err = os.Create(opts.outputPath)
+	out, err = os.Create(opts.OutputPath)
 	if err != nil {
-		logErrAndExit(err)
+		tools.LogErrAndExit(err)
 	}
 
 	if kind == harvest {
@@ -248,17 +224,17 @@ func generateDocker(kind int) {
 			if s := strings.Split(httpsd, ":"); len(s) == 2 {
 				adminPort, err = strconv.Atoi(s[1])
 				if err != nil {
-					logErrAndExit(errors.New("invalid httpsd listen configuration. Valid configuration are <<addr>>:PORT or :PORT"))
+					tools.LogErrAndExit(errors.New("invalid httpsd listen configuration. Valid configuration are <<addr>>:PORT or :PORT"))
 				}
 			} else {
-				logErrAndExit(errors.New("invalid httpsd listen configuration. Valid configuration are <<addr>>:PORT or :PORT"))
+				tools.LogErrAndExit(errors.New("invalid httpsd listen configuration. Valid configuration are <<addr>>:PORT or :PORT"))
 			}
 
 			pollerTemplate.Admin = AdminInfo{
 				ServiceName:   "admin",
 				ConfigFile:    configFilePath,
 				Port:          adminPort,
-				Image:         opts.image,
+				Image:         opts.Image,
 				ContainerName: "admin",
 				Enabled:       true,
 				CertDir:       certDirPath,
@@ -267,33 +243,33 @@ func generateDocker(kind int) {
 	} else {
 		pt, err := template.New("prom-stack.tmpl").ParseFiles("prom-stack.tmpl")
 		if err != nil {
-			logErrAndExit(err)
+			tools.LogErrAndExit(err)
 		}
 
 		promStackOut, err := os.Create("prom-stack.yml")
 		if err != nil {
-			logErrAndExit(err)
+			tools.LogErrAndExit(err)
 		}
 		err = pt.Execute(promStackOut, promTemplate)
 		if err != nil {
-			logErrAndExit(err)
+			tools.LogErrAndExit(err)
 		}
 	}
 
 	err = t.Execute(out, pollerTemplate)
 	if err != nil {
-		logErrAndExit(err)
+		tools.LogErrAndExit(err)
 	}
 
-	f, err := os.Create(opts.filesdPath)
+	f, err := os.Create(opts.FilesdPath)
 	if err != nil {
-		logErrAndExit(err)
+		tools.LogErrAndExit(err)
 	}
 	defer silentClose(f)
 	for _, line := range filesd {
 		_, _ = fmt.Fprintln(f, line)
 	}
-	_, _ = fmt.Fprintf(os.Stderr, "Wrote file_sd targets to %s\n", opts.filesdPath)
+	_, _ = fmt.Fprintf(os.Stderr, "Wrote file_sd targets to %s\n", opts.FilesdPath)
 
 	if os.Getenv("HARVEST_DOCKER") != "" {
 		srcFolder := "/opt/harvest"
@@ -301,32 +277,32 @@ func generateDocker(kind int) {
 
 		err = copyFiles(srcFolder, destFolder)
 		if err != nil {
-			logErrAndExit(err)
+			tools.LogErrAndExit(err)
 		}
 	}
 
 	if kind == harvest {
 		_, _ = fmt.Fprint(os.Stderr,
 			"Start containers with:\n"+
-				color.Colorize("docker compose -f "+opts.outputPath+" up -d --remove-orphans\n", color.Green))
+				color.Colorize("docker compose -f "+opts.OutputPath+" up -d --remove-orphans\n", color.Green))
 	}
 	if kind == full {
 		_, _ = fmt.Fprint(os.Stderr,
 			"Start containers with:\n"+
-				color.Colorize("docker compose -f prom-stack.yml -f "+opts.outputPath+" up -d --remove-orphans\n", color.Green))
+				color.Colorize("docker compose -f prom-stack.yml -f "+opts.OutputPath+" up -d --remove-orphans\n", color.Green))
 	}
 }
 
 // setup mount(s) for the confpath and any CLI-passed mounts
 func makeMounts(pollerName string) []string {
-	var mounts = opts.mounts
+	var mounts = opts.Mounts
 
 	p, err := conf.PollerNamed(pollerName)
 	if err != nil {
-		logErrAndExit(err)
+		tools.LogErrAndExit(err)
 	}
 
-	confPath := opts.confPath
+	confPath := opts.ConfPath
 	if confPath == "conf" {
 		confPath = p.ConfPath
 	}
@@ -489,27 +465,22 @@ func asComposePath(path string) string {
 	return "./" + path
 }
 
-func logErrAndExit(err error) {
-	fmt.Printf("%v\n", err)
-	os.Exit(1)
-}
-
 func silentClose(body io.ReadCloser) {
 	_ = body.Close()
 }
 
 func generateSystemd() {
 	var adminService string
-	_, err := conf.LoadHarvestConfig(opts.configPath)
+	_, err := conf.LoadHarvestConfig(opts.ConfigPath)
 	if err != nil {
-		logErrAndExit(err)
+		tools.LogErrAndExit(err)
 	}
 	if conf.Config.Pollers == nil {
 		return
 	}
 	t, err := template.New("target.tmpl").ParseFiles("service/contrib/target.tmpl")
 	if err != nil {
-		logErrAndExit(err)
+		tools.LogErrAndExit(err)
 	}
 	color.DetectConsole("")
 	println("Save the following to " + color.Colorize("/etc/systemd/system/harvest.target", color.Green) +
@@ -519,7 +490,7 @@ func generateSystemd() {
 		println("and " + color.Colorize("cp "+harvestAdminService+" /etc/systemd/system/", color.Green))
 	}
 	println("and then run " + color.Colorize("systemctl daemon-reload", color.Green))
-	writeAdminSystemd(opts.configPath)
+	writeAdminSystemd(opts.ConfigPath)
 	pollers := make([]string, 0)
 	unixPollers := make([]string, 0)
 
@@ -551,7 +522,7 @@ func generateSystemd() {
 		PollersOrdered: pollers,
 	})
 	if err != nil {
-		logErrAndExit(err)
+		tools.LogErrAndExit(err)
 	}
 }
 
@@ -561,11 +532,11 @@ func writeAdminSystemd(configFp string) {
 	}
 	t, err := template.New("httpsd.tmpl").ParseFiles("service/contrib/httpsd.tmpl")
 	if err != nil {
-		logErrAndExit(err)
+		tools.LogErrAndExit(err)
 	}
 	f, err := os.Create(harvestAdminService)
 	if err != nil {
-		logErrAndExit(err)
+		tools.LogErrAndExit(err)
 	}
 	defer silentClose(f)
 	configAbsPath, err := filepath.Abs(configFp)
@@ -576,68 +547,7 @@ func writeAdminSystemd(configFp string) {
 	println(color.Colorize("✓", color.Green) + " HTTP SD file: " + harvestAdminService + " created")
 }
 
-func BuildMetrics(dir, configPath, pollerName string) (map[string]Counter, conf.Remote) {
-	var (
-		poller         *conf.Poller
-		err            error
-		restClient     *rest.Client
-		zapiClient     *zapi.Client
-		harvestYmlPath string
-	)
-
-	if opts.configPath != "" {
-		harvestYmlPath = filepath.Join(dir, opts.configPath)
-	} else {
-		harvestYmlPath = filepath.Join(dir, configPath)
-	}
-	_, err = conf.LoadHarvestConfig(harvestYmlPath)
-	if err != nil {
-		logErrAndExit(err)
-	}
-
-	if poller, _, err = rest.GetPollerAndAddr(pollerName); err != nil {
-		logErrAndExit(err)
-	}
-
-	timeout, _ := time.ParseDuration(rest.DefaultTimeout)
-	credentials := auth.NewCredentials(poller, slog.Default())
-	if restClient, err = rest.New(poller, timeout, credentials); err != nil {
-		fmt.Printf("error creating new client %+v\n", err)
-		os.Exit(1)
-	}
-	if err = restClient.Init(2, conf.Remote{}); err != nil {
-		fmt.Printf("error init rest client %+v\n", err)
-		os.Exit(1)
-	}
-
-	if zapiClient, err = zapi.New(poller, credentials); err != nil {
-		fmt.Printf("error creating new client %+v\n", err)
-		os.Exit(1)
-	}
-
-	swaggerBytes = readSwaggerJSON()
-	restCounters := processRestCounters(dir, restClient)
-	zapiCounters := processZapiCounters(dir, zapiClient)
-	counters := mergeCounters(restCounters, zapiCounters)
-	counters = processExternalCounters(dir, counters)
-
-	if opts.promURL != "" {
-		prometheusRest, prometheusZapi, err := fetchAndCategorizePrometheusMetrics(opts.promURL)
-		if err != nil {
-			logErrAndExit(err)
-		}
-
-		documentedRest, documentedZapi := categorizeCounters(counters)
-
-		if err := validateMetrics(documentedRest, documentedZapi, prometheusRest, prometheusZapi); err != nil {
-			logErrAndExit(err)
-		}
-	}
-
-	return counters, restClient.Remote()
-}
-
-func generateDescription(dPath string, data []byte, counters map[string]Counter) {
+func generateDescription(dPath string, data []byte, counters map[string]tools.Counter) {
 	var err error
 	dashPath := grafana.ShortPath(dPath)
 	panelDescriptionMap := make(map[string]string)
@@ -720,20 +630,20 @@ func init() {
 	flag.StringVarP(&opts.Poller, "poller", "p", "dc1", "name of poller, e.g. 10.193.48.154")
 	_ = descCmd.MarkPersistentFlagRequired("poller")
 
-	dFlags.IntVarP(&opts.loglevel, "loglevel", "l", 2,
+	dFlags.IntVarP(&opts.Loglevel, "loglevel", "l", 2,
 		"logging level (0=trace, 1=debug, 2=info, 3=warning, 4=error, 5=critical)",
 	)
-	dFlags.StringVar(&opts.image, "image", "ghcr.io/netapp/harvest:latest", "Harvest image. Use rahulguptajss/harvest:latest to pull from Docker Hub")
-	dFlags.StringVar(&opts.certDir, "certdir", "./cert", "Harvest certificate dir path")
-	dFlags.StringVarP(&opts.outputPath, "output", "o", "", "Output file path. ")
-	dFlags.BoolVarP(&opts.showPorts, "port", "p", true, "Expose poller ports to host machine")
+	dFlags.StringVar(&opts.Image, "image", "ghcr.io/netapp/harvest:latest", "Harvest image. Use rahulguptajss/harvest:latest to pull from Docker Hub")
+	dFlags.StringVar(&opts.CertDir, "certdir", "./cert", "Harvest certificate dir path")
+	dFlags.StringVarP(&opts.OutputPath, "output", "o", "", "Output file path. ")
+	dFlags.BoolVarP(&opts.ShowPorts, "port", "p", true, "Expose poller ports to host machine")
 	_ = dockerCmd.MarkPersistentFlagRequired("output")
-	dFlags.StringSliceVar(&opts.mounts, "volume", []string{}, "Additional volume mounts to include in compose file")
+	dFlags.StringSliceVar(&opts.Mounts, "volume", []string{}, "Additional volume mounts to include in compose file")
 
-	fFlags.StringVar(&opts.filesdPath, "filesdpath", "container/prometheus/harvest_targets.yml",
+	fFlags.StringVar(&opts.FilesdPath, "filesdpath", "container/prometheus/harvest_targets.yml",
 		"Prometheus file_sd target path. Written when the --output is set")
-	fFlags.IntVar(&opts.promPort, "promPort", 9090, "Prometheus Port")
-	fFlags.IntVar(&opts.grafanaPort, "grafanaPort", 3000, "Grafana Port")
+	fFlags.IntVar(&opts.PromPort, "promPort", 9090, "Prometheus Port")
+	fFlags.IntVar(&opts.GrafanaPort, "grafanaPort", 3000, "Grafana Port")
 
-	metricCmd.PersistentFlags().StringVar(&opts.promURL, "prom-url", "", "Prometheus URL for CI validation")
+	metricCmd.PersistentFlags().StringVar(&opts.PromURL, "prom-url", "", "Prometheus URL for CI validation")
 }

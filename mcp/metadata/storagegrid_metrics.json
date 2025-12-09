@@ -1,4 +1,8 @@
 {
+  "bucket_bytes": "Represent the bytes read/write in the bucket",
+  "bucket_labels": "Represent the detail of bucket",
+  "bucket_objects": "Represent the number of object count in the bucket",
+  "bucket_quota_bytes": "Represent the bytes read/write in quota of the bucket",
   "storagegrid_content_buckets_and_containers": "Total number of S3 buckets and Swift containers",
   "storagegrid_content_objects": "Total number of S3 and Swift objects (excluding empty objects)",
   "storagegrid_ilm_awaiting_client_objects": "Total number of objects on this node awaiting ILM evaluation because of client operation (for example, ingest)",
@@ -21,5 +25,10 @@
   "storagegrid_storage_utilization_total_space_bytes": "Total storage space available in bytes",
   "storagegrid_storage_utilization_usable_space_bytes": "The total amount of object storage space remaining",
   "storagegrid_tenant_usage_data_bytes": "The logical size of all objects for the tenant",
-  "storagegrid_tenant_usage_quota_bytes": "The maximum amount of logical space available for the tenant's object. If a quota metric is not provided, an unlimited amount of space is available"
+  "storagegrid_tenant_usage_quota_bytes": "The maximum amount of logical space available for the tenant's object. If a quota metric is not provided, an unlimited amount of space is available",
+  "tenant_labels": "Represent the detail of tenant",
+  "tenant_logical_quota": "Represent the logical quota size in tenant",
+  "tenant_logical_used": "Represent the logical data used in tenant",
+  "tenant_objects": "Represent the number of object count in the tenant",
+  "tenant_used_percent": "Represent the data used percent in tenant"
 }

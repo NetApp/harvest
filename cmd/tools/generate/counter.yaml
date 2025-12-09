@@ -2332,8 +2332,155 @@ counters:
   - Name: lun_block_size
     Description: Represents the block size being used
 
+  - Name: audit_log
+    Description: Captures the operations such as create, update, and delete attempts on volumes via REST or ONTAP CLI commands
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/audit_log.yaml
 
-  # ASAr2 cluster metrics
+  - Name: change_log
+    Description: Detect and track changes related to the creation, modification, and deletion of an object of Node, SVM and Volume
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/node.yaml
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.10.0/svm.yaml
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.14.0/volume.yaml
+
+  - Name: poller_cpu_percent
+    Description: Tracks the percentage of cpu usage of concurrent collectors running.
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: NA
+
+  - Name: fcp_util_percent
+    Description: Represent the FCP utilization percentage
+    APIs:
+      - API: RestPerf
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/restperf/9.12.0/fcp.yaml
+
+  - Name: nfs_diag_storePool_LockAlloc
+    Description: Represent the current number of lock objects allocated
+    APIs:
+      - API: RestPerf
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/restperf/9.12.0/nfsv4_pool.yaml
+
+  - Name: nfs_diag_storePool_LockMax
+    Description: Represent the maximum number of lock objects
+    APIs:
+      - API: RestPerf
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/restperf/9.12.0/nfsv4_pool.yaml
+
+  - Name: security_account_activediruser
+    Description: Represent the Active directory user in security account
+    APIs:
+      - API: Rest
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/security_account.yaml
+  - Name: security_account_certificateuser
+    Description: Represent the Certificate user in security account
+    APIs:
+      - API: Rest
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/security_account.yaml
+  - Name: security_account_ldapuser
+    Description: Represent the LDAP user in security account
+    APIs:
+      - API: Rest
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/security_account.yaml
+  - Name: security_account_localuser
+    Description: Represent the Local user in security account
+    APIs:
+      - API: Rest
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/security_account.yaml
+  - Name: security_account_samluser
+    Description: Represent the SAML user in security account
+    APIs:
+      - API: Rest
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/security_account.yaml
+
+  - Name: security_audit_destination_status
+    Description: Represent the security audit protocol in security audit destinations
+    APIs:
+      - API: Rest
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/security_audit_dest.yaml
+
+  - Name: svm_ldap_encrypted
+    Description: This metric indicates a LDAP session security has been sealed
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.10.0/svm.yaml
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapi/cdot/9.8.0/svm.yaml
+  - Name: svm_ldap_signed
+    Description: This metric indicates a LDAP session security has been signed
+    APIs:
+      - API: REST
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.10.0/svm.yaml
+      - API: ZAPI
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapi/cdot/9.8.0/svm.yaml
+
+  - Name: volume_arw_status
+    Description: Represent the cluster level ARW status
+    APIs:
+      - API: Rest
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.14.0/volume.yaml
+
+  - Name: ethernet_switch_port_new_status
+    Description: Represent the status of the ethernet switch port
+    APIs:
+      - API: Rest
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.8.0/ethernet_switch_port.yaml
+
+  - Name: vscan_server_disconnected
+    Description: Represent the disconnected vscan servers to the vscan pool
+    APIs:
+      - API: Rest
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/rest/9.12.0/vscan.yaml
+
+
+  # ASAr2 cluster metricsF
   - Name: cluster_space_available
     Description: Available space across the cluster.
     APIs:
