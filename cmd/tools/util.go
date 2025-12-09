@@ -156,14 +156,17 @@ var (
 	}
 
 	excludeDocumentedRestMetrics = []string{
+		"audit_log",
 		"aggr_hybrid_disk_count",
 		"availability_zone_",
+		"change_log",
 		"cifs_session_idle_duration",
 		"cluster_space_available",
 		"cluster_software",
 		"ems_events",
 		"ethernet_switch_port_",
 		"export_rule_labels",
+		"fcp_util_percent",
 		"fcvi_",
 		"flashpool_",
 		"health_",
@@ -181,6 +184,7 @@ var (
 		"nvmf_",
 		"ontaps3_svm_",
 		"path_",
+		"poller_cpu_percent",
 		"qtree_",
 		"smb2_",
 		"snapshot_labels",

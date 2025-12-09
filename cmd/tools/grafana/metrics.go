@@ -125,7 +125,7 @@ func visitExpressionsAndQueries(path string, data []byte, restCounters map[strin
 				pathSlice = append(pathSlice, api.Template)
 			}
 			slices.Sort(pathSlice)
-			templateNames = strings.Join(pathSlice, ",")
+			templateNames = strings.Join(pathSlice, " ")
 		}
 
 		table.Append([]string{metric, templateNames})
