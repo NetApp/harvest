@@ -14,6 +14,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -31,6 +32,7 @@ type VictoriaMetrics struct {
 	url          string
 	addMetaTags  bool
 	globalPrefix string
+	bufferPool   *sync.Pool
 }
 
 func New(abc *exporter.AbstractExporter) exporter.Exporter {
@@ -41,6 +43,13 @@ func (v *VictoriaMetrics) Init() error {
 
 	if err := v.InitAbc(); err != nil {
 		return err
+	}
+
+	// Initialize buffer pool
+	v.bufferPool = &sync.Pool{
+		New: func() any {
+			return new(bytes.Buffer)
+		},
 	}
 
 	var (
@@ -142,9 +151,8 @@ func (v *VictoriaMetrics) Export(data *matrix.Matrix) (exporter.Stats, error) {
 
 	s = time.Now()
 
-	time.Local = time.UTC
 	// update timestamp when backfill historical data, Ex: time.Now().Add(-1*24*time.Hour)
-	timestamp := strconv.FormatFloat(float64(time.Now().UTC().Unix()), 'f', -1, 64) // Ex: "1762933202"
+	timestamp := strconv.FormatInt(time.Now().Unix(), 10) // Ex: "1762933202"
 
 	// render metrics into open metrics format with timestamp
 	metrics, stats, _ = exporters.Render(data, v.addMetaTags, v.Params.SortLabels, v.globalPrefix, v.Logger, timestamp)
@@ -188,7 +196,11 @@ func (v *VictoriaMetrics) Emit(data [][]byte) error {
 	var response *http.Response
 	var err error
 
-	buffer = bytes.NewBuffer(bytes.Join(data, []byte("\n")))
+	buffer = v.bufferPool.Get().(*bytes.Buffer)
+	buffer.Reset()
+	_, _ = buffer.Write(bytes.Join(data, []byte("\n")))
+
+	defer v.bufferPool.Put(buffer)
 
 	if request, err = requests.New("POST", v.url, buffer); err != nil {
 		return err

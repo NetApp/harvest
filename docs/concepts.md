@@ -82,7 +82,7 @@ None of the [pollers](#poller) know anything about Prometheus. That's because Pr
 
 ## VictoriaMetrics
 
-[VictoriaMetrics](https://docs.victoriametrics.com/victoriametrics/) is an open-source time-series database. Harvest ships with some sample Grafana dashboards that are designed to work with VictoriaMetrics. Unlike the Prometheus exporter, Harvest's VictoriaMetrics exporter pushes metrics from the poller to VictoriaMetrics via Prometheus exposition format. The exporter is compatible with VictoriaMetrics v1.129.1.
+[VictoriaMetrics](https://docs.victoriametrics.com/victoriametrics/) is an open-source time-series database. Existing Harvest dashboards supported for Prometheus will also work with VictoriaMetrics. Unlike the Prometheus exporter, Harvest's VictoriaMetrics exporter pushes metrics from the poller to VictoriaMetrics via Prometheus exposition format. The exporter is compatible with VictoriaMetrics v1.129.1.
 
 
 **More information:**
