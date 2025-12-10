@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Dec-08
+Creation Date : 2025-Dec-10
 ONTAP Version: 9.16.1
 ```
 
@@ -9067,6 +9067,25 @@ The `nic_ifgrp_rx_bytes` metric is visualized in the following Grafana dashboard
 |--------|----------|--------|--------|
 | ONTAP: Network | Link Aggregation Group (LAG) | table | [Link Aggregation Groups](/d/cdot-network/ontap3a-network?orgId=1&viewPanel=122) |
 | ONTAP: Network | Link Aggregation Group (LAG) | timeseries | [Top $TopResources LAGs by Receive Throughput](/d/cdot-network/ontap3a-network?orgId=1&viewPanel=124) |
+///
+
+
+
+### nic_ifgrp_speed
+
+Link Aggregation Group (LAG) link speed.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| RestPerf | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml |
+| ZapiPerf | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
+
+The `nic_ifgrp_speed` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Network | Link Aggregation Group (LAG) | table | [Link Aggregation Groups](/d/cdot-network/ontap3a-network?orgId=1&viewPanel=122) |
 ///
 
 
