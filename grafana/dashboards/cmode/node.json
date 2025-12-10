@@ -3922,13 +3922,6 @@
             },
             {
               "exemplar": false,
-              "expr": "sum(node_cifs_signed_sessions{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
-              "interval": "",
-              "legendFormat": "Signed Sessions",
-              "refId": "C"
-            },
-            {
-              "exemplar": false,
               "expr": "sum(node_cifs_open_files{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\"})",
               "interval": "",
               "legendFormat": "Open Files",

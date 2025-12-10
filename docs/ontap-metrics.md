@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Dec-10
+Creation Date : 2025-Dec-08
 ONTAP Version: 9.16.1
 ```
 
@@ -1684,6 +1684,24 @@ Performance metric for write I/O operations.
 
 
 
+### audit_log
+
+Captures the operations such as create, update, and delete attempts on volumes via REST or ONTAP CLI commands
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/audit_log.yaml |
+
+The `audit_log` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: AuditLog | Highlights | table | [Volume Changes](/d/cdot-auditlog/ontap3a-auditlog?orgId=1&viewPanel=295) |
+///
+
+
+
 ### availability_zone_space_available
 
 
@@ -1721,6 +1739,37 @@ Performance metric for write I/O operations.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | REST | `api/storage/availability-zones` | `space.size` | conf/rest/asar2/9.16.0/availability_zone.yaml |
+
+
+
+### change_log
+
+Detect and track changes related to the creation, modification, and deletion of an object of Node, SVM and Volume
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.12.0/node.yaml |
+| REST | `NA` | `Harvest generated` | conf/rest/9.10.0/svm.yaml |
+| REST | `NA` | `Harvest generated` | conf/rest/9.14.0/volume.yaml |
+
+The `change_log` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Changelog Monitor | Node Changes | stat | [Create](/d/cdot-changelog-monitor/ontap3a-changelog monitor?orgId=1&viewPanel=285) |
+| ONTAP: Changelog Monitor | Node Changes | stat | [Update](/d/cdot-changelog-monitor/ontap3a-changelog monitor?orgId=1&viewPanel=291) |
+| ONTAP: Changelog Monitor | Node Changes | stat | [Delete](/d/cdot-changelog-monitor/ontap3a-changelog monitor?orgId=1&viewPanel=286) |
+| ONTAP: Changelog Monitor | Node Changes | table | [Node Changes ](/d/cdot-changelog-monitor/ontap3a-changelog monitor?orgId=1&viewPanel=288) |
+| ONTAP: Changelog Monitor | SVM Changes | stat | [Create](/d/cdot-changelog-monitor/ontap3a-changelog monitor?orgId=1&viewPanel=292) |
+| ONTAP: Changelog Monitor | SVM Changes | stat | [Update](/d/cdot-changelog-monitor/ontap3a-changelog monitor?orgId=1&viewPanel=298) |
+| ONTAP: Changelog Monitor | SVM Changes | stat | [Delete](/d/cdot-changelog-monitor/ontap3a-changelog monitor?orgId=1&viewPanel=300) |
+| ONTAP: Changelog Monitor | SVM Changes | table | [SVM Changes ](/d/cdot-changelog-monitor/ontap3a-changelog monitor?orgId=1&viewPanel=301) |
+| ONTAP: Changelog Monitor | Volume Changes | stat | [Create](/d/cdot-changelog-monitor/ontap3a-changelog monitor?orgId=1&viewPanel=299) |
+| ONTAP: Changelog Monitor | Volume Changes | stat | [Update](/d/cdot-changelog-monitor/ontap3a-changelog monitor?orgId=1&viewPanel=284) |
+| ONTAP: Changelog Monitor | Volume Changes | stat | [Delete](/d/cdot-changelog-monitor/ontap3a-changelog monitor?orgId=1&viewPanel=293) |
+| ONTAP: Changelog Monitor | Volume Changes | table | [Volume Changes ](/d/cdot-changelog-monitor/ontap3a-changelog monitor?orgId=1&viewPanel=295) |
+///
 
 
 
@@ -2819,6 +2868,27 @@ The `environment_sensor_threshold_value` metric is visualized in the following G
 | ONTAP: Health | Highlights | piechart | [Errors](/d/cdot-health/ontap3a-health?orgId=1&viewPanel=268) |
 | ONTAP: Health | Sensor | table | [Sensor Issues](/d/cdot-health/ontap3a-health?orgId=1&viewPanel=285) |
 | ONTAP: Power | Sensor Problems | table | [Sensor Problems](/d/cdot-power/ontap3a-power?orgId=1&viewPanel=86) |
+///
+
+
+
+### ethernet_switch_port_new_status
+
+Represent the status of the ethernet switch port
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| Rest | `NA` | `Harvest generated` | conf/rest/9.8.0/ethernet_switch_port.yaml |
+
+The `ethernet_switch_port_new_status` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Switch | Highlights | table | [Switch Details](/d/cdot-switch/ontap3a-switch?orgId=1&viewPanel=5) |
+| ONTAP: Switch | Interfaces | stat | [Down (Last 24h)](/d/cdot-switch/ontap3a-switch?orgId=1&viewPanel=37) |
+| ONTAP: Switch | Interfaces | table | [Down (Last 24h)](/d/cdot-switch/ontap3a-switch?orgId=1&viewPanel=39) |
+| ONTAP: Switch | Interfaces | timeseries | [Down (Last 24h)](/d/cdot-switch/ontap3a-switch?orgId=1&viewPanel=40) |
 ///
 
 
@@ -4170,6 +4240,25 @@ Total number of FCP operations
 |--------|----------|--------|---------|
 | RestPerf | `api/cluster/counter/tables/fcp` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
 | ZapiPerf | `perf-object-get-instances fcp_port` | `total_ops`<br><span class="key">Unit:</span> per_sec<br><span class="key">Type:</span> rate<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/fcp.yaml |
+
+
+
+### fcp_util_percent
+
+Represent the FCP utilization percentage
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| RestPerf | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/fcp.yaml |
+
+The `fcp_util_percent` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Network | FibreChannel | table | [FC ports](/d/cdot-network/ontap3a-network?orgId=1&viewPanel=71) |
+| ONTAP: Node | Network Layer | timeseries | [Top $TopResources FC Ports by Utilization %](/d/cdot-node/ontap3a-node?orgId=1&viewPanel=110) |
+///
 
 
 
@@ -8546,6 +8635,44 @@ The `nfs_diag_storePool_LayoutStateMax` metric is visualized in the following Gr
 
 
 
+### nfs_diag_storePool_LockAlloc
+
+Represent the current number of lock objects allocated
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| RestPerf | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
+
+The `nfs_diag_storePool_LockAlloc` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | timeseries | [Allocations over 50%](/d/cdot-nfsv4-storepool-monitors/ontap3a-nfsv4 storepool monitors?orgId=1&viewPanel=53) |
+| ONTAP: NFS Troubleshooting | Highlights | timeseries | [All nodes with 1% or more allocations in $Datacenter](/d/cdot-nfs-troubleshooting/ontap3a-nfs troubleshooting?orgId=1&viewPanel=2) |
+///
+
+
+
+### nfs_diag_storePool_LockMax
+
+Represent the maximum number of lock objects
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| RestPerf | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/nfsv4_pool.yaml |
+
+The `nfs_diag_storePool_LockMax` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: NFSv4 StorePool Monitors | Allocations over 50% | timeseries | [Allocations over 50%](/d/cdot-nfsv4-storepool-monitors/ontap3a-nfsv4 storepool monitors?orgId=1&viewPanel=53) |
+| ONTAP: NFS Troubleshooting | Highlights | timeseries | [All nodes with 1% or more allocations in $Datacenter](/d/cdot-nfs-troubleshooting/ontap3a-nfs troubleshooting?orgId=1&viewPanel=2) |
+///
+
+
+
 ### nfs_diag_storePool_LockStateAlloc
 
 Current number of lock state objects allocated.
@@ -8940,25 +9067,6 @@ The `nic_ifgrp_rx_bytes` metric is visualized in the following Grafana dashboard
 |--------|----------|--------|--------|
 | ONTAP: Network | Link Aggregation Group (LAG) | table | [Link Aggregation Groups](/d/cdot-network/ontap3a-network?orgId=1&viewPanel=122) |
 | ONTAP: Network | Link Aggregation Group (LAG) | timeseries | [Top $TopResources LAGs by Receive Throughput](/d/cdot-network/ontap3a-network?orgId=1&viewPanel=124) |
-///
-
-
-
-### nic_ifgrp_speed
-
-Link Aggregation Group (LAG) link speed.
-
-| API    | Endpoint | Metric | Template |
-|--------|----------|--------|---------|
-| RestPerf | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml |
-| ZapiPerf | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
-
-The `nic_ifgrp_speed` metric is visualized in the following Grafana dashboards:
-    
-/// html | div.grafana-table
-| Dashboard | Row | Type | Panel |
-|--------|----------|--------|--------|
-| ONTAP: Network | Link Aggregation Group (LAG) | table | [Link Aggregation Groups](/d/cdot-network/ontap3a-network?orgId=1&viewPanel=122) |
 ///
 
 
@@ -15473,6 +15581,24 @@ Tracks the number of concurrent collectors running.
 
 
 
+### poller_cpu_percent
+
+Tracks the percentage of cpu usage of concurrent collectors running.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | NA |
+
+The `poller_cpu_percent` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| Harvest Metadata | Highlights | timeseries | [% CPU Used](/d/cdot-metadata/harvest metadata?orgId=1&viewPanel=183) |
+///
+
+
+
 ### poller_memory
 
 Tracks the memory usage of the poller process, including Resident Set Size (RSS), swap memory, and Virtual Memory Size (VMS).
@@ -16802,6 +16928,44 @@ The `rw_ctx_qos_rewinds` metric is visualized in the following Grafana dashboard
 
 
 
+### security_account_activediruser
+
+Represent the Active directory user in security account
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| Rest | `NA` | `Harvest generated` | conf/rest/9.12.0/security_account.yaml |
+
+The `security_account_activediruser` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Security | Highlights | stat | [AD/LDAP](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=192) |
+| ONTAP: Security | Cluster Compliance | table | [Cluster Compliance](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=219) |
+///
+
+
+
+### security_account_certificateuser
+
+Represent the Certificate user in security account
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| Rest | `NA` | `Harvest generated` | conf/rest/9.12.0/security_account.yaml |
+
+The `security_account_certificateuser` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Security | Highlights | stat | [Certificate](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=190) |
+| ONTAP: Security | Cluster Compliance | table | [Cluster Compliance](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=219) |
+///
+
+
+
 ### security_account_labels
 
 This metric provides information about SecurityAccount
@@ -16823,6 +16987,63 @@ The `security_account_labels` metric is visualized in the following Grafana dash
 
 
 
+### security_account_ldapuser
+
+Represent the LDAP user in security account
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| Rest | `NA` | `Harvest generated` | conf/rest/9.12.0/security_account.yaml |
+
+The `security_account_ldapuser` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Security | Highlights | stat | [AD/LDAP](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=192) |
+| ONTAP: Security | Cluster Compliance | table | [Cluster Compliance](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=219) |
+///
+
+
+
+### security_account_localuser
+
+Represent the Local user in security account
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| Rest | `NA` | `Harvest generated` | conf/rest/9.12.0/security_account.yaml |
+
+The `security_account_localuser` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Security | Highlights | stat | [Local](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=194) |
+| ONTAP: Security | Cluster Compliance | table | [Cluster Compliance](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=219) |
+///
+
+
+
+### security_account_samluser
+
+Represent the SAML user in security account
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| Rest | `NA` | `Harvest generated` | conf/rest/9.12.0/security_account.yaml |
+
+The `security_account_samluser` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Security | Highlights | stat | [SAML](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=158) |
+| ONTAP: Security | Cluster Compliance | table | [Cluster Compliance](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=219) |
+///
+
+
+
 ### security_audit_destination_port
 
 The destination port used to forward the message.
@@ -16830,6 +17051,26 @@ The destination port used to forward the message.
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | ZAPI | `cluster-log-forward-get-iter` | `cluster-log-forward-info.port` | conf/zapi/cdot/9.8.0/security_audit_dest.yaml |
+
+
+
+### security_audit_destination_status
+
+Represent the security audit protocol in security audit destinations
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| Rest | `NA` | `Harvest generated` | conf/rest/9.12.0/security_audit_dest.yaml |
+
+The `security_audit_destination_status` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Security | Highlights | stat | [Cluster Compliant %](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=214) |
+| ONTAP: Security | Highlights | piechart | [Cluster Compliant](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=215) |
+| ONTAP: Security | Cluster Compliance | table | [Cluster Compliance](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=219) |
+///
 
 
 
@@ -18902,6 +19143,44 @@ The `svm_labels` metric is visualized in the following Grafana dashboards:
 | ONTAP: Security | Highlights | piechart | [SVM Compliant](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=217) |
 | ONTAP: Security | Highlights | piechart | [SVM Autonomous Ransomware Protection](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=209) |
 | ONTAP: Security | Cluster Compliance | table | [Cluster Compliance](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=219) |
+| ONTAP: Security | SVM Compliance | table | [SVM Compliance](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=225) |
+///
+
+
+
+### svm_ldap_encrypted
+
+This metric indicates a LDAP session security has been sealed
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.10.0/svm.yaml |
+| ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/svm.yaml |
+
+The `svm_ldap_encrypted` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Security | SVM Compliance | table | [SVM Compliance](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=225) |
+///
+
+
+
+### svm_ldap_signed
+
+This metric indicates a LDAP session security has been signed
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| REST | `NA` | `Harvest generated` | conf/rest/9.10.0/svm.yaml |
+| ZAPI | `NA` | `Harvest generated` | conf/zapi/cdot/9.8.0/svm.yaml |
+
+The `svm_ldap_signed` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
 | ONTAP: Security | SVM Compliance | table | [SVM Compliance](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=225) |
 ///
 
@@ -21813,6 +22092,24 @@ The `volume_analytics_dir_subdir_count` metric is visualized in the following Gr
 
 
 
+### volume_arw_status
+
+Represent the cluster level ARW status
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| Rest | `NA` | `Harvest generated` | conf/rest/9.14.0/volume.yaml |
+
+The `volume_arw_status` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Security | Cluster Compliance | table | [Cluster Compliance](/d/cdot-security/ontap3a-security?orgId=1&viewPanel=219) |
+///
+
+
+
 ### volume_autosize_grow_threshold_percent
 
 Used space threshold which triggers autogrow. When the size-used is greater than this percent of size-total, the volume will be grown. The computed value is rounded down. The default value of this element varies from 85% to 98%, depending on the volume size. It is an error for the grow threshold to be less than or equal to the shrink threshold.
@@ -23829,6 +24126,24 @@ The `vscan_scanner_stats_pct_network_used` metric is visualized in the following
 | Dashboard | Row | Type | Panel |
 |--------|----------|--------|--------|
 | ONTAP: Vscan | Scanner utilization | timeseries | [Scanner Network Utilization](/d/cdot-vscan/ontap3a-vscan?orgId=1&viewPanel=587) |
+///
+
+
+
+### vscan_server_disconnected
+
+Represent the disconnected vscan servers to the vscan pool
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| Rest | `NA` | `Harvest generated` | conf/rest/9.12.0/vscan.yaml |
+
+The `vscan_server_disconnected` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Vscan | Vscan Server | table | [Disconnected Vscan Servers in Cluster](/d/cdot-vscan/ontap3a-vscan?orgId=1&viewPanel=599) |
 ///
 
 
