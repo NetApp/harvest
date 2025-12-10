@@ -82,7 +82,7 @@ func New(poller *conf.Poller, c *auth.Credentials) (*Client, error) {
 	if poller.IsKfs {
 		url = "https://" + addr + ":8443/servlets/netapp.servlets.admin.XMLrequest_filer"
 	} else {
-		url = "https://" + addr + ":443/servlets/netapp.servlets.admin.XMLrequest_filer"
+		url = "https://" + addr + "/servlets/netapp.servlets.admin.XMLrequest_filer"
 	}
 
 	if poller.LogSet != nil {
