@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Nov-21
+Creation Date : 2025-Dec-10
 ONTAP Version: 9.16.1
 ```
 
@@ -8114,6 +8114,86 @@ The `net_route_labels` metric is visualized in the following Grafana dashboards:
 
 
 
+### netstat_bytes_recvd
+
+Number of bytes received by a TCP connection
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZapiPerf | `perf-object-get-instances netstat` | `bytes_recvd`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
+
+
+
+### netstat_bytes_sent
+
+Number of bytes sent by a TCP connection
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZapiPerf | `perf-object-get-instances netstat` | `bytes_sent`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
+
+
+
+### netstat_cong_win
+
+Congestion window of a TCP connection
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZapiPerf | `perf-object-get-instances netstat` | `cong_win`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
+
+
+
+### netstat_cong_win_th
+
+Congestion window threshold of a TCP connection
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZapiPerf | `perf-object-get-instances netstat` | `cong_win_th`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
+
+
+
+### netstat_ooorcv_pkts
+
+Number of out-of-order packets received by this TCP connection
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZapiPerf | `perf-object-get-instances netstat` | `ooorcv_pkts`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
+
+
+
+### netstat_recv_window
+
+Receive window size of a TCP connection
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZapiPerf | `perf-object-get-instances netstat` | `recv_window`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
+
+
+
+### netstat_rexmit_pkts
+
+Number of packets retransmitted by this TCP connection
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZapiPerf | `perf-object-get-instances netstat` | `rexmit_pkts`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
+
+
+
+### netstat_send_window
+
+Send window size of a TCP connection
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| ZapiPerf | `perf-object-get-instances netstat` | `send_window`<br><span class="key">Unit:</span> none<br><span class="key">Type:</span> raw<br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/netstat.yaml |
+
+
+
 ### nfs_clients_idle_duration
 
 Specifies an ISO-8601 format of date and time to retrieve the idle time duration in hours, minutes, and seconds format.
@@ -8860,6 +8940,25 @@ The `nic_ifgrp_rx_bytes` metric is visualized in the following Grafana dashboard
 |--------|----------|--------|--------|
 | ONTAP: Network | Link Aggregation Group (LAG) | table | [Link Aggregation Groups](/d/cdot-network/ontap3a-network?orgId=1&viewPanel=122) |
 | ONTAP: Network | Link Aggregation Group (LAG) | timeseries | [Top $TopResources LAGs by Receive Throughput](/d/cdot-network/ontap3a-network?orgId=1&viewPanel=124) |
+///
+
+
+
+### nic_ifgrp_speed
+
+Link Aggregation Group (LAG) link speed.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| RestPerf | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml |
+| ZapiPerf | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
+
+The `nic_ifgrp_speed` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Network | Link Aggregation Group (LAG) | table | [Link Aggregation Groups](/d/cdot-network/ontap3a-network?orgId=1&viewPanel=122) |
 ///
 
 

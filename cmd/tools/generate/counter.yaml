@@ -1895,6 +1895,18 @@ counters:
         ONTAPCounter: Harvest generated
         Template: conf/zapiperf/cdot/9.8.0/nic_common.yaml
 
+  - Name: nic_ifgrp_speed
+    Description: Link Aggregation Group (LAG) link speed.
+    APIs:
+      - API: RestPerf
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/restperf/9.12.0/nic_common.yaml
+      - API: ZapiPerf
+        Endpoint: NA
+        ONTAPCounter: Harvest generated
+        Template: conf/zapiperf/cdot/9.8.0/nic_common.yaml
+
   - Name: nic_rx_percent
     Description: Bytes received percentage.
     APIs:

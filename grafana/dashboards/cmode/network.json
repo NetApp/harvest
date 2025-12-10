@@ -1319,6 +1319,23 @@
               "options": {}
             },
             {
+              "id": "configFromData",
+              "options": {
+                "applyTo": {
+                  "id": "byName",
+                  "options": "Value #D"
+                },
+                "configRefId": "A",
+                "mappings": [
+                  {
+                    "fieldName": "speed",
+                    "handlerKey": "threshold1",
+                    "reducerId": "p50"
+                  }
+                ]
+              }
+            },
+            {
               "id": "organize",
               "options": {
                 "excludeByName": {
@@ -2298,6 +2315,26 @@
               {
                 "matcher": {
                   "id": "byName",
+                  "options": "Link Speed"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "bps"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 170
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 0
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
                   "options": "node"
                 },
                 "properties": [
@@ -2446,6 +2483,15 @@
               "interval": "",
               "legendFormat": "",
               "refId": "E"
+            },
+            {
+              "editorMode": "code",
+              "expr": "nic_ifgrp_speed{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",ports!=\"\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "legendFormat": "",
+              "refId": "A"
             }
           ],
           "title": "Link Aggregation Groups",
@@ -2461,7 +2507,8 @@
                     "ifgroup",
                     "ports",
                     "datacenter",
-                    "cluster"
+                    "cluster",
+                    "Value #A"
                   ]
                 }
               }
@@ -2469,6 +2516,23 @@
             {
               "id": "merge",
               "options": {}
+            },
+            {
+              "id": "configFromData",
+              "options": {
+                "applyTo": {
+                  "id": "byName",
+                  "options": "Value #D"
+                },
+                "configRefId": "A",
+                "mappings": [
+                  {
+                    "fieldName": "speed",
+                    "handlerKey": "threshold1",
+                    "reducerId": "p50"
+                  }
+                ]
+              }
             },
             {
               "id": "organize",
@@ -2484,15 +2548,17 @@
                 },
                 "includeByName": {},
                 "indexByName": {
-                  "Value #D": 5,
-                  "Value #E": 6,
+                  "Value #A": 4,
+                  "Value #D": 6,
+                  "Value #E": 7,
                   "cluster": 1,
                   "datacenter": 0,
                   "ifgroup": 3,
                   "node": 2,
-                  "ports": 4
+                  "ports": 5
                 },
                 "renameByName": {
+                  "Value #A": "Link Speed",
                   "ifgroup": "LAG",
                   "ports": "Ports"
                 }
@@ -5256,5 +5322,5 @@
   "timezone": "",
   "title": "ONTAP: Network",
   "uid": "cdot-network",
-  "version": 13
+  "version": 14
 }
