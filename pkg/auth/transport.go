@@ -149,6 +149,10 @@ func DumpRequest(req *http.Request, body bool) ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
+		//goland:noinspection GoUnhandledErrorResult
+		defer req.Body.Close()
+		//goland:noinspection GoUnhandledErrorResult
+		defer save.Close()
 	}
 
 	var b bytes.Buffer

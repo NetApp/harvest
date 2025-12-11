@@ -40,6 +40,8 @@ func JSONToGson(path string, flatten bool) []gjson.Result {
 		if err != nil {
 			panic(err)
 		}
+		//goland:noinspection GoUnhandledErrorResult
+		defer reader.(*gzip.Reader).Close()
 	} else {
 		data, err := os.ReadFile(path)
 		if err != nil {
