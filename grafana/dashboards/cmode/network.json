@@ -922,20 +922,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "rgb(80, 220, 20)",
+                    "color": "green",
                     "value": null
-                  },
-                  {
-                    "color": "light-yellow",
-                    "value": 1000000
-                  },
-                  {
-                    "color": "semi-dark-orange",
-                    "value": 10000000
-                  },
-                  {
-                    "color": "semi-dark-red",
-                    "value": 100000000
                   }
                 ]
               },
@@ -991,7 +979,125 @@
                   {
                     "id": "thresholds",
                     "value": {
-                      "mode": "absolute",
+                      "mode": "percentage",
+                      "steps": [
+                        {
+                          "color": "rgb(80, 220, 20)",
+                          "value": null
+                        },
+                        {
+                          "color": "light-yellow",
+                          "value": 50
+                        },
+                        {
+                          "color": "semi-dark-orange",
+                          "value": 75
+                        },
+                        {
+                          "color": "semi-dark-red",
+                          "value": 90
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "max",
+                    "value": 1
+                  },
+                  {
+                    "id": "min",
+                    "value": 0
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #F"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "percentunit"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "gradient",
+                      "type": "gauge"
+                    }
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "Send %"
+                  },
+                  {
+                    "id": "noValue",
+                    "value": "n/a"
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "percentage",
+                      "steps": [
+                        {
+                          "color": "rgb(80, 220, 20)",
+                          "value": null
+                        },
+                        {
+                          "color": "light-yellow",
+                          "value": 50
+                        },
+                        {
+                          "color": "semi-dark-orange",
+                          "value": 75
+                        },
+                        {
+                          "color": "semi-dark-red",
+                          "value": 90
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "max",
+                    "value": 1
+                  },
+                  {
+                    "id": "min",
+                    "value": 0
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #G"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "percentunit"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "gradient",
+                      "type": "gauge"
+                    }
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "Receive %"
+                  },
+                  {
+                    "id": "noValue",
+                    "value": "n/a"
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "percentage",
                       "steps": [
                         {
                           "color": "rgb(80, 220, 20)",
@@ -1139,13 +1245,6 @@
                   {
                     "id": "displayName",
                     "value": "Send"
-                  },
-                  {
-                    "id": "custom.cellOptions",
-                    "value": {
-                      "mode": "gradient",
-                      "type": "gauge"
-                    }
                   }
                 ]
               },
@@ -1158,13 +1257,6 @@
                   {
                     "id": "displayName",
                     "value": "Receive"
-                  },
-                  {
-                    "id": "custom.cellOptions",
-                    "value": {
-                      "mode": "gradient",
-                      "type": "gauge"
-                    }
                   }
                 ]
               },
@@ -1291,6 +1383,26 @@
               "interval": "",
               "legendFormat": "",
               "refId": "E"
+            },
+            {
+              "datasource": "${DS_PROMETHEUS}",
+              "expr": "nic_tx_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "F"
+            },
+            {
+              "datasource": "${DS_PROMETHEUS}",
+              "expr": "nic_rx_percent{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",nic=~\"$Eth\",node=~\"$Node\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "G"
             }
           ],
           "title": "NIC ports",
@@ -1308,6 +1420,8 @@
                     "Value #C",
                     "Value #D",
                     "Value #E",
+                    "Value #F",
+                    "Value #G",
                     "cluster",
                     "datacenter"
                   ]
@@ -1317,23 +1431,6 @@
             {
               "id": "merge",
               "options": {}
-            },
-            {
-              "id": "configFromData",
-              "options": {
-                "applyTo": {
-                  "id": "byName",
-                  "options": "Value #D"
-                },
-                "configRefId": "A",
-                "mappings": [
-                  {
-                    "fieldName": "speed",
-                    "handlerKey": "threshold1",
-                    "reducerId": "p50"
-                  }
-                ]
-              }
             },
             {
               "id": "organize",
@@ -1354,7 +1451,9 @@
                   "Value #B": 6,
                   "Value #C": 7,
                   "Value #D": 8,
-                  "Value #E": 9,
+                  "Value #E": 10,
+                  "Value #F": 9,
+                  "Value #G": 11,
                   "cluster": 1,
                   "datacenter": 0,
                   "nic": 3,
@@ -2291,20 +2390,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "rgb(80, 220, 20)",
+                    "color": "green",
                     "value": null
-                  },
-                  {
-                    "color": "light-yellow",
-                    "value": 1000000
-                  },
-                  {
-                    "color": "semi-dark-orange",
-                    "value": 10000000
-                  },
-                  {
-                    "color": "semi-dark-red",
-                    "value": 100000000
                   }
                 ]
               },
@@ -2312,26 +2399,6 @@
               "unitScale": true
             },
             "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Link Speed"
-                },
-                "properties": [
-                  {
-                    "id": "unit",
-                    "value": "bps"
-                  },
-                  {
-                    "id": "custom.width",
-                    "value": 170
-                  },
-                  {
-                    "id": "decimals",
-                    "value": 0
-                  }
-                ]
-              },
               {
                 "matcher": {
                   "id": "byName",
@@ -2411,10 +2478,6 @@
                   {
                     "id": "displayName",
                     "value": "Send"
-                  },
-                  {
-                    "id": "custom.displayMode",
-                    "value": "gradient-gauge"
                   }
                 ]
               },
@@ -2427,10 +2490,124 @@
                   {
                     "id": "displayName",
                     "value": "Receive"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #A"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "percentunit"
                   },
                   {
-                    "id": "custom.displayMode",
-                    "value": "gradient-gauge"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "gradient",
+                      "type": "gauge"
+                    }
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "Send %"
+                  },
+                  {
+                    "id": "noValue",
+                    "value": "n/a"
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "percentage",
+                      "steps": [
+                        {
+                          "color": "rgb(80, 220, 20)",
+                          "value": null
+                        },
+                        {
+                          "color": "light-yellow",
+                          "value": 50
+                        },
+                        {
+                          "color": "semi-dark-orange",
+                          "value": 75
+                        },
+                        {
+                          "color": "semi-dark-red",
+                          "value": 90
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "max",
+                    "value": 1
+                  },
+                  {
+                    "id": "min",
+                    "value": 0
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #B"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "percentunit"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "gradient",
+                      "type": "gauge"
+                    }
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "Receive %"
+                  },
+                  {
+                    "id": "noValue",
+                    "value": "n/a"
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "percentage",
+                      "steps": [
+                        {
+                          "color": "rgb(80, 220, 20)",
+                          "value": null
+                        },
+                        {
+                          "color": "light-yellow",
+                          "value": 50
+                        },
+                        {
+                          "color": "semi-dark-orange",
+                          "value": 75
+                        },
+                        {
+                          "color": "semi-dark-red",
+                          "value": 90
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "max",
+                    "value": 1
+                  },
+                  {
+                    "id": "min",
+                    "value": 0
                   }
                 ]
               }
@@ -2486,12 +2663,23 @@
             },
             {
               "editorMode": "code",
-              "expr": "nic_ifgrp_speed{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",ports!=\"\"}",
+              "expr": "nic_ifgrp_tx_perc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",ports!=\"\"}",
               "format": "table",
               "hide": false,
               "instant": true,
+              "interval": "",
               "legendFormat": "",
               "refId": "A"
+            },
+            {
+              "editorMode": "code",
+              "expr": "nic_ifgrp_rx_perc{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",node=~\"$Node\",ports!=\"\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "B"
             }
           ],
           "title": "Link Aggregation Groups",
@@ -2504,11 +2692,12 @@
                     "node",
                     "Value #D",
                     "Value #E",
+                    "Value #A",
+                    "Value #B",
                     "ifgroup",
                     "ports",
                     "datacenter",
-                    "cluster",
-                    "Value #A"
+                    "cluster"
                   ]
                 }
               }
@@ -2516,23 +2705,6 @@
             {
               "id": "merge",
               "options": {}
-            },
-            {
-              "id": "configFromData",
-              "options": {
-                "applyTo": {
-                  "id": "byName",
-                  "options": "Value #D"
-                },
-                "configRefId": "A",
-                "mappings": [
-                  {
-                    "fieldName": "speed",
-                    "handlerKey": "threshold1",
-                    "reducerId": "p50"
-                  }
-                ]
-              }
             },
             {
               "id": "organize",
@@ -2548,9 +2720,10 @@
                 },
                 "includeByName": {},
                 "indexByName": {
-                  "Value #A": 4,
+                  "Value #A": 7,
+                  "Value #B": 9,
                   "Value #D": 6,
-                  "Value #E": 7,
+                  "Value #E": 8,
                   "cluster": 1,
                   "datacenter": 0,
                   "ifgroup": 3,
@@ -2558,7 +2731,6 @@
                   "ports": 5
                 },
                 "renameByName": {
-                  "Value #A": "Link Speed",
                   "ifgroup": "LAG",
                   "ports": "Ports"
                 }

@@ -43,7 +43,8 @@ type Nic struct {
 var ifgrpMetrics = []string{
 	"rx_bytes",
 	"tx_bytes",
-	"speed",
+	"rx_perc",
+	"tx_perc",
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -198,11 +199,7 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collect
 					tx.SetValueFloat64(instance, txPercent)
 				}
 
-				linkSpeed := float64(speed)
-				if strings.HasSuffix(s, "M") {
-					linkSpeed = float64(speed) * 8
-				}
-				portDataMap[nodeName+port] = collectors.PortData{Node: nodeName, Port: port, Read: rxBytes, Write: txBytes, Speed: linkSpeed}
+				portDataMap[nodeName+port] = collectors.PortData{Node: nodeName, Port: port, Read: rxBytes, Write: txBytes, ReadPerc: rxPercent, WritePerc: txPercent}
 
 				if rxOk || txOk {
 					utilPercent.SetValueFloat64(instance, math.Max(rxPercent, txPercent))

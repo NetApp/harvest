@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Dec-10
+Creation Date : 2025-Dec-11
 ONTAP Version: 9.16.1
 ```
 
@@ -9071,16 +9071,16 @@ The `nic_ifgrp_rx_bytes` metric is visualized in the following Grafana dashboard
 
 
 
-### nic_ifgrp_speed
+### nic_ifgrp_rx_perc
 
-Link Aggregation Group (LAG) link speed.
+Link Aggregation Group (LAG) Bytes received percentage.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
 | RestPerf | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml |
 | ZapiPerf | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
 
-The `nic_ifgrp_speed` metric is visualized in the following Grafana dashboards:
+The `nic_ifgrp_rx_perc` metric is visualized in the following Grafana dashboards:
     
 /// html | div.grafana-table
 | Dashboard | Row | Type | Panel |
@@ -9106,6 +9106,25 @@ The `nic_ifgrp_tx_bytes` metric is visualized in the following Grafana dashboard
 |--------|----------|--------|--------|
 | ONTAP: Network | Link Aggregation Group (LAG) | table | [Link Aggregation Groups](/d/cdot-network/ontap3a-network?orgId=1&viewPanel=122) |
 | ONTAP: Network | Link Aggregation Group (LAG) | timeseries | [Top $TopResources LAGs by Send Throughput](/d/cdot-network/ontap3a-network?orgId=1&viewPanel=123) |
+///
+
+
+
+### nic_ifgrp_tx_perc
+
+Link Aggregation Group (LAG) Bytes sent percentage.
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+| RestPerf | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml |
+| ZapiPerf | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
+
+The `nic_ifgrp_tx_perc` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Network | Link Aggregation Group (LAG) | table | [Link Aggregation Groups](/d/cdot-network/ontap3a-network?orgId=1&viewPanel=122) |
 ///
 
 
@@ -9275,6 +9294,14 @@ Bytes received percentage.
 | RestPerf | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml |
 | ZapiPerf | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
 
+The `nic_rx_percent` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Network | Ethernet | table | [NIC ports](/d/cdot-network/ontap3a-network?orgId=1&viewPanel=58) |
+///
+
 
 
 ### nic_rx_total_errors
@@ -9360,6 +9387,14 @@ Bytes sent percentage.
 |--------|----------|--------|---------|
 | RestPerf | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/restperf/9.12.0/nic_common.yaml |
 | ZapiPerf | `NA` | `Harvest generated`<br><span class="key">Unit:</span> <br><span class="key">Type:</span> <br><span class="key">Base:</span>  | conf/zapiperf/cdot/9.8.0/nic_common.yaml |
+
+The `nic_tx_percent` metric is visualized in the following Grafana dashboards:
+    
+/// html | div.grafana-table
+| Dashboard | Row | Type | Panel |
+|--------|----------|--------|--------|
+| ONTAP: Network | Ethernet | table | [NIC ports](/d/cdot-network/ontap3a-network?orgId=1&viewPanel=58) |
+///
 
 
 

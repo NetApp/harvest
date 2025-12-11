@@ -35,11 +35,12 @@ type embedShelf struct {
 }
 
 type PortData struct {
-	Node  string
-	Port  string
-	Read  float64
-	Write float64
-	Speed float64
+	Node      string
+	Port      string
+	Read      float64
+	Write     float64
+	ReadPerc  float64
+	WritePerc float64
 }
 
 // Reference https://kb.netapp.com/onprem/ontap/hardware/FAQ%3A_How_do_shelf_product_IDs_and_modules_in_ONTAP_map_to_a_model_of_a_shelf_or_storage_system_with_embedded_storage
@@ -483,7 +484,8 @@ func PopulateIfgroupMetrics(portIfgroupMap map[string]string, portDataMap map[st
 		port := portInfo.Port
 		readBytes := portInfo.Read
 		writeBytes := portInfo.Write
-		linkSpeed := portInfo.Speed
+		readPerc := portInfo.ReadPerc
+		writePerc := portInfo.WritePerc
 
 		ifgrpupInstanceKey := nodeName + ifgroupName
 		ifgroupInstance := nData.GetInstance(ifgrpupInstanceKey)
@@ -519,9 +521,13 @@ func PopulateIfgroupMetrics(portIfgroupMap map[string]string, portDataMap map[st
 		txv, _ := tx.GetValueFloat64(ifgroupInstance)
 		tx.SetValueFloat64(ifgroupInstance, writeBytes+txv)
 
-		speed := nData.GetMetric("speed")
-		speedv, _ := speed.GetValueFloat64(ifgroupInstance)
-		speed.SetValueFloat64(ifgroupInstance, linkSpeed+speedv)
+		rxp := nData.GetMetric("rx_perc")
+		rxpv, _ := rxp.GetValueFloat64(ifgroupInstance)
+		rxp.SetValueFloat64(ifgroupInstance, readPerc+rxpv)
+
+		txp := nData.GetMetric("tx_perc")
+		txpv, _ := txp.GetValueFloat64(ifgroupInstance)
+		txp.SetValueFloat64(ifgroupInstance, writePerc+txpv)
 	}
 	return nil
 }
