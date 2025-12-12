@@ -214,6 +214,7 @@ func generateDocker(kind int) {
 	if err != nil {
 		tools.LogErrAndExit(err)
 	}
+	defer out.Close()
 
 	if kind == harvest {
 		// generate admin service if configuration is present in harvest config
@@ -250,6 +251,7 @@ func generateDocker(kind int) {
 		if err != nil {
 			tools.LogErrAndExit(err)
 		}
+		defer promStackOut.Close()
 		err = pt.Execute(promStackOut, promTemplate)
 		if err != nil {
 			tools.LogErrAndExit(err)

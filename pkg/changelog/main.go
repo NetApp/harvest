@@ -71,6 +71,7 @@ func (c *cli) makeDraft() {
 		)
 		return
 	}
+	defer out.Close()
 	_, _ = out.WriteString(`
 - :gem: Seven new dashboards:
     - StorageGRID and ONTAP fabric pool
