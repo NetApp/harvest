@@ -43,8 +43,12 @@ docker run -d \
   -p 8082:8082 \
   --env HARVEST_TSDB_URL=http://your-prometheus:9090 \
   ghcr.io/netapp/harvest-mcp:latest \
-  start --http --port 8082
+  start --http --port 8082 --host 0.0.0.0
 ```
+
+If you only want to bind to localhost, omit the `--host` option.
+
+```bash
 
 Then configure your mcp.json:
 
