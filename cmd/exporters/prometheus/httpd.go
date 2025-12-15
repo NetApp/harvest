@@ -9,6 +9,7 @@ package prometheus
 import (
 	"errors"
 	"fmt"
+	"github.com/netapp/harvest/v2/cmd/exporters"
 	"log/slog"
 	"net"
 	"net/http"
@@ -148,7 +149,7 @@ func (p *Prometheus) ServeMetrics(w http.ResponseWriter, r *http.Request) {
 
 	// serve our own metadata
 	// notice that some values are always taken from previous session
-	md, _, _ := p.render(p.Metadata)
+	md, _, _ := exporters.Render(p.Metadata, p.addMetaTags, p.Params.SortLabels, p.globalPrefix, p.Logger, "")
 	_, err = p.aCache.streamMetrics(w, tagsSeen, md)
 	if err != nil {
 		p.Logger.Error("failed to stream metadata metrics", slogx.Err(err))

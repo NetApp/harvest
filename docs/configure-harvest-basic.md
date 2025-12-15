@@ -58,6 +58,8 @@ data to a database, NOT the names used to refer to the actual databases.
 
 ### [InfluxDB Exporter](influxdb-exporter.md)
 
+### [VictoriaMetrics Exporter](victoriametrics-exporter.md)
+
 ## Tools
 
 This section is optional. You can uncomment the `grafana_api_token` key and add your Grafana API token so `harvest` does
