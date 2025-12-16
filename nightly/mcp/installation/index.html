@@ -2255,17 +2255,20 @@
 <span class="w">  </span>-p<span class="w"> </span><span class="m">8082</span>:8082<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--env<span class="w"> </span><span class="nv">HARVEST_TSDB_URL</span><span class="o">=</span>http://your-prometheus:9090<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>ghcr.io/netapp/harvest-mcp:latest<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>start<span class="w"> </span>--http<span class="w"> </span>--port<span class="w"> </span><span class="m">8082</span>
+<span class="w">  </span>start<span class="w"> </span>--http<span class="w"> </span>--port<span class="w"> </span><span class="m">8082</span><span class="w"> </span>--host<span class="w"> </span><span class="m">0</span>.0.0.0
 </code></pre></div>
-<p>Then configure your mcp.json:</p>
-<div class="highlight"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;servers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;harvest-mcp&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://localhost:8082&quot;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="p">}</span>
+<p>If you only want to bind to localhost, omit the <code>--host</code> option.</p>
+<div class="highlight"><pre><span></span><code>Then<span class="w"> </span>configure<span class="w"> </span>your<span class="w"> </span>mcp.json:
+
+<span class="sb">```</span>json
+<span class="o">{</span>
+<span class="w">  </span><span class="s2">&quot;servers&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="s2">&quot;harvest-mcp&quot;</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">      </span><span class="s2">&quot;type&quot;</span>:<span class="w"> </span><span class="s2">&quot;http&quot;</span>,
+<span class="w">      </span><span class="s2">&quot;url&quot;</span>:<span class="w"> </span><span class="s2">&quot;http://localhost:8082&quot;</span>
+<span class="w">    </span><span class="o">}</span>
+<span class="w">  </span><span class="o">}</span>
+<span class="o">}</span>
 </code></pre></div>
 <p>For remote server access:</p>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
