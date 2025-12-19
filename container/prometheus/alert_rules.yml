@@ -6,7 +6,7 @@ groups:
 
   # Alert for any instance that is unreachable for >5 minutes.
   - alert: InstanceDown
-    expr: up{} == 0
+    expr: up{job=~"harvest.*"} == 0
     for: 5m
     labels:
       severity: "critical"
