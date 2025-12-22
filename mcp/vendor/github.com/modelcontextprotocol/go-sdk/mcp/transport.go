@@ -69,7 +69,7 @@ type Connection interface {
 type clientConnection interface {
 	Connection
 
-	// SessionUpdated is called whenever the client session state changes.
+	// sessionUpdated is called whenever the client session state changes.
 	sessionUpdated(clientSessionState)
 }
 
@@ -204,8 +204,7 @@ func (c *canceller) Preempt(ctx context.Context, req *jsonrpc.Request) (result a
 // call executes and awaits a jsonrpc2 call on the given connection,
 // translating errors into the mcp domain.
 func call(ctx context.Context, conn *jsonrpc2.Connection, method string, params Params, result Result) error {
-	// TODO: the "%w"s in this function effectively make jsonrpc2.WireError part of the API.
-	// Consider alternatives.
+	// The "%w"s in this function expose jsonrpc.Error as part of the API.
 	call := conn.Call(ctx, method, params)
 	err := call.Await(ctx, result)
 	switch {
@@ -217,6 +216,18 @@ func call(ctx context.Context, conn *jsonrpc2.Connection, method string, params 
 			Reason:    ctx.Err().Error(),
 			RequestID: call.ID().Raw(),
 		})
+		// By default, the jsonrpc2 library waits for graceful shutdown when the
+		// connection is closed, meaning it expects all outgoing and incoming
+		// requests to complete. However, for MCP this expectation is unrealistic,
+		// and can lead to hanging shutdown. For example, if a streamable client is
+		// killed, the server will not be able to detect this event, except via
+		// keepalive pings (if they are configured), and so outgoing calls may hang
+		// indefinitely.
+		//
+		// Therefore, we choose to eagerly retire calls, removing them from the
+		// outgoingCalls map, when the caller context is cancelled: if the caller
+		// will never receive the response, there's no need to track it.
+		conn.Retire(call, ctx.Err())
 		return errors.Join(ctx.Err(), err)
 	case err != nil:
 		return fmt.Errorf("calling %q: %w", method, err)
@@ -381,7 +392,8 @@ func newIOConn(rwc io.ReadWriteCloser) *ioConn {
 				var tr [1]byte
 				if n, readErr := dec.Buffered().Read(tr[:]); n > 0 {
 					// If read byte is not a newline, it is an error.
-					if tr[0] != '\n' {
+					// Support both Unix (\n) and Windows (\r\n) line endings.
+					if tr[0] != '\n' && tr[0] != '\r' {
 						err = fmt.Errorf("invalid trailing data at the end of stream")
 					}
 				} else if readErr != nil && readErr != io.EOF {
