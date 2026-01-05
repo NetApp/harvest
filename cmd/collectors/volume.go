@@ -51,8 +51,7 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 		return nil, nil, err
 	}
 
-	cache := data.Clone(matrix.With{Data: false, Metrics: true, Instances: false, ExportInstances: true})
-	cache.UUID += ".Volume"
+	var flexgroupCount int
 
 	for _, i := range data.GetInstances() {
 		volName := i.GetLabel("volume")
@@ -61,14 +60,16 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 		case "flexgroup_constituent":
 			match := flexgroupRegex.FindStringSubmatch(volName)
 			key := svmName + "." + match[1]
-			if cache.GetInstance(key) == nil {
-				fg, _ := cache.NewInstance(key)
+			if data.GetInstance(key) == nil {
+				fg, _ := data.NewInstance(key)
 				fg.SetLabels(maps.Clone(i.GetLabels()))
 				fg.SetLabel("volume", match[1])
 				fg.SetLabel("node", "")
 				fg.SetLabel("uuid", "")
 				fg.SetLabel(style, "flexgroup")
+				fg.SetExportable(true)
 				fgAggrMap[key] = set.New()
+				flexgroupCount++
 			}
 
 			if volumeAggrMatrix.GetInstance(key) == nil {
@@ -99,7 +100,7 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 		}
 	}
 
-	logger.Debug("", slog.Int("flexgroup volume count", len(cache.GetInstances())))
+	logger.Debug("", slog.Int("flexgroup volume count", flexgroupCount))
 
 	recordFGFalse := make(map[string]*set.Set)
 	for _, i := range data.GetInstances() {
@@ -118,9 +119,9 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 			flexgroupInstance.SetLabel("aggr", strings.Join(aggrs, ","))
 		}
 
-		fg := cache.GetInstance(key)
+		fg := data.GetInstance(key)
 		if fg == nil {
-			logger.Error("instance not in local cache", slog.String("key", key))
+			logger.Error("instance not in data matrix", slog.String("key", key))
 			continue
 		}
 
@@ -133,9 +134,9 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 				continue
 			}
 
-			fgm := cache.GetMetric(mkey)
+			fgm := data.GetMetric(mkey)
 			if fgm == nil {
-				logger.Error("metric not in local cache", slog.String("key", mkey))
+				logger.Error("metric not in data matrix", slog.String("key", mkey))
 				continue
 			}
 
@@ -158,10 +159,10 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 
 						prod := value * opsValue
 						tempOpsKey := opsKeyPrefix + opsKey
-						tempOps := cache.GetMetric(tempOpsKey)
+						tempOps := data.GetMetric(tempOpsKey)
 
 						if tempOps == nil {
-							if tempOps, err = cache.NewMetricFloat64(tempOpsKey); err != nil {
+							if tempOps, err = data.NewMetricFloat64(tempOpsKey); err != nil {
 								return nil, nil, err
 							}
 							tempOps.SetExportable(false)
@@ -192,11 +193,11 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 		}
 	}
 
-	for k, i := range cache.GetInstances() {
+	for k, i := range data.GetInstances() {
 		if !i.IsExportable() {
 			continue
 		}
-		for mkey, m := range cache.GetMetrics() {
+		for mkey, m := range data.GetMetrics() {
 			if mNames, ok := recordFGFalse[k]; ok {
 				if mNames.Has(m.GetName()) {
 					m.SetValueNAN(i)
@@ -210,7 +211,7 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 						opsKey = m.GetComment()
 					}
 
-					if ops := cache.GetMetric(opsKeyPrefix + opsKey); ops != nil {
+					if ops := data.GetMetric(opsKeyPrefix + opsKey); ops != nil {
 						if opsValue, ok := ops.GetValueFloat64(i); ok && opsValue != 0 {
 							m.SetValueFloat64(i, value/opsValue)
 						} else {
@@ -223,9 +224,9 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 	}
 
 	if enableVolumeAggrMatrix {
-		return []*matrix.Matrix{cache, volumeAggrMatrix}, nil, nil
+		return []*matrix.Matrix{volumeAggrMatrix}, nil, nil
 	}
-	return []*matrix.Matrix{cache}, nil, nil
+	return nil, nil, nil
 }
 
 func ProcessFlexGroupFootPrint(data *matrix.Matrix, logger *slog.Logger) *matrix.Matrix {
