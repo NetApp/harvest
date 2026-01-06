@@ -75,6 +75,13 @@ var armModelToModelName = map[uint64]string{
 	0xd4c: "Cortex-X1C",
 	0xd4d: "Cortex-A715",
 	0xd4e: "Cortex-X3",
+	0xd4f: "Neoverse-V2",
+	0xd81: "Cortex-A720",
+	0xd82: "Cortex-X4",
+	0xd84: "Neoverse-V3",
+	0xd85: "Cortex-X925",
+	0xd87: "Cortex-A725",
+	0xd8e: "Neoverse-N3",
 }
 
 func sysCPUPath(ctx context.Context, cpu int32, relPath string) string {
@@ -86,7 +93,7 @@ func finishCPUInfo(ctx context.Context, c *InfoStat) {
 	var err error
 	var value float64
 
-	if len(c.CoreID) == 0 {
+	if c.CoreID == "" {
 		lines, err = common.ReadLines(sysCPUPath(ctx, c.CPU, "topology/core_id"))
 		if err == nil {
 			c.CoreID = lines[0]
@@ -125,14 +132,17 @@ func Info() ([]InfoStat, error) {
 
 func InfoWithContext(ctx context.Context) ([]InfoStat, error) {
 	filename := common.HostProcWithContext(ctx, "cpuinfo")
-	lines, _ := common.ReadLines(filename)
+	lines, err := common.ReadLines(filename)
+	if err != nil {
+		return nil, fmt.Errorf("could not read %s: %w", filename, err)
+	}
 
 	var ret []InfoStat
 	var processorName string
 
 	c := InfoStat{CPU: -1, Cores: 1}
 	for _, line := range lines {
-		fields := strings.Split(line, ":")
+		fields := strings.SplitN(line, ":", 2)
 		if len(fields) < 2 {
 			continue
 		}
@@ -157,6 +167,25 @@ func InfoWithContext(ctx context.Context) ([]InfoStat, error) {
 			c.VendorID = value
 			if strings.Contains(value, "S390") {
 				processorName = "S390"
+			}
+		case "mvendorid":
+			if !strings.HasPrefix(value, "0x") {
+				continue
+			}
+
+			if v, err := strconv.ParseUint(value[2:], 16, 32); err == nil {
+				switch v {
+				case 0x31e:
+					c.VendorID = "Andes"
+				case 0x029:
+					c.VendorID = "Microchip"
+				case 0x127:
+					c.VendorID = "MIPS"
+				case 0x489:
+					c.VendorID = "SiFive"
+				case 0x5b7:
+					c.VendorID = "T-Head"
+				}
 			}
 		case "CPU implementer":
 			if v, err := strconv.ParseUint(value, 0, 8); err == nil {
@@ -193,9 +222,9 @@ func InfoWithContext(ctx context.Context) ([]InfoStat, error) {
 					c.VendorID = "Ampere"
 				}
 			}
-		case "cpu family":
+		case "cpu family", "marchid":
 			c.Family = value
-		case "model", "CPU part":
+		case "model", "CPU part", "mimpid":
 			c.Model = value
 			// if CPU is arm based, model name is found via model number. refer to: arch/arm64/kernel/cpuinfo.c
 			if c.VendorID == "ARM" {
@@ -208,7 +237,7 @@ func InfoWithContext(ctx context.Context) ([]InfoStat, error) {
 					}
 				}
 			}
-		case "Model Name", "model name", "cpu":
+		case "Model Name", "model name", "cpu", "uarch":
 			c.ModelName = value
 			if strings.Contains(value, "POWER") {
 				c.Model = strings.Split(value, " ")[0]
@@ -220,6 +249,10 @@ func InfoWithContext(ctx context.Context) ([]InfoStat, error) {
 
 			if key == "revision" {
 				val = strings.Split(value, ".")[0]
+			}
+
+			if strings.EqualFold(val, "unknown") {
+				continue
 			}
 
 			t, err := strconv.ParseInt(val, 10, 32)
@@ -238,7 +271,7 @@ func InfoWithContext(ctx context.Context) ([]InfoStat, error) {
 				return ret, err
 			}
 			c.CacheSize = int32(t)
-		case "physical id":
+		case "physical id", "hart":
 			c.PhysicalID = value
 		case "core id":
 			c.CoreID = value
@@ -246,6 +279,11 @@ func InfoWithContext(ctx context.Context) ([]InfoStat, error) {
 			c.Flags = strings.FieldsFunc(value, func(r rune) bool {
 				return r == ',' || r == ' '
 			})
+		case "isa", "hart isa":
+			if len(c.Flags) != 0 || !strings.HasPrefix(value, "rv64") {
+				continue
+			}
+			c.Flags = riscvISAParse(value)
 		case "microcode":
 			c.Microcode = value
 		}
@@ -255,4 +293,14 @@ func InfoWithContext(ctx context.Context) ([]InfoStat, error) {
 		ret = append(ret, c)
 	}
 	return ret, nil
+}
+
+func riscvISAParse(s string) []string {
+	ext := strings.Split(s, "_")
+	if len(ext[0]) <= 4 {
+		return nil
+	}
+	// the base extensions must "rv64" prefix
+	base := strings.Split(ext[0][4:], "")
+	return append(base, ext[1:]...)
 }
