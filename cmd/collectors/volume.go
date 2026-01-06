@@ -222,10 +222,42 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 		}
 	}
 
-	if enableVolumeAggrMatrix {
-		return []*matrix.Matrix{cache, volumeAggrMatrix}, nil, nil
+	// Merge FlexGroup instances from cache back to data matrix for downstream plugins like topclients
+	for fgKey, fgInstance := range cache.GetInstances() {
+		if !fgInstance.IsExportable() {
+			continue
+		}
+
+		dataInstance := data.GetInstance(fgKey)
+		if dataInstance == nil {
+			if dataInstance, err = data.NewInstance(fgKey); err != nil {
+				logger.Error("Failed to create instance in data matrix", slogx.Err(err), slog.String("key", fgKey))
+				continue
+			}
+			dataInstance.SetLabels(fgInstance.GetLabels())
+		}
+
+		for metricKey, cacheMetric := range cache.GetMetrics() {
+			if !cacheMetric.IsExportable() {
+				continue
+			}
+
+			dataMetric := data.GetMetric(metricKey)
+			if dataMetric == nil {
+				logger.Warn("Metric not found in data matrix, skipping", slog.String("metric", metricKey))
+				continue
+			}
+
+			if value, ok := cacheMetric.GetValueFloat64(fgInstance); ok {
+				dataMetric.SetValueFloat64(dataInstance, value)
+			}
+		}
 	}
-	return []*matrix.Matrix{cache}, nil, nil
+
+	if enableVolumeAggrMatrix {
+		return []*matrix.Matrix{volumeAggrMatrix}, nil, nil
+	}
+	return nil, nil, nil
 }
 
 func ProcessFlexGroupFootPrint(data *matrix.Matrix, logger *slog.Logger) *matrix.Matrix {

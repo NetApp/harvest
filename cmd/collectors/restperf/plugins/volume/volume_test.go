@@ -92,13 +92,12 @@ func runVolumeTest(t *testing.T, createVolume func(params *node.Node) plugin.Plu
 	assert.Nil(t, err)
 
 	// Verify the output
-	assert.Equal(t, len(output), 2)
+	assert.Equal(t, len(output), 1)
 
-	cache := output[0]
-	volumeAggrmetric := output[1]
+	volumeAggrmetric := output[0]
 
-	// Check for flexgroup instance
-	flexgroupInstance := cache.GetInstance("svm1.RahulTest")
+	// Check for flexgroup instance in the modified data matrix
+	flexgroupInstance := data.GetInstance("svm1.RahulTest")
 	assert.NotNil(t, flexgroupInstance)
 
 	// Check for flexgroup constituents
@@ -118,30 +117,31 @@ func runVolumeTest(t *testing.T, createVolume func(params *node.Node) plugin.Plu
 	// Verify aggregated ops metric
 	if setMetricNaN {
 		assert.True(t, flexgroupMetricInstance.IsExportable())
-		_, ok := cache.GetMetric("read_ops").GetValueFloat64(flexgroupInstance)
+		_, ok := data.GetMetric("read_ops").GetValueFloat64(flexgroupInstance)
 		assert.False(t, ok)
 	} else {
-		value, ok := cache.GetMetric("read_ops").GetValueFloat64(flexgroupInstance)
+		value, ok := data.GetMetric("read_ops").GetValueFloat64(flexgroupInstance)
 		assert.True(t, ok)
 		assert.Equal(t, value, 20.0)
 	}
 
 	// Verify aggregated latency metric (weighted average)
 	if setMetricNaN {
-		_, ok := cache.GetMetric("read_latency").GetValueFloat64(flexgroupInstance)
+		_, ok := data.GetMetric("read_latency").GetValueFloat64(flexgroupInstance)
 		assert.False(t, ok)
 	} else {
 		expectedLatency := (20*4 + 30*6 + 40*10) / 20.0
-		value, ok := cache.GetMetric("read_latency").GetValueFloat64(flexgroupInstance)
+		value, ok := data.GetMetric("read_latency").GetValueFloat64(flexgroupInstance)
 		assert.True(t, ok)
 		assert.Equal(t, value, expectedLatency)
 	}
 
 	// Check for simple volume instance
-	simpleVolumeInstance := cache.GetInstance("svm1.SimpleVolume")
-	assert.Nil(t, simpleVolumeInstance)
+	simpleVolumeInstance := data.GetInstance("SimpleVolume")
+	assert.NotNil(t, simpleVolumeInstance)
+	assert.Equal(t, simpleVolumeInstance.GetLabel(StyleType), "flexvol")
 
-	// count instances in both data and cache
+	// count exportable instances
 	currentCount := 0
 	for _, i := range data.GetInstances() {
 		if i.IsExportable() {
@@ -149,13 +149,7 @@ func runVolumeTest(t *testing.T, createVolume func(params *node.Node) plugin.Plu
 		}
 	}
 
-	for _, i := range cache.GetInstances() {
-		if i.IsExportable() {
-			currentCount++
-		}
-	}
-
-	// Verify the number of instances in the cache
+	// Verify the number of exportable instances in the data matrix
 	assert.Equal(t, currentCount, expectedCount)
 }
 
