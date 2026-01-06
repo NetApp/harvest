@@ -29750,7 +29750,7 @@ These can be generated on demand by running <code>bin/harvest grafana metrics</c
 <p>More information about ONTAP REST performance counters can be found <a href="https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html">here</a>.</p>
 </li>
 </ul>
-<div class="highlight"><pre><span></span><code>Creation Date : 2025-Dec-24
+<div class="highlight"><pre><span></span><code>Creation Date : 2026-Jan-06
 ONTAP Version: 9.16.1
 </code></pre></div>
 <details>
@@ -31145,7 +31145,7 @@ ONTAP Version: 9.16.1
 </table>
 </div>
 <h3 id="aggr_inode_inodefile_private_capacity">aggr_inode_inodefile_private_capacity<a class="headerlink" href="#aggr_inode_inodefile_private_capacity" title="Permanent link">&para;</a></h3>
-<p>Number of files that can currently be stored on disk for system metadata files. This number will dynamically increase as more system files are created.This is an advanced property; there is an added computationl cost to retrieving its value. The field is not populated for either a collection GET or an instance GET unless it is explicitly requested using the <i>fields</i> query parameter containing either footprint or **.</p>
+<p>Number of files that can currently be stored on disk for system metadata files. This number will dynamically increase as more system files are created.This is an advanced property; there is an added computational cost to retrieving its value. The field is not populated for either a collection GET or an instance GET unless it is explicitly requested using the <i>fields</i> query parameter containing either footprint or **.</p>
 <table>
 <thead>
 <tr>
@@ -32212,7 +32212,7 @@ ONTAP Version: 9.16.1
 </tbody>
 </table>
 <h3 id="aggr_snapshot_files_total">aggr_snapshot_files_total<a class="headerlink" href="#aggr_snapshot_files_total" title="Permanent link">&para;</a></h3>
-<p>Total files allowed in Snapshot copies</p>
+<p>Total files allowed in snapshots</p>
 <table>
 <thead>
 <tr>
@@ -32259,7 +32259,7 @@ ONTAP Version: 9.16.1
 </table>
 </div>
 <h3 id="aggr_snapshot_files_used">aggr_snapshot_files_used<a class="headerlink" href="#aggr_snapshot_files_used" title="Permanent link">&para;</a></h3>
-<p>Total files created in Snapshot copies</p>
+<p>Total files created in snapshots</p>
 <table>
 <thead>
 <tr>
@@ -32347,7 +32347,7 @@ ONTAP Version: 9.16.1
 </table>
 </div>
 <h3 id="aggr_snapshot_maxfiles_available">aggr_snapshot_maxfiles_available<a class="headerlink" href="#aggr_snapshot_maxfiles_available" title="Permanent link">&para;</a></h3>
-<p>Maximum files available for Snapshot copies</p>
+<p>Maximum files available for snapshots</p>
 <table>
 <thead>
 <tr>
@@ -32441,7 +32441,7 @@ ONTAP Version: 9.16.1
 </table>
 </div>
 <h3 id="aggr_snapshot_maxfiles_used">aggr_snapshot_maxfiles_used<a class="headerlink" href="#aggr_snapshot_maxfiles_used" title="Permanent link">&para;</a></h3>
-<p>Files in use by Snapshot copies</p>
+<p>Files in use by snapshots</p>
 <table>
 <thead>
 <tr>
@@ -32488,7 +32488,7 @@ ONTAP Version: 9.16.1
 </table>
 </div>
 <h3 id="aggr_snapshot_reserve_percent">aggr_snapshot_reserve_percent<a class="headerlink" href="#aggr_snapshot_reserve_percent" title="Permanent link">&para;</a></h3>
-<p>Percentage of space reserved for Snapshot copies</p>
+<p>Percentage of space reserved for snapshots</p>
 <table>
 <thead>
 <tr>
@@ -32535,7 +32535,7 @@ ONTAP Version: 9.16.1
 </table>
 </div>
 <h3 id="aggr_snapshot_size_available">aggr_snapshot_size_available<a class="headerlink" href="#aggr_snapshot_size_available" title="Permanent link">&para;</a></h3>
-<p>Available space for Snapshot copies in bytes</p>
+<p>Available space for snapshots in bytes</p>
 <table>
 <thead>
 <tr>
@@ -32582,7 +32582,7 @@ ONTAP Version: 9.16.1
 </table>
 </div>
 <h3 id="aggr_snapshot_size_total">aggr_snapshot_size_total<a class="headerlink" href="#aggr_snapshot_size_total" title="Permanent link">&para;</a></h3>
-<p>Total space for Snapshot copies in bytes</p>
+<p>Total space for snapshots in bytes</p>
 <table>
 <thead>
 <tr>
@@ -32608,7 +32608,7 @@ ONTAP Version: 9.16.1
 </tbody>
 </table>
 <h3 id="aggr_snapshot_size_used">aggr_snapshot_size_used<a class="headerlink" href="#aggr_snapshot_size_used" title="Permanent link">&para;</a></h3>
-<p>Space used by Snapshot copies in bytes</p>
+<p>Space used by snapshots in bytes</p>
 <table>
 <thead>
 <tr>
@@ -32655,7 +32655,7 @@ ONTAP Version: 9.16.1
 </table>
 </div>
 <h3 id="aggr_snapshot_used_percent">aggr_snapshot_used_percent<a class="headerlink" href="#aggr_snapshot_used_percent" title="Permanent link">&para;</a></h3>
-<p>Percentage of disk space used by Snapshot copies</p>
+<p>Percentage of disk space used by snapshots</p>
 <table>
 <thead>
 <tr>
@@ -33380,7 +33380,7 @@ ONTAP Version: 9.16.1
 </tbody>
 </table>
 <h3 id="aggr_space_total">aggr_space_total<a class="headerlink" href="#aggr_space_total" title="Permanent link">&para;</a></h3>
-<p>Total usable space in bytes, not including WAFL reserve and aggregate Snapshot copy reserve.</p>
+<p>Total usable space in bytes, not including WAFL reserve and aggregate snapshot reserve.</p>
 <table>
 <thead>
 <tr>
@@ -34010,7 +34010,7 @@ ONTAP Version: 9.16.1
 </table>
 </div>
 <h3 id="aggr_write_data">aggr_write_data<a class="headerlink" href="#aggr_write_data" title="Permanent link">&para;</a></h3>
-<p>Peformance metric for write I/O operations.</p>
+<p>Performance metric for write I/O operations.</p>
 <table>
 <thead>
 <tr>
@@ -34030,7 +34030,7 @@ ONTAP Version: 9.16.1
 </tbody>
 </table>
 <h3 id="aggr_write_latency">aggr_write_latency<a class="headerlink" href="#aggr_write_latency" title="Permanent link">&para;</a></h3>
-<p>Peformance metric for write I/O operations.</p>
+<p>Performance metric for write I/O operations.</p>
 <table>
 <thead>
 <tr>
@@ -34050,7 +34050,7 @@ ONTAP Version: 9.16.1
 </tbody>
 </table>
 <h3 id="aggr_write_ops">aggr_write_ops<a class="headerlink" href="#aggr_write_ops" title="Permanent link">&para;</a></h3>
-<p>Peformance metric for write I/O operations.</p>
+<p>Performance metric for write I/O operations.</p>
 <table>
 <thead>
 <tr>
@@ -35242,7 +35242,7 @@ ONTAP Version: 9.16.1
 </tbody>
 </table>
 <h3 id="cluster_write_data">cluster_write_data<a class="headerlink" href="#cluster_write_data" title="Permanent link">&para;</a></h3>
-<p>Peformance metric for write I/O operations.</p>
+<p>Performance metric for write I/O operations.</p>
 <table>
 <thead>
 <tr>
@@ -35262,7 +35262,7 @@ ONTAP Version: 9.16.1
 </tbody>
 </table>
 <h3 id="cluster_write_latency">cluster_write_latency<a class="headerlink" href="#cluster_write_latency" title="Permanent link">&para;</a></h3>
-<p>Peformance metric for write I/O operations.</p>
+<p>Performance metric for write I/O operations.</p>
 <table>
 <thead>
 <tr>
@@ -35282,7 +35282,7 @@ ONTAP Version: 9.16.1
 </tbody>
 </table>
 <h3 id="cluster_write_ops">cluster_write_ops<a class="headerlink" href="#cluster_write_ops" title="Permanent link">&para;</a></h3>
-<p>Peformance metric for write I/O operations.</p>
+<p>Performance metric for write I/O operations.</p>
 <table>
 <thead>
 <tr>
@@ -49536,7 +49536,7 @@ ONTAP Version: 9.16.1
 </table>
 </div>
 <h3 id="namespace_block_size">namespace_block_size<a class="headerlink" href="#namespace_block_size" title="Permanent link">&para;</a></h3>
-<p>The size of blocks in the namespace in bytes.<br/>Valid in POST when creating an NVMe namespace that is not a clone of another. Disallowed in POST when creating a namespace clone. Valid in POST.</p>
+<p>The size of blocks in the namespace in bytes. The default for namespaces with an <code>os_type</code> of <em>vmware</em> is <em>512</em>. All other namespaces default to <em>4096</em>.<br/>Valid in POST when creating an NVMe namespace that is not a clone of another. Disallowed in POST when creating a namespace clone. Valid in POST.</p>
 <table>
 <thead>
 <tr>
@@ -63930,7 +63930,7 @@ ONTAP Version: 9.16.1
 </table>
 </div>
 <h3 id="node_volume_write_data">node_volume_write_data<a class="headerlink" href="#node_volume_write_data" title="Permanent link">&para;</a></h3>
-<p>Peformance metric for write I/O operations. node_volume_write_data is <a href="#volume_write_data">volume_write_data</a> aggregated by <code>node</code>.</p>
+<p>Performance metric for write I/O operations. node_volume_write_data is <a href="#volume_write_data">volume_write_data</a> aggregated by <code>node</code>.</p>
 <table>
 <thead>
 <tr>
@@ -63995,7 +63995,7 @@ ONTAP Version: 9.16.1
 </table>
 </div>
 <h3 id="node_volume_write_latency">node_volume_write_latency<a class="headerlink" href="#node_volume_write_latency" title="Permanent link">&para;</a></h3>
-<p>Peformance metric for write I/O operations. node_volume_write_latency is <a href="#volume_write_latency">volume_write_latency</a> aggregated by <code>node</code>.</p>
+<p>Performance metric for write I/O operations. node_volume_write_latency is <a href="#volume_write_latency">volume_write_latency</a> aggregated by <code>node</code>.</p>
 <table>
 <thead>
 <tr>
@@ -64054,7 +64054,7 @@ ONTAP Version: 9.16.1
 </table>
 </div>
 <h3 id="node_volume_write_ops">node_volume_write_ops<a class="headerlink" href="#node_volume_write_ops" title="Permanent link">&para;</a></h3>
-<p>Peformance metric for write I/O operations. node_volume_write_ops is <a href="#volume_write_ops">volume_write_ops</a> aggregated by <code>node</code>.</p>
+<p>Performance metric for write I/O operations. node_volume_write_ops is <a href="#volume_write_ops">volume_write_ops</a> aggregated by <code>node</code>.</p>
 <table>
 <thead>
 <tr>
@@ -72518,7 +72518,7 @@ ONTAP Version: 9.16.1
 </table>
 </div>
 <h3 id="qtree_write_data">qtree_write_data<a class="headerlink" href="#qtree_write_data" title="Permanent link">&para;</a></h3>
-<p>Peformance metric for write I/O operations.</p>
+<p>Performance metric for write I/O operations.</p>
 <table>
 <thead>
 <tr>
@@ -72538,7 +72538,7 @@ ONTAP Version: 9.16.1
 </tbody>
 </table>
 <h3 id="qtree_write_ops">qtree_write_ops<a class="headerlink" href="#qtree_write_ops" title="Permanent link">&para;</a></h3>
-<p>Peformance metric for write I/O operations.</p>
+<p>Performance metric for write I/O operations.</p>
 <table>
 <thead>
 <tr>
@@ -79417,7 +79417,7 @@ ONTAP Version: 9.16.1
 </tbody>
 </table>
 <h3 id="svm_cifs_write_data">svm_cifs_write_data<a class="headerlink" href="#svm_cifs_write_data" title="Permanent link">&para;</a></h3>
-<p>Peformance metric for write I/O operations.</p>
+<p>Performance metric for write I/O operations.</p>
 <table>
 <thead>
 <tr>
@@ -87594,7 +87594,7 @@ ONTAP Version: 9.16.1
 </table>
 </div>
 <h3 id="svm_vol_write_data">svm_vol_write_data<a class="headerlink" href="#svm_vol_write_data" title="Permanent link">&para;</a></h3>
-<p>Peformance metric for write I/O operations. svm_vol_write_data is <a href="#volume_write_data">volume_write_data</a> aggregated by <code>svm</code>.</p>
+<p>Performance metric for write I/O operations. svm_vol_write_data is <a href="#volume_write_data">volume_write_data</a> aggregated by <code>svm</code>.</p>
 <table>
 <thead>
 <tr>
@@ -87671,7 +87671,7 @@ ONTAP Version: 9.16.1
 </table>
 </div>
 <h3 id="svm_vol_write_latency">svm_vol_write_latency<a class="headerlink" href="#svm_vol_write_latency" title="Permanent link">&para;</a></h3>
-<p>Peformance metric for write I/O operations. svm_vol_write_latency is <a href="#volume_write_latency">volume_write_latency</a> aggregated by <code>svm</code>.</p>
+<p>Performance metric for write I/O operations. svm_vol_write_latency is <a href="#volume_write_latency">volume_write_latency</a> aggregated by <code>svm</code>.</p>
 <table>
 <thead>
 <tr>
@@ -87724,7 +87724,7 @@ ONTAP Version: 9.16.1
 </table>
 </div>
 <h3 id="svm_vol_write_ops">svm_vol_write_ops<a class="headerlink" href="#svm_vol_write_ops" title="Permanent link">&para;</a></h3>
-<p>Peformance metric for write I/O operations. svm_vol_write_ops is <a href="#volume_write_ops">volume_write_ops</a> aggregated by <code>svm</code>.</p>
+<p>Performance metric for write I/O operations. svm_vol_write_ops is <a href="#volume_write_ops">volume_write_ops</a> aggregated by <code>svm</code>.</p>
 <table>
 <thead>
 <tr>
@@ -92523,7 +92523,7 @@ ONTAP Version: 9.16.1
 </table>
 </div>
 <h3 id="volume_snapshot_count">volume_snapshot_count<a class="headerlink" href="#volume_snapshot_count" title="Permanent link">&para;</a></h3>
-<p>Number of Snapshot copies in the volume.</p>
+<p>Number of snapshots in the volume.</p>
 <table>
 <thead>
 <tr>
@@ -94280,7 +94280,7 @@ ONTAP Version: 9.16.1
 </table>
 </div>
 <h3 id="volume_write_data">volume_write_data<a class="headerlink" href="#volume_write_data" title="Permanent link">&para;</a></h3>
-<p>Peformance metric for write I/O operations.</p>
+<p>Performance metric for write I/O operations.</p>
 <table>
 <thead>
 <tr>
@@ -94417,7 +94417,7 @@ ONTAP Version: 9.16.1
 </table>
 </div>
 <h3 id="volume_write_latency">volume_write_latency<a class="headerlink" href="#volume_write_latency" title="Permanent link">&para;</a></h3>
-<p>Peformance metric for write I/O operations.</p>
+<p>Performance metric for write I/O operations.</p>
 <table>
 <thead>
 <tr>
@@ -94500,7 +94500,7 @@ ONTAP Version: 9.16.1
 </table>
 </div>
 <h3 id="volume_write_ops">volume_write_ops<a class="headerlink" href="#volume_write_ops" title="Permanent link">&para;</a></h3>
-<p>Peformance metric for write I/O operations.</p>
+<p>Performance metric for write I/O operations.</p>
 <table>
 <thead>
 <tr>
