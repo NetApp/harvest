@@ -35,12 +35,18 @@ type embedShelf struct {
 }
 
 type PortData struct {
-	Node      string
-	Port      string
-	Read      float64
-	Write     float64
-	ReadPerc  float64
-	WritePerc float64
+	Node  string
+	Port  string
+	Read  float64
+	Write float64
+	Speed float64
+}
+
+type IfgroData struct {
+	Key   string
+	Read  float64
+	Write float64
+	Speed float64
 }
 
 // Reference https://kb.netapp.com/onprem/ontap/hardware/FAQ%3A_How_do_shelf_product_IDs_and_modules_in_ONTAP_map_to_a_model_of_a_shelf_or_storage_system_with_embedded_storage
@@ -475,6 +481,7 @@ func AggregatePerScanner(logger *slog.Logger, data *matrix.Matrix, latencyKey st
 
 func PopulateIfgroupMetrics(portIfgroupMap map[string]string, portDataMap map[string]PortData, nData *matrix.Matrix, logger *slog.Logger) error {
 	var err error
+	ifgrpMap := make(map[string]IfgroData)
 	for portKey, ifgroupName := range portIfgroupMap {
 		portInfo, ok := portDataMap[portKey]
 		if !ok {
@@ -484,8 +491,7 @@ func PopulateIfgroupMetrics(portIfgroupMap map[string]string, portDataMap map[st
 		port := portInfo.Port
 		readBytes := portInfo.Read
 		writeBytes := portInfo.Write
-		readPerc := portInfo.ReadPerc
-		writePerc := portInfo.WritePerc
+		speed := portInfo.Speed
 
 		ifgrpupInstanceKey := nodeName + ifgroupName
 		ifgroupInstance := nData.GetInstance(ifgrpupInstanceKey)
@@ -501,6 +507,7 @@ func PopulateIfgroupMetrics(portIfgroupMap map[string]string, portDataMap map[st
 			}
 		}
 
+		ifgrpMap[ifgrpupInstanceKey] = IfgroData{Key: ifgrpupInstanceKey, Read: readBytes + ifgrpMap[ifgrpupInstanceKey].Read, Write: writeBytes + ifgrpMap[ifgrpupInstanceKey].Write, Speed: speed + ifgrpMap[ifgrpupInstanceKey].Speed}
 		// set labels
 		ifgroupInstance.SetLabel("node", nodeName)
 		ifgroupInstance.SetLabel("ifgroup", ifgroupName)
@@ -520,14 +527,18 @@ func PopulateIfgroupMetrics(portIfgroupMap map[string]string, portDataMap map[st
 		tx := nData.GetMetric("tx_bytes")
 		txv, _ := tx.GetValueFloat64(ifgroupInstance)
 		tx.SetValueFloat64(ifgroupInstance, writeBytes+txv)
+	}
+
+	for key, ifgroupInstance := range nData.GetInstances() {
+		if !ifgroupInstance.IsExportable() {
+			continue
+		}
 
 		rxp := nData.GetMetric("rx_perc")
-		rxpv, _ := rxp.GetValueFloat64(ifgroupInstance)
-		rxp.SetValueFloat64(ifgroupInstance, readPerc+rxpv)
+		rxp.SetValueFloat64(ifgroupInstance, ifgrpMap[key].Read/ifgrpMap[key].Speed)
 
 		txp := nData.GetMetric("tx_perc")
-		txpv, _ := txp.GetValueFloat64(ifgroupInstance)
-		txp.SetValueFloat64(ifgroupInstance, writePerc+txpv)
+		txp.SetValueFloat64(ifgroupInstance, ifgrpMap[key].Write/ifgrpMap[key].Speed)
 	}
 	return nil
 }

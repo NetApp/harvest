@@ -199,7 +199,7 @@ func (n *Nic) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collect
 					tx.SetValueFloat64(instance, txPercent)
 				}
 
-				portDataMap[nodeName+port] = collectors.PortData{Node: nodeName, Port: port, Read: rxBytes, Write: txBytes, ReadPerc: rxPercent, WritePerc: txPercent}
+				portDataMap[nodeName+port] = collectors.PortData{Node: nodeName, Port: port, Read: rxBytes, Write: txBytes, Speed: float64(speed)}
 
 				if rxOk || txOk {
 					utilPercent.SetValueFloat64(instance, math.Max(rxPercent, txPercent))

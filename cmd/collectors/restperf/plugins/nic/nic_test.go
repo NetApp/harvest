@@ -10,6 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"log/slog"
+	"math"
 	"testing"
 )
 
@@ -75,13 +76,13 @@ func runNicTest(t *testing.T, createRestNic func(params *node.Node) plugin.Plugi
 
 	instanceB4, _ := data.NewInstance("rtp-a700s-01:f5y")
 	instanceB4.SetLabel("id", "rtp-a700s-01:f5y")
-	instanceB4.SetLabel("speed", "10000M")
+	instanceB4.SetLabel("speed", "20000M")
 	instanceB4.SetLabel("node", "rtp-a700s-01")
 	instanceB4.SetLabel("type", "nic_ixl")
 
 	instanceB5, _ := data.NewInstance("rtp-a700s-01:f5z")
 	instanceB5.SetLabel("id", "rtp-a700s-01:f5z")
-	instanceB5.SetLabel("speed", "10000M")
+	instanceB5.SetLabel("speed", "30000M")
 	instanceB5.SetLabel("node", "rtp-a700s-01")
 	instanceB5.SetLabel("type", "nic_ixl")
 
@@ -108,17 +109,17 @@ func runNicTest(t *testing.T, createRestNic func(params *node.Node) plugin.Plugi
 	receiveBytes.SetValueFloat64(instanceB1, 2861802356977)
 	transmitBytes.SetValueFloat64(instanceB1, 5789662182305)
 
-	receiveBytes.SetValueFloat64(instanceB2, 2861802356977)
-	transmitBytes.SetValueFloat64(instanceB2, 5789662182305)
+	receiveBytes.SetValueFloat64(instanceB2, 5000000000)
+	transmitBytes.SetValueFloat64(instanceB2, 90000000000)
 
-	receiveBytes.SetValueFloat64(instanceB3, 2861802356977)
-	transmitBytes.SetValueFloat64(instanceB3, 5789662182305)
+	receiveBytes.SetValueFloat64(instanceB3, 5000000000)
+	transmitBytes.SetValueFloat64(instanceB3, 90000000000)
 
-	receiveBytes.SetValueFloat64(instanceB4, 2861802356977)
-	transmitBytes.SetValueFloat64(instanceB4, 5789662182305)
+	receiveBytes.SetValueFloat64(instanceB4, 5000000000)
+	transmitBytes.SetValueFloat64(instanceB4, 90000000000)
 
-	receiveBytes.SetValueFloat64(instanceB5, 2861802356977)
-	transmitBytes.SetValueFloat64(instanceB5, 5789662182305)
+	receiveBytes.SetValueFloat64(instanceB5, 5000000000)
+	transmitBytes.SetValueFloat64(instanceB5, 90000000000)
 
 	dataMap := map[string]*matrix.Matrix{
 		"nic": data,
@@ -156,7 +157,12 @@ func runNicTest(t *testing.T, createRestNic func(params *node.Node) plugin.Plugi
 
 	value, ok := ifgroupData.GetMetric("rx_bytes").GetValueFloat64(ifgroupInstance1)
 	assert.True(t, ok)
-	assert.Equal(t, value, 11447209427908.0)
+	assert.Equal(t, value, 20000000000.0)
+
+	readPercVal, _ := ifgroupData.GetMetric("rx_perc").GetValueFloat64(ifgroupInstance1)
+	assert.Equal(t, math.Round(readPercVal*100)/100, 2.29)
+	writePercVal, _ := ifgroupData.GetMetric("tx_perc").GetValueFloat64(ifgroupInstance1)
+	assert.Equal(t, math.Round(writePercVal*100)/100, 41.14)
 }
 
 func TestRunForAllImplementations(t *testing.T) {
