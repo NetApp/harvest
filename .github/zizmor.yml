@@ -1,0 +1,7 @@
+# Allow first party GitHub actions to use unpinned references
+rules:
+  unpinned-uses:
+    config:
+      policies:
+        actions/*: ref-pin
+        github/*: ref-pin
