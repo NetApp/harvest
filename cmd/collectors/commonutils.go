@@ -42,7 +42,7 @@ type PortData struct {
 	Speed float64
 }
 
-type IfgroData struct {
+type IfgrpData struct {
 	Key   string
 	Read  float64
 	Write float64
@@ -481,7 +481,7 @@ func AggregatePerScanner(logger *slog.Logger, data *matrix.Matrix, latencyKey st
 
 func PopulateIfgroupMetrics(portIfgroupMap map[string]string, portDataMap map[string]PortData, nData *matrix.Matrix, logger *slog.Logger) error {
 	var err error
-	ifgrpMap := make(map[string]IfgroData)
+	ifgrpMap := make(map[string]IfgrpData)
 	for portKey, ifgroupName := range portIfgroupMap {
 		portInfo, ok := portDataMap[portKey]
 		if !ok {
@@ -507,7 +507,7 @@ func PopulateIfgroupMetrics(portIfgroupMap map[string]string, portDataMap map[st
 			}
 		}
 
-		ifgrpMap[ifgrpupInstanceKey] = IfgroData{Key: ifgrpupInstanceKey, Read: readBytes + ifgrpMap[ifgrpupInstanceKey].Read, Write: writeBytes + ifgrpMap[ifgrpupInstanceKey].Write, Speed: speed + ifgrpMap[ifgrpupInstanceKey].Speed}
+		ifgrpMap[ifgrpupInstanceKey] = IfgrpData{Key: ifgrpupInstanceKey, Read: readBytes + ifgrpMap[ifgrpupInstanceKey].Read, Write: writeBytes + ifgrpMap[ifgrpupInstanceKey].Write, Speed: speed + ifgrpMap[ifgrpupInstanceKey].Speed}
 		// set labels
 		ifgroupInstance.SetLabel("node", nodeName)
 		ifgroupInstance.SetLabel("ifgroup", ifgroupName)
