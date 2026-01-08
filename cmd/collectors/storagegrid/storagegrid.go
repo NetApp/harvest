@@ -363,7 +363,7 @@ func (s *StorageGrid) handleResults(result []gjson.Result) uint64 {
 			value := instanceData.Get(label)
 			if value.Exists() {
 				if value.IsArray() {
-					var labelArray []string
+					labelArray := make([]string, 0, len(value.Array()))
 					for _, r := range value.Array() {
 						labelString := r.ClonedString()
 						labelArray = append(labelArray, labelString)

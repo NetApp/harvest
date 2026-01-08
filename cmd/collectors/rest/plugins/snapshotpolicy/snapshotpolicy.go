@@ -30,7 +30,7 @@ func (m *SnapshotPolicy) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matri
 		copies := instance.GetLabel("copies")
 		copiesJSON := gjson.Result{Type: gjson.JSON, Raw: "[" + copies + "]"}
 		var copiesValue int
-		var schedules []string
+		schedules := make([]string, 0, len(copiesJSON.Array()))
 		for _, copiesData := range copiesJSON.Array() {
 			count := copiesData.Get("count").ClonedString()
 			countVal, _ := strconv.Atoi(count)

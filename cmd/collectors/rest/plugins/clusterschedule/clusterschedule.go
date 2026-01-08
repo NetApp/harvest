@@ -23,7 +23,7 @@ func (c *ClusterSchedule) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matr
 		if cron := instance.GetLabel("cron"); cron != "" {
 			updateDetailsJSON := gjson.Result{Type: gjson.JSON, Raw: cron}
 			var minStr, hourStr, dayStr, monthStr, weekDayStr string
-			var cronVal []string
+			cronVal := make([]string, 0, 5)
 
 			minStr = list(updateDetailsJSON.Get("minutes"))
 			hourStr = list(updateDetailsJSON.Get("hours"))

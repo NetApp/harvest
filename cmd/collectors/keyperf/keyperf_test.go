@@ -241,7 +241,7 @@ func TestKeyPerf_pollData(t *testing.T) {
 			m := kp.testPollInstanceAndDataWithMetrics(t, tt.pollDataPath2, tt.numInstances, tt.numMetrics)
 
 			var sum int64
-			var names []string
+			names := make([]string, 0, len(m.GetInstances()))
 			for n := range m.GetInstances() {
 				names = append(names, n)
 			}

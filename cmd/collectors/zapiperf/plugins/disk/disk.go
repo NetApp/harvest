@@ -807,7 +807,7 @@ func (d *Disk) handleCMode(shelves []*node.Node) ([]*matrix.Matrix, error) {
 			for _, obj := range objectElem.GetChildren() {
 
 				if keys := d.instanceKeys[attribute]; len(keys) != 0 {
-					var sKeys []string
+					sKeys := make([]string, 0, len(keys))
 					for _, k := range keys {
 						v := obj.GetChildContentS(k)
 						sKeys = append(sKeys, v)

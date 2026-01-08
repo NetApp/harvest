@@ -165,7 +165,7 @@ func (s *Shelf) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *colle
 
 	var (
 		err    error
-		output []*matrix.Matrix
+		output []*matrix.Matrix //nolint:prealloc
 	)
 
 	data := dataMap[s.Object]

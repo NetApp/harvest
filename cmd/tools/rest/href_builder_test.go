@@ -25,7 +25,7 @@ func TestBuild(t *testing.T) {
 
 	assert.Equal(t, hrefTest1, expectedHrefTest1)
 
-	testFields = make([]string, 0)
+	testFields = make([]string, 0, URLMaxLimit/len("Test"))
 	for i := range URLMaxLimit / len("Test") {
 		testFields = append(testFields, "Test"+strconv.Itoa(i))
 	}

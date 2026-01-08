@@ -592,7 +592,7 @@ func (e *Ems) HandleResults(result []gjson.Result, prop map[string][]*emsProp) (
 						value := parseProperties(instanceData, label)
 						if value.Exists() {
 							if value.IsArray() {
-								var labelArray []string
+								labelArray := make([]string, 0, len(value.Array()))
 								for _, r := range value.Array() {
 									labelString := r.ClonedString()
 									labelArray = append(labelArray, labelString)

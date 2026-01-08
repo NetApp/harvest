@@ -1443,7 +1443,7 @@ func (r *RestPerf) getParentOpsCounters(data *matrix.Matrix) error {
 		return errs.New(errs.ErrMissingParam, "counter ops")
 	}
 
-	var filter []string
+	filter := make([]string, 0, 1)
 	filter = append(filter, "counters.name=ops")
 	href := rest.NewHrefBuilder().
 		APIPath(dataQuery).

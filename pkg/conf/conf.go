@@ -841,7 +841,7 @@ func (c *Collector) UnmarshalYAML(n ast.Node) error {
 		values := n.(*ast.MappingNode).Values
 		if len(values) > 0 {
 			c.Name = node.ToString(values[0].Key)
-			var subs []string
+			subs := make([]string, 0, len(values[0].Value.(*ast.SequenceNode).Values))
 			c.Templates = &subs
 			for _, n2 := range values[0].Value.(*ast.SequenceNode).Values {
 				subs = append(subs, n2.(*ast.StringNode).Value)
@@ -854,7 +854,7 @@ func (c *Collector) UnmarshalYAML(n ast.Node) error {
 
 func (i *Pollers) UnmarshalYAML(n ast.Node) error {
 	if n.Type() == ast.MappingType {
-		var namesInOrder []string
+		namesInOrder := make([]string, 0, len(n.(*ast.MappingNode).Values))
 		for _, mn := range n.(*ast.MappingNode).Values {
 			namesInOrder = append(namesInOrder, node.ToString(mn.Key))
 		}

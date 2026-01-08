@@ -38,7 +38,7 @@ func (g *Mgr) Import() (bool, string) {
 	}
 	importCmds := []string{"grafana", "import", "--addr", grafanaURL}
 	if docker.IsDockerBasedPoller() {
-		params := []string{"exec", containerIDs[0].ID, "bin/harvest"}
+		params := []string{"exec", containerIDs[0].ID, "bin/harvest"} //nolint:prealloc
 		params = append(params, importCmds...)
 		importOutput, err = cmds.Run("docker", params...)
 	} else {

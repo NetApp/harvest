@@ -332,7 +332,17 @@ func (v *Volume) getEncryptedDisks() ([]gjson.Result, error) {
 
 func (v *Volume) getVolumeInfo() (map[string]volumeInfo, error) {
 	volumeMap := make(map[string]volumeInfo)
-	fields := []string{"name", "svm.name", "clone.parent_snapshot.name", "clone.split_estimate", "is_object_store", "snapmirror.is_protected", "snapmirror.destinations.is_ontap", "snapmirror.destinations.is_cloud"}
+	fields := []string{ //nolint:prealloc
+		"name",
+		"svm.name",
+		"clone.parent_snapshot.name",
+		"clone.split_estimate",
+		"is_object_store",
+		"snapmirror.is_protected",
+		"snapmirror.destinations.is_ontap",
+		"snapmirror.destinations.is_cloud",
+	}
+
 	if !v.isArwSupportedVersion {
 		return v.getVolume("", fields, volumeMap)
 	}

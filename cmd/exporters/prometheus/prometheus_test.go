@@ -117,7 +117,7 @@ net_app_bike_max_speed{} 3`, "bike"},
 			assert.Nil(t, err)
 
 			prom := p.(*Prometheus)
-			var lines []string
+			var lines []string //nolint:prealloc
 
 			for _, metrics := range prom.aCache.(*memCache).Get() {
 				for _, metric := range metrics {
@@ -155,7 +155,7 @@ netapp_change_log{category="metric",cluster="umeng-aff300-01-02",object="volume"
 			assert.Nil(t, err)
 
 			prom := p.(*Prometheus)
-			var lines []string
+			var lines []string //nolint:prealloc
 
 			for _, metrics := range prom.aCache.(*memCache).Get() {
 				for _, metric := range metrics {

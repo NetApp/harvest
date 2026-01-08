@@ -164,8 +164,9 @@ type sdTarget struct {
 }
 
 func (a *Admin) makeTargets() []byte {
-	targets := make([]sdTarget, 0)
-	for _, details := range a.pollerToPromAddr.Snapshot() {
+	snapshot := a.pollerToPromAddr.Snapshot()
+	targets := make([]sdTarget, 0, len(snapshot))
+	for _, details := range snapshot {
 		target := sdTarget{
 			Targets: []string{fmt.Sprintf(`%s:%d`, details.IP, details.Port)},
 			Labels:  labels{MetaPoller: details.Name},
