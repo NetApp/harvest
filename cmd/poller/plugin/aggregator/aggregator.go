@@ -279,7 +279,7 @@ func (a *Aggregator) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *
 
 // NewLabels returns the new labels the receiver creates
 func (a *Aggregator) NewLabels() []string {
-	var newLabelNames []string
+	newLabelNames := make([]string, 0, len(a.rules))
 	for _, r := range a.rules {
 		newLabelNames = append(newLabelNames, r.includeLabels...)
 	}

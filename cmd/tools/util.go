@@ -491,8 +491,8 @@ func MergeCounters(restCounters map[string]Counter, zapiCounters map[string]Coun
 	restKeys := slices.Sorted(maps.Keys(restCounters))
 	for _, k := range restKeys {
 		v := restCounters[k]
-		hashIndex := strings.Index(k, "#")
-		if hashIndex != -1 {
+		found := strings.Contains(k, "#")
+		if found {
 			if v1, ok := restCounters[v.Name]; !ok {
 				v.Description = reRemove.ReplaceAllString(v.Description, "")
 				// Remove extra spaces from the description
@@ -509,8 +509,8 @@ func MergeCounters(restCounters map[string]Counter, zapiCounters map[string]Coun
 	zapiKeys := slices.Sorted(maps.Keys(zapiCounters))
 	for _, k := range zapiKeys {
 		v := zapiCounters[k]
-		hashIndex := strings.Index(k, "#")
-		if hashIndex != -1 {
+		found := strings.Contains(k, "#")
+		if found {
 			if v1, ok := zapiCounters[v.Name]; !ok {
 				v.Description = reRemove.ReplaceAllString(v.Description, "")
 				// Remove extra spaces from the description

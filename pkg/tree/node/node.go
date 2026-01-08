@@ -221,7 +221,7 @@ func (n *Node) SetChildContentS(name, content string) {
 }
 
 func (n *Node) GetAllChildContentS() []string {
-	content := make([]string, 0)
+	content := make([]string, 0, len(n.Children))
 	for _, ch := range n.Children {
 		content = append(content, ch.GetContentS())
 	}
@@ -229,7 +229,7 @@ func (n *Node) GetAllChildContentS() []string {
 }
 
 func (n *Node) GetAllChildNamesS() []string {
-	names := make([]string, 0)
+	names := make([]string, 0, len(n.Children))
 	for _, ch := range n.Children {
 		names = append(names, ch.GetNameS())
 	}

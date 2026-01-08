@@ -75,7 +75,7 @@ func TestEmsAlertRules(t *testing.T) {
 }
 
 func GetAllAlertRules(dir string, fileName string, isEms bool) []AlertRule {
-	alertRules := make([]AlertRule, 0)
+	alertRules := make([]AlertRule, 0) //nolint:prealloc
 	alertNames := make([]string, 0)
 	exprList := make([]string, 0)
 	summaryList := make([]string, 0)

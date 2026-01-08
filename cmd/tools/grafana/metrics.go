@@ -135,7 +135,7 @@ func visitExpressionsAndQueries(path string, data []byte, restCounters map[strin
 }
 
 func setToList(seen map[string]struct{}) []string {
-	list := make([]string, 0)
+	list := make([]string, 0, len(seen))
 	for k := range seen {
 		list = append(list, k)
 	}

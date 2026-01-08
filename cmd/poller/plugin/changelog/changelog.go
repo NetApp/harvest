@@ -265,7 +265,7 @@ func (c *ChangeLog) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *c
 		}
 	}
 
-	var matricesArray []*matrix.Matrix
+	matricesArray := make([]*matrix.Matrix, 0, 1)
 	matricesArray = append(matricesArray, changeMat)
 
 	metadata := &collector.Metadata{}

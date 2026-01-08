@@ -245,7 +245,7 @@ func addLabel(content []byte, label string, title string, labelMap map[string]st
 
 	// create a new list of vars and copy the existing ones into it, duplicate the first var since we're going to
 	// overwrite it
-	var newVars []gjson.Result
+	newVars := make([]gjson.Result, 0, len(vars)+1)
 	newVars = append(newVars, vars[0])
 	newVars = append(newVars, vars...)
 
@@ -943,7 +943,7 @@ func addClusterLabel(data []byte, cluster string) []byte {
 	}
 
 	// create a new list of vars and copy the existing ones into it, duplicate the fourth var after cluster var since we're going to overwrite it
-	var newVars []gjson.Result
+	newVars := make([]gjson.Result, 0, len(vars)+1)
 	newVars = append(newVars, vars[:clusterIndex+1]...)
 	newVars = append(newVars, vars[clusterIndex:]...)
 
