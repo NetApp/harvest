@@ -403,7 +403,7 @@ func checkExporterTypes(config conf.HarvestConfig) validation {
 		if exporter.Type == "" {
 			continue
 		}
-		if exporter.Type == "Prometheus" || exporter.Type == "InfluxDB" {
+		if exporter.Type == "Prometheus" || exporter.Type == "InfluxDB" || exporter.Type == "VictoriaMetrics" {
 			continue
 		}
 		invalidTypes[name] = exporter.Type
