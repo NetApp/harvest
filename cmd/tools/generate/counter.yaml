@@ -510,6 +510,7 @@ counters:
         Template: conf/rest/9.12.0/node.yaml
 
   - Name: node_nfs_read_throughput
+    Description: Rate of NFSv3 read data transfers in bytes per second.
     APIs:
       - API: RestPerf
         Unit: b_per_sec
@@ -517,6 +518,7 @@ counters:
         Unit: b_per_sec
 
   - Name: node_nfs_throughput
+    Description: Rate of NFSv3 data transfers in bytes per second.
     APIs:
       - API: RestPerf
         Unit: b_per_sec
@@ -524,6 +526,7 @@ counters:
         Unit: b_per_sec
 
   - Name: node_nfs_write_throughput
+    Description: Rate of NFSv3 write data transfers in bytes per second.
     APIs:
       - API: RestPerf
         Unit: b_per_sec
@@ -831,6 +834,7 @@ counters:
     Description: Number of Successful Updates
 
   - Name: svm_nfs_read_throughput
+    Description: Rate of NFSv3 read data transfers in bytes per second.
     APIs:
       - API: RestPerf
         Unit: b_per_sec
@@ -838,6 +842,7 @@ counters:
         Unit: b_per_sec
 
   - Name: svm_nfs_throughput
+    Description: Rate of NFSv3 data transfers in bytes per second.
     APIs:
       - API: RestPerf
         Unit: b_per_sec
@@ -845,6 +850,7 @@ counters:
         Unit: b_per_sec
 
   - Name: svm_nfs_write_throughput
+    Description: Rate of NFSv3 write data transfers in bytes per second.
     APIs:
       - API: RestPerf
         Unit: b_per_sec
@@ -1079,9 +1085,6 @@ counters:
   - Name: volume_space_physical_used_percent
     Description: The size (in percent) that is physically used in the volume.The percentage is based on volume size including the space reserved for Snapshot copies.This field is valid only if the volume is online.
 
-  - Name: aggr_space_performance_tier_used_percent
-    Description: A summation of volume footprints inside the aggregate,as a percentage. A volume's footprint is the amount of space being used for the volume in the aggregate.
-
   - Name: flexcache_miss_percent
     Description: This metric represents the percentage of block requests from a client that resulted in a "miss" in the FlexCache. A "miss" occurs when the requested data is not found in the cache and has to be retrieved from the origin volume.
 
@@ -1109,9 +1112,6 @@ counters:
   - Name: ontaps3_used_percent
     Description: The used_percent metric the percentage of a bucket's total capacity that is currently being used.
 
-  - Name: volume_total_data
-    Description: This metric represents the total amount of data that has been read from and written to a specific volume.
-
   - Name: node_nvmf_data_sent
     Description: NVMe/FC kilobytes (KB) sent per second.
 
@@ -1126,12 +1126,6 @@ counters:
 
   - Name: volume_space_performance_tier_inactive_user_data_percent
     Description: The size (in percent) that is physically used in the performance tier of the volume and has a cold temperature. This parameter is only supported if the volume is in an aggregate that is either attached to object store or could be attached to an object store.
-
-  - Name: aggr_object_store_logical_used
-    Description: Logical space usage of aggregates in the attached object store.
-
-  - Name: aggr_object_store_physical_used
-    Description: Physical space usage of aggregates in the attached object store.
 
   - Name: volume_analytics_dir_bytes_used
     Description: The actual number of bytes used on disk by this file.
@@ -1156,14 +1150,6 @@ counters:
       - API: REST
         Endpoint: api/storage/volumes/{volume.uuid}/files
         ONTAPCounter: analytics.subdir_count
-        Template: conf/rest/9.12.0/volume_analytics.yaml
-
-  - Name: volume_analytics_dir_bytes_used
-    Description: The actual number of bytes used on disk by this file.
-    APIs:
-      - API: REST
-        Endpoint: api/storage/volumes/{volume.uuid}/files
-        ONTAPCounter: analytics.bytes_used
         Template: conf/rest/9.12.0/volume_analytics.yaml
 
   - Name: volume_analytics_bytes_used_by_accessed_time
@@ -1852,6 +1838,7 @@ counters:
         Template: conf/zapi/cdot/9.8.0/aggr.yaml
 
   - Name: aggr_space_performance_tier_used_percent
+    Description: A summation of volume footprints inside the aggregate,as a percentage. A volume's footprint is the amount of space being used for the volume in the aggregate.
     APIs:
       - API: ZAPI
         Endpoint: aggr-space-get-iter
@@ -1859,7 +1846,7 @@ counters:
         Template: conf/zapi/cdot/9.8.0/aggr.yaml
 
   - Name: node_volume_total_data
-    Description: This metric represents the total amount of data that has been read from and written to volumes aggregated by node.
+    Description: Represents the aggregated total data throughput in bytes across all volumes on a node. This metric is calculated by Harvest by summing the data read from and written to each volume on the node.
     APIs:
       - API: RestPerf
         Endpoint: NA
@@ -2243,9 +2230,6 @@ counters:
   - Name: node_total_data
     Description: Represents the total data throughput in bytes for a node, as reported by ONTAP.
 
-  - Name: node_volume_total_data
-    Description: Represents the aggregated total data throughput in bytes across all volumes on a node. This metric is calculated by Harvest by summing the data read from and written to each volume on the node.
-
   - Name: snapshot_volume_violation_count
     Description: This metric represents the total number of snapshots that exist on volumes without being created through an applied snapshot policy.
     APIs:
@@ -2611,3 +2595,111 @@ counters:
         Endpoint: api/protocols/san/igroups
         ONTAPCounter: Harvest generated
         Template: conf/rest/asar2/9.16.0/igroup.yaml
+
+  - Name: nvme_lif_read_data
+    Description: Amount of data read from the storage system in bytes per second.
+
+  - Name: nic_rx_bytes
+    Description: Received in bytes per second.
+
+  - Name: qos_total_data
+    Description: This is the total amount of data read/written in bytes per second from/to the filer by the workload.
+
+  - Name: fcp_lif_write_data
+    Description: Amount of data written to the storage system in bytes per second.
+
+  - Name: ontaps3_svm_put_data
+    Description: Rate of PUT object data transfers in bytes per second. ontaps3_svm_put_data is [ontaps3_svm_put_data](#ontaps3_svm_put_data) aggregated by `svm`.
+
+  - Name: nvmf_tcp_port_write_data
+    Description: Amount of data written to the storage system in bytes per second.
+
+  - Name: node_write_data
+    Description: Write throughput in bytes per second.
+
+  - Name: nic_tx_errors
+    Description: Sent errors in bytes per second.
+
+  - Name: nvmf_tcp_port_total_data
+    Description: Amount of NVMF traffic to and from the storage system in bytes per second.
+
+  - Name: node_read_data
+    Description: Read throughput in bytes per second.
+
+  - Name: fcp_nvmf_read_data
+    Description: Amount of data read from the storage system (FC-NVMe) in bytes per second.
+
+  - Name: nvmf_rdma_port_total_data
+    Description: Amount of NVMF traffic to and from the storage system in bytes per second.
+
+  - Name: fcp_nvmf_remote_caw_data
+    Description: Amount of remote CAW data sent to the storage system (FC-NVMe) in bytes per second.
+
+  - Name: nic_rx_errors
+    Description: Receive errors in bytes per second.
+
+  - Name: fcp_write_data
+    Description: Amount of data written to the storage system in bytes per second.
+
+  - Name: nic_tx_bytes
+    Description: Sent in bytes per second.
+
+  - Name: fcp_nvmf_caw_data
+    Description: Amount of CAW data sent to the storage system (FC-NVMe) in bytes per second.
+
+  - Name: fcp_nvmf_remote_read_data
+    Description: Amount of remote data read from the storage system (FC-NVMe) in bytes per second.
+
+  - Name: node_other_data
+    Description: Other throughput in bytes per second.
+
+  - Name: nvmf_rdma_port_write_data
+    Description: Amount of data written to the storage system in bytes per second.
+
+  - Name: fcp_read_data
+    Description: Amount of data read from the storage system in bytes per second.
+
+  - Name: qos_read_data
+    Description: This is the amount of data read in bytes per second from the filer by the workload.
+
+  - Name: lun_remote_bytes
+    Description: I/O to or from a LUN which is not owned by the storage system handling the I/O in bytes per second.
+
+  - Name: ontaps3_svm_get_data
+    Description: Rate of GET object data transfers in bytes per second. ontaps3_svm_get_data is [ontaps3_svm_get_data](#ontaps3_svm_get_data) aggregated by `svm`.
+
+  - Name: nvm_mirror_write_throughput
+    Description: Mirror throughput in bytes per second.
+
+  - Name: qos_write_data
+    Description: This is the amount of data written in bytes per second to the filer by the workload.
+
+  - Name: fcp_nvmf_total_data
+    Description: Amount of FC-NVMe traffic to and from the storage system in bytes per second.
+
+  - Name: nvme_lif_write_data
+    Description: Amount of data written to the storage system in bytes per second.
+
+  - Name: fcp_nvmf_remote_total_data
+    Description: Amount of remote FC-NVMe traffic to and from the storage system in bytes per second.
+
+  - Name: nvmf_tcp_port_read_data
+    Description: Amount of data read from the storage system in bytes per second.
+
+  - Name: fcp_total_data
+    Description: Amount of FCP traffic to and from the storage system in bytes per second.
+
+  - Name: fcp_lif_read_data
+    Description: Amount of data read from the storage system in bytes per second.
+
+  - Name: volume_total_data
+    Description: This metric represents the total amount of data that has been read from and written to a specific volume in bytes per second.
+
+  - Name: fcp_nvmf_write_data
+    Description: Amount of data written to the storage system (FC-NVMe) in bytes per second.
+
+  - Name: nvmf_rdma_port_read_data
+    Description: Amount of data read from the storage system in bytes per second.
+
+  - Name: fcp_nvmf_remote_write_data
+    Description: Amount of remote data written to the storage system (FC-NVMe) in bytes per second.
