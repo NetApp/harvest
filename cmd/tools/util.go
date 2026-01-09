@@ -368,7 +368,56 @@ func BuildMetrics(dir, configPath, pollerName string, opts *Options, metricsPane
 		}
 	}
 
+	descriptions := readDescriptions()
+
+	for k, counter := range counters {
+		// Check if there is an overridden description from the descriptions.yaml file and if so use it
+		if desc, ok := descriptions[counter.Name]; ok {
+			counter.Description = desc.Description
+			counters[k] = counter
+			continue
+		}
+
+		// Generically handle latency metrics to specify microseconds in the description if the unit is microseconds
+		// and the description does not already mention microseconds
+		if strings.Contains(counter.Name, "latency") {
+			for _, metricDef := range counter.APIs {
+				if metricDef.Unit == "microsec" && !strings.Contains(counter.Description, "microsec") {
+					counter.Description = strings.Replace(counter.Description, "latency", "latency in microseconds", 1)
+					counters[k] = counter
+					break
+				}
+			}
+		}
+	}
+
 	return counters, restClient.Remote()
+}
+
+type Desc struct {
+	Metric      string `yaml:"metric"`
+	Description string `yaml:"description"`
+}
+
+func readDescriptions() map[string]Desc {
+	open, err := os.Open("cmd/tools/generate/descriptions.yaml")
+	if err != nil {
+		LogErrAndExit(err)
+	}
+	defer open.Close()
+
+	var descriptions []Desc
+	err = yaml.NewDecoder(open).Decode(&descriptions)
+	if err != nil {
+		LogErrAndExit(err)
+	}
+
+	descriptionsMap := make(map[string]Desc)
+	for _, d := range descriptions {
+		descriptionsMap[d.Metric] = d
+	}
+
+	return descriptionsMap
 }
 
 func GenerateCounters(dir string, counters map[string]Counter, collectorName string, metricsPanelMap map[string]PanelData) map[string]Counter {
@@ -1910,7 +1959,7 @@ func readSwaggerJSON(opts *Options) []byte {
 		log.Fatal("failed to download swagger:", err)
 		return nil
 	}
-	cmd := fmt.Sprintf("dasel -f %s -r yaml -w json", path)
+	cmd := fmt.Sprintf("cat %s | dasel -i yaml -o json", path)
 	f, err = exec.Command("bash", "-c", cmd).Output()
 	if err != nil {
 		log.Fatal("Failed to execute command:", cmd, err)
