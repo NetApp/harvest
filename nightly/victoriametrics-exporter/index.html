@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="../prepare-storagegrid-clusters/">
+        <link rel="prev" href="../influxdb-exporter/">
       
       
-        <link rel="next" href="../configure-harvest-basic/">
+        <link rel="next" href="../configure-grafana/">
       
       
       <link rel="icon" href="../assets/harvest.svg">
@@ -20,7 +20,7 @@
     
     
       
-        <title>Cisco Switches - Harvest</title>
+        <title>VictoriaMetrics - Harvest</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#prepare-cisco-switch" class="md-skip">
+        <a href="#victoriametrics-exporter" class="md-skip">
           Skip to content
         </a>
       
@@ -113,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Cisco Switches
+              VictoriaMetrics
             
           </span>
         </div>
@@ -599,21 +599,19 @@
       
   
   
-    
   
   
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
         
           
           <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
@@ -627,7 +625,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             Prepare Monitored Systems
@@ -743,28 +741,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    Cisco Switches
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../prepare-cisco-switch/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -773,51 +753,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#prepare-cisco-switch" class="md-nav__link">
-    <span class="md-ellipsis">
-      Prepare Cisco switch
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#enable-nx-api-on-cisco-switch" class="md-nav__link">
-    <span class="md-ellipsis">
-      Enable NX-API on Cisco switch
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#reference" class="md-nav__link">
-    <span class="md-ellipsis">
-      Reference
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -854,19 +789,21 @@
       
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
         
           
           <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
@@ -880,7 +817,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             Configure Exporters
@@ -933,10 +870,30 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../victoriametrics-exporter/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    VictoriaMetrics
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -945,6 +902,59 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameters
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1923,6 +1933,8 @@
   
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -1931,29 +1943,35 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#prepare-cisco-switch" class="md-nav__link">
+  <a href="#overview" class="md-nav__link">
     <span class="md-ellipsis">
-      Prepare Cisco switch
+      Overview
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#enable-nx-api-on-cisco-switch" class="md-nav__link">
+  <a href="#parameters" class="md-nav__link">
     <span class="md-ellipsis">
-      Enable NX-API on Cisco switch
+      Parameters
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#reference" class="md-nav__link">
-    <span class="md-ellipsis">
-      Reference
-    </span>
-  </a>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1972,34 +1990,77 @@
                   
 
 
-  <h1>Cisco Switches</h1>
-
-<h2 id="prepare-cisco-switch">Prepare Cisco switch<a class="headerlink" href="#prepare-cisco-switch" title="Permanent link">&para;</a></h2>
-<p>NetApp Harvest requires login credentials to access Cisco switches. Although, a generic admin account can be used, it
-is better to create a dedicated monitoring user with read-only permissions.</p>
-<p>If you want to create a dedicated monitoring user for Harvest, follow the steps below.</p>
-<ol>
-<li>ssh into the switch with a user than can create new users. e.g. <code>ssh admin@switch-ip</code></li>
-<li>Create a new user with read-only permissions by running the following commands. Replace password with a strong password.</li>
-</ol>
-<div class="highlight"><pre><span></span><code>configure<span class="w"> </span>terminal
-username<span class="w"> </span>ro_user<span class="w"> </span>role<span class="w"> </span>network-operator<span class="w"> </span>password<span class="w"> </span>Netapp123
-<span class="nb">exit</span>
+<h1 id="victoriametrics-exporter">VictoriaMetrics Exporter<a class="headerlink" href="#victoriametrics-exporter" title="Permanent link">&para;</a></h1>
+<details class="note" open="open">
+<summary>VictoriaMetrics Install</summary>
+<p>The information below describes how to setup Harvest's VictoriaMetrics exporter.
+If you need help installing or setting up VictoriaMetrics, check
+out <a href="https://docs.victoriametrics.com/victoriametrics/">their documentation</a>.</p>
+</details>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>The VictoriaMetrics Exporter will format metrics into <a href="https://docs.influxdata.com/influxdb/v2.0/reference/syntax/line-protocol/#naming-restrictions">Prometheus exposition format</a>.
+The Exporter is compatible with VictoriaMetrics v1.129.1.</p>
+<h2 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h2>
+<p>Overview of all parameters is provided below. Only one of <code>url</code> or <code>addr</code> should be provided and at least one of them is
+required.
+If <code>addr</code> is specified, it should be a valid TCP address or hostname of the VictoriaMetrics server and should not include the
+scheme and port.</p>
+<blockquote>
+<p><code>addr</code> only works with HTTP. If you need to use HTTPS, you should use <code>url</code> instead.</p>
+</blockquote>
+<p>If <code>url</code> is specified, you must add all arguments to the url.
+Harvest will do no additional processing and use exactly what you specify. (
+e.g. <code>url: http://localhost:8428/api/v1/import/prometheus</code>.
+When using <code>url</code>, the <code>addr</code> and <code>port</code> field will be ignored.</p>
+<table>
+<thead>
+<tr>
+<th>parameter</th>
+<th>type</th>
+<th>description</th>
+<th>default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>url</code></td>
+<td>string</td>
+<td>URL of the database, format: <code>SCHEME://HOST[:PORT]</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>addr</code></td>
+<td>string</td>
+<td>address of the database, format: <code>HOST</code> (HTTP only)</td>
+<td></td>
+</tr>
+<tr>
+<td><code>port</code></td>
+<td>int, optional</td>
+<td>port of the database</td>
+<td><code>8086</code></td>
+</tr>
+<tr>
+<td><code>client_timeout</code></td>
+<td>int, optional</td>
+<td>client timeout in seconds</td>
+<td><code>5</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h3>
+<p>snippet from <code>harvest.yml</code> using <code>addr</code>: (supports HTTP only))</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Exporters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">my_victoriametrics</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">exporter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VictoriaMetrics</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost</span>
 </code></pre></div>
-<h2 id="enable-nx-api-on-cisco-switch">Enable NX-API on Cisco switch<a class="headerlink" href="#enable-nx-api-on-cisco-switch" title="Permanent link">&para;</a></h2>
-<p>NetApp Harvest uses NX-API to collect metrics from Cisco switches. You need to enable NX-API on the switch, follow the steps below.</p>
-<ol>
-<li>ssh into the switch with a user than can enable NX-API. e.g. <code>ssh admin@switch-ip</code></li>
-<li>Enable NX-API by running the following commands:</li>
-</ol>
-<div class="highlight"><pre><span></span><code>configure<span class="w"> </span>terminal
-feature<span class="w"> </span>nxapi
-<span class="nb">exit</span>
+<p>snippet from <code>harvest.yml</code> using <code>url</code>: (supports both HTTP/HTTPS))</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Exporters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">victoriametrics2</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">exporter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VictoriaMetrics</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://localhost:8428/api/v1/import/prometheus</span>
 </code></pre></div>
-<h2 id="reference">Reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
-<p>See <a href="https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/93x/security/configuration/guide/b-cisco-nexus-9000-nx-os-security-configuration-guide-93x/b-cisco-nexus-9000-nx-os-security-configuration-guide-93x_chapter_01000.html">Configuring User Accounts and RBAC</a>
-for more information on Cisco NX-OS user accounts and RBAC.</p>
-<p>See <a href="https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/93x/progammability/guide/b-cisco-nexus-9000-series-nx-os-programmability-guide-93x/b-cisco-nexus-9000-series-nx-os-programmability-guide-93x_chapter_010011.html">NX-OS Programmability Guide</a> for more information on the Cisco NX-API.</p>
 
 
 

@@ -405,6 +405,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#victoriametrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      VictoriaMetrics
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#dashboards" class="md-nav__link">
     <span class="md-ellipsis">
       Dashboards
@@ -1023,6 +1032,27 @@
   
   <span class="md-ellipsis">
     InfluxDB
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../victoriametrics-exporter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    VictoriaMetrics
   </span>
   
 
@@ -2091,6 +2121,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#victoriametrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      VictoriaMetrics
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#dashboards" class="md-nav__link">
     <span class="md-ellipsis">
       Dashboards
@@ -2224,6 +2263,12 @@
 <p><strong>More information:</strong></p>
 <ul>
 <li><a href="../influxdb-exporter/">InfluxDB Exporter</a></li>
+</ul>
+<h2 id="victoriametrics">VictoriaMetrics<a class="headerlink" href="#victoriametrics" title="Permanent link">&para;</a></h2>
+<p><a href="https://docs.victoriametrics.com/victoriametrics/">VictoriaMetrics</a> is an open-source time-series database. Existing Harvest dashboards supported for Prometheus will also work with VictoriaMetrics. Unlike the Prometheus exporter, Harvest's VictoriaMetrics exporter pushes metrics from the poller to VictoriaMetrics via Prometheus exposition format. The exporter is compatible with VictoriaMetrics v1.129.1.</p>
+<p><strong>More information:</strong></p>
+<ul>
+<li><a href="../victoriametrics-exporter/">VictoriaMetrics Exporter</a></li>
 </ul>
 <h2 id="dashboards">Dashboards<a class="headerlink" href="#dashboards" title="Permanent link">&para;</a></h2>
 <p>Harvest ships with a set of <a href="https://grafana.com/">Grafana</a> dashboards that are primarily designed to work with Prometheus. The dashboards are located in the <code>grafana/dashboards</code> directory. Harvest does not include Grafana, only the dashboards for it. Grafana must be installed separately via Docker, NAbox, or other means.</p>
