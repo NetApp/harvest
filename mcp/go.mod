@@ -5,9 +5,9 @@ go 1.25
 replace github.com/netapp/harvest/v2 => ../
 
 require (
-	github.com/goccy/go-yaml v1.19.1
+	github.com/goccy/go-yaml v1.19.2
 	github.com/modelcontextprotocol/go-sdk v1.2.0
-	github.com/netapp/harvest/v2 v2.0.0-20251215084222-367b927e5360
+	github.com/netapp/harvest/v2 v2.0.0-20260108145919-b9575e5b0cef
 	github.com/spf13/cobra v1.10.2
 )
 
