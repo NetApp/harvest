@@ -368,6 +368,20 @@ func BuildMetrics(dir, configPath, pollerName string, opts *Options, metricsPane
 		}
 	}
 
+	for k, counter := range counters {
+		// Generically handle latency metrics to specify microseconds in the description if the unit is microseconds
+		// and the description does not already mention microseconds
+		if strings.Contains(counter.Name, "latency") {
+			for _, metricDef := range counter.APIs {
+				if metricDef.Unit == "microsec" && !strings.Contains(counter.Description, "microsec") {
+					counter.Description = strings.Replace(counter.Description, "latency", "latency in microseconds", 1)
+					counters[k] = counter
+					break
+				}
+			}
+		}
+	}
+
 	return counters, restClient.Remote()
 }
 
@@ -562,6 +576,25 @@ func ProcessExternalCounters(dir string, counters map[string]Counter, metricsPan
 		fmt.Printf("error while parsing file %v", err)
 		return nil
 	}
+
+	// Check that there are not duplicates in counter.yaml
+	duplicates := make(map[string]int)
+	for _, v := range c.C {
+		duplicates[v.Name]++
+	}
+
+	dupsFound := false
+	for k, count := range duplicates {
+		if count > 1 {
+			fmt.Printf("error: duplicate counter definition found for counter '%s' in counter.yaml file\n", k)
+			dupsFound = true
+		}
+	}
+
+	if dupsFound {
+		os.Exit(1)
+	}
+
 	for _, v := range c.C {
 		if v1, ok := counters[v.Name]; !ok {
 			v.Panels = metricsPanelMap[v.Name].Panels
@@ -1910,7 +1943,7 @@ func readSwaggerJSON(opts *Options) []byte {
 		log.Fatal("failed to download swagger:", err)
 		return nil
 	}
-	cmd := fmt.Sprintf("dasel -f %s -r yaml -w json", path)
+	cmd := fmt.Sprintf("cat %s | dasel -i yaml -o json", path)
 	f, err = exec.Command("bash", "-c", cmd).Output()
 	if err != nil {
 		log.Fatal("Failed to execute command:", cmd, err)

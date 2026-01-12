@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2025-Dec-11
+Creation Date : 2026-Jan-09
 ONTAP Version: 9.16.1
 ```
 
@@ -3121,7 +3121,7 @@ The `external_service_op_num_timeouts` metric is visualized in the following Gra
 
 ### external_service_op_request_latency
 
-Average latency of requests for operations of this type on this server.
+Average latency in microseconds of requests for operations of this type on this server.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -3240,7 +3240,7 @@ Counter that indicates the throughput for commands in ops per second.
 
 ### fcp_avg_other_latency
 
-Average latency for operations other than read and write
+Average latency in microseconds for operations other than read and write
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -3251,7 +3251,7 @@ Average latency for operations other than read and write
 
 ### fcp_avg_read_latency
 
-Average latency for read operations
+Average latency in microseconds for read operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -3270,7 +3270,7 @@ The `fcp_avg_read_latency` metric is visualized in the following Grafana dashboa
 
 ### fcp_avg_write_latency
 
-Average latency for write operations
+Average latency in microseconds for write operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -3421,7 +3421,7 @@ The `fcp_labels` metric is visualized in the following Grafana dashboards:
 
 ### fcp_lif_avg_latency
 
-Average latency for FCP operations
+Average latency in microseconds for FCP operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -3443,7 +3443,7 @@ The `fcp_lif_avg_latency` metric is visualized in the following Grafana dashboar
 
 ### fcp_lif_avg_other_latency
 
-Average latency for operations other than read and write
+Average latency in microseconds for operations other than read and write
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -3462,7 +3462,7 @@ The `fcp_lif_avg_other_latency` metric is visualized in the following Grafana da
 
 ### fcp_lif_avg_read_latency
 
-Average latency for read operations
+Average latency in microseconds for read operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -3483,7 +3483,7 @@ The `fcp_lif_avg_read_latency` metric is visualized in the following Grafana das
 
 ### fcp_lif_avg_write_latency
 
-Average latency for write operations
+Average latency in microseconds for write operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -3523,7 +3523,7 @@ The `fcp_lif_other_ops` metric is visualized in the following Grafana dashboards
 
 ### fcp_lif_read_data
 
-Amount of data read from the storage system
+Amount of data read from the storage system in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -3587,7 +3587,7 @@ The `fcp_lif_total_ops` metric is visualized in the following Grafana dashboards
 
 ### fcp_lif_write_data
 
-Amount of data written to the storage system
+Amount of data written to the storage system in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -3737,7 +3737,7 @@ The `fcp_max_speed` metric is visualized in the following Grafana dashboards:
 
 ### fcp_nvmf_avg_other_latency
 
-Average latency for operations other than read and write (FC-NVMe)
+Average latency in microseconds for operations other than read and write (FC-NVMe)
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -3748,7 +3748,7 @@ Average latency for operations other than read and write (FC-NVMe)
 
 ### fcp_nvmf_avg_read_latency
 
-Average latency for read operations (FC-NVMe)
+Average latency in microseconds for read operations (FC-NVMe)
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -3767,7 +3767,7 @@ The `fcp_nvmf_avg_read_latency` metric is visualized in the following Grafana da
 
 ### fcp_nvmf_avg_remote_other_latency
 
-Average latency for remote operations other than read and write (FC-NVMe)
+Average latency in microseconds for remote operations other than read and write (FC-NVMe)
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -3778,7 +3778,7 @@ Average latency for remote operations other than read and write (FC-NVMe)
 
 ### fcp_nvmf_avg_remote_read_latency
 
-Average latency for remote read operations (FC-NVMe)
+Average latency in microseconds for remote read operations (FC-NVMe)
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -3789,7 +3789,7 @@ Average latency for remote read operations (FC-NVMe)
 
 ### fcp_nvmf_avg_remote_write_latency
 
-Average latency for remote write operations (FC-NVMe)
+Average latency in microseconds for remote write operations (FC-NVMe)
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -3800,7 +3800,7 @@ Average latency for remote write operations (FC-NVMe)
 
 ### fcp_nvmf_avg_write_latency
 
-Average latency for write operations (FC-NVMe)
+Average latency in microseconds for write operations (FC-NVMe)
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -3819,7 +3819,7 @@ The `fcp_nvmf_avg_write_latency` metric is visualized in the following Grafana d
 
 ### fcp_nvmf_caw_data
 
-Amount of CAW data sent to the storage system (FC-NVMe)
+Amount of CAW data sent to the storage system (FC-NVMe) in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -3863,7 +3863,7 @@ Number of NVMF operations that are not read or write.
 
 ### fcp_nvmf_read_data
 
-Amount of data read from the storage system (FC-NVMe)
+Amount of data read from the storage system (FC-NVMe) in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -3904,7 +3904,7 @@ The `fcp_nvmf_read_ops` metric is visualized in the following Grafana dashboards
 
 ### fcp_nvmf_remote_caw_data
 
-Amount of remote CAW data sent to the storage system (FC-NVMe)
+Amount of remote CAW data sent to the storage system (FC-NVMe) in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -3937,7 +3937,7 @@ Number of NVMF remote operations that are not read or write.
 
 ### fcp_nvmf_remote_read_data
 
-Amount of remote data read from the storage system (FC-NVMe)
+Amount of remote data read from the storage system (FC-NVMe) in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -3959,7 +3959,7 @@ Number of FC-NVMe remote read operations
 
 ### fcp_nvmf_remote_total_data
 
-Amount of remote FC-NVMe traffic to and from the storage system
+Amount of remote FC-NVMe traffic to and from the storage system in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -3981,7 +3981,7 @@ Total number of remote FC-NVMe operations
 
 ### fcp_nvmf_remote_write_data
 
-Amount of remote data written to the storage system (FC-NVMe)
+Amount of remote data written to the storage system (FC-NVMe) in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -4003,7 +4003,7 @@ Number of FC-NVMe remote write operations
 
 ### fcp_nvmf_total_data
 
-Amount of FC-NVMe traffic to and from the storage system
+Amount of FC-NVMe traffic to and from the storage system in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -4041,7 +4041,7 @@ The `fcp_nvmf_total_ops` metric is visualized in the following Grafana dashboard
 
 ### fcp_nvmf_write_data
 
-Amount of data written to the storage system (FC-NVMe)
+Amount of data written to the storage system (FC-NVMe) in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -4131,7 +4131,7 @@ The `fcp_queue_full` metric is visualized in the following Grafana dashboards:
 
 ### fcp_read_data
 
-Amount of data read from the storage system
+Amount of data read from the storage system in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -4223,7 +4223,7 @@ The `fcp_threshold_full` metric is visualized in the following Grafana dashboard
 
 ### fcp_total_data
 
-Amount of FCP traffic to and from the storage system
+Amount of FCP traffic to and from the storage system in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -4264,7 +4264,7 @@ The `fcp_util_percent` metric is visualized in the following Grafana dashboards:
 
 ### fcp_write_data
 
-Amount of data written to the storage system
+Amount of data written to the storage system in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -4429,7 +4429,7 @@ The `fcvi_hard_reset_count` metric is visualized in the following Grafana dashbo
 
 ### fcvi_rdma_write_avg_latency
 
-Average RDMA write I/O latency.
+Average RDMA write I/O latency in microseconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -5373,7 +5373,7 @@ The `fpolicy_denied_requests` metric is visualized in the following Grafana dash
 
 ### fpolicy_io_processing_latency
 
-Average IO processing latency for screen request
+Average IO processing latency in microseconds for screen request
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -5391,7 +5391,7 @@ The `fpolicy_io_processing_latency` metric is visualized in the following Grafan
 
 ### fpolicy_io_thread_wait_latency
 
-Average IO thread wait latency for the screen request
+Average IO thread wait latency in microseconds for the screen request
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -5427,7 +5427,7 @@ The `fpolicy_processed_requests` metric is visualized in the following Grafana d
 
 ### fpolicy_processing_latency
 
-Average policy processing latency for screen request
+Average policy processing latency in microseconds for screen request
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -5481,7 +5481,7 @@ The `fpolicy_server_failed_requests` metric is visualized in the following Grafa
 
 ### fpolicy_server_max_request_latency
 
-Maximum latency for a screen request
+Maximum latency in microseconds for a screen request
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -5535,7 +5535,7 @@ The `fpolicy_server_processed_requests` metric is visualized in the following Gr
 
 ### fpolicy_server_request_latency
 
-Average latency for screen request
+Average latency in microseconds for screen request
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -5607,7 +5607,7 @@ The `fpolicy_svm_failedop_notifications` metric is visualized in the following G
 
 ### fpolicy_svm_io_processing_latency
 
-Average IO processing latency for screen request
+Average IO processing latency in microseconds for screen request
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -5625,7 +5625,7 @@ The `fpolicy_svm_io_processing_latency` metric is visualized in the following Gr
 
 ### fpolicy_svm_io_thread_wait_latency
 
-Average IO thread wait latency for screen request
+Average IO thread wait latency in microseconds for screen request
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -5661,7 +5661,7 @@ The `fru_status` metric is visualized in the following Grafana dashboards:
 
 ### headroom_aggr_current_latency
 
-This is the storage aggregate average latency per message at the disk level.
+This is the storage aggregate average latency in microseconds per message at the disk level.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -5774,7 +5774,7 @@ The confidence factor for the optimal point value based on the observed resource
 
 ### headroom_aggr_optimal_point_latency
 
-The latency component of the optimal point of the latency/utilization curve.
+The latency in microseconds component of the optimal point of the latency/utilization curve.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -5832,7 +5832,7 @@ The `headroom_aggr_optimal_point_utilization` metric is visualized in the follow
 
 ### headroom_cpu_current_latency
 
-Current operation latency of the resource.
+Current operation latency in microseconds of the resource.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -5963,7 +5963,7 @@ Confidence factor for the optimal point value based on the observed resource lat
 
 ### headroom_cpu_optimal_point_latency
 
-Latency component of the optimal point of the latency/utilization curve. This counter can provide an average latency over a range of time.
+Latency component of the optimal point of the latency in microseconds/utilization curve. This counter can provide an average latency over a range of time.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -6342,7 +6342,7 @@ The `igroup_labels` metric is visualized in the following Grafana dashboards:
 
 ### iscsi_lif_avg_latency
 
-Average latency for iSCSI operations
+Average latency in microseconds for iSCSI operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -6363,7 +6363,7 @@ The `iscsi_lif_avg_latency` metric is visualized in the following Grafana dashbo
 
 ### iscsi_lif_avg_other_latency
 
-Average latency for operations other than read and write (for example, Inquiry, Report LUNs, SCSI Task Management Functions)
+Average latency in microseconds for operations other than read and write (for example, Inquiry, Report LUNs, SCSI Task Management Functions)
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -6382,7 +6382,7 @@ The `iscsi_lif_avg_other_latency` metric is visualized in the following Grafana 
 
 ### iscsi_lif_avg_read_latency
 
-Average latency for read operations
+Average latency in microseconds for read operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -6402,7 +6402,7 @@ The `iscsi_lif_avg_read_latency` metric is visualized in the following Grafana d
 
 ### iscsi_lif_avg_write_latency
 
-Average latency for write operations
+Average latency in microseconds for write operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -6549,7 +6549,7 @@ The `iscsi_lif_write_data` metric is visualized in the following Grafana dashboa
 
 ### iw_avg_latency
 
-Average RDMA I/O latency.
+Average RDMA I/O latency in microseconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -7007,7 +7007,7 @@ Percentage of reads whose size is not a multiple of WAFL block size
 
 ### lun_remote_bytes
 
-I/O to or from a LUN which is not owned by the storage system handling the I/O.
+I/O to or from a LUN which is not owned by the storage system handling the I/O in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9212,7 +9212,7 @@ The `nic_rx_alignment_errors` metric is visualized in the following Grafana dash
 
 ### nic_rx_bytes
 
-Bytes received
+Received in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9256,7 +9256,7 @@ The `nic_rx_crc_errors` metric is visualized in the following Grafana dashboards
 
 ### nic_rx_errors
 
-Error received
+Receive errors in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9327,7 +9327,7 @@ The `nic_rx_total_errors` metric is visualized in the following Grafana dashboar
 
 ### nic_tx_bytes
 
-Bytes sent
+Sent in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9350,7 +9350,7 @@ The `nic_tx_bytes` metric is visualized in the following Grafana dashboards:
 
 ### nic_tx_errors
 
-Error sent
+Sent errors in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9510,7 +9510,7 @@ The `node_cifs_established_sessions` metric is visualized in the following Grafa
 
 ### node_cifs_latency
 
-Average latency for CIFS operations
+Average latency in microseconds for CIFS operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9589,7 +9589,7 @@ The `node_cifs_ops` metric is visualized in the following Grafana dashboards:
 
 ### node_cifs_read_latency
 
-Average latency for CIFS read operations
+Average latency in microseconds for CIFS read operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -9622,7 +9622,7 @@ Total number of CIFS operations
 
 ### node_cifs_write_latency
 
-Average latency for CIFS write operations
+Average latency in microseconds for CIFS write operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -10359,7 +10359,7 @@ The `node_new_status` metric is visualized in the following Grafana dashboards:
 
 ### node_nfs_access_avg_latency
 
-Average latency of Access procedure requests. The counter keeps track of the average response time of Access requests.
+Average latency in microseconds of Access procedure requests. The counter keeps track of the average response time of Access requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -10393,7 +10393,7 @@ Total number of Access procedure requests. It is the total number of access succ
 
 ### node_nfs_backchannel_ctl_avg_latency
 
-Average latency of BACKCHANNEL_CTL operations.
+Average latency in microseconds of BACKCHANNEL_CTL operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -10419,7 +10419,7 @@ Total number of BACKCHANNEL_CTL operations.
 
 ### node_nfs_bind_conn_to_session_avg_latency
 
-Average latency of BIND_CONN_TO_SESSION operations.
+Average latency in microseconds of BIND_CONN_TO_SESSION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -10445,7 +10445,7 @@ Total number of BIND_CONN_TO_SESSION operations.
 
 ### node_nfs_close_avg_latency
 
-Average latency of CLOSE operations.
+Average latency in microseconds of CLOSE operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -10475,7 +10475,7 @@ Total number of CLOSE operations.
 
 ### node_nfs_commit_avg_latency
 
-Average latency of Commit procedure requests. The counter keeps track of the average response time of Commit requests.
+Average latency in microseconds of Commit procedure requests. The counter keeps track of the average response time of Commit requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -10509,7 +10509,7 @@ Total number of Commit procedure requests. It is the total number of Commit succ
 
 ### node_nfs_create_avg_latency
 
-Average latency of Create procedure requests. The counter keeps track of the average response time of Create requests.
+Average latency in microseconds of Create procedure requests. The counter keeps track of the average response time of Create requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -10526,7 +10526,7 @@ Average latency of Create procedure requests. The counter keeps track of the ave
 
 ### node_nfs_create_session_avg_latency
 
-Average latency of CREATE_SESSION operations.
+Average latency in microseconds of CREATE_SESSION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -10569,7 +10569,7 @@ Total number Create of procedure requests. It is the total number of create succ
 
 ### node_nfs_delegpurge_avg_latency
 
-Average latency of DELEGPURGE operations.
+Average latency in microseconds of DELEGPURGE operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -10599,7 +10599,7 @@ Total number of DELEGPURGE operations.
 
 ### node_nfs_delegreturn_avg_latency
 
-Average latency of DELEGRETURN operations.
+Average latency in microseconds of DELEGRETURN operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -10629,7 +10629,7 @@ Total number of DELEGRETURN operations.
 
 ### node_nfs_destroy_clientid_avg_latency
 
-Average latency of DESTROY_CLIENTID operations.
+Average latency in microseconds of DESTROY_CLIENTID operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -10655,7 +10655,7 @@ Total number of DESTROY_CLIENTID operations.
 
 ### node_nfs_destroy_session_avg_latency
 
-Average latency of DESTROY_SESSION operations.
+Average latency in microseconds of DESTROY_SESSION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -10681,7 +10681,7 @@ Total number of DESTROY_SESSION operations.
 
 ### node_nfs_exchange_id_avg_latency
 
-Average latency of EXCHANGE_ID operations.
+Average latency in microseconds of EXCHANGE_ID operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -10707,7 +10707,7 @@ Total number of EXCHANGE_ID operations.
 
 ### node_nfs_free_stateid_avg_latency
 
-Average latency of FREE_STATEID operations.
+Average latency in microseconds of FREE_STATEID operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -10733,7 +10733,7 @@ Total number of FREE_STATEID operations.
 
 ### node_nfs_fsinfo_avg_latency
 
-Average latency of FSInfo procedure requests. The counter keeps track of the average response time of FSInfo requests.
+Average latency in microseconds of FSInfo procedure requests. The counter keeps track of the average response time of FSInfo requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -10755,7 +10755,7 @@ Total number FSInfo of procedure requests. It is the total number of FSInfo succ
 
 ### node_nfs_fsstat_avg_latency
 
-Average latency of FSStat procedure requests. The counter keeps track of the average response time of FSStat requests.
+Average latency in microseconds of FSStat procedure requests. The counter keeps track of the average response time of FSStat requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -10777,7 +10777,7 @@ Total number FSStat of procedure requests. It is the total number of FSStat succ
 
 ### node_nfs_get_dir_delegation_avg_latency
 
-Average latency of GET_DIR_DELEGATION operations.
+Average latency in microseconds of GET_DIR_DELEGATION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -10803,7 +10803,7 @@ Total number of GET_DIR_DELEGATION operations.
 
 ### node_nfs_getattr_avg_latency
 
-Average latency of GetAttr procedure requests. This counter keeps track of the average response time of GetAttr requests.
+Average latency in microseconds of GetAttr procedure requests. This counter keeps track of the average response time of GetAttr requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -10837,7 +10837,7 @@ Total number of Getattr procedure requests. It is the total number of getattr su
 
 ### node_nfs_getdeviceinfo_avg_latency
 
-Average latency of GETDEVICEINFO operations.
+Average latency in microseconds of GETDEVICEINFO operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -10863,7 +10863,7 @@ Total number of GETDEVICEINFO operations.
 
 ### node_nfs_getdevicelist_avg_latency
 
-Average latency of GETDEVICELIST operations.
+Average latency in microseconds of GETDEVICELIST operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -10889,7 +10889,7 @@ Total number of GETDEVICELIST operations.
 
 ### node_nfs_getfh_avg_latency
 
-Average latency of GETFH operations.
+Average latency in microseconds of GETFH operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -10919,7 +10919,7 @@ Total number of GETFH operations.
 
 ### node_nfs_latency
 
-Average latency of NFSv3 requests. This counter keeps track of the average response time of NFSv3 requests.
+Average latency in microseconds of NFSv3 requests. This counter keeps track of the average response time of NFSv3 requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -10944,7 +10944,7 @@ The `node_nfs_latency` metric is visualized in the following Grafana dashboards:
 
 ### node_nfs_layoutcommit_avg_latency
 
-Average latency of LAYOUTCOMMIT operations.
+Average latency in microseconds of LAYOUTCOMMIT operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -10970,7 +10970,7 @@ Total number of LAYOUTCOMMIT operations.
 
 ### node_nfs_layoutget_avg_latency
 
-Average latency of LAYOUTGET operations.
+Average latency in microseconds of LAYOUTGET operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -10996,7 +10996,7 @@ Total number of LAYOUTGET operations.
 
 ### node_nfs_layoutreturn_avg_latency
 
-Average latency of LAYOUTRETURN operations.
+Average latency in microseconds of LAYOUTRETURN operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11022,7 +11022,7 @@ Total number of LAYOUTRETURN operations.
 
 ### node_nfs_link_avg_latency
 
-Average latency of Link procedure requests. The counter keeps track of the average response time of Link requests.
+Average latency in microseconds of Link procedure requests. The counter keeps track of the average response time of Link requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11056,7 +11056,7 @@ Total number Link of procedure requests. It is the total number of Link success 
 
 ### node_nfs_lock_avg_latency
 
-Average latency of LOCK operations.
+Average latency in microseconds of LOCK operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11086,7 +11086,7 @@ Total number of LOCK operations.
 
 ### node_nfs_lockt_avg_latency
 
-Average latency of LOCKT operations.
+Average latency in microseconds of LOCKT operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11116,7 +11116,7 @@ Total number of LOCKT operations.
 
 ### node_nfs_locku_avg_latency
 
-Average latency of LOCKU operations.
+Average latency in microseconds of LOCKU operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11146,7 +11146,7 @@ Total number of LOCKU operations.
 
 ### node_nfs_lookup_avg_latency
 
-Average latency of LookUp procedure requests. This shows the average time it takes for the LookUp operation to reply to the request.
+Average latency in microseconds of LookUp procedure requests. This shows the average time it takes for the LookUp operation to reply to the request.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11180,7 +11180,7 @@ Total number of Lookup procedure requests. It is the total number of lookup succ
 
 ### node_nfs_lookupp_avg_latency
 
-Average latency of LOOKUPP operations.
+Average latency in microseconds of LOOKUPP operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11210,7 +11210,7 @@ Total number of LOOKUPP operations.
 
 ### node_nfs_mkdir_avg_latency
 
-Average latency of MkDir procedure requests. The counter keeps track of the average response time of MkDir requests.
+Average latency in microseconds of MkDir procedure requests. The counter keeps track of the average response time of MkDir requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11232,7 +11232,7 @@ Total number MkDir of procedure requests. It is the total number of MkDir succes
 
 ### node_nfs_mknod_avg_latency
 
-Average latency of MkNod procedure requests. The counter keeps track of the average response time of MkNod requests.
+Average latency in microseconds of MkNod procedure requests. The counter keeps track of the average response time of MkNod requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11254,7 +11254,7 @@ Total number MkNod of procedure requests. It is the total number of MkNod succes
 
 ### node_nfs_null_avg_latency
 
-Average latency of Null procedure requests.
+Average latency in microseconds of Null procedure requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11288,7 +11288,7 @@ Total number of Null procedure requests. It is the total of null success and nul
 
 ### node_nfs_nverify_avg_latency
 
-Average latency of NVERIFY operations.
+Average latency in microseconds of NVERIFY operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11318,7 +11318,7 @@ Total number of NVERIFY operations.
 
 ### node_nfs_open_avg_latency
 
-Average latency of OPEN operations.
+Average latency in microseconds of OPEN operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11333,7 +11333,7 @@ Average latency of OPEN operations.
 
 ### node_nfs_open_confirm_avg_latency
 
-Average latency of OPEN_CONFIRM procedures
+Average latency in microseconds of OPEN_CONFIRM procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11355,7 +11355,7 @@ Total number of OPEN_CONFIRM procedures
 
 ### node_nfs_open_downgrade_avg_latency
 
-Average latency of OPEN_DOWNGRADE operations.
+Average latency in microseconds of OPEN_DOWNGRADE operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11400,7 +11400,7 @@ Total number of OPEN operations.
 
 ### node_nfs_openattr_avg_latency
 
-Average latency of OPENATTR operations.
+Average latency in microseconds of OPENATTR operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11452,7 +11452,7 @@ The `node_nfs_ops` metric is visualized in the following Grafana dashboards:
 
 ### node_nfs_pathconf_avg_latency
 
-Average latency of PathConf procedure requests. The counter keeps track of the average response time of PathConf requests.
+Average latency in microseconds of PathConf procedure requests. The counter keeps track of the average response time of PathConf requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11504,7 +11504,7 @@ Total number of PUTFH operations.
 
 ### node_nfs_putpubfh_avg_latency
 
-Average latency of PUTPUBFH operations.
+Average latency in microseconds of PUTPUBFH operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11534,7 +11534,7 @@ Total number of PUTPUBFH operations.
 
 ### node_nfs_putrootfh_avg_latency
 
-Average latency of PUTROOTFH operations.
+Average latency in microseconds of PUTROOTFH operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11564,7 +11564,7 @@ Total number of PUTROOTFH operations.
 
 ### node_nfs_read_avg_latency
 
-Average latency of Read procedure requests. The counter keeps track of the average response time of Read requests.
+Average latency in microseconds of Read procedure requests. The counter keeps track of the average response time of Read requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11610,7 +11610,7 @@ The `node_nfs_read_ops` metric is visualized in the following Grafana dashboards
 
 ### node_nfs_read_symlink_avg_latency
 
-Average latency of ReadSymLink procedure requests. The counter keeps track of the average response time of ReadSymLink requests.
+Average latency in microseconds of ReadSymLink procedure requests. The counter keeps track of the average response time of ReadSymLink requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11632,7 +11632,7 @@ Total number of ReadSymLink procedure requests. It is the total number of read s
 
 ### node_nfs_read_throughput
 
-Rate of NFSv3 read data transfers per second.
+Rate of NFSv3 read data transfers in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11675,7 +11675,7 @@ Total number Read of procedure requests. It is the total number of read success 
 
 ### node_nfs_readdir_avg_latency
 
-Average latency of ReadDir procedure requests. The counter keeps track of the average response time of ReadDir requests.
+Average latency in microseconds of ReadDir procedure requests. The counter keeps track of the average response time of ReadDir requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11709,7 +11709,7 @@ Total number ReadDir of procedure requests. It is the total number of ReadDir su
 
 ### node_nfs_readdirplus_avg_latency
 
-Average latency of ReadDirPlus procedure requests. The counter keeps track of the average response time of ReadDirPlus requests.
+Average latency in microseconds of ReadDirPlus procedure requests. The counter keeps track of the average response time of ReadDirPlus requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11731,7 +11731,7 @@ Total number ReadDirPlus of procedure requests. It is the total number of ReadDi
 
 ### node_nfs_readlink_avg_latency
 
-Average latency of READLINK operations.
+Average latency in microseconds of READLINK operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11761,7 +11761,7 @@ Total number of READLINK operations.
 
 ### node_nfs_reclaim_complete_avg_latency
 
-Average latency of RECLAIM_COMPLETE operations.
+Average latency in microseconds of RECLAIM_COMPLETE operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11809,7 +11809,7 @@ Total number of RELEASE_LOCKOWNER procedures
 
 ### node_nfs_remove_avg_latency
 
-Average latency of Remove procedure requests. The counter keeps track of the average response time of Remove requests.
+Average latency in microseconds of Remove procedure requests. The counter keeps track of the average response time of Remove requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11843,7 +11843,7 @@ Total number Remove of procedure requests. It is the total number of Remove succ
 
 ### node_nfs_rename_avg_latency
 
-Average latency of Rename procedure requests. The counter keeps track of the average response time of Rename requests.
+Average latency in microseconds of Rename procedure requests. The counter keeps track of the average response time of Rename requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11877,7 +11877,7 @@ Total number Rename of procedure requests. It is the total number of Rename succ
 
 ### node_nfs_renew_avg_latency
 
-Average latency of RENEW procedures
+Average latency in microseconds of RENEW procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11899,7 +11899,7 @@ Total number of RENEW procedures
 
 ### node_nfs_restorefh_avg_latency
 
-Average latency of RESTOREFH operations.
+Average latency in microseconds of RESTOREFH operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11929,7 +11929,7 @@ Total number of RESTOREFH operations.
 
 ### node_nfs_rmdir_avg_latency
 
-Average latency of RmDir procedure requests. The counter keeps track of the average response time of RmDir requests.
+Average latency in microseconds of RmDir procedure requests. The counter keeps track of the average response time of RmDir requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11951,7 +11951,7 @@ Total number RmDir of procedure requests. It is the total number of RmDir succes
 
 ### node_nfs_savefh_avg_latency
 
-Average latency of SAVEFH operations.
+Average latency in microseconds of SAVEFH operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11981,7 +11981,7 @@ Total number of SAVEFH operations.
 
 ### node_nfs_secinfo_avg_latency
 
-Average latency of SECINFO operations.
+Average latency in microseconds of SECINFO operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -11996,7 +11996,7 @@ Average latency of SECINFO operations.
 
 ### node_nfs_secinfo_no_name_avg_latency
 
-Average latency of SECINFO_NO_NAME operations.
+Average latency in microseconds of SECINFO_NO_NAME operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12037,7 +12037,7 @@ Total number of SECINFO operations.
 
 ### node_nfs_sequence_avg_latency
 
-Average latency of SEQUENCE operations.
+Average latency in microseconds of SEQUENCE operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12063,7 +12063,7 @@ Total number of SEQUENCE operations.
 
 ### node_nfs_set_ssv_avg_latency
 
-Average latency of SET_SSV operations.
+Average latency in microseconds of SET_SSV operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12089,7 +12089,7 @@ Total number of SET_SSV operations.
 
 ### node_nfs_setattr_avg_latency
 
-Average latency of SetAttr procedure requests. The counter keeps track of the average response time of SetAttr requests.
+Average latency in microseconds of SetAttr procedure requests. The counter keeps track of the average response time of SetAttr requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12123,7 +12123,7 @@ Total number of Setattr procedure requests. It is the total number of Setattr su
 
 ### node_nfs_setclientid_avg_latency
 
-Average latency of SETCLIENTID procedures
+Average latency in microseconds of SETCLIENTID procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12134,7 +12134,7 @@ Average latency of SETCLIENTID procedures
 
 ### node_nfs_setclientid_confirm_avg_latency
 
-Average latency of SETCLIENTID_CONFIRM procedures
+Average latency in microseconds of SETCLIENTID_CONFIRM procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12167,7 +12167,7 @@ Total number of SETCLIENTID procedures
 
 ### node_nfs_symlink_avg_latency
 
-Average latency of SymLink procedure requests. The counter keeps track of the average response time of SymLink requests.
+Average latency in microseconds of SymLink procedure requests. The counter keeps track of the average response time of SymLink requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12189,7 +12189,7 @@ Total number SymLink of procedure requests. It is the total number of SymLink su
 
 ### node_nfs_test_stateid_avg_latency
 
-Average latency of TEST_STATEID operations.
+Average latency in microseconds of TEST_STATEID operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12215,7 +12215,7 @@ Total number of TEST_STATEID operations.
 
 ### node_nfs_throughput
 
-Rate of NFSv3 data transfers per second.
+Rate of NFSv3 data transfers in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12265,7 +12265,7 @@ The `node_nfs_total_ops` metric is visualized in the following Grafana dashboard
 
 ### node_nfs_verify_avg_latency
 
-Average latency of VERIFY operations.
+Average latency in microseconds of VERIFY operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12295,7 +12295,7 @@ Total number of VERIFY operations.
 
 ### node_nfs_want_delegation_avg_latency
 
-Average latency of WANT_DELEGATION operations.
+Average latency in microseconds of WANT_DELEGATION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12321,7 +12321,7 @@ Total number of WANT_DELEGATION operations.
 
 ### node_nfs_write_avg_latency
 
-Average latency of Write procedure requests. The counter keeps track of the average response time of Write requests.
+Average latency in microseconds of Write procedure requests. The counter keeps track of the average response time of Write requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12367,7 +12367,7 @@ The `node_nfs_write_ops` metric is visualized in the following Grafana dashboard
 
 ### node_nfs_write_throughput
 
-Rate of NFSv3 write data transfers per second.
+Rate of NFSv3 write data transfers in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12490,7 +12490,7 @@ The `node_nvmf_ops` metric is visualized in the following Grafana dashboards:
 
 ### node_other_data
 
-Other throughput
+Other throughput in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12526,7 +12526,7 @@ All other operations per second
 
 ### node_read_data
 
-Read throughput
+Read throughput in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12650,7 +12650,7 @@ The `node_uptime` metric is visualized in the following Grafana dashboards:
 
 ### node_volume_avg_latency
 
-Performance metric aggregated over all types of I/O operations. node_volume_avg_latency is [volume_avg_latency](#volume_avg_latency) aggregated by `node`.
+Performance metric aggregated over all types of I/O operations. node_volume_avg_latency in microseconds is [volume_avg_latency](#volume_avg_latency) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12738,7 +12738,7 @@ Number of operations of the given type performed on this volume. node_volume_nfs
 
 ### node_volume_nfs_other_latency
 
-Average time for the WAFL filesystem to process other NFS operations to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency (Note: This is applicable only for ONTAP 9.9 and below. Harvest uses KeyPerf collector for ONTAP 9.10 onwards.). node_volume_nfs_other_latency is [volume_nfs_other_latency](#volume_nfs_other_latency) aggregated by `node`.
+Average time for the WAFL filesystem to process other NFS operations to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency in microseconds (Note: This is applicable only for ONTAP 9.9 and below. Harvest uses KeyPerf collector for ONTAP 9.10 onwards.). node_volume_nfs_other_latency is [volume_nfs_other_latency](#volume_nfs_other_latency) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12758,7 +12758,7 @@ Number of other NFS operations per second to the volume (Note: This is applicabl
 
 ### node_volume_nfs_punch_hole_latency
 
-Average time for the WAFL filesystem to process NFS protocol hole-punch requests to the volume (Note: This is applicable only for ONTAP 9.9 and below. Harvest uses KeyPerf collector for ONTAP 9.10 onwards.). node_volume_nfs_punch_hole_latency is [volume_nfs_punch_hole_latency](#volume_nfs_punch_hole_latency) aggregated by `node`.
+Average time for the WAFL filesystem to process NFS protocol hole-punch requests to the volume (Note: This is applicable only for ONTAP 9.9 and below. Harvest uses KeyPerf collector for ONTAP 9.10 onwards.). node_volume_nfs_punch_hole_latency in microseconds is [volume_nfs_punch_hole_latency](#volume_nfs_punch_hole_latency) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12864,7 +12864,7 @@ Performance metric for other I/O operations. Other I/O operations can be metadat
 
 ### node_volume_other_latency
 
-Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on. node_volume_other_latency is [volume_other_latency](#volume_other_latency) aggregated by `node`.
+Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on. node_volume_other_latency in microseconds is [volume_other_latency](#volume_other_latency) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12924,7 +12924,7 @@ The `node_volume_read_data` metric is visualized in the following Grafana dashbo
 
 ### node_volume_read_latency
 
-Performance metric for read I/O operations. node_volume_read_latency is [volume_read_latency](#volume_read_latency) aggregated by `node`.
+Performance metric for read I/O operations. node_volume_read_latency in microseconds is [volume_read_latency](#volume_read_latency) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13027,7 +13027,7 @@ The `node_volume_write_data` metric is visualized in the following Grafana dashb
 
 ### node_volume_write_latency
 
-Performance metric for write I/O operations. node_volume_write_latency is [volume_write_latency](#volume_write_latency) aggregated by `node`.
+Performance metric for write I/O operations. node_volume_write_latency in microseconds is [volume_write_latency](#volume_write_latency) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13067,7 +13067,7 @@ The `node_volume_write_ops` metric is visualized in the following Grafana dashbo
 
 ### node_write_data
 
-Write throughput
+Write throughput in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13124,7 +13124,7 @@ The `ntpserver_labels` metric is visualized in the following Grafana dashboards:
 
 ### nvm_mirror_write_throughput
 
-Mirror throughput in Bytes per second
+Mirror throughput in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13142,7 +13142,7 @@ The `nvm_mirror_write_throughput` metric is visualized in the following Grafana 
 
 ### nvme_lif_avg_latency
 
-Average latency for NVMF operations
+Average latency in microseconds for NVMF operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13164,7 +13164,7 @@ The `nvme_lif_avg_latency` metric is visualized in the following Grafana dashboa
 
 ### nvme_lif_avg_other_latency
 
-Average latency for operations other than read, write, compare or compare-and-write.
+Average latency in microseconds for operations other than read, write, compare or compare-and-write.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13183,7 +13183,7 @@ The `nvme_lif_avg_other_latency` metric is visualized in the following Grafana d
 
 ### nvme_lif_avg_read_latency
 
-Average latency for read operations
+Average latency in microseconds for read operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13202,7 +13202,7 @@ The `nvme_lif_avg_read_latency` metric is visualized in the following Grafana da
 
 ### nvme_lif_avg_write_latency
 
-Average latency for write operations
+Average latency in microseconds for write operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13240,7 +13240,7 @@ The `nvme_lif_other_ops` metric is visualized in the following Grafana dashboard
 
 ### nvme_lif_read_data
 
-Amount of data read from the storage system
+Amount of data read from the storage system in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13301,7 +13301,7 @@ The `nvme_lif_total_ops` metric is visualized in the following Grafana dashboard
 
 ### nvme_lif_write_data
 
-Amount of data written to the storage system
+Amount of data written to the storage system in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13343,7 +13343,7 @@ The `nvme_lif_write_ops` metric is visualized in the following Grafana dashboard
 
 ### nvmf_rdma_port_avg_latency
 
-Average latency for NVMF operations
+Average latency in microseconds for NVMF operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13354,7 +13354,7 @@ Average latency for NVMF operations
 
 ### nvmf_rdma_port_avg_other_latency
 
-Average latency for operations other than read, write, compare or compare-and-write
+Average latency in microseconds for operations other than read, write, compare or compare-and-write
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13365,7 +13365,7 @@ Average latency for operations other than read, write, compare or compare-and-wr
 
 ### nvmf_rdma_port_avg_read_latency
 
-Average latency for read operations
+Average latency in microseconds for read operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13376,7 +13376,7 @@ Average latency for read operations
 
 ### nvmf_rdma_port_avg_write_latency
 
-Average latency for write operations
+Average latency in microseconds for write operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13398,7 +13398,7 @@ Number of operations that are not read, write, compare or compare-and-right.
 
 ### nvmf_rdma_port_read_data
 
-Amount of data read from the storage system
+Amount of data read from the storage system in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13420,7 +13420,7 @@ Number of read operations
 
 ### nvmf_rdma_port_total_data
 
-Amount of NVMF traffic to and from the storage system
+Amount of NVMF traffic to and from the storage system in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13442,7 +13442,7 @@ Total number of operations.
 
 ### nvmf_rdma_port_write_data
 
-Amount of data written to the storage system
+Amount of data written to the storage system in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13464,7 +13464,7 @@ Number of write operations
 
 ### nvmf_tcp_port_avg_latency
 
-Average latency for NVMF operations
+Average latency in microseconds for NVMF operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13475,7 +13475,7 @@ Average latency for NVMF operations
 
 ### nvmf_tcp_port_avg_other_latency
 
-Average latency for operations other than read, write, compare or compare-and-write
+Average latency in microseconds for operations other than read, write, compare or compare-and-write
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13486,7 +13486,7 @@ Average latency for operations other than read, write, compare or compare-and-wr
 
 ### nvmf_tcp_port_avg_read_latency
 
-Average latency for read operations
+Average latency in microseconds for read operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13497,7 +13497,7 @@ Average latency for read operations
 
 ### nvmf_tcp_port_avg_write_latency
 
-Average latency for write operations
+Average latency in microseconds for write operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13519,7 +13519,7 @@ Number of operations that are not read, write, compare or compare-and-write.
 
 ### nvmf_tcp_port_read_data
 
-Amount of data read from the storage system
+Amount of data read from the storage system in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13541,7 +13541,7 @@ Number of read operations
 
 ### nvmf_tcp_port_total_data
 
-Amount of NVMF traffic to and from the storage system
+Amount of NVMF traffic to and from the storage system in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13563,7 +13563,7 @@ Total number of operations.
 
 ### nvmf_tcp_port_write_data
 
-Amount of data written to the storage system
+Amount of data written to the storage system in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13705,7 +13705,7 @@ Number of times Abort Multipart Upload operation failed because client terminate
 
 ### ontaps3_svm_abort_multipart_upload_latency
 
-Average latency for Abort Multipart Upload operations. ontaps3_svm_abort_multipart_upload_latency is [ontaps3_svm_abort_multipart_upload_latency](#ontaps3_svm_abort_multipart_upload_latency) aggregated by `svm`.
+Average latency in microseconds for Abort Multipart Upload operations. ontaps3_svm_abort_multipart_upload_latency is [ontaps3_svm_abort_multipart_upload_latency](#ontaps3_svm_abort_multipart_upload_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13815,7 +13815,7 @@ Number of times Complete Multipart Upload operation failed because client termin
 
 ### ontaps3_svm_complete_multipart_upload_latency
 
-Average latency for Complete Multipart Upload operations. ontaps3_svm_complete_multipart_upload_latency is [ontaps3_svm_complete_multipart_upload_latency](#ontaps3_svm_complete_multipart_upload_latency) aggregated by `svm`.
+Average latency in microseconds for Complete Multipart Upload operations. ontaps3_svm_complete_multipart_upload_latency is [ontaps3_svm_complete_multipart_upload_latency](#ontaps3_svm_complete_multipart_upload_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13900,7 +13900,7 @@ Number of times Create Bucket operation failed because client terminated connect
 
 ### ontaps3_svm_create_bucket_latency
 
-Average latency for Create Bucket operations. ontaps3_svm_create_bucket_latency is [ontaps3_svm_create_bucket_latency](#ontaps3_svm_create_bucket_latency) aggregated by `svm`.
+Average latency in microseconds for Create Bucket operations. ontaps3_svm_create_bucket_latency is [ontaps3_svm_create_bucket_latency](#ontaps3_svm_create_bucket_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13966,7 +13966,7 @@ Number of times Delete Bucket operation failed because client terminated connect
 
 ### ontaps3_svm_delete_bucket_latency
 
-Average latency for Delete Bucket operations. ontaps3_svm_delete_bucket_latency is [ontaps3_svm_delete_bucket_latency](#ontaps3_svm_delete_bucket_latency) aggregated by `svm`.
+Average latency in microseconds for Delete Bucket operations. ontaps3_svm_delete_bucket_latency is [ontaps3_svm_delete_bucket_latency](#ontaps3_svm_delete_bucket_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -14021,7 +14021,7 @@ Number of times DELETE object operation failed due to the case where client clos
 
 ### ontaps3_svm_delete_object_latency
 
-Average latency for DELETE object operations. ontaps3_svm_delete_object_latency is [ontaps3_svm_delete_object_latency](#ontaps3_svm_delete_object_latency) aggregated by `svm`.
+Average latency in microseconds for DELETE object operations. ontaps3_svm_delete_object_latency is [ontaps3_svm_delete_object_latency](#ontaps3_svm_delete_object_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -14081,7 +14081,7 @@ Number of times DELETE object tagging operation failed because client terminated
 
 ### ontaps3_svm_delete_object_tagging_latency
 
-Average latency for DELETE object tagging operations. ontaps3_svm_delete_object_tagging_latency is [ontaps3_svm_delete_object_tagging_latency](#ontaps3_svm_delete_object_tagging_latency) aggregated by `svm`.
+Average latency in microseconds for DELETE object tagging operations. ontaps3_svm_delete_object_tagging_latency is [ontaps3_svm_delete_object_tagging_latency](#ontaps3_svm_delete_object_tagging_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -14188,7 +14188,7 @@ Number of Get Bucket Versioning operations. ontaps3_svm_get_bucket_versioning_to
 
 ### ontaps3_svm_get_data
 
-Rate of GET object data transfers per second. ontaps3_svm_get_data is [ontaps3_svm_get_data](#ontaps3_svm_get_data) aggregated by `svm`.
+Rate of GET object data transfers in bytes per second. ontaps3_svm_get_data is [ontaps3_svm_get_data](#ontaps3_svm_get_data) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -14251,7 +14251,7 @@ Number of times GET object operation failed due to the case where client closed 
 
 ### ontaps3_svm_get_object_lastbyte_latency
 
-Average last-byte latency for GET object operations. ontaps3_svm_get_object_lastbyte_latency is [ontaps3_svm_get_object_lastbyte_latency](#ontaps3_svm_get_object_lastbyte_latency) aggregated by `svm`.
+Average last-byte latency in microseconds for GET object operations. ontaps3_svm_get_object_lastbyte_latency is [ontaps3_svm_get_object_lastbyte_latency](#ontaps3_svm_get_object_lastbyte_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -14262,7 +14262,7 @@ Average last-byte latency for GET object operations. ontaps3_svm_get_object_last
 
 ### ontaps3_svm_get_object_latency
 
-Average first-byte latency for GET object operations. ontaps3_svm_get_object_latency is [ontaps3_svm_get_object_latency](#ontaps3_svm_get_object_latency) aggregated by `svm`.
+Average first-byte latency in microseconds for GET object operations. ontaps3_svm_get_object_latency is [ontaps3_svm_get_object_latency](#ontaps3_svm_get_object_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -14322,7 +14322,7 @@ Number of times GET object tagging operation failed due to the case where client
 
 ### ontaps3_svm_get_object_tagging_latency
 
-Average latency for GET object tagging operations. ontaps3_svm_get_object_tagging_latency is [ontaps3_svm_get_object_tagging_latency](#ontaps3_svm_get_object_tagging_latency) aggregated by `svm`.
+Average latency in microseconds for GET object tagging operations. ontaps3_svm_get_object_tagging_latency is [ontaps3_svm_get_object_tagging_latency](#ontaps3_svm_get_object_tagging_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -14407,7 +14407,7 @@ Number of times HEAD bucket operation failed due to the case where client closed
 
 ### ontaps3_svm_head_bucket_latency
 
-Average latency for HEAD bucket operations. ontaps3_svm_head_bucket_latency is [ontaps3_svm_head_bucket_latency](#ontaps3_svm_head_bucket_latency) aggregated by `svm`.
+Average latency in microseconds for HEAD bucket operations. ontaps3_svm_head_bucket_latency is [ontaps3_svm_head_bucket_latency](#ontaps3_svm_head_bucket_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -14462,7 +14462,7 @@ Number of times HEAD object operation failed due to the case where client closed
 
 ### ontaps3_svm_head_object_latency
 
-Average latency for HEAD object operations. ontaps3_svm_head_object_latency is [ontaps3_svm_head_object_latency](#ontaps3_svm_head_object_latency) aggregated by `svm`.
+Average latency in microseconds for HEAD object operations. ontaps3_svm_head_object_latency is [ontaps3_svm_head_object_latency](#ontaps3_svm_head_object_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -14541,7 +14541,7 @@ Number of times Initiate Multipart Upload operation failed because client termin
 
 ### ontaps3_svm_initiate_multipart_upload_latency
 
-Average latency for Initiate Multipart Upload operations. ontaps3_svm_initiate_multipart_upload_latency is [ontaps3_svm_initiate_multipart_upload_latency](#ontaps3_svm_initiate_multipart_upload_latency) aggregated by `svm`.
+Average latency in microseconds for Initiate Multipart Upload operations. ontaps3_svm_initiate_multipart_upload_latency is [ontaps3_svm_initiate_multipart_upload_latency](#ontaps3_svm_initiate_multipart_upload_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -14618,7 +14618,7 @@ Number of times LIST Bucket operation failed due to the case where client closed
 
 ### ontaps3_svm_list_buckets_latency
 
-Average latency for LIST Buckets operations. ontaps3_svm_list_buckets_latency is [ontaps3_svm_list_buckets_latency](#ontaps3_svm_list_buckets_latency) aggregated by `svm`.
+Average latency in microseconds for LIST Buckets operations. ontaps3_svm_list_buckets_latency is [ontaps3_svm_list_buckets_latency](#ontaps3_svm_list_buckets_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -14673,7 +14673,7 @@ Number of times LIST object versions operation failed due to the case where clie
 
 ### ontaps3_svm_list_object_versions_latency
 
-Average latency for LIST Object versions operations. ontaps3_svm_list_object_versions_latency is [ontaps3_svm_list_object_versions_latency](#ontaps3_svm_list_object_versions_latency) aggregated by `svm`.
+Average latency in microseconds for LIST Object versions operations. ontaps3_svm_list_object_versions_latency is [ontaps3_svm_list_object_versions_latency](#ontaps3_svm_list_object_versions_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -14728,7 +14728,7 @@ Number of times LIST objects operation failed due to the case where client close
 
 ### ontaps3_svm_list_objects_latency
 
-Average latency for LIST Objects operations. ontaps3_svm_list_objects_latency is [ontaps3_svm_list_objects_latency](#ontaps3_svm_list_objects_latency) aggregated by `svm`.
+Average latency in microseconds for LIST Objects operations. ontaps3_svm_list_objects_latency is [ontaps3_svm_list_objects_latency](#ontaps3_svm_list_objects_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -14783,7 +14783,7 @@ Number of times LIST Upload operation failed due to the case where client closed
 
 ### ontaps3_svm_list_uploads_latency
 
-Average latency for LIST Upload operations. ontaps3_svm_list_uploads_latency is [ontaps3_svm_list_uploads_latency](#ontaps3_svm_list_uploads_latency) aggregated by `svm`.
+Average latency in microseconds for LIST Upload operations. ontaps3_svm_list_uploads_latency is [ontaps3_svm_list_uploads_latency](#ontaps3_svm_list_uploads_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -14939,7 +14939,7 @@ Number of Put Bucket Versioning operations. ontaps3_svm_put_bucket_versioning_to
 
 ### ontaps3_svm_put_data
 
-Rate of PUT object data transfers per second. ontaps3_svm_put_data is [ontaps3_svm_put_data](#ontaps3_svm_put_data) aggregated by `svm`.
+Rate of PUT object data transfers in bytes per second. ontaps3_svm_put_data is [ontaps3_svm_put_data](#ontaps3_svm_put_data) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -14980,7 +14980,7 @@ Number of times PUT object operation failed due to the case where client closed 
 
 ### ontaps3_svm_put_object_latency
 
-Average latency for PUT object operations. ontaps3_svm_put_object_latency is [ontaps3_svm_put_object_latency](#ontaps3_svm_put_object_latency) aggregated by `svm`.
+Average latency in microseconds for PUT object operations. ontaps3_svm_put_object_latency is [ontaps3_svm_put_object_latency](#ontaps3_svm_put_object_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -15040,7 +15040,7 @@ Number of times PUT object tagging operation failed because client terminated co
 
 ### ontaps3_svm_put_object_tagging_latency
 
-Average latency for PUT object tagging operations. ontaps3_svm_put_object_tagging_latency is [ontaps3_svm_put_object_tagging_latency](#ontaps3_svm_put_object_tagging_latency) aggregated by `svm`.
+Average latency in microseconds for PUT object tagging operations. ontaps3_svm_put_object_tagging_latency is [ontaps3_svm_put_object_tagging_latency](#ontaps3_svm_put_object_tagging_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -15210,7 +15210,7 @@ Number of times Upload Part operation failed because client terminated connectio
 
 ### ontaps3_svm_upload_part_latency
 
-Average latency for Upload Part operations. ontaps3_svm_upload_part_latency is [ontaps3_svm_upload_part_latency](#ontaps3_svm_upload_part_latency) aggregated by `svm`.
+Average latency in microseconds for Upload Part operations. ontaps3_svm_upload_part_latency is [ontaps3_svm_upload_part_latency](#ontaps3_svm_upload_part_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -15300,7 +15300,7 @@ The `path_read_iops` metric is visualized in the following Grafana dashboards:
 
 ### path_read_latency
 
-The average latency of I/O read operations sent from this controller to the indicated target port.
+The average latency in microseconds of I/O read operations sent from this controller to the indicated target port.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -15379,7 +15379,7 @@ The `path_write_iops` metric is visualized in the following Grafana dashboards:
 
 ### path_write_latency
 
-The average latency of I/O write operations sent from this controller to the indicated target port.
+The average latency in microseconds of I/O write operations sent from this controller to the indicated target port.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -15951,7 +15951,7 @@ Minimum throughput defined by this policy. It is specified in terms of Mbps. 0 m
 
 ### qos_read_data
 
-This is the amount of data read per second from the filer by the workload.
+This is the amount of data read in bytes per second from the filer by the workload.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -16089,7 +16089,7 @@ The `qos_sequential_writes` metric is visualized in the following Grafana dashbo
 
 ### qos_total_data
 
-This is the total amount of data read/written per second from/to the filer by the workload.
+This is the total amount of data read/written in bytes per second from/to the filer by the workload.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -16204,7 +16204,7 @@ Minimum throughput Mbps allowed for the workload.
 
 ### qos_write_data
 
-This is the amount of data written per second to the filer by the workload.
+This is the amount of data written in bytes per second to the filer by the workload.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -17791,7 +17791,7 @@ Operational Status.
 
 ### smb2_close_latency
 
-Average latency for SMB2_COM_CLOSE operations
+Average latency in microseconds for SMB2_COM_CLOSE operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -17829,7 +17829,7 @@ The `smb2_close_ops` metric is visualized in the following Grafana dashboards:
 
 ### smb2_create_latency
 
-Average latency for SMB2_COM_CREATE operations
+Average latency in microseconds for SMB2_COM_CREATE operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -17867,7 +17867,7 @@ The `smb2_create_ops` metric is visualized in the following Grafana dashboards:
 
 ### smb2_lock_latency
 
-Average latency for SMB2_COM_LOCK operations
+Average latency in microseconds for SMB2_COM_LOCK operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -17905,7 +17905,7 @@ The `smb2_lock_ops` metric is visualized in the following Grafana dashboards:
 
 ### smb2_negotiate_latency
 
-Average latency for SMB2_COM_NEGOTIATE operations
+Average latency in microseconds for SMB2_COM_NEGOTIATE operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -17943,7 +17943,7 @@ The `smb2_negotiate_ops` metric is visualized in the following Grafana dashboard
 
 ### smb2_oplock_break_latency
 
-Average latency for SMB2_COM_OPLOCK_BREAK operations
+Average latency in microseconds for SMB2_COM_OPLOCK_BREAK operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -17981,7 +17981,7 @@ The `smb2_oplock_break_ops` metric is visualized in the following Grafana dashbo
 
 ### smb2_query_directory_latency
 
-Average latency for SMB2_COM_QUERY_DIRECTORY operations
+Average latency in microseconds for SMB2_COM_QUERY_DIRECTORY operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -18019,7 +18019,7 @@ The `smb2_query_directory_ops` metric is visualized in the following Grafana das
 
 ### smb2_query_info_latency
 
-Average latency for SMB2_COM_QUERY_INFO operations
+Average latency in microseconds for SMB2_COM_QUERY_INFO operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -18057,7 +18057,7 @@ The `smb2_query_info_ops` metric is visualized in the following Grafana dashboar
 
 ### smb2_read_latency
 
-Average latency for SMB2_COM_READ operations
+Average latency in microseconds for SMB2_COM_READ operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -18095,7 +18095,7 @@ The `smb2_read_ops` metric is visualized in the following Grafana dashboards:
 
 ### smb2_session_setup_latency
 
-Average latency for SMB2_COM_SESSION_SETUP operations
+Average latency in microseconds for SMB2_COM_SESSION_SETUP operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -18133,7 +18133,7 @@ The `smb2_session_setup_ops` metric is visualized in the following Grafana dashb
 
 ### smb2_set_info_latency
 
-Average latency for SMB2_COM_SET_INFO operations
+Average latency in microseconds for SMB2_COM_SET_INFO operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -18171,7 +18171,7 @@ The `smb2_set_info_ops` metric is visualized in the following Grafana dashboards
 
 ### smb2_tree_connect_latency
 
-Average latency for SMB2_COM_TREE_CONNECT operations
+Average latency in microseconds for SMB2_COM_TREE_CONNECT operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -18209,7 +18209,7 @@ The `smb2_tree_connect_ops` metric is visualized in the following Grafana dashbo
 
 ### smb2_write_latency
 
-Average latency for SMB2_COM_WRITE operations
+Average latency in microseconds for SMB2_COM_WRITE operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -18948,7 +18948,7 @@ Number of established SMB and SMB2 sessions
 
 ### svm_cifs_latency
 
-Average latency for CIFS operations
+Average latency in microseconds for CIFS operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -19049,7 +19049,7 @@ Performance metric for read I/O operations.
 
 ### svm_cifs_read_latency
 
-Average latency for CIFS read operations
+Average latency in microseconds for CIFS read operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -19132,7 +19132,7 @@ Performance metric for write I/O operations.
 
 ### svm_cifs_write_latency
 
-Average latency for CIFS write operations
+Average latency in microseconds for CIFS write operations
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -19253,7 +19253,7 @@ This metric indicates a value of 1 if the SVM state is online (indicating the SV
 
 ### svm_nfs_access_avg_latency
 
-Average latency of Access procedure requests. The counter keeps track of the average response time of Access requests.
+Average latency in microseconds of Access procedure requests. The counter keeps track of the average response time of Access requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -19287,7 +19287,7 @@ Total number of Access procedure requests. It is the total number of access succ
 
 ### svm_nfs_backchannel_ctl_avg_latency
 
-Average latency of BACKCHANNEL_CTL operations.
+Average latency in microseconds of BACKCHANNEL_CTL operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -19313,7 +19313,7 @@ Total number of BACKCHANNEL_CTL operations.
 
 ### svm_nfs_bind_conn_to_session_avg_latency
 
-Average latency of BIND_CONN_TO_SESSION operations.
+Average latency in microseconds of BIND_CONN_TO_SESSION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -19339,7 +19339,7 @@ Total number of BIND_CONN_TO_SESSION operations.
 
 ### svm_nfs_close_avg_latency
 
-Average latency of CLOSE procedures
+Average latency in microseconds of CLOSE procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -19369,7 +19369,7 @@ Total number of CLOSE procedures
 
 ### svm_nfs_commit_avg_latency
 
-Average latency of Commit procedure requests. The counter keeps track of the average response time of Commit requests.
+Average latency in microseconds of Commit procedure requests. The counter keeps track of the average response time of Commit requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -19403,7 +19403,7 @@ Total number of Commit procedure requests. It is the total number of Commit succ
 
 ### svm_nfs_create_avg_latency
 
-Average latency of Create procedure requests. The counter keeps track of the average response time of Create requests.
+Average latency in microseconds of Create procedure requests. The counter keeps track of the average response time of Create requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -19420,7 +19420,7 @@ Average latency of Create procedure requests. The counter keeps track of the ave
 
 ### svm_nfs_create_session_avg_latency
 
-Average latency of CREATE_SESSION operations.
+Average latency in microseconds of CREATE_SESSION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -19463,7 +19463,7 @@ Total number Create of procedure requests. It is the total number of create succ
 
 ### svm_nfs_delegpurge_avg_latency
 
-Average latency of DELEGPURGE procedures
+Average latency in microseconds of DELEGPURGE procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -19493,7 +19493,7 @@ Total number of DELEGPURGE procedures
 
 ### svm_nfs_delegreturn_avg_latency
 
-Average latency of DELEGRETURN procedures
+Average latency in microseconds of DELEGRETURN procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -19523,7 +19523,7 @@ Total number of DELEGRETURN procedures
 
 ### svm_nfs_destroy_clientid_avg_latency
 
-Average latency of DESTROY_CLIENTID operations.
+Average latency in microseconds of DESTROY_CLIENTID operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -19549,7 +19549,7 @@ Total number of DESTROY_CLIENTID operations.
 
 ### svm_nfs_destroy_session_avg_latency
 
-Average latency of DESTROY_SESSION operations.
+Average latency in microseconds of DESTROY_SESSION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -19575,7 +19575,7 @@ Total number of DESTROY_SESSION operations.
 
 ### svm_nfs_exchange_id_avg_latency
 
-Average latency of EXCHANGE_ID operations.
+Average latency in microseconds of EXCHANGE_ID operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -19601,7 +19601,7 @@ Total number of EXCHANGE_ID operations.
 
 ### svm_nfs_free_stateid_avg_latency
 
-Average latency of FREE_STATEID operations.
+Average latency in microseconds of FREE_STATEID operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -19627,7 +19627,7 @@ Total number of FREE_STATEID operations.
 
 ### svm_nfs_fsinfo_avg_latency
 
-Average latency of FSInfo procedure requests. The counter keeps track of the average response time of FSInfo requests.
+Average latency in microseconds of FSInfo procedure requests. The counter keeps track of the average response time of FSInfo requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -19649,7 +19649,7 @@ Total number FSInfo of procedure requests. It is the total number of FSInfo succ
 
 ### svm_nfs_fsstat_avg_latency
 
-Average latency of FSStat procedure requests. The counter keeps track of the average response time of FSStat requests.
+Average latency in microseconds of FSStat procedure requests. The counter keeps track of the average response time of FSStat requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -19671,7 +19671,7 @@ Total number FSStat of procedure requests. It is the total number of FSStat succ
 
 ### svm_nfs_get_dir_delegation_avg_latency
 
-Average latency of GET_DIR_DELEGATION operations.
+Average latency in microseconds of GET_DIR_DELEGATION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -19697,7 +19697,7 @@ Total number of GET_DIR_DELEGATION operations.
 
 ### svm_nfs_getattr_avg_latency
 
-Average latency of GetAttr procedure requests. This counter keeps track of the average response time of GetAttr requests.
+Average latency in microseconds of GetAttr procedure requests. This counter keeps track of the average response time of GetAttr requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -19731,7 +19731,7 @@ Total number of Getattr procedure requests. It is the total number of getattr su
 
 ### svm_nfs_getdeviceinfo_avg_latency
 
-Average latency of GETDEVICEINFO operations.
+Average latency in microseconds of GETDEVICEINFO operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -19757,7 +19757,7 @@ Total number of GETDEVICEINFO operations.
 
 ### svm_nfs_getdevicelist_avg_latency
 
-Average latency of GETDEVICELIST operations.
+Average latency in microseconds of GETDEVICELIST operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -19783,7 +19783,7 @@ Total number of GETDEVICELIST operations.
 
 ### svm_nfs_getfh_avg_latency
 
-Average latency of GETFH procedures
+Average latency in microseconds of GETFH procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -19813,7 +19813,7 @@ Total number of GETFH procedures
 
 ### svm_nfs_latency
 
-Average latency of NFSv3 requests. This counter keeps track of the average response time of NFSv3 requests.
+Average latency in microseconds of NFSv3 requests. This counter keeps track of the average response time of NFSv3 requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -19844,7 +19844,7 @@ The `svm_nfs_latency` metric is visualized in the following Grafana dashboards:
 
 ### svm_nfs_layoutcommit_avg_latency
 
-Average latency of LAYOUTCOMMIT operations.
+Average latency in microseconds of LAYOUTCOMMIT operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -19870,7 +19870,7 @@ Total number of LAYOUTCOMMIT operations.
 
 ### svm_nfs_layoutget_avg_latency
 
-Average latency of LAYOUTGET operations.
+Average latency in microseconds of LAYOUTGET operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -19896,7 +19896,7 @@ Total number of LAYOUTGET operations.
 
 ### svm_nfs_layoutreturn_avg_latency
 
-Average latency of LAYOUTRETURN operations.
+Average latency in microseconds of LAYOUTRETURN operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -19922,7 +19922,7 @@ Total number of LAYOUTRETURN operations.
 
 ### svm_nfs_link_avg_latency
 
-Average latency of Link procedure requests. The counter keeps track of the average response time of Link requests.
+Average latency in microseconds of Link procedure requests. The counter keeps track of the average response time of Link requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -19956,7 +19956,7 @@ Total number Link of procedure requests. It is the total number of Link success 
 
 ### svm_nfs_lock_avg_latency
 
-Average latency of LOCK procedures
+Average latency in microseconds of LOCK procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -19986,7 +19986,7 @@ Total number of LOCK procedures
 
 ### svm_nfs_lockt_avg_latency
 
-Average latency of LOCKT procedures
+Average latency in microseconds of LOCKT procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -20016,7 +20016,7 @@ Total number of LOCKT procedures
 
 ### svm_nfs_locku_avg_latency
 
-Average latency of LOCKU procedures
+Average latency in microseconds of LOCKU procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -20046,7 +20046,7 @@ Total number of LOCKU procedures
 
 ### svm_nfs_lookup_avg_latency
 
-Average latency of LookUp procedure requests. This shows the average time it takes for the LookUp operation to reply to the request.
+Average latency in microseconds of LookUp procedure requests. This shows the average time it takes for the LookUp operation to reply to the request.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -20080,7 +20080,7 @@ Total number of Lookup procedure requests. It is the total number of lookup succ
 
 ### svm_nfs_lookupp_avg_latency
 
-Average latency of LOOKUPP procedures
+Average latency in microseconds of LOOKUPP procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -20110,7 +20110,7 @@ Total number of LOOKUPP procedures
 
 ### svm_nfs_mkdir_avg_latency
 
-Average latency of MkDir procedure requests. The counter keeps track of the average response time of MkDir requests.
+Average latency in microseconds of MkDir procedure requests. The counter keeps track of the average response time of MkDir requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -20132,7 +20132,7 @@ Total number MkDir of procedure requests. It is the total number of MkDir succes
 
 ### svm_nfs_mknod_avg_latency
 
-Average latency of MkNod procedure requests. The counter keeps track of the average response time of MkNod requests.
+Average latency in microseconds of MkNod procedure requests. The counter keeps track of the average response time of MkNod requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -20154,7 +20154,7 @@ Total number MkNod of procedure requests. It is the total number of MkNod succes
 
 ### svm_nfs_null_avg_latency
 
-Average latency of Null procedure requests.
+Average latency in microseconds of Null procedure requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -20188,7 +20188,7 @@ Total number of Null procedure requests. It is the total of null success and nul
 
 ### svm_nfs_nverify_avg_latency
 
-Average latency of NVERIFY procedures
+Average latency in microseconds of NVERIFY procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -20218,7 +20218,7 @@ Total number of NVERIFY procedures
 
 ### svm_nfs_open_avg_latency
 
-Average latency of OPEN procedures
+Average latency in microseconds of OPEN procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -20233,7 +20233,7 @@ Average latency of OPEN procedures
 
 ### svm_nfs_open_confirm_avg_latency
 
-Average latency of OPEN_CONFIRM procedures
+Average latency in microseconds of OPEN_CONFIRM procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -20255,7 +20255,7 @@ Total number of OPEN_CONFIRM procedures
 
 ### svm_nfs_open_downgrade_avg_latency
 
-Average latency of OPEN_DOWNGRADE procedures
+Average latency in microseconds of OPEN_DOWNGRADE procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -20300,7 +20300,7 @@ Total number of OPEN procedures
 
 ### svm_nfs_openattr_avg_latency
 
-Average latency of OPENATTR procedures
+Average latency in microseconds of OPENATTR procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -20389,7 +20389,7 @@ Performance metric for other I/O operations. Other I/O operations can be metadat
 
 ### svm_nfs_pathconf_avg_latency
 
-Average latency of PathConf procedure requests. The counter keeps track of the average response time of PathConf requests.
+Average latency in microseconds of PathConf procedure requests. The counter keeps track of the average response time of PathConf requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -20411,7 +20411,7 @@ Total number PathConf of procedure requests. It is the total number of PathConf 
 
 ### svm_nfs_putfh_avg_latency
 
-Average latency of PUTFH procedures
+Average latency in microseconds of PUTFH procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -20441,7 +20441,7 @@ Total number of PUTFH procedures
 
 ### svm_nfs_putpubfh_avg_latency
 
-Average latency of PUTPUBFH procedures
+Average latency in microseconds of PUTPUBFH procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -20471,7 +20471,7 @@ Total number of PUTPUBFH procedures
 
 ### svm_nfs_putrootfh_avg_latency
 
-Average latency of PUTROOTFH procedures
+Average latency in microseconds of PUTROOTFH procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -20501,7 +20501,7 @@ Total number of PUTROOTFH procedures
 
 ### svm_nfs_read_avg_latency
 
-Average latency of Read procedure requests. The counter keeps track of the average response time of Read requests.
+Average latency in microseconds of Read procedure requests. The counter keeps track of the average response time of Read requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -20559,7 +20559,7 @@ The `svm_nfs_read_ops` metric is visualized in the following Grafana dashboards:
 
 ### svm_nfs_read_symlink_avg_latency
 
-Average latency of ReadSymLink procedure requests. The counter keeps track of the average response time of ReadSymLink requests.
+Average latency in microseconds of ReadSymLink procedure requests. The counter keeps track of the average response time of ReadSymLink requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -20581,7 +20581,7 @@ Total number of ReadSymLink procedure requests. It is the total number of read s
 
 ### svm_nfs_read_throughput
 
-Rate of NFSv3 read data transfers per second.
+Rate of NFSv3 read data transfers in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -20646,7 +20646,7 @@ The `svm_nfs_read_total` metric is visualized in the following Grafana dashboard
 
 ### svm_nfs_readdir_avg_latency
 
-Average latency of ReadDir procedure requests. The counter keeps track of the average response time of ReadDir requests.
+Average latency in microseconds of ReadDir procedure requests. The counter keeps track of the average response time of ReadDir requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -20680,7 +20680,7 @@ Total number ReadDir of procedure requests. It is the total number of ReadDir su
 
 ### svm_nfs_readdirplus_avg_latency
 
-Average latency of ReadDirPlus procedure requests. The counter keeps track of the average response time of ReadDirPlus requests.
+Average latency in microseconds of ReadDirPlus procedure requests. The counter keeps track of the average response time of ReadDirPlus requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -20702,7 +20702,7 @@ Total number ReadDirPlus of procedure requests. It is the total number of ReadDi
 
 ### svm_nfs_readlink_avg_latency
 
-Average latency of READLINK procedures
+Average latency in microseconds of READLINK procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -20732,7 +20732,7 @@ Total number of READLINK procedures
 
 ### svm_nfs_reclaim_complete_avg_latency
 
-Average latency of RECLAIM_COMPLETE operations.
+Average latency in microseconds of RECLAIM_COMPLETE operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -20780,7 +20780,7 @@ Total number of RELEASE_LOCKOWNER procedures
 
 ### svm_nfs_remove_avg_latency
 
-Average latency of Remove procedure requests. The counter keeps track of the average response time of Remove requests.
+Average latency in microseconds of Remove procedure requests. The counter keeps track of the average response time of Remove requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -20814,7 +20814,7 @@ Total number Remove of procedure requests. It is the total number of Remove succ
 
 ### svm_nfs_rename_avg_latency
 
-Average latency of Rename procedure requests. The counter keeps track of the average response time of Rename requests.
+Average latency in microseconds of Rename procedure requests. The counter keeps track of the average response time of Rename requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -20848,7 +20848,7 @@ Total number Rename of procedure requests. It is the total number of Rename succ
 
 ### svm_nfs_renew_avg_latency
 
-Average latency of RENEW procedures
+Average latency in microseconds of RENEW procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -20870,7 +20870,7 @@ Total number of RENEW procedures
 
 ### svm_nfs_restorefh_avg_latency
 
-Average latency of RESTOREFH procedures
+Average latency in microseconds of RESTOREFH procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -20900,7 +20900,7 @@ Total number of RESTOREFH procedures
 
 ### svm_nfs_rmdir_avg_latency
 
-Average latency of RmDir procedure requests. The counter keeps track of the average response time of RmDir requests.
+Average latency in microseconds of RmDir procedure requests. The counter keeps track of the average response time of RmDir requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -20922,7 +20922,7 @@ Total number RmDir of procedure requests. It is the total number of RmDir succes
 
 ### svm_nfs_savefh_avg_latency
 
-Average latency of SAVEFH procedures
+Average latency in microseconds of SAVEFH procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -20952,7 +20952,7 @@ Total number of SAVEFH procedures
 
 ### svm_nfs_secinfo_avg_latency
 
-Average latency of SECINFO procedures
+Average latency in microseconds of SECINFO procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -20967,7 +20967,7 @@ Average latency of SECINFO procedures
 
 ### svm_nfs_secinfo_no_name_avg_latency
 
-Average latency of SECINFO_NO_NAME operations.
+Average latency in microseconds of SECINFO_NO_NAME operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -21008,7 +21008,7 @@ Total number of SECINFO procedures
 
 ### svm_nfs_sequence_avg_latency
 
-Average latency of SEQUENCE operations.
+Average latency in microseconds of SEQUENCE operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -21034,7 +21034,7 @@ Total number of SEQUENCE operations.
 
 ### svm_nfs_set_ssv_avg_latency
 
-Average latency of SET_SSV operations.
+Average latency in microseconds of SET_SSV operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -21060,7 +21060,7 @@ Total number of SET_SSV operations.
 
 ### svm_nfs_setattr_avg_latency
 
-Average latency of SetAttr procedure requests. The counter keeps track of the average response time of SetAttr requests.
+Average latency in microseconds of SetAttr procedure requests. The counter keeps track of the average response time of SetAttr requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -21094,7 +21094,7 @@ Total number of Setattr procedure requests. It is the total number of Setattr su
 
 ### svm_nfs_setclientid_avg_latency
 
-Average latency of SETCLIENTID procedures
+Average latency in microseconds of SETCLIENTID procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -21105,7 +21105,7 @@ Average latency of SETCLIENTID procedures
 
 ### svm_nfs_setclientid_confirm_avg_latency
 
-Average latency of SETCLIENTID_CONFIRM procedures
+Average latency in microseconds of SETCLIENTID_CONFIRM procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -21138,7 +21138,7 @@ Total number of SETCLIENTID procedures
 
 ### svm_nfs_symlink_avg_latency
 
-Average latency of SymLink procedure requests. The counter keeps track of the average response time of SymLink requests.
+Average latency in microseconds of SymLink procedure requests. The counter keeps track of the average response time of SymLink requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -21160,7 +21160,7 @@ Total number SymLink of procedure requests. It is the total number of SymLink su
 
 ### svm_nfs_test_stateid_avg_latency
 
-Average latency of TEST_STATEID operations.
+Average latency in microseconds of TEST_STATEID operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -21186,7 +21186,7 @@ Total number of TEST_STATEID operations.
 
 ### svm_nfs_throughput
 
-Rate of NFSv3 data transfers per second.
+Rate of NFSv3 data transfers in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -21227,7 +21227,7 @@ Performance metric aggregated over all types of I/O operations.
 
 ### svm_nfs_verify_avg_latency
 
-Average latency of VERIFY procedures
+Average latency in microseconds of VERIFY procedures
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -21257,7 +21257,7 @@ Total number of VERIFY procedures
 
 ### svm_nfs_want_delegation_avg_latency
 
-Average latency of WANT_DELEGATION operations.
+Average latency in microseconds of WANT_DELEGATION operations.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -21283,7 +21283,7 @@ Total number of WANT_DELEGATION operations.
 
 ### svm_nfs_write_avg_latency
 
-Average latency of Write procedure requests. The counter keeps track of the average response time of Write requests.
+Average latency in microseconds of Write procedure requests. The counter keeps track of the average response time of Write requests.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -21341,7 +21341,7 @@ The `svm_nfs_write_ops` metric is visualized in the following Grafana dashboards
 
 ### svm_nfs_write_throughput
 
-Rate of NFSv3 write data transfers per second.
+Rate of NFSv3 write data transfers in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -21406,7 +21406,7 @@ The `svm_nfs_write_total` metric is visualized in the following Grafana dashboar
 
 ### svm_vol_avg_latency
 
-Performance metric aggregated over all types of I/O operations. svm_vol_avg_latency is [volume_avg_latency](#volume_avg_latency) aggregated by `svm`.
+Performance metric aggregated over all types of I/O operations. svm_vol_avg_latency in microseconds is [volume_avg_latency](#volume_avg_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -21493,7 +21493,7 @@ Number of operations of the given type performed on this volume. svm_vol_nfs_loo
 
 ### svm_vol_nfs_other_latency
 
-Average time for the WAFL filesystem to process other NFS operations to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency (Note: This is applicable only for ONTAP 9.9 and below. Harvest uses KeyPerf collector for ONTAP 9.10 onwards.). svm_vol_nfs_other_latency is [volume_nfs_other_latency](#volume_nfs_other_latency) aggregated by `svm`.
+Average time for the WAFL filesystem to process other NFS operations to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency in microseconds (Note: This is applicable only for ONTAP 9.9 and below. Harvest uses KeyPerf collector for ONTAP 9.10 onwards.). svm_vol_nfs_other_latency is [volume_nfs_other_latency](#volume_nfs_other_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -21513,7 +21513,7 @@ Number of other NFS operations per second to the volume (Note: This is applicabl
 
 ### svm_vol_nfs_punch_hole_latency
 
-Average time for the WAFL filesystem to process NFS protocol hole-punch requests to the volume (Note: This is applicable only for ONTAP 9.9 and below. Harvest uses KeyPerf collector for ONTAP 9.10 onwards.). svm_vol_nfs_punch_hole_latency is [volume_nfs_punch_hole_latency](#volume_nfs_punch_hole_latency) aggregated by `svm`.
+Average time for the WAFL filesystem to process NFS protocol hole-punch requests to the volume (Note: This is applicable only for ONTAP 9.9 and below. Harvest uses KeyPerf collector for ONTAP 9.10 onwards.). svm_vol_nfs_punch_hole_latency in microseconds is [volume_nfs_punch_hole_latency](#volume_nfs_punch_hole_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -21619,7 +21619,7 @@ Performance metric for other I/O operations. Other I/O operations can be metadat
 
 ### svm_vol_other_latency
 
-Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on. svm_vol_other_latency is [volume_other_latency](#volume_other_latency) aggregated by `svm`.
+Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on. svm_vol_other_latency in microseconds is [volume_other_latency](#volume_other_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -21681,7 +21681,7 @@ The `svm_vol_read_data` metric is visualized in the following Grafana dashboards
 
 ### svm_vol_read_latency
 
-Performance metric for read I/O operations. svm_vol_read_latency is [volume_read_latency](#volume_read_latency) aggregated by `svm`.
+Performance metric for read I/O operations. svm_vol_read_latency in microseconds is [volume_read_latency](#volume_read_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -21779,7 +21779,7 @@ The `svm_vol_write_data` metric is visualized in the following Grafana dashboard
 
 ### svm_vol_write_latency
 
-Performance metric for write I/O operations. svm_vol_write_latency is [volume_write_latency](#volume_write_latency) aggregated by `svm`.
+Performance metric for write I/O operations. svm_vol_write_latency in microseconds is [volume_write_latency](#volume_write_latency) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -21840,7 +21840,7 @@ The `svm_vscan_connections_active` metric is visualized in the following Grafana
 
 ### svm_vscan_dispatch_latency
 
-Average dispatch latency
+Average dispatch latency in microseconds
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -21860,7 +21860,7 @@ The `svm_vscan_dispatch_latency` metric is visualized in the following Grafana d
 
 ### svm_vscan_scan_latency
 
-Average scan latency
+Average scan latency in microseconds
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -22744,7 +22744,7 @@ Number of operations of the given type performed on this volume.
 
 ### volume_nfs_other_latency
 
-Average time for the WAFL filesystem to process other NFS operations to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency (Note: This is applicable only for ONTAP 9.9 and below. Harvest uses KeyPerf collector for ONTAP 9.10 onwards.)
+Average time for the WAFL filesystem to process other NFS operations to the volume; not including NFS protocol request processing or network communication time which will also be included in client observed NFS request latency in microseconds (Note: This is applicable only for ONTAP 9.9 and below. Harvest uses KeyPerf collector for ONTAP 9.10 onwards.)
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -23899,7 +23899,7 @@ The `volume_top_files_write_ops` metric is visualized in the following Grafana d
 
 ### volume_total_data
 
-This metric represents the total amount of data that has been read from and written to a specific volume.
+This metric represents the total amount of data that has been read from and written to a specific volume in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -24091,7 +24091,7 @@ This metric provides information about Vscan
 
 ### vscan_scan_latency
 
-Average scan latency
+Average scan latency in microseconds
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
