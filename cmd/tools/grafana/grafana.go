@@ -80,6 +80,7 @@ type options struct {
 	defaultDropdownMap  map[string][]string
 	isDebug             bool
 	showDatasource      bool // show datasource variable in the dashboard
+	orgID               int
 }
 
 type Folder struct {
@@ -684,6 +685,10 @@ func importFiles(dir string, folder *Folder) {
 
 		if opts.showDatasource {
 			data, _ = sjson.SetBytes(data, "templating.list.0.hide", 0)
+		}
+
+		if opts.orgID != 1 {
+			data = bytes.ReplaceAll(data, []byte("orgId=1"), []byte("orgId="+strconv.Itoa(opts.orgID)))
 		}
 
 		if err = json.Unmarshal(data, &dashboard); err != nil {
@@ -1786,6 +1791,8 @@ func addImportCustomizeFlags(commands ...*cobra.Command) {
 			"Rewrite all panel expressions to add the specified cluster label and specified cluster variable along with the default 'cluster'")
 		cmd.PersistentFlags().BoolVar(&opts.showDatasource, "show-datasource", false,
 			"Show datasource variable dropdown in dashboards, useful for multi-datasource setups")
+		cmd.PersistentFlags().IntVar(&opts.orgID, "orgid", 1,
+			"Modify the dashboards to use the specified organization ID when importing")
 
 		_ = cmd.PersistentFlags().MarkHidden("multi")
 		_ = cmd.PersistentFlags().MarkHidden("force")
