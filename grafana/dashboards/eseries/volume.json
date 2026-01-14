@@ -59,7 +59,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1768120543262,
+  "iteration": 1768397496563,
   "links": [
     {
       "asDropdown": true,
@@ -821,7 +821,14 @@
             {
               "id": "organize",
               "options": {
-                "excludeByName": {},
+                "excludeByName": {
+                  "datacenter 2": true,
+                  "datacenter 3": true,
+                  "system 2": true,
+                  "system 3": true,
+                  "volume 2": true,
+                  "volume 3": true
+                },
                 "indexByName": {
                   "Value #A": 11,
                   "Value #C": 10,
