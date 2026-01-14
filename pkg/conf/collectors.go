@@ -12,6 +12,8 @@ func GetCollectorSlice() []string {
 var IsCollector = map[string]struct{}{
 	"CiscoRest":   {},
 	"Ems":         {},
+	"Eseries":     {},
+	"EseriesPerf": {},
 	"KeyPerf":     {},
 	"Rest":        {},
 	"RestPerf":    {},
@@ -31,6 +33,18 @@ var IsONTAPCollector = map[string]struct{}{
 	"StatPerf": {},
 	"KeyPerf":  {},
 	"Ems":      {},
+}
+
+var IsESeriesCollector = map[string]struct{}{
+	"Eseries":     {},
+	"EseriesPerf": {},
+}
+
+var IsNonONTAPCollector = map[string]struct{}{
+	"CiscoRest":   {},
+	"StorageGrid": {},
+	"Eseries":     {},
+	"EseriesPerf": {},
 }
 
 func IsPingableCollector(collector string) bool {

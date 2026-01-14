@@ -1,0 +1,19 @@
+name: Controller
+query: storage-systems/{system_id}/live-statistics
+object: eseries_controller
+type: controller
+
+counters:
+  - ^^controllerId                          => id
+  - cacheHitsIopsTotal                      => cache_hit_ops
+  - cpuUtilizationStats.0.sumCpuUtilization => cpu_utilization
+  - lastResetTimeInMS                       => last_reset_time
+  - observedTimeInMS                        => observed_time
+  - readBytesTotal                          => read_data
+  - readIopsTotal                           => read_ops
+  - writeBytesTotal                         => write_data
+  - writeIopsTotal                          => write_ops
+
+export_options:
+  instance_keys:
+    - id

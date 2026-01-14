@@ -1,0 +1,32 @@
+name: PowerSupply
+query: storage-systems/{system_id}/hardware-inventory
+object: eseries_power_supply
+type: power_supply
+
+counters:
+  - ^^id                                => id
+  - ^firmwareRevision                   => firmware_version
+  - ^fruType                            => fru_type
+  - ^manufacturerDate                   => manufacturer_date
+  - ^partNumber                         => part_number
+  - ^physicalLocation.label             => location
+  - ^reserved1                          => reserved1
+  - ^reserved2                          => reserved2
+  - ^serialNumber                       => serial_number
+  - ^status                             => status
+  - ^vendorName                         => vendor
+
+export_options:
+  instance_keys:
+    - id
+  instance_labels:
+    - firmware_version
+    - fru_type
+    - manufacturer_date
+    - part_number
+    - location
+    - reserved1
+    - reserved2
+    - serial_number
+    - status
+    - vendor
