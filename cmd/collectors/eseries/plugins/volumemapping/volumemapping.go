@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"time"
 
+	"github.com/netapp/harvest/v2/cmd/collectors/eseries/cluster"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/rest"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/auth"
@@ -42,7 +43,7 @@ func (v *VolumeMapping) Init(remote conf.Remote) error {
 	}
 
 	credentials := auth.NewCredentials(poller, v.SLogger)
-	if v.client, err = rest.New(poller, timeout, credentials, false, ""); err != nil {
+	if v.client, err = rest.New(poller, timeout, credentials, ""); err != nil {
 		return err
 	}
 
@@ -143,7 +144,7 @@ func (v *VolumeMapping) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix
 		v.SLogger.Warn("Failed to build host lookup", slogx.Err(err))
 	}
 
-	clusterNames, err := v.buildClusterLookup(systemID)
+	clusterNames, err := cluster.BuildClusterLookup(v.client, systemID, v.SLogger)
 	if err != nil {
 		v.SLogger.Warn("Failed to build cluster lookup", slogx.Err(err))
 	}
@@ -228,33 +229,6 @@ func (v *VolumeMapping) buildHostLookup(systemID string) (map[string]string, err
 
 	v.SLogger.Debug("built host lookup", slog.Int("count", len(hostNames)))
 	return hostNames, nil
-}
-
-func (v *VolumeMapping) buildClusterLookup(systemID string) (map[string]string, error) {
-	clusterNames := make(map[string]string)
-
-	apiPath := v.client.GetAPIPath() + "/storage-systems/" + systemID + "/host-groups"
-	clusters, err := v.client.Fetch(apiPath, nil)
-	if err != nil {
-		return clusterNames, fmt.Errorf("failed to fetch host groups: %w", err)
-	}
-
-	for _, cluster := range clusters {
-		clusterRef := cluster.Get("clusterRef").String()
-		if clusterRef == "" {
-			clusterRef = cluster.Get("id").String()
-		}
-		clusterName := cluster.Get("name").String()
-		if clusterName == "" {
-			clusterName = cluster.Get("label").String()
-		}
-		if clusterRef != "" && clusterName != "" {
-			clusterNames[clusterRef] = clusterName
-		}
-	}
-
-	v.SLogger.Debug("built cluster lookup", slog.Int("count", len(clusterNames)))
-	return clusterNames, nil
 }
 
 func (v *VolumeMapping) buildWorkloadLookup(systemID string) (map[string]string, error) {

@@ -32,6 +32,7 @@ const (
 var (
 	clientPool   = sync.Map{} // key: pollerName, value: *Client
 	clientPoolMu sync.Mutex
+	re           = regexp.MustCompile(`^(\d+)\.(\d+)(?:\.(\d+))?`)
 )
 
 type Client struct {
@@ -56,9 +57,8 @@ type responseCache struct {
 }
 
 type CacheConfig struct {
-	Enabled bool
-	Name    string
-	TTL     time.Duration
+	Name string
+	TTL  time.Duration
 }
 
 func getOrCreateClient(poller *conf.Poller, timeout time.Duration, credentials *auth.Credentials, cacheName string) (*Client, error) {
@@ -87,9 +87,9 @@ func getOrCreateClient(poller *conf.Poller, timeout time.Duration, credentials *
 	return client, nil
 }
 
-// New creates a new E-Series client. If usePool is true and cacheName provided, returns a pooled singleton client.
-func New(poller *conf.Poller, timeout time.Duration, credentials *auth.Credentials, usePool bool, cacheName string) (*Client, error) {
-	if usePool && cacheName != "" {
+// New creates a new E-Series client. If cacheName is provided, returns a pooled singleton client.
+func New(poller *conf.Poller, timeout time.Duration, credentials *auth.Credentials, cacheName string) (*Client, error) {
+	if cacheName != "" {
 		return getOrCreateClient(poller, timeout, credentials, cacheName)
 	}
 	return newClient(poller, timeout, credentials)
@@ -141,7 +141,7 @@ func (c *Client) GetStorageSystems() ([]gjson.Result, error) {
 
 // Fetch makes a REST GET request with optional caching support
 func (c *Client) Fetch(fullPath string, cacheConfig *CacheConfig, headers ...map[string]string) ([]gjson.Result, error) {
-	if cacheConfig == nil || !cacheConfig.Enabled {
+	if cacheConfig == nil {
 		return c.get(fullPath, headers...)
 	}
 
@@ -173,7 +173,7 @@ func (c *Client) Fetch(fullPath string, cacheConfig *CacheConfig, headers ...map
 	}
 
 	// Check if cache is still valid
-	if time.Now().Before(c.cache.expiresAt) && c.cache.data != nil {
+	if c.cache.data != nil && time.Now().Before(c.cache.expiresAt) {
 		c.cache.hits++
 		c.Logger.Debug("cache hit",
 			slog.String("cache", cacheConfig.Name),
@@ -193,7 +193,7 @@ func (c *Client) Fetch(fullPath string, cacheConfig *CacheConfig, headers ...map
 	c.cache.expiresAt = time.Now().Add(c.cache.ttl)
 	c.cache.misses++
 
-	c.Logger.Info("cache miss - fetched fresh data",
+	c.Logger.Debug("cache miss - fetched fresh data",
 		slog.String("cache", cacheConfig.Name),
 		slog.String("endpoint", fullPath),
 		slog.Uint64("misses", c.cache.misses),
@@ -421,7 +421,6 @@ func (c *Client) getBundleDisplayVersion(systemID string) (string, error) {
 //
 // Returns empty string if parsing fails
 func (c *Client) normalizeBundleVersion(bundleDisplay string) string {
-	re := regexp.MustCompile(`^(\d+)\.(\d+)(?:\.(\d+))?`)
 	matches := re.FindStringSubmatch(bundleDisplay)
 
 	if len(matches) == 0 {

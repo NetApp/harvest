@@ -203,7 +203,7 @@ func checkEseries(pollerName string, cred *auth.Credentials) (conf.Remote, error
 	}
 
 	timeout, _ := time.ParseDuration(eseriesrest.DefaultTimeout)
-	client, err = eseriesrest.New(poller, timeout, cred, false, "")
+	client, err = eseriesrest.New(poller, timeout, cred, "")
 	if err != nil {
 		return conf.Remote{}, err
 	}

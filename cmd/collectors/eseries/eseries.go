@@ -147,12 +147,11 @@ func (e *ESeries) InitClient() error {
 	credentials := auth.NewCredentials(poller, e.Logger)
 
 	// Use pooled client only if caching is enabled (checked after template parsing)
-	usePool := e.Prop.CacheConfig != nil && e.Prop.CacheConfig.Enabled
 	cacheName := ""
-	if usePool {
+	if e.Prop.CacheConfig != nil {
 		cacheName = e.Prop.CacheConfig.Name
 	}
-	if e.Client, err = rest.New(poller, duration, credentials, usePool, cacheName); err != nil {
+	if e.Client, err = rest.New(poller, duration, credentials, cacheName); err != nil {
 		return err
 	}
 

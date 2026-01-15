@@ -42,12 +42,22 @@ type ObjectConfig struct {
 	UsesSharedCache      bool
 }
 
+// newObjectConfig creates an ObjectConfig with UsesSharedCache defaulted to true
+func newObjectConfig(arrayPath, filter string, calculateUtilization bool) ObjectConfig {
+	return ObjectConfig{
+		ArrayPath:            arrayPath,
+		Filter:               filter,
+		CalculateUtilization: calculateUtilization,
+		UsesSharedCache:      true,
+	}
+}
+
 func GetESeriesObjectConfig(objType string) ObjectConfig {
 	configs := map[string]ObjectConfig{
-		"controller":   {ArrayPath: "controllers", Filter: "", CalculateUtilization: false, UsesSharedCache: true},
-		"fan":          {ArrayPath: "fans", Filter: "", CalculateUtilization: false, UsesSharedCache: true},
-		"battery":      {ArrayPath: "batteries", Filter: "", CalculateUtilization: false, UsesSharedCache: true},
-		"power_supply": {ArrayPath: "powerSupplies", Filter: "", CalculateUtilization: false, UsesSharedCache: true},
+		"controller":   newObjectConfig("controllers", "", false),
+		"fan":          newObjectConfig("fans", "", false),
+		"battery":      newObjectConfig("batteries", "", false),
+		"power_supply": newObjectConfig("powerSupplies", "", false),
 	}
 	if config, ok := configs[objType]; ok {
 		return config
@@ -57,14 +67,14 @@ func GetESeriesObjectConfig(objType string) ObjectConfig {
 
 func GetESeriesPerfObjectConfig(objType string) ObjectConfig {
 	configs := map[string]ObjectConfig{
-		"controller":  {ArrayPath: "controllerStats", Filter: "type=controller", CalculateUtilization: false, UsesSharedCache: true},
-		"pool":        {ArrayPath: "poolStats", Filter: "type=storagePool", CalculateUtilization: false, UsesSharedCache: true},
-		"volume":      {ArrayPath: "volumeStats", Filter: "type=volume", CalculateUtilization: false, UsesSharedCache: true},
-		"drive":       {ArrayPath: "diskStats", Filter: "type=drive", CalculateUtilization: true, UsesSharedCache: true},
-		"interface":   {ArrayPath: "interfaceStats", Filter: "type=ioInterface", CalculateUtilization: false, UsesSharedCache: true},
-		"application": {ArrayPath: "applicationStats", Filter: "type=application", CalculateUtilization: false, UsesSharedCache: true},
-		"workload":    {ArrayPath: "workloadStats", Filter: "type=workload", CalculateUtilization: false, UsesSharedCache: true},
-		"system":      {ArrayPath: "systemStats", Filter: "type=storageSystem", CalculateUtilization: false, UsesSharedCache: true},
+		"controller":  newObjectConfig("controllerStats", "type=controller", false),
+		"pool":        newObjectConfig("poolStats", "type=storagePool", false),
+		"volume":      newObjectConfig("volumeStats", "type=volume", false),
+		"drive":       newObjectConfig("diskStats", "type=drive", true),
+		"interface":   newObjectConfig("interfaceStats", "type=ioInterface", false),
+		"application": newObjectConfig("applicationStats", "type=application", false),
+		"workload":    newObjectConfig("workloadStats", "type=workload", false),
+		"system":      newObjectConfig("systemStats", "type=storageSystem", false),
 	}
 	if config, ok := configs[objType]; ok {
 		return config
@@ -117,9 +127,8 @@ func (e *ESeries) setupSharedCache(config ObjectConfig) {
 	}
 
 	e.Prop.CacheConfig = &rest.CacheConfig{
-		Enabled: true,
-		Name:    cacheName,
-		TTL:     e.getCacheTTL(),
+		Name: cacheName,
+		TTL:  e.getCacheTTL(),
 	}
 
 	e.Logger.Debug("shared cache auto-enabled",
@@ -128,8 +137,7 @@ func (e *ESeries) setupSharedCache(config ObjectConfig) {
 }
 
 func (e *ESeries) applyFilter(config ObjectConfig) {
-	cacheDisabled := e.Prop.CacheConfig == nil || !e.Prop.CacheConfig.Enabled
-	if cacheDisabled && config.Filter != "" {
+	if e.Prop.CacheConfig == nil && config.Filter != "" {
 		e.Prop.Filter = append(e.Prop.Filter, config.Filter)
 	}
 }
@@ -192,7 +200,7 @@ func (e *ESeries) parseCounters() error {
 
 	// Only parse filter from counters if type field wasn't used AND cache is disabled
 	if e.Params.GetChildContentS("type") == "" {
-		if e.Prop.CacheConfig == nil || !e.Prop.CacheConfig.Enabled {
+		if e.Prop.CacheConfig == nil {
 			if x := counters.GetChildS("filter"); x != nil {
 				e.Prop.Filter = append(e.Prop.Filter, x.GetAllChildContentS()...)
 			}

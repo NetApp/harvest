@@ -1,9 +1,9 @@
 package host
 
 import (
-	"fmt"
-	"log/slog"
 	"time"
+
+	"github.com/netapp/harvest/v2/cmd/collectors/eseries/cluster"
 
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/rest"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
@@ -36,7 +36,7 @@ func (h *Host) Init(remote conf.Remote) error {
 	}
 
 	credentials := auth.NewCredentials(poller, h.SLogger)
-	if h.client, err = rest.New(poller, timeout, credentials, false, ""); err != nil {
+	if h.client, err = rest.New(poller, timeout, credentials, ""); err != nil {
 		return err
 	}
 
@@ -58,7 +58,7 @@ func (h *Host) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collec
 	}
 
 	// Build cluster lookup map
-	clusterNames, err := h.buildClusterLookup(systemID)
+	clusterNames, err := cluster.BuildClusterLookup(h.client, systemID, h.SLogger)
 	if err != nil {
 		h.SLogger.Warn("Failed to build cluster lookup", slogx.Err(err))
 		return nil, nil, nil
@@ -77,31 +77,4 @@ func (h *Host) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collec
 	}
 
 	return nil, nil, nil
-}
-
-func (h *Host) buildClusterLookup(systemID string) (map[string]string, error) {
-	clusterNames := make(map[string]string)
-
-	apiPath := h.client.GetAPIPath() + "/storage-systems/" + systemID + "/host-groups"
-	clusters, err := h.client.Fetch(apiPath, nil)
-	if err != nil {
-		return clusterNames, fmt.Errorf("failed to fetch host groups: %w", err)
-	}
-
-	for _, cluster := range clusters {
-		clusterRef := cluster.Get("clusterRef").String()
-		if clusterRef == "" {
-			clusterRef = cluster.Get("id").String()
-		}
-		clusterName := cluster.Get("name").String()
-		if clusterName == "" {
-			clusterName = cluster.Get("label").String()
-		}
-		if clusterRef != "" && clusterName != "" {
-			clusterNames[clusterRef] = clusterName
-		}
-	}
-
-	h.SLogger.Debug("built cluster lookup", slog.Int("count", len(clusterNames)))
-	return clusterNames, nil
 }
