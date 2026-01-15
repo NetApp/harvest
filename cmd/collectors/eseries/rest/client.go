@@ -64,10 +64,6 @@ type CacheConfig struct {
 func getOrCreateClient(poller *conf.Poller, timeout time.Duration, credentials *auth.Credentials, cacheName string) (*Client, error) {
 	key := poller.Name + ":" + cacheName
 
-	if existing, ok := clientPool.Load(key); ok {
-		return existing.(*Client), nil
-	}
-
 	clientPoolMu.Lock()
 	defer clientPoolMu.Unlock()
 
