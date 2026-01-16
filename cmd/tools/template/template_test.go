@@ -22,7 +22,7 @@ import (
 
 const toConf = "../../../conf"
 
-var allTemplatesButEms = []string{"rest", "restperf", "storagegrid", "zapi", "zapiperf", "keyperf", "statperf"}
+var allTemplatesButEms = []string{"rest", "restperf", "storagegrid", "eseries", "eseriesperf", "zapi", "zapiperf", "keyperf", "statperf"}
 
 // validates each template file name:
 //   - ends with yaml

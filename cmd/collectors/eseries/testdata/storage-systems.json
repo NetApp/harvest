@@ -1,0 +1,14 @@
+[
+    {
+        "id": "600a098000f63714000000005e5cf5d2",
+        "name": "eseries-test-system",
+        "wwn": "600A098000F63714000000005E5CF5D2",
+        "status": "optimal",
+        "freePoolSpace": "8089740492800",
+        "driveCount": 24,
+        "hostSparesUsed": 0,
+        "hotSpareSizeAsString": "0",
+        "ip1": "10.193.48.154",
+        "ip2": "10.193.48.155"
+    }
+]

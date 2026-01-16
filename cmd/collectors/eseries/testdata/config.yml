@@ -1,0 +1,18 @@
+Exporters:
+  prometheus:
+    exporter: Prometheus
+    port: 12990
+
+Defaults:
+  collectors:
+    - ESeries
+  exporters:
+    - prometheus
+  username: test
+  password: test
+
+Pollers:
+  test:
+    addr: localhost
+    username: test
+    password: test

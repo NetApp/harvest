@@ -1,0 +1,20 @@
+name: Fan
+query: storage-systems/{system_id}/hardware-inventory
+object: eseries_fan
+type: fan
+
+counters:
+  - ^^id                                => id
+  - ^physicalLocation.label             => location
+  - ^reserved1                          => reserved1
+  - ^reserved2                          => reserved2
+  - ^status                             => status
+
+export_options:
+  instance_keys:
+    - id
+  instance_labels:
+    - location
+    - reserved1
+    - reserved2
+    - status

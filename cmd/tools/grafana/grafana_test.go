@@ -60,7 +60,7 @@ func TestHttpsAddr(t *testing.T) {
 func TestAddPrefixToMetricNames(t *testing.T) {
 	prefix := "xx_"
 	VisitDashboards(
-		[]string{"../../../grafana/dashboards/cisco", "../../../grafana/dashboards/cmode", "../../../grafana/dashboards/cmode-details", "../../../grafana/dashboards/storagegrid"},
+		[]string{"../../../grafana/dashboards/cisco", "../../../grafana/dashboards/cmode", "../../../grafana/dashboards/cmode-details", "../../../grafana/dashboards/storagegrid", "../../../grafana/dashboards/eseries"},
 		func(path string, data []byte) {
 			if _, err := expressionCheck(t, data, path, prefix); err != nil {
 				return

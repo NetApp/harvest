@@ -1,0 +1,26 @@
+name: Drive
+query: storage-systems/{system_id}/live-statistics
+object: eseries_drive
+type: drive
+
+counters:
+  - ^^diskId                      => id
+  - ^serialNumber                 => serial
+  - ^slot                         => slot
+  - ^trayId                       => tray_id
+  - idleTime                      => idle_time
+  - lastResetTimeInMS             => last_reset_timee
+  - observedTimeInMS              => observed_time
+  - readBytes                     => read_data
+  - readOps                       => read_ops
+  - readTimeTotal                 => read_latency
+  - writeBytes                    => write_data
+  - writeOps                      => write_ops
+  - writeTimeTotal                => write_latency
+
+export_options:
+  instance_keys:
+    - id
+    - serial
+    - slot
+    - tray_id

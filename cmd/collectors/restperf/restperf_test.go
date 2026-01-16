@@ -43,10 +43,10 @@ func Test_parseMetricResponse(t *testing.T) {
 			args: args{
 				instanceData: instanceData, metric: "rss_matrix",
 			}, want: &metricResponse{
-			label:   "queue_0#tx_frames,queue_1#tx_frames,queue_2#tx_frames,queue_0#tx_bytes,queue_1#tx_bytes,queue_2#tx_bytes",
-			value:   "6177010,1605252882,0,3,1,4",
-			isArray: true,
-		},
+				label:   "queue_0#tx_frames,queue_1#tx_frames,queue_2#tx_frames,queue_0#tx_bytes,queue_1#tx_bytes,queue_2#tx_bytes",
+				value:   "6177010,1605252882,0,3,1,4",
+				isArray: true,
+			},
 		},
 	}
 
