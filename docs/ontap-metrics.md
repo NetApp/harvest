@@ -7,7 +7,7 @@ These can be generated on demand by running `bin/harvest grafana metrics`. See
 - More information about ONTAP REST performance counters can be found [here](https://docs.netapp.com/us-en/ontap-pcmap-9121/index.html).
 
 ```
-Creation Date : 2026-Jan-09
+Creation Date : 2026-Jan-16
 ONTAP Version: 9.16.1
 ```
 
@@ -821,7 +821,7 @@ The `aggr_object_store_physical_used` metric is visualized in the following Graf
 
 ### aggr_other_data
 
-Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.
+Performance metric for other I/O operations in bytes per seconds. Other I/O operations can be metadata operations, such as directory lookups and so on.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -976,7 +976,7 @@ Option to specify the maximum number of disks that can be included in a RAID gro
 
 ### aggr_read_data
 
-Performance metric for read I/O operations.
+Performance metric for read I/O operations in bytes per seconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -1555,7 +1555,7 @@ The `aggr_space_used_percent` metric is visualized in the following Grafana dash
 
 ### aggr_total_data
 
-Performance metric aggregated over all types of I/O operations.
+Performance metric aggregated over all types of I/O operations in bytes per seconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -1656,7 +1656,7 @@ The `aggr_volume_count` metric is visualized in the following Grafana dashboards
 
 ### aggr_write_data
 
-Performance metric for write I/O operations.
+Performance metric for write I/O operations in bytes per seconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -1887,7 +1887,7 @@ The `cluster_new_status` metric is visualized in the following Grafana dashboard
 
 ### cluster_other_data
 
-Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.
+Performance metric for other I/O operations in bytes per seconds. Other I/O operations can be metadata operations, such as directory lookups and so on.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -1957,7 +1957,7 @@ The `cluster_peer_non_encrypted` metric is visualized in the following Grafana d
 
 ### cluster_read_data
 
-Performance metric for read I/O operations.
+Performance metric for read I/O operations in bytes per seconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -2144,7 +2144,7 @@ Displays tags at the cluster level.
 
 ### cluster_total_data
 
-Performance metric aggregated over all types of I/O operations.
+Performance metric aggregated over all types of I/O operations in bytes per seconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -2174,7 +2174,7 @@ Performance metric aggregated over all types of I/O operations.
 
 ### cluster_write_data
 
-Performance metric for write I/O operations.
+Performance metric for write I/O operations in bytes per seconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -6503,7 +6503,7 @@ Number of protocol errors from iSCSI sessions on this logical interface (LIF)
 
 ### iscsi_lif_read_data
 
-Amount of data read from the storage system in bytes
+Performance metric for ISCSI LIF read I/O operations in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -6525,7 +6525,7 @@ The `iscsi_lif_read_data` metric is visualized in the following Grafana dashboar
 
 ### iscsi_lif_write_data
 
-Amount of data written to the storage system in bytes
+Performance metric for ISCSI LIF write I/O operations in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -6714,7 +6714,7 @@ Number of packets sent per second
 
 ### lif_total_data
 
-Performance metric aggregated over all types of I/O operations.
+Performance metric aggregated over all types of I/O operations in bytes per seconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -6889,7 +6889,7 @@ The `lun_new_status` metric is visualized in the following Grafana dashboards:
 
 ### lun_other_data
 
-Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.
+Performance metric for other I/O operations in bytes per seconds. Other I/O operations can be metadata operations, such as directory lookups and so on.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -6949,7 +6949,7 @@ The `lun_read_align_histo` metric is visualized in the following Grafana dashboa
 
 ### lun_read_data
 
-Read bytes
+Performance metric for read I/O operations in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -7104,7 +7104,7 @@ The `lun_size_used_percent` metric is visualized in the following Grafana dashbo
 
 ### lun_total_data
 
-Total of Read and write bytes
+Performance metric for read and write I/O operations in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -7176,7 +7176,7 @@ The `lun_write_align_histo` metric is visualized in the following Grafana dashbo
 
 ### lun_write_data
 
-Write bytes
+Performance metric for write I/O operations in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -7896,7 +7896,7 @@ Number of other operations
 
 ### namespace_read_data
 
-Read bytes
+Performance metric for namespace read I/O operations in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -7947,7 +7947,7 @@ Number of remote other operations
 
 ### namespace_remote_read_data
 
-Remote read bytes
+Performance metric for namespace remote read I/O operations in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -7969,7 +7969,7 @@ Number of remote read operations
 
 ### namespace_remote_write_data
 
-Remote write bytes
+Performance metric for namespace remote write I/O operations in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8059,7 +8059,7 @@ The `namespace_size_used` metric is visualized in the following Grafana dashboar
 
 ### namespace_total_data
 
-Performance metric aggregated over all types of I/O operations.
+Performance metric aggregated over all types of I/O operations in bytes per seconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -8079,7 +8079,7 @@ Performance metric aggregated over all types of I/O operations.
 
 ### namespace_write_data
 
-Write bytes
+Performance metric for namespace write I/O operations in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12586,7 +12586,7 @@ Number of SSD Disk kilobytes (KB) written per second
 
 ### node_total_data
 
-Represents the total data throughput in bytes for a node, as reported by ONTAP.
+Performance metric for total data throughput in bytes per second.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12854,7 +12854,7 @@ Number of operations of the given type performed on this volume. node_volume_nfs
 
 ### node_volume_other_data
 
-Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on. node_volume_other_data is [volume_other_data](#volume_other_data) aggregated by `node`.
+Performance metric for other I/O operations in bytes per seconds. Other I/O operations can be metadata operations, such as directory lookups and so on. node_volume_other_data is [volume_other_data](#volume_other_data) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12902,7 +12902,7 @@ The `node_volume_other_ops` metric is visualized in the following Grafana dashbo
 
 ### node_volume_read_data
 
-Performance metric for read I/O operations. node_volume_read_data is [volume_read_data](#volume_read_data) aggregated by `node`.
+Performance metric for read I/O operations in bytes per seconds. node_volume_read_data is [volume_read_data](#volume_read_data) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -12963,7 +12963,7 @@ The `node_volume_read_ops` metric is visualized in the following Grafana dashboa
 
 ### node_volume_total_data
 
-Represents the aggregated total data throughput in bytes across all volumes on a node. This metric is calculated by Harvest by summing the data read from and written to each volume on the node.
+Performance metric for the aggregated total data throughput in bytes per second across all volumes on a node. This metric is calculated by Harvest by summing the data read from and written to each volume on the node.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -13005,7 +13005,7 @@ The `node_volume_total_ops` metric is visualized in the following Grafana dashbo
 
 ### node_volume_write_data
 
-Performance metric for write I/O operations. node_volume_write_data is [volume_write_data](#volume_write_data) aggregated by `node`.
+Performance metric for write I/O operations in bytes per seconds. node_volume_write_data is [volume_write_data](#volume_write_data) aggregated by `node`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -16359,7 +16359,7 @@ The `qtree_nfs_ops` metric is visualized in the following Grafana dashboards:
 
 ### qtree_other_data
 
-Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.
+Performance metric for other I/O operations in bytes per seconds. Other I/O operations can be metadata operations, such as directory lookups and so on.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -16379,7 +16379,7 @@ Performance metric for other I/O operations. Other I/O operations can be metadat
 
 ### qtree_read_data
 
-Performance metric for read I/O operations.
+Performance metric for read I/O operations in bytes per seconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -16399,7 +16399,7 @@ Performance metric for read I/O operations.
 
 ### qtree_total_data
 
-Performance metric aggregated over all types of I/O operations.
+Performance metric aggregated over all types of I/O operations in bytes per seconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -16430,7 +16430,7 @@ The `qtree_total_ops` metric is visualized in the following Grafana dashboards:
 
 ### qtree_write_data
 
-Performance metric for write I/O operations.
+Performance metric for write I/O operations in bytes per seconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -18681,7 +18681,7 @@ The `storage_unit_labels` metric is visualized in the following Grafana dashboar
 
 ### storage_unit_other_data
 
-Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.
+Performance metric for other I/O operations in bytes per seconds. Other I/O operations can be metadata operations, such as directory lookups and so on.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -18711,7 +18711,7 @@ Performance metric for other I/O operations. Other I/O operations can be metadat
 
 ### storage_unit_read_data
 
-Performance metric for read I/O operations.
+Performance metric for read I/O operations in bytes per seconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -18813,7 +18813,7 @@ The `storage_unit_space_used` metric is visualized in the following Grafana dash
 
 ### storage_unit_total_data
 
-Performance metric aggregated over all types of I/O operations.
+Performance metric aggregated over all types of I/O operations in bytes per seconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -18849,7 +18849,7 @@ The `storage_unit_total_ops` metric is visualized in the following Grafana dashb
 
 ### storage_unit_write_data
 
-Performance metric for write I/O operations.
+Performance metric for write I/O operations in bytes per seconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -19039,7 +19039,7 @@ Performance metric for other I/O operations. Other I/O operations can be metadat
 
 ### svm_cifs_read_data
 
-Performance metric for read I/O operations.
+Performance metric for read I/O operations in bytes per seconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -19122,7 +19122,7 @@ Performance metric aggregated over all types of I/O operations.
 
 ### svm_cifs_write_data
 
-Performance metric for write I/O operations.
+Performance metric for write I/O operations in bytes per seconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -21609,7 +21609,7 @@ Number of operations of the given type performed on this volume. svm_vol_nfs_wri
 
 ### svm_vol_other_data
 
-Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on. svm_vol_other_data is [volume_other_data](#volume_other_data) aggregated by `svm`.
+Performance metric for other I/O operations in bytes per seconds. Other I/O operations can be metadata operations, such as directory lookups and so on. svm_vol_other_data is [volume_other_data](#volume_other_data) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -21658,7 +21658,7 @@ The `svm_vol_other_ops` metric is visualized in the following Grafana dashboards
 
 ### svm_vol_read_data
 
-Performance metric for read I/O operations. svm_vol_read_data is [volume_read_data](#volume_read_data) aggregated by `svm`.
+Performance metric for read I/O operations in bytes per seconds. svm_vol_read_data is [volume_read_data](#volume_read_data) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -21722,7 +21722,7 @@ The `svm_vol_read_ops` metric is visualized in the following Grafana dashboards:
 
 ### svm_vol_total_data
 
-Performance metric aggregated over all types of I/O operations. svm_vol_total_data is [volume_total_data](#volume_total_data) aggregated by `svm`.
+Performance metric aggregated over all types of I/O operations in bytes per seconds. svm_vol_total_data is [volume_total_data](#volume_total_data) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -21755,7 +21755,7 @@ The `svm_vol_total_ops` metric is visualized in the following Grafana dashboards
 
 ### svm_vol_write_data
 
-Performance metric for write I/O operations. svm_vol_write_data is [volume_write_data](#volume_write_data) aggregated by `svm`.
+Performance metric for write I/O operations in bytes per seconds. svm_vol_write_data is [volume_write_data](#volume_write_data) aggregated by `svm`.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -22898,7 +22898,7 @@ The `volume_num_compress_fail` metric is visualized in the following Grafana das
 
 ### volume_other_data
 
-Performance metric for other I/O operations. Other I/O operations can be metadata operations, such as directory lookups and so on.
+Performance metric for other I/O operations in bytes per seconds. Other I/O operations can be metadata operations, such as directory lookups and so on.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -23027,7 +23027,7 @@ The `volume_performance_tier_footprint_percent` metric is visualized in the foll
 
 ### volume_read_data
 
-Performance metric for read I/O operations.
+Performance metric for read I/O operations in bytes per seconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
@@ -23994,7 +23994,7 @@ The `volume_total_ops` metric is visualized in the following Grafana dashboards:
 
 ### volume_write_data
 
-Performance metric for write I/O operations.
+Performance metric for write I/O operations in bytes per seconds.
 
 | API    | Endpoint | Metric | Template |
 |--------|----------|--------|---------|
