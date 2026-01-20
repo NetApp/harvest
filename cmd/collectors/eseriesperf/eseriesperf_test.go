@@ -210,10 +210,10 @@ func TestEseriesPerf_PollData(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			ep := newEseriesPerf(tt.object, tt.template)
 
-			// Mock system info via global labels
+			// Mock cluster info via global labels
 			mat := ep.Matrix[ep.Object]
-			mat.SetGlobalLabel("system_id", "600a098000f63714000000005e5cf5d2")
-			mat.SetGlobalLabel("system", "eseries-test-system")
+			mat.SetGlobalLabel("cluster_id", "600a098000f63714000000005e5cf5d2")
+			mat.SetGlobalLabel("cluster", "eseries-test-system")
 
 			// First poll - establishes baseline
 			pollData1 := jsonToPerfData(tt.pollDataPath1)
@@ -275,17 +275,17 @@ func TestEseriesPerf_PollData(t *testing.T) {
 func TestEseriesPerf_TimestampConversion(t *testing.T) {
 	ep := newEseriesPerf("Volume", "volume.yaml")
 
-	// Mock system info
+	// Mock cluster info
 	mat := ep.Matrix[ep.Object]
-	mat.SetGlobalLabel("system_id", "test-system")
-	mat.SetGlobalLabel("system", "test")
+	mat.SetGlobalLabel("cluster_id", "test-system")
+	mat.SetGlobalLabel("cluster", "test")
 
 	// Load test data
 	pollData := jsonToPerfData("testdata/perf1.json")
 	ep.pollData(mat, pollData, set.New())
 
 	// Verify timestamp converted from milliseconds to seconds
-	timestampMetric := mat.GetMetric("observed_time")
+	timestampMetric := mat.GetMetric("observedTimeInMS")
 	if timestampMetric == nil {
 		t.Skip("timestamp metric not found")
 	}
@@ -314,10 +314,10 @@ func TestEseriesPerf_TimestampConversion(t *testing.T) {
 func TestEseriesPerf_PartialDetection_CounterReset(t *testing.T) {
 	ep := newEseriesPerf("Volume", "volume.yaml")
 
-	// Mock system info
+	// Mock cluster info
 	mat := ep.Matrix[ep.Object]
-	mat.SetGlobalLabel("system_id", "test-system")
-	mat.SetGlobalLabel("system", "test")
+	mat.SetGlobalLabel("cluster_id", "test-system")
+	mat.SetGlobalLabel("cluster", "test")
 
 	// First poll
 	pollData1 := jsonToPerfData("testdata/perf1.json")
@@ -357,22 +357,13 @@ func TestEseriesPerf_PartialDetection_CounterReset(t *testing.T) {
 	}
 }
 
-func TestEseriesPerf_PartialDetection_ControllerFailover(t *testing.T) {
-	// Skip: Controller failover detection requires sourceController to be defined
-	// as an instance label (^sourceController) in the volume.yaml template.
-	// Currently, the template doesn't track sourceController, so this partial
-	// detection won't trigger. The functionality exists in eseriesperf.go but
-	// requires template configuration to work.
-	t.Skip("Skipping: volume.yaml template does not define sourceController as a label")
-}
-
 func TestEseriesPerf_CookCounters_ThreePass(t *testing.T) {
 	ep := newEseriesPerf("Volume", "volume.yaml")
 
 	// Mock system info
 	mat := ep.Matrix[ep.Object]
-	mat.SetGlobalLabel("system_id", "test-system")
-	mat.SetGlobalLabel("system", "test")
+	mat.SetGlobalLabel("cluster_id", "test-system")
+	mat.SetGlobalLabel("cluster", "test")
 
 	// First poll
 	pollData1 := jsonToPerfData("testdata/perf1.json")
@@ -421,10 +412,10 @@ func TestEseriesPerf_UtilizationCalculation(t *testing.T) {
 		t.Error("drive should have utilization calculation enabled")
 	}
 
-	// Mock system info
+	// Mock cluster info
 	mat := ep.Matrix[ep.Object]
-	mat.SetGlobalLabel("system_id", "test-system")
-	mat.SetGlobalLabel("system", "test")
+	mat.SetGlobalLabel("cluster_id", "test-system")
+	mat.SetGlobalLabel("cluster", "test")
 
 	// First poll
 	pollData1 := jsonToPerfData("testdata/perf1.json")
@@ -496,10 +487,10 @@ func TestEseriesPerf_MultipleObjectTypes(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			ep := newEseriesPerf(tt.object, tt.template)
 
-			// Mock system info
+			// Mock cluster info
 			mat := ep.Matrix[ep.Object]
-			mat.SetGlobalLabel("system_id", "test-system")
-			mat.SetGlobalLabel("system", "test")
+			mat.SetGlobalLabel("cluster_id", "test-system")
+			mat.SetGlobalLabel("cluster", "test")
 
 			// Load test data
 			pollData := jsonToPerfData("testdata/perf1.json")

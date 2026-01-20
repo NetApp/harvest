@@ -1,5 +1,5 @@
 name: Host
-query: storage-systems/{system_id}/hosts
+query: storage-systems/{cluster_id}/hosts
 object: eseries_host
 
 counters:

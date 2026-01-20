@@ -21,10 +21,10 @@ import (
 
 type ESeries struct {
 	*collector.AbstractCollector
-	Client     *rest.Client
-	Prop       *Prop
-	systemID   string
-	systemName string
+	Client      *rest.Client
+	Prop        *Prop
+	clusterID   string
+	clusterName string
 }
 
 type Prop struct {
@@ -217,30 +217,30 @@ func (e *ESeries) PollCounter() (map[string]*matrix.Matrix, error) {
 	}
 
 	system := systems[0]
-	e.systemID = system.Get("id").ClonedString()
-	e.systemName = system.Get("name").ClonedString()
+	e.clusterID = system.Get("id").ClonedString()
+	e.clusterName = system.Get("name").ClonedString()
 
-	if e.systemID == "" {
+	if e.clusterID == "" {
 		return nil, errs.New(errs.ErrNoInstance, "system missing id")
 	}
 
-	if e.systemName == "" {
-		e.systemName = e.systemID
+	if e.clusterName == "" {
+		e.clusterName = e.clusterID
 	}
 
-	// Store systemID in Params for plugin access (not exported as global label)
+	// Store clusterID in Params for plugin access (not exported as global label)
 	if e.Params != nil {
-		e.Params.NewChildS("system_id", e.systemID)
-		e.Params.NewChildS("system_name", e.systemName)
+		e.Params.NewChildS("cluster_id", e.clusterID)
+		e.Params.NewChildS("cluster", e.clusterName)
 	}
 
 	mat := e.Matrix[e.Object]
-	mat.SetGlobalLabel("system", e.systemName)
+	mat.SetGlobalLabel("cluster", e.clusterName)
 
 	e.Logger.Debug(
-		"discovered system",
-		slog.String("id", e.systemID),
-		slog.String("name", e.systemName),
+		"discovered cluster",
+		slog.String("id", e.clusterID),
+		slog.String("name", e.clusterName),
 	)
 
 	return nil, nil
@@ -257,7 +257,7 @@ func (e *ESeries) PollData() (map[string]*matrix.Matrix, error) {
 
 	query := rest.NewURLBuilder().
 		APIPath(e.Prop.Query).
-		SystemID(e.systemID).
+		ClusterID(e.clusterID).
 		Build()
 
 	var results []gjson.Result
@@ -418,8 +418,8 @@ func (e *ESeries) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plu
 	return nil
 }
 
-func (e *ESeries) GetSystemID() string {
-	return e.systemID
+func (e *ESeries) GetCluster() string {
+	return e.clusterID
 }
 
 var (

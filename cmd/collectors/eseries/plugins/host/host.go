@@ -50,15 +50,15 @@ func (h *Host) Init(remote conf.Remote) error {
 func (h *Host) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[h.Object]
 
-	// Get systemID from ParentParams
-	systemID := h.ParentParams.GetChildContentS("system_id")
-	if systemID == "" {
-		h.SLogger.Warn("systemID not found in ParentParams, skipping host cluster enrichment")
+	// Get clusterID from ParentParams
+	clusterID := h.ParentParams.GetChildContentS("cluster_id")
+	if clusterID == "" {
+		h.SLogger.Warn("clusterID not found in ParentParams, skipping host cluster enrichment")
 		return nil, nil, nil
 	}
 
 	// Build cluster lookup map
-	clusterNames, err := cluster.BuildClusterLookup(h.client, systemID, h.SLogger)
+	clusterNames, err := cluster.BuildClusterLookup(h.client, clusterID, h.SLogger)
 	if err != nil {
 		h.SLogger.Warn("Failed to build cluster lookup", slogx.Err(err))
 		return nil, nil, nil
@@ -70,7 +70,7 @@ func (h *Host) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collec
 		clusterID := instance.GetLabel("cluster_id")
 		if clusterID != "" {
 			if clusterName, ok := clusterNames[clusterID]; ok {
-				instance.SetLabel("cluster", clusterName)
+				instance.SetLabel("host_cluster", clusterName)
 				enrichedCount++
 			}
 		}

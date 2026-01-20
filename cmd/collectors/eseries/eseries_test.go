@@ -127,10 +127,10 @@ func TestESeries_PollData(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			e := newESeries(tt.object, tt.template)
 
-			e.systemID = "600a098000f63714000000005e5cf5d2"
-			e.systemName = "eseries-test-system"
+			e.clusterID = "600a098000f63714000000005e5cf5d2"
+			e.clusterName = "eseries-test-system"
 			mat := e.Matrix[e.Object]
-			mat.SetGlobalLabel("system", e.systemName)
+			mat.SetGlobalLabel("cluster", e.clusterName)
 
 			pollData := JSONToGson(tt.pollDataPath, false)
 
@@ -163,7 +163,7 @@ func TestESeries_PollData(t *testing.T) {
 			}
 
 			globalLabels := mat.GetGlobalLabels()
-			assert.Equal(t, globalLabels["system"], e.systemName)
+			assert.Equal(t, globalLabels["cluster"], e.clusterName)
 
 			metrics := mat.GetMetrics()
 
@@ -222,8 +222,8 @@ func TestESeries_Init(t *testing.T) {
 			if e.Prop.Query == "" {
 				t.Error("query should not be empty")
 			}
-			if !contains(e.Prop.Query, "{system_id}") {
-				t.Error("query should contain system_id placeholder")
+			if !contains(e.Prop.Query, "{cluster_id}") {
+				t.Error("query should contain cluster_id placeholder")
 			}
 		})
 	}
@@ -234,26 +234,26 @@ func TestESeries_PollCounter(t *testing.T) {
 
 	e := newESeries("Volume", "volume.yaml")
 
-	systemsJSON := JSONToGson("testdata/storage-systems.json", false)
+	clusterJSON := JSONToGson("testdata/storage-systems.json", false)
 
-	if len(systemsJSON) > 0 {
-		system := systemsJSON[0]
-		e.systemID = system.Get("id").ClonedString()
-		e.systemName = system.Get("name").ClonedString()
+	if len(clusterJSON) > 0 {
+		cluster := clusterJSON[0]
+		e.clusterID = cluster.Get("id").ClonedString()
+		e.clusterName = cluster.Get("name").ClonedString()
 
 		mat := e.Matrix[e.Object]
-		mat.SetGlobalLabel("system", e.systemName)
+		mat.SetGlobalLabel("cluster", e.clusterName)
 	}
 
-	if e.systemName == "" {
-		t.Error("system should be set")
+	if e.clusterName == "" {
+		t.Error("cluster should be set")
 	}
-	assert.Equal(t, e.systemID, "600a098000f63714000000005e5cf5d2")
-	assert.Equal(t, e.systemName, "eseries-test-system")
+	assert.Equal(t, e.clusterID, "600a098000f63714000000005e5cf5d2")
+	assert.Equal(t, e.clusterName, "eseries-test-system")
 
 	mat := e.Matrix[e.Object]
 	globalLabels := mat.GetGlobalLabels()
-	assert.Equal(t, globalLabels["system"], e.systemName)
+	assert.Equal(t, globalLabels["cluster"], e.clusterName)
 }
 
 func TestESeries_URLBuilder(t *testing.T) {
@@ -266,19 +266,19 @@ func TestESeries_URLBuilder(t *testing.T) {
 	}{
 		{
 			name:     "volume_query",
-			apiPath:  "storage-systems/{system_id}/volumes",
+			apiPath:  "storage-systems/{cluster_id}/volumes",
 			systemID: "600a098000f63714000000005e5cf5d2",
 			expected: "storage-systems/600a098000f63714000000005e5cf5d2/volumes",
 		},
 		{
 			name:     "controller_query",
-			apiPath:  "storage-systems/{system_id}/controllers",
+			apiPath:  "storage-systems/{cluster_id}/controllers",
 			systemID: "test-system-123",
 			expected: "storage-systems/test-system-123/controllers",
 		},
 		{
 			name:     "with_filters",
-			apiPath:  "storage-systems/{system_id}/volumes",
+			apiPath:  "storage-systems/{cluster_id}/volumes",
 			systemID: "test-sys",
 			filters:  []string{"type=volume", "status=optimal"},
 			expected: "storage-systems/test-sys/volumes",
@@ -289,7 +289,7 @@ func TestESeries_URLBuilder(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			builder := rest.NewURLBuilder().
 				APIPath(tt.apiPath).
-				SystemID(tt.systemID)
+				ClusterID(tt.systemID)
 
 			// Note: Filters method is not exported, skipping for now
 
@@ -305,7 +305,7 @@ func TestESeries_MetricExtraction(t *testing.T) {
 	e := newESeries("Volume", "volume.yaml")
 
 	mat := e.Matrix[e.Object]
-	mat.SetGlobalLabel("system", e.systemName)
+	mat.SetGlobalLabel("cluster", e.clusterName)
 
 	// Load test data
 	pollData := JSONToGson("testdata/volume.json", false)

@@ -3,6 +3,7 @@ package volumemapping
 import (
 	"fmt"
 	"log/slog"
+	"strings"
 	"time"
 
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/cluster"
@@ -13,17 +14,12 @@ import (
 	"github.com/netapp/harvest/v2/pkg/conf"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/slogx"
-	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
 )
 
 type VolumeMapping struct {
 	*plugin.AbstractPlugin
-	client          *rest.Client
-	lunMapping      *matrix.Matrix
-	poolMapping     *matrix.Matrix
-	workloadMapping *matrix.Matrix
-	hostMapping     *matrix.Matrix
+	client *rest.Client
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -51,105 +47,36 @@ func (v *VolumeMapping) Init(remote conf.Remote) error {
 		return err
 	}
 
-	// Matrix 1: LUN Mappings (1-to-many: volume → hosts/clusters)
-	v.lunMapping = matrix.New(v.Parent+".LunMapping", "eseries_volume_lun", "eseries_volume_lun")
-	exportOptions1 := node.NewS("export_options")
-	instanceKeys1 := exportOptions1.NewChildS("instance_keys", "")
-	instanceKeys1.NewChildS("", "volume")
-	instanceKeys1.NewChildS("", "lun")
-	instanceKeys1.NewChildS("", "host")
-	instanceKeys1.NewChildS("", "type")
-	v.lunMapping.SetExportOptions(exportOptions1)
-
-	// Create metric for LUN mapping
-	if _, err := v.lunMapping.NewMetricUint8("mapping"); err != nil {
-		return err
-	}
-
-	// Matrix 2: Pool Mappings (1-to-1: volume → pool)
-	v.poolMapping = matrix.New(v.Parent+".PoolMapping", "eseries_volume_pool", "eseries_volume_pool")
-	exportOptions2 := node.NewS("export_options")
-	instanceKeys2 := exportOptions2.NewChildS("instance_keys", "")
-	instanceKeys2.NewChildS("", "volume")
-	instanceKeys2.NewChildS("", "pool")
-	v.poolMapping.SetExportOptions(exportOptions2)
-
-	if _, err := v.poolMapping.NewMetricUint8("mapping"); err != nil {
-		return err
-	}
-
-	// Matrix 3: Workload Mappings (1-to-1: volume → workload)
-	v.workloadMapping = matrix.New(v.Parent+".WorkloadMapping", "eseries_volume_workload", "eseries_volume_workload")
-	exportOptions3 := node.NewS("export_options")
-	instanceKeys3 := exportOptions3.NewChildS("instance_keys", "")
-	instanceKeys3.NewChildS("", "volume")
-	instanceKeys3.NewChildS("", "workload")
-	v.workloadMapping.SetExportOptions(exportOptions3)
-
-	if _, err := v.workloadMapping.NewMetricUint8("mapping"); err != nil {
-		return err
-	}
-
-	// Matrix 4: Host Mappings (1-to-1: volume → host)
-	v.hostMapping = matrix.New(v.Parent+".HostMapping", "eseries_volume_host", "eseries_volume_host")
-	exportOptions4 := node.NewS("export_options")
-	instanceKeys4 := exportOptions4.NewChildS("instance_keys", "")
-	instanceKeys4.NewChildS("", "volume")
-	instanceKeys4.NewChildS("", "host")
-	instanceKeys4.NewChildS("", "type")
-	v.hostMapping.SetExportOptions(exportOptions4)
-
-	if _, err := v.hostMapping.NewMetricUint8("mapping"); err != nil {
-		return err
-	}
-
 	return nil
 }
 
 func (v *VolumeMapping) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[v.Object]
 
-	// Purge and reset all matrices
-	v.lunMapping.PurgeInstances()
-	v.lunMapping.Reset()
-	v.poolMapping.PurgeInstances()
-	v.poolMapping.Reset()
-	v.workloadMapping.PurgeInstances()
-	v.workloadMapping.Reset()
-	v.hostMapping.PurgeInstances()
-	v.hostMapping.Reset()
-
-	// Set global labels for all matrices
-	globalLabels := data.GetGlobalLabels()
-	v.lunMapping.SetGlobalLabels(globalLabels)
-	v.poolMapping.SetGlobalLabels(globalLabels)
-	v.workloadMapping.SetGlobalLabels(globalLabels)
-	v.hostMapping.SetGlobalLabels(globalLabels)
-
-	// Get systemID from ParentParams
-	systemID := v.ParentParams.GetChildContentS("system_id")
-	if systemID == "" {
-		v.SLogger.Warn("systemID not found in ParentParams, skipping volume mapping")
-		return []*matrix.Matrix{v.lunMapping, v.poolMapping, v.workloadMapping, v.hostMapping}, nil, nil
+	// Get clusterID from ParentParams
+	clusterID := v.ParentParams.GetChildContentS("cluster_id")
+	if clusterID == "" {
+		v.SLogger.Warn("clusterID not found in ParentParams, skipping volume mapping")
+		return nil, nil, nil
 	}
 
 	// Build lookup maps
-	poolNames, err := v.buildPoolLookup(systemID)
+	poolNames, err := v.buildPoolLookup(clusterID)
 	if err != nil {
 		v.SLogger.Warn("Failed to build pool lookup", slogx.Err(err))
 	}
 
-	hostNames, err := v.buildHostLookup(systemID)
+	hostNames, err := v.buildHostLookup(clusterID)
 	if err != nil {
 		v.SLogger.Warn("Failed to build host lookup", slogx.Err(err))
 	}
 
-	clusterNames, err := cluster.BuildClusterLookup(v.client, systemID, v.SLogger)
+	clusterNames, err := cluster.BuildClusterLookup(v.client, clusterID, v.SLogger)
 	if err != nil {
 		v.SLogger.Warn("Failed to build cluster lookup", slogx.Err(err))
 	}
 
-	workloadNames, err := v.buildWorkloadLookup(systemID)
+	workloadNames, err := v.buildWorkloadLookup(clusterID)
 	if err != nil {
 		v.SLogger.Warn("Failed to build workload lookup", slogx.Err(err))
 	}
@@ -161,20 +88,17 @@ func (v *VolumeMapping) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix
 			continue
 		}
 
-		// Process LUN mappings (1-to-many)
-		v.processLunMappings(volumeInstance, volumeName, hostNames, clusterNames)
+		// Add pool label
+		v.addPoolLabel(volumeInstance, poolNames)
 
-		// Process pool mapping (1-to-1)
-		v.processPoolMapping(volumeInstance, volumeName, poolNames)
+		// Add workload label
+		v.addWorkloadLabel(volumeInstance, workloadNames)
 
-		// Process workload mapping (1-to-1)
-		v.processWorkloadMapping(volumeInstance, volumeName, workloadNames)
-
-		// Process host mapping (1-to-1)
-		v.processHostMapping(volumeInstance, volumeName, hostNames, clusterNames)
+		// Add LUN, host and type labels (comma-separated)
+		v.addLunAndHostLabels(volumeInstance, hostNames, clusterNames)
 	}
 
-	return []*matrix.Matrix{v.lunMapping, v.poolMapping, v.workloadMapping, v.hostMapping}, nil, nil
+	return nil, nil, nil
 }
 
 func (v *VolumeMapping) buildPoolLookup(systemID string) (map[string]string, error) {
@@ -252,7 +176,7 @@ func (v *VolumeMapping) buildWorkloadLookup(systemID string) (map[string]string,
 	return workloadNames, nil
 }
 
-func (v *VolumeMapping) processLunMappings(volumeInstance *matrix.Instance, volumeName string, hostNames, clusterNames map[string]string) {
+func (v *VolumeMapping) addLunAndHostLabels(volumeInstance *matrix.Instance, hostNames, clusterNames map[string]string) {
 	listOfMappingsJSON := volumeInstance.GetLabel("list_of_mappings")
 	if listOfMappingsJSON == "" || listOfMappingsJSON == "[]" {
 		return
@@ -263,85 +187,71 @@ func (v *VolumeMapping) processLunMappings(volumeInstance *matrix.Instance, volu
 		return
 	}
 
+	var luns, hosts, types []string
+
 	for _, mapping := range mappings.Array() {
 		lun := mapping.Get("lun").String()
 		mapRef := mapping.Get("mapRef").String()
 		mapType := mapping.Get("type").String()
 
-		if lun == "" || mapRef == "" {
+		if mapRef == "" {
 			continue
 		}
 
-		// Create composite instance key: volume#lun#mapRef#lunNumber
-		instanceKey := volumeName + "#lun#" + mapRef + "#" + lun
-
-		instance, err := v.lunMapping.NewInstance(instanceKey)
-		if err != nil {
-			v.SLogger.Warn("Failed to create LUN mapping instance",
-				slog.String("key", instanceKey),
-				slogx.Err(err))
-			continue
+		if lun != "" {
+			luns = append(luns, lun)
 		}
+		types = append(types, mapType)
 
-		// Set labels
-		instance.SetLabel("volume", volumeName)
-		instance.SetLabel("lun", lun)
-		instance.SetLabel("type", mapType)
 		// Resolve host or cluster name
+		var hostName string
 		switch mapType {
 		case "cluster":
-			if clusterName, ok := clusterNames[mapRef]; ok {
-				instance.SetLabel("host", clusterName)
+			if name, ok := clusterNames[mapRef]; ok {
+				hostName = name
 			} else {
-				instance.SetLabel("host", mapRef)
+				hostName = mapRef
 			}
 		case "host":
-			if hostName, ok := hostNames[mapRef]; ok {
-				instance.SetLabel("host", hostName)
+			if name, ok := hostNames[mapRef]; ok {
+				hostName = name
 			} else {
-				instance.SetLabel("host", mapRef)
+				hostName = mapRef
 			}
 		default:
-			// Unknown type - log and skip this instance
-			v.SLogger.Warn("Unknown mapping type, skipping host mapping",
-				slog.String("volume", volumeName),
+			v.SLogger.Warn("Unknown mapping type",
+				slog.String("volume", volumeInstance.GetLabel("volume")),
 				slog.String("type", mapType),
 				slog.String("mapRef", mapRef))
-			return
+			hostName = mapRef
 		}
+		hosts = append(hosts, hostName)
+	}
 
-		v.lunMapping.GetMetric("mapping").SetValueUint8(instance, 1)
+	if len(luns) > 0 {
+		volumeInstance.SetLabel("luns", strings.Join(luns, ","))
+	}
+
+	if len(hosts) > 0 {
+		volumeInstance.SetLabel("hosts", strings.Join(hosts, ","))
+		volumeInstance.SetLabel("mapping_types", strings.Join(types, ","))
 	}
 }
 
-func (v *VolumeMapping) processPoolMapping(volumeInstance *matrix.Instance, volumeName string, poolNames map[string]string) {
+func (v *VolumeMapping) addPoolLabel(volumeInstance *matrix.Instance, poolNames map[string]string) {
 	poolRef := volumeInstance.GetLabel("volume_group_ref")
 	if poolRef == "" {
 		return
 	}
 
-	instanceKey := volumeName + "#pool#" + poolRef
-
-	instance, err := v.poolMapping.NewInstance(instanceKey)
-	if err != nil {
-		v.SLogger.Warn("Failed to create pool mapping instance",
-			slog.String("key", instanceKey),
-			slogx.Err(err))
-		return
-	}
-
-	instance.SetLabel("volume", volumeName)
-
 	if poolName, ok := poolNames[poolRef]; ok {
-		instance.SetLabel("pool", poolName)
+		volumeInstance.SetLabel("pool", poolName)
 	} else {
-		instance.SetLabel("pool", poolRef)
+		volumeInstance.SetLabel("pool", poolRef)
 	}
-
-	v.poolMapping.GetMetric("mapping").SetValueUint8(instance, 1)
 }
 
-func (v *VolumeMapping) processWorkloadMapping(volumeInstance *matrix.Instance, volumeName string, workloadNames map[string]string) {
+func (v *VolumeMapping) addWorkloadLabel(volumeInstance *matrix.Instance, workloadNames map[string]string) {
 	metadataJSON := volumeInstance.GetLabel("metadata")
 	if metadataJSON == "" || metadataJSON == "[]" {
 		return
@@ -364,88 +274,9 @@ func (v *VolumeMapping) processWorkloadMapping(volumeInstance *matrix.Instance, 
 		return
 	}
 
-	// Create instance key: volume#workload#workloadID
-	instanceKey := volumeName + "#workload#" + workloadID
-
-	instance, err := v.workloadMapping.NewInstance(instanceKey)
-	if err != nil {
-		v.SLogger.Warn("Failed to create workload mapping instance",
-			slog.String("key", instanceKey),
-			slogx.Err(err))
-		return
-	}
-
-	instance.SetLabel("volume", volumeName)
-
 	if workloadName, ok := workloadNames[workloadID]; ok {
-		instance.SetLabel("workload", workloadName)
+		volumeInstance.SetLabel("workload", workloadName)
 	} else {
-		instance.SetLabel("workload", workloadID)
+		volumeInstance.SetLabel("workload", workloadID)
 	}
-
-	v.workloadMapping.GetMetric("mapping").SetValueUint8(instance, 1)
-}
-
-func (v *VolumeMapping) processHostMapping(volumeInstance *matrix.Instance, volumeName string, hostNames, clusterNames map[string]string) {
-	listOfMappingsJSON := volumeInstance.GetLabel("list_of_mappings")
-	if listOfMappingsJSON == "" || listOfMappingsJSON == "[]" {
-		return
-	}
-
-	mappings := gjson.Parse(listOfMappingsJSON)
-	if !mappings.IsArray() {
-		return
-	}
-
-	// Get the first mapping to establish the 1-to-1 relationship
-	// This represents the primary host/cluster for this volume
-	if len(mappings.Array()) == 0 {
-		return
-	}
-
-	firstMapping := mappings.Array()[0]
-	mapRef := firstMapping.Get("mapRef").String()
-	mapType := firstMapping.Get("type").String()
-
-	if mapRef == "" {
-		return
-	}
-
-	// Create instance key: volume#host#mapRef
-	instanceKey := volumeName + "#host#" + mapRef
-
-	instance, err := v.hostMapping.NewInstance(instanceKey)
-	if err != nil {
-		v.SLogger.Warn("Failed to create host mapping instance",
-			slog.String("key", instanceKey),
-			slogx.Err(err))
-		return
-	}
-
-	instance.SetLabel("volume", volumeName)
-	instance.SetLabel("type", mapType)
-
-	switch mapType {
-	case "cluster":
-		if clusterName, ok := clusterNames[mapRef]; ok {
-			instance.SetLabel("host", clusterName)
-		} else {
-			instance.SetLabel("host", mapRef)
-		}
-	case "host":
-		if hostName, ok := hostNames[mapRef]; ok {
-			instance.SetLabel("host", hostName)
-		} else {
-			instance.SetLabel("host", mapRef)
-		}
-	default:
-		// Unknown type - log and skip this instance
-		v.SLogger.Warn("Unknown mapping type, skipping host mapping",
-			slog.String("volume", volumeName),
-			slog.String("type", mapType),
-			slog.String("mapRef", mapRef))
-		return
-	}
-
-	v.hostMapping.GetMetric("mapping").SetValueUint8(instance, 1)
 }

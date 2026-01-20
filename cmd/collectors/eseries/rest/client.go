@@ -348,7 +348,7 @@ func (c *Client) Init(retries int, remote conf.Remote) error {
 				c.Logger.Warn(
 					"Failed to get bundleDisplay version, using default version",
 					slogx.Err(err),
-					slog.String("systemID", systemID),
+					slog.String("clusterID", systemID),
 					slog.String("bundleVersion", bundleVersion),
 					slog.String("defaultVersion", DefaultESeriesVersion),
 				)

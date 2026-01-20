@@ -1,5 +1,5 @@
 name: Controller
-query: storage-systems/{system_id}/hardware-inventory
+query: storage-systems/{cluster_id}/hardware-inventory
 object: eseries_controller
 type: controller
 

@@ -1,7 +1,7 @@
-name: System
-query: storage-systems/{system_id}/live-statistics
-object: eseries_system
-type: system
+name: Cluster
+query: storage-systems/{cluster_id}/live-statistics
+object: eseries_cluster
+type: cluster
 
 counters:
   - ^^arrayId                     => id

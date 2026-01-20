@@ -9,4 +9,4 @@ objects:
   Controller:        controller.yaml
   Drive:             drive.yaml
   Pool:              pool.yaml
-  System:            system.yaml
+  Cluster:           cluster.yaml

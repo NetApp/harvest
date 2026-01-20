@@ -54,12 +54,12 @@
       }
     ]
   },
-  "description": "E-Series System Overview - System Information, Capacity, Performance, and Port Status",
+  "description": "E-Series cluster Overview - cluster Information, Capacity, Performance, and Port Status",
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1768399444151,
+  "iteration": 1768489325857,
   "links": [],
   "panels": [
     {
@@ -78,7 +78,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "E-Series System Details",
+      "description": "E-Series cluster Details",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -114,7 +114,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "eseries_system_labels{datacenter=~\"$Datacenter\",system=~\"$System\"}",
+          "expr": "eseries_cluster_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -122,7 +122,7 @@
           "refId": "A"
         }
       ],
-      "title": "System Configuration",
+      "title": "Cluster Configuration",
       "transformations": [
         {
           "id": "organize",
@@ -133,6 +133,7 @@
               "__name__": true,
               "instance": true,
               "job": true,
+              "name": true,
               "wwn": true
             },
             "indexByName": {
@@ -141,6 +142,7 @@
               "__name__": 10,
               "boot_version": 11,
               "chassis_serial": 4,
+              "cluster": 2,
               "datacenter": 0,
               "firmware_version": 5,
               "instance": 12,
@@ -152,22 +154,21 @@
               "nvsram_version": 14,
               "password_status": 15,
               "status": 8,
-              "system": 2,
               "wwn": 16
             },
             "renameByName": {
               "boot_version": "Boot Version",
               "chassis_serial": "Serial Number",
+              "cluster": "Cluster",
               "datacenter": "Datacenter",
               "firmware_version": "Firmware Version",
               "management_ip1": "Admin IP 1",
               "management_ip2": "Admin IP 2",
               "model": "Model",
-              "name": "Hostname",
+              "name": "",
               "nvsram_version": "NVSRAM Version",
               "password_status": "Password Status",
               "status": "Status",
-              "system": "System",
               "timezone": "Timezone"
             }
           }
@@ -257,9 +258,9 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "(\n      eseries_system_used_pool_space{datacenter=~\"$Datacenter\",system=~\"$System\"}\n    /\n      (\n          eseries_system_used_pool_space{datacenter=~\"$Datacenter\",system=~\"$System\"}\n        +\n          eseries_system_free_pool_space{datacenter=~\"$Datacenter\",system=~\"$System\"}\n      )\n  )\nand on (datacenter, system)\n  topk(\n    $TopResources,\n    max by (datacenter, system) (\n      avg_over_time(\n        (\n            eseries_system_used_pool_space{datacenter=~\"$Datacenter\",system=~\"$System\"}\n          /\n            (\n                eseries_system_used_pool_space{datacenter=~\"$Datacenter\",system=~\"$System\"}\n              +\n                eseries_system_free_pool_space{datacenter=~\"$Datacenter\",system=~\"$System\"}\n            )\n        )[3h:] @ end()\n      )\n    )\n  )",
+          "expr": "(\n      eseries_cluster_used_pool_space{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n    /\n      (\n          eseries_cluster_used_pool_space{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n        +\n          eseries_cluster_free_pool_space{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n      )\n  )\nand on (datacenter, cluster)\n  topk(\n    $TopResources,\n    max by (datacenter, cluster) (\n      avg_over_time(\n        (\n            eseries_cluster_used_pool_space{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n          /\n            (\n                eseries_cluster_used_pool_space{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n              +\n                eseries_cluster_free_pool_space{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n            )\n        )[3h:] @ end()\n      )\n    )\n  )",
           "interval": "",
-          "legendFormat": "{{datacenter}} - {{system}}",
+          "legendFormat": "{{datacenter}} - {{cluster}}",
           "refId": "A"
         }
       ],
@@ -345,9 +346,9 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "eseries_system_used_pool_space{datacenter=~\"$Datacenter\",system=~\"$System\"}\nand on (datacenter, system)\n  topk(\n    $TopResources,\n    max by (datacenter, system) (\n      avg_over_time(\n        eseries_system_used_pool_space{datacenter=~\"$Datacenter\",system=~\"$System\"}[3h] @ end()\n      )\n    )\n  )",
+          "expr": "eseries_cluster_used_pool_space{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\nand on (datacenter, cluster)\n  topk(\n    $TopResources,\n    max by (datacenter, cluster) (\n      avg_over_time(\n        eseries_cluster_used_pool_space{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
           "interval": "",
-          "legendFormat": "{{datacenter}} - {{system}}",
+          "legendFormat": "{{datacenter}} - {{cluster}}",
           "refId": "A"
         }
       ],
@@ -433,9 +434,9 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "eseries_system_free_pool_space{datacenter=~\"$Datacenter\",system=~\"$System\"}\nand on (datacenter, system)\n  topk(\n    $TopResources,\n    max by (datacenter, system) (\n      avg_over_time(\n        eseries_system_free_pool_space{datacenter=~\"$Datacenter\",system=~\"$System\"}[3h] @ end()\n      )\n    )\n  )",
+          "expr": "eseries_cluster_free_pool_space{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\nand on (datacenter, cluster)\n  topk(\n    $TopResources,\n    max by (datacenter, cluster) (\n      avg_over_time(\n        eseries_cluster_free_pool_space{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
           "interval": "",
-          "legendFormat": "{{datacenter}} - {{system}}",
+          "legendFormat": "{{datacenter}} - {{cluster}}",
           "refId": "A"
         }
       ],
@@ -521,9 +522,9 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "eseries_system_unconfigured_space{datacenter=~\"$Datacenter\",system=~\"$System\"}\nand on (datacenter, system)\n  topk(\n    $TopResources,\n    max by (datacenter, system) (\n      avg_over_time(\n        eseries_system_unconfigured_space{datacenter=~\"$Datacenter\",system=~\"$System\"}[3h] @ end()\n      )\n    )\n  )",
+          "expr": "eseries_cluster_unconfigured_space{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\nand on (datacenter, cluster)\n  topk(\n    $TopResources,\n    max by (datacenter, cluster) (\n      avg_over_time(\n        eseries_cluster_unconfigured_space{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
           "interval": "",
-          "legendFormat": "{{datacenter}} - {{system}}",
+          "legendFormat": "{{datacenter}} - {{cluster}}",
           "refId": "A"
         }
       ],
@@ -582,7 +583,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "eseries_host_labels{datacenter=~\"$Datacenter\",system=~\"$System\"}",
+              "expr": "eseries_host_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -607,23 +608,21 @@
                   "Time": 4,
                   "Value": 9,
                   "__name__": 5,
-                  "cluster": 3,
+                  "cluster": 1,
                   "datacenter": 0,
                   "host": 2,
                   "host_id": 6,
                   "instance": 7,
-                  "job": 8,
-                  "system": 1
+                  "job": 8
                 },
                 "renameByName": {
-                  "cluster": "Cluster",
+                  "cluster": "cluster",
                   "cluster_id": "Cluster",
                   "datacenter": "Datacenter",
                   "host": "Host",
                   "host_type_index": "Host Type",
                   "hostname": "Hostname",
-                  "name": "Name",
-                  "system": "System"
+                  "name": "Name"
                 }
               }
             }
@@ -669,7 +668,7 @@
         "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(eseries_system_labels, datacenter)",
+        "definition": "label_values(eseries_cluster_labels, datacenter)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -679,7 +678,7 @@
         "name": "Datacenter",
         "options": [],
         "query": {
-          "query": "label_values(eseries_system_labels, datacenter)",
+          "query": "label_values(eseries_cluster_labels, datacenter)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -692,17 +691,17 @@
         "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(eseries_system_labels{datacenter=~\"$Datacenter\"}, name)",
+        "definition": "label_values(eseries_cluster_labels{datacenter=~\"$Datacenter\"}, name)",
         "description": null,
         "error": null,
         "hide": 0,
         "includeAll": true,
-        "label": "System",
+        "label": "Cluster",
         "multi": false,
-        "name": "System",
+        "name": "Cluster",
         "options": [],
         "query": {
-          "query": "label_values(eseries_system_labels{datacenter=~\"$Datacenter\"}, name)",
+          "query": "label_values(eseries_cluster_labels{datacenter=~\"$Datacenter\"}, name)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -810,7 +809,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "E-Series: System Overview",
-  "uid": "eseries-system-overview",
+  "title": "E-Series: Cluster Overview",
+  "uid": "eseries-cluster-overview",
   "version": 1
 }

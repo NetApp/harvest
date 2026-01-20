@@ -74,7 +74,7 @@ func GetESeriesPerfObjectConfig(objType string) ObjectConfig {
 		"interface":   newObjectConfig("interfaceStats", "type=ioInterface", false),
 		"application": newObjectConfig("applicationStats", "type=application", false),
 		"workload":    newObjectConfig("workloadStats", "type=workload", false),
-		"system":      newObjectConfig("systemStats", "type=storageSystem", false),
+		"cluster":     newObjectConfig("systemStats", "type=storageSystem", false),
 	}
 	if config, ok := configs[objType]; ok {
 		return config
@@ -82,7 +82,7 @@ func GetESeriesPerfObjectConfig(objType string) ObjectConfig {
 	return ObjectConfig{}
 }
 
-// ExtractCacheNameFromQuery Example: "storage-systems/{system_id}/live-statistics" -> "live-statistics"
+// ExtractCacheNameFromQuery Example: "storage-systems/{cluster_id}/live-statistics" -> "live-statistics"
 func ExtractCacheNameFromQuery(query string) string {
 	parts := strings.Split(query, "/")
 	if len(parts) > 0 {

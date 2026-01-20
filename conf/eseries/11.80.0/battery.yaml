@@ -1,5 +1,5 @@
 name: Battery
-query: storage-systems/{system_id}/hardware-inventory
+query: storage-systems/{cluster_id}/hardware-inventory
 object: eseries_battery
 type: battery
 

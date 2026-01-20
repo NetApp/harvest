@@ -6,7 +6,7 @@ schedule:
 
 objects:
   Volume:            volume.yaml
-  System:            system.yaml
+  Cluster:           cluster.yaml
   Host:              host.yaml
   Controller:        controller.yaml
   Fan:               fan.yaml

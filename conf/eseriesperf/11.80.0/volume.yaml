@@ -1,5 +1,5 @@
 name: Volume
-query: storage-systems/{system_id}/live-statistics
+query: storage-systems/{cluster_id}/live-statistics
 object: eseries_volume
 type: volume
 

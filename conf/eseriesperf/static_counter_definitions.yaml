@@ -96,7 +96,7 @@ objects:
       - name: cacheHitsIopsTotal
         type: rate
 
-  eseries_system:
+  eseries_cluster:
     counter_definitions:
       - name: observedTimeInMS
         type: delta

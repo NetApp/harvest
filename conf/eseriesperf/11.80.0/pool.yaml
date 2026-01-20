@@ -1,5 +1,5 @@
 name: Pool
-query: storage-systems/{system_id}/live-statistics
+query: storage-systems/{cluster_id}/live-statistics
 object: eseries_pool
 type: pool
 
@@ -9,7 +9,7 @@ counters:
   - ^arrayWwn                     => array_wwn
   - ^memberIdsHash                => member_ids_hash
   - ^sourceController             => source_controller
-  - ^system_id                    => system_id
+  - ^system_id                    => cluster_id
   - cacheHitsIopsTotal            => cache_hit_ops
   - idleTime                      => idle_time
   - lastResetTimeInMS             => last_reset_time

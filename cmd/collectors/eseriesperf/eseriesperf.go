@@ -295,7 +295,7 @@ func (ep *EseriesPerf) PollData() (map[string]*matrix.Matrix, error) {
 	curMat := prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
 	curMat.Reset()
 
-	systemID := ep.GetSystemID()
+	systemID := ep.GetCluster()
 
 	// Build query - use filters from template
 	// Note: shared cache may contain broader data, but we still apply template filters
@@ -303,7 +303,7 @@ func (ep *EseriesPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	query := rest.NewURLBuilder().
 		APIPath(ep.Prop.Query).
-		SystemID(systemID).
+		ClusterID(systemID).
 		Filter(filters).
 		Build()
 

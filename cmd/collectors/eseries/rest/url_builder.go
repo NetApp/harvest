@@ -5,9 +5,9 @@ import (
 )
 
 type URLBuilder struct {
-	apiPath  string
-	systemID string
-	filters  []string
+	apiPath   string
+	clusterID string
+	filters   []string
 }
 
 func NewURLBuilder() *URLBuilder {
@@ -19,8 +19,8 @@ func (b *URLBuilder) APIPath(apiPath string) *URLBuilder {
 	return b
 }
 
-func (b *URLBuilder) SystemID(systemID string) *URLBuilder {
-	b.systemID = systemID
+func (b *URLBuilder) ClusterID(clusterID string) *URLBuilder {
+	b.clusterID = clusterID
 	return b
 }
 
@@ -32,9 +32,9 @@ func (b *URLBuilder) Filter(filters []string) *URLBuilder {
 func (b *URLBuilder) Build() string {
 	url := b.apiPath
 
-	// Replace {system_id} placeholder if systemID is set
-	if b.systemID != "" {
-		url = strings.ReplaceAll(url, "{system_id}", b.systemID)
+	// Replace {cluster_id} placeholder if clusterID is set
+	if b.clusterID != "" {
+		url = strings.ReplaceAll(url, "{cluster_id}", b.clusterID)
 	}
 
 	if len(b.filters) > 0 {
