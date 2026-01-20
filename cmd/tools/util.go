@@ -380,6 +380,18 @@ func BuildMetrics(dir, configPath, pollerName string, opts *Options, metricsPane
 				}
 			}
 		}
+
+		// Generically handle throughput metrics to specify bytes per second in the description
+		// does not already contain it
+		if strings.HasSuffix(counter.Name, "_data") {
+			for _, metricDef := range counter.APIs {
+				if metricDef.Unit == "b_per_sec" && !strings.Contains(counter.Description, "per second") {
+					counter.Description = strings.Replace(counter.Description, "operations", "operations in bytes per seconds", 1)
+					counters[k] = counter
+					break
+				}
+			}
+		}
 	}
 
 	return counters, restClient.Remote()

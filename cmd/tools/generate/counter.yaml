@@ -1100,6 +1100,18 @@ counters:
   - Name: namespace_size_available
     Description: This metric represents the amount of available space in a namespace.
 
+  - Name: namespace_read_data
+    Description: Performance metric for namespace read I/O operations in bytes per second.
+
+  - Name: namespace_write_data
+    Description: Performance metric for namespace write I/O operations in bytes per second.
+
+  - Name: namespace_remote_read_data
+    Description: Performance metric for namespace remote read I/O operations in bytes per second.
+
+  - Name: namespace_remote_write_data
+    Description: Performance metric for namespace remote write I/O operations in bytes per second.
+
   - Name: namespace_size_available_percent
     Description: This metric represents the percentage of available space in a namespace.
 
@@ -1846,7 +1858,7 @@ counters:
         Template: conf/zapi/cdot/9.8.0/aggr.yaml
 
   - Name: node_volume_total_data
-    Description: Represents the aggregated total data throughput in bytes across all volumes on a node. This metric is calculated by Harvest by summing the data read from and written to each volume on the node.
+    Description: Performance metric for the aggregated total data throughput in bytes per second across all volumes on a node. This metric is calculated by Harvest by summing the data read from and written to each volume on the node.
     APIs:
       - API: RestPerf
         Endpoint: NA
@@ -2228,7 +2240,7 @@ counters:
         Template: conf/rest/9.12.0/mav_request.yaml
 
   - Name: node_total_data
-    Description: Represents the total data throughput in bytes for a node, as reported by ONTAP.
+    Description: Performance metric for total data throughput in bytes per second.
 
   - Name: snapshot_volume_violation_count
     Description: This metric represents the total number of snapshots that exist on volumes without being created through an applied snapshot policy.
@@ -2332,7 +2344,13 @@ counters:
         Template: conf/rest/9.6.0/snapshot.yaml
 
   - Name: lun_total_data
-    Description: Total of Read and write bytes
+    Description: Performance metric for read and write I/O operations in bytes per second.
+
+  - Name: lun_read_data
+    Description: Performance metric for read I/O operations in bytes per second.
+
+  - Name: lun_write_data
+    Description: Performance metric for write I/O operations in bytes per second.
 
   - Name: lun_total_ops
     Description: Total number of read and write operations
@@ -2703,3 +2721,9 @@ counters:
 
   - Name: fcp_nvmf_remote_write_data
     Description: Amount of remote data written to the storage system (FC-NVMe) in bytes per second.
+
+  - Name: iscsi_lif_read_data
+    Description: Performance metric for ISCSI LIF read I/O operations in bytes per second.
+
+  - Name: iscsi_lif_write_data
+    Description: Performance metric for ISCSI LIF write I/O operations in bytes per second.

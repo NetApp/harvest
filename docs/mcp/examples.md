@@ -2,7 +2,9 @@
 
 This section provides example queries you can ask your MCP client (GitHub Copilot, Claude Desktop, etc.) when using the Harvest MCP Server. For more examples and community discussions about MCP usage, see: [Harvest MCP Discussion](https://github.com/NetApp/harvest/discussions/3902) 
 
-Higher-capability language models provide better analysis and insights. When possible use the latest model versions with larger context windows.
+Higher-capability language models provide better analysis and insights. When possible use the latest model versions with large context windows. You will get better results when using flagship models like GPT-5.X, Sonnet 4.X, Gemini 3, etc. 
+
+The following examples were run with Claude Sonnet 4 large language model. 
 
 ## Getting the Best Results
 
