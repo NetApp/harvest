@@ -19,7 +19,12 @@ import (
 
 type VolumeMapping struct {
 	*plugin.AbstractPlugin
-	client *rest.Client
+	client        *rest.Client
+	schedule      int
+	poolNames     map[string]string
+	hostNames     map[string]string
+	clusterNames  map[string]string
+	workloadNames map[string]string
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -47,6 +52,12 @@ func (v *VolumeMapping) Init(remote conf.Remote) error {
 		return err
 	}
 
+	v.poolNames = make(map[string]string)
+	v.hostNames = make(map[string]string)
+	v.clusterNames = make(map[string]string)
+	v.workloadNames = make(map[string]string)
+
+	v.schedule = v.SetPluginInterval()
 	return nil
 }
 
@@ -60,27 +71,56 @@ func (v *VolumeMapping) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix
 		return nil, nil, nil
 	}
 
-	// Build lookup maps
+	// Rebuild caches at plugin interval to reduce API calls
+	if v.schedule >= v.PluginInvocationRate {
+		v.schedule = 0
+		v.rebuildCaches(clusterID)
+	}
+	v.schedule++
+
+	v.applyLabelsToVolumes(data)
+
+	return nil, nil, nil
+}
+
+func (v *VolumeMapping) rebuildCaches(clusterID string) {
+	// Clear existing caches
+	v.poolNames = make(map[string]string)
+	v.hostNames = make(map[string]string)
+	v.clusterNames = make(map[string]string)
+	v.workloadNames = make(map[string]string)
+
+	// Build lookup maps and cache them
 	poolNames, err := v.buildPoolLookup(clusterID)
 	if err != nil {
 		v.SLogger.Warn("Failed to build pool lookup", slogx.Err(err))
+	} else {
+		v.poolNames = poolNames
 	}
 
 	hostNames, err := v.buildHostLookup(clusterID)
 	if err != nil {
 		v.SLogger.Warn("Failed to build host lookup", slogx.Err(err))
+	} else {
+		v.hostNames = hostNames
 	}
 
 	clusterNames, err := cluster.BuildClusterLookup(v.client, clusterID, v.SLogger)
 	if err != nil {
 		v.SLogger.Warn("Failed to build cluster lookup", slogx.Err(err))
+	} else {
+		v.clusterNames = clusterNames
 	}
 
 	workloadNames, err := v.buildWorkloadLookup(clusterID)
 	if err != nil {
 		v.SLogger.Warn("Failed to build workload lookup", slogx.Err(err))
+	} else {
+		v.workloadNames = workloadNames
 	}
+}
 
+func (v *VolumeMapping) applyLabelsToVolumes(data *matrix.Matrix) {
 	// Process each volume instance
 	for _, volumeInstance := range data.GetInstances() {
 		volumeName := volumeInstance.GetLabel("volume")
@@ -89,16 +129,14 @@ func (v *VolumeMapping) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix
 		}
 
 		// Add pool label
-		v.addPoolLabel(volumeInstance, poolNames)
+		v.addPoolLabel(volumeInstance, v.poolNames)
 
 		// Add workload label
-		v.addWorkloadLabel(volumeInstance, workloadNames)
+		v.addWorkloadLabel(volumeInstance, v.workloadNames)
 
 		// Add LUN, host and type labels (comma-separated)
-		v.addLunAndHostLabels(volumeInstance, hostNames, clusterNames)
+		v.addLunAndHostLabels(volumeInstance, v.hostNames, v.clusterNames)
 	}
-
-	return nil, nil, nil
 }
 
 func (v *VolumeMapping) buildPoolLookup(systemID string) (map[string]string, error) {
