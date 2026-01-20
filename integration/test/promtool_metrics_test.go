@@ -14,6 +14,7 @@ var allowedList = []string{
 	"aggr_power",
 	"cluster_software_status",
 	"health_lif_alerts",
+	"health_support_alerts",
 	"security_certificate_labels",
 	"shelf_average_ambient_temperature",
 	"shelf_average_fan_speed",
