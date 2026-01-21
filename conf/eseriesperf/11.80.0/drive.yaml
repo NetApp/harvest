@@ -9,7 +9,7 @@ counters:
   - ^slot                         => slot
   - ^trayId                       => tray_id
   - idleTime                      => idle_time
-  - lastResetTimeInMS             => last_reset_timee
+  - lastResetTimeInMS             => last_reset_time
   - observedTimeInMS              => observed_time
   - readBytes                     => read_data
   - readOps                       => read_ops

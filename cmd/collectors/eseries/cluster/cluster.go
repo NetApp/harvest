@@ -9,10 +9,10 @@ import (
 
 // BuildClusterLookup creates a map of cluster IDs to cluster names by fetching host groups
 // from the E-Series API for the given storage system.
-func BuildClusterLookup(client *rest.Client, systemID string, logger *slog.Logger) (map[string]string, error) {
+func BuildClusterLookup(client *rest.Client, clusterID string, logger *slog.Logger) (map[string]string, error) {
 	clusterNames := make(map[string]string)
 
-	apiPath := client.GetAPIPath() + "/storage-systems/" + systemID + "/host-groups"
+	apiPath := client.GetAPIPath() + "/storage-systems/" + clusterID + "/host-groups"
 	clusters, err := client.Fetch(apiPath, nil)
 	if err != nil {
 		return clusterNames, fmt.Errorf("failed to fetch host groups: %w", err)

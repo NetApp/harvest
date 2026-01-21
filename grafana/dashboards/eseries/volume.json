@@ -67,7 +67,8 @@
       "includeVars": true,
       "keepTime": true,
       "tags": [
-        "cdot"
+        "eseries",
+        "harvest"
       ],
       "targetBlank": false,
       "title": "Related Dashboards",

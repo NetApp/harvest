@@ -54,7 +54,7 @@
       }
     ]
   },
-  "description": "E-Series cluster Overview - cluster Information, Capacity, Performance, and Port Status",
+  "description": "E-Series Cluster Overview - cluster Information, Capacity, Performance, and Port Status",
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
