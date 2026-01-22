@@ -947,11 +947,23 @@ func runHTTPServer(server *mcp.Server) {
 		slog.String("host", httpHost),
 		slog.Int("port", httpPort))
 
+	// Health check endpoint
+	http.HandleFunc("/health", func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("OK"))
+	})
+
 	handler := mcp.NewStreamableHTTPHandler(func(*http.Request) *mcp.Server {
 		return server
 	}, nil)
 
 	wrappedHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Skip MCP handler for health endpoint
+		if r.URL.Path == "/health" {
+			http.DefaultServeMux.ServeHTTP(w, r)
+			return
+		}
+
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Mcp-Protocol-Version, Mcp-Session-Id")
