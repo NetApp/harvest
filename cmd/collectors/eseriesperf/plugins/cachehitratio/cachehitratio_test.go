@@ -135,9 +135,9 @@ func TestCalculateVolumeRatios(t *testing.T) {
 		}
 	}
 
-	checkMetric("readCacheHitRatio", 80.0)
-	checkMetric("writeCacheHitRatio", 60.0)
-	checkMetric("totalCacheHitRatio", 70.0) // (80 + 60) / 200 * 100
+	checkMetric("read_cache_hit_ratio", 80.0)
+	checkMetric("write_cache_hit_ratio", 60.0)
+	checkMetric("total_cache_hit_ratio", 70.0) // (80 + 60) / 200 * 100
 }
 
 func TestCalculateAggregatedRatios(t *testing.T) {
@@ -153,14 +153,14 @@ func TestCalculateAggregatedRatios(t *testing.T) {
 	p.calculateAggregatedRatios(mat)
 
 	// Verify: 150 / 200 * 100 = 75%
-	metric := mat.GetMetric("totalCacheHitRatio")
+	metric := mat.GetMetric("total_cache_hit_ratio")
 	if metric == nil {
-		t.Fatal("totalCacheHitRatio metric was not created")
+		t.Fatal("total_cache_hit_ratio metric was not created")
 	}
 	if val, ok := metric.GetValueFloat64(instance); !ok {
-		t.Error("Failed to get totalCacheHitRatio value")
+		t.Error("Failed to get total_cache_hit_ratio value")
 	} else if val != 75.0 {
-		t.Errorf("totalCacheHitRatio = %f; want 75.0", val)
+		t.Errorf("total_cache_hit_ratio = %f; want 75.0", val)
 	}
 }
 
@@ -184,7 +184,7 @@ func TestRun_VolumeObject(t *testing.T) {
 	}
 
 	// Verify all cache hit ratio metrics were created
-	for _, name := range []string{"readCacheHitRatio", "writeCacheHitRatio", "totalCacheHitRatio"} {
+	for _, name := range []string{"read_cache_hit_ratio", "write_cache_hit_ratio", "total_cache_hit_ratio"} {
 		if mat.GetMetric(name) == nil {
 			t.Errorf("%s metric was not created by Run()", name)
 		}

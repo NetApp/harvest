@@ -98,13 +98,7 @@ func (e *ESeries) Init(a *collector.AbstractCollector) error {
 		}
 	}
 
-	if err := e.InitMisc(); err != nil {
-		return err
-	}
-
-	if err := e.InitMatrix(); err != nil {
-		return err
-	}
+	e.InitMatrix()
 
 	e.Logger.Debug(
 		"initialized",
@@ -168,7 +162,7 @@ func (e *ESeries) InitClient() error {
 	return nil
 }
 
-func (e *ESeries) InitMatrix() error {
+func (e *ESeries) InitMatrix() {
 	mat := e.Matrix[e.Object]
 	mat.Object = e.Prop.Object
 
@@ -182,22 +176,12 @@ func (e *ESeries) InitMatrix() error {
 		}
 	}
 
-	return nil
-}
-
-func (e *ESeries) InitMisc() error {
-	if exportOptions := e.Params.GetChildS("export_options"); exportOptions != nil {
-		e.Matrix[e.Object].SetExportOptions(exportOptions)
-	}
-
 	e.Logger.Debug(
 		"initialized cache",
 		slog.Any("instanceKeys", e.Prop.InstanceKeys),
 		slog.Int("numMetrics", len(e.Prop.Metrics)),
 		slog.Int("numLabels", len(e.Prop.InstanceLabels)),
 	)
-
-	return nil
 }
 
 func (e *ESeries) PollCounter() (map[string]*matrix.Matrix, error) {
@@ -264,7 +248,7 @@ func (e *ESeries) PollData() (map[string]*matrix.Matrix, error) {
 	var err error
 
 	apiStart := time.Now()
-	results, err = e.Client.Fetch(e.Client.GetAPIPath()+"/"+query, e.Prop.CacheConfig)
+	results, err = e.Client.Fetch(e.Client.APIPath+"/"+query, e.Prop.CacheConfig)
 	apiTime = time.Since(apiStart)
 
 	if err != nil {

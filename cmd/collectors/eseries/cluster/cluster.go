@@ -12,7 +12,7 @@ import (
 func BuildClusterLookup(client *rest.Client, clusterID string, logger *slog.Logger) (map[string]string, error) {
 	clusterNames := make(map[string]string)
 
-	apiPath := client.GetAPIPath() + "/storage-systems/" + clusterID + "/host-groups"
+	apiPath := client.APIPath + "/storage-systems/" + clusterID + "/host-groups"
 	clusters, err := client.Fetch(apiPath, nil)
 	if err != nil {
 		return clusterNames, fmt.Errorf("failed to fetch host groups: %w", err)

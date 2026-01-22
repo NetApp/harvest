@@ -78,13 +78,7 @@ func (ep *EseriesPerf) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
-	if err := ep.InitMisc(); err != nil {
-		return err
-	}
-
-	if err := ep.InitMatrix(); err != nil {
-		return err
-	}
+	ep.InitMatrix()
 
 	ep.buildCounters()
 
@@ -100,7 +94,7 @@ func (ep *EseriesPerf) Init(a *collector.AbstractCollector) error {
 	return nil
 }
 
-func (ep *EseriesPerf) InitMatrix() error {
+func (ep *EseriesPerf) InitMatrix() {
 	mat := ep.Matrix[ep.Object]
 	ep.perfProp.isCacheEmpty = true
 
@@ -118,8 +112,6 @@ func (ep *EseriesPerf) InitMatrix() error {
 
 	_, _ = ep.Metadata.NewMetricUint64("skips")
 	_, _ = ep.Metadata.NewMetricUint64("numPartials")
-
-	return nil
 }
 
 func (ep *EseriesPerf) LoadTemplate() (string, error) {
@@ -297,8 +289,9 @@ func (ep *EseriesPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	systemID := ep.GetCluster()
 
-	// Build query - use filters from template
-	// Note: shared cache may contain broader data, but we still apply template filters
+	// Build query - filters are intentionally disabled when using shared cache
+	// to prevent cache poisoning (subset of filtered data being cached for all consumers)
+	// See applyFilter() in template.go for the filter-disabling logic
 	filters := ep.Prop.Filter
 
 	query := rest.NewURLBuilder().
@@ -310,7 +303,7 @@ func (ep *EseriesPerf) PollData() (map[string]*matrix.Matrix, error) {
 	var results []gjson.Result
 	apiStart := time.Now()
 
-	results, err = ep.Client.Fetch(ep.Client.GetAPIPath()+"/"+query, ep.Prop.CacheConfig, headers)
+	results, err = ep.Client.Fetch(ep.Client.APIPath+"/"+query, ep.Prop.CacheConfig, headers)
 	apiTime = time.Since(apiStart)
 
 	if err != nil {
@@ -768,6 +761,13 @@ func (ep *EseriesPerf) calculateUtilization(curMat *matrix.Matrix) (int, error) 
 	return skips, nil
 }
 
+// validateMatrix ensures that the previous matrix (prevMat) contains all the metrics present in the current matrix (curMat).
+// This is crucial for performing accurate comparisons and calculations between the two matrices, especially in scenarios where
+// the current matrix may have additional metrics that are not present in the previous matrix, such as after an ONTAP upgrade.
+//
+// The function iterates over all the metrics in curMat and checks if each metric exists in prevMat. If a metric from curMat
+// does not exist in prevMat, it is created in prevMat as a new float64 metric. This prevents potential panics or errors
+// when attempting to perform calculations with metrics that are missing in prevMat.
 func (ep *EseriesPerf) validateMatrix(prevMat *matrix.Matrix, curMat *matrix.Matrix) error {
 	var err error
 	for k := range curMat.GetMetrics() {

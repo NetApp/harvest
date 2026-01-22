@@ -142,7 +142,7 @@ func (v *VolumeMapping) applyLabelsToVolumes(data *matrix.Matrix) {
 func (v *VolumeMapping) buildPoolLookup(systemID string) (map[string]string, error) {
 	poolNames := make(map[string]string)
 
-	apiPath := v.client.GetAPIPath() + "/storage-systems/" + systemID + "/storage-pools"
+	apiPath := v.client.APIPath + "/storage-systems/" + systemID + "/storage-pools"
 	pools, err := v.client.Fetch(apiPath, nil)
 	if err != nil {
 		return poolNames, fmt.Errorf("failed to fetch pools: %w", err)
@@ -169,7 +169,7 @@ func (v *VolumeMapping) buildPoolLookup(systemID string) (map[string]string, err
 func (v *VolumeMapping) buildHostLookup(systemID string) (map[string]string, error) {
 	hostNames := make(map[string]string)
 
-	apiPath := v.client.GetAPIPath() + "/storage-systems/" + systemID + "/hosts"
+	apiPath := v.client.APIPath + "/storage-systems/" + systemID + "/hosts"
 	hosts, err := v.client.Fetch(apiPath, nil)
 	if err != nil {
 		return hostNames, fmt.Errorf("failed to fetch hosts: %w", err)
@@ -196,7 +196,7 @@ func (v *VolumeMapping) buildHostLookup(systemID string) (map[string]string, err
 func (v *VolumeMapping) buildWorkloadLookup(systemID string) (map[string]string, error) {
 	workloadNames := make(map[string]string)
 
-	apiPath := v.client.GetAPIPath() + "/storage-systems/" + systemID + "/workloads"
+	apiPath := v.client.APIPath + "/storage-systems/" + systemID + "/workloads"
 	workloads, err := v.client.Fetch(apiPath, nil)
 	if err != nil {
 		return workloadNames, fmt.Errorf("failed to fetch workloads: %w", err)

@@ -68,21 +68,21 @@ func (c *CacheHitRatio) calculateVolumeRatios(data *matrix.Matrix) {
 		return
 	}
 
-	readCacheHitRatio, err := data.NewMetricFloat64("readCacheHitRatio")
+	readCacheHitRatio, err := data.NewMetricFloat64("read_cache_hit_ratio")
 	if err != nil {
-		c.SLogger.Warn("Failed to create readCacheHitRatio metric", slog.String("error", err.Error()))
+		c.SLogger.Warn("Failed to create read_cache_hit_ratio metric", slog.String("error", err.Error()))
 		return
 	}
 
-	writeCacheHitRatio, err := data.NewMetricFloat64("writeCacheHitRatio")
+	writeCacheHitRatio, err := data.NewMetricFloat64("write_cache_hit_ratio")
 	if err != nil {
-		c.SLogger.Warn("Failed to create writeCacheHitRatio metric", slog.String("error", err.Error()))
+		c.SLogger.Warn("Failed to create write_cache_hit_ratio metric", slog.String("error", err.Error()))
 		return
 	}
 
-	totalCacheHitRatio, err := data.NewMetricFloat64("totalCacheHitRatio")
+	totalCacheHitRatio, err := data.NewMetricFloat64("total_cache_hit_ratio")
 	if err != nil {
-		c.SLogger.Warn("Failed to create totalCacheHitRatio metric", slog.String("error", err.Error()))
+		c.SLogger.Warn("Failed to create total_cache_hit_ratio metric", slog.String("error", err.Error()))
 		return
 	}
 
@@ -134,9 +134,9 @@ func (c *CacheHitRatio) calculateAggregatedRatios(data *matrix.Matrix) {
 		return
 	}
 
-	totalCacheHitRatio, err := data.NewMetricFloat64("totalCacheHitRatio")
+	totalCacheHitRatio, err := data.NewMetricFloat64("total_cache_hit_ratio")
 	if err != nil {
-		c.SLogger.Warn("Failed to create totalCacheHitRatio metric", slog.String("error", err.Error()))
+		c.SLogger.Warn("Failed to create total_cache_hit_ratio metric", slog.String("error", err.Error()))
 		return
 	}
 

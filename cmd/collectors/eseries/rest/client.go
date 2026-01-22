@@ -32,14 +32,14 @@ const (
 var (
 	clientPool   = sync.Map{} // key: pollerName, value: *Client
 	clientPoolMu sync.Mutex
-	re           = regexp.MustCompile(`^(\d+)\.(\d+)(?:\.(\d+))?`)
+	bundleRe     = regexp.MustCompile(`^(\d+)\.(\d+)(?:\.(\d+))?`)
 )
 
 type Client struct {
 	client   *http.Client
 	Logger   *slog.Logger
 	baseURL  string
-	apiPath  string
+	APIPath  string
 	Timeout  time.Duration
 	auth     *auth.Credentials
 	Metadata *collector.Metadata
@@ -104,7 +104,7 @@ func newClient(poller *conf.Poller, timeout time.Duration, credentials *auth.Cre
 
 	client = Client{
 		auth:     credentials,
-		apiPath:  DefaultAPIPath,
+		APIPath:  DefaultAPIPath,
 		Metadata: &collector.Metadata{},
 	}
 	client.Logger = slog.Default().With(slog.String("ESeries", "Client"))
@@ -131,7 +131,7 @@ func newClient(poller *conf.Poller, timeout time.Duration, credentials *auth.Cre
 
 // GetStorageSystems retrieves all storage systems from the web services proxy
 func (c *Client) GetStorageSystems() ([]gjson.Result, error) {
-	endpoint := c.apiPath + "/storage-systems"
+	endpoint := c.APIPath + "/storage-systems"
 	return c.get(endpoint)
 }
 
@@ -197,11 +197,6 @@ func (c *Client) Fetch(fullPath string, cacheConfig *CacheConfig, headers ...map
 		slog.Int("records", len(data)))
 
 	return data, nil
-}
-
-// GetAPIPath returns the API path
-func (c *Client) GetAPIPath() string {
-	return c.apiPath
 }
 
 func (c *Client) get(endpoint string, headers ...map[string]string) ([]gjson.Result, error) {
@@ -378,7 +373,7 @@ func (c *Client) Remote() conf.Remote {
 
 // Returns normalized version like "11.70.4" from bundleDisplay values like "11.70.4R1"
 func (c *Client) getBundleDisplayVersion(systemID string) (string, error) {
-	endpoint := c.apiPath + "/firmware/embedded-firmware/" + systemID + "/versions"
+	endpoint := c.APIPath + "/firmware/embedded-firmware/" + systemID + "/versions"
 	results, err := c.get(endpoint)
 	if err != nil {
 		return "", fmt.Errorf("failed to get firmware versions: %w", err)
@@ -417,7 +412,7 @@ func (c *Client) getBundleDisplayVersion(systemID string) (string, error) {
 //
 // Returns empty string if parsing fails
 func (c *Client) normalizeBundleVersion(bundleDisplay string) string {
-	matches := re.FindStringSubmatch(bundleDisplay)
+	matches := bundleRe.FindStringSubmatch(bundleDisplay)
 
 	if len(matches) == 0 {
 		// No match, return empty string to trigger default version fallback
