@@ -4,12 +4,13 @@ import (
 	"bytes"
 	"compress/gzip"
 	"fmt"
-	"github.com/netapp/harvest/v2/cmd/collectors/eseries/rest"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/netapp/harvest/v2/cmd/collectors/eseries/rest"
 
 	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
@@ -127,10 +128,10 @@ func TestESeries_PollData(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			e := newESeries(tt.object, tt.template)
 
-			e.clusterID = "600a098000f63714000000005e5cf5d2"
-			e.clusterName = "eseries-test-system"
+			e.arrayID = "600a098000f63714000000005e5cf5d2"
+			e.arrayName = "eseries-test-system"
 			mat := e.Matrix[e.Object]
-			mat.SetGlobalLabel("cluster", e.clusterName)
+			mat.SetGlobalLabel("array", e.arrayName)
 
 			pollData := JSONToGson(tt.pollDataPath, false)
 
@@ -163,7 +164,7 @@ func TestESeries_PollData(t *testing.T) {
 			}
 
 			globalLabels := mat.GetGlobalLabels()
-			assert.Equal(t, globalLabels["cluster"], e.clusterName)
+			assert.Equal(t, globalLabels["array"], e.arrayName)
 
 			metrics := mat.GetMetrics()
 
@@ -222,8 +223,8 @@ func TestESeries_Init(t *testing.T) {
 			if e.Prop.Query == "" {
 				t.Error("query should not be empty")
 			}
-			if !contains(e.Prop.Query, "{cluster_id}") {
-				t.Error("query should contain cluster_id placeholder")
+			if !contains(e.Prop.Query, "{array_id}") {
+				t.Error("query should contain array_id placeholder")
 			}
 		})
 	}
@@ -234,26 +235,26 @@ func TestESeries_PollCounter(t *testing.T) {
 
 	e := newESeries("Volume", "volume.yaml")
 
-	clusterJSON := JSONToGson("testdata/storage-systems.json", false)
+	arrayJSON := JSONToGson("testdata/storage-systems.json", false)
 
-	if len(clusterJSON) > 0 {
-		cluster := clusterJSON[0]
-		e.clusterID = cluster.Get("id").ClonedString()
-		e.clusterName = cluster.Get("name").ClonedString()
+	if len(arrayJSON) > 0 {
+		array := arrayJSON[0]
+		e.arrayID = array.Get("id").ClonedString()
+		e.arrayName = array.Get("name").ClonedString()
 
 		mat := e.Matrix[e.Object]
-		mat.SetGlobalLabel("cluster", e.clusterName)
+		mat.SetGlobalLabel("array", e.arrayName)
 	}
 
-	if e.clusterName == "" {
-		t.Error("cluster should be set")
+	if e.arrayName == "" {
+		t.Error("array should be set")
 	}
-	assert.Equal(t, e.clusterID, "600a098000f63714000000005e5cf5d2")
-	assert.Equal(t, e.clusterName, "eseries-test-system")
+	assert.Equal(t, e.arrayID, "600a098000f63714000000005e5cf5d2")
+	assert.Equal(t, e.arrayName, "eseries-test-system")
 
 	mat := e.Matrix[e.Object]
 	globalLabels := mat.GetGlobalLabels()
-	assert.Equal(t, globalLabels["cluster"], e.clusterName)
+	assert.Equal(t, globalLabels["array"], e.arrayName)
 }
 
 func TestESeries_URLBuilder(t *testing.T) {
@@ -266,19 +267,19 @@ func TestESeries_URLBuilder(t *testing.T) {
 	}{
 		{
 			name:     "volume_query",
-			apiPath:  "storage-systems/{cluster_id}/volumes",
+			apiPath:  "storage-systems/{array_id}/volumes",
 			systemID: "600a098000f63714000000005e5cf5d2",
 			expected: "storage-systems/600a098000f63714000000005e5cf5d2/volumes",
 		},
 		{
 			name:     "controller_query",
-			apiPath:  "storage-systems/{cluster_id}/controllers",
+			apiPath:  "storage-systems/{array_id}/controllers",
 			systemID: "test-system-123",
 			expected: "storage-systems/test-system-123/controllers",
 		},
 		{
 			name:     "with_filters",
-			apiPath:  "storage-systems/{cluster_id}/volumes",
+			apiPath:  "storage-systems/{array_id}/volumes",
 			systemID: "test-sys",
 			filters:  []string{"type=volume", "status=optimal"},
 			expected: "storage-systems/test-sys/volumes",
@@ -289,7 +290,7 @@ func TestESeries_URLBuilder(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			builder := rest.NewURLBuilder().
 				APIPath(tt.apiPath).
-				ClusterID(tt.systemID)
+				ArrayID(tt.systemID)
 
 			// Note: Filters method is not exported, skipping for now
 
@@ -305,7 +306,7 @@ func TestESeries_MetricExtraction(t *testing.T) {
 	e := newESeries("Volume", "volume.yaml")
 
 	mat := e.Matrix[e.Object]
-	mat.SetGlobalLabel("cluster", e.clusterName)
+	mat.SetGlobalLabel("array", e.arrayName)
 
 	// Load test data
 	pollData := JSONToGson("testdata/volume.json", false)

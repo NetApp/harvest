@@ -1,6 +1,6 @@
-name: Cluster
+name: Array
 query: storage-systems
-object: eseries_cluster
+object: eseries_array
 
 counters:
   - ^^wwn                                 => wwn

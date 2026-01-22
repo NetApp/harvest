@@ -2,6 +2,9 @@ package eseriesperf
 
 import (
 	"fmt"
+	"os"
+	"testing"
+
 	"github.com/netapp/harvest/v2/assert"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/options"
@@ -11,8 +14,6 @@ import (
 	"github.com/netapp/harvest/v2/pkg/tree"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
-	"os"
-	"testing"
 )
 
 const (
@@ -210,10 +211,10 @@ func TestEseriesPerf_PollData(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			ep := newEseriesPerf(tt.object, tt.template)
 
-			// Mock cluster info via global labels
+			// Mock array info via global labels
 			mat := ep.Matrix[ep.Object]
-			mat.SetGlobalLabel("cluster_id", "600a098000f63714000000005e5cf5d2")
-			mat.SetGlobalLabel("cluster", "eseries-test-system")
+			mat.SetGlobalLabel("array_id", "600a098000f63714000000005e5cf5d2")
+			mat.SetGlobalLabel("array", "eseries-test-system")
 
 			// First poll - establishes baseline
 			pollData1 := jsonToPerfData(tt.pollDataPath1)
@@ -275,10 +276,10 @@ func TestEseriesPerf_PollData(t *testing.T) {
 func TestEseriesPerf_TimestampConversion(t *testing.T) {
 	ep := newEseriesPerf("Volume", "volume.yaml")
 
-	// Mock cluster info
+	// Mock array info
 	mat := ep.Matrix[ep.Object]
-	mat.SetGlobalLabel("cluster_id", "test-system")
-	mat.SetGlobalLabel("cluster", "test")
+	mat.SetGlobalLabel("array_id", "test-system")
+	mat.SetGlobalLabel("array", "test")
 
 	// Load test data
 	pollData := jsonToPerfData("testdata/perf1.json")
@@ -314,10 +315,10 @@ func TestEseriesPerf_TimestampConversion(t *testing.T) {
 func TestEseriesPerf_PartialDetection_CounterReset(t *testing.T) {
 	ep := newEseriesPerf("Volume", "volume.yaml")
 
-	// Mock cluster info
+	// Mock array info
 	mat := ep.Matrix[ep.Object]
-	mat.SetGlobalLabel("cluster_id", "test-system")
-	mat.SetGlobalLabel("cluster", "test")
+	mat.SetGlobalLabel("array_id", "test-system")
+	mat.SetGlobalLabel("array", "test")
 
 	// First poll
 	pollData1 := jsonToPerfData("testdata/perf1.json")
@@ -362,8 +363,8 @@ func TestEseriesPerf_CookCounters_ThreePass(t *testing.T) {
 
 	// Mock system info
 	mat := ep.Matrix[ep.Object]
-	mat.SetGlobalLabel("cluster_id", "test-system")
-	mat.SetGlobalLabel("cluster", "test")
+	mat.SetGlobalLabel("array_id", "test-system")
+	mat.SetGlobalLabel("array", "test")
 
 	// First poll
 	pollData1 := jsonToPerfData("testdata/perf1.json")
@@ -412,10 +413,10 @@ func TestEseriesPerf_UtilizationCalculation(t *testing.T) {
 		t.Error("drive should have utilization calculation enabled")
 	}
 
-	// Mock cluster info
+	// Mock array info
 	mat := ep.Matrix[ep.Object]
-	mat.SetGlobalLabel("cluster_id", "test-system")
-	mat.SetGlobalLabel("cluster", "test")
+	mat.SetGlobalLabel("array_id", "test-system")
+	mat.SetGlobalLabel("array", "test")
 
 	// First poll
 	pollData1 := jsonToPerfData("testdata/perf1.json")
@@ -487,10 +488,10 @@ func TestEseriesPerf_MultipleObjectTypes(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			ep := newEseriesPerf(tt.object, tt.template)
 
-			// Mock cluster info
+			// Mock array info
 			mat := ep.Matrix[ep.Object]
-			mat.SetGlobalLabel("cluster_id", "test-system")
-			mat.SetGlobalLabel("cluster", "test")
+			mat.SetGlobalLabel("array_id", "test-system")
+			mat.SetGlobalLabel("array", "test")
 
 			// Load test data
 			pollData := jsonToPerfData("testdata/perf1.json")

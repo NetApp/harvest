@@ -1,6 +1,10 @@
 package eseries
 
 import (
+	"log/slog"
+	"strings"
+	"time"
+
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/plugins/host"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/plugins/volume"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/plugins/volumemapping"
@@ -14,17 +18,14 @@ import (
 	"github.com/netapp/harvest/v2/pkg/set"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/third_party/tidwall/gjson"
-	"log/slog"
-	"strings"
-	"time"
 )
 
 type ESeries struct {
 	*collector.AbstractCollector
-	Client      *rest.Client
-	Prop        *Prop
-	clusterID   string
-	clusterName string
+	Client    *rest.Client
+	Prop      *Prop
+	arrayID   string
+	arrayName string
 }
 
 type Prop struct {
@@ -201,30 +202,30 @@ func (e *ESeries) PollCounter() (map[string]*matrix.Matrix, error) {
 	}
 
 	system := systems[0]
-	e.clusterID = system.Get("id").ClonedString()
-	e.clusterName = system.Get("name").ClonedString()
+	e.arrayID = system.Get("id").ClonedString()
+	e.arrayName = system.Get("name").ClonedString()
 
-	if e.clusterID == "" {
+	if e.arrayID == "" {
 		return nil, errs.New(errs.ErrNoInstance, "system missing id")
 	}
 
-	if e.clusterName == "" {
-		e.clusterName = e.clusterID
+	if e.arrayName == "" {
+		e.arrayName = e.arrayID
 	}
 
-	// Store clusterID in Params for plugin access (not exported as global label)
+	// Store arrayID in Params for plugin access (not exported as global label)
 	if e.Params != nil {
-		e.Params.NewChildS("cluster_id", e.clusterID)
-		e.Params.NewChildS("cluster", e.clusterName)
+		e.Params.NewChildS("array_id", e.arrayID)
+		e.Params.NewChildS("array", e.arrayName)
 	}
 
 	mat := e.Matrix[e.Object]
-	mat.SetGlobalLabel("cluster", e.clusterName)
+	mat.SetGlobalLabel("array", e.arrayName)
 
 	e.Logger.Debug(
-		"discovered cluster",
-		slog.String("id", e.clusterID),
-		slog.String("name", e.clusterName),
+		"discovered array",
+		slog.String("id", e.arrayID),
+		slog.String("name", e.arrayName),
 	)
 
 	return nil, nil
@@ -241,7 +242,7 @@ func (e *ESeries) PollData() (map[string]*matrix.Matrix, error) {
 
 	query := rest.NewURLBuilder().
 		APIPath(e.Prop.Query).
-		ClusterID(e.clusterID).
+		ArrayID(e.arrayID).
 		Build()
 
 	var results []gjson.Result
@@ -402,8 +403,8 @@ func (e *ESeries) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plu
 	return nil
 }
 
-func (e *ESeries) GetCluster() string {
-	return e.clusterID
+func (e *ESeries) GetArray() string {
+	return e.arrayID
 }
 
 var (

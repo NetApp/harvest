@@ -54,12 +54,12 @@
       }
     ]
   },
-  "description": "E-Series Cluster Overview - cluster Information, Capacity, Performance, and Port Status",
+  "description": "E-Series Array Overview - array Information, Capacity, Performance, and Port Status",
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1768489325857,
+  "iteration": 1769099388632,
   "links": [],
   "panels": [
     {
@@ -78,7 +78,7 @@
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "E-Series cluster Details",
+      "description": "E-Series Array Details",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -114,7 +114,7 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "eseries_cluster_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
+          "expr": "eseries_array_labels{array=~\"$Array\",datacenter=~\"$Datacenter\"}",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -122,7 +122,7 @@
           "refId": "A"
         }
       ],
-      "title": "Cluster Configuration",
+      "title": "Array Configuration",
       "transformations": [
         {
           "id": "organize",
@@ -140,9 +140,9 @@
               "Time": 9,
               "Value": 17,
               "__name__": 10,
+              "array": 2,
               "boot_version": 11,
               "chassis_serial": 4,
-              "cluster": 2,
               "datacenter": 0,
               "firmware_version": 5,
               "instance": 12,
@@ -157,9 +157,9 @@
               "wwn": 16
             },
             "renameByName": {
+              "array": "Array",
               "boot_version": "Boot Version",
               "chassis_serial": "Serial Number",
-              "cluster": "Cluster",
               "datacenter": "Datacenter",
               "firmware_version": "Firmware Version",
               "management_ip1": "Admin IP 1",
@@ -258,9 +258,9 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "(\n      eseries_cluster_used_pool_space{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n    /\n      (\n          eseries_cluster_used_pool_space{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n        +\n          eseries_cluster_free_pool_space{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n      )\n  )\nand on (datacenter, cluster)\n  topk(\n    $TopResources,\n    max by (datacenter, cluster) (\n      avg_over_time(\n        (\n            eseries_cluster_used_pool_space{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n          /\n            (\n                eseries_cluster_used_pool_space{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n              +\n                eseries_cluster_free_pool_space{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\n            )\n        )[3h:] @ end()\n      )\n    )\n  )",
+          "expr": "(\n      eseries_array_used_pool_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}\n    /\n      (\n          eseries_array_used_pool_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}\n        +\n          eseries_array_free_pool_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}\n      )\n  )\nand on (datacenter, array)\n  topk(\n    $TopResources,\n    max by (datacenter, array) (\n      avg_over_time(\n        (\n            eseries_array_used_pool_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}\n          /\n            (\n                eseries_array_used_pool_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}\n              +\n                eseries_array_free_pool_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}\n            )\n        )[3h:] @ end()\n      )\n    )\n  )",
           "interval": "",
-          "legendFormat": "{{datacenter}} - {{cluster}}",
+          "legendFormat": "{{datacenter}} - {{array}}",
           "refId": "A"
         }
       ],
@@ -346,9 +346,9 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "eseries_cluster_used_pool_space{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\nand on (datacenter, cluster)\n  topk(\n    $TopResources,\n    max by (datacenter, cluster) (\n      avg_over_time(\n        eseries_cluster_used_pool_space{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+          "expr": "eseries_array_used_pool_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array)\n  topk(\n    $TopResources,\n    max by (datacenter, array) (\n      avg_over_time(eseries_array_used_pool_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
           "interval": "",
-          "legendFormat": "{{datacenter}} - {{cluster}}",
+          "legendFormat": "{{datacenter}} - {{array}}",
           "refId": "A"
         }
       ],
@@ -434,9 +434,9 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "eseries_cluster_free_pool_space{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\nand on (datacenter, cluster)\n  topk(\n    $TopResources,\n    max by (datacenter, cluster) (\n      avg_over_time(\n        eseries_cluster_free_pool_space{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+          "expr": "eseries_array_free_pool_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array)\n  topk(\n    $TopResources,\n    max by (datacenter, array) (\n      avg_over_time(eseries_array_free_pool_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
           "interval": "",
-          "legendFormat": "{{datacenter}} - {{cluster}}",
+          "legendFormat": "{{datacenter}} - {{array}}",
           "refId": "A"
         }
       ],
@@ -522,9 +522,9 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "eseries_cluster_unconfigured_space{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}\nand on (datacenter, cluster)\n  topk(\n    $TopResources,\n    max by (datacenter, cluster) (\n      avg_over_time(\n        eseries_cluster_unconfigured_space{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+          "expr": "eseries_array_unconfigured_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array)\n  topk(\n    $TopResources,\n    max by (datacenter, array) (\n      avg_over_time(\n        eseries_array_unconfigured_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
           "interval": "",
-          "legendFormat": "{{datacenter}} - {{cluster}}",
+          "legendFormat": "{{datacenter}} - {{array}}",
           "refId": "A"
         }
       ],
@@ -583,7 +583,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "eseries_host_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\"}",
+              "expr": "eseries_host_labels{array=~\"$Array\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -608,7 +608,7 @@
                   "Time": 4,
                   "Value": 9,
                   "__name__": 5,
-                  "cluster": 1,
+                  "array": 1,
                   "datacenter": 0,
                   "host": 2,
                   "host_id": 6,
@@ -616,10 +616,11 @@
                   "job": 8
                 },
                 "renameByName": {
-                  "cluster": "cluster",
-                  "cluster_id": "Cluster",
+                  "array": "Array",
+                  "array_id": "Array",
                   "datacenter": "Datacenter",
                   "host": "Host",
+                  "host_cluster": "Host Cluster",
                   "host_type_index": "Host Type",
                   "hostname": "Hostname",
                   "name": "Name"
@@ -668,7 +669,7 @@
         "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(eseries_cluster_labels, datacenter)",
+        "definition": "label_values(eseries_array_labels, datacenter)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -678,7 +679,7 @@
         "name": "Datacenter",
         "options": [],
         "query": {
-          "query": "label_values(eseries_cluster_labels, datacenter)",
+          "query": "label_values(eseries_array_labels, datacenter)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -691,17 +692,17 @@
         "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(eseries_cluster_labels{datacenter=~\"$Datacenter\"}, name)",
+        "definition": "label_values(eseries_array_labels{datacenter=~\"$Datacenter\"}, name)",
         "description": null,
         "error": null,
         "hide": 0,
         "includeAll": true,
-        "label": "Cluster",
+        "label": "Array",
         "multi": false,
-        "name": "Cluster",
+        "name": "Array",
         "options": [],
         "query": {
-          "query": "label_values(eseries_cluster_labels{datacenter=~\"$Datacenter\"}, name)",
+          "query": "label_values(eseries_array_labels{datacenter=~\"$Datacenter\"}, name)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -809,7 +810,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "E-Series: Cluster Overview",
-  "uid": "eseries-cluster-overview",
+  "title": "E-Series: Array Overview",
+  "uid": "eseries-array-overview",
   "version": 1
 }

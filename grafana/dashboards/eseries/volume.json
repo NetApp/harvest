@@ -171,9 +171,9 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "eseries_volume_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}\nand on (datacenter, volume, cluster)\n  topk(\n    $TopResources,\n    max by (datacenter, volume, cluster) (\n      avg_over_time(\n        eseries_volume_read_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}[3h] @ end()\n      )\n    )\n  )",
+          "expr": "eseries_volume_read_latency{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}\nand on (datacenter, volume, array)\n  topk(\n    $TopResources,\n    max by (datacenter, volume, array) (\n      avg_over_time(\n        eseries_volume_read_latency{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}[3h] @ end()\n      )\n    )\n  )",
           "interval": "",
-          "legendFormat": "{{cluster}} - {{volume}}",
+          "legendFormat": "{{array}} - {{volume}}",
           "refId": "A"
         }
       ],
@@ -262,9 +262,9 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "eseries_volume_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}\nand on (datacenter, volume, cluster)\n  topk(\n    $TopResources,\n    max by (datacenter, volume, cluster) (\n      avg_over_time(\n        eseries_volume_write_latency{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}[3h] @ end()\n      )\n    )\n  )",
+          "expr": "eseries_volume_write_latency{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}\nand on (datacenter, volume, array)\n  topk(\n    $TopResources,\n    max by (datacenter, volume, array) (\n      avg_over_time(\n        eseries_volume_write_latency{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}[3h] @ end()\n      )\n    )\n  )",
           "interval": "",
-          "legendFormat": "{{cluster}} - {{volume}}",
+          "legendFormat": "{{array}} - {{volume}}",
           "refId": "A"
         }
       ],
@@ -354,9 +354,9 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "eseries_volume_read_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}\nand on (datacenter, volume, cluster)\n  topk(\n    $TopResources,\n    max by (datacenter, volume, cluster) (\n      avg_over_time(\n        eseries_volume_read_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}[3h] @ end()\n      )\n    )\n  )",
+          "expr": "eseries_volume_read_ops{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}\nand on (datacenter, volume, array)\n  topk(\n    $TopResources,\n    max by (datacenter, volume, array) (\n      avg_over_time(\n        eseries_volume_read_ops{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}[3h] @ end()\n      )\n    )\n  )",
           "interval": "",
-          "legendFormat": "{{cluster}} - {{volume}}",
+          "legendFormat": "{{array}} - {{volume}}",
           "refId": "A"
         }
       ],
@@ -446,9 +446,9 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "eseries_volume_write_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}\nand on (datacenter, volume, cluster)\n  topk(\n    $TopResources,\n    max by (datacenter, volume, cluster) (\n      avg_over_time(\n        eseries_volume_write_ops{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}[3h] @ end()\n      )\n    )\n  )",
+          "expr": "eseries_volume_write_ops{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}\nand on (datacenter, volume, array)\n  topk(\n    $TopResources,\n    max by (datacenter, volume, array) (\n      avg_over_time(\n        eseries_volume_write_ops{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}[3h] @ end()\n      )\n    )\n  )",
           "interval": "",
-          "legendFormat": "{{cluster}} - {{volume}}",
+          "legendFormat": "{{array}} - {{volume}}",
           "refId": "A"
         }
       ],
@@ -537,10 +537,10 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "eseries_volume_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}\nand on (datacenter, volume, cluster)\n  topk(\n    $TopResources,\n    max by (datacenter, volume, cluster) (\n      avg_over_time(\n        eseries_volume_read_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}[3h] @ end()\n      )\n    )\n  )",
+          "expr": "eseries_volume_read_data{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}\nand on (datacenter, volume, array)\n  topk(\n    $TopResources,\n    max by (datacenter, volume, array) (\n      avg_over_time(\n        eseries_volume_read_data{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}[3h] @ end()\n      )\n    )\n  )",
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{cluster}} - {{volume}}",
+          "legendFormat": "{{array}} - {{volume}}",
           "refId": "A"
         }
       ],
@@ -629,9 +629,9 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "eseries_volume_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}\nand on (datacenter, volume, cluster)\n  topk(\n    $TopResources,\n    max by (datacenter, volume, cluster) (\n      avg_over_time(\n        eseries_volume_write_data{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}[3h] @ end()\n      )\n    )\n  )",
+          "expr": "eseries_volume_write_data{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}\nand on (datacenter, volume, array)\n  topk(\n    $TopResources,\n    max by (datacenter, volume, array) (\n      avg_over_time(\n        eseries_volume_write_data{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}[3h] @ end()\n      )\n    )\n  )",
           "interval": "",
-          "legendFormat": "{{cluster}} - {{volume}}",
+          "legendFormat": "{{array}} - {{volume}}",
           "refId": "A"
         }
       ],
@@ -749,7 +749,7 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "label_join(\n  eseries_volume_labels{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"volume\"\n)",
+              "expr": "label_join(\n  eseries_volume_labels{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"array\",\n  \"volume\"\n)",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -759,7 +759,7 @@
             },
             {
               "exemplar": false,
-              "expr": "label_join(\n  eseries_volume_allocated_capacity{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"volume\"\n)",
+              "expr": "label_join(\n  eseries_volume_allocated_capacity{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"array\",\n  \"volume\"\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -770,7 +770,7 @@
             },
             {
               "exemplar": false,
-              "expr": "label_join(\n  eseries_volume_reported_capacity{cluster=~\"$Cluster\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"cluster\",\n  \"volume\"\n)",
+              "expr": "label_join(\n  eseries_volume_reported_capacity{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"array\",\n  \"volume\"\n)",
               "format": "table",
               "hide": false,
               "instant": true,
@@ -803,7 +803,7 @@
                 "include": {
                   "names": [
                     "block_size",
-                    "cluster",
+                    "array",
                     "datacenter",
                     "hosts",
                     "mapping_types",
@@ -824,8 +824,8 @@
               "id": "organize",
               "options": {
                 "excludeByName": {
-                  "cluster 2": true,
-                  "cluster 3": true,
+                  "array 2": true,
+                  "array 3": true,
                   "datacenter 2": true,
                   "datacenter 3": true,
                   "volume 2": true,
@@ -834,10 +834,10 @@
                 "indexByName": {
                   "Value #A": 12,
                   "Value #C": 11,
+                  "array": 1,
+                  "array 2": 14,
+                  "array 3": 17,
                   "block_size": 10,
-                  "cluster": 1,
-                  "cluster 2": 14,
-                  "cluster 3": 17,
                   "datacenter": 0,
                   "datacenter 2": 15,
                   "datacenter 3": 18,
@@ -856,8 +856,8 @@
                 "renameByName": {
                   "Value #A": "Allocated capacity",
                   "Value #C": "Reported capacity",
+                  "array": "Array",
                   "block_size": "Block size",
-                  "cluster": "Cluster",
                   "datacenter": "Datacenter",
                   "host": "Assigned to",
                   "hosts": "Assigned to",
@@ -914,7 +914,7 @@
         "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(eseries_cluster_labels, datacenter)",
+        "definition": "label_values(eseries_array_labels, datacenter)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -924,7 +924,7 @@
         "name": "Datacenter",
         "options": [],
         "query": {
-          "query": "label_values(eseries_cluster_labels, datacenter)",
+          "query": "label_values(eseries_array_labels, datacenter)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -940,17 +940,17 @@
         "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(eseries_cluster_labels{datacenter=~\"$Datacenter\"}, cluster)",
+        "definition": "label_values(eseries_array_labels{datacenter=~\"$Datacenter\"}, array)",
         "description": null,
         "error": null,
         "hide": 0,
         "includeAll": true,
         "label": null,
         "multi": true,
-        "name": "Cluster",
+        "name": "Array",
         "options": [],
         "query": {
-          "query": "label_values(eseries_cluster_labels{datacenter=~\"$Datacenter\"}, cluster)",
+          "query": "label_values(eseries_array_labels{datacenter=~\"$Datacenter\"}, array)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -966,7 +966,7 @@
         "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(eseries_volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, volume)",
+        "definition": "label_values(eseries_volume_labels{datacenter=~\"$Datacenter\",array=~\"$Array\"}, volume)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -976,7 +976,7 @@
         "name": "Volume",
         "options": [],
         "query": {
-          "query": "label_values(eseries_volume_labels{datacenter=~\"$Datacenter\",cluster=~\"$Cluster\"}, volume)",
+          "query": "label_values(eseries_volume_labels{datacenter=~\"$Datacenter\",array=~\"$Array\"}, volume)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,

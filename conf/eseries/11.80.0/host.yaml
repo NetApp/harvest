@@ -1,5 +1,5 @@
 name: Host
-query: storage-systems/{cluster_id}/hosts
+query: storage-systems/{array_id}/hosts
 object: eseries_host
 
 counters:
@@ -14,5 +14,5 @@ export_options:
   instance_keys:
     - host_id
   instance_labels:
-    - cluster
+    - host_cluster
     - host

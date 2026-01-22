@@ -287,7 +287,7 @@ func (ep *EseriesPerf) PollData() (map[string]*matrix.Matrix, error) {
 	curMat := prevMat.Clone(matrix.With{Data: false, Metrics: true, Instances: true, ExportInstances: true})
 	curMat.Reset()
 
-	systemID := ep.GetCluster()
+	systemID := ep.GetArray()
 
 	// Build query - filters are intentionally disabled when using shared cache
 	// to prevent cache poisoning (subset of filtered data being cached for all consumers)
@@ -296,7 +296,7 @@ func (ep *EseriesPerf) PollData() (map[string]*matrix.Matrix, error) {
 
 	query := rest.NewURLBuilder().
 		APIPath(ep.Prop.Query).
-		ClusterID(systemID).
+		ArrayID(systemID).
 		Filter(filters).
 		Build()
 

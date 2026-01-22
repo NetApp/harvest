@@ -2,11 +2,11 @@ package volumemapping
 
 import (
 	"fmt"
+	"github.com/netapp/harvest/v2/cmd/collectors/eseries/hostcluster"
 	"log/slog"
 	"strings"
 	"time"
 
-	"github.com/netapp/harvest/v2/cmd/collectors/eseries/cluster"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/rest"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/auth"
@@ -19,12 +19,12 @@ import (
 
 type VolumeMapping struct {
 	*plugin.AbstractPlugin
-	client        *rest.Client
-	schedule      int
-	poolNames     map[string]string
-	hostNames     map[string]string
-	clusterNames  map[string]string
-	workloadNames map[string]string
+	client           *rest.Client
+	schedule         int
+	poolNames        map[string]string
+	hostNames        map[string]string
+	hostClusterNames map[string]string
+	workloadNames    map[string]string
 }
 
 func New(p *plugin.AbstractPlugin) plugin.Plugin {
@@ -54,7 +54,7 @@ func (v *VolumeMapping) Init(remote conf.Remote) error {
 
 	v.poolNames = make(map[string]string)
 	v.hostNames = make(map[string]string)
-	v.clusterNames = make(map[string]string)
+	v.hostClusterNames = make(map[string]string)
 	v.workloadNames = make(map[string]string)
 
 	v.schedule = v.SetPluginInterval()
@@ -64,17 +64,17 @@ func (v *VolumeMapping) Init(remote conf.Remote) error {
 func (v *VolumeMapping) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[v.Object]
 
-	// Get clusterID from ParentParams
-	clusterID := v.ParentParams.GetChildContentS("cluster_id")
-	if clusterID == "" {
-		v.SLogger.Warn("clusterID not found in ParentParams, skipping volume mapping")
+	// Get arrayID from ParentParams
+	arrayID := v.ParentParams.GetChildContentS("array_id")
+	if arrayID == "" {
+		v.SLogger.Warn("arrayID not found in ParentParams, skipping volume mapping")
 		return nil, nil, nil
 	}
 
 	// Rebuild caches at plugin interval to reduce API calls
 	if v.schedule >= v.PluginInvocationRate {
 		v.schedule = 0
-		v.rebuildCaches(clusterID)
+		v.rebuildCaches(arrayID)
 	}
 	v.schedule++
 
@@ -83,36 +83,36 @@ func (v *VolumeMapping) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix
 	return nil, nil, nil
 }
 
-func (v *VolumeMapping) rebuildCaches(clusterID string) {
+func (v *VolumeMapping) rebuildCaches(arrayID string) {
 	// Clear existing caches
 	v.poolNames = make(map[string]string)
 	v.hostNames = make(map[string]string)
-	v.clusterNames = make(map[string]string)
+	v.hostClusterNames = make(map[string]string)
 	v.workloadNames = make(map[string]string)
 
 	// Build lookup maps and cache them
-	poolNames, err := v.buildPoolLookup(clusterID)
+	poolNames, err := v.buildPoolLookup(arrayID)
 	if err != nil {
 		v.SLogger.Warn("Failed to build pool lookup", slogx.Err(err))
 	} else {
 		v.poolNames = poolNames
 	}
 
-	hostNames, err := v.buildHostLookup(clusterID)
+	hostNames, err := v.buildHostLookup(arrayID)
 	if err != nil {
 		v.SLogger.Warn("Failed to build host lookup", slogx.Err(err))
 	} else {
 		v.hostNames = hostNames
 	}
 
-	clusterNames, err := cluster.BuildClusterLookup(v.client, clusterID, v.SLogger)
+	hostClusterNames, err := hostcluster.BuildHostClusterLookup(v.client, arrayID, v.SLogger)
 	if err != nil {
-		v.SLogger.Warn("Failed to build cluster lookup", slogx.Err(err))
+		v.SLogger.Warn("Failed to build host group lookup", slogx.Err(err))
 	} else {
-		v.clusterNames = clusterNames
+		v.hostClusterNames = hostClusterNames
 	}
 
-	workloadNames, err := v.buildWorkloadLookup(clusterID)
+	workloadNames, err := v.buildWorkloadLookup(arrayID)
 	if err != nil {
 		v.SLogger.Warn("Failed to build workload lookup", slogx.Err(err))
 	} else {
@@ -135,7 +135,7 @@ func (v *VolumeMapping) applyLabelsToVolumes(data *matrix.Matrix) {
 		v.addWorkloadLabel(volumeInstance, v.workloadNames)
 
 		// Add LUN, host and type labels (comma-separated)
-		v.addLunAndHostLabels(volumeInstance, v.hostNames, v.clusterNames)
+		v.addLunAndHostLabels(volumeInstance, v.hostNames, v.hostClusterNames)
 	}
 }
 
@@ -214,7 +214,7 @@ func (v *VolumeMapping) buildWorkloadLookup(systemID string) (map[string]string,
 	return workloadNames, nil
 }
 
-func (v *VolumeMapping) addLunAndHostLabels(volumeInstance *matrix.Instance, hostNames, clusterNames map[string]string) {
+func (v *VolumeMapping) addLunAndHostLabels(volumeInstance *matrix.Instance, hostNames, hostClusterNames map[string]string) {
 	listOfMappingsJSON := volumeInstance.GetLabel("list_of_mappings")
 	if listOfMappingsJSON == "" || listOfMappingsJSON == "[]" {
 		return
@@ -241,11 +241,11 @@ func (v *VolumeMapping) addLunAndHostLabels(volumeInstance *matrix.Instance, hos
 		}
 		types = append(types, mapType)
 
-		// Resolve host or cluster name
+		// Resolve host or host cluster name
 		var hostName string
 		switch mapType {
 		case "cluster":
-			if name, ok := clusterNames[mapRef]; ok {
+			if name, ok := hostClusterNames[mapRef]; ok {
 				hostName = name
 			} else {
 				hostName = mapRef

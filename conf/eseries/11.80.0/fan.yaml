@@ -1,5 +1,5 @@
 name: Fan
-query: storage-systems/{cluster_id}/hardware-inventory
+query: storage-systems/{array_id}/hardware-inventory
 object: eseries_fan
 type: fan
 

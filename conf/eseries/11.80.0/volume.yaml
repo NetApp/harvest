@@ -1,5 +1,5 @@
 name: Volume
-query: storage-systems/{cluster_id}/volumes
+query: storage-systems/{array_id}/volumes
 object: eseries_volume
 
 counters:

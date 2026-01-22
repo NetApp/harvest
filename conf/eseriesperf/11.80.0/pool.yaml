@@ -1,5 +1,5 @@
 name: Pool
-query: storage-systems/{cluster_id}/live-statistics
+query: storage-systems/{array_id}/live-statistics
 object: eseries_pool
 type: pool
 

@@ -1,9 +1,8 @@
 package host
 
 import (
+	"github.com/netapp/harvest/v2/cmd/collectors/eseries/hostcluster"
 	"time"
-
-	"github.com/netapp/harvest/v2/cmd/collectors/eseries/cluster"
 
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/rest"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
@@ -50,28 +49,26 @@ func (h *Host) Init(remote conf.Remote) error {
 func (h *Host) Run(dataMap map[string]*matrix.Matrix) ([]*matrix.Matrix, *collector.Metadata, error) {
 	data := dataMap[h.Object]
 
-	// Get clusterID from ParentParams
-	clusterID := h.ParentParams.GetChildContentS("cluster_id")
-	if clusterID == "" {
-		h.SLogger.Warn("clusterID not found in ParentParams, skipping host cluster enrichment")
+	// Get arrayID from ParentParams
+	arrayID := h.ParentParams.GetChildContentS("array_id")
+	if arrayID == "" {
+		h.SLogger.Warn("arrayID not found in ParentParams, skipping host enrichment")
 		return nil, nil, nil
 	}
 
-	// Build cluster lookup map
-	clusterNames, err := cluster.BuildClusterLookup(h.client, clusterID, h.SLogger)
+	// Build hosts lookup map
+	hostClusterNames, err := hostcluster.BuildHostClusterLookup(h.client, arrayID, h.SLogger)
 	if err != nil {
-		h.SLogger.Warn("Failed to build cluster lookup", slogx.Err(err))
+		h.SLogger.Warn("Failed to build host lookup", slogx.Err(err))
 		return nil, nil, nil
 	}
 
-	// update host instances with cluster names
-	enrichedCount := 0
+	// update host instances with host cluster names
 	for _, instance := range data.GetInstances() {
-		clusterID := instance.GetLabel("cluster_id")
-		if clusterID != "" {
-			if clusterName, ok := clusterNames[clusterID]; ok {
-				instance.SetLabel("host_cluster", clusterName)
-				enrichedCount++
+		hostClusterID := instance.GetLabel("cluster_id")
+		if hostClusterID != "" {
+			if hostClusterName, ok := hostClusterNames[hostClusterID]; ok {
+				instance.SetLabel("host_cluster", hostClusterName)
 			}
 		}
 	}
