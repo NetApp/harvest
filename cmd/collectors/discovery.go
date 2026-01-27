@@ -6,6 +6,7 @@ import (
 	"time"
 
 	ciscorest "github.com/netapp/harvest/v2/cmd/collectors/cisco/rest"
+	eseriesrest "github.com/netapp/harvest/v2/cmd/collectors/eseries/rest"
 	sgrest "github.com/netapp/harvest/v2/cmd/collectors/storagegrid/rest"
 	"github.com/netapp/harvest/v2/cmd/tools/rest"
 	"github.com/netapp/harvest/v2/pkg/api/ontapi/zapi"
@@ -40,6 +41,10 @@ func GatherCiscoSwitchInfo(pollerName string, cred *auth.Credentials) (conf.Remo
 
 func GatherStorageGridInfo(pollerName string, cred *auth.Credentials) (conf.Remote, error) {
 	return checkStorageGrid(pollerName, cred)
+}
+
+func GatherEseriesInfo(pollerName string, cred *auth.Credentials) (conf.Remote, error) {
+	return checkEseries(pollerName, cred)
 }
 
 func MergeRemotes(remoteZapi conf.Remote, remoteRest conf.Remote, errZapi error, errRest error) (conf.Remote, error) {
@@ -183,4 +188,29 @@ func checkStorageGrid(pollerName string, cred *auth.Credentials) (conf.Remote, e
 	}
 
 	return client.Remote, nil
+}
+
+func checkEseries(pollerName string, cred *auth.Credentials) (conf.Remote, error) {
+
+	var (
+		poller *conf.Poller
+		client *eseriesrest.Client
+		err    error
+	)
+
+	if poller, err = conf.PollerNamed(pollerName); err != nil {
+		return conf.Remote{}, err
+	}
+
+	timeout, _ := time.ParseDuration(eseriesrest.DefaultTimeout)
+	client, err = eseriesrest.New(poller, timeout, cred, "")
+	if err != nil {
+		return conf.Remote{}, err
+	}
+
+	if err := client.Init(1, conf.Remote{}); err != nil {
+		return conf.Remote{}, err
+	}
+
+	return client.Remote(), nil
 }

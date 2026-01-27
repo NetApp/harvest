@@ -1,0 +1,24 @@
+name: Volume
+query: storage-systems/{array_id}/live-statistics
+object: eseries_volume
+type: volume
+
+counters:
+  - ^^volumeName                  => volume
+  - lastResetTimeInMS             => last_reset_time
+  - observedTimeInMS              => observed_time
+  - readBytes                     => read_data
+  - readHitOps                    => read_hit_ops
+  - readOps                       => read_ops
+  - readTimeTotal                 => read_latency
+  - writeBytes                    => write_data
+  - writeHitOps                   => write_hit_ops
+  - writeOps                      => write_ops
+  - writeTimeTotal                => write_latency
+
+plugins:
+  - CacheHitRatio
+
+export_options:
+  instance_keys:
+    - volume

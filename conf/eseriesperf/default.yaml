@@ -1,0 +1,12 @@
+collector: EseriesPerf
+
+schedule:
+  - counter: 24h
+  - data: 1m
+
+objects:
+  Volume:            volume.yaml
+  Controller:        controller.yaml
+  Drive:             drive.yaml
+  Pool:              pool.yaml
+  Array:             array.yaml

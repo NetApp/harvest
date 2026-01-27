@@ -1876,6 +1876,7 @@ func checkTags(t *testing.T, path string, data []byte) {
 		"asar2":       true,
 		"cdot":        true,
 		"cisco":       true,
+		"eseries":     true,
 		"fsx":         true,
 		"harvest":     true,
 		"ontap":       true,

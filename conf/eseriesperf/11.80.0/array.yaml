@@ -1,0 +1,18 @@
+name: Array
+query: storage-systems/{array_id}/live-statistics
+object: eseries_array
+type: array
+
+counters:
+  - ^^arrayId                     => id
+  - cacheHitsIopsTotal            => cache_hit_ops
+  - lastResetTimeInMS             => last_reset_time
+  - observedTimeInMS              => observed_time
+  - readBytesTotal                => read_data
+  - readIopsTotal                 => read_ops
+  - writeBytesTotal               => write_data
+  - writeIopsTotal                => write_ops
+
+export_options:
+  instance_keys:
+    - id

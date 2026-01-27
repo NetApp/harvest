@@ -1,0 +1,114 @@
+objects:
+  eseries_volume:
+    counter_definitions:
+      - name: observedTimeInMS
+        type: delta
+      - name: lastResetTimeInMS
+        type: delta
+      - name: readOps
+        type: rate
+      - name: writeOps
+        type: rate
+      - name: readHitOps
+        type: rate
+      - name: writeHitOps
+        type: rate
+      - name: readTimeTotal
+        type: average
+        base_counter: readOps
+      - name: writeTimeTotal
+        type: average
+        base_counter: writeOps
+      - name: readBytes
+        type: rate
+      - name: writeBytes
+        type: rate
+      - name: idleTime
+        type: average
+        base_counter: readOps
+
+  eseries_controller:
+    counter_definitions:
+      - name: observedTimeInMS
+        type: delta
+      - name: lastResetTimeInMS
+        type: delta
+      - name: readIopsTotal
+        type: rate
+      - name: writeIopsTotal
+        type: rate
+      - name: readBytesTotal
+        type: rate
+      - name: writeBytesTotal
+        type: rate
+      - name: cacheHitsIopsTotal
+        type: rate
+      - name: cpuUtilizationStats.0.sumCpuUtilization
+        type: rate
+
+  eseries_drive:
+    counter_definitions:
+      - name: observedTimeInMS
+        type: delta
+      - name: lastResetTimeInMS
+        type: delta
+      - name: readOps
+        type: rate
+      - name: writeOps
+        type: rate
+      - name: readTimeTotal
+        type: average
+        base_counter: readOps
+      - name: writeTimeTotal
+        type: average
+        base_counter: writeOps
+      - name: readBytes
+        type: rate
+      - name: writeBytes
+        type: rate
+      - name: idleTime
+        type: average
+        base_counter: readOps
+
+  eseries_pool:
+    counter_definitions:
+      - name: observedTimeInMS
+        type: delta
+      - name: lastResetTimeInMS
+        type: delta
+      - name: readOps
+        type: rate
+      - name: writeOps
+        type: rate
+      - name: readTimeTotal
+        type: average
+        base_counter: readOps
+      - name: writeTimeTotal
+        type: average
+        base_counter: writeOps
+      - name: readBytes
+        type: rate
+      - name: writeBytes
+        type: rate
+      - name: idleTime
+        type: average
+        base_counter: readOps
+      - name: cacheHitsIopsTotal
+        type: rate
+
+  eseries_array:
+    counter_definitions:
+      - name: observedTimeInMS
+        type: delta
+      - name: lastResetTimeInMS
+        type: delta
+      - name: readIopsTotal
+        type: rate
+      - name: writeIopsTotal
+        type: rate
+      - name: readBytesTotal
+        type: rate
+      - name: writeBytesTotal
+        type: rate
+      - name: cacheHitsIopsTotal
+        type: rate

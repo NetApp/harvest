@@ -1,0 +1,32 @@
+name: Battery
+query: storage-systems/{array_id}/hardware-inventory
+object: eseries_battery
+type: battery
+
+counters:
+  - ^^id                                => id
+  - ^fruType                            => fru_type
+  - ^manufacturerDate                   => manufacturer_date
+  - ^physicalLocation.label             => location
+  - ^reserved1                          => reserved1
+  - ^reserved2                          => reserved2
+  - ^status                             => status
+  - ^vendorName                         => vendor
+  - ^vendorPN                           => vendor_part_number
+  - ^vendorSN                           => vendor_serial_number
+  - batteryAge                          => age_days
+  - batteryLifeRemaining                => life_remaining_days
+
+export_options:
+  instance_keys:
+    - id
+  instance_labels:
+    - fru_type
+    - manufacturer_date
+    - location
+    - reserved1
+    - reserved2
+    - status
+    - vendor
+    - vendor_part_number
+    - vendor_serial_number

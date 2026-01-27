@@ -1,0 +1,39 @@
+name: Array
+query: storage-systems
+object: eseries_array
+
+counters:
+  - ^^wwn                                 => wwn
+  - ^bootVersion                          => boot_version
+  - ^chassisSerialNumber                  => chassis_serial
+  - ^fwVersion                            => firmware_version
+  - ^ip1                                  => management_ip1
+  - ^ip2                                  => management_ip2
+  - ^model                                => model
+  - ^name                                 => name
+  - ^nvsramVersion                        => nvsram_version
+  - ^passwordStatus                       => password_status
+  - ^status                               => status
+  - ^timeZone                             => timezone
+  - driveCount                            => drive_count
+  - freePoolSpace                         => free_pool_space
+  - hostSparesUsed                        => host_spares_used
+  - trayCount                             => tray_count
+  - unconfiguredSpace                     => unconfigured_space
+  - usedPoolSpace                         => used_pool_space
+
+export_options:
+  instance_keys:
+    - wwn
+  instance_labels:
+    - boot_version
+    - chassis_serial
+    - firmware_version
+    - model
+    - management_ip1
+    - management_ip2
+    - name
+    - nvsram_version
+    - password_status
+    - status
+    - timezone

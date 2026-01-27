@@ -1,0 +1,48 @@
+name: Controller
+query: storage-systems/{array_id}/hardware-inventory
+object: eseries_controller
+type: controller
+
+counters:
+  - ^^id                                => id
+  - ^appVersion                         => app_version
+  - ^boardID                            => board_id
+  - ^boardSubmodelID                    => board_submodel_id
+  - ^bootTime                           => boot_time
+  - ^bootVersion                        => boot_version
+  - ^controllerErrorMode                => error_mode
+  - ^hostBoardID                        => host_board_id
+  - ^manufacturer                       => manufacturer
+  - ^manufacturerDate                   => manufacturer_date
+  - ^modelName                          => model
+  - ^oemPartNumber                      => oem_part_number
+  - ^partNumber                         => part_number
+  - ^physicalLocation.label             => location
+  - ^productID                          => product_id
+  - ^serialNumber                       => serial_number
+  - ^status                             => status
+  - cacheMemorySize                     => cache_memory_mb
+  - flashCacheMemorySize                => flash_cache_memory_gb
+  - physicalCacheMemorySize             => physical_cache_memory_mb
+  - processorMemorySize                 => processor_memory_mb
+
+export_options:
+  instance_keys:
+    - id
+  instance_labels:
+    - app_version
+    - board_id
+    - board_submodel_id
+    - boot_time
+    - boot_version
+    - error_mode
+    - host_board_id
+    - manufacturer
+    - manufacturer_date
+    - model
+    - oem_part_number
+    - part_number
+    - location
+    - product_id
+    - serial_number
+    - status

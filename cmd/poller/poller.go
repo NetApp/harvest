@@ -56,6 +56,8 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/cisco"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/ems"
+	_ "github.com/netapp/harvest/v2/cmd/collectors/eseries"
+	_ "github.com/netapp/harvest/v2/cmd/collectors/eseriesperf"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/keyperf"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/restperf"
 	_ "github.com/netapp/harvest/v2/cmd/collectors/simple"
@@ -1731,6 +1733,7 @@ func (p *Poller) negotiateAPI(cols []conf.Collector) []conf.Collector {
 	ontapCols := p.filterONTAPCollectors(cols)
 	ciscoCols := p.filterCiscoCollectors(cols)
 	sgCols := p.filterStorageGridCollectors(cols)
+	eseriesCols := p.filterEseriesCollectors(cols)
 	otherCols := p.filterOtherCollectors(cols)
 
 	var validCollectors []conf.Collector
@@ -1771,6 +1774,14 @@ func (p *Poller) negotiateAPI(cols []conf.Collector) []conf.Collector {
 		}
 	}
 
+	if len(eseriesCols) > 0 {
+		if p.negotiateConnection("Eseries", eseriesCols) {
+			validCollectors = append(validCollectors, eseriesCols...)
+		} else {
+			logger.Warn("ESeries connection failed, skipping Eseries collectors")
+		}
+	}
+
 	// Include other collectors without connection validation
 	if len(otherCols) > 0 {
 		validCollectors = append(validCollectors, otherCols...)
@@ -1786,7 +1797,7 @@ func (p *Poller) filterOtherCollectors(cols []conf.Collector) []conf.Collector {
 		if _, ok := conf.IsONTAPCollector[c.Name]; ok {
 			continue
 		}
-		if c.Name == "CiscoRest" || c.Name == "StorageGrid" {
+		if _, ok := conf.IsNonONTAPCollector[c.Name]; ok {
 			continue
 		}
 		// Include everything else
@@ -1806,6 +1817,8 @@ func (p *Poller) negotiateConnection(connectionType string, cols []conf.Collecto
 		remote, err = collectors.GatherCiscoSwitchInfo(opts.Poller, p.auth)
 	case "StorageGrid":
 		remote, err = collectors.GatherStorageGridInfo(opts.Poller, p.auth)
+	case "Eseries":
+		remote, err = collectors.GatherEseriesInfo(opts.Poller, p.auth)
 	default:
 		logger.Warn("unknown connection type", slog.String("type", connectionType))
 		return false
@@ -1854,6 +1867,16 @@ func (p *Poller) filterStorageGridCollectors(cols []conf.Collector) []conf.Colle
 		}
 	}
 	return sgCollectors
+}
+
+func (p *Poller) filterEseriesCollectors(cols []conf.Collector) []conf.Collector {
+	var eseriesCollectors []conf.Collector
+	for _, c := range cols {
+		if _, ok := conf.IsESeriesCollector[c.Name]; ok {
+			eseriesCollectors = append(eseriesCollectors, c)
+		}
+	}
+	return eseriesCollectors
 }
 
 func (p *Poller) truncateReason(msg string) string {
