@@ -762,24 +762,44 @@ func getResourcePath(resource string) string {
 }
 
 // validateTSDBConnection tests the connection to the time-series database (Prometheus/VictoriaMetrics)
+// Retries 5 times with 10 second delay between attempts
 func validateTSDBConnection(config auth.TSDBConfig) error {
-	logger.Info("validating time-series database connection", slog.String("url", config.URL))
+	const maxRetries = 5
+	const retryDelay = 10 * time.Second
 
 	buildInfoURL := config.URL + "/api/v1/status/buildinfo"
-	resp, err := auth.MakeRequest(config, buildInfoURL)
-	if err != nil {
-		return fmt.Errorf("time-series database connection validation failed: %w", err)
+	logger.Info("validating time-series database connection", slog.String("url", config.URL))
+
+	var lastErr error
+	for attempt := 1; attempt <= maxRetries; attempt++ {
+		if attempt > 1 {
+			logger.Info("retrying connection", slog.Int("attempt", attempt))
+			time.Sleep(retryDelay)
+		}
+
+		resp, err := auth.MakeRequest(config, buildInfoURL)
+		if err != nil {
+			lastErr = fmt.Errorf("connection failed: %w", err)
+			continue
+		}
+
+		statusCode := resp.StatusCode
+		_ = resp.Body.Close()
+
+		if statusCode < 200 || statusCode >= 300 {
+			lastErr = fmt.Errorf("HTTP %d", statusCode)
+			continue
+		}
+
+		if attempt > 1 {
+			logger.Info("connection successful", slog.Int("attempts", attempt))
+		} else {
+			logger.Info("connection validated successfully")
+		}
+		return nil
 	}
 
-	//goland:noinspection GoUnhandledErrorResult
-	defer resp.Body.Close()
-
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return fmt.Errorf("time-series database returned HTTP %d", resp.StatusCode)
-	}
-
-	logger.Info("time-series database connection validated successfully")
-	return nil
+	return fmt.Errorf("failed after %d attempts: %w", maxRetries, lastErr)
 }
 
 var rootCmd = &cobra.Command{
