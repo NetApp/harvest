@@ -88,14 +88,13 @@ func ProcessFlexGroupData(logger *slog.Logger, data *matrix.Matrix, style string
 		case "flexvol":
 			i.SetLabel(style, "flexvol")
 			key := svmName + "." + volName
-			flexvolInstance, err := volumeAggrMatrix.NewInstance(key)
-			if err != nil {
-				logger.Error("Failed to create new instance", slogx.Err(err), slog.String("key", key))
-				continue
+			if volumeAggrMatrix.GetInstance(key) == nil {
+				flexvolInstance, _ := volumeAggrMatrix.NewInstance(key)
+				flexvolInstance.SetLabels(maps.Clone(i.GetLabels()))
+				flexvolInstance.SetLabel("node", "")
+				flexvolInstance.SetLabel(style, "flexvol")
+				metric.SetValueFloat64(flexvolInstance, 1)
 			}
-			flexvolInstance.SetLabels(maps.Clone(i.GetLabels()))
-			flexvolInstance.SetLabel(style, "flexvol")
-			metric.SetValueFloat64(flexvolInstance, 1)
 		}
 	}
 
