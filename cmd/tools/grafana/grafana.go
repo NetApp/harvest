@@ -51,6 +51,7 @@ var (
 	grafanaMinVers = "7.1.0" // lowest grafana version we require
 	homePath       string
 	grafanaVersion *goversion.Version
+	caser          = cases.Title(language.Und)
 )
 
 type options struct {
@@ -82,6 +83,9 @@ type options struct {
 	isDebug             bool
 	showDatasource      bool // show datasource variable in the dashboard
 	orgID               int
+	titlePrefix         string
+	uidSuffix           string
+	tags                []string
 }
 
 type Folder struct {
@@ -689,6 +693,22 @@ func importFiles(dir string, folder *Folder) {
 			data, _ = sjson.SetBytes(data, "templating.list.0.hide", 0)
 		}
 
+		if opts.titlePrefix != "" {
+			title := gjson.GetBytes(data, "title").ClonedString()
+			data, _ = sjson.SetBytes(data, "title", opts.titlePrefix+title)
+		}
+
+		if opts.uidSuffix != "" {
+			uid := gjson.GetBytes(data, "uid").ClonedString()
+			data, _ = sjson.SetBytes(data, "uid", uid+opts.uidSuffix)
+		}
+
+		if len(opts.tags) > 0 {
+			data = addTags(data, "tags")
+			data = addTagsToArray(data, "annotations.list", "target.tags")
+			data = addTagsToArray(data, "links", "tags")
+		}
+
 		if opts.orgID != 1 {
 			data = bytes.ReplaceAll(data, []byte("orgId=1"), []byte("orgId="+strconv.Itoa(opts.orgID)))
 		}
@@ -753,7 +773,35 @@ func importFiles(dir string, folder *Folder) {
 	}
 }
 
-var caser = cases.Title(language.Und)
+func addTagsToArray(data []byte, path string, subpath string) []byte {
+	gjson.GetBytes(data, path).ForEach(func(k, _ gjson.Result) bool {
+		data = addTags(data, path+"."+strconv.Itoa(k.Index)+"."+subpath)
+		return true
+	})
+
+	return data
+}
+
+func addTags(data []byte, path string) []byte {
+	tags := gjson.GetBytes(data, path).Array()
+	existingTags := make(map[string]struct{})
+	for _, t := range tags {
+		existingTags[t.ClonedString()] = struct{}{}
+	}
+	for _, t := range opts.tags {
+		if _, exists := existingTags[t]; !exists {
+			tags = append(tags, gjson.Parse(`"`+t+`"`))
+		}
+	}
+	// Convert back to []string for sjson
+	tagStrings := make([]string, 0, len(tags))
+	for _, t := range tags {
+		tagStrings = append(tagStrings, t.ClonedString())
+	}
+	data, _ = sjson.SetBytes(data, path, tagStrings)
+	return data
+
+}
 
 func varNameForLabel(label string) string {
 	return caser.String(label)
@@ -1097,10 +1145,15 @@ func rewriteCluster(input string, cluster string) string {
 }
 
 func writeCustomDashboard(dashboard map[string]any, dir string, file os.DirEntry) error {
-	data, err := json.Marshal(dashboard)
-	if err != nil {
+	buffer := &bytes.Buffer{}
+	encoder := json.NewEncoder(buffer)
+	encoder.SetEscapeHTML(false)
+	encoder.SetIndent("", "  ")
+	if err := encoder.Encode(dashboard); err != nil {
 		return err
 	}
+	data := buffer.Bytes()
+	var err error
 
 	data, err = formatJSON(data)
 	if err != nil {
@@ -1795,6 +1848,12 @@ func addImportCustomizeFlags(commands ...*cobra.Command) {
 			"Show datasource variable dropdown in dashboards, useful for multi-datasource setups")
 		cmd.PersistentFlags().IntVar(&opts.orgID, "orgid", 1,
 			"Modify the dashboards to use the specified organization ID when importing")
+		cmd.PersistentFlags().StringVar(&opts.titlePrefix, "title-prefix", "",
+			"Prefix the dashboards title field with the specified prefix")
+		cmd.PersistentFlags().StringVar(&opts.uidSuffix, "uid-suffix", "",
+			"Suffix the dashboards uid with the specified suffix to avoid uid conflicts when importing")
+		cmd.PersistentFlags().StringSliceVar(&opts.tags, "tags", nil,
+			"Add the following comma-separated tags to the dashboards when importing")
 
 		_ = cmd.PersistentFlags().MarkHidden("multi")
 		_ = cmd.PersistentFlags().MarkHidden("force")
