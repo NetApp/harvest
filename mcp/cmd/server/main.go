@@ -867,15 +867,14 @@ func runMcpServer(_ *cobra.Command, _ []string) {
 		slog.Bool("password_set", tsdbConfig.Auth.Password != ""))
 
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	defer cancel()
 	if err := validateTSDBConnection(ctx, tsdbConfig); err != nil {
 		logger.Error("failed to connect to time-series database server",
 			slogx.Err(err),
 			slog.String("url", tsdbConfig.URL))
 		logger.Error("please verify HARVEST_TSDB_URL and authentication settings")
-		cancel()
-		os.Exit(1)
+		os.Exit(1) //nolint:gocritic
 	}
-	cancel()
 
 	server := createMCPServer()
 
