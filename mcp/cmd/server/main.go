@@ -773,13 +773,12 @@ func validateTSDBConnection(ctx context.Context, config auth.TSDBConfig) error {
 	var lastErr error
 	for attempt := 1; attempt <= maxRetries; attempt++ {
 		if attempt > 1 {
-			logger.Info("retrying connection", slog.Int("attempt", attempt))
-
 			select {
 			case <-ctx.Done():
 				return ctx.Err()
 			case <-time.After(retryDelay):
 			}
+			logger.Info("retrying connection", slog.Int("attempt", attempt))
 		}
 
 		resp, err := auth.MakeRequest(config, buildInfoURL)
@@ -796,11 +795,7 @@ func validateTSDBConnection(ctx context.Context, config auth.TSDBConfig) error {
 			continue
 		}
 
-		if attempt > 1 {
-			logger.Info("connection successful", slog.Int("attempts", attempt))
-		} else {
-			logger.Info("connection validated successfully")
-		}
+		logger.Info("connection validated successfully", slog.Int("attempts", attempt))
 		return nil
 	}
 
