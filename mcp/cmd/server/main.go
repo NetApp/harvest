@@ -762,24 +762,44 @@ func getResourcePath(resource string) string {
 }
 
 // validateTSDBConnection tests the connection to the time-series database (Prometheus/VictoriaMetrics)
-func validateTSDBConnection(config auth.TSDBConfig) error {
-	logger.Info("validating time-series database connection", slog.String("url", config.URL))
+// Retries 5 times with 10 second delay between attempts
+func validateTSDBConnection(ctx context.Context, config auth.TSDBConfig) error {
+	const maxRetries = 5
+	const retryDelay = 10 * time.Second
 
 	buildInfoURL := config.URL + "/api/v1/status/buildinfo"
-	resp, err := auth.MakeRequest(config, buildInfoURL)
-	if err != nil {
-		return fmt.Errorf("time-series database connection validation failed: %w", err)
+	logger.Info("validating time-series database connection", slog.String("url", config.URL))
+
+	var lastErr error
+	for attempt := 1; attempt <= maxRetries; attempt++ {
+		if attempt > 1 {
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+			case <-time.After(retryDelay):
+			}
+			logger.Info("retrying connection", slog.Int("attempt", attempt))
+		}
+
+		resp, err := auth.MakeRequest(config, buildInfoURL)
+		if err != nil {
+			lastErr = fmt.Errorf("time-series database connection attempt failed: %w", err)
+			continue
+		}
+
+		statusCode := resp.StatusCode
+		_ = resp.Body.Close()
+
+		if statusCode < 200 || statusCode >= 300 {
+			lastErr = fmt.Errorf("time-series database returned HTTP %d", statusCode)
+			continue
+		}
+
+		logger.Info("connection validated successfully", slog.Int("attempts", attempt))
+		return nil
 	}
 
-	//goland:noinspection GoUnhandledErrorResult
-	defer resp.Body.Close()
-
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return fmt.Errorf("time-series database returned HTTP %d", resp.StatusCode)
-	}
-
-	logger.Info("time-series database connection validated successfully")
-	return nil
+	return fmt.Errorf("time-series database connection validation failed after %d attempts: %w", maxRetries, lastErr)
 }
 
 var rootCmd = &cobra.Command{
@@ -841,12 +861,14 @@ func runMcpServer(_ *cobra.Command, _ []string) {
 		slog.Bool("username_set", tsdbConfig.Auth.Username != ""),
 		slog.Bool("password_set", tsdbConfig.Auth.Password != ""))
 
-	if err := validateTSDBConnection(tsdbConfig); err != nil {
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	defer cancel()
+	if err := validateTSDBConnection(ctx, tsdbConfig); err != nil {
 		logger.Error("failed to connect to time-series database server",
 			slogx.Err(err),
 			slog.String("url", tsdbConfig.URL))
 		logger.Error("please verify HARVEST_TSDB_URL and authentication settings")
-		os.Exit(1)
+		os.Exit(1) //nolint:gocritic
 	}
 
 	server := createMCPServer()
