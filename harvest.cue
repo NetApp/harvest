@@ -19,6 +19,10 @@ label: [string]: string
 	expire_after?: string
 }
 
+#DiskCache: {
+    path: string
+}
+
 #TLS: {
 	cert_file: string
 	key_file:  string
@@ -39,6 +43,7 @@ label: [string]: string
 	port_range?:      string
 	sort_labels?:     bool
 	tls?:             #TLS
+	disk_cache?:      #DiskCache
 }
 
 #Influx: {
