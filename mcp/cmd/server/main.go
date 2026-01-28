@@ -787,7 +787,7 @@ func validateTSDBConnection(config auth.TSDBConfig) error {
 		_ = resp.Body.Close()
 
 		if statusCode < 200 || statusCode >= 300 {
-			lastErr = fmt.Errorf("HTTP %d", statusCode)
+			lastErr = fmt.Errorf("time-series database buildinfo endpoint returned HTTP %d", statusCode)
 			continue
 		}
 
@@ -799,7 +799,7 @@ func validateTSDBConnection(config auth.TSDBConfig) error {
 		return nil
 	}
 
-	return fmt.Errorf("failed after %d attempts: %w", maxRetries, lastErr)
+	return fmt.Errorf("time-series database connection validation failed after %d attempts: %w", maxRetries, lastErr)
 }
 
 var rootCmd = &cobra.Command{
