@@ -784,7 +784,7 @@ func validateTSDBConnection(ctx context.Context, config auth.TSDBConfig) error {
 
 		resp, err := auth.MakeRequest(config, buildInfoURL)
 		if err != nil {
-			lastErr = fmt.Errorf("time-series database connection attempt: %w", err)
+			lastErr = fmt.Errorf("time-series database connection attempt failed: %w", err)
 			continue
 		}
 
@@ -792,7 +792,7 @@ func validateTSDBConnection(ctx context.Context, config auth.TSDBConfig) error {
 		_ = resp.Body.Close()
 
 		if statusCode < 200 || statusCode >= 300 {
-			lastErr = fmt.Errorf("time-series database buildinfo endpoint returned HTTP %d", statusCode)
+			lastErr = fmt.Errorf("time-series database returned HTTP %d", statusCode)
 			continue
 		}
 
