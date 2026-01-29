@@ -8,10 +8,11 @@ import (
 	"bytes"
 	"encoding/xml"
 	"fmt"
-	"github.com/goccy/go-yaml/ast"
 	"regexp"
 	"slices"
 	"strings"
+
+	"github.com/goccy/go-yaml/ast"
 )
 
 type Node struct {
@@ -100,6 +101,9 @@ func (n *Node) NewAttrS(name, value string) {
 }
 
 func (n *Node) GetChildren() []*Node {
+	if n == nil {
+		return nil
+	}
 	return n.Children
 }
 
