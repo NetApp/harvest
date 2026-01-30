@@ -147,3 +147,12 @@ func testNodeUnionCase3(t *testing.T, parent *Node, child *Node) {
 		t.Errorf("client timeout after union got=[%v], want=[%v]", nil, "3m")
 	}
 }
+
+func TestGetChildrenNoPanic(t *testing.T) {
+	s := NewS("parent")
+	child := s.NewChildS("child1", "value1")
+	child.AddChild(NewS("sub"))
+
+	assert.Equal(t, 1, len(s.GetChildS("child1").GetChildren()))
+	assert.Equal(t, 0, len(s.GetChildS("child2").GetChildren()))
+}
