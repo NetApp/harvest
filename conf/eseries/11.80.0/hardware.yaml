@@ -1,0 +1,13 @@
+name: Hardware
+query: storage-systems/{array_id}
+object: eseries_hardware
+
+counters:
+  - ^^id                                => array_id
+
+plugins:
+  - Hardware
+
+export_options:
+  instance_keys:
+    - array_id

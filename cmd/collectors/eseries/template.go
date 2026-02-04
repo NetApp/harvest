@@ -52,16 +52,7 @@ func newObjectConfig(arrayPath, filter string, calculateUtilization bool) Object
 	}
 }
 
-func GetESeriesObjectConfig(objType string) ObjectConfig {
-	configs := map[string]ObjectConfig{
-		"controller":   newObjectConfig("controllers", "", false),
-		"fan":          newObjectConfig("fans", "", false),
-		"battery":      newObjectConfig("batteries", "", false),
-		"power_supply": newObjectConfig("powerSupplies", "", false),
-	}
-	if config, ok := configs[objType]; ok {
-		return config
-	}
+func GetESeriesObjectConfig(_ string) ObjectConfig {
 	return ObjectConfig{}
 }
 

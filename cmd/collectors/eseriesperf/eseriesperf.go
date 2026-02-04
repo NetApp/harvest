@@ -10,6 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/rest"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseriesperf/plugins/cachehitratio"
+	"github.com/netapp/harvest/v2/cmd/collectors/eseriesperf/plugins/controller"
 	"github.com/netapp/harvest/v2/cmd/poller/collector"
 	"github.com/netapp/harvest/v2/cmd/poller/plugin"
 	"github.com/netapp/harvest/v2/pkg/conf"
@@ -240,6 +241,8 @@ func (ep *EseriesPerf) LoadPlugin(kind string, p *plugin.AbstractPlugin) plugin.
 	switch kind {
 	case "CacheHitRatio":
 		return cachehitratio.New(p)
+	case "Controller":
+		return controller.New(p)
 	default:
 		ep.Logger.Info("No eseries plugin found", slog.String("kind", kind))
 	}

@@ -54,12 +54,12 @@
       }
     ]
   },
-  "description": "",
+  "description": "E-Series Controller Performance and Capacity",
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1770120569992,
+  "iteration": 1770118720622,
   "links": [
     {
       "asDropdown": true,
@@ -87,14 +87,14 @@
         "x": 0,
         "y": 0
       },
-      "id": 28,
+      "id": 100,
       "panels": [],
-      "title": "Highlights",
+      "title": "Performance",
       "type": "row"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Volume read latency.",
+      "description": "Number of reads per second from the controller.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -128,6 +128,7 @@
               "mode": "off"
             }
           },
+          "decimals": 0,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -142,14 +143,106 @@
               }
             ]
           },
-          "unit": "µs"
+          "unit": "iops"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 12,
+        "h": 8,
         "w": 12,
         "x": 0,
+        "y": 1
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "eseries_controller_read_ops{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"}\nand on (datacenter, controller, array)\n  topk(\n    $TopResources,\n    max by (datacenter, controller, array) (\n      avg_over_time(\n        eseries_controller_read_ops{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+          "interval": "",
+          "legendFormat": "{{datacenter}}/{{array}}/{{controller}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top $TopResources Controllers by Read IOPS",
+      "transformations": [],
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Number of writes per second to the controller.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "iops"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
         "y": 1
       },
       "id": 30,
@@ -171,296 +264,21 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "eseries_volume_read_latency{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}\nand on (datacenter, volume, array)\n  topk(\n    $TopResources,\n    max by (datacenter, volume, array) (\n      avg_over_time(\n        eseries_volume_read_latency{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}[3h] @ end()\n      )\n    )\n  )",
+          "expr": "eseries_controller_write_ops{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"}\nand on (datacenter, controller, array)\n  topk(\n    $TopResources,\n    max by (datacenter, controller, array) (\n      avg_over_time(\n        eseries_controller_write_ops{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
           "interval": "",
-          "legendFormat": "{{array}} - {{volume}}",
+          "legendFormat": "{{datacenter}}/{{array}}/{{controller}}",
           "refId": "A"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top $TopResources Volumes by Read Latency",
+      "title": "Top $TopResources Controllers by Write IOPS",
       "transformations": [],
       "type": "timeseries"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Volume write latency.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "µs"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 12,
-        "w": 12,
-        "x": 12,
-        "y": 1
-      },
-      "id": 33,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "eseries_volume_write_latency{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}\nand on (datacenter, volume, array)\n  topk(\n    $TopResources,\n    max by (datacenter, volume, array) (\n      avg_over_time(\n        eseries_volume_write_latency{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}[3h] @ end()\n      )\n    )\n  )",
-          "interval": "",
-          "legendFormat": "{{array}} - {{volume}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top $TopResources Volumes by Write Latency",
-      "transformations": [],
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "Number of reads per second from the volume.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 0,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "iops"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 12,
-        "w": 12,
-        "x": 0,
-        "y": 13
-      },
-      "id": 32,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "eseries_volume_read_ops{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}\nand on (datacenter, volume, array)\n  topk(\n    $TopResources,\n    max by (datacenter, volume, array) (\n      avg_over_time(\n        eseries_volume_read_ops{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}[3h] @ end()\n      )\n    )\n  )",
-          "interval": "",
-          "legendFormat": "{{array}} - {{volume}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top $TopResources Volumes by Read IOPs",
-      "transformations": [],
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "Number of writes per second to the volume.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 0,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "iops"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 12,
-        "w": 12,
-        "x": 12,
-        "y": 13
-      },
-      "id": 35,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "eseries_volume_write_ops{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}\nand on (datacenter, volume, array)\n  topk(\n    $TopResources,\n    max by (datacenter, volume, array) (\n      avg_over_time(\n        eseries_volume_write_ops{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}[3h] @ end()\n      )\n    )\n  )",
-          "interval": "",
-          "legendFormat": "{{array}} - {{volume}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top $TopResources Volumes by Write IOPs",
-      "transformations": [],
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "Bytes read per second from the volume.",
+      "description": "Data read per second from the controller.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -513,10 +331,101 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 12,
+        "h": 8,
         "w": 12,
         "x": 0,
-        "y": 25
+        "y": 9
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "eseries_controller_read_data{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"}\nand on (datacenter, controller, array)\n  topk(\n    $TopResources,\n    max by (datacenter, controller, array) (\n      avg_over_time(\n        eseries_controller_read_data{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+          "interval": "",
+          "legendFormat": "{{datacenter}}/{{array}}/{{controller}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top $TopResources Controllers by Read Throughput",
+      "transformations": [],
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Data written per second to the controller.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "Bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 9
       },
       "id": 31,
       "options": {
@@ -537,22 +446,21 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "eseries_volume_read_data{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}\nand on (datacenter, volume, array)\n  topk(\n    $TopResources,\n    max by (datacenter, volume, array) (\n      avg_over_time(\n        eseries_volume_read_data{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}[3h] @ end()\n      )\n    )\n  )",
+          "expr": "eseries_controller_write_data{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"}\nand on (datacenter, controller, array)\n  topk(\n    $TopResources,\n    max by (datacenter, controller, array) (\n      avg_over_time(\n        eseries_controller_write_data{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
           "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "{{array}} - {{volume}}",
+          "legendFormat": "{{datacenter}}/{{array}}/{{controller}}",
           "refId": "A"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top $TopResources Volumes by Read Throughput",
+      "title": "Top $TopResources Controllers by Write Throughput",
       "transformations": [],
       "type": "timeseries"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Bytes written per second to the volume.",
+      "description": "Controller CPU utilization percentage",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -576,7 +484,7 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "auto",
+            "showPoints": "never",
             "spanNulls": true,
             "stacking": {
               "group": "A",
@@ -586,7 +494,10 @@
               "mode": "off"
             }
           },
+          "decimals": 2,
           "mappings": [],
+          "max": 100,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -595,22 +506,26 @@
                 "value": null
               },
               {
+                "color": "yellow",
+                "value": 70
+              },
+              {
                 "color": "red",
-                "value": 80
+                "value": 90
               }
             ]
           },
-          "unit": "Bps"
+          "unit": "percent"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 12,
+        "h": 8,
         "w": 12,
-        "x": 12,
-        "y": 25
+        "x": 0,
+        "y": 17
       },
-      "id": 34,
+      "id": 1,
       "options": {
         "legend": {
           "calcs": [
@@ -622,23 +537,107 @@
           "placement": "bottom"
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "multi",
+          "sort": "none"
         }
       },
       "pluginVersion": "8.1.8",
       "targets": [
         {
           "exemplar": false,
-          "expr": "eseries_volume_write_data{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}\nand on (datacenter, volume, array)\n  topk(\n    $TopResources,\n    max by (datacenter, volume, array) (\n      avg_over_time(\n        eseries_volume_write_data{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}[3h] @ end()\n      )\n    )\n  )",
+          "expr": "eseries_controller_cpu_utilization{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"}\nand on (datacenter, controller, array)\n  topk(\n    $TopResources,\n    max by (datacenter, controller, array) (\n      avg_over_time(\n        eseries_controller_cpu_utilization{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
           "interval": "",
-          "legendFormat": "{{array}} - {{volume}}",
+          "legendFormat": "{{datacenter}}/{{array}}/{{controller}}",
           "refId": "A"
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top $TopResources Volumes by Write Throughput",
-      "transformations": [],
+      "title": "Top $TopResources Controllers by CPU Utilization",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Cache hit operations per second",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "iops"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 17
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "eseries_controller_cache_hit_ops{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"}\nand on (datacenter, controller, array)\n  topk(\n    $TopResources,\n    max by (datacenter, controller, array) (\n      avg_over_time(\n        eseries_controller_cache_hit_ops{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+          "interval": "",
+          "legendFormat": "{{datacenter}}/{{array}}/{{controller}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Top $TopResources Controllers by Cache Hit Ops",
       "type": "timeseries"
     },
     {
@@ -648,13 +647,13 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 37
+        "y": 25
       },
-      "id": 37,
+      "id": 101,
       "panels": [
         {
           "datasource": "${DS_PROMETHEUS}",
-          "description": "Volume details.",
+          "description": "Controller configuration and status",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -667,81 +666,29 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "rgb(31, 176, 196)",
+                    "color": "green",
                     "value": null
                   }
                 ]
-              },
-              "unit": "none"
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Offline"
-                },
-                "properties": [
-                  {
-                    "id": "mappings",
-                    "value": [
-                      {
-                        "options": {
-                          "false": {
-                            "index": 1,
-                            "text": "No"
-                          },
-                          "true": {
-                            "index": 0,
-                            "text": "Yes"
-                          }
-                        },
-                        "type": "value"
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Reported capacity"
-                },
-                "properties": [
-                  {
-                    "id": "unit",
-                    "value": "bytes"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Allocated capacity"
-                },
-                "properties": [
-                  {
-                    "id": "unit",
-                    "value": "bytes"
-                  }
-                ]
               }
-            ]
+            },
+            "overrides": []
           },
           "gridPos": {
-            "h": 18,
+            "h": 8,
             "w": 24,
             "x": 0,
-            "y": 38
+            "y": 26
           },
-          "id": 18,
+          "id": 5,
           "interval": "1m",
           "maxDataPoints": 2,
           "options": {
             "showHeader": true,
             "sortBy": [
               {
-                "desc": true,
-                "displayName": "Volume"
+                "desc": false,
+                "displayName": "Controller"
               }
             ]
           },
@@ -749,40 +696,178 @@
           "targets": [
             {
               "exemplar": false,
-              "expr": "label_join(\n  eseries_volume_labels{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"array\",\n  \"volume\"\n)",
+              "expr": "eseries_controller_labels{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"}",
               "format": "table",
               "instant": true,
               "interval": "",
-              "intervalFactor": 1,
               "legendFormat": "",
-              "refId": "B"
+              "refId": "A"
+            }
+          ],
+          "title": "Controller Configuration",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "datacenter",
+                    "array",
+                    "controller",
+                    "status",
+                    "model",
+                    "serial_number",
+                    "part_number",
+                    "app_version",
+                    "boot_version",
+                    "manufacturer"
+                  ]
+                }
+              }
             },
             {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "app_version": 6,
+                  "array": 1,
+                  "boot_version": 7,
+                  "controller": 2,
+                  "datacenter": 0,
+                  "manufacturer": 8,
+                  "model": 4,
+                  "part_number": 9,
+                  "serial_number": 5,
+                  "status": 3
+                },
+                "renameByName": {
+                  "app_version": "Firmware Version",
+                  "array": "Array",
+                  "boot_version": "Boot Version",
+                  "controller": "Controller",
+                  "datacenter": "Datacenter",
+                  "manufacturer": "Manufacturer",
+                  "model": "Model",
+                  "part_number": "Part Number",
+                  "serial_number": "Serial Number",
+                  "status": "Status"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Controller cache and processor memory - Data Cache (Total/Used) and Processor Cache",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "decmbytes"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #A"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "mbytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #B"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "mbytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #C"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "mbytes"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 34
+          },
+          "id": 6,
+          "interval": "1m",
+          "maxDataPoints": 2,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "Controller"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
               "exemplar": false,
-              "expr": "label_join(\n  eseries_volume_allocated_capacity{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"array\",\n  \"volume\"\n)",
+              "expr": "label_join(\n  eseries_controller_total_cache_memory{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"array\",\n  \"controller\",\n  \"id\"\n)",
               "format": "table",
-              "hide": false,
               "instant": true,
               "interval": "",
-              "intervalFactor": 1,
               "legendFormat": "",
               "refId": "A"
             },
             {
               "exemplar": false,
-              "expr": "label_join(\n  eseries_volume_reported_capacity{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"array\",\n  \"volume\"\n)",
+              "expr": "label_join(\n  eseries_controller_used_cache_memory{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"array\",\n  \"controller\",\n  \"id\"\n)",
               "format": "table",
-              "hide": false,
               "instant": true,
               "interval": "",
-              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "B"
+            },
+            {
+              "exemplar": false,
+              "expr": "label_join(\n  eseries_controller_processor_memory{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"array\",\n  \"controller\",\n  \"id\"\n)",
+              "format": "table",
+              "instant": true,
+              "interval": "",
               "legendFormat": "",
               "refId": "C"
             }
           ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Volumes",
+          "title": "Controller Cache & Memory",
           "transformations": [
             {
               "id": "seriesToColumns",
@@ -802,20 +887,12 @@
               "options": {
                 "include": {
                   "names": [
-                    "block_size",
-                    "array",
+                    "controller",
                     "datacenter",
-                    "hosts",
-                    "mapping_types",
-                    "offline",
-                    "pool",
-                    "raid_level",
-                    "status",
-                    "volume",
-                    "wwid",
                     "Value #A",
+                    "Value #B",
                     "Value #C",
-                    "workload"
+                    "array"
                   ]
                 }
               }
@@ -826,50 +903,26 @@
                 "excludeByName": {
                   "array 2": true,
                   "array 3": true,
+                  "controller 2": true,
+                  "controller 3": true,
                   "datacenter 2": true,
-                  "datacenter 3": true,
-                  "volume 2": true,
-                  "volume 3": true
+                  "datacenter 3": true
                 },
                 "indexByName": {
-                  "Value #A": 12,
-                  "Value #C": 11,
+                  "Value #A": 3,
+                  "Value #B": 4,
+                  "Value #C": 5,
                   "array": 1,
-                  "array 2": 14,
-                  "array 3": 17,
-                  "block_size": 10,
-                  "datacenter": 0,
-                  "datacenter 2": 15,
-                  "datacenter 3": 18,
-                  "hosts": 4,
-                  "mapping_types": 5,
-                  "offline": 8,
-                  "pool": 6,
-                  "raid_level": 9,
-                  "status": 3,
-                  "volume": 2,
-                  "volume 2": 16,
-                  "volume 3": 19,
-                  "workload": 7,
-                  "wwid": 13
+                  "controller": 2,
+                  "datacenter": 0
                 },
                 "renameByName": {
-                  "Value #A": "Allocated capacity",
-                  "Value #C": "Reported capacity",
+                  "Value #A": "Data Cache Total",
+                  "Value #B": "Data Cache Used",
+                  "Value #C": "Processor Cache",
                   "array": "Array",
-                  "block_size": "Block size",
-                  "datacenter": "Datacenter",
-                  "host": "Assigned to",
-                  "hosts": "Assigned to",
-                  "mapping_types": "Host Type",
-                  "offline": "Offline",
-                  "pool": "Pool",
-                  "raid_level": "RAID level",
-                  "status": "Status",
-                  "type": "Host Type",
-                  "volume": "Volume",
-                  "workload": "Workload",
-                  "wwid": "WWID"
+                  "controller": "Controller",
+                  "datacenter": "Datacenter"
                 }
               }
             }
@@ -877,304 +930,7 @@
           "type": "table"
         }
       ],
-      "title": "Volume Table",
-      "type": "row"
-    },
-    {
-      "collapsed": true,
-      "datasource": "${DS_PROMETHEUS}",
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 38
-      },
-      "id": 39,
-      "panels": [
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "Percentage of read requests served from cache.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "decimals": 2,
-              "mappings": [],
-              "max": 100,
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "percent"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 12,
-            "w": 8,
-            "x": 0,
-            "y": 39
-          },
-          "id": 40,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "eseries_volume_read_cache_hit_ratio{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}\nand on (datacenter, volume, array)\n  topk(\n    $TopResources,\n    max by (datacenter, volume, array) (\n      avg_over_time(\n        eseries_volume_read_cache_hit_ratio{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}[3h] @ end()\n      )\n    )\n  )",
-              "interval": "",
-              "legendFormat": "{{array}} - {{volume}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Top $TopResources Volumes by Read Cache Hit Ratio",
-          "transformations": [],
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "Percentage of write requests served from cache.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "decimals": 2,
-              "mappings": [],
-              "max": 100,
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "percent"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 12,
-            "w": 8,
-            "x": 8,
-            "y": 39
-          },
-          "id": 41,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "eseries_volume_write_cache_hit_ratio{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}\nand on (datacenter, volume, array)\n  topk(\n    $TopResources,\n    max by (datacenter, volume, array) (\n      avg_over_time(\n        eseries_volume_write_cache_hit_ratio{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}[3h] @ end()\n      )\n    )\n  )",
-              "interval": "",
-              "legendFormat": "{{array}} - {{volume}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Top $TopResources Volumes by Write Cache Hit Ratio",
-          "transformations": [],
-          "type": "timeseries"
-        },
-        {
-          "datasource": "${DS_PROMETHEUS}",
-          "description": "Percentage of total requests served from cache.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 10,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": true,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "decimals": 2,
-              "mappings": [],
-              "max": 100,
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "percent"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 12,
-            "w": 8,
-            "x": 16,
-            "y": 39
-          },
-          "id": 42,
-          "options": {
-            "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single"
-            }
-          },
-          "pluginVersion": "8.1.8",
-          "targets": [
-            {
-              "exemplar": false,
-              "expr": "eseries_volume_total_cache_hit_ratio{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}\nand on (datacenter, volume, array)\n  topk(\n    $TopResources,\n    max by (datacenter, volume, array) (\n      avg_over_time(\n        eseries_volume_total_cache_hit_ratio{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"}[3h] @ end()\n      )\n    )\n  )",
-              "interval": "",
-              "legendFormat": "{{array}} - {{volume}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Top $TopResources Volumes by Total Cache Hit Ratio",
-          "transformations": [],
-          "type": "timeseries"
-        }
-      ],
-      "title": "Cache",
+      "title": "Capacity",
       "type": "row"
     }
   ],
@@ -1182,8 +938,8 @@
   "schemaVersion": 30,
   "style": "dark",
   "tags": [
-    "harvest",
-    "eseries"
+    "eseries",
+    "harvest"
   ],
   "templating": {
     "list": [
@@ -1202,7 +958,7 @@
         "name": "DS_PROMETHEUS",
         "options": [],
         "query": "prometheus",
-        "refresh": 2,
+        "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
         "type": "datasource"
@@ -1211,7 +967,7 @@
         "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(eseries_array_labels, datacenter)",
+        "definition": "label_values(eseries_controller_labels, datacenter)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -1221,7 +977,7 @@
         "name": "Datacenter",
         "options": [],
         "query": {
-          "query": "label_values(eseries_array_labels, datacenter)",
+          "query": "label_values(eseries_controller_labels, datacenter)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -1237,7 +993,7 @@
         "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(eseries_array_labels{datacenter=~\"$Datacenter\"}, array)",
+        "definition": "label_values(eseries_controller_labels{datacenter=~\"$Datacenter\"}, array)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -1247,7 +1003,7 @@
         "name": "Array",
         "options": [],
         "query": {
-          "query": "label_values(eseries_array_labels{datacenter=~\"$Datacenter\"}, array)",
+          "query": "label_values(eseries_controller_labels{datacenter=~\"$Datacenter\"}, array)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -1263,17 +1019,17 @@
         "allValue": ".*",
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(eseries_volume_labels{datacenter=~\"$Datacenter\",array=~\"$Array\"}, volume)",
+        "definition": "label_values(eseries_controller_labels{datacenter=~\"$Datacenter\",array=~\"$Array\"}, controller)",
         "description": null,
         "error": null,
         "hide": 0,
         "includeAll": true,
         "label": null,
         "multi": true,
-        "name": "Volume",
+        "name": "Controller",
         "options": [],
         "query": {
-          "query": "label_values(eseries_volume_labels{datacenter=~\"$Datacenter\",array=~\"$Array\"}, volume)",
+          "query": "label_values(eseries_controller_labels{datacenter=~\"$Datacenter\",array=~\"$Array\"}, controller)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -1382,21 +1138,9 @@
     "from": "now-3h",
     "to": "now"
   },
-  "timepicker": {
-    "refresh_intervals": [
-      "10s",
-      "30s",
-      "1m",
-      "5m",
-      "15m",
-      "30m",
-      "1h",
-      "2h",
-      "1d"
-    ]
-  },
+  "timepicker": {},
   "timezone": "",
-  "title": "Eseries: Volume",
-  "uid": "eseries-volume",
+  "title": "E-Series: Controller",
+  "uid": "eseries-controller",
   "version": 1
 }

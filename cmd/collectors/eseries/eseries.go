@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/netapp/harvest/v2/cmd/collectors/eseries/plugins/hardware"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/plugins/host"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/plugins/volume"
 	"github.com/netapp/harvest/v2/cmd/collectors/eseries/plugins/volumemapping"
@@ -70,10 +71,7 @@ func (e *ESeries) Init(a *collector.AbstractCollector) error {
 		return err
 	}
 
-	objType := e.Params.GetChildContentS("type")
-	config := GetESeriesObjectConfig(objType)
-
-	if err := e.ParseTemplate(config); err != nil {
+	if err := e.ParseTemplate(ObjectConfig{}); err != nil {
 		return err
 	}
 
@@ -391,6 +389,8 @@ func (e *ESeries) pollData(mat *matrix.Matrix, results []gjson.Result) uint64 {
 
 func (e *ESeries) LoadPlugin(kind string, abc *plugin.AbstractPlugin) plugin.Plugin {
 	switch kind {
+	case "Hardware":
+		return hardware.New(abc)
 	case "Host":
 		return host.New(abc)
 	case "Volume":

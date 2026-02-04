@@ -59,7 +59,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1769099388632,
+  "iteration": 1770119363206,
   "links": [],
   "panels": [
     {
@@ -71,114 +71,14 @@
         "x": 0,
         "y": 0
       },
-      "id": 1,
+      "id": 200,
       "panels": [],
-      "title": "Highlights",
+      "title": "Performance",
       "type": "row"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "E-Series Array Details",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "left",
-            "displayMode": "auto",
-            "filterable": true
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 1
-      },
-      "id": 2,
-      "options": {
-        "showHeader": true,
-        "sortBy": []
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "eseries_array_labels{array=~\"$Array\",datacenter=~\"$Datacenter\"}",
-          "format": "table",
-          "instant": true,
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Array Configuration",
-      "transformations": [
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "Time": true,
-              "Value": true,
-              "__name__": true,
-              "instance": true,
-              "job": true,
-              "name": true,
-              "wwn": true
-            },
-            "indexByName": {
-              "Time": 9,
-              "Value": 17,
-              "__name__": 10,
-              "array": 2,
-              "boot_version": 11,
-              "chassis_serial": 4,
-              "datacenter": 0,
-              "firmware_version": 5,
-              "instance": 12,
-              "job": 13,
-              "management_ip1": 6,
-              "management_ip2": 7,
-              "model": 3,
-              "name": 1,
-              "nvsram_version": 14,
-              "password_status": 15,
-              "status": 8,
-              "wwn": 16
-            },
-            "renameByName": {
-              "array": "Array",
-              "boot_version": "Boot Version",
-              "chassis_serial": "Serial Number",
-              "datacenter": "Datacenter",
-              "firmware_version": "Firmware Version",
-              "management_ip1": "Admin IP 1",
-              "management_ip2": "Admin IP 2",
-              "model": "Model",
-              "name": "",
-              "nvsram_version": "NVSRAM Version",
-              "password_status": "Password Status",
-              "status": "Status",
-              "timezone": "Timezone"
-            }
-          }
-        }
-      ],
-      "type": "table"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "Storage pool space used percentage",
+      "description": "Number of reads per second from the array.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -212,10 +112,8 @@
               "mode": "off"
             }
           },
-          "decimals": 2,
+          "decimals": 0,
           "mappings": [],
-          "max": 1,
-          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -225,21 +123,21 @@
               },
               {
                 "color": "red",
-                "value": 0.8
+                "value": 80
               }
             ]
           },
-          "unit": "percentunit"
+          "unit": "iops"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 12,
+        "h": 8,
         "w": 12,
         "x": 0,
-        "y": 9
+        "y": 1
       },
-      "id": 4,
+      "id": 202,
       "options": {
         "legend": {
           "calcs": [
@@ -258,21 +156,21 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "(\n      eseries_array_used_pool_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}\n    /\n      (\n          eseries_array_used_pool_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}\n        +\n          eseries_array_free_pool_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}\n      )\n  )\nand on (datacenter, array)\n  topk(\n    $TopResources,\n    max by (datacenter, array) (\n      avg_over_time(\n        (\n            eseries_array_used_pool_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}\n          /\n            (\n                eseries_array_used_pool_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}\n              +\n                eseries_array_free_pool_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}\n            )\n        )[3h:] @ end()\n      )\n    )\n  )",
+          "expr": "eseries_array_read_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array)\n  topk(\n    $TopResources,\n    max by (datacenter, array) (\n      avg_over_time(eseries_array_read_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
           "interval": "",
-          "legendFormat": "{{datacenter}} - {{array}}",
+          "legendFormat": "{{datacenter}}/{{array}}",
           "refId": "A"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top $TopResources Systems by Storage Capacity Used %",
+      "title": "Top $TopResources Arrays by Read IOPS",
       "transformations": [],
       "type": "timeseries"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Used pool space in bytes",
+      "description": "Number of writes per second to the array.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -306,7 +204,281 @@
               "mode": "off"
             }
           },
-          "decimals": 2,
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "iops"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 1
+      },
+      "id": 203,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "eseries_array_write_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array)\n  topk(\n    $TopResources,\n    max by (datacenter, array) (\n      avg_over_time(eseries_array_write_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+          "interval": "",
+          "legendFormat": "{{datacenter}}/{{array}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top $TopResources Arrays by Write IOPS",
+      "transformations": [],
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Data read per second from the array.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "Bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 9
+      },
+      "id": 204,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "eseries_array_read_data{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array)\n  topk(\n    $TopResources,\n    max by (datacenter, array) (\n      avg_over_time(eseries_array_read_data{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+          "interval": "",
+          "legendFormat": "{{datacenter}}/{{array}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top $TopResources Arrays by Read Throughput",
+      "transformations": [],
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Data written per second to the array.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "Bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 9
+      },
+      "id": 205,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "eseries_array_write_data{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array)\n  topk(\n    $TopResources,\n    max by (datacenter, array) (\n      avg_over_time(eseries_array_write_data{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+          "interval": "",
+          "legendFormat": "{{datacenter}}/{{array}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Top $TopResources Arrays by Write Throughput",
+      "transformations": [],
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Array cache hit operations per second",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -317,105 +489,17 @@
               }
             ]
           },
-          "unit": "bytes"
+          "unit": "iops"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 12,
-        "w": 12,
-        "x": 12,
-        "y": 9
-      },
-      "id": 5,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "eseries_array_used_pool_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array)\n  topk(\n    $TopResources,\n    max by (datacenter, array) (\n      avg_over_time(eseries_array_used_pool_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
-          "interval": "",
-          "legendFormat": "{{datacenter}} - {{array}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top $TopResources Systems by Used Space",
-      "transformations": [],
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "Free pool space in bytes",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 2,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "bytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 12,
+        "h": 8,
         "w": 12,
         "x": 0,
-        "y": 21
+        "y": 17
       },
-      "id": 6,
+      "id": 201,
       "options": {
         "legend": {
           "calcs": [
@@ -434,103 +518,15 @@
       "targets": [
         {
           "exemplar": false,
-          "expr": "eseries_array_free_pool_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array)\n  topk(\n    $TopResources,\n    max by (datacenter, array) (\n      avg_over_time(eseries_array_free_pool_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+          "expr": "eseries_array_cache_hit_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array)\n  topk(\n    $TopResources,\n    max by (datacenter, array) (\n      avg_over_time(eseries_array_cache_hit_ops{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
           "interval": "",
-          "legendFormat": "{{datacenter}} - {{array}}",
+          "legendFormat": "{{datacenter}}/{{array}}",
           "refId": "A"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top $TopResources Systems by Free Space",
-      "transformations": [],
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "Unconfigured space in bytes",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 2,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "blue",
-                "value": null
-              }
-            ]
-          },
-          "unit": "bytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 12,
-        "w": 12,
-        "x": 12,
-        "y": 21
-      },
-      "id": 7,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.1.8",
-      "targets": [
-        {
-          "exemplar": false,
-          "expr": "eseries_array_unconfigured_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array)\n  topk(\n    $TopResources,\n    max by (datacenter, array) (\n      avg_over_time(\n        eseries_array_unconfigured_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
-          "interval": "",
-          "legendFormat": "{{datacenter}} - {{array}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top $TopResources Systems by Unconfigured Space",
+      "title": "Top $TopResources Arrays by Cache Hit IOPS",
       "transformations": [],
       "type": "timeseries"
     },
@@ -541,7 +537,480 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 33
+        "y": 25
+      },
+      "id": 1,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "E-Series Array Details",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 26
+          },
+          "id": 2,
+          "options": {
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "eseries_array_labels{array=~\"$Array\",datacenter=~\"$Datacenter\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Array Configuration",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value": true,
+                  "__name__": true,
+                  "instance": true,
+                  "job": true,
+                  "name": true,
+                  "wwn": true
+                },
+                "indexByName": {
+                  "Time": 9,
+                  "Value": 17,
+                  "__name__": 10,
+                  "array": 2,
+                  "boot_version": 11,
+                  "chassis_serial": 4,
+                  "datacenter": 0,
+                  "firmware_version": 5,
+                  "instance": 12,
+                  "job": 13,
+                  "management_ip1": 6,
+                  "management_ip2": 7,
+                  "model": 3,
+                  "name": 1,
+                  "nvsram_version": 14,
+                  "password_status": 15,
+                  "status": 8,
+                  "wwn": 16
+                },
+                "renameByName": {
+                  "array": "Array",
+                  "boot_version": "Boot Version",
+                  "chassis_serial": "Serial Number",
+                  "datacenter": "Datacenter",
+                  "firmware_version": "Firmware Version",
+                  "management_ip1": "Admin IP 1",
+                  "management_ip2": "Admin IP 2",
+                  "model": "Model",
+                  "name": "",
+                  "nvsram_version": "NVSRAM Version",
+                  "password_status": "Password Status",
+                  "status": "Status",
+                  "timezone": "Timezone"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Storage pool space used percentage",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 1,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 0.8
+                  }
+                ]
+              },
+              "unit": "percentunit"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 34
+          },
+          "id": 4,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "(\n      eseries_array_used_pool_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}\n    /\n      (\n          eseries_array_used_pool_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}\n        +\n          eseries_array_free_pool_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}\n      )\n  )\nand on (datacenter, array)\n  topk(\n    $TopResources,\n    max by (datacenter, array) (\n      avg_over_time(\n        (\n            eseries_array_used_pool_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}\n          /\n            (\n                eseries_array_used_pool_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}\n              +\n                eseries_array_free_pool_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}\n            )\n        )[3h:] @ end()\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{datacenter}}/{{array}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Systems by Storage Capacity Used %",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Used pool space in bytes",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 34
+          },
+          "id": 5,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "eseries_array_used_pool_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array)\n  topk(\n    $TopResources,\n    max by (datacenter, array) (\n      avg_over_time(eseries_array_used_pool_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{datacenter}}/{{array}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Systems by Used Space",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Free pool space in bytes",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 44
+          },
+          "id": 6,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "eseries_array_free_pool_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array)\n  topk(\n    $TopResources,\n    max by (datacenter, array) (\n      avg_over_time(eseries_array_free_pool_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end())\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{datacenter}}/{{array}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Systems by Free Space",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Unconfigured space in bytes",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "blue",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 12,
+            "y": 44
+          },
+          "id": 7,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "eseries_array_unconfigured_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array)\n  topk(\n    $TopResources,\n    max by (datacenter, array) (\n      avg_over_time(\n        eseries_array_unconfigured_space{array=~\"$Array\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{datacenter}}/{{array}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Systems by Unconfigured Space",
+          "transformations": [],
+          "type": "timeseries"
+        }
+      ],
+      "title": "Capacity",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 26
       },
       "id": 14,
       "panels": [
