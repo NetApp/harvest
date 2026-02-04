@@ -54,7 +54,7 @@
       }
     ]
   },
-  "description": "E-Series Array Overview - array Information, Capacity, Performance, and Port Status",
+  "description": "E-Series Array - array Information, Capacity, Performance, and Port Status",
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
@@ -1279,7 +1279,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "E-Series: Array Overview",
-  "uid": "eseries-array-overview",
+  "title": "E-Series: Array",
+  "uid": "eseries-array",
   "version": 1
 }
