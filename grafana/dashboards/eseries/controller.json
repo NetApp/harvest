@@ -89,7 +89,7 @@
       },
       "id": 100,
       "panels": [],
-      "title": "Performance",
+      "title": "Highlights",
       "type": "row"
     },
     {
@@ -930,7 +930,7 @@
           "type": "table"
         }
       ],
-      "title": "Capacity",
+      "title": "Controller Details",
       "type": "row"
     }
   ],
