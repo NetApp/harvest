@@ -10,6 +10,7 @@ import (
 	"github.com/netapp/harvest/v2/pkg/errs"
 	"github.com/netapp/harvest/v2/pkg/matrix"
 	"github.com/netapp/harvest/v2/pkg/num"
+	"github.com/netapp/harvest/v2/pkg/power"
 	"github.com/netapp/harvest/v2/pkg/slogx"
 	"github.com/netapp/harvest/v2/pkg/template"
 	"github.com/netapp/harvest/v2/pkg/tree/node"
@@ -87,8 +88,13 @@ type shelfEnvironmentMetric struct {
 	ambientTemperature    []float64
 	nonAmbientTemperature []float64
 	fanSpeed              []float64
-	voltageSensor         map[string]float64
-	currentSensor         map[string]float64
+	voltageSensor         map[string]shelfSensorReading
+	currentSensor         map[string]shelfSensorReading
+}
+
+type shelfSensorReading struct {
+	value float64
+	rail  power.Rail
 }
 
 var shelfMetrics = []string{
@@ -794,18 +800,24 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 					if mkey == "voltage" {
 						if value, ok := metric.GetValueFloat64(instance); ok {
 							if shelfEnvironmentMetricMap[iKey].voltageSensor == nil {
-								shelfEnvironmentMetricMap[iKey].voltageSensor = make(map[string]float64)
+								shelfEnvironmentMetricMap[iKey].voltageSensor = make(map[string]shelfSensorReading)
 							}
-							shelfEnvironmentMetricMap[iKey].voltageSensor[iKey2] = value
+							shelfEnvironmentMetricMap[iKey].voltageSensor[iKey2] = shelfSensorReading{
+								value: value,
+								rail:  power.ClassifyRailFromLabels(instance.GetLabel("location"), instance.GetLabel("sensor_id"), instance.GetLabel("id")),
+							}
 						}
 					}
 				case "shelf_sensor":
 					if mkey == "current" {
 						if value, ok := metric.GetValueFloat64(instance); ok {
 							if shelfEnvironmentMetricMap[iKey].currentSensor == nil {
-								shelfEnvironmentMetricMap[iKey].currentSensor = make(map[string]float64)
+								shelfEnvironmentMetricMap[iKey].currentSensor = make(map[string]shelfSensorReading)
 							}
-							shelfEnvironmentMetricMap[iKey].currentSensor[iKey2] = value
+							shelfEnvironmentMetricMap[iKey].currentSensor[iKey2] = shelfSensorReading{
+								value: value,
+								rail:  power.ClassifyRailFromLabels(instance.GetLabel("location"), instance.GetLabel("sensor_id"), instance.GetLabel("id")),
+							}
 						}
 					}
 				}
@@ -830,13 +842,55 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 			switch k {
 			case "power":
 				var sumPower float64
+				var sumInput float64
+				var sumOutput float64
+				var sumUnknown float64
+				var inputPairs int
+				var outputPairs int
+				var unknownPairs int
 				for k1, v1 := range v.voltageSensor {
 					if v2, ok := v.currentSensor[k1]; ok {
 						// in W
-						sumPower += (v1 * v2) / 1000
+						pairPower := (v1.value * v2.value) / 1000
+						rail := power.ResolveRail(v1.rail, v2.rail)
+						switch rail {
+						case power.RailInput:
+							sumInput += pairPower
+							inputPairs++
+						case power.RailOutput:
+							sumOutput += pairPower
+							outputPairs++
+						default:
+							sumUnknown += pairPower
+							unknownPairs++
+						}
 					} else {
 						d.SLogger.Warn("missing current sensor", slog.String("voltage sensor id", k1))
 					}
+				}
+
+				switch {
+				case inputPairs > 0:
+					sumPower = sumInput
+					if outputPairs > 0 {
+						d.SLogger.Debug(
+							"input and output rails detected; using input rail for shelf power",
+							slog.String("shelf", instance.GetLabel("shelf")),
+							slog.Int("input_pairs", inputPairs),
+							slog.Int("output_pairs", outputPairs),
+							slog.Int("unknown_pairs", unknownPairs),
+						)
+					}
+				case outputPairs > 0:
+					sumPower = sumOutput
+					d.SLogger.Debug(
+						"input rail not detected; using output rail for shelf power",
+						slog.String("shelf", instance.GetLabel("shelf")),
+						slog.Int("output_pairs", outputPairs),
+						slog.Int("unknown_pairs", unknownPairs),
+					)
+				default:
+					sumPower = sumUnknown
 				}
 
 				m.SetValueFloat64(instance, sumPower)

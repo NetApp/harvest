@@ -37,6 +37,10 @@ as reported by ONTAP via `/api/private/cli/system/chassis/fru`
 Disk shelf power is calculated by collecting `psu.power_drawn`, as reported by REST, via
 `/api/storage/shelves` or `sensor-reading`, as reported by ZAPI `storage-shelf-info-get-iter`.
 
+When shelves report both input and output rail sensors, Harvest classifies the rail from sensor labels
+and uses only input-rail pairs to calculate shelf power. If no input rail is detected, Harvest falls back
+to output-rail pairs, and if rail classification is unavailable, all pairs are summed.
+
 The power for [embedded shelves](https://kb.netapp.com/onprem/ontap/hardware/FAQ%3A_How_do_shelf_product_IDs_and_modules_in_ONTAP_map_to_a_model_of_a_shelf_or_storage_system_with_embedded_storage)
 is ignored, since that power is already accounted for in the controller's power draw.
 
