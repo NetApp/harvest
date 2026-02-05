@@ -1,0 +1,2849 @@
+{
+  "__inputs": [
+    {
+      "description": "",
+      "label": "Prometheus",
+      "name": "DS_PROMETHEUS",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus",
+      "type": "datasource"
+    }
+  ],
+  "__requires": [
+    {
+      "id": "grafana",
+      "name": "Grafana",
+      "type": "grafana",
+      "version": "8.1.8"
+    },
+    {
+      "id": "prometheus",
+      "name": "Prometheus",
+      "type": "datasource",
+      "version": "1.0.0"
+    },
+    {
+      "id": "table",
+      "name": "Table",
+      "type": "panel",
+      "version": ""
+    },
+    {
+      "id": "timeseries",
+      "name": "Time series",
+      "type": "panel",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "E-Series Hardware - Controller, Battery, Fan, Power Supply, Thermal Sensor, SFP, and Drives",
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 1,
+  "id": null,
+  "iteration": 1770108469172,
+  "links": [
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [
+        "eseries",
+        "harvest"
+      ],
+      "targetBlank": false,
+      "title": "Related Dashboards",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
+  "panels": [
+    {
+      "collapsed": false,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "panels": [],
+      "title": "Controller",
+      "type": "row"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Controller configuration and status",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "left",
+            "displayMode": "auto",
+            "filterable": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 2,
+      "interval": "1m",
+      "maxDataPoints": 2,
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Controller"
+          }
+        ]
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "eseries_controller_labels{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"}",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Controller Configuration",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "datacenter",
+                "array",
+                "controller",
+                "status",
+                "model",
+                "serial_number",
+                "part_number",
+                "app_version",
+                "boot_version",
+                "manufacturer"
+              ]
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {
+              "app_version": 6,
+              "array": 1,
+              "boot_version": 7,
+              "controller": 2,
+              "datacenter": 0,
+              "manufacturer": 8,
+              "model": 4,
+              "part_number": 9,
+              "serial_number": 5,
+              "status": 3
+            },
+            "renameByName": {
+              "app_version": "Firmware Version",
+              "array": "Array",
+              "boot_version": "Boot Version",
+              "controller": "Controller",
+              "datacenter": "Datacenter",
+              "manufacturer": "Manufacturer",
+              "model": "Model",
+              "part_number": "Part Number",
+              "serial_number": "Serial Number",
+              "status": "Status"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "Controller firmware and software code versions",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "left",
+            "displayMode": "auto",
+            "filterable": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
+      "id": 14,
+      "interval": "1m",
+      "maxDataPoints": 2,
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Controller"
+          }
+        ]
+      },
+      "pluginVersion": "8.1.8",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "eseries_controller_code_version_labels{array=~\"$Array\",datacenter=~\"$Datacenter\"}",
+          "format": "table",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Code Versions",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "array",
+                "code_module",
+                "datacenter",
+                "version_string",
+                "controller"
+              ]
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {
+              "array": 1,
+              "code_module": 3,
+              "controller": 2,
+              "datacenter": 0,
+              "version_string": 4
+            },
+            "renameByName": {
+              "array": "Array",
+              "code_module": "Module",
+              "controller": "Controller",
+              "controller_location": "Controller",
+              "datacenter": "Datacenter",
+              "version_string": "Version"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 17
+      },
+      "id": 30,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Drive status and configuration",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [
+                {
+                  "options": {
+                    "false": {
+                      "text": "No"
+                    },
+                    "true": {
+                      "text": "Yes"
+                    }
+                  },
+                  "type": "value"
+                }
+              ],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Capacity"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "decbytes"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 0
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Endurance Used (%)"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "percent"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "current_speed"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "Mbits"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "max_speed"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "Mbits"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #D"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #E"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 24,
+            "x": 0,
+            "y": 18
+          },
+          "id": 31,
+          "interval": "1m",
+          "maxDataPoints": 2,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "Location"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "eseries_drive_labels{array=~\"$Array\",datacenter=~\"$Datacenter\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "eseries_drive_capacity{array=~\"$Array\",datacenter=~\"$Datacenter\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "B"
+            },
+            {
+              "exemplar": false,
+              "expr": "eseries_drive_percent_endurance_used{array=~\"$Array\",datacenter=~\"$Datacenter\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "C"
+            },
+            {
+              "exemplar": false,
+              "expr": "eseries_drive_block_size{array=~\"$Array\",datacenter=~\"$Datacenter\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "D"
+            },
+            {
+              "exemplar": false,
+              "expr": "eseries_drive_block_size_physical{array=~\"$Array\",datacenter=~\"$Datacenter\"}",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "E"
+            }
+          ],
+          "title": "Drives",
+          "transformations": [
+            {
+              "id": "seriesToColumns",
+              "options": {
+                "byField": "id"
+              }
+            },
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "array 1",
+                    "assigned_to",
+                    "current_speed",
+                    "da_capable",
+                    "dulbe_capable",
+                    "fips_capable",
+                    "firmware_version",
+                    "interface_type",
+                    "manufacturer",
+                    "max_speed",
+                    "media_type",
+                    "mode",
+                    "pcie_generation",
+                    "product_id",
+                    "redundant_path",
+                    "rw_accessible",
+                    "secure_capable",
+                    "secure_enabled",
+                    "serial_number",
+                    "slot",
+                    "status",
+                    "wwid",
+                    "Value #B",
+                    "Value #C",
+                    "Value #D",
+                    "Value #E",
+                    "datacenter 1"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "array 2": true,
+                  "array 3": true,
+                  "datacenter 2": true,
+                  "datacenter 3": true
+                },
+                "indexByName": {
+                  "Value #B": 13,
+                  "Value #C": 6,
+                  "Value #D": 11,
+                  "Value #E": 12,
+                  "array 1": 1,
+                  "assigned_to": 4,
+                  "current_speed": 9,
+                  "da_capable": 20,
+                  "datacenter 1": 0,
+                  "dulbe_capable": 21,
+                  "fips_capable": 22,
+                  "firmware_version": 14,
+                  "interface_type": 7,
+                  "manufacturer": 17,
+                  "max_speed": 10,
+                  "media_type": 5,
+                  "mode": 3,
+                  "pcie_generation": 8,
+                  "product_id": 15,
+                  "redundant_path": 24,
+                  "rw_accessible": 23,
+                  "secure_capable": 18,
+                  "secure_enabled": 19,
+                  "serial_number": 16,
+                  "slot": 26,
+                  "status": 2,
+                  "wwid": 25
+                },
+                "renameByName": {
+                  "Value #B": "Capacity",
+                  "Value #C": "Endurance Used (%)",
+                  "Value #D": "Block Size",
+                  "Value #E": "Physical sector size",
+                  "array": "Array",
+                  "array 1": "Array",
+                  "assigned_to": "Assigned To",
+                  "current_speed": "Speed",
+                  "da_capable": "DA Capable",
+                  "datacenter": "Datacenter",
+                  "datacenter 1": "Datacenter",
+                  "dulbe_capable": "DULBE Capable",
+                  "fips_capable": "FIPS Capable",
+                  "firmware_version": "Firmware",
+                  "interface_type": "Interface",
+                  "location": "Location",
+                  "manufacturer": "Manufacturer",
+                  "max_speed": "Max Speed",
+                  "media_type": "Media Type",
+                  "mode": "Mode",
+                  "pcie_generation": "PCIe Gen",
+                  "product_id": "Product ID",
+                  "redundant_path": "Redundant Path",
+                  "rw_accessible": "RW Accessible",
+                  "secure_capable": "Secure Capable",
+                  "secure_enabled": "Secure Enabled",
+                  "serial_number": "Serial Number",
+                  "slot": "Slot",
+                  "status": "Status",
+                  "wwid": "WWID"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Drives",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "id": 15,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Controller cache and processor memory - Data Cache (Total/Used) and Processor Cache",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "decmbytes"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #A"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "mbytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #B"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "mbytes"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #C"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "mbytes"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 19
+          },
+          "id": 3,
+          "interval": "1m",
+          "maxDataPoints": 2,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "Controller"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "label_join(\n  eseries_controller_total_cache_memory{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"array\",\n  \"controller\",\n  \"id\"\n)",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "label_join(\n  eseries_controller_used_cache_memory{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"array\",\n  \"controller\",\n  \"id\"\n)",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "B"
+            },
+            {
+              "exemplar": false,
+              "expr": "label_join(\n  eseries_controller_processor_memory{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"array\",\n  \"controller\",\n  \"id\"\n)",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "C"
+            }
+          ],
+          "title": "Controller Cache & Memory",
+          "transformations": [
+            {
+              "id": "seriesToColumns",
+              "options": {
+                "byField": "unique_id"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "(.*) 1$",
+                "renamePattern": "$1"
+              }
+            },
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "controller",
+                    "datacenter",
+                    "Value #A",
+                    "Value #B",
+                    "Value #C",
+                    "array"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "array 2": true,
+                  "array 3": true,
+                  "controller 2": true,
+                  "controller 3": true,
+                  "datacenter 2": true,
+                  "datacenter 3": true
+                },
+                "indexByName": {
+                  "Value #A": 3,
+                  "Value #B": 4,
+                  "Value #C": 5,
+                  "array": 1,
+                  "array 2": 6,
+                  "array 3": 9,
+                  "controller": 2,
+                  "controller 2": 7,
+                  "controller 3": 10,
+                  "datacenter": 0,
+                  "datacenter 2": 8,
+                  "datacenter 3": 11
+                },
+                "renameByName": {
+                  "Value #A": "Data Cache Total",
+                  "Value #B": "Data Cache Used",
+                  "Value #C": "Processor Cache",
+                  "array": "Array",
+                  "array 1": "Array",
+                  "controller": "Controller",
+                  "datacenter": "Datacenter",
+                  "datacenter 1": "Datacenter"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Cache memory DIMMs (data cache modules)",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #B"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "mbytes"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 27
+          },
+          "id": 12,
+          "interval": "1m",
+          "maxDataPoints": 2,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "Controller"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "label_join(\n  eseries_cache_memory_dimm_labels{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"array\",\n  \"dimm_id\"\n)",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "label_join(\n  eseries_cache_memory_dimm_capacity{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"array\",\n  \"dimm_id\"\n)",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "B"
+            }
+          ],
+          "title": "Cache Memory DIMMs",
+          "transformations": [
+            {
+              "id": "seriesToColumns",
+              "options": {
+                "byField": "unique_id"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "(.*) 1$",
+                "renamePattern": "$1"
+              }
+            },
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "datacenter",
+                    "array",
+                    "controller",
+                    "slot",
+                    "status",
+                    "Value #B",
+                    "manufacturer",
+                    "serial_number"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "array 1": true,
+                  "array 2": true,
+                  "datacenter 1": true,
+                  "datacenter 2": true
+                },
+                "indexByName": {
+                  "Capacity": 5,
+                  "array": 1,
+                  "controller": 2,
+                  "datacenter": 0,
+                  "manufacturer": 6,
+                  "serial_number": 7,
+                  "slot": 3,
+                  "status": 4
+                },
+                "renameByName": {
+                  "Capacity": "Capacity",
+                  "Value #B": "Capacity",
+                  "array": "Array",
+                  "controller": "Controller",
+                  "datacenter": "Datacenter",
+                  "manufacturer": "Manufacturer",
+                  "serial_number": "Serial Number",
+                  "slot": "Slot",
+                  "status": "Status"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Cache backup devices (flash-backed cache protection)",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #B"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "mbytes"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 35
+          },
+          "id": 13,
+          "interval": "1m",
+          "maxDataPoints": 2,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "Controller"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "label_join(\n  eseries_cache_backup_device_labels{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"array\",\n  \"device_id\"\n)",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            },
+            {
+              "exemplar": false,
+              "expr": "label_join(\n  eseries_cache_backup_device_capacity{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"array\",\n  \"device_id\"\n)",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "B"
+            }
+          ],
+          "title": "Cache Backup Devices",
+          "transformations": [
+            {
+              "id": "seriesToColumns",
+              "options": {
+                "byField": "unique_id"
+              }
+            },
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "(.*) 1$",
+                "renamePattern": "$1"
+              }
+            },
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "datacenter",
+                    "array",
+                    "controller",
+                    "slot",
+                    "status",
+                    "device_type",
+                    "Value #B",
+                    "product_id"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "array 1": true,
+                  "array 2": true,
+                  "datacenter 1": true,
+                  "datacenter 2": true
+                },
+                "indexByName": {
+                  "Capacity": 6,
+                  "array": 1,
+                  "controller": 2,
+                  "datacenter": 0,
+                  "device_type": 5,
+                  "product_id": 7,
+                  "slot": 3,
+                  "status": 4
+                },
+                "renameByName": {
+                  "Capacity": "Capacity",
+                  "Value #B": "Capacity",
+                  "array": "Array",
+                  "controller": "Controller",
+                  "datacenter": "Datacenter",
+                  "device_type": "Device Type",
+                  "product_id": "Product",
+                  "slot": "Slot",
+                  "status": "Status"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Top controllers by data cache used (cacheMemorySize)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "decmbytes"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "mbytes"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 0,
+            "y": 43
+          },
+          "id": 4,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "eseries_controller_used_cache_memory{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array, controller, controller_id)\n  topk(\n    $TopResources,\n    max by (datacenter, array, controller, controller_id) (\n      avg_over_time(\n        eseries_controller_used_cache_memory{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{array}} - {{controller}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Controllers by Data Cache Used",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Top controllers by data cache total (physicalCacheMemorySize)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "decmbytes"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "mbytes"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 12,
+            "y": 43
+          },
+          "id": 10,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "eseries_controller_total_cache_memory{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array, controller, controller_id)\n  topk(\n    $TopResources,\n    max by (datacenter, array, controller, controller_id) (\n      avg_over_time(\n        eseries_controller_total_cache_memory{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{array}} - {{controller}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Controllers by Data Cache Total",
+          "transformations": [],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Top controllers by processor cache (processorMemorySize)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "decmbytes"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "mbytes"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 12,
+            "x": 0,
+            "y": 55
+          },
+          "id": 11,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "lastNotNull",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "eseries_controller_processor_memory{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"}\nand on (datacenter, array, controller, controller_id)\n  topk(\n    $TopResources,\n    max by (datacenter, array, controller, controller_id) (\n      avg_over_time(\n        eseries_controller_processor_memory{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"}[3h] @ end()\n      )\n    )\n  )",
+              "interval": "",
+              "legendFormat": "{{array}} - {{controller}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top $TopResources Controllers by Processor Cache",
+          "transformations": [],
+          "type": "timeseries"
+        }
+      ],
+      "title": "Cache",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 19
+      },
+      "id": 19,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Host interfaces (storage-side ports)",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "speed"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "Mbits"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 24,
+            "x": 0,
+            "y": 4
+          },
+          "id": 5,
+          "interval": "1m",
+          "maxDataPoints": 2,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "Controller"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "eseries_controller_host_interface_labels{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Host Interfaces",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "array",
+                    "channel",
+                    "controller",
+                    "datacenter",
+                    "global_identifier",
+                    "interface_type",
+                    "link_state",
+                    "nvme_supported",
+                    "physical_port_state",
+                    "port",
+                    "speed",
+                    "max_transmission_unit"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "global_identifier": true,
+                  "interface_type": true,
+                  "nvme_supported": true
+                },
+                "indexByName": {
+                  "array": 1,
+                  "channel": 3,
+                  "controller": 2,
+                  "datacenter": 0,
+                  "global_identifier": 10,
+                  "interface_type": 9,
+                  "link_state": 6,
+                  "max_transmission_unit": 8,
+                  "nvme_supported": 11,
+                  "physical_port_state": 5,
+                  "port": 4,
+                  "speed": 7
+                },
+                "renameByName": {
+                  "array": "Array",
+                  "channel": "Channel",
+                  "controller": "Controller",
+                  "datacenter": "Datacenter",
+                  "global_identifier": "Global Identifier",
+                  "interface_type": "Type",
+                  "link_state": "Link Status",
+                  "max_transmission_unit": "Maximum Transmit Packet",
+                  "nvme_supported": "NVMe",
+                  "physical_port_state": "Port Status",
+                  "port": "Port",
+                  "speed": "Current Data Rate"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Host Interfaces",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 20
+      },
+      "id": 16,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Drive interfaces (backend ports)",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "current_speed"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "Mbits"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "maximum_speed"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "Mbits"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "protection_info_capable"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "false": {
+                            "index": 1,
+                            "text": "No"
+                          },
+                          "true": {
+                            "index": 0,
+                            "text": "Yes"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 5
+          },
+          "id": 6,
+          "interval": "1m",
+          "maxDataPoints": 2,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "Controller"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "eseries_controller_drive_interface_labels{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Drive Interfaces",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "datacenter",
+                    "array",
+                    "controller",
+                    "interface_type",
+                    "channel",
+                    "current_speed",
+                    "maximum_speed",
+                    "protection_info_capable"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "array": 1,
+                  "channel": 4,
+                  "controller": 2,
+                  "current_speed": 5,
+                  "datacenter": 0,
+                  "interface_type": 3,
+                  "maximum_speed": 6,
+                  "protection_info_capable": 7
+                },
+                "renameByName": {
+                  "array": "Array",
+                  "channel": "Channel",
+                  "controller": "Controller",
+                  "current_speed": "Current Speed",
+                  "datacenter": "Datacenter",
+                  "interface_type": "Type",
+                  "maximum_speed": "Max Speed",
+                  "protection_info_capable": "Protection Info"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Drive Interfaces",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 21
+      },
+      "id": 17,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Management network interfaces",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "ipv4_enabled"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "false": {
+                            "index": 1,
+                            "text": "No"
+                          },
+                          "true": {
+                            "index": 0,
+                            "text": "Yes"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "ipv6_enabled"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "false": {
+                            "index": 1,
+                            "text": "No"
+                          },
+                          "true": {
+                            "index": 0,
+                            "text": "Yes"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "full_duplex"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "false": {
+                            "index": 1,
+                            "text": "No"
+                          },
+                          "true": {
+                            "index": 0,
+                            "text": "Yes"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "remote_access_enabled"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "false": {
+                            "index": 1,
+                            "text": "No"
+                          },
+                          "true": {
+                            "index": 0,
+                            "text": "Yes"
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "current_speed"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "Mbits"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 24,
+            "x": 0,
+            "y": 6
+          },
+          "id": 7,
+          "interval": "1m",
+          "maxDataPoints": 2,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "Controller"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "eseries_controller_net_interface_labels{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Management Ports",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "datacenter",
+                    "array",
+                    "controller",
+                    "alias",
+                    "port",
+                    "mac_address",
+                    "link_status",
+                    "ipv4_enabled",
+                    "ipv4_address",
+                    "ipv4_subnet_mask",
+                    "ipv4_gateway",
+                    "ipv4_config_method",
+                    "ipv6_enabled",
+                    "ipv6_local_address",
+                    "ipv6_config_method",
+                    "current_speed",
+                    "full_duplex",
+                    "remote_access_enabled"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "alias": 3,
+                  "array": 1,
+                  "controller": 2,
+                  "current_speed": 14,
+                  "datacenter": 0,
+                  "full_duplex": 15,
+                  "ipv4_address": 8,
+                  "ipv4_config_method": 11,
+                  "ipv4_enabled": 7,
+                  "ipv4_gateway": 10,
+                  "ipv4_subnet_mask": 9,
+                  "ipv6_config_method": 14,
+                  "ipv6_enabled": 12,
+                  "ipv6_local_address": 13,
+                  "link_status": 6,
+                  "mac_address": 5,
+                  "port": 4,
+                  "remote_access_enabled": 16
+                },
+                "renameByName": {
+                  "alias": "Hostname",
+                  "array": "Array",
+                  "controller": "Controller",
+                  "current_speed": "Speed",
+                  "datacenter": "Datacenter",
+                  "full_duplex": "Full Duplex",
+                  "ipv4_address": "IPv4 Address",
+                  "ipv4_config_method": "IPv4 Config",
+                  "ipv4_enabled": "IPv4 Enabled",
+                  "ipv4_gateway": "Gateway",
+                  "ipv4_subnet_mask": "Subnet Mask",
+                  "ipv6_config_method": "IPv6 Config",
+                  "ipv6_enabled": "IPv6 Enabled",
+                  "ipv6_local_address": "IPv6 Address",
+                  "link_status": "Link Status",
+                  "mac_address": "MAC Address",
+                  "port": "Port",
+                  "remote_access_enabled": "Remote Access"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "DNS and NTP configuration per management port",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 16
+          },
+          "id": 8,
+          "interval": "1m",
+          "maxDataPoints": 2,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "Controller"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "eseries_controller_net_interface_labels{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "DNS & NTP Configuration",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "datacenter",
+                    "array",
+                    "controller",
+                    "alias",
+                    "port",
+                    "dns_config_method",
+                    "primary_dns_server",
+                    "backup_dns_server",
+                    "ntp_service"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "alias": 3,
+                  "array": 1,
+                  "backup_dns_server": 7,
+                  "controller": 2,
+                  "datacenter": 0,
+                  "dns_config_method": 5,
+                  "ntp_service": 8,
+                  "port": 4,
+                  "primary_dns_server": 6
+                },
+                "renameByName": {
+                  "alias": "Hostname",
+                  "array": "Array",
+                  "backup_dns_server": "Backup DNS",
+                  "controller": "Controller",
+                  "datacenter": "Datacenter",
+                  "dns_config_method": "DNS Config",
+                  "ntp_service": "NTP Service",
+                  "port": "Port",
+                  "primary_dns_server": "Primary DNS"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Management",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 22
+      },
+      "id": 104,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Power supply status and information",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 24,
+            "x": 0,
+            "y": 7
+          },
+          "id": 105,
+          "interval": "1m",
+          "maxDataPoints": 2,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "Slot"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "eseries_power_supply_labels{array=~\"$Array\",datacenter=~\"$Datacenter\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Power Supply",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "datacenter",
+                    "array",
+                    "slot",
+                    "status",
+                    "fru_type",
+                    "vendor",
+                    "part_number",
+                    "serial_number",
+                    "firmware_version"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "array": 1,
+                  "datacenter": 0,
+                  "firmware_version": 8,
+                  "fru_type": 4,
+                  "part_number": 6,
+                  "serial_number": 7,
+                  "slot": 2,
+                  "status": 3,
+                  "vendor": 5
+                },
+                "renameByName": {
+                  "array": "Array",
+                  "datacenter": "Datacenter",
+                  "firmware_version": "Firmware Version",
+                  "fru_type": "FRU Type",
+                  "part_number": "Part Number",
+                  "serial_number": "Serial Number",
+                  "slot": "Slot",
+                  "status": "Status",
+                  "vendor": "Vendor"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Power Supply",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 23
+      },
+      "id": 102,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Fan status and location",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 24,
+            "x": 0,
+            "y": 24
+          },
+          "id": 103,
+          "interval": "1m",
+          "maxDataPoints": 2,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "Location"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "eseries_fan_labels{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Fan",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "array",
+                    "controller",
+                    "datacenter",
+                    "location",
+                    "parent_type",
+                    "status",
+                    "fan_number"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "array": 1,
+                  "controller": 4,
+                  "datacenter": 0,
+                  "fan_number": 3,
+                  "location": 2,
+                  "parent_type": 6,
+                  "status": 5
+                },
+                "renameByName": {
+                  "array": "Array",
+                  "controller": "Controller",
+                  "datacenter": "Datacenter",
+                  "fan_number": "Fan",
+                  "location": "Location",
+                  "parent_type": "Parent Type",
+                  "status": "Status"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Fan",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      },
+      "id": 106,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Thermal sensor status and temperature readings",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 24,
+            "x": 0,
+            "y": 9
+          },
+          "id": 107,
+          "interval": "1m",
+          "maxDataPoints": 2,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "Location"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "eseries_thermal_sensor_labels{array=~\"$Array\",datacenter=~\"$Datacenter\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Thermal Sensor",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "datacenter",
+                    "array",
+                    "location",
+                    "status",
+                    "slot"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "array": 1,
+                  "datacenter": 0,
+                  "location": 2,
+                  "slot": 4,
+                  "status": 3
+                },
+                "renameByName": {
+                  "array": "Array",
+                  "datacenter": "Datacenter",
+                  "location": "Location",
+                  "slot": "Slot",
+                  "status": "Status"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Thermal Sensor",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 25
+      },
+      "id": 100,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "Battery status and information",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 24,
+            "x": 0,
+            "y": 10
+          },
+          "id": 101,
+          "interval": "1m",
+          "maxDataPoints": 2,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "Controller"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "eseries_battery_labels{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Battery",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "datacenter",
+                    "array",
+                    "controller",
+                    "status",
+                    "fru_type",
+                    "vendor",
+                    "vendor_part_number",
+                    "vendor_serial_number"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "array": 1,
+                  "controller": 2,
+                  "datacenter": 0,
+                  "fru_type": 4,
+                  "status": 3,
+                  "vendor": 5,
+                  "vendor_part_number": 6,
+                  "vendor_serial_number": 7
+                },
+                "renameByName": {
+                  "array": "Array",
+                  "controller": "Controller",
+                  "datacenter": "Datacenter",
+                  "fru_type": "FRU Type",
+                  "status": "Status",
+                  "vendor": "Vendor",
+                  "vendor_part_number": "Part Number",
+                  "vendor_serial_number": "Serial Number"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "Battery",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 26
+      },
+      "id": 108,
+      "panels": [
+        {
+          "datasource": "${DS_PROMETHEUS}",
+          "description": "SFP transceiver status and information",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 24,
+            "x": 0,
+            "y": 11
+          },
+          "id": 109,
+          "interval": "1m",
+          "maxDataPoints": 2,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "Controller"
+              }
+            ]
+          },
+          "pluginVersion": "8.1.8",
+          "targets": [
+            {
+              "exemplar": false,
+              "expr": "eseries_sfp_labels{array=~\"$Array\",controller=~\"$Controller\",datacenter=~\"$Datacenter\"}",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "SFP",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "array",
+                    "controller",
+                    "datacenter",
+                    "part_number",
+                    "serial_number",
+                    "status",
+                    "vendor",
+                    "port"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "array": 1,
+                  "controller": 2,
+                  "datacenter": 0,
+                  "part_number": 5,
+                  "port": 3,
+                  "serial_number": 6,
+                  "status": 4,
+                  "vendor": 7
+                },
+                "renameByName": {
+                  "array": "Array",
+                  "controller": "Controller",
+                  "datacenter": "Datacenter",
+                  "location": "Location",
+                  "part_number": "Part Number",
+                  "port": "Port",
+                  "serial_number": "Serial Number",
+                  "status": "Status",
+                  "vendor": "Vendor"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "SFP",
+      "type": "row"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 30,
+  "style": "dark",
+  "tags": [
+    "harvest",
+    "eseries"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "Prometheus",
+          "value": "Prometheus"
+        },
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": false,
+        "label": "Data Source",
+        "multi": false,
+        "name": "DS_PROMETHEUS",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(eseries_array_labels, datacenter)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "Datacenter",
+        "options": [],
+        "query": {
+          "query": "label_values(eseries_array_labels, datacenter)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(eseries_array_labels{datacenter=~\"$Datacenter\"}, array)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "Array",
+        "options": [],
+        "query": {
+          "query": "label_values(eseries_array_labels{datacenter=~\"$Datacenter\"}, array)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "label_values(eseries_controller_labels{datacenter=~\"$Datacenter\",array=~\"$Array\"}, controller)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "Controller",
+        "options": [],
+        "query": {
+          "query": "label_values(eseries_controller_labels{datacenter=~\"$Datacenter\",array=~\"$Array\"}, controller)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "5",
+          "value": "5"
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "TopResources",
+        "options": [
+          {
+            "selected": false,
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "selected": false,
+            "text": "2",
+            "value": "2"
+          },
+          {
+            "selected": false,
+            "text": "3",
+            "value": "3"
+          },
+          {
+            "selected": false,
+            "text": "4",
+            "value": "4"
+          },
+          {
+            "selected": true,
+            "text": "5",
+            "value": "5"
+          },
+          {
+            "selected": false,
+            "text": "6",
+            "value": "6"
+          },
+          {
+            "selected": false,
+            "text": "8",
+            "value": "8"
+          },
+          {
+            "selected": false,
+            "text": "10",
+            "value": "10"
+          }
+        ],
+        "query": "1,2,3,4,5,6,8,10",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-3h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "",
+  "title": "Eseries: Hardware",
+  "uid": "eseries-hardware",
+  "version": 1
+}

@@ -8,7 +8,4 @@ objects:
   Volume:            volume.yaml
   Array:             array.yaml
   Host:              host.yaml
-  Controller:        controller.yaml
-  Fan:               fan.yaml
-  Battery:           battery.yaml
-  PowerSupply:       power_supply.yaml
+  Hardware:          hardware.yaml

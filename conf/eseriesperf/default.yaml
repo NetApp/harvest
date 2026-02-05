@@ -7,6 +7,6 @@ schedule:
 objects:
   Volume:            volume.yaml
   Controller:        controller.yaml
-  Drive:             drive.yaml
-  Pool:              pool.yaml
+#  Drive:             drive.yaml
+#  Pool:              pool.yaml
   Array:             array.yaml

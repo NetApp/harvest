@@ -6,6 +6,7 @@ package matrix
 
 import (
 	"maps"
+	"strings"
 )
 
 // Instance struct and related methods
@@ -46,6 +47,11 @@ func (i *Instance) RemoveLabel(key string) {
 
 func (i *Instance) SetLabel(key, value string) {
 	i.labels[key] = value
+}
+
+// SetLabelTrimmed sets a label with leading and trailing whitespace removed from the value
+func (i *Instance) SetLabelTrimmed(key, value string) {
+	i.labels[key] = strings.TrimSpace(value)
 }
 
 func (i *Instance) SetLabels(labels map[string]string) {
