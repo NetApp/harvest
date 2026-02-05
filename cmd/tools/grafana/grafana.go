@@ -545,7 +545,7 @@ func initImportVars() {
 		m[filepath.Join(opts.dir, "7mode")] = &Folder{name: "Harvest-main-7mode"}
 		m[filepath.Join(opts.dir, "storagegrid")] = &Folder{name: "Harvest-main-StorageGrid"}
 		m[filepath.Join(opts.dir, "asar2")] = &Folder{name: "Harvest-main-ASAr2"}
-		m[filepath.Join(opts.dir, "eseries")] = &Folder{name: "Harvest-main-Eseries"}
+		m[filepath.Join(opts.dir, "eseries")] = &Folder{name: "Harvest-main-E-Series"}
 	case opts.dir != "" && opts.serverfolder.name != "":
 		m[opts.dir] = &Folder{name: opts.serverfolder.name}
 	case opts.dir != "" && opts.customizeDir != "":
