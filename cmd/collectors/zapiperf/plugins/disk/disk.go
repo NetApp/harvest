@@ -755,7 +755,7 @@ func (d *Disk) calculateEnvironmentMetrics(data *matrix.Matrix) {
 						case power.RailOutput:
 							sumOutput += pairPower
 							outputPairs++
-						default:
+						case power.RailUnknown:
 							sumUnknown += pairPower
 							unknownPairs++
 						}
