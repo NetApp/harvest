@@ -6,8 +6,6 @@
 
 NetApp E-Series storage systems with REST API support can be monitored directly by Harvest. This guide covers the setup required to prepare your E-Series array.
 
-## Requirements
-
 ## Monitor Role Requirements
 
 For Harvest monitoring, use a user with the **Monitor** role.
