@@ -112,10 +112,9 @@ func TestESeries_PollData(t *testing.T) {
 			template:     "volume.yaml",
 			pollDataPath: "testdata/volume.json",
 			numInstances: 22,
-			numMetrics:   44,
+			numMetrics:   66,
 			instanceKey:  "vmware-hdd1",
 			expectedLabels: []string{
-				"block_size",
 				"offline",
 				"raid_level",
 				"status",
@@ -197,8 +196,8 @@ func TestESeries_Init(t *testing.T) {
 			object:       "Volume",
 			template:     "volume.yaml",
 			wantErr:      false,
-			numMetrics:   2,
-			numLabels:    9,
+			numMetrics:   3,
+			numLabels:    8,
 			expectedKeys: []string{"name"},
 		},
 	}

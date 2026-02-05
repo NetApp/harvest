@@ -4,7 +4,6 @@ object: eseries_volume
 
 counters:
   - ^^name                                => volume
-  - ^blkSize                              => block_size
   - ^listOfMappings                       => list_of_mappings
   - ^metadata                             => metadata
   - ^offline                              => offline
@@ -12,6 +11,7 @@ counters:
   - ^status                               => status
   - ^volumeGroupRef                       => volume_group_ref
   - ^wwn                                  => wwid
+  - blkSize                               => block_size
   - capacity                              => reported_capacity
   - totalSizeInBytes                      => allocated_capacity
 
@@ -23,7 +23,6 @@ export_options:
   instance_keys:
     - volume
   instance_labels:
-    - block_size
     - hosts
     - luns
     - mapping_types

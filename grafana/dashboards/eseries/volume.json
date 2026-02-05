@@ -59,7 +59,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1770120569992,
+  "iteration": 1770277648441,
   "links": [
     {
       "asDropdown": true,
@@ -724,6 +724,18 @@
                     "value": "bytes"
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value #D"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "bytes"
+                  }
+                ]
               }
             ]
           },
@@ -778,6 +790,17 @@
               "intervalFactor": 1,
               "legendFormat": "",
               "refId": "C"
+            },
+            {
+              "exemplar": false,
+              "expr": "label_join(\n  eseries_volume_block_size{array=~\"$Array\",datacenter=~\"$Datacenter\",volume=~\"$Volume\"},\n  \"unique_id\",\n  \"-\",\n  \"datacenter\",\n  \"array\",\n  \"volume\"\n)",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "D"
             }
           ],
           "timeFrom": null,
@@ -802,7 +825,6 @@
               "options": {
                 "include": {
                   "names": [
-                    "block_size",
                     "array",
                     "datacenter",
                     "hosts",
@@ -812,10 +834,11 @@
                     "raid_level",
                     "status",
                     "volume",
+                    "workload",
                     "wwid",
                     "Value #A",
                     "Value #C",
-                    "workload"
+                    "Value #D"
                   ]
                 }
               }
@@ -824,23 +847,29 @@
               "id": "organize",
               "options": {
                 "excludeByName": {
+                  "Value #D": false,
                   "array 2": true,
                   "array 3": true,
+                  "array 4": true,
                   "datacenter 2": true,
                   "datacenter 3": true,
+                  "datacenter 4": true,
                   "volume 2": true,
-                  "volume 3": true
+                  "volume 3": true,
+                  "volume 4": true
                 },
                 "indexByName": {
                   "Value #A": 12,
                   "Value #C": 11,
+                  "Value #D": 10,
                   "array": 1,
                   "array 2": 14,
                   "array 3": 17,
-                  "block_size": 10,
+                  "array 4": 20,
                   "datacenter": 0,
                   "datacenter 2": 15,
                   "datacenter 3": 18,
+                  "datacenter 4": 21,
                   "hosts": 4,
                   "mapping_types": 5,
                   "offline": 8,
@@ -850,12 +879,14 @@
                   "volume": 2,
                   "volume 2": 16,
                   "volume 3": 19,
+                  "volume 4": 22,
                   "workload": 7,
                   "wwid": 13
                 },
                 "renameByName": {
                   "Value #A": "Allocated capacity",
                   "Value #C": "Reported capacity",
+                  "Value #D": "Block size",
                   "array": "Array",
                   "block_size": "Block size",
                   "datacenter": "Datacenter",
