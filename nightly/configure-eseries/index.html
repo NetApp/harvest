@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="../prepare-fsx-clusters/">
+        <link rel="prev" href="../configure-storagegrid/">
       
       
-        <link rel="next" href="../prepare-storagegrid-clusters/">
+        <link rel="next" href="../configure-unix/">
       
       
       <link rel="icon" href="../assets/harvest.svg">
@@ -20,7 +20,7 @@
     
     
       
-        <title>ONTAP 7mode - Harvest</title>
+        <title>E-Series - Harvest</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#enabling-https-and-tls-ontap-7-mode-only" class="md-skip">
+        <a href="#requirements" class="md-skip">
           Skip to content
         </a>
       
@@ -113,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ONTAP 7mode
+              E-Series
             
           </span>
         </div>
@@ -599,21 +599,19 @@
       
   
   
-    
   
   
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
         
           
           <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
@@ -627,7 +625,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             Prepare Monitored Systems
@@ -701,30 +699,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    ONTAP 7mode
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../prepare-7mode-clusters/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -733,68 +711,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#creating-ontap-user" class="md-nav__link">
-    <span class="md-ellipsis">
-      Creating ONTAP user
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Creating ONTAP user">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#create-the-role-with-required-capabilities" class="md-nav__link">
-    <span class="md-ellipsis">
-      Create the role with required capabilities
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#create-a-group-for-this-role" class="md-nav__link">
-    <span class="md-ellipsis">
-      Create a group for this role
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#create-a-user-for-the-role-and-enter-the-password-when-prompted" class="md-nav__link">
-    <span class="md-ellipsis">
-      Create a user for the role and enter the password when prompted
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1021,19 +937,21 @@
       
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" checked>
         
           
           <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
@@ -1047,7 +965,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_10">
             <span class="md-nav__icon md-icon"></span>
             Configure Collectors
@@ -1184,10 +1102,28 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../configure-eseries/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    E-Series
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -1196,6 +1132,168 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Requirements
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metrics
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameters
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#harvest-configuration-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Harvest Configuration Example
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#collector-configuration-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Collector Configuration File
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#object-configuration-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Object Configuration File
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#template-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Template Example
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Template Example">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#query-path-and-array-id-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      Query Path and Array ID Injection
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#counters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Counters
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#export-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      Export Options
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plugins" class="md-nav__link">
+    <span class="md-ellipsis">
+      Plugins
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#eseriesperf-collector" class="md-nav__link">
+    <span class="md-ellipsis">
+      EseriesPerf Collector
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="EseriesPerf Collector">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#static-counter-definitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Static Counter Definitions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#performance-template-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Performance Template Example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1984,8 +2082,6 @@
   
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -1994,37 +2090,139 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#creating-ontap-user" class="md-nav__link">
+  <a href="#requirements" class="md-nav__link">
     <span class="md-ellipsis">
-      Creating ONTAP user
+      Requirements
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Creating ONTAP user">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metrics
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameters
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#create-the-role-with-required-capabilities" class="md-nav__link">
+  <a href="#harvest-configuration-example" class="md-nav__link">
     <span class="md-ellipsis">
-      Create the role with required capabilities
+      Harvest Configuration Example
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#create-a-group-for-this-role" class="md-nav__link">
+  <a href="#collector-configuration-file" class="md-nav__link">
     <span class="md-ellipsis">
-      Create a group for this role
+      Collector Configuration File
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#object-configuration-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Object Configuration File
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#template-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Template Example
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Template Example">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#query-path-and-array-id-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      Query Path and Array ID Injection
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#counters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Counters
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#export-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      Export Options
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plugins" class="md-nav__link">
+    <span class="md-ellipsis">
+      Plugins
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#eseriesperf-collector" class="md-nav__link">
+    <span class="md-ellipsis">
+      EseriesPerf Collector
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="EseriesPerf Collector">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#static-counter-definitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Static Counter Definitions
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#create-a-user-for-the-role-and-enter-the-password-when-prompted" class="md-nav__link">
+  <a href="#performance-template-example" class="md-nav__link">
     <span class="md-ellipsis">
-      Create a user for the role and enter the password when prompted
+      Performance Template Example
     </span>
   </a>
   
@@ -2050,43 +2248,308 @@
                   
 
 
-<p>NetApp Harvest requires login credentials to access monitored hosts. Although, a generic admin account can be used, it
-is best practice to create a dedicated monitoring account with the least privilege access.</p>
-<p>ONTAP 7-mode supports only username / password based authentication with NetApp Harvest.
-Harvest communicates with monitored systems exclusively via HTTPS, which is not enabled by default in Data
-ONTAP 7-mode. Login as a user with full administrative privileges and execute the following steps.</p>
-<h1 id="enabling-https-and-tls-ontap-7-mode-only">Enabling HTTPS and TLS (ONTAP 7-mode only)<a class="headerlink" href="#enabling-https-and-tls-ontap-7-mode-only" title="Permanent link">&para;</a></h1>
-<p>Verify SSL is configured</p>
-<div class="highlight"><pre><span></span><code>secureadmin status ssl
+  <h1>E-Series</h1>
+
+<div class="admonition note">
+<p class="admonition-title">Beta Feature</p>
+<p>The Eseries and EseriesPerf collectors are new in Harvest and should be considered beta. 
+Feedback and bug reports are welcome on <a href="https://github.com/NetApp/harvest/discussions">GitHub Discussions</a>.</p>
+</div>
+<p>The Eseries collectors use the REST protocol to collect data from NetApp E-Series storage systems.</p>
+<p>The <a href="#eseriesperf-collector">EseriesPerf collector</a> is an extension of this collector for performance metrics, therefore they share many parameters and configuration settings.</p>
+<h3 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">&para;</a></h3>
+<ul>
+<li>E-Series storage array with REST API support</li>
+<li>A user account with <strong>Monitor role</strong> permissions on the E-Series array (see <a href="../prepare-eseries/#monitor-role-requirements">prepare-eseries.md</a>)</li>
+</ul>
+<p>No SDK or other requirements.</p>
+<h3 id="metrics">Metrics<a class="headerlink" href="#metrics" title="Permanent link">&para;</a></h3>
+<p>The Eseries collector collects a dynamic set of metrics from E-Series storage arrays. The E-Series REST API returns JSON documents and Harvest extracts values from the JSON using template definitions with dot notation paths.</p>
+<p>The collector automatically discovers the storage array and extracts metrics for volumes, controllers, hardware components, and other objects.</p>
+<h3 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h3>
+<p>The parameters of the collector are distributed across three files:</p>
+<ul>
+<li><a href="../configure-harvest-basic/#pollers">Harvest configuration file</a> (default: <code>harvest.yml</code>)</li>
+<li>Eseries configuration file (default: <code>conf/eseries/default.yaml</code>)</li>
+<li>Each object has its own configuration file (located in <code>conf/eseries/$version/</code>)</li>
+</ul>
+<p>Except for <code>addr</code> and <code>datacenter</code>, all other parameters of the Eseries collector can be defined in either of these three files. Parameters defined in the lower-level file override parameters in the higher-level ones. This allows you to configure each object individually, or use the same parameters for all objects.</p>
+<p>The full set of parameters are described <a href="#collector-configuration-file">below</a>.</p>
+<h4 id="harvest-configuration-example">Harvest Configuration Example<a class="headerlink" href="#harvest-configuration-example" title="Permanent link">&para;</a></h4>
+<p>In your <code>harvest.yml</code>, configure a poller pointing to your E-Series storage array:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Pollers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">eseries-array</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">datacenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DC-01</span>
+<span class="w">    </span><span class="nt">addr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0.1.100</span><span class="w">                    </span><span class="c1"># E-Series array management address</span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">monitor</span><span class="w">                   </span><span class="c1"># Array user with Monitor role</span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">enterpass</span><span class="w">                 </span><span class="c1"># Or use credential_script</span>
+<span class="w">    </span><span class="nt">collectors</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Eseries</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EseriesPerf</span>
+<span class="w">    </span><span class="nt">exporters</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prometheus</span>
 </code></pre></div>
-<p>If ssl is ‘active’ continue. If not, setup SSL and be sure to choose a Key length (bits) of 2048:</p>
-<div class="highlight"><pre><span></span><code>secureadmin setup ssl
+<h4 id="collector-configuration-file">Collector Configuration File<a class="headerlink" href="#collector-configuration-file" title="Permanent link">&para;</a></h4>
+<p>This configuration file contains a list of objects that should be collected and the filenames of their templates. Additionally, this file contains the parameters that are applied as defaults to all objects.</p>
+<table>
+<thead>
+<tr>
+<th>parameter</th>
+<th>type</th>
+<th>description</th>
+<th>default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>client_timeout</code></td>
+<td>duration (Go-syntax)</td>
+<td>how long to wait for server responses</td>
+<td>30s</td>
+</tr>
+<tr>
+<td><code>jitter</code></td>
+<td>duration (Go-syntax), optional</td>
+<td>Each Harvest collector runs independently, which means that at startup, each collector may send its REST queries at nearly the same time. To spread out the collector startup times over a broader period, you can use <code>jitter</code> to randomly distribute collector startup across a specified duration. For example, a <code>jitter</code> of <code>1m</code> starts each collector after a random delay between 0 and 60 seconds. For more details, refer to <a href="https://github.com/NetApp/harvest/discussions/2856">this discussion</a>.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>schedule</code></td>
+<td>list, <strong>required</strong></td>
+<td>how frequently to retrieve metrics from the E-Series array</td>
+<td></td>
+</tr>
+<tr>
+<td>- <code>counter</code></td>
+<td>duration (Go-syntax)</td>
+<td>poll frequency of updating the counter metadata cache</td>
+<td>24 hours</td>
+</tr>
+<tr>
+<td>- <code>data</code></td>
+<td>duration (Go-syntax)</td>
+<td>how frequently this collector/object should retrieve metrics</td>
+<td>3 minutes</td>
+</tr>
+</tbody>
+</table>
+<p>The default configuration file (<code>conf/eseries/default.yaml</code>) defines the objects to collect:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">collector</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Eseries</span>
+
+<span class="nt">schedule</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">counter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">24h</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">data</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3m</span>
+
+<span class="nt">objects</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">Volume</span><span class="p">:</span><span class="w">            </span><span class="l l-Scalar l-Scalar-Plain">volume.yaml</span>
+<span class="w">  </span><span class="nt">Array</span><span class="p">:</span><span class="w">             </span><span class="l l-Scalar l-Scalar-Plain">array.yaml</span>
+<span class="w">  </span><span class="nt">Host</span><span class="p">:</span><span class="w">              </span><span class="l l-Scalar l-Scalar-Plain">host.yaml</span>
+<span class="w">  </span><span class="nt">Controller</span><span class="p">:</span><span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">controller.yaml</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>SSL Setup has already been done before. Do you want to proceed? [no] yes
-Country Name (2 letter code) [US]: NL
-State or Province Name (full name) [California]: Noord-Holland
-Locality Name (city, town, etc.) [Santa Clara]: Schiphol
-Organization Name (company) [Your Company]: NetApp
-Organization Unit Name (division): SalesEngineering
-Common Name (fully qualified domain name) [sdt-7dot1a.nltestlab.hq.netapp.com]:
-Administrator email: noreply@netapp.com
-Days until expires [5475] :5475 Key length (bits) [512] :2048
+<p>For each object, we define the filename of the object configuration file.
+The object configuration files are located in subdirectories matching the SANtricity OS version (e.g., <code>11.80.0</code>).
+At runtime, the collector will select the object configuration file that closest matches the version of the target E-Series system.</p>
+<h3 id="object-configuration-file">Object Configuration File<a class="headerlink" href="#object-configuration-file" title="Permanent link">&para;</a></h3>
+<p>The Object configuration file ("subtemplate") should contain the following parameters:</p>
+<table>
+<thead>
+<tr>
+<th>parameter</th>
+<th>type</th>
+<th>description</th>
+<th>default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>string, <strong>required</strong></td>
+<td>display name of the collector that will collect this object</td>
+<td></td>
+</tr>
+<tr>
+<td><code>object</code></td>
+<td>string, <strong>required</strong></td>
+<td>short name of the object, used to prefix metrics (e.g., <code>eseries_volume</code>)</td>
+<td></td>
+</tr>
+<tr>
+<td><code>query</code></td>
+<td>string, <strong>required</strong></td>
+<td>REST API endpoint to query, relative to <code>/devmgr/v2/</code> (can include <code>{array_id}</code> placeholder)</td>
+<td></td>
+</tr>
+<tr>
+<td><code>counters</code></td>
+<td>list, <strong>required</strong></td>
+<td>list of counters to collect (see <a href="#counters">Counters</a> section below)</td>
+<td></td>
+</tr>
+<tr>
+<td><code>plugins</code></td>
+<td>list, optional</td>
+<td>list of plugins to run on the collected data (see <a href="#plugins">Plugins</a> section below)</td>
+<td></td>
+</tr>
+<tr>
+<td><code>export_options</code></td>
+<td>section, <strong>required</strong></td>
+<td>defines how to export instance labels and keys</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="template-example">Template Example<a class="headerlink" href="#template-example" title="Permanent link">&para;</a></h3>
+<p>Here's an example of the Volume object template (<code>conf/eseries/11.80.0/volume.yaml</code>):</p>
+<div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Volume</span>
+<span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">storage-systems/{array_id}/volumes</span>
+<span class="nt">object</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eseries_volume</span>
+
+<span class="nt">counters</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^name                                =&gt; volume</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^listOfMappings                       =&gt; list_of_mappings</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^metadata                             =&gt; metadata</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^offline                              =&gt; offline</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^raidLevel                            =&gt; raid_level</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^status                               =&gt; status</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^volumeGroupRef                       =&gt; volume_group_ref</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^wwn                                  =&gt; wwid</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">blkSize                               =&gt; block_size</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">capacity                              =&gt; reported_capacity</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">totalSizeInBytes                      =&gt; allocated_capacity</span>
+
+<span class="nt">plugins</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Volume</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VolumeMapping</span>
+
+<span class="nt">export_options</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">instance_keys</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">volume</span>
+<span class="w">  </span><span class="nt">instance_labels</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hosts</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">luns</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mapping_types</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">offline</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pool</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">raid_level</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">status</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">volume</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">workload</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wwid</span>
 </code></pre></div>
-<p>Enable management via SSL and enable TLS</p>
-<div class="highlight"><pre><span></span><code>options httpd.admin.ssl.enable on
-options tls.enable on  
+<h4 id="query-path-and-array-id-injection">Query Path and Array ID Injection<a class="headerlink" href="#query-path-and-array-id-injection" title="Permanent link">&para;</a></h4>
+<p>The <code>query</code> parameter can include <code>{array_id}</code> as a placeholder. The collector automatically discovers the storage array ID and injects it into the query URL at runtime.</p>
+<p>For example:
+- Template: <code>storage-systems/{array_id}/volumes</code>
+- Runtime: <code>storage-systems/1/volumes</code></p>
+<h3 id="counters">Counters<a class="headerlink" href="#counters" title="Permanent link">&para;</a></h3>
+<p>Counters define which metrics and labels to collect from the REST API response. Each counter line follows this format:</p>
+<div class="highlight"><pre><span></span><code>[prefix]json_field_name =&gt; display_name
 </code></pre></div>
-<h2 id="creating-ontap-user">Creating ONTAP user<a class="headerlink" href="#creating-ontap-user" title="Permanent link">&para;</a></h2>
-<h3 id="create-the-role-with-required-capabilities">Create the role with required capabilities<a class="headerlink" href="#create-the-role-with-required-capabilities" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>role add netapp-harvest-role -c &quot;Role for performance monitoring by NetApp Harvest&quot; -a login-http-admin,api-system-get-version,api-system-get-info,api-perf-object-*,api-emsautosupport-log 
+<p><strong>Counter Prefixes:</strong></p>
+<ul>
+<li><code>^^</code> - <strong>Instance key</strong>: Uniquely identifies each instance (required, must have at least one)</li>
+<li><code>^</code> - <strong>Instance label</strong>: String metadata exported to <code>&lt;object&gt;_labels</code> metric</li>
+<li>No prefix - <strong>Numeric metric</strong>: Exported as its own time-series metric</li>
+</ul>
+<p><strong>Arrow Syntax (<code>=&gt;</code>):</strong></p>
+<p>The arrow renames the JSON field to a shorter display name used in metrics:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">counters</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^name                    =&gt; volume</span><span class="w">           </span><span class="c1"># Instance key</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^raidLevel                =&gt; raid_level</span><span class="w">       </span><span class="c1"># Label</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">totalSizeInBytes          =&gt; allocated_capacity</span><span class="w">  </span><span class="c1"># Metric</span>
 </code></pre></div>
-<h3 id="create-a-group-for-this-role">Create a group for this role<a class="headerlink" href="#create-a-group-for-this-role" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>useradmin group add netapp-harvest-group -c &quot;Group for performance monitoring by NetApp Harvest&quot; -r netapp-harvest-role 
+<p>This produces metrics like:
+- <code>eseries_volume_allocated_capacity{volume="MyVolume", ...}</code>
+- <code>eseries_volume_labels{volume="MyVolume", raid_level="raid6", ...}</code></p>
+<h3 id="export-options">Export Options<a class="headerlink" href="#export-options" title="Permanent link">&para;</a></h3>
+<p>The <code>export_options</code> section controls what gets exported:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">export_options</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">instance_keys</span><span class="p">:</span><span class="w">      </span><span class="c1"># Primary identifier(s)</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">volume</span><span class="w">          </span>
+<span class="w">  </span><span class="nt">instance_labels</span><span class="p">:</span><span class="w">    </span><span class="c1"># Labels to include in &lt;object&gt;_labels metric</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hosts</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">luns</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mapping_types</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">offline</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pool</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">raid_level</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">status</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">volume</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">workload</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wwid</span><span class="w">    </span>
 </code></pre></div>
-<h3 id="create-a-user-for-the-role-and-enter-the-password-when-prompted">Create a user for the role and enter the password when prompted<a class="headerlink" href="#create-a-user-for-the-role-and-enter-the-password-when-prompted" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>useradmin user add netapp-harvest -c &quot;User account for performance monitoring by NetApp Harvest&quot; -n &quot;NetApp Harvest&quot; -g netapp-harvest-group
+<ul>
+<li><strong>instance_keys</strong>: Unique identifier labels (from <code>^^</code> counters)</li>
+<li><strong>instance_labels</strong>: All labels to export in the <code>&lt;object&gt;_labels</code> metric</li>
+</ul>
+<h3 id="plugins">Plugins<a class="headerlink" href="#plugins" title="Permanent link">&para;</a></h3>
+<p>Eseries collectors support plugins that enrich or transform collected data:</p>
+<p><strong>Plugin Configuration:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nt">plugins</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Volume</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VolumeMapping</span>
 </code></pre></div>
-<p>The user is now created and can be configured for use by NetApp Harvest.</p>
+<p>Plugins run after data collection but before export, allowing them to add computed metrics or enrich labels.</p>
+<hr />
+<h2 id="eseriesperf-collector">EseriesPerf Collector<a class="headerlink" href="#eseriesperf-collector" title="Permanent link">&para;</a></h2>
+<p>The EseriesPerf collector extends Eseries to collect <strong>performance metrics</strong> from E-Series arrays using the <code>/live-statistics</code> endpoint. It implements delta calculations similar to RestPerf and ZapiPerf collectors.</p>
+<h3 id="static-counter-definitions">Static Counter Definitions<a class="headerlink" href="#static-counter-definitions" title="Permanent link">&para;</a></h3>
+<p>Unlike Eseries, EseriesPerf uses a <strong>static counter definitions file</strong> (<code>conf/eseriesperf/static_counter_definitions.yaml</code>) that defines how to process each counter:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">objects</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">eseries_volume</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">counter_definitions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">readOps</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rate</span><span class="w">                    </span><span class="c1"># Calculate delta per second</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">readTimeTotal</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">average</span><span class="w">                 </span><span class="c1"># Divide by base counter</span>
+<span class="w">        </span><span class="nt">base_counter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">readOps</span><span class="w">         </span><span class="c1"># readTimeTotal / readOps = avg latency</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">readBytes</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rate</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">writeOps</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rate</span>
+</code></pre></div>
+<h3 id="performance-template-example">Performance Template Example<a class="headerlink" href="#performance-template-example" title="Permanent link">&para;</a></h3>
+<p>Here's an example EseriesPerf template (<code>conf/eseriesperf/11.80.0/volume.yaml</code>):</p>
+<div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Volume</span>
+<span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">storage-systems/{array_id}/live-statistics</span>
+<span class="nt">object</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eseries_volume</span>
+<span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">volume</span>
+
+<span class="nt">counters</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">^^volumeName                  =&gt; volume</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lastResetTimeInMS             =&gt; last_reset_time</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">observedTimeInMS              =&gt; observed_time</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">readBytes                     =&gt; read_data</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">readHitOps                    =&gt; read_hit_ops</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">readOps                       =&gt; read_ops</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">readTimeTotal                 =&gt; read_latency</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">writeBytes                    =&gt; write_data</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">writeHitOps                   =&gt; write_hit_ops</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">writeOps                      =&gt; write_ops</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">writeTimeTotal                =&gt; write_latency</span>
+
+<span class="nt">plugins</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CacheHitRatio</span>
+
+<span class="nt">export_options</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">instance_keys</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">volume</span>
+</code></pre></div>
+<p>The static counter definitions file determines how each counter is processed:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># conf/eseriesperf/static_counter_definitions.yaml</span>
+<span class="nt">objects</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">eseries_volume</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">counter_definitions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">readOps</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rate</span><span class="w">                    </span><span class="c1"># Becomes read_ops (ops/sec)</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">readTimeTotal</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">average</span><span class="w">                 </span><span class="c1"># Becomes read_latency (ms/op)</span>
+<span class="w">        </span><span class="nt">base_counter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">readOps</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">readBytes</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rate</span><span class="w">                    </span><span class="c1"># Becomes read_data (bytes/sec)</span>
+</code></pre></div>
+<p>See <a href="../prepare-eseries/">prepare-eseries.md</a> for system setup and <a href="../help/troubleshooting/">troubleshooting guide</a> for general issues.</p>
 
 
 

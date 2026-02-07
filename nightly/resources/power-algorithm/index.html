@@ -744,6 +744,27 @@
   
   
     <li class="md-nav__item">
+      <a href="../../prepare-eseries/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    E-Series
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../prepare-cisco-switch/" class="md-nav__link">
         
   
@@ -1066,6 +1087,27 @@
   
   <span class="md-ellipsis">
     StorageGRID
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configure-eseries/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    E-Series
   </span>
   
 
@@ -2068,6 +2110,9 @@ as reported by ONTAP via <code>/api/private/cli/system/chassis/fru</code></p>
 <h2 id="disk-shelf-power">Disk shelf power<a class="headerlink" href="#disk-shelf-power" title="Permanent link">&para;</a></h2>
 <p>Disk shelf power is calculated by collecting <code>psu.power_drawn</code>, as reported by REST, via
 <code>/api/storage/shelves</code> or <code>sensor-reading</code>, as reported by ZAPI <code>storage-shelf-info-get-iter</code>.</p>
+<p>When shelves report both input and output rail sensors, Harvest classifies the rail from sensor labels
+and uses only input-rail pairs to calculate shelf power. If no input rail is detected, Harvest falls back
+to output-rail pairs, and if rail classification is unavailable, all pairs are summed.</p>
 <p>The power for <a href="https://kb.netapp.com/onprem/ontap/hardware/FAQ%3A_How_do_shelf_product_IDs_and_modules_in_ONTAP_map_to_a_model_of_a_shelf_or_storage_system_with_embedded_storage">embedded shelves</a>
 is ignored, since that power is already accounted for in the controller's power draw.</p>
 <h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>

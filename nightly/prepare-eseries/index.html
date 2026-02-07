@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="../prepare-fsx-clusters/">
+        <link rel="prev" href="../prepare-storagegrid-clusters/">
       
       
-        <link rel="next" href="../prepare-storagegrid-clusters/">
+        <link rel="next" href="../prepare-cisco-switch/">
       
       
       <link rel="icon" href="../assets/harvest.svg">
@@ -20,7 +20,7 @@
     
     
       
-        <title>ONTAP 7mode - Harvest</title>
+        <title>E-Series - Harvest</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#enabling-https-and-tls-ontap-7-mode-only" class="md-skip">
+        <a href="#prepare-e-series-systems" class="md-skip">
           Skip to content
         </a>
       
@@ -113,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ONTAP 7mode
+              E-Series
             
           </span>
         </div>
@@ -701,30 +701,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    ONTAP 7mode
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../prepare-7mode-clusters/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -733,68 +713,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#creating-ontap-user" class="md-nav__link">
-    <span class="md-ellipsis">
-      Creating ONTAP user
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Creating ONTAP user">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#create-the-role-with-required-capabilities" class="md-nav__link">
-    <span class="md-ellipsis">
-      Create the role with required capabilities
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#create-a-group-for-this-role" class="md-nav__link">
-    <span class="md-ellipsis">
-      Create a group for this role
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#create-a-user-for-the-role-and-enter-the-password-when-prompted" class="md-nav__link">
-    <span class="md-ellipsis">
-      Create a user for the role and enter the password when prompted
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -825,10 +743,30 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../prepare-eseries/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    E-Series
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -837,6 +775,35 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#monitor-role-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Monitor Role Requirements
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1994,44 +1961,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#creating-ontap-user" class="md-nav__link">
+  <a href="#monitor-role-requirements" class="md-nav__link">
     <span class="md-ellipsis">
-      Creating ONTAP user
+      Monitor Role Requirements
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Creating ONTAP user">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#create-the-role-with-required-capabilities" class="md-nav__link">
-    <span class="md-ellipsis">
-      Create the role with required capabilities
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#create-a-group-for-this-role" class="md-nav__link">
-    <span class="md-ellipsis">
-      Create a group for this role
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#create-a-user-for-the-role-and-enter-the-password-when-prompted" class="md-nav__link">
-    <span class="md-ellipsis">
-      Create a user for the role and enter the password when prompted
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -2050,43 +1984,17 @@
                   
 
 
-<p>NetApp Harvest requires login credentials to access monitored hosts. Although, a generic admin account can be used, it
-is best practice to create a dedicated monitoring account with the least privilege access.</p>
-<p>ONTAP 7-mode supports only username / password based authentication with NetApp Harvest.
-Harvest communicates with monitored systems exclusively via HTTPS, which is not enabled by default in Data
-ONTAP 7-mode. Login as a user with full administrative privileges and execute the following steps.</p>
-<h1 id="enabling-https-and-tls-ontap-7-mode-only">Enabling HTTPS and TLS (ONTAP 7-mode only)<a class="headerlink" href="#enabling-https-and-tls-ontap-7-mode-only" title="Permanent link">&para;</a></h1>
-<p>Verify SSL is configured</p>
-<div class="highlight"><pre><span></span><code>secureadmin status ssl
-</code></pre></div>
-<p>If ssl is ‘active’ continue. If not, setup SSL and be sure to choose a Key length (bits) of 2048:</p>
-<div class="highlight"><pre><span></span><code>secureadmin setup ssl
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>SSL Setup has already been done before. Do you want to proceed? [no] yes
-Country Name (2 letter code) [US]: NL
-State or Province Name (full name) [California]: Noord-Holland
-Locality Name (city, town, etc.) [Santa Clara]: Schiphol
-Organization Name (company) [Your Company]: NetApp
-Organization Unit Name (division): SalesEngineering
-Common Name (fully qualified domain name) [sdt-7dot1a.nltestlab.hq.netapp.com]:
-Administrator email: noreply@netapp.com
-Days until expires [5475] :5475 Key length (bits) [512] :2048
-</code></pre></div>
-<p>Enable management via SSL and enable TLS</p>
-<div class="highlight"><pre><span></span><code>options httpd.admin.ssl.enable on
-options tls.enable on  
-</code></pre></div>
-<h2 id="creating-ontap-user">Creating ONTAP user<a class="headerlink" href="#creating-ontap-user" title="Permanent link">&para;</a></h2>
-<h3 id="create-the-role-with-required-capabilities">Create the role with required capabilities<a class="headerlink" href="#create-the-role-with-required-capabilities" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>role add netapp-harvest-role -c &quot;Role for performance monitoring by NetApp Harvest&quot; -a login-http-admin,api-system-get-version,api-system-get-info,api-perf-object-*,api-emsautosupport-log 
-</code></pre></div>
-<h3 id="create-a-group-for-this-role">Create a group for this role<a class="headerlink" href="#create-a-group-for-this-role" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>useradmin group add netapp-harvest-group -c &quot;Group for performance monitoring by NetApp Harvest&quot; -r netapp-harvest-role 
-</code></pre></div>
-<h3 id="create-a-user-for-the-role-and-enter-the-password-when-prompted">Create a user for the role and enter the password when prompted<a class="headerlink" href="#create-a-user-for-the-role-and-enter-the-password-when-prompted" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>useradmin user add netapp-harvest -c &quot;User account for performance monitoring by NetApp Harvest&quot; -n &quot;NetApp Harvest&quot; -g netapp-harvest-group
-</code></pre></div>
-<p>The user is now created and can be configured for use by NetApp Harvest.</p>
+<h1 id="prepare-e-series-systems">Prepare E-Series Systems<a class="headerlink" href="#prepare-e-series-systems" title="Permanent link">&para;</a></h1>
+<div class="admonition note">
+<p class="admonition-title">Beta Feature</p>
+<p>E-Series monitoring support is new in Harvest and should be considered beta.
+Feedback and bug reports are welcome on <a href="https://github.com/NetApp/harvest/discussions">GitHub Discussions</a>.</p>
+</div>
+<p>NetApp E-Series storage systems with REST API support can be monitored directly by Harvest. This guide covers the setup required to prepare your E-Series array.</p>
+<h2 id="monitor-role-requirements">Monitor Role Requirements<a class="headerlink" href="#monitor-role-requirements" title="Permanent link">&para;</a></h2>
+<p>For Harvest monitoring, use a user with the <strong>Monitor</strong> role.
+<strong>Official Documentation:</strong> <a href="https://docs.netapp.com/us-en/e-series-santricity/sm-settings/view-local-user-roles.html">View Local User Roles</a></p>
+<p>For E-Series configuration in Harvest, see <a href="/configure-eseries/">Configure E-Series</a>.</p>
 
 
 
