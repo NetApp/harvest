@@ -10,6 +10,7 @@ counters:
   - ^clone_parent_name                            => clone_parent_volume
   - ^clone_parent_vserver                         => clone_parent_svm
   - ^clone_volume                                 => is_flexclone
+  - ^instance_uuid                                => uuid
   - ^is_encrypted                                 => isEncrypted
   - ^is_sis_volume                                => is_sis_volume
   - ^is_space_enforcement_logical                 => is_space_enforcement_logical
@@ -24,7 +25,6 @@ counters:
   - ^tiering_minimum_cooling_days                 => tiering_minimum_cooling_days
   - ^tiering_policy                               => tiering_policy
   - ^type                                         => type
-  - ^uuid                                         => uuid
   - ^volume_style_extended                        => style
   - ^vsroot                                       => svm_root
   - autosize_grow_threshold_percent               => autosize_grow_threshold_percent
