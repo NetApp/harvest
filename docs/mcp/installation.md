@@ -48,8 +48,6 @@ docker run -d \
 
 If you only want to bind to localhost, omit the `--host` option.
 
-```bash
-
 Then configure your mcp.json:
 
 ```json
