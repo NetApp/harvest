@@ -2,6 +2,7 @@
  * Copyright NetApp Inc, 2021 All rights reserved
  */
 
+//nolint:revive
 package color
 
 import (

@@ -2,6 +2,7 @@
  * Copyright NetApp Inc, 2024 All rights reserved
  */
 
+//nolint:revive
 package version
 
 import (
