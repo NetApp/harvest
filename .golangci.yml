@@ -37,7 +37,7 @@ linters:
     - nakedret
     - nilerr
     - nilnesserr
-#    - nolintlint
+    #    - nolintlint
     - nonamedreturns
     - nosprintfhostport
     - perfsprint
@@ -86,6 +86,11 @@ linters:
       - comments
       - common-false-positives
       - std-error-handling
+    rules:
+      - path: "(version|template|color|plugin)/"
+        linters:
+          - revive
+        text: "var-naming: avoid package names that conflict"
     paths:
       - third_party/.*
 issues:
