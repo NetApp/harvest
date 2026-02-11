@@ -2071,3 +2071,44 @@ func checkLegendFormat(t *testing.T, path string, data []byte) {
 		}
 	})
 }
+
+func TestMultiSelectEnabled(t *testing.T) {
+	VisitDashboards(Dashboards, func(path string, data []byte) {
+		checkMultiSelectEnabled(t, path, data)
+	})
+}
+
+func checkMultiSelectEnabled(t *testing.T, path string, data []byte) {
+	path = ShortPath(path)
+
+	// Variables that should be excluded from the multi-select check
+	excludedVariableTypes := map[string]bool{
+		"datasource": true,
+		"custom":     true,
+		"textbox":    true,
+		"constant":   true,
+	}
+
+	excludedVariableNames := map[string]bool{
+		"DS_PROMETHEUS": true,
+		"TopResources":  true,
+		"Interval":      true,
+		"IncludeRoot":   true,
+	}
+
+	gjson.GetBytes(data, "templating.list").ForEach(func(_, value gjson.Result) bool {
+		name := value.Get("name").ClonedString()
+		varType := value.Get("type").ClonedString()
+		multi := value.Get("multi").Bool()
+
+		if excludedVariableTypes[varType] || excludedVariableNames[name] {
+			return true
+		}
+
+		if varType == "query" && !multi {
+			t.Errorf("dashboard=%s variable=%s type=%s should have multi-select enabled (multi: true)", path, name, varType)
+		}
+
+		return true
+	})
+}
