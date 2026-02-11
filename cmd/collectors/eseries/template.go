@@ -52,10 +52,6 @@ func newObjectConfig(arrayPath, filter string, calculateUtilization bool) Object
 	}
 }
 
-func GetESeriesObjectConfig(_ string) ObjectConfig {
-	return ObjectConfig{}
-}
-
 func GetESeriesPerfObjectConfig(objType string) ObjectConfig {
 	configs := map[string]ObjectConfig{
 		"controller":  newObjectConfig("controllerStats", "type=controller", false),
@@ -131,7 +127,7 @@ func (e *ESeries) applyFilter(config ObjectConfig) {
 	if e.Prop.CacheConfig == nil && config.Filter != "" {
 		e.Prop.Filter = append(e.Prop.Filter, config.Filter)
 	} else if e.Prop.CacheConfig != nil && config.Filter != "" {
-		e.Logger.Warn("filter disabled due to shared cache",
+		e.Logger.Debug("filter disabled due to shared cache",
 			slog.String("skipped_filter", config.Filter),
 			slog.String("cache", e.Prop.CacheConfig.Name))
 	}

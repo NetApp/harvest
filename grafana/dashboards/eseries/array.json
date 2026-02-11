@@ -1144,7 +1144,7 @@
         "hide": 0,
         "includeAll": true,
         "label": "Datacenter",
-        "multi": false,
+        "multi": true,
         "name": "Datacenter",
         "options": [],
         "query": {
@@ -1167,7 +1167,7 @@
         "hide": 0,
         "includeAll": true,
         "label": "Array",
-        "multi": false,
+        "multi": true,
         "name": "Array",
         "options": [],
         "query": {
