@@ -1,6 +1,148 @@
 # Change Log
 ## [Releases](https://github.com/NetApp/harvest/releases)
 
+## 26.02.0 / 2026-02-11 Release
+:pushpin: Highlights of this major release include:
+## :star: New Features
+
+- :medal_sports: Harvest includes Disk based cache in addition to the in-memory cache to optimize Harvest’s memory footprint.
+
+- :medal_sports: Harvest already supports VictoriaMetrics exporter in pull mode, with this release Harvest would supports VictoriaMetrics in push mode also.
+
+- :medal_sports: Harvest Adds new E-Series collector. hat tip to @mamoep for raising.
+
+
+- Override default HARVEST_TSDB_URL on a per-request basis for MCP HTTP mode. Thanks @gautcher for raising.
+
+- :gem: New dashboards and additional panels:
+  - Harvest includes LUN Serial hex numbers in Lun table. Thanks @Venumadhu for raising.
+  - Harvest would mention flagship models and which model was used for examples
+
+- :closed_book: Documentation additions:
+  - Included doc HTTP mode recommend binding to all interfaces. Thanks to Chris Gautcher for reporting!
+  - Added new Eseries documentation
+  - Included mcp installation.md
+
+- `harvest grafana metrics` prints a templatePath detail for each metric consumed in all grafana dashboards. Thanks @songlin-rgb for raising.
+- `harvest grafana import` adds option for setting grafana orgId and then import all grafana dashboards accordingly. Thanks @spapadop for reporting.
+- `harvest grafana import` adds options for add/modify title,uid,tags and then import all grafana dashboards accordingly. Thanks @spapadop for reporting.
+
+- Harvest provide option to limit concurrent ONTAP HTTP connections. Thanks @songlin-rg for raising.
+
+- Harvest include unit and type for metrics descriptions in mcp/metadata/ontap_metrics.json. Thanks @gautcher for reporting.
+- Harvest adds health endpoint in harvest mcp
+- Harvest supports prometheus endpoint retry in mcp-server.
+
+## Announcements
+
+:bulb: **IMPORTANT** After upgrading, don't forget to re-import your dashboards to get all the new enhancements and fixes. You can import them via the `bin/harvest grafana import` CLI, from the Grafana UI, or from the 'Maintenance > Reset Harvest Dashboards' button in NAbox3. For NAbox4, this step is not needed.
+
+## Known Issues
+
+- #3941 disabled the `restperf/volume_node.yaml` and `zapiperf/volume_node.yaml` templates because ONTAP provided incomplete metrics for them. The `node_vol` prefixed metrics are not used in any Harvest dashboard. If you still need these metrics, you can re-enable the templates in their corresponding `default.yaml`. See #3900 for details.
+
+## Thanks to all the awesome contributors
+
+:metal: Thanks to all the people who've opened issues, asked questions on Discord, and contributed code or dashboards for this release:
+
+@@mamoep, @gautcher, @Venumadhu, Chris Gautcher, @songlin-rgb, @spapadop
+
+:seedling: This release includes 14 features, 16 bug fixes, 5 documentation, 1 testing, 4 refactoring, 21 miscellaneous, and 7 ci pull requests.
+
+<details>
+
+<summary>Expand for full list of pull requests</summary>
+
+### :rocket: Features
+- Limit concurrent collectors ([#4024](https://github.com/NetApp/harvest/pull/4024))
+- Adding serial in hex format in LUN table ([#4034](https://github.com/NetApp/harvest/pull/4034))
+- Override default HARVEST_TSDB_URL on a per-request basis for Harvest MCP ([#4042](https://github.com/NetApp/harvest/pull/4042))
+- Disk cache ([#4033](https://github.com/NetApp/harvest/pull/4033))
+- Add templatePath in grafana metric harvest cli ([#4056](https://github.com/NetApp/harvest/pull/4056))
+- Support victoria metrics push exporter ([#4031](https://github.com/NetApp/harvest/pull/4031))
+- Add units for ONTAP metrics missing them ([#4082](https://github.com/NetApp/harvest/pull/4082))
+- Add support for specifying organization ID when importing dashb… ([#4087](https://github.com/NetApp/harvest/pull/4087))
+- Add units for ONTAP metrics missing them ([#4091](https://github.com/NetApp/harvest/pull/4091))
+- Add health endpoint in harvest mcp ([#4097](https://github.com/NetApp/harvest/pull/4097))
+- ESeries collector infrastructure ([#4088](https://github.com/NetApp/harvest/pull/4088))
+- Include options for modifying title, uid, tags when importing d… ([#4101](https://github.com/NetApp/harvest/pull/4101))
+- Time series retry in harvest MCP ([#4105](https://github.com/NetApp/harvest/pull/4105))
+- ESeries hardware metrics ([#4112](https://github.com/NetApp/harvest/pull/4112))
+
+
+### :bug: Bug Fixes
+- StorageGRID Cached credential script tokens not expired on 401 ([#4011](https://github.com/NetApp/harvest/pull/4011))
+- Fix activity label for volume analytics ([#4026](https://github.com/NetApp/harvest/pull/4026))
+- Handle local/remote records in cluster schedule ([#4027](https://github.com/NetApp/harvest/pull/4027))
+- Better error handling when trying to monitor an ONTAP cluster wi… ([#4041](https://github.com/NetApp/harvest/pull/4041))
+- Update logic of hot/cold changes if total_footprint is missing in volume template ([#4046](https://github.com/NetApp/harvest/pull/4046))
+- Support different ontap port Zapi/ZapiPerf collector ([#4061](https://github.com/NetApp/harvest/pull/4061))
+- Volume top metrics are not available for Flexgroup volumes ([#4072](https://github.com/NetApp/harvest/pull/4072))
+- Adding dynamic threshold of link speed in 2 network tables ([#4062](https://github.com/NetApp/harvest/pull/4062))
+- RestPerf:Volume volume aggregate metrics error handling ([#4098](https://github.com/NetApp/harvest/pull/4098))
+- Remove unsafe GetChildS GetChildren chaining ([#4102](https://github.com/NetApp/harvest/pull/4102))
+- Eseries dashboard names ([#4114](https://github.com/NetApp/harvest/pull/4114))
+- Avoid double-counting shelf power ([#4116](https://github.com/NetApp/harvest/pull/4116))
+- Eseries dashboard names for container ([#4118](https://github.com/NetApp/harvest/pull/4118))
+- Volume uuid should be instance_uuid ([#4121](https://github.com/NetApp/harvest/pull/4121))
+- Top file note should point to correct discussion ([#4123](https://github.com/NetApp/harvest/pull/4123))
+- Enable multiselect for array dashboard ([#4125](https://github.com/NetApp/harvest/pull/4125))
+- Move cache log to debug ([#4127](https://github.com/NetApp/harvest/pull/4127))
+
+### :closed_book: Documentation
+- Update rest strategy guide ([#4039](https://github.com/NetApp/harvest/pull/4039))
+- For HTTP mode recommend binding to all interfaces ([#4065](https://github.com/NetApp/harvest/pull/4065))
+- Mention flagship models and which model was used for examples ([#4084](https://github.com/NetApp/harvest/pull/4084))
+- Eseries documentation ([#4115](https://github.com/NetApp/harvest/pull/4115))
+- Fix mcp installation.md ([#4124](https://github.com/NetApp/harvest/pull/4124))
+
+### :wrench: Testing
+- Ensure node GetChildren does not panic ([#4110](https://github.com/NetApp/harvest/pull/4110))
+
+### Refactoring
+- Make mcp go runnable ([#4018](https://github.com/NetApp/harvest/pull/4018))
+- Address lint warnings ([#4032](https://github.com/NetApp/harvest/pull/4032))
+- Lint issues ([#4038](https://github.com/NetApp/harvest/pull/4038))
+- Fix potential resource leak ([#4064](https://github.com/NetApp/harvest/pull/4064))
+- Address lint warnings ([#4081](https://github.com/NetApp/harvest/pull/4081))
+
+### Miscellaneous
+- Improve changelog twistie formatting ([#4025](https://github.com/NetApp/harvest/pull/4025))
+- Update all dependencies ([#4019](https://github.com/NetApp/harvest/pull/4019))
+- Merge release/25.11.0 to main ([#4023](https://github.com/NetApp/harvest/pull/4023))
+- Update all dependencies ([#4029](https://github.com/NetApp/harvest/pull/4029))
+- Update all dependencies ([#4036](https://github.com/NetApp/harvest/pull/4036))
+- Update all dependencies ([#4047](https://github.com/NetApp/harvest/pull/4047))
+- Track upstream go-version changes ([#4048](https://github.com/NetApp/harvest/pull/4048))
+- Bump go ([#4054](https://github.com/NetApp/harvest/pull/4054))
+- Lint issues ([#4055](https://github.com/NetApp/harvest/pull/4055))
+- Update all dependencies ([#4058](https://github.com/NetApp/harvest/pull/4058))
+- Update all dependencies ([#4066](https://github.com/NetApp/harvest/pull/4066))
+- Update all dependencies ([#4068](https://github.com/NetApp/harvest/pull/4068))
+- Track upstream gopsutil changes ([#4074](https://github.com/NetApp/harvest/pull/4074))
+- Update all dependencies ([#4083](https://github.com/NetApp/harvest/pull/4083))
+- Bump go ([#4090](https://github.com/NetApp/harvest/pull/4090))
+- Update all dependencies ([#4092](https://github.com/NetApp/harvest/pull/4092))
+- Update all dependencies ([#4104](https://github.com/NetApp/harvest/pull/4104))
+- Bring harvest.cue up to date ([#4107](https://github.com/NetApp/harvest/pull/4107))
+- Update all dependencies ([#4111](https://github.com/NetApp/harvest/pull/4111))
+- Bump go ([#4113](https://github.com/NetApp/harvest/pull/4113))
+- Update all dependencies ([#4119](https://github.com/NetApp/harvest/pull/4119))
+- Bump dependencies ([#4122](https://github.com/NetApp/harvest/pull/4122))
+- Bump go ([#4128](https://github.com/NetApp/harvest/pull/4128))
+
+### :hammer: CI
+- Unit test should fail ZapiPerf templates when detect caret ([#4043](https://github.com/NetApp/harvest/pull/4043))
+- V-zhuravlev has signed the CCLA ([#4070](https://github.com/NetApp/harvest/pull/4070))
+- Allow first party GitHub actions to use unpinned references ([#4079](https://github.com/NetApp/harvest/pull/4079))
+- Fix ci issue ([#4094](https://github.com/NetApp/harvest/pull/4094))
+- KuaJnio has signed the CCLA ([#4109](https://github.com/NetApp/harvest/pull/4109))
+- Rmilkowski has signed the CCLA ([#4117](https://github.com/NetApp/harvest/pull/4117))
+- Fix lint ([#4126](https://github.com/NetApp/harvest/pull/4126))
+</details>
+
+
+---
 ## 25.11.0 / 2025-11-10 Release
 :pushpin: Highlights of this major release include:
 ## :star: New Features
