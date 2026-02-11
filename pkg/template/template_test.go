@@ -1,3 +1,4 @@
+//nolint:revive
 package template
 
 import "testing"
