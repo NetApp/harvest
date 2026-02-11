@@ -23,7 +23,6 @@
 // 	Custom plugins have access to all the parameters of their parent
 // 	collector and should be therefore treated with great care.
 
-//nolint:revive
 package plugin
 
 import (
