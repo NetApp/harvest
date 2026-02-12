@@ -386,8 +386,8 @@ func (c *Client) getBundleDisplayVersion(systemID string) (string, error) {
 		}
 
 		for _, version := range codeVersions.Array() {
-			if version.Get("codeModule").String() == "bundleDisplay" {
-				versionString := version.Get("versionString").String()
+			if version.Get("codeModule").ClonedString() == "bundleDisplay" {
+				versionString := version.Get("versionString").ClonedString()
 				if versionString != "" {
 					normalized := c.normalizeBundleVersion(versionString)
 					if normalized == "" {

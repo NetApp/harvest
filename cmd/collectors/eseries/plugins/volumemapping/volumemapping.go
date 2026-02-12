@@ -149,13 +149,13 @@ func (v *VolumeMapping) buildPoolLookup(systemID string) (map[string]string, err
 	}
 
 	for _, pool := range pools {
-		poolRef := pool.Get("id").String()
+		poolRef := pool.Get("id").ClonedString()
 		if poolRef == "" {
-			poolRef = pool.Get("volumeGroupRef").String()
+			poolRef = pool.Get("volumeGroupRef").ClonedString()
 		}
-		poolName := pool.Get("name").String()
+		poolName := pool.Get("name").ClonedString()
 		if poolName == "" {
-			poolName = pool.Get("label").String()
+			poolName = pool.Get("label").ClonedString()
 		}
 		if poolRef != "" && poolName != "" {
 			poolNames[poolRef] = poolName
@@ -176,13 +176,13 @@ func (v *VolumeMapping) buildHostLookup(systemID string) (map[string]string, err
 	}
 
 	for _, host := range hosts {
-		hostRef := host.Get("hostRef").String()
+		hostRef := host.Get("hostRef").ClonedString()
 		if hostRef == "" {
-			hostRef = host.Get("id").String()
+			hostRef = host.Get("id").ClonedString()
 		}
-		hostName := host.Get("name").String()
+		hostName := host.Get("name").ClonedString()
 		if hostName == "" {
-			hostName = host.Get("label").String()
+			hostName = host.Get("label").ClonedString()
 		}
 		if hostRef != "" && hostName != "" {
 			hostNames[hostRef] = hostName
@@ -203,8 +203,8 @@ func (v *VolumeMapping) buildWorkloadLookup(systemID string) (map[string]string,
 	}
 
 	for _, workload := range workloads {
-		workloadID := workload.Get("id").String()
-		workloadName := workload.Get("name").String()
+		workloadID := workload.Get("id").ClonedString()
+		workloadName := workload.Get("name").ClonedString()
 		if workloadID != "" && workloadName != "" {
 			workloadNames[workloadID] = workloadName
 		}
@@ -228,9 +228,9 @@ func (v *VolumeMapping) addLunAndHostLabels(volumeInstance *matrix.Instance, hos
 	var luns, hosts, types []string
 
 	for _, mapping := range mappings.Array() {
-		lun := mapping.Get("lun").String()
-		mapRef := mapping.Get("mapRef").String()
-		mapType := mapping.Get("type").String()
+		lun := mapping.Get("lun").ClonedString()
+		mapRef := mapping.Get("mapRef").ClonedString()
+		mapType := mapping.Get("type").ClonedString()
 
 		if mapRef == "" {
 			continue
@@ -302,8 +302,8 @@ func (v *VolumeMapping) addWorkloadLabel(volumeInstance *matrix.Instance, worklo
 
 	var workloadID string
 	for _, item := range metadata.Array() {
-		if item.Get("key").String() == "workloadId" {
-			workloadID = item.Get("value").String()
+		if item.Get("key").ClonedString() == "workloadId" {
+			workloadID = item.Get("value").ClonedString()
 			break
 		}
 	}

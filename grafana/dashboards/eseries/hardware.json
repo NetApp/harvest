@@ -262,7 +262,7 @@
                 "array",
                 "code_module",
                 "datacenter",
-                "version_string",
+                "version",
                 "controller"
               ]
             }
@@ -277,7 +277,7 @@
               "code_module": 3,
               "controller": 2,
               "datacenter": 0,
-              "version_string": 4
+              "version": 4
             },
             "renameByName": {
               "array": "Array",
@@ -285,7 +285,7 @@
               "controller": "Controller",
               "controller_location": "Controller",
               "datacenter": "Datacenter",
-              "version_string": "Version"
+              "version": "Version"
             }
           }
         }

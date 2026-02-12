@@ -18,13 +18,13 @@ func BuildHostClusterLookup(client *rest.Client, arrayID string, logger *slog.Lo
 	}
 
 	for _, host := range hosts {
-		hostRef := host.Get("hostRef").String()
+		hostRef := host.Get("hostRef").ClonedString()
 		if hostRef == "" {
-			hostRef = host.Get("id").String()
+			hostRef = host.Get("id").ClonedString()
 		}
-		hostName := host.Get("name").String()
+		hostName := host.Get("name").ClonedString()
 		if hostName == "" {
-			hostName = host.Get("label").String()
+			hostName = host.Get("label").ClonedString()
 		}
 		if hostRef != "" && hostName != "" {
 			hostClusterNames[hostRef] = hostName

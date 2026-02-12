@@ -315,7 +315,7 @@ func (e *ESeries) pollData(mat *matrix.Matrix, results []gjson.Result) uint64 {
 			for _, k := range e.Prop.InstanceKeys {
 				value := instanceData.Get(k)
 				if value.Exists() {
-					instanceKey.WriteString(value.String())
+					instanceKey.WriteString(value.ClonedString())
 				}
 			}
 		}
