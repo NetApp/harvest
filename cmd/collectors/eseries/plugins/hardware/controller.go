@@ -183,7 +183,7 @@ func (h *Hardware) initCodeVersionMatrix() {
 	instanceLabels.NewChildS("", "controller_id")
 	instanceLabels.NewChildS("", "controller")
 	instanceLabels.NewChildS("", "code_module")
-	instanceLabels.NewChildS("", "version_string")
+	instanceLabels.NewChildS("", "version")
 
 	mat.SetExportOptions(exportOptions)
 
@@ -437,7 +437,7 @@ func (h *Hardware) processCodeVersions(controller gjson.Result, controllerID, co
 		inst.SetLabelTrimmed("controller_id", controllerID)
 		inst.SetLabelTrimmed("controller", controllerLocation)
 		inst.SetLabelTrimmed("code_module", codeModule)
-		inst.SetLabelTrimmed("version_string", versionString)
+		inst.SetLabelTrimmed("version", versionString)
 	}
 }
 
