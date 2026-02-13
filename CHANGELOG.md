@@ -7,7 +7,7 @@
 
 - :medal_sports: Harvest includes a new BETA E-Series collector for inventory and performance metrics along with five E-Series dashboards and 47 panels. 
   Thanks to @mamoep, @ReBaunana, @erikgruetter, @mark.pendrick, @darthVikes, @crollorc, @heinowalther, @ngocchiongnoi, @summertony15, @Venumadhu for raising.
-  E-Series dashboards:
+  E-Series newly added dashboards:
     - E-Series: Array
     - E-Series: Controller
     - E-Series: Hardware
