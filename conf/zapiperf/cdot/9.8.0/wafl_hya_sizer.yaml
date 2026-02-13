@@ -7,9 +7,10 @@ instance_key:             uuid
 
 counters:
   - cache_stats
-  - instance_name
+  - instance_name          => aggr
   - node_name              => node
 
 export_options:
   instance_keys:
+    - aggr
     - node
