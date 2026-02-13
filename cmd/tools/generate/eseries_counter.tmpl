@@ -1,0 +1,64 @@
+This document describes which E-Series metrics are collected and what those metrics are named in Harvest, including:
+
+- Details about which Harvest metrics each dashboard uses.
+These can be generated on demand by running `bin/harvest grafana metrics`. See
+[#1577](https://github.com/NetApp/harvest/issues/1577#issue-1471478260) for details.
+
+```
+Creation Date : {{ .CounterMetaData.Date }}
+E-Series Version: {{ .CounterMetaData.ESeriesVersion }}
+```
+
+??? "Navigate to Grafana dashboards"
+
+    Add your Grafana instance to the following form and save it. When you click on dashboard links on this page, a link to your dashboard will be opened. NAbox hosts Grafana on a subdomain like so: https://localhost/grafana/
+
+    <div>
+        <label for="grafanaHost">Grafana Host</label>
+        <input type="text" id="grafanaHost" name="grafanaHost" placeholder="e.g. http://localhost:3000" style="width: 80%;margin-left:1em">
+        <button type="button" onclick="saveGrafanaHost()">Save</button>
+    </div>
+
+## Understanding the structure
+
+Below is an <span class="key">annotated</span> example of how to interpret the structure of each of the [metrics](#metrics).
+
+eseries_volume_read_ops <span class="key">Name of the metric exported by Harvest</span>
+
+Volume read I/O operations per second. <span class="key">Description of the E-Series metric</span>
+
+* <span class="key">API</span> will be REST since E-Series uses the REST API
+* <span class="key">Endpoint</span> name of the REST API endpoint used to collect this metric
+* <span class="key">Metric</span> name of the E-Series counter
+* <span class="key">Template</span> path of the template that collects the metric
+
+| API    | Endpoint | Metric | Template |
+|--------|----------|--------|---------|
+|REST | `storage-systems/{array_id}/live-statistics` | readOps | conf/eseriesperf/11.80.0/volume.yaml|
+
+
+## Metrics
+
+{{range .Counters}}
+### {{ .Name }}
+
+{{ .Description }}
+
+{{.Header -}}
+{{range .APIs}}
+{{.TableRow -}}
+{{end}}
+
+{{- if .HasPanels}}
+
+The `{{ .Name }}` metric is visualized in the following Grafana dashboards:
+
+/// html | div.grafana-table
+{{- .PanelHeader -}}
+{{range .Panels}}
+{{.DashboardTableRow -}}
+{{end}}
+///
+{{end}}
+
+{{end}}

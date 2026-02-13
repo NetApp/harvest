@@ -12,7 +12,7 @@ import (
 func LoadMetricDescriptions(metadataDir string, logger *slog.Logger) map[string]string {
 	descriptions := make(map[string]string)
 
-	files := []string{"ontap_metrics.json", "storagegrid_metrics.json", "cisco_metrics.json"}
+	files := []string{"ontap_metrics.json", "storagegrid_metrics.json", "cisco_metrics.json", "eseries_metrics.json"}
 
 	loadedCount := 0
 	for _, filename := range files {

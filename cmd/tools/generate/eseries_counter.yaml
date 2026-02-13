@@ -1,0 +1,496 @@
+counters:
+  # =============================================================================
+  # Array Metrics (Eseries Collector - Configuration)
+  # =============================================================================
+  - Name: eseries_array_labels
+    Description: This metric provides information about E-Series storage arrays.
+    APIs:
+      - API: REST
+        Endpoint: storage-systems
+        ESeriesCounter: Harvest generated
+        Template: conf/eseries/11.80.0/array.yaml
+
+  - Name: eseries_array_drive_count
+    Description: Total number of drives in the storage array
+    APIs:
+      - API: REST
+        Endpoint: storage-systems
+        ESeriesCounter: driveCount
+        Template: conf/eseries/11.80.0/array.yaml
+
+  - Name: eseries_array_free_pool_space
+    Description: Free space available in storage pools in bytes
+    APIs:
+      - API: REST
+        Endpoint: storage-systems
+        ESeriesCounter: freePoolSpace
+        Template: conf/eseries/11.80.0/array.yaml
+
+  - Name: eseries_array_used_pool_space
+    Description: Used space in storage pools in bytes
+    APIs:
+      - API: REST
+        Endpoint: storage-systems
+        ESeriesCounter: usedPoolSpace
+        Template: conf/eseries/11.80.0/array.yaml
+
+  - Name: eseries_array_tray_count
+    Description: Number of drive trays in the storage array
+    APIs:
+      - API: REST
+        Endpoint: storage-systems
+        ESeriesCounter: trayCount
+        Template: conf/eseries/11.80.0/array.yaml
+
+  - Name: eseries_array_unconfigured_space
+    Description: Unconfigured space available in the storage array in bytes
+    APIs:
+      - API: REST
+        Endpoint: storage-systems
+        ESeriesCounter: unconfiguredSpace
+        Template: conf/eseries/11.80.0/array.yaml
+
+  - Name: eseries_array_host_spares_used
+    Description: Number of hot spare drives currently in use
+    APIs:
+      - API: REST
+        Endpoint: storage-systems
+        ESeriesCounter: hostSparesUsed
+        Template: conf/eseries/11.80.0/array.yaml
+
+  # =============================================================================
+  # Array Performance Metrics (EseriesPerf Collector)
+  # =============================================================================
+  - Name: eseries_array_read_ops
+    Description: Array-wide read I/O operations per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: readIopsTotal
+        Template: conf/eseriesperf/11.80.0/array.yaml
+
+  - Name: eseries_array_write_ops
+    Description: Array-wide write I/O operations per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: writeIopsTotal
+        Template: conf/eseriesperf/11.80.0/array.yaml
+
+  - Name: eseries_array_read_data
+    Description: Array-wide read data throughput in bytes per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: readBytesTotal
+        Template: conf/eseriesperf/11.80.0/array.yaml
+
+  - Name: eseries_array_write_data
+    Description: Array-wide write data throughput in bytes per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: writeBytesTotal
+        Template: conf/eseriesperf/11.80.0/array.yaml
+
+  - Name: eseries_array_cache_hit_ops
+    Description: Total number of IO operations that hit cache on the array
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: cacheHitsIopsTotal
+        Template: conf/eseriesperf/11.80.0/array.yaml
+
+  # =============================================================================
+  # Battery Metrics (Eseries Collector - Hardware)
+  # =============================================================================
+  - Name: eseries_battery_labels
+    Description: This metric provides information about batteries.
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/hardware-inventory
+        ESeriesCounter: Harvest generated
+        Template: conf/eseries/11.80.0/hardware.yaml
+
+  # =============================================================================
+  # Controller Metrics (Eseries Collector - Hardware)
+  # =============================================================================
+  - Name: eseries_controller_labels
+    Description: This metric provides information about controllers.
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/hardware-inventory
+        ESeriesCounter: Harvest generated
+        Template: conf/eseries/11.80.0/hardware.yaml
+
+  # =============================================================================
+  # Controller Performance Metrics (EseriesPerf Collector)
+  # =============================================================================
+  - Name: eseries_controller_read_ops
+    Description: Total number of read IO operations serviced by the controller
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: readIopsTotal
+        Template: conf/eseriesperf/11.80.0/controller.yaml
+
+  - Name: eseries_controller_write_ops
+    Description: Total number of write IO operations serviced by the controller
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: writeIopsTotal
+        Template: conf/eseriesperf/11.80.0/controller.yaml
+
+  - Name: eseries_controller_read_data
+    Description: Total number of bytes read by the controller
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: readBytesTotal
+        Template: conf/eseriesperf/11.80.0/controller.yaml
+
+  - Name: eseries_controller_write_data
+    Description: Total number of bytes written by the controller
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: writeBytesTotal
+        Template: conf/eseriesperf/11.80.0/controller.yaml
+
+  - Name: eseries_controller_cache_hit_ops
+    Description: Total number of IO operations that hit cache on the controller
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: cacheHitsIopsTotal
+        Template: conf/eseriesperf/11.80.0/controller.yaml
+
+  - Name: eseries_controller_cpu_utilization
+    Description: Controller CPU utilization percentage
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: cpuUtilizationStats.0.sumCpuUtilization
+        Template: conf/eseriesperf/11.80.0/controller.yaml
+
+  # =============================================================================
+  # Fan Metrics (Eseries Collector - Hardware)
+  # =============================================================================
+  - Name: eseries_fan_labels
+    Description: This metric provides information about fans.
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/hardware-inventory
+        ESeriesCounter: Harvest generated
+        Template: conf/eseries/11.80.0/hardware.yaml
+
+  # =============================================================================
+  # Power Supply Metrics (Eseries Collector - Hardware)
+  # =============================================================================
+  - Name: eseries_power_supply_labels
+    Description: This metric provides information about power supplies.
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/hardware-inventory
+        ESeriesCounter: Harvest generated
+        Template: conf/eseries/11.80.0/hardware.yaml
+
+  # =============================================================================
+  # Host Metrics (Eseries Collector)
+  # =============================================================================
+  - Name: eseries_host_labels
+    Description: This metric provides information about hosts connected to the storage array.
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/hosts
+        ESeriesCounter: Harvest generated
+        Template: conf/eseries/11.80.0/host.yaml
+
+  # =============================================================================
+  # Volume Metrics (Eseries Collector - Configuration)
+  # =============================================================================
+  - Name: eseries_volume_labels
+    Description: This metric provides information about volumes.
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/volumes
+        ESeriesCounter: Harvest generated
+        Template: conf/eseries/11.80.0/volume.yaml
+
+  - Name: eseries_volume_reported_capacity
+    Description: The capacity in bytes of the volume
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/volumes
+        ESeriesCounter: capacity
+        Template: conf/eseries/11.80.0/volume.yaml
+
+  - Name: eseries_volume_allocated_capacity
+    Description: Allocated capacity of the volume in bytes
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/volumes
+        ESeriesCounter: totalSizeInBytes
+        Template: conf/eseries/11.80.0/volume.yaml
+
+  - Name: eseries_volume_block_size
+    Description: Block size of the volume in bytes
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/volumes
+        ESeriesCounter: blkSize
+        Template: conf/eseries/11.80.0/volume.yaml
+
+  # =============================================================================
+  # Volume Performance Metrics (EseriesPerf Collector)
+  # =============================================================================
+  - Name: eseries_volume_read_ops
+    Description: Volume read I/O operations per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: readOps
+        Template: conf/eseriesperf/11.80.0/volume.yaml
+
+  - Name: eseries_volume_write_ops
+    Description: Volume write I/O operations per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: writeOps
+        Template: conf/eseriesperf/11.80.0/volume.yaml
+
+  - Name: eseries_volume_read_data
+    Description: Volume read data throughput in bytes per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: readBytes
+        Template: conf/eseriesperf/11.80.0/volume.yaml
+
+  - Name: eseries_volume_write_data
+    Description: Volume write data throughput in bytes per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: writeBytes
+        Template: conf/eseriesperf/11.80.0/volume.yaml
+
+  - Name: eseries_volume_read_latency
+    Description: Read response time average in microseconds
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: readTimeTotal
+        Template: conf/eseriesperf/11.80.0/volume.yaml
+
+  - Name: eseries_volume_write_latency
+    Description: Write response time average in microseconds
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: writeTimeTotal
+        Template: conf/eseriesperf/11.80.0/volume.yaml
+
+  - Name: eseries_volume_read_hit_ops
+    Description: Number of read operations that hit cache
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: readHitOps
+        Template: conf/eseriesperf/11.80.0/volume.yaml
+
+  - Name: eseries_volume_write_hit_ops
+    Description: Volume write cache hit operations per second
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: writeHitOps
+        Template: conf/eseriesperf/11.80.0/volume.yaml
+
+  - Name: eseries_volume_read_cache_hit_ratio
+    Description: Volume read cache hit ratio calculated from read hit operations and total read operations
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: Harvest Generated
+        Template: conf/eseriesperf/11.80.0/volume.yaml (CacheHitRatio plugin)
+
+  - Name: eseries_volume_write_cache_hit_ratio
+    Description: Volume write cache hit ratio calculated from write hit operations and total write operations
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: Harvest Generated
+        Template: conf/eseriesperf/11.80.0/volume.yaml (CacheHitRatio plugin)
+
+  - Name: eseries_volume_total_cache_hit_ratio
+    Description: Volume total cache hit ratio combining read and write cache hit operations
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/live-statistics
+        ESeriesCounter: Harvest Generated
+        Template: conf/eseriesperf/11.80.0/volume.yaml (CacheHitRatio plugin)
+
+  # =============================================================================
+  # Cache Backup Device Metrics (Hardware Plugin)
+  # =============================================================================
+  - Name: eseries_cache_backup_device_labels
+    Description: This metric provides information about cache backup devices.
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/hardware-inventory
+        ESeriesCounter: Harvest generated
+        Template: conf/eseries/11.80.0/hardware.yaml (Hardware plugin)
+
+  - Name: eseries_cache_backup_device_capacity
+    Description: Capacity of the cache backup device in bytes
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/hardware-inventory
+        ESeriesCounter: cacheBackupDevices.capacityInMegabytes
+        Template: conf/eseries/11.80.0/hardware.yaml (Hardware plugin)
+
+  # =============================================================================
+  # Cache Memory DIMM Metrics (Hardware Plugin)
+  # =============================================================================
+  - Name: eseries_cache_memory_dimm_labels
+    Description: This metric provides information about cache memory DIMMs.
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/hardware-inventory
+        ESeriesCounter: Harvest generated
+        Template: conf/eseries/11.80.0/hardware.yaml (Hardware plugin)
+
+  - Name: eseries_cache_memory_dimm_capacity
+    Description: Capacity of the cache memory DIMM in bytes
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/hardware-inventory
+        ESeriesCounter: cacheMemoryDimms.capacityInMegabytes
+        Template: conf/eseries/11.80.0/hardware.yaml (Hardware plugin)
+
+  # =============================================================================
+  # Controller Additional Metrics (Hardware Plugin)
+  # =============================================================================
+  - Name: eseries_controller_code_version_labels
+    Description: This metric provides information about controller code versions.
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/hardware-inventory
+        ESeriesCounter: Harvest generated
+        Template: conf/eseries/11.80.0/hardware.yaml (Hardware plugin)
+
+  - Name: eseries_controller_drive_interface_labels
+    Description: This metric provides information about controller drive-side interfaces.
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/interfaces?channelType=driveside
+        ESeriesCounter: Harvest generated
+        Template: conf/eseries/11.80.0/hardware.yaml (Hardware plugin)
+
+  - Name: eseries_controller_host_interface_labels
+    Description: This metric provides information about controller host-side interfaces.
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/interfaces?channelType=hostside
+        ESeriesCounter: Harvest generated
+        Template: conf/eseries/11.80.0/hardware.yaml (Hardware plugin)
+
+  - Name: eseries_controller_net_interface_labels
+    Description: This metric provides information about controller network interfaces.
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/hardware-inventory
+        ESeriesCounter: Harvest generated
+        Template: conf/eseries/11.80.0/hardware.yaml (Hardware plugin)
+
+  - Name: eseries_controller_processor_memory
+    Description: Controller processor memory size in bytes
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/hardware-inventory
+        ESeriesCounter: controllers.processorMemorySizeMiB
+        Template: conf/eseries/11.80.0/hardware.yaml (Hardware plugin)
+
+  - Name: eseries_controller_total_cache_memory
+    Description: Total cache memory on the controller in bytes
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/hardware-inventory
+        ESeriesCounter: controllers.cacheMemorySize
+        Template: conf/eseries/11.80.0/hardware.yaml (Hardware plugin)
+
+  - Name: eseries_controller_used_cache_memory
+    Description: Used cache memory on the controller in bytes
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/hardware-inventory
+        ESeriesCounter: controllers
+        Template: conf/eseries/11.80.0/hardware.yaml (Hardware plugin)
+
+  # =============================================================================
+  # Drive Configuration Metrics (Hardware Plugin)
+  # =============================================================================
+  - Name: eseries_drive_labels
+    Description: This metric provides information about drives.
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/hardware-inventory
+        ESeriesCounter: Harvest generated
+        Template: conf/eseries/11.80.0/hardware.yaml (Hardware plugin)
+
+  - Name: eseries_drive_capacity
+    Description: Raw capacity of the drive in bytes
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/hardware-inventory
+        ESeriesCounter: drives.rawCapacity
+        Template: conf/eseries/11.80.0/hardware.yaml (Hardware plugin)
+
+  - Name: eseries_drive_block_size
+    Description: Logical block size of the drive in bytes
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/hardware-inventory
+        ESeriesCounter: drives.blkSize
+        Template: conf/eseries/11.80.0/hardware.yaml (Hardware plugin)
+
+  - Name: eseries_drive_block_size_physical
+    Description: Physical block size of the drive in bytes
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/hardware-inventory
+        ESeriesCounter: drives.blkSizePhysical
+        Template: conf/eseries/11.80.0/hardware.yaml (Hardware plugin)
+
+  - Name: eseries_drive_percent_endurance_used
+    Description: Percentage of SSD endurance used for solid state drives
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/hardware-inventory
+        ESeriesCounter: drives.ssdWearLife.percentEnduranceUsed
+        Template: conf/eseries/11.80.0/hardware.yaml (Hardware plugin)
+
+  # =============================================================================
+  # SFP Metrics (Hardware Plugin)
+  # =============================================================================
+  - Name: eseries_sfp_labels
+    Description: This metric provides information about SFP transceivers.
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/hardware-inventory
+        ESeriesCounter: Harvest generated
+        Template: conf/eseries/11.80.0/hardware.yaml (Hardware plugin)
+
+  # =============================================================================
+  # Thermal Sensor Metrics (Hardware Plugin)
+  # =============================================================================
+  - Name: eseries_thermal_sensor_labels
+    Description: This metric provides information about thermal sensors.
+    APIs:
+      - API: REST
+        Endpoint: storage-systems/{array_id}/hardware-inventory
+        ESeriesCounter: Harvest generated
+        Template: conf/eseries/11.80.0/hardware.yaml (Hardware plugin)
