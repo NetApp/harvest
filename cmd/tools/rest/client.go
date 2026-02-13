@@ -286,12 +286,12 @@ func (c *Client) invokeWithAuthRetry() ([]byte, error) {
 	body, err = doInvoke()
 
 	if err != nil {
-		var he errs.HarvestError
-		if errors.As(err, &he) {
+		var re *errs.RestError
+		if errors.As(err, &re) {
 			// If this is an auth failure and the client is using a credential script,
 			// expire the current credentials, call the script again, update the client's password,
 			// and try again
-			if errors.Is(he, errs.ErrAuthFailed) {
+			if errors.Is(re, errs.ErrAuthFailed) {
 				pollerAuth, err2 := c.auth.GetPollerAuth()
 				if err2 != nil {
 					return nil, err2
