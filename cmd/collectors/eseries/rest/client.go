@@ -292,9 +292,9 @@ func (c *Client) get(endpoint string, headers ...map[string]string) ([]gjson.Res
 	results, err = doInvoke()
 
 	if err != nil {
-		var he errs.HarvestError
-		if errors.As(err, &he) {
-			if errors.Is(he, errs.ErrAuthFailed) {
+		var re *errs.RestError
+		if errors.As(err, &re) {
+			if errors.Is(re, errs.ErrAuthFailed) {
 				pollerAuth, err2 := c.auth.GetPollerAuth()
 				if err2 != nil {
 					return nil, err2
