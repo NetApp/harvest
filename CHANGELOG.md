@@ -45,9 +45,8 @@
 
 :bulb: E-Series collector and dashboards are beta as we collect more feedback.
 
-## Known Issues
+**IMPORTANT** KeyPerf is the default collector for volume performance metrics starting in `25.11` and this release `26.02` fixes an issue where KeyPerf Collector did not calculate FlexGroup latency.
 
-- #3941 disabled the `restperf/volume_node.yaml` and `zapiperf/volume_node.yaml` templates because ONTAP provided incomplete metrics for them. The `node_vol` prefixed metrics are not used in any Harvest dashboard. If you still need these metrics, you can re-enable the templates in their corresponding `default.yaml`. See #3900 for details.
 
 ## Thanks to all the awesome contributors
 
