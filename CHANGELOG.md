@@ -21,6 +21,8 @@
 
 - Harvest includes fix to avoid double-counting of the shelf power. Thanks to @rmilkowski for raising and contributing a fix 🤘
 
+- **IMPORTANT** KeyPerf is the default collector for volume performance metrics starting in `25.11` and this release `26.02` fixes an issue where KeyPerf Collector did not calculate FlexGroup latency.
+
 - :gem: New dashboards and additional panels:
   - Harvest includes LUN Serial hex numbers in Lun table. Thanks @Venumadhu for raising.
 
@@ -37,16 +39,13 @@
 - Harvest MCP enhancement:
   - Harvest MCP includes metric unit and type information for performance metrics. Thanks @gautcher for reporting.
   - Harvest adds health endpoint in harvest mcp. Thanks @Yann for reporting.
-  - Harvest supports prometheus endpoint retry in mcp-server. Thanks @Yann for reporting.
+  - Harvest supports prometheus/victoriametrics endpoint retry in mcp-server. Thanks @Yann for reporting.
 
 ## Announcements
 
 :bulb: **IMPORTANT** After upgrading, don't forget to re-import your dashboards to get all the new enhancements and fixes. You can import them via the `bin/harvest grafana import` CLI, from the Grafana UI, or from the 'Maintenance > Reset Harvest Dashboards' button in NAbox3. For NAbox4, this step is not needed.
 
 :bulb: E-Series collector and dashboards are beta as we collect more feedback.
-
-**IMPORTANT** KeyPerf is the default collector for volume performance metrics starting in `25.11` and this release `26.02` fixes an issue where KeyPerf Collector did not calculate FlexGroup latency.
-
 
 ## Thanks to all the awesome contributors
 
